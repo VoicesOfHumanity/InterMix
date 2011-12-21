@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body>
+	
+<% if @cdata and @cdata['logo'].to_s != '' -%>	
+<img src="<%= @cdata['logo'] %>"/>
+<% else -%>
+<img src="http://<%= BASEDOMAIN %>/images/logo.gif"/>
+<% end -%>
+<br/><br/>
+
+<div>
+<%=raw @message %>
+</div>
+
+<hr/>
+
+<p><a href="http://<%= BASEDOMAIN %>/">InterMix</a></p>
+
+</body>
+</html>

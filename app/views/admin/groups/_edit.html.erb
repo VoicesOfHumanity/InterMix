@@ -1,0 +1,22 @@
+<% semantic_form_for [:admin, @group] do |f| %>
+
+	<% f.inputs do %>
+		<%= f.input :shortname, :required => true %>
+		<%= f.input :name, :required => true %>
+		<%= f.input :description %>
+		<%= f.input :visibility, :as => :select, :collection =>GROUP_VISIBILITY %>	
+		<%= f.input :openness, :as => :select, :collection =>GROUP_OPENNESS %>	
+		<%= f.input :moderation %>
+		<%= f.input :is_network %>
+		<%= f.input :logo, :as=>:file %>		
+		<%= f.input :front_template %>
+		<%= f.input :member_template %>
+		<%= f.input :alt_logins, :label=>"Allow Facebook/Twitter logins?", :as => :boolean %>
+	<% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec1(<%= @group.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec1()" />
+</p>

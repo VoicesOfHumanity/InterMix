@@ -1,0 +1,26 @@
+<% semantic_form_for @participant do |f| %>
+
+	<% f.inputs :name => "Profile" do %>
+		<%= f.input :first_name, :required => true %>
+		<%= f.input :last_name %>
+		<%= f.input :title %>
+		<%= f.input :self_description %>
+		<%= f.input :address1 %>
+		<%= f.input :address2 %>
+		<%= f.input :city %>
+		<%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:name).select(:name,:iso) %>
+		<%= f.input :state_code, :label => "State/Region", :as => :select, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select(:name,:admin1uniq) %>
+		<%= f.input :zip %>
+		<%= f.input :phone %>
+		<%= f.input :metropolitan_area %>
+		<%= f.input :bioregion %>
+		<%= f.input :faith_tradition %>
+		<%= f.input :status %>
+	<% end %>
+	
+	<% f.buttons do %>
+		<%= f.commit_button %>
+	<% end %>
+
+<% end %>
+

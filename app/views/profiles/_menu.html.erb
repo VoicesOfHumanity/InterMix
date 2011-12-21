@@ -1,0 +1,17 @@
+<p><a href="/me/profile">View</a> | <a href="/me/profile/edit">Edit</a>
+<% if session['dialog_id'].to_i == 0 -%>	
+ | <a href="/me/photos">Photos</a>
+	 | <a href="/me/profile/settings">Settings</a>
+<% end -%> 
+<% if not ((@dialog and not @dialog.alt_logins) or (@group and not @group.alt_logins)) -%>
+	| <a href="/authentications">Authentication</a>
+<% end -%>	
+	</p>
+	
+	<% if @alert.to_s != '' -%>
+	<div style="color:#600;border:1px solid #600;padding:20px;margin-bottom:10px;font-weight:bold"><%= @alert %></div>
+	<% elsif @notice.to_s != '' -%>
+	<div style="color:#060;border:1px solid #060;padding:20px;margin-bottom:10px;font-weight:bold"><%= @notice %></div>
+	<% end -%>
+
+	

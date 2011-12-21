@@ -1,0 +1,27 @@
+<% semantic_form_for [:admin, @template] do |f| %>
+
+	<% f.inputs do %>
+		<%= f.input :name, :required => true %>
+		<%= f.input :section, :as => :select, :collection => SECTIONS %>
+		<%= f.input :mail_web, :as => :select, :collection => ['web','mail'], :include_blank => false %>
+		<%= f.input :title, :required => true %>
+
+		<li class="text required" id="item_html_content_input">
+			<div style="width:25%;float:left">HTML Body</div>
+			<div style="width:75%;float:left">
+			<%= ckeditor_textarea( :template, :html_body, :ajax => true, :width=>'97%', :height=>'300', :toolbar=>'Full' ) %> 
+			</div>
+		</li>		
+
+		<%= f.input :group_id, :as => :select, :collection => Group.order(:name).all.collect {|g| [g.name,g.id]} %>	
+		<%= f.input :dialog_id %>
+		<%= f.input :round_id %>
+
+	<% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec1(<%= @template.id.to_i %>)" />
+  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saverec1()" />
+</p>

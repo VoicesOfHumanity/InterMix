@@ -1,0 +1,21 @@
+<h1><%= @inout == 'out' ? "Sent messages" : "Received messages" %></h1>
+<table class="listtable">
+<tr>
+<th>Date</th>
+<th><%= @inout == 'out' ? 'To' : 'From' %></th>
+<th>Subject</th>
+<th>Read?</th>	
+</tr>		
+<% for message in @messages -%>
+	<tr>
+		<td><%= link_to_function message.created_at.strftime("%m/%d/%Y %H:%M"), "showmess(#{message.id})" %></td>
+		<% if @inout == 'out' -%>
+			<td><a href="participant/<%= message.to_participant_id %>/profile"><%= message.recipient ? message.recipient.name : message.to_participant_id %></a></td>
+		<% else -%>
+			<td><a href="participant/<%= message.from_participant_id %>/profile"><%= message.sender ? message.sender.name : message.from_participant_id %></a></td>	
+		<% end -%>
+		<td><%= message.subject %></td>
+		<td><%= (message.read_web or message.read_email) ? 'yes' : 'no' %></td>
+	</tr>	
+<% end -%>
+</table>

@@ -1,0 +1,2 @@
+class GroupParticipantsController < ApplicationController
+end

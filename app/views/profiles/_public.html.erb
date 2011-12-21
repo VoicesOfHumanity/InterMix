@@ -1,0 +1,41 @@
+<% if @participant.fb_uid.to_i > 0 -%>
+<img src="http://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" />
+<% end -%>
+
+<h3><%= @participant.name %></h3>
+
+<div style="clear:both;height:1px"></div>
+
+<table class="profiletable">
+<tr><td class="label">Title:</td><td><%= @participant.title %></td></tr>	
+<tr><td class="label">Description:</td><td><%= @participant.self_description %></td></tr>	
+<tr><td class="label">Address1:</td><td><%= @participant.address1 %></td></tr>	
+<tr><td class="label">Address2:</td><td><%= @participant.address2 %></td></tr>	
+<tr><td class="label">City:</td><td><%= @participant.city %></td></tr>	
+<tr><td class="label">State:</td><td><%= @participant.state_name %></td></tr>	
+<tr><td class="label">Country:</td><td><%= @participant.country_name %></td></tr>	
+<tr><td class="label">Zip:</td><td><%= @participant.zip %></td></tr>	
+<tr><td class="label">Phone:</td><td><%= @participant.phone %></td></tr>	
+<tr><td class="label">Metropolitan Area:</td><td><%= @participant.metro_area ?  @participant.metro_area.name : @participant.metropolitan_area %></td></tr>	
+<tr><td class="label">Bio Region:</td><td><%= @participant.bioregion %></td></tr>	
+<tr><td class="label">Faith Tradition:</td><td><%= @participant.faith_tradition %></td></tr>	
+<tr><td class="label">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="label">Member #:</td><td><%= @participant.id %></td></tr>	
+<% @participant.metamaps.each do |metamap_id,metamap_name| -%>
+<% metamap_nodes = @participant.metamap_nodes %>
+<% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
+<tr><td class="label"><%= metamap_name %></td><td><%= info[2] if info %></td></tr>
+<% end -%>
+
+<tr><td class="label">Groups:</td><td>
+<% if @participant.groups.length == 0 -%>
+	none
+<% else -%>
+	<% for group in @participant.groups -%>
+		<a href="/groups/<%= group.id %>/forum"><%= group.name %></a><br>
+	<% end -%>
+<% end -%>	
+</td></tr>	
+
+
+</table>

@@ -1,0 +1,27 @@
+<% if !@group.dialogs or !@group.dialogs.class==Array or @group.dialogs.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+    <th></th>
+		<th>ID</th>
+    <th>Name</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @group.dialogs.each do |dialog| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="addmark" title="mark" value="<%= dialog.id %>" /></td>
+		<td><%= dialog.id %></td>
+    <td><%= dialog.name %></td>
+  </tr>
+<% end %>
+</table>
+
+<% end -%>
+
+<p><a href="javascript:add_dialog()">Add</a>: <%= select_tag :new_dialog, options_from_collection_for_select(@dialogs, "id", "name") %> | <a href="javascript:del_dialog()">Delete marked</a></p>

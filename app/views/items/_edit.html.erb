@@ -1,0 +1,105 @@
+<form accept-charset="UTF-8" action="/items/<%= @item.id %>" class="formtastic item" id="edit_item_<%= @item.id %>" method="post" enctype="multipart/form-data">
+<div style="margin:0;padding:0;display:inline">
+	<input name="utf8" type="hidden" value="&#x2713;" />
+	<input name="_method" type="hidden" value="<%= @item.id.to_i > 0 ? 'put' : 'post' %>" />
+	<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+	<%= hidden_field :item, :reply_to %>
+	<%= hidden_field :item, :group_id %>
+	<%= hidden_field :item, :dialog_id %>
+</div>
+
+<% if @item.reply_to.to_i > 0 -%>
+<h3>Reply</h3>
+<% end -%>
+
+<fieldset class="inputs"><ol>
+        <li class="hidden optional" id="item_media_type_input"><input id="item_media_type" name="item[media_type]" type="hidden" value="<%= @item.media_type.to_s!='' ? @item.media_type : 'text' %>" /></li>
+
+		<% if session[:dialog_id].to_i == 0 and not @dialog -%>
+		<li><label>Media</label>
+		<% xarr = ['text','picture','video','audio','link'] -%>
+		<% x = 0 -%>
+		<% for xi in xarr -%>
+			<span id="<%= "media_#{xi}" %>"><%= link_to_function xi, "mediachange('#{xi}')" %></span>
+			<%= " | " if x < xarr.length - 1 -%>
+			<% x += 1 -%>
+		<% end -%>
+		</li>
+		<% end -%>
+
+		<% if false -%>
+		<li class="select optional" id="item_group_id_input"><label for="item_group_id">To</label>
+			<%= select :item, :group_id, [['*everybody wall/forum*',0],['*my wall*',-1]]+@groupsin.collect{|c| ["Group: #{c.group.name}",c.group.id]} %>
+		</li>	
+		<% end -%>
+		
+		<% if session[:dialog_id].to_i > 0 -%>
+			<%= hidden_field_tag :send_to, @send_to %>
+		<% else -%>
+			<li class="select optional" id="send_to_input"><label for="send_to">To</label>
+				<% if @item.reply_to.to_i > 0 or @item.group_id.to_i > 0 or @item.dialog_id.to_i > 0 -%>
+					<%= hidden_field_tag :send_to, @send_to %>
+					<%= @send_to_name %>
+				<% else -%>
+					<%= select_tag :send_to, options_for_select( [['*everybody forum / my wall*','all'],['*my wall*','wall']] + @groupsin.collect{|c| ["Group: #{c.group.name}","G#{c.group.id}"]} + @dialogsin.collect{|c| ["Dialog: #{c.dialog.name}","D#{c.dialog.id}"]}, @send_to ) %>
+				<% end -%>
+			</li>	
+		<% end -%>
+
+		<% if @item.dialog_id.to_i > 0 -%>
+		<li class="string optional" id="dialog_name"><label for="dialog_name">Discussion</label>
+				<%= @dialog_name %>
+		</li>
+		<% end -%>
+		
+
+		<li class="string optional" id="item_subject_input"><label for="item_subject">Subject</label><input id="item_subject" maxlength="255" name="item[subject]" size="50" type="text" value="<%= @item.subject %>" /></li>
+
+
+		<li id="uploadli" style="<%= @item.media_type!='picture' ? 'display:none' : '' %>">
+			<div id="mediatitle1" style="width:25%;float:left"><b>Upload file</b></div>
+			<div style="width:75%;float:left">
+				<div id="uploaddiv">
+					<input type="file" id="uploadfile" name="uploadfile" />
+				</div>						
+		</li>			
+		
+		<li>
+			<div id="mediatitle2" style="width:25%;float:left"><b><%= (@item.reply_to.to_i>0) ? "Reply" : "Initial message" %>
+			<% if @max_characters.to_i > 0 and @item.reply_to.to_i == 0 -%>
+			<br/>(<span id="item_long_length"><%= @item.html_content ? @item.html_content.length : 0 %></span> of <%= @max_characters.to_i %> char)
+			<% end -%>
+			</b></div>
+			<div style="width:75%;float:left">
+				<div id="textdiv" style="<%= @item.media_type!='text' ? 'display:none' : '' %>">
+				<%= ckeditor_textarea( :item, :html_content, :ajax => true, :width=>'97%', :height=>'250', :toolbar=>'Basic' ) %> 
+				</div>
+				<div id="linkdiv" style="<%= @item.media_type=='text' ? 'display:none' : '' %>">
+				<input id="item_link" maxlength="255" name="item[link]" value="<%= @item.link %>" size="50" type="text" /> 
+				</div>
+			</div>
+		</li>
+
+    <li class="text optional" id="item_short_content_input"><label for="item_short_content">Short summary<br/>/ twitter version<br/>(<span id="charsused">0</span> of 140 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="height: 80px"></textarea></li>
+
+    <li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Tags</label><input id="item_tag_list" name="item[tag_list]" size="80" type="text" value="" /></li>
+
+</ol></fieldset>
+
+	<p>
+	  <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
+	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
+	</p>
+
+</form>
+
+<script>
+CKEDITOR.instances['item_html_content_editor'].on('instanceReady', function() {
+	this.document.on("keyup", editor_change);
+});
+function editor_change() {
+	html_to_short();
+}
+var cur_media_type = $('#item_media_type').val();
+mediachange(cur_media_type);
+</script>

@@ -1,0 +1,39 @@
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @participant.id %></td></tr>	
+<tr><td class="left">Name:</td><td><%= @participant.name %></td></tr>	
+<tr><td class="left">E-mail:</td><td><%= @participant.email %></td></tr>	
+<tr><td class="left">Title:</td><td><%= @participant.title %></td></tr>	
+<tr><td class="left">Description:</td><td><%= @participant.self_description %></td></tr>	
+<tr><td class="left">Address1:</td><td><%= @participant.address1 %></td></tr>	
+<tr><td class="left">Address2:</td><td><%= @participant.address2 %></td></tr>	
+<tr><td class="left">City:</td><td><%= @participant.city %></td></tr>	
+<tr><td class="left">State:</td><td><%= @participant.state_name %></td></tr>	
+<tr><td class="left">Country:</td><td><%= @participant.country_name %></td></tr>	
+<tr><td class="left">Zip:</td><td><%= @participant.zip %></td></tr>	
+<tr><td class="left">Phone:</td><td><%= @participant.phone %></td></tr>	
+<tr><td class="left">Metropolitan Area:</td><td><%= @participant.metropolitan_area %></td></tr>	
+<tr><td class="left">Bio Region:</td><td><%= @participant.bioregion %></td></tr>	
+<tr><td class="left">Faith Tradition:</td><td><%= @participant.faith_tradition %></td></tr>	
+<tr><td class="left">Tags:</td><td><%= @participant.tag_list if @participant.tag_list %></td></tr>
+<tr><td class="left">Status:</td><td><%= @participant.status %></td></tr>	
+<tr><td class="left">Visibility:</td><td><%= @participant.visibility%></td></tr>	
+
+<tr><td class="left">Forum emails:</td><td><%= @participant.forum_email %></td></tr>	
+<tr><td class="left">Group emails:</td><td><%= @participant.group_email %></td></tr>	
+<tr><td class="left">Private emails:</td><td><%= @participant.private_email %></td></tr>	
+<tr><td class="left">System emails:</td><td><%= @participant.system_email %></td></tr>	
+<tr><td class="left">Block all emails?</td><td><%= @participant.no_email %></td></tr>	
+<tr><td class="left">E-mail Posting Code:</td><td>w+<%= @participant.direct_email_code %>@intermix.org</tr></tr>
+
+<tr><td class="left">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @participant.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+<p>
+<a href="javascript:editrec1()">Edit</a> | 
+<a href="javascript:delrec1()">Delete</a>
+</p>
+
+<script>
+curid1 = <%= @participant.id %>;
+</script>

@@ -1,0 +1,310 @@
+#header {
+	background-color: #3d5440;
+	border-radius: 10px 10px 0 0;
+	-moz-border-radius: 10px 10px 0 0;
+	margin: 5px 0 0 0;
+	padding: 5px;
+	height: 80px;
+	color: white;
+}
+#header ul.logmenu {
+	list-style: none;
+	float: right;
+}
+#header ul.logmenu li {
+	display:block;
+	float: left;
+	margin: 0 0 0 5px;
+}
+#header h1 {
+	font-size: 32px;
+	color: #fff;
+	margin: 0 0 0 10px;
+}
+#header a {
+	color: #fff;
+}
+#header a:hover {
+	color: #fff;
+}
+
+#mainmenu {
+	width:730px;
+	height:37px;
+	clear: both;
+	float:right;
+	margin:11px 0 0 0;
+	padding:0;
+}
+#mainmenu ul {
+		width:730px;
+		height:37px;
+		float:right;
+		margin:0;
+		padding:0;
+		list-style: none;
+		display:block;
+}
+#mainmenu ul li {
+		width:123px;
+		height:37px;
+		float:left;
+		margin:0 6px 0 0;
+		padding:0;
+		display:block;		
+}
+#mainmenu ul li a.menu {
+		width:123px;
+		height:31px;
+		float:left;
+		margin:6px 0 0 0;
+		font-family:Arial;
+		font-size:15px;
+		font-weight:bold;
+		color:#fff;
+		line-height: 31px;
+		text-align:center;
+		text-decoration:none;
+		vertical-align:middle;		
+		border-radius: 10px 10px 0 0;
+		-moz-border-radius: 10px 10px 0 0;
+		border: 1px solid #fcf9f7;
+}	
+#mainmenu ul li a.selected {
+	color: #000;
+	background-color: #fcf9f7;
+}
+#mainmenu ul li a.menu:hover {
+	color: #000;
+	background-color: #fcf9f7;
+}
+
+
+#leftcolumn {
+	background-color: #eceadf;
+	border-radius: 0 0 0 10px;
+	-moz-border-radius: 0 0 0 10px;
+	margin: 0 -10px 5px 0;
+	padding: 5px;
+	min-height: 500px;
+}
+#maincontent {
+	background-color: #fcf9f7;
+	border-radius: 0 0 10px 0;
+	-moz-border-radius: 0 0 10px 0;
+	margin: 0 0 5px 0;
+	padding: 5px;
+	min-height: 500px;
+}
+
+/*---------- Selectmenu ----------------------------------*/
+
+.ui-selectmenu { display: block; position:relative; height:25px; text-decoration: none; overflow:hidden;}
+.ui-selectmenu-icon { position:absolute; right:6px; margin-top:-8px; top: 50%; }
+.ui-selectmenu-menu { padding:0; margin:0; list-style:none; position:absolute; top: 0; visibility: hidden; overflow: auto; }
+.ui-selectmenu-open { visibility: visible; }
+.ui-selectmenu-menu-popup { margin-top: -1px; }
+.ui-selectmenu-menu-dropdown { }
+.ui-selectmenu-menu li { padding:0; margin:0; display: block; border-top: 1px dotted transparent; border-bottom: 1px dotted transparent; border-right-width: 0 !important; border-left-width: 0 !important; font-weight: normal !important; }
+.ui-selectmenu-menu li a,.ui-selectmenu-status {line-height: 19px; display:block; padding:3px 10px; outline:none; text-decoration:none; }
+.ui-selectmenu-menu li.ui-selectmenu-hasIcon a,
+.ui-selectmenu-hasIcon .ui-selectmenu-status { padding-left: 20px; position: relative; margin-left: 5px; }
+.ui-selectmenu-menu li .ui-icon, .ui-selectmenu-status .ui-icon { position: absolute; top: 1em; margin-top: -8px; left: 0; }
+.ui-selectmenu-status { line-height: 1.4em; }
+.ui-selectmenu-open li.ui-selectmenu-item-focus a {  }
+.ui-selectmenu-open li.ui-selectmenu-item-selected { }
+.ui-selectmenu-menu li span,.ui-selectmenu-status span { display:block; margin-bottom: .2em; }
+.ui-selectmenu-menu li .ui-selectmenu-item-header { font-weight: bold; }
+.ui-selectmenu-menu li .ui-selectmenu-item-content {  }
+.ui-selectmenu-menu li .ui-selectmenu-item-footer { opacity: .8; }
+
+
+/*---------- Forum ----------------------------------*/
+
+
+div.forumitem {
+	clear: both;
+	border: 2px dotted #999;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	padding: 10px 10px 2px 10px;
+	margin: 10px 0 10px 0;
+	position: relative;
+}
+div.forumitem .subject {
+	position: absolute;
+	top: -10px;
+	left: 15px;
+	padding: 0 5px 0 5px;
+	font-weight: bold;
+	background-color: #fcf9f7;
+}
+div.forumitem div.iteminfo {
+	color: #999;
+	height: 18px;
+	position: relative;
+}
+div.forumitem div.iteminfo div.iteminfotxt {
+	float: left;
+	height: 18px;
+	margin-right: 10px;
+}
+div.forumitem div.iteminfo div.votesection {
+	float: left;
+	padding: 0 10px 0 10px;
+	color: #999;
+	height: 20px;
+	overflow: visible;
+}
+div.forumitem div.iteminfo div.votesection img {
+	opacity: 0.5;
+	vertical-align: middle;
+}
+div.forumitem div.iteminfo div.votesection:hover {
+	color: #000;
+	background: #ddd;
+}
+div.forumitem div.iteminfo div.votesection:hover img {
+	opacity: 1.0;
+}
+div.votesection .intshort, div.votesection .appshort {
+	float: left;
+}
+div.votesection div.title {
+	font-weight: bold;
+	text-align: center;
+	height: 20px;
+}
+div.votesection .intlong {
+	float: left;
+	display: none;
+	height: 60px;
+	background: #ddd;
+	margin: -40px -10px 0 -10px;
+	padding: 0 10px 20px 10px;
+}
+div.votesection .applong {
+	float: left;
+	display: none;
+	height: 50px;
+	background: #ddd;
+	height: 60px;
+	background: #ddd;
+	margin: -40px -10px 0 -10px;
+	padding: 0 10px 20px 10px;
+}
+div.votesection div.slot {
+	float: left;
+	margin: 0;
+	padding: 0;
+	width: 21px;
+	overflow: hidden;
+	text-align: center;
+	font-weight: bold;
+}
+div.votesection div.bigslot {
+	float: left;
+	margin: 0;
+	padding: 0;
+	width: 63px;
+	overflow: hidden;
+}
+div.votesection .left {
+	text-align: left;
+}
+div.votesection .right {
+	text-align: right;
+}
+div.iteminfo_summary {
+	position: absolute;
+	bottom: -120px;
+	left: 350px;
+	width: 380px;
+	height: 115px;
+	background-color: #ddd;
+	opacity: 1.0 !important;
+	z-index: 100;
+}
+
+
+div#forumcontrol {
+	width: 100%;
+	height: 29px;
+	overflow: hidden;
+}
+div#forumcontrol div.lefttitle {
+	clear: left;
+	float:left;
+	width: 100px;
+	height:27px;
+	padding:4px 5px 0 0;
+	text-align: right;
+}
+div#forumcontrol div.leftfield {
+	float: left;
+	height:27px;
+}
+div#forumcontrol div.right {
+	float:right;
+}
+
+/*-- authentications --*/
+
+.authentications {
+  margin-bottom: 30px;
+}
+
+.authentication {
+  width: 130px;
+  float: left;
+  background-color: #EEE;
+  border: solid 1px #999;
+  padding: 5px 10px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  position: relative;
+  margin-right: 10px;
+}
+
+.authentication .remove {
+  text-decoration: none;
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  color: #333;
+  padding: 2px 4px;
+  font-size: 10px;
+}
+
+.authentication .remove:hover {
+  color: #CCC;
+  background-color: #777;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+}
+
+.authentication img {
+  float: left;
+  margin-right: 10px;
+}
+
+.authentication .provider {
+  font-weight: bold;
+}
+
+.authentication .uid {
+  color: #666;
+  font-size: 11px;
+}
+
+.auth_provider img {
+  display: block;
+}
+
+.auth_provider {
+  float: left;
+  text-decoration: none;
+  margin-right: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+}

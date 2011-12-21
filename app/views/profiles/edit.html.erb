@@ -1,0 +1,89 @@
+<%= render(:partial => 'menu')%>
+
+<h3>Edit your profile</h3>
+
+<% semantic_form_for :participant, @particicipant, :url => '/me/profile/update', :html=>{:id=>"profile_edit"} do |f| %>
+
+	<% f.inputs do %>
+
+	<li class="select required">
+		<div style="width:25%;float:left">E-mail/Username</div>
+		<div style="width:75%;float:left">
+			<%= @participant.email %>
+		</div>
+	</li>		
+
+	<li class="select required" id="passwordli">
+		<div style="width:25%;float:left">Password Change</div>
+		<div style="width:75%;float:left">
+			Existing password: <%= password_field_tag :old_pass, '', :maxlength => 15, :size => 15 %> (case sensitive)<br>
+			New password: <%= password_field_tag :new_pass, '', :maxlength => 15, :size => 15 %> Repeat: <%= password_field_tag :new_pass_confirm, '', :maxlength => 15, :size => 15 %>
+		</div>
+	</li>		
+
+		<%= f.input :first_name, :required => true %>
+		<%= f.input :last_name %>
+		<%= f.input :title %>
+		<%= f.input :self_description %>
+		<%= f.input :address1 %>
+		<%= f.input :address2 %>
+		<%= f.input :city %>
+		<%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
+		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]} %>
+		<%= f.input :zip %>
+		<%= f.input :phone %>
+		<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas %>
+		<%= f.input :bioregion %>
+		<%= f.input :political, :label => 'Political Affiliation' %>
+		<%= f.input :faith_tradition %>
+		<%= f.input :tag_list, :as => :string, :input_html => {:size=>80}  %>
+		<%= f.input :visibility, :as => :select, :collection =>PARTICIPANT_VISIBILITY %>	
+		
+		<% @participant.metamaps.each do |metamap_id,metamap_name| -%>
+		<% metamap_nodes = @participant.metamap_nodes %>
+		<% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
+		<li class="select required" id="meta_#{metamap_id}_input">
+			<div style="width:25%;float:left"><%= metamap_name %></div>
+			<div style="width:75%;float:left">
+				<%= select_tag "meta[#{metamap_id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap_id),'id','name',(info ? info[1] : 0)), :id=>"meta_#{metamap_id}"%>
+			</div>
+		</li>		
+		<% end -%>
+		
+	<% end %>
+
+	<p>
+	  <input type="button" value="Cancel" onclick="viewrec1(<%= @participant.id.to_i %>)" />
+	  <input type="submit" value="Save" />
+	</p>
+
+<% end %>
+
+<script>
+var curid1 = 0;
+var cur_country_code = '<%= @participant.country_code %>';
+var cur_admin1uniq = '<%= @participant.admin1uniq %>';
+var cur_admin2uniq = '';
+var cur_metroarea = '<%= @participant.metro_area_id %>'
+function chgcountry() {
+	$('#profile_edit').css('opacity','0.5');
+	$.getJSON("/front/getadmin1s",{country_code: $("#participant_country_code").val()}, function(j){
+	  var options = '';
+	  for (var i = 0; i < j.length; i++) {
+	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	  }
+	  $("select#participant_admin1uniq").html(options);
+
+		$.getJSON("/front/getmetro",{country_code: $("#participant_country_code").val()}, function(j){
+	    var options = '';
+	    for (var i = 0; i < j.length; i++) {
+	      options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	    }
+	    $("select#participant_metro_area_id").html(options);
+		})
+			
+		$('#profile_edit').css('opacity','1.0');
+	})
+  
+}
+</script>

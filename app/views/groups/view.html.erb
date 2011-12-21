@@ -1,0 +1,54 @@
+<%= render(:partial => 'groups/menu')%>
+
+<% if @group.logo.exists? then -%>
+<p><%= image_tag @group.logo.url(:thumb) %></p>
+<% else %>
+<p>[no logo]</p>
+<% end -%>
+
+<p><b>Prefix:</b> <%= @group.shortname %></p>
+
+<p><b>Description:</b> <%= @group.description %></p>
+
+<p><b>Created:</b> <%= @group.created_at.strftime("%m/%d/%Y") %></p>
+
+<p><b>Owner:</b> <%= @group.owner_participant ? @group.owner_participant.name : @group.owner.to_i %></p>
+
+<p><b>Members:</b> <a href="/groups/<%= @group.id %>/members"><%= @group.group_participants_count.to_i %></a></p>
+
+<p><b>Items Posted:</b> <%= @group.items_count.to_i %></p>
+
+<p><b>Moderated:</b> <%= @group.moderation ? 'yes' : '' %></p>
+
+<p><b>Membership:</b> <%= GROUP_OPENNESS_TEXT[@group.openness] %>
+<% if not @is_member and @group.openness == 'open' -%>	
+<a href="/groups/<%= @group.id %>/join">Join</a>
+<% elsif @group.openness == 'open_to_apply'%>
+Apply
+<% end -%>	
+</p>
+
+<p><b>Visibility:</b> <%= GROUP_VISIBILITY_TEXT[@group.visibility] %></p>
+
+<p><b>Has mailing list:</b> <%= @group.has_mail_list ? 'yes' : 'no' %></p>
+
+<p><b>Discussions:</b>
+<% if @group.dialogs.length == 0 -%>
+	none
+<% else -%>
+	<% for dialog in @group.dialogs -%>
+		<br><a href="/dialogs/<%= dialog.id %>/forum"><%= dialog.name %></a>
+	<% end -%>
+<% end -%>	
+<p>	
+
+<% if @is_member -%>
+	<% if @group.owner.to_s == current_participant.id -%>
+		<p>You are the owner of this group. You can not leave it.</p>
+	<% else -%>
+		<p>You are a member of this group. <a href="/groups/<%= @group.id %>/unjoin" onclick="confirm('Are you sure you want to leave this group?')">Leave</a></p>
+	<% end -%>	
+	<% if @is_moderator -%>
+	<p>You are a group moderator. You can <a href="/groups/<%= @group.id %>/admin">administer</a> the group</p>
+	<% end -%>
+<% end -%>

@@ -1,0 +1,16 @@
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @hub.id %></td></tr>	
+<tr><td class="left">Name:</td><td><%= @hub.name %></td></tr>	
+<tr><td class="left">Created:</td><td><%= @hub.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @hub.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+<p>
+<a href="javascript:editrec1()">Edit</a> | 
+<a href="javascript:delrec1()">Delete</a> |&nbsp;&nbsp;&nbsp;
+<a href="javascript:list2()">Admins</a>
+</p>
+
+<script>
+curid1 = <%= @hub.id %>;
+</script>

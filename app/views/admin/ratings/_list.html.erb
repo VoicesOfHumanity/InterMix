@@ -1,0 +1,45 @@
+<% if !@ratings or !@ratings.class==Array or @ratings.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+		<th>Date</th>
+		<% if @from != 'item' -%>
+			<th>Item</th>
+		<% end -%>
+		<% if @from != 'participant' -%>
+			<th>Participant</th>
+		<% end -%>
+		<% if @from != 'group' -%>
+			<th>Group</th>
+		<% end -%>
+		<th>Approval</th>
+    <th>Interest</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @ratings.each do |rating| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><%= link_to_function rating.created_at.strftime("%Y-%m-%d %H:%M"), "viewrec2(#{rating.id})" %></td>
+		<% if @from != 'item' -%>
+			<td><%= rating.item_id %></td>
+		<% end -%>
+		<% if @from != 'participant' -%>
+			<td><%= rating.participant ? rating.participant.name : '???' %></td>
+		<% end -%>
+		<% if @from != 'group' -%>
+			<td><%= rating.group_id.to_i > 0 ? (rating.group ? rating.group.name : '???') : '' %></td>
+		<% end -%>
+    <td><%= rating.approval %></td>
+    <td><%= rating.interest %></td>
+  </tr>
+<% end %>
+</table>
+
+<% end -%>
+
+<p><%= link_to_function 'Add rating', "newrec2()" %></p>

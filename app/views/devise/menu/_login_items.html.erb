@@ -1,0 +1,14 @@
+
+<% if participant_signed_in? %>
+  <li class="menu">
+  <%= link_to('Sign out', destroy_participant_session_path) %>        
+  </li>
+<% else %>
+  <li class="menu">
+		<% if (@dialog and not @dialog.alt_logins) or (@group and not @group.alt_logins) %>
+			<%= link_to "Sign in", "/participants/sign_in" %>
+  	<% else -%>
+			<%= link_to "Sign in", "/authentications" %>
+		<% end -%>
+	</li>
+<% end %>

@@ -1,0 +1,31 @@
+<% if @group -%>	
+
+	<h3><%= @group.name %></h3>
+
+	<p><%= @group.description %></p>
+
+	<% if @group.openness == 'private' -%>
+		<p>This is a closed group. You can not interact with it unless you have previously been added to it.</p>
+	<% elsif @group.openness == 'by_invitation_only' -%>
+		<p>Membership in this group is by invitation only. You can not interact with it unless you have previously been added to it.</p>
+	<% elsif @group.openness == 'open_to_apply' -%>
+		<p>To become a member of this group, you need to apply for membership and be accepted. Please write to <%= "#{@group.shortname}-owner@intermix.cr8.com" %> to apply.</p>
+	<% elsif @group.openness == 'open' -%>
+		<p>This is an open group. You can join by sending a subscribe request.</p>
+	<% else -%>
+		<p>It is unknown whether this group is open for membership</p>
+	<% end -%>
+	
+<% else -%>	
+	<p>We didn't recognize any active group</p>	
+<% end -%>	
+	
+<p>You can interact with the group software over e-mail, by sending simple one-word commands</p>
+
+<ul>
+<li>help
+<li>subscribe
+<li>unsubscribe
+</ul>
+
+<p>Put the command on the first line of your message, and don't put anything else in it. Nobody will be reading your message, it will be processed automatically</p>

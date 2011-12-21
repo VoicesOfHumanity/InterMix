@@ -1,0 +1,36 @@
+<% semantic_form_for @participant do |f| %>
+
+	<% f.inputs do %>
+		<%= f.input :first_name, :required => true %>
+		<%= f.input :last_name %>
+		<%= f.input :email, :required => true %>
+		<%= f.input :title %>
+		<%= f.input :self_description %>
+		<%= f.input :address1 %>
+		<%= f.input :address2 %>
+		<%= f.input :city %>
+		<%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:name).select("name,iso").collect {|r| [r.name,r.iso]} %>
+		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select("name,admin1uniq").collect {|r| [r.name,r.admin1uniq]} %>
+		<%= f.input :zip %>
+		<%= f.input :phone %>
+		<%= f.input :metropolitan_area %>
+		<%= f.input :bioregion %>
+		<%= f.input :faith_tradition %>
+		<%= f.input :tag_list, :as => :string, :input_html => {:size=>80}  %>
+		<%= f.input :status %>
+		<%= f.input :visibility, :as => :select, :collection =>PARTICIPANT_VISIBILITY %>
+		
+		<%= f.input :system_email, :label => 'System emails', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :private_email, :label => 'User emails', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :group_email, :label => 'Group emails', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :forum_email, :label => 'Forum postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :no_email, :label => 'Block all emails?', :as => :boolean %>	
+			
+	<% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec1(<%= @participant.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec1()" />
+</p>

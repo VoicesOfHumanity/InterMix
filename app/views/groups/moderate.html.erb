@@ -1,0 +1,8 @@
+<h3>Moderation</h3>
+
+<p><b>Group:</b> <%= @group.name %></p>
+
+<p><b>Members:</b> <a href="/groups/<%= @group.id %>/members"><%= @group.group_participants_count.to_i %></a></p>
+
+<p><b>Items Posted:</b> <%= @group.items_count.to_i %></p>
+

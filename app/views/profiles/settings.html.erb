@@ -1,0 +1,48 @@
+<%= render(:partial => 'menu')%>
+
+<h1>Settings</h1>
+
+<% semantic_form_for :participant, @particicipant, :url => '/me/profile/update' do |f| %>
+
+	<% f.inputs do %>
+		<%= f.input :visibility, :label => 'Profile visibility', :as => :select, :collection =>PARTICIPANT_VISIBILITY_TEXT.invert %>	
+		<%= f.input :wall_visibility, :label => 'Wall visibility', :as => :select, :collection =>PARTICIPANT_WALL_VISIBILITY_TEXT.invert %>	
+		<%= f.input :item_to_forum, :label=>'Post wall items to the forum?', :as => :radio %>
+		
+		<li><h3>E-mail preferences</h3></li>
+
+		<%= f.input :system_email, :label => 'System messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :private_email, :label => 'User messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :group_email, :label => 'Group messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :forum_email, :label => 'Forum postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :no_email, :label => 'Block all emails?', :as => :boolean %>	
+
+		<li><label>E-mail Posting:</label>w+<%= @participant.direct_email_code %>@intermix.org<br></li>
+		
+		<li><h3>Twitter</h3></li>
+		
+		<%= f.input :twitter_post, :as => :radio %>
+		<%= f.input :twitter_username %>
+		
+		<li><label>Twitter access</label><%= @participant.twitter_post and @participant.twitter_username.to_s != '' ? ( @participant.twitter_oauth_token.to_s != '' ? 'authorized' : 'not yet authorized'  ) : 'none' %></li>
+		
+	<% end %>
+
+	<p>
+	  <input type="button" value="Cancel" onclick="viewrec1(<%= @participant.id.to_i %>)" />
+	  <input type="submit" value="Save" />
+	</p>
+
+<% end %>
+
+<p id="authtext" style="display:none">We haven't yet been authorized to send your posts to your Twitter account. After you have saved any new information, come back here and simply click on <a href="/me/twitauth">this link</a>, which sends you to Twitter's website, where you can log in, if you aren't already logged in. You can then accept that Intermix is allowed to post to your account. We will not get access to your password, and we will not post anything other than the posts you make here. You can turn off that feature at any time.</p>
+
+
+<script>
+function showauthtext() {
+	$('#authtext').show();
+}
+<% if @participant.twitter_post and @participant.twitter_username.to_s != '' and @participant.twitter_oauth_token.to_s == '' -%>
+showauthtext();
+<% end -%>
+</script>

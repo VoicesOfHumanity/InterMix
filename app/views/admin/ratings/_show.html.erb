@@ -1,0 +1,21 @@
+<p id="notice"><%= notice %></p>
+
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @rating.id %></td></tr>	
+<tr><td class="left">Type:</td><td><%= @rating.rating_type %></td></tr>	
+<tr><td class="left">Participant:</td><td><%= @rating.participant ? @rating.participant.name : '???' %></td></tr>	
+<tr><td class="left">Group:</td><td><%= @rating.group_id.to_i > 0 ? (@rating.group ? @rating.group.name : '???') : '' %></td></tr>	
+<tr><td class="left">Approval:</td><td><%= @rating.approval %></td></tr>	
+<tr><td class="left">Interest:</td><td><%= @rating.interest %></td></tr>	
+<tr><td class="left">Created:</td><td><%= @rating.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @rating.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+<p>
+<a href="javascript:editrec2()">Edit</a> | 
+<a href="javascript:delrec2()">Delete</a>
+</p>
+
+<script>
+curid2 = <%= @rating.id %>;
+</script>

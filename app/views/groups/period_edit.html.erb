@@ -1,0 +1,14 @@
+<%= render(:partial => 'groups/menu')%>
+
+<h3 style="clear:both">Period</h3>
+
+<form action="/groups/<%= @group.id %>/period_save" method="post">
+<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+<%= hidden_field_tag :period_id, @period_id %>
+
+<p>Title: <%= text_field :period, :name, :size => 30 %></p>
+<p>Dates: <%= text_field :period, :startdate, :size => 10 %> - <%= text_field :period, :enddate, :size => 10 %></p>
+
+<p><input type="submit" value="Save"></p>
+
+</form>

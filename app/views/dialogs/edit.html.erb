@@ -1,0 +1,41 @@
+<%= render(:partial => 'dialogs/menu')%>
+
+<% semantic_form_for( @dialog, :html => { :multipart => true } ) do |f| %>
+
+	<% f.inputs do %>
+		<%= f.input :name, :required => true %>		
+		<%= f.input :shortname, :label=>"Prefix", :required => true %>
+		<%= f.input :description %>
+		<%= f.input :visibility, :as => :select, :collection =>GROUP_VISIBILITY %>	
+		<%= f.input :openness, :as => :select, :collection =>GROUP_OPENNESS %>	
+		<%= f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
+		<%= f.input :multigroup, :as => :boolean %>
+		<%= f.input :max_characters %>
+		<%= f.input :front_template %>
+		<%= f.input :signup_template %>
+		<%= f.input :confirm_template %>
+		<%= f.input :confirm_email_template %>
+		<%= f.input :member_template %>
+		<%= f.input :logo, :as=>:file %>
+		<%= f.input :alt_logins, :label=>"Allow Facebook/Twitter logins?", :as => :boolean %>
+		<%= f.input :required_message,:label=>"Must a message be entered to join?" ,:as=>:boolean %>
+		<%= f.input :required_subject,:label=>"Is a subject required for messages?" ,:as=>:boolean %>
+		<%= f.input :max_messages %>
+		<%= f.input :default_message %>
+		<%= f.input :allow_replies, :as=>:boolean %>
+		<%= f.input :value_calc, :as=>:select, :collection=>['total','avg']  %>
+		<%= f.input :profiles_visible,:label=>"Should user profiles be visible?" ,:as=>:boolean %>
+		<%= f.input :names_visible_voting,:label=>"Should names be visible in a voting phase?" ,:as=>:boolean %>
+		<%= f.input :names_visible_general,:label=>"Should names be visible in general?" ,:as=>:boolean %>
+		<%= f.input :in_voting_round,:label=>"In voting round?" ,:as=>:boolean %>
+		<%= f.input :posting_open,:label=>"Open for posting?" ,:as=>:boolean %>
+		<%= f.input :voting_open,:label=>"Open for voting?" ,:as=>:boolean %>
+	<% end %>
+
+	<p>
+	  <input type="button" value="Cancel" onclick="viewrec1(<%= @dialog.id.to_i %>)" />
+	  <input type="submit" value="Save" />
+	</p>
+	
+<% end %>
+

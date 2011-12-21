@@ -1,0 +1,72 @@
+<%= render(:partial => 'menu')%>
+
+<h3>Your Photos</h3>
+
+<div id="photosdiv"><%= render(:partial => 'photolist')%></div>
+
+<br/>
+<form id="picuploadform" target="picuploadframe" action="/me/picupload" method="post" enctype="multipart/form-data">
+<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+<table>
+<tr><td>Add a picture:</td><td><input type="file" id="uploadfile1" name="uploadfile"/></td>
+<td align="center" id="picprogress"></td></tr>
+<tr><td>Caption:</td><td><input type="text" id="uploadcaption" name="caption" size="40" /></td><td><input type="button" value="Send" onclick="uploadpicture()" /></td></tr>
+</table>
+</form>
+<iframe id="picuploadframe" name="picuploadframe" style="display:none"></iframe>
+
+<script>
+function uploadpicture() {
+  if ($('#uploadfile1').val()!='') {
+    $('#picuploadform').submit();
+    $('#picprogress').html("&nbsp;&nbsp;uploading&nbsp;..");
+  }
+}
+function uploadpicturedone() {
+  $('#picprogress').html("&nbsp;&nbsp;done");
+  $('#uploadfile1').val('');
+  refreshpix();
+}
+function refreshpix() {
+	$.ajax({
+    type: "GET",
+    url: "/me/photolist",
+    complete: function(t){	
+      $("#photosdiv").html(t.responseText);
+		  $('#photosdiv').css('opacity','1.0');
+    }
+  });	
+}
+var deletepix = function() {
+	var pars = 'dummy=1';
+  var marks = $('input.picmark');
+  var xcount = 0;
+  for (var x=0;x<marks.length;x++) {
+    var mark = marks[x];
+    if (mark.checked) {
+      var photo_id = mark.value;
+      pars += "&pix[]=" + photo_id;
+      xcount++;
+    }
+  }
+  if (xcount==0) {
+    alert('Check the box for each picture you want to delete');
+    return;
+  } else if (xcount>0) {
+    if (!confirm("Delete "+xcount+" pictures?")) {
+      return;
+    }
+  }
+  pars += "&authenticity_token=<%= form_authenticity_token %>";
+  $('#photosdiv').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    data: pars,
+    url: "/me/picdelete",
+    complete: function(t){	
+      refreshpix();
+    }
+  });	
+}
+</script>

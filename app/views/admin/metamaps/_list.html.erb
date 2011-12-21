@@ -1,0 +1,25 @@
+<% if !@metamaps or !@metamaps.class==Array or @metamaps.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
+    <th>ID</th>
+    <th>Name</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @metamaps.each do |metamap| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= metamap.id %>" /></td>
+		<td><a href="#" onclick="viewrec1(<%= metamap.id %>)"><%= metamap.id %></a></td>
+    <td><a href="#" onclick="viewrec1(<%= metamap.id %>)"><%= metamap.name %></a></td>
+  </tr>
+<% end %>
+</table>
+
+<% end -%>

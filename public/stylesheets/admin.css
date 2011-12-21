@@ -1,0 +1,145 @@
+html,body {
+  color: #333;
+  background-color: #fff;
+  font-family: verdana, helvetica, arial, sans-serif;
+  margin: 0px;
+  padding: 0px;
+  height:100%;
+  border:none
+}
+
+#maintable {
+  background-color: #eee);
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+#topbar {
+  height: 40px;
+}
+*+html #topbar, * html #topbar {
+	height: 60px;
+}  
+#topbar td {
+  background-color: #000;
+  color: #fff;
+  padding: 5px;
+}
+#leftbar {
+  background-color: #ddd;
+  width: 120px; 
+  min-height: 800px; 
+  padding: 3px;
+}
+#mainarea {
+  padding: 5px;
+  background-color: #eee);
+}
+a {
+  color: #000;
+}
+a:hover {
+  color: #f00;
+}
+#wait {
+	position: absolute;
+	top: 27px;
+	right: 10px;
+	display: ;
+	z-index: 200;
+}
+
+td.dotted {
+  border: 1px dotted #333333;
+}
+
+.listtable td { 
+  vertical-align: top;
+  font-size: 0.9em;
+}
+.listtable th {
+  background: #dddddd;
+}
+.listtable td.right {
+  text-align: right;
+  vertical-align: top;
+}
+.listtable td.center {
+  text-align: center;
+  vertical-align: top;
+}
+.listtable tr.line0 td {
+   background: #e0f8f8;	
+}
+.listtable tr.line1 td {
+   background: #f8d0f8;
+}
+.listtable td.on {
+  background: #ccffcc;
+  text-align: center;
+  border: 1px solid #ffffff;
+}
+.listtable td.hover:hover {
+  border: 1px dotted #333333;
+}
+.listtable td.off {
+  background: #ffcccc;
+  border: 1px solid #ffffff;
+}
+.listtable tr.hover td {
+  border: 1px dotted #333333;
+}
+
+.edittable td { 
+  background: #eeeeee;
+  vertical-align: top;
+}
+.edittable td.left {
+  background: #dddddd;
+  text-align: right;
+  vertical-align: top;
+}
+.edittable td.leftflag {
+  background: #dddddd;
+  text-align: right;
+  color: #ff0000;
+}
+.edittable td.right {
+  background: #dddddd;
+  text-align: right;
+}
+
+div.field, div.actions {
+  margin-bottom: 10px;
+}
+#notice {
+  color: green;
+}
+.field_with_errors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+.mainbox {
+  width: 96%;
+  border: 1px dotted #666;
+  padding: 3px;
+  margin: 5px;
+}
+.mainbox h3 {
+  margin: 0 0 3px 0;
+  padding: 0;
+}
+.icon {
+	background-color:#4778b3;
+	background-image: url(/images/sanscons/bg_rounded.gif);
+	background-repeat: no-repeat;
+}
+.icon:hover, .iconhover {
+	background-color:#f00;
+}
+.nav_icon {
+  float: right;
+  margin: 5px;
+}

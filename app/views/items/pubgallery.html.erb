@@ -1,0 +1,16 @@
+<% x = 0 -%>
+<table>
+<% for item in @items -%>
+	<% if x % 3 == 0 -%>
+	<tr>
+	<% end -%>
+	<td>
+	<img src="/images/data/items/<%= item.id %>/big.jpg" width="245" title="<%= "#{item.participant.first_name} #{item.participant.last_name}: #{item.short_content}" %>"><br>
+	<span style="font-family:Comic Sans MS"><%= "#{item.short_content} - #{item.participant.first_name} #{item.participant.last_name}" %></span>
+	</td>
+	<% x += 1 -%>
+	<% if ((x % 3) == 0) or (x == @items.length) -%>
+	</tr>
+	<% end -%>
+<% end -%>
+</table>

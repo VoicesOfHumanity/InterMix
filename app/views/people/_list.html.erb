@@ -1,0 +1,28 @@
+<% if !@participants or !@participants.class==Array or @participants.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<p><%= "#{(@participants.current_page-1)*@participants.per_page+1}-#{[@participants.total_entries,@participants.current_page*@participants.per_page].min} of #{@participants.total_entries} people" if @participants.respond_to?('total_entries') and @participants.total_entries.to_i>1 %>
+&nbsp;&nbsp;&nbsp;
+<%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 and @participants.respond_to?('current_page') and @participants.current_page>1 %>
+<%= raw %(<a href="javascript:gotopage(#{@participants.previous_page})">&lt;</a>) if @participants.respond_to?('previous_page') and @participants.previous_page %>
+<%= raw "page #{@participants.current_page} of #{@participants.total_pages}" if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 %>
+<%= raw %(<a href="javascript:gotopage(#{@participants.next_page})">&gt;</a>) if @participants.respond_to?('next_page') and @participants.next_page %>
+<%= raw %(<a href="javascript:gotopage(#{@participants.total_pages})">&gt;&gt;</a>) if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 and @participants.current_page<@participants.total_pages %></p>
+
+<% @participants.each do |participant| %>
+		<b><a href="/participant/<%= participant.id %>/profile"><%= participant.name %></a></b><br/>
+		Items: <%= participant.items_count.to_i %> Tags:<%= participant.tag_list if participant.tag_list %></br>
+<% end %>
+
+<p><%= "#{(@participants.current_page-1)*@participants.per_page+1}-#{[@participants.total_entries,@participants.current_page*@participants.per_page].min} of #{@participants.total_entries} people" if @participants.respond_to?('total_entries') and @participants.total_entries.to_i>1 %>
+&nbsp;&nbsp;&nbsp;
+<%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 and @participants.respond_to?('current_page') and @participants.current_page>1 %>
+<%= raw %(<a href="javascript:gotopage(#{@participants.previous_page})">&lt;</a>) if @participants.respond_to?('previous_page') and @participants.previous_page %>
+<%= raw "page #{@participants.current_page} of #{@participants.total_pages}" if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 %>
+<%= raw %(<a href="javascript:gotopage(#{@participants.next_page})">&gt;</a>) if @participants.respond_to?('next_page') and @participants.next_page %>
+<%= raw %(<a href="javascript:gotopage(#{@participants.total_pages})">&gt;&gt;</a>) if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 and @participants.current_page<@participants.total_pages %></p>
+
+<% end -%>

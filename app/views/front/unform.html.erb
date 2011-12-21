@@ -1,0 +1,15 @@
+<h3 style="text-align:center">United Nations Association</h3>
+
+<p>If you're a student in the SF Bay area, we inite you join a discussion by submitting a 500 words or less article on the topic of "The Ideal Role of the United Nations". We ask you to also provide your nationality. Afterwards, everybody will have the opportunity to rate the entered messages. The results will be tabulated by nationality and also an overall most highly rated message will be chosen.</p>
+
+<form action="/front/unformjoin" method="post" enctype="multipart/form-data">
+<input type="hidden" name="group_id" value="<%= @group_id %>">	
+<input type="hidden" name="dialog_id" value="<%= @dialog_id %>">	
+<table style="background-color:#fff">	
+<tr><td>Picture</td><td><input type="file" name="picfile" size="20" style="width:200px"></td></tr>	
+<tr><td>Message</td><td><textarea name="message" cols="10" rows="3" style="width:200px;height:50px"><%= @message %></textarea></td></tr>	
+<tr><td>Your Name</td><td><input type="text" name="name" value="<%= @name %>" size="30" style="width:200px"></td></tr>	
+<tr><td>E-mail</td><td><input type="text" name="email" value="<%= @email %>" size="30" style="width:200px"></td></tr>	
+</table>
+<input type="submit" value="Send!">	
+</form>

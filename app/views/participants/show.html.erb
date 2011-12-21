@@ -1,0 +1,20 @@
+<table class="edittable">
+<tr><td class="left">Name:</td><td><%= @participant.name %></td></tr>	
+<tr><td class="left">Title:</td><td><%= @participant.title %></td></tr>	
+<tr><td class="left">Description:</td><td><%= @participant.self_description %></td></tr>	
+<tr><td class="left">Address1:</td><td><%= @participant.address1 %></td></tr>	
+<tr><td class="left">Address2:</td><td><%= @participant.address2 %></td></tr>	
+<tr><td class="left">City:</td><td><%= @participant.city %></td></tr>	
+<tr><td class="left">State:</td><td><%= @participant.state_name %></td></tr>	
+<tr><td class="left">Country:</td><td><%= @participant.country_name %></td></tr>	
+<tr><td class="left">Zip:</td><td><%= @participant.zip %></td></tr>	
+<tr><td class="left">Phone:</td><td><%= @participant.phone %></td></tr>	
+<tr><td class="left">Metropolitan Area:</td><td><%= @participant.metropolitan_area %></td></tr>	
+<tr><td class="left">Bio Region:</td><td><%= @participant.bioregion %></td></tr>	
+<tr><td class="left">Faith Tradition:</td><td><%= @participant.faith_tradition %></td></tr>	
+<tr><td class="left">Status:</td><td><%= @participant.status %></td></tr>	
+	
+</table>	
+
+<%= link_to 'Edit', edit_participant_path(@participant) %> |
+<%= link_to 'Back', participants_path %>

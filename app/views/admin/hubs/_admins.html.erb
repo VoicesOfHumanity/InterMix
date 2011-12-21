@@ -1,0 +1,35 @@
+<% if !@hub.participants or !@hub.participants.class==Array or @hub.participants.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+    <th></th>
+		<th>ID</th>
+		<th>Name</th>
+		<th>E-mail</th>
+    <th>Status</th>
+		<th>Items</th>
+		<th>Tags</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @hub.participants.each do |participant| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="admmark" title="mark" value="<%= participant.id %>" /></td>
+		<td><%= participant.id %></td>
+		<td><%= participant.name %></td>
+		<td><%= participant.email %></td>	
+		<td><%= participant.status %></td>	
+		<td align="right"><%= participant.items_count %></td>	
+		<td><%= participant.tag_list if participant.tag_list %></td>
+  </tr>
+<% end %>
+</table>
+
+<% end -%>
+
+<p><a href="javascript:add_admin()">Add</a>: <%= select_tag :new_admin, options_from_collection_for_select(@participants, "id", "name") %> | <a href="javascript:del_admin()">Delete marked</a></p>

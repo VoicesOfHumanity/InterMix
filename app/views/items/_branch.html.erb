@@ -1,0 +1,22 @@
+<% for item in items -%>
+<% odd_or_even = 1-odd_or_even%>
+<li>
+<% if false -%>	
+<div class="forumitem forum<%= level==0 ? 'main' : 'reply' %> forum<%= odd_or_even %>" id="item_<%= item.id %>">
+<% end -%>	
+<%= render(:partial => 'items/branchitem', :locals => {:item=>item, :level=>level, :is_reply => (level>0), :odd_or_even => odd_or_even}) -%>
+	<% replies = Item.where("reply_to=#{item.id}").order("id").all -%>
+	<% if replies.length > 0 -%>
+		<% level += 1 -%>
+		<ul>
+		<%= render(:partial => 'items/branch', :locals => {:items=>replies, :level=>level, :odd_or_even => odd_or_even, :from=>from}) %>
+		</ul>
+		<% level -= 1 -%>
+	<% end -%>
+
+<% if false -%>	
+</div>
+<% end -%>
+
+</li>
+<% end -%>

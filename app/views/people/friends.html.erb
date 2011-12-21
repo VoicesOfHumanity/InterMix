@@ -1,0 +1,39 @@
+<% if @participant.fb_uid.to_i > 0 -%>
+<img src="http://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" />
+<% end -%>
+
+<h3><%= @participant.name %></h3>
+
+<div style="clear:both;height:1px"></div>
+
+<h3>Followers:</h3>
+
+<% if !@participant.followers or !@participant.followers.class==Array or @participant.followers.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<ul>
+<% @participant.followers.each do |person| %>
+		<li><a href="/participant/<%= person.id %>/profile"><%= person.name %></a></li>
+<% end %>
+</ul>
+
+<% end -%>
+
+<h3>Follows:</h3>
+
+<% if !@participant.idols or !@participant.idols.class==Array or @participant.idols.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<ul>
+<% @participant.idols.each do |person| %>
+		<li><a href="/participant/<%= person.id %>/profile"><%= person.name %></a></li>
+<% end %>
+</ul>
+
+<% end -%>

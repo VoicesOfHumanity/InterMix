@@ -1,0 +1,3 @@
+<div class="forumitem forummain" id="item_<%= @item.id %>">
+<%= render :partial => "item", :locals => { :item => @item, :is_reply => false, :odd_or_even=>0, :from=>'individual', :top=>@item.id, :showlong=>true } %>
+</div>

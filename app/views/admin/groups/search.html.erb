@@ -1,0 +1,303 @@
+<form id="searchform" name="searchform" action="">
+<input type="hidden" name="page" id="page" value="<%= @page || 1 %>"/>
+<table class="edittable">
+<tr><td class="left">ID</td><td><%= text_field_tag :group_id, "", "size"=>6 %></td></tr>
+<tr><td class="left">Name</td><td><%= text_field_tag :name, "", "size"=>52 %></td></tr>
+
+<tr></tr>
+<tr><td class="left">Sort</td><td>
+<% xsort = [['',''],['name','name'],["created",'created_at desc'],['ID','id desc']] %>
+<% for x in (1..2).to_a -%>
+<%= select_tag "sort#{x}", options_for_select(xsort,@sort[x-1]) %>
+<% end -%>
+&nbsp;&nbsp;
+Per Page <%= select_tag(:per_page, options_for_select([10,20,30,50,100,200,500,1000,['* all *','9999']],30)) %>
+</td></tr>
+
+</table>
+
+<table width="100%"><tr><td>
+<input type="button" value="Search/List" onclick="search()"/>
+</td><td align="right">
+<%= link_to_function 'New group', "newrec1()" %>&nbsp;&nbsp;&nbsp;
+</td></tr>	
+</table>	
+
+</form>
+
+
+
+<div id="list1box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('list1')" title="Close" /></div>
+<div class="nav_icon" id="maxlist1im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('list1')" title="Maximize" /></div>
+<div class="nav_icon" id="minlist1im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('list1')" title="Minimize" /></div>
+<a name="list1"></a>
+<h3 id="list1title">List of Groups</h3>
+<div id="list1boxcontent"></div>
+</div>
+
+<div id="rec1box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('rec1')" title="Close" /></div>
+<div class="nav_icon" id="maxrec1im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('rec1')" title="Maximize" /></div>
+<div class="nav_icon" id="minrec1im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('rec1')" title="Minimize" /></div>
+<a name="rec1"></a>
+<h3 id="rec1title">Group Record</h3>
+<div id="rec1boxcontent"></div>
+</div>
+
+<div id="list2box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('list2')" title="Close" /></div>
+<div class="nav_icon" id="maxlist2im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('list2')" title="Maximize" /></div>
+<div class="nav_icon" id="minlist2im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('list2')" title="Minimize" /></div>
+<a name="list2"></a>
+<h3 id="list2title">List of Members</h3>
+<div id="list2boxcontent"></div>
+</div>
+
+<div id="rec2box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('rec2')" title="Close" /></div>
+<div class="nav_icon" id="maxrec2im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('rec2')" title="Maximize" /></div>
+<div class="nav_icon" id="minrec2im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('rec2')" title="Minimize" /></div>
+<a name="rec2"></a>
+<h3 id="rec2title">Member</h3>
+<div id="rec2boxcontent"></div>
+</div>
+
+<div id="list3box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('list3')" title="Close" /></div>
+<div class="nav_icon" id="maxlist3im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('list3')" title="Maximize" /></div>
+<div class="nav_icon" id="minlist3im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('list3')" title="Minimize" /></div>
+<a name="list3"></a>
+<h3 id="list3title">Dialogs</h3>
+<div id="list3boxcontent"></div>
+</div>
+
+
+<script type="text/javascript">
+var curid1 = 0;
+var curid2 = 0;
+function search() {
+	$('#list1box').show();
+  $('#list1box').css('opacity','0.5');
+	showworking();
+	var pars = $("#searchform").serialize();
+	$.ajax({
+     type: "GET",
+     url: "/admin/groups",
+     data: pars,
+     complete: function(t){	
+       $("#list1boxcontent").html(t.responseText);
+		   searchdone();
+     }
+   });	
+}
+var searchdone = function(t) {
+  $('#list1box').show();
+  $('#list1boxcontent').show();
+  hideworking();
+  $('#list1box').css('opacity','1.0');
+  boxmax('list1');
+}
+function viewrec1(id) {
+  curid1 = id;
+  $("#rec1boxcontent").html("<br/><br/>working...<br/>");
+	$.ajax({
+    type: "GET",
+    url: "/admin/groups/"+id,
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+    }
+  });	
+}
+function editrec1() {
+  id = curid1;
+  $('#rec1box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/groups/"+id+'/edit',
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+     }
+   });	
+}
+function newrec1() {
+	curid1 = 0;
+  $('#rec1box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/groups/new",
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+     }
+   });	
+}
+function delrec1() {
+	if (confirm("Are you sure you want to delete group #" + curid1 + "?")) {
+    $('rec1box').css('opacity','0.5');
+		$.ajax({
+	    type: 'DELETE',
+	    url: '/admin/groups/'+curid1+"?authenticity_token=<%= form_authenticity_token %>",
+	    complete: function(t){	
+	      $("#rec1boxcontent").html(t.responseText);
+			  $('#rec1box').css('opacity','1.0');
+				search();
+	     }
+	   });			
+	}
+}
+function saverec1() {
+  id = curid1;
+  if (id>0) {
+		var pars = $("#edit_group_"+id).serialize();
+    var url = "/admin/groups/"+id;
+		var xtype = 'PUT';
+  } else {
+		var pars = $("#new_group").serialize();
+    var url = "/admin/groups";
+		var xtype = 'POST';
+  }
+  $('#rec1box').css('opacity','0.5');
+	$.ajax({
+    type: xtype,
+    url: url,
+    data: pars,
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+			search();
+     }
+   });	
+}
+function getlist2(group_id,moderator) {
+  $('#list2box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/group_participants",
+		data: "from=group&group_id="+curid1+"&moderator="+moderator,
+    complete: function(t){	
+      $("#list2boxcontent").html(t.responseText);
+		  $('#list2box').css('opacity','1.0');
+     }
+   });		
+}
+function viewrec2(id) {
+  curid2 = id;
+  $("#rec2boxcontent").html("<br/><br/>working...<br/>");
+	$.ajax({
+    type: "GET",
+    url: "/admin/group_participants/"+id,
+		data: "from=group&group_id="+curid1,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+    }
+  });	
+}
+function editrec2() {
+  id = curid2;
+  $('#rec2box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/group_participants/"+id+'/edit',
+		data: "from=group&group_id="+curid1,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+     }
+   });	
+}
+function newrec2() {
+	curid2 = 0;
+  $('#rec2box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/group_participants/new",
+		data: "from=group&group_id="+curid1,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+     }
+   });	
+}
+function delrec2(name) {
+	if (confirm("Are you sure you want to remove " + name + " as a member?")) {
+    $('rec2box').css('opacity','0.5');
+		$.ajax({
+	    type: 'DELETE',
+	    url: '/admin/group_participants/'+curid2,
+			data: "from=group&group_id="+curid1,
+	    complete: function(t){	
+	      $("#rec2boxcontent").html(t.responseText);
+			  $('#rec2box').css('opacity','1.0');
+				getlist2(curid1);
+				viewrec1(curid1);
+	     }
+	   });			
+	}
+}
+function saverec2() {
+  id = curid2;
+  if (id>0) {
+		var pars = $("#edit_group_participant_"+id).serialize();
+    var url = "/admin/group_participants/"+id;
+		var xtype = 'PUT';
+  } else {
+		var pars = $("#new_group_participant").serialize();
+    var url = "/admin/group_participants";
+		var xtype = 'POST';
+  }
+	pars += "&from=group&group_id="+curid1
+  $('#rec2box').css('opacity','0.5');
+	$.ajax({
+    type: xtype,
+    url: url,
+    data: pars,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+			getlist2(curid1);
+			viewrec1(curid1);
+     }
+   });	
+}
+
+function getlist3(group_id) {
+  $('#list3box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/groups/"+group_id+"/dialogs",
+		data: "from=group&group_id="+group_id,
+    complete: function(t){	
+      $("#list3boxcontent").html(t.responseText);
+		  $('#list3box').css('opacity','1.0');
+     }
+   });		
+}
+
+
+var allmarked = false;
+function markall() {
+	var marks = $('input.cammark');
+	for (var x=0;x<marks.length;x++) {
+		var mark = marks[x];
+		if (allmarked) {
+			mark.checked = false;
+		} else {
+			mark.checked = true;
+		}	
+	}
+	if (allmarked) {
+		allmarked = false;
+	} else {
+		allmarked = true;
+	}
+}
+search();
+</script>
+
+
+
+

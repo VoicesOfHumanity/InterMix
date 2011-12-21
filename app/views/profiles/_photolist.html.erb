@@ -1,0 +1,14 @@
+<% for photo in @photos %>
+	filename: <%= photo.filename %><br/>
+	caption: <%= photo.caption %><br/>
+	<% if File.exist?("#{@picdir}/#{photo.id}_75.jpg") -%>
+		<a href="<%= "#{@picurl}/#{photo.id}.jpg" %>" target="_blank"><img src="<%= "#{@picurl}/#{photo.id}_75.jpg" %>"/></a><input type="checkbox" name="markpic[]" class="picmark" value="<%= photo.id %>" />
+		<br/> 
+	<% else -%>	
+		icon<br/>
+	<% end -%>
+<% end %>
+
+<% if @photos.length > 0 -%>
+<p><input type="button" value="delete" onclick="deletepix()" /></p>
+<% end -%>

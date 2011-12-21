@@ -1,0 +1,24 @@
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @group.id %></td></tr>	
+<tr><td class="left">Name:</td><td><%= @group.name %></td></tr>	
+<tr><td class="left">Description:</td><td><%= @group.description %></td></tr>	
+<tr><td class="left">Visibility:</td><td><%= @group.visibility %></td></tr>	
+<tr><td class="left">Openness:</td><td><%= @group.openness %></td></tr>	
+<tr><td class="left">Moderation:</td><td><%= @group.moderation ? 'yes' : '' %></td></tr>	
+<tr><td class="left">Network:</td><td><%= @group.is_network ? 'yes' : '' %></td></tr>	
+<tr><td class="left">Members:</td><td align="right"><a href="#" onclick="getlist2(<%= @group.id %>)"><%= @group.group_participants_count %></a></td></tr>	
+<tr><td class="left">Items:</td><td align="right"><%= @group.items_count %></td></tr>	
+<tr><td class="left">Created:</td><td><%= @group.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @group.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+<p>
+<a href="javascript:editrec1()">Edit</a> | 
+<a href="javascript:delrec1()">Delete</a>
+</p>
+
+<p><%= link_to_function 'Members', "getlist2(#{@group.id})" %> | <%= link_to_function 'Moderators', "getlist2(#{@group.id},true)" %> | <%= link_to_function 'Dialogs', "getlist3(#{@group.id})" %></p>
+
+<script>
+curid1 = <%= @group.id %>;
+</script>

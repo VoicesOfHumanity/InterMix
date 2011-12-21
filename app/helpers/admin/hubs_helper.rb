@@ -1,0 +1,2 @@
+module Admin::HubsHelper
+end

@@ -1,0 +1,93 @@
+<% if @error_message.to_s != '' -%>
+<p><%= @error_message %></p>
+<% end -%>
+
+<% if !@items or !@items.class==Array or @items.length==0 -%>
+
+	<% if @from.to_s == 'wall' -%>
+		<p>This person hasn't posted anything yet</p>
+	<% else -%>
+		<p>There are currently no messages to see. How about adding some?</p>
+	<% end -%>	
+
+<% else -%>
+
+	<%= "#{(@items.current_page-1)*@items.per_page+1}-#{[@items.total_entries,@items.current_page*@items.per_page].min} of #{@items.total_entries} items" if @items.respond_to?('total_entries') and @items.total_entries.to_i>1 %>
+	&nbsp;&nbsp;&nbsp;
+	<%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.respond_to?('current_page') and @items.current_page>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.previous_page})">&lt;</a>) if @items.respond_to?('previous_page') and @items.previous_page %>
+	<%= raw "page #{@items.current_page} of #{@items.total_pages}" if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.next_page})">&gt;</a>) if @items.respond_to?('next_page') and @items.next_page %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.total_pages})">&gt;&gt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.current_page<@items.total_pages %>
+
+	<% odd_or_even = 0 %>
+
+	<% if false -%>
+
+	<ul id="browser" class="filetree">
+			<li><span class="folder">Folder 1</span>
+				<ul>
+					<li><span class="file">Item 1.1</span></li>
+				</ul>
+			</li>
+			<li><span class="folder">Folder 2</span>
+				<ul>
+					<li><span class="folder">Subfolder 2.1</span>
+						<ul>
+							<li><span class="file">File 2.1.1</span></li>
+							<li><span class="file">File 2.1.2</span></li>
+						</ul>
+					</li>
+					<li><span class="file">File 2.2</span></li>
+				</ul>
+			</li>
+			<li class="closed"><span class="folder">Folder 3 (closed at start)</span>
+				<ul>
+					<li><span class="file">File 3.1</span></li>
+				</ul>
+			</li>
+			<li><span class="file">File 4</span></li>
+		</ul>
+			
+	<% elsif @threads == 'tree' -%>
+	
+		<ul id="browser" class="filetree">
+		<% level = 0 -%>
+		<%= render(:partial => 'items/branch', :locals => {:items=>@items, :level=>level, :odd_or_even => odd_or_even, :from=>@from.to_s}) %>
+		</ul>
+			
+	<% else -%>
+		<% for item in @items -%>
+			<% odd_or_even = 1-odd_or_even%>
+			<div class="forumitem forummain forum<%= odd_or_even %>" id="item_<%= item.id %>">
+				<%= render :partial => "items/item", :locals => { :item => item, :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0 } %>
+			
+				<% if @threads == 'flat' -%>
+					<% @replies = Item.where("is_first_in_thread=0 and first_in_thread=#{item.id}").order("id").all -%>
+					<% for reply in @replies -%>
+						<% odd_or_even = 1-odd_or_even%>
+						<div class="forumitem forumreply forum<%= odd_or_even %>" id="item_<%= reply.id %>">
+							<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id } %>
+						</div>
+					<% end -%>
+		    <% end -%>	
+			</div><!--forumitem-->
+		<% end -%>
+	<% end -%>	
+	
+	<%= "#{(@items.current_page-1)*@items.per_page+1}-#{[@items.total_entries,@items.current_page*@items.per_page].min} of #{@items.total_entries} items" if @items.respond_to?('total_entries') and @items.total_entries.to_i>1 %>
+	&nbsp;&nbsp;&nbsp;
+	<%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.respond_to?('current_page') and @items.current_page>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.previous_page})">&lt;</a>) if @items.respond_to?('previous_page') and @items.previous_page %>
+	<%= raw "page #{@items.current_page} of #{@items.total_pages}" if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.next_page})">&gt;</a>) if @items.respond_to?('next_page') and @items.next_page %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.total_pages})">&gt;&gt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.current_page<@items.total_pages %>
+	
+<% end -%>
+
+<% if @threads == 'tree' -%>
+<script>
+$("#browser").treeview();
+</script>
+<% end -%>
+

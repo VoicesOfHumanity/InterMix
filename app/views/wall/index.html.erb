@@ -1,0 +1,29 @@
+<% if @participant.fb_uid.to_i > 0 -%>
+<img src="http://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" />
+<% end -%>
+
+<% if @dialog and not @dialog.profiles_visible -%>
+	<h3>Posted by <%= @participant.name %>:</h3>
+<% else -%>
+<h3>Posted by <a href="/participant/<%= @participant.id %>/profile"><%= @participant.name %></a>:</h3>
+<% end -%>
+
+<form id="searchform">
+<div id="forumcontrol">
+
+<% if @participant_id == current_participant.id -%>
+<input type="button" value="Post something" id="newthreadbutton" onclick="newitem()">
+<% end -%>
+
+<%= hidden_field_tag "from", "wall" %>
+
+</div>
+</form>
+
+<div style="clear:both;height:1px"></div>
+
+<div id="newforumitem" class="newforumitem" style="display:none"></div>
+
+<div id="itemlist">
+<%= render(:partial => 'items/list')%>
+</div>

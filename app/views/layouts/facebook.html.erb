@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Intermix</title>
+	<%= stylesheet_link_tag('blueprint/screen', :media => "all") %>
+	<%= stylesheet_link_tag('blueprint/print', :media => "print") %>
+	<!--[if lt IE 8]>
+	<%= stylesheet_link_tag 'blueprint/ie', :media => "screen, projection" %>
+	<![endif]-->
+  <%= stylesheet_link_tag "main", "formtastic", "formtastic_changes", "jquery.treeview.css", "extra" %>
+  <%= javascript_include_tag :defaults, :ckeditor, "forum", "front", "jquery.treeview.js" %>
+  <%= csrf_meta_tag %>
+</head>
+<body>
+
+<div class="container">
+	<% if false -%>
+	<div class="span-5">
+		<div id="leftcolumn">			
+			<ul class="mainmenu">
+			<li><a class="menu<%= ' selected' if @section=='home' %>" href="/">Home</a></li>
+			<% if participant_signed_in? -%>
+			<li><a  class="menu<%= ' selected' if @section=='forum' %>" href="/forum">Forum</a></li>
+			<li><a  class="menu<%= ' selected' if @section=='photos' %>" href="/photos">Photos</a></li>
+			<li><a  class="menu<%= ' selected' if @section=='groups' %>" href="/groups">Groups</a></li>
+			<li><a  class="menu<%= ' selected' if @section=='people' %>" href="/people">People</a></li>
+			<li><a  class="menu<%= ' selected' if @section=='friends' %>" href="/me/friends">Friends</a></li>
+			<li><a  class="menu<%= ' selected' if @section=='messages' %>" href="/messages">Messages</a></li>
+			<li><a  class="menu<%= ' selected' if @section=='wall' %>" href="/me/wall">Wall</a></li>
+			<% end -%>
+		  <%= render 'devise/menu/login_items' %>
+		  <%= render 'devise/menu/registration_items' %>
+			<% if participant_signed_in? -%>
+			<li><a  class="menu<%= ' selected' if @section=='profile' %>" href="/me/profile">Profile</a></li>
+			<% end -%>
+			</ul>			
+			<div class="sidebarbox">
+		  <% if current_participant %>
+		    <p>You're logged in as:<br/><%= current_participant.name %></p>
+		  <% end %>
+			</div>
+		</div>
+	</div>
+	<% end -%>
+
+	<div class="span-14 last">
+
+		<% if flash[:notice].to_s !="" -%>
+		<p style="color: green"><%=raw flash[:notice] %></p>
+		<% end -%>
+		<% if flash[:alert].to_s !="" -%>
+		<p style="color: red"><%=raw flash[:alert] %></p>
+		<% end -%>
+		
+		<% if participant_signed_in? and @newlogin -%>
+			<p>Hello, <%= current_participant.name %></p>
+		<% elsif participant_signed_in? -%>
+			<p>You're logged in as: <%= current_participant.name %></p>
+		<% end -%>
+
+		<h3 style="text-align:center">Individual Initiatives for Nuclear Disarmament</h3>
+		
+		<%= render :partial => "menu" %>
+				
+		<%= yield %>
+		
+		<% if @sponsor_group_id.to_i > 0 and @sponsor_group_id != @group_id -%>
+			<p><br/>sponsored by:
+			<% if @sponsor_group.logo -%>
+		 		<br/><%= image_tag @sponsor_group.logo.url if @sponsor_group.logo %>
+			<% else -%>
+				<%= @sponsor_group.name %>
+			<% end -%>
+			</p>
+		<% end -%>
+
+	</div>
+</div>
+
+
+</body>
+</html>

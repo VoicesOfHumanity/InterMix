@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title><%= controller.controller_name %>: <%= controller.action_name %></title>
+<%= stylesheet_link_tag "admin", "formtastic", "formtastic_changes", "pepper-grinder/jquery-ui-1.8.6.custom" %>
+<%= javascript_include_tag :defaults %>
+<%= javascript_include_tag :ckeditor %>
+<%= csrf_meta_tag %>
+</head>
+<body>
+<div id="wait" style="display:none"><img src="/images/wait/spinner1_32.gif" width="32" height="32"/></div>
+<table id="maintable" width="100%" cellspacing="0" border="0">
+<tr id="topbar"><td colspan="2"><h1><%=h @heading ? "#{@heading}" : "Administration" %></h1>
+<div style="position:absolute;top:5px;right:8px">User:&nbsp;<%= current_participant.name %></div>  
+</td></tr>
+
+<tr><td id="leftbar" valign="top">
+
+<%= render(:partial => 'admin/admin/menu')%>
+
+</td><td id="mainarea" valign="top">
+	
+	<% if flash[:notice].to_s !="" -%>
+	<p style="color: green"><%= flash[:notice] %></p>
+	<% end -%>
+	<% if flash[:alert].to_s !="" -%>
+	<p style="color: red"><%= flash[:alert] %></p>
+	<% end -%>
+
+	<%= yield  %>
+
+</td></tr>
+</table>
+</body>
+</html>

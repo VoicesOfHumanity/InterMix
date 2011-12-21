@@ -1,0 +1,124 @@
+class MessagesController < ApplicationController
+  
+  layout "front"
+  before_filter :authenticate_participant!
+  
+  def index
+    @from = params[:from] || ''
+    
+    @sortby = params[:sortby] || "messages.id desc"
+    @perscr = params[:perscr].to_i || 25
+    @page = ( params[:page] || 1 ).to_i
+    @page = 1 if @page < 1
+    
+    @inout = params[:inout] || 'in'
+    
+    @messages = Message.scoped
+    @messages = @messages.where(:to_group_id => params[:to_group_id]) if params[:to_group_id].to_i > 0
+      
+    if @inout == 'out'  
+      @messages = @messages.where(:from_participant_id => current_participant.id) 
+      @messages = @messages.includes([:group,:recipient])
+    else
+      @messages = @messages.where(:to_participant_id => current_participant.id)
+      @messages = @messages.includes([:group,:sender])
+    end
+      
+    @messages = @messages.order(@sortby)
+    @messages = @messages.paginate :page=>@page, :per_page => @per_page    
+    update_last_url
+  end
+  
+  def list
+    index
+    render :partial=>'list', :layout=>false  
+  end  
+
+  def new
+    #-- New message
+    @from = params[:from] || ''
+    @message = Message.new
+    @participant = Participant.includes(:idols).find(current_participant.id)  
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all      
+    render :partial=>'edit', :layout=>false
+  end  
+
+  def edit
+    #-- screen for a editing a message
+    @from = params[:from] || ''
+    @message_id = params[:id]
+    @message = Message.find(@message_id)
+    render :partial=>'edit', :layout=>false
+  end  
+  
+  def create
+    @from = params[:from] || ''
+    if params[:message][:to_group_id].to_i > 0
+      #-- A message to all members of a group who allow it
+      tosend = messsent = emailsent = 0
+      @group = Group.includes(:group_participants=>:participant).find(params[:message][:to_group_id])
+      tosend = @group.group_participants.length
+      logger.info("messages#create sending to #{tosend} group members of group ##{params[:message][:to_group_id]}") 
+      for group_participant in @group.group_participants
+        @message = Message.new
+        @message.from_participant_id = current_participant.id
+        @message.to_participant_id = group_participant.participant.id if group_participant.participant
+        @message.to_group_id = params[:message][:to_group_id]
+        @message.subject = params[:message][:subject]
+        @message.message = params[:message][:message]  
+        if @message.save     
+          messsent += 1
+          if group_participant.participant and group_participant.participant.private_email == 'instant'
+            #-- Send as an e-mail. emailit is found in the application controller
+            @message.sendmethod = 'email'
+            @message.emailit
+            emailsent += 1
+          end  
+        else
+          logger.info("messages#create Couldn't save message")  
+        end
+      end
+      render :text=>"#{messsent} of #{tosend} messages sent. #{emailsent} sent by e-mail", :layout=>false
+    else
+      @message = Message.new(params[:message])
+      @message.from_participant_id = current_participant.id
+      @message.sendmethod = 'web'
+      @message.sent_at = Time.now
+      if @message.save
+        @recipient = Participant.find_by_id(@message.to_participant_id) 
+        if @recipient and @recipient.private_email == 'instant'
+          #-- Send as an e-mail. 
+          @message.sendmethod = 'email'
+          @message.emailit
+        end  
+        render :text=>'Message was successfully created.', :layout=>false
+      else
+        logger.info("messages#create Couldn't save message")  
+        render :text=>'There was a problem creating the message.', :layout=>false          
+      end
+    end  
+
+  end  
+  
+  def update
+    @from = params[:from] || ''
+    @message = Message.find(params[:item][:id])
+    if @message.update_attributes(params[:item])
+      render :text=>'Message was successfully updated.', :layout=>false
+    end   
+  end  
+  
+  def show
+    @message_id = params[:id]
+    @message = Message.includes(:sender,:recipient,:group).find(@message_id)
+    if @message.to_participant_id == current_participant.id
+      @message.read_web = true
+      @message.read_at = Time.now
+      @message.save
+    end
+    render :partial=>'show', :layout=>false
+  end  
+  
+  
+  
+end

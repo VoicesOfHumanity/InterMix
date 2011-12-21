@@ -1,0 +1,42 @@
+<%= render(:partial => 'groups/menu')%>
+
+<form id="searchform" style="clear:both">
+<div id="forumcontrol">
+	
+	<div class="right">
+	<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
+	<input type="button" value="Start New Thread" id="newthreadbutton" onclick="newitem()">
+	</div>
+
+	<div class="lefttitle">Sort by:</div>
+	<div class="leftfield">
+<%= select_tag "sortby", options_for_select([['Date','items.id desc'],['Value','items.value desc'],['Approval','items.approval desc'],['Interest','items.interest desc'],['Controversy','items.controversy desc']],@sortby), :onchange=>"list()" %>
+	</div>
+
+	<div class="lefttitle">Threads:</div>
+	<div class="leftfield">
+	<%= select_tag "threads", options_for_select([['None',''],['First+Replies','flat'],['Tree View','tree']],@threads), :onchange=>"list()" %>
+	</div>
+
+	<div class="lefttitle">Show:</div>
+	<div class="leftfield">
+	<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list()" %>
+	</div>
+
+	<div class="lefttitle">Discussion:</div>
+	<div class="leftfield">
+	<%= select_tag "dialog_id", options_for_select([['All messages',0]]+@dialogsin.collect{|c| [c.dialog.name,c.dialog.id]},@dialog_id), :onchange=>"list()" %>
+	</div>
+	
+	<%= hidden_field_tag :group_id, @group_id %>
+	<%= hidden_field_tag "from", "group" %>
+	<%= hidden_field_tag :page, 1 %>
+	
+</div>
+</form>
+
+<div id="newforumitem" class="newforumitem" style="display:none"></div>
+
+<div id="itemlist">
+<%= render(:partial => 'items/list')%>
+</div>

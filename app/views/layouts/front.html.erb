@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Intermix</title>
+	<%= stylesheet_link_tag('blueprint/screen', :media => "all") %>
+	<%= stylesheet_link_tag('blueprint/print', :media => "print") %>
+	<!--[if lt IE 8]>
+	<%= stylesheet_link_tag 'blueprint/ie', :media => "screen, projection" %>
+	<![endif]-->
+  <%= stylesheet_link_tag "main", "formtastic", "formtastic_changes", "jquery.treeview.css", "extra" %>
+  <%= javascript_include_tag :defaults, :ckeditor, "ckeditor/adapters/jquery", "forum", "jquery.treeview.js", "jquery.simplemodal.1.4.1" %>
+  <%= csrf_meta_tag %>
+</head>
+<body>
+
+<div class="container">
+	<div class="span-24 last">
+		
+		<div id="header">
+			<div id="mainheader1">&nbsp;</div>
+			<div id="mainheader2"><img src="/images/beta.png" style="position:absolute;margin:5px 0 0 860px;width:72px;height:72px;"><img height="84" alt="" src="/images/logo.gif" width="290"></div>
+			<div id="mainheader3">organize locally * connect globally</div>
+			<div id="mainheader4">&nbsp;</div>
+		</div>
+		
+	</div>
+	<div class="span-5">
+		<div id="leftcolumn">
+			
+			<ul class="mainmenu">
+			<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Home</a></li>
+			
+			<% if participant_signed_in? -%>
+				<% if (session[:dialog_id].to_i>0 or session[:group_id].to_i>0) and not session[:fullmenu] -%>
+					<% showingfull = false -%>
+				<% else -%>
+					<% showingfull = true -%>
+				<% end -%>
+
+				<% if false -%>
+				<li class="menu full"><a  class="<%= 'selected' if @section=='forum' %>" href="/forum">Forum</a></li>
+				<li class="menu full"><a  class="<%= 'selected' if @section=='photos' %>" href="/photos">Photos</a></li>
+				<% end -%>
+				
+				<li class="menu<%= ' full' if session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='groups' %>" href="/groups">Groups</a></li>
+				<% if not showingfull and session[:dialog_id].to_i > 0 -%>
+				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>
+				<% else -%>
+				<li class="menu<%= ' full' if session[:dialog_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs">Discussions</a></li>
+				<% end -%>
+					
+				<li class="menu full"><a  class="<%= 'selected' if @section=='people' %>" href="/people">People</a></li>
+				<li class="menu full"><a  class="<%= 'selected' if @section=='friends' %>" href="/me/friends">Friends</a></li>
+				<li class="menu full"><a  class="<%= 'selected' if @section=='messages' %>" href="/messages">Messages</a></li>
+				<li class="menu full"><a  class="<%= 'selected' if @section=='wall' %>" href="/me/wall">Wall</a></li>			
+				
+			<% end -%>
+			
+			<% if participant_signed_in? -%>
+				<li class="menu"><a class="<%= 'selected' if @section=='profile' %>" href="/me/profile">Profile</a></li>
+			<% end -%>
+		  <%= render 'devise/menu/login_items' %>
+		  <%= render 'devise/menu/registration_items' %>
+			<% if participant_signed_in? and (session[:dialog_id].to_i>0 or session[:group_id].to_i>0) %>
+				<li class="moreless" style="display:none">
+					<a href="#" onclick="menumoreless();return false" id="morelesslink">
+				<% if showingfull -%>
+					- less -
+				<% else -%>
+					- more -
+				<% end -%>
+					</a>
+				</li>
+			<% end -%>
+			</ul>
+			
+			<div class="sidebarbox">
+		  <% if current_participant %>
+		    <p>You're logged in as:<br/><%= current_participant.name %><br><%= current_participant.email %></p>
+		  <% end %>
+			</div>
+
+		</div>
+	</div>
+	<div class="span-19 last">
+		<div id="maincontent">
+			<% if flash[:notice].to_s !="" -%>
+			<p style="color: green"><%=raw flash[:notice] %></p>
+			<% end -%>
+			<% if flash[:alert].to_s !="" -%>
+			<p style="color: red"><%=raw flash[:alert] %></p>
+			<% end -%>
+			<%= yield %>
+		</div>
+	</div>
+	
+	<div class="span-24 last">
+		<div style="margin-bottom:5px;padding:3px 10px;background-color: #d1cec3;text-align:center">
+	<a href="/privacy">Privacy</a> |
+	Contact
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
+<% if participant_signed_in? and (session[:dialog_id].to_i>0 or session[:group_id].to_i>0) %>
+<script>
+var showingfull = true;
+<% if not showingfull -%>
+menumoreless();
+<% end -%>
+function menumoreless() {
+	if (showingfull) {
+		$('ul.mainmenu li.full').hide();
+		$('#morelesslink').html("- more -")
+		showingfull = false;
+	} else {
+		$('ul.mainmenu li.full').show();
+		$('#morelesslink').html("- less -")
+		showingfull = true;
+	}
+	$.ajax({
+	  type: 'GET',
+	  url: '/front/setsess',
+	  data: "fullmenu="+showingfull
+	});	
+}
+</script>
+<% end -%>

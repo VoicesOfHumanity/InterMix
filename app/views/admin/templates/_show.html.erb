@@ -1,0 +1,23 @@
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @template.id %></td></tr>	
+<tr><td class="left">Name:</td><td><%= @template.name %></td></tr>	
+<tr><td class="left">Section:</td><td><%= @template.section %></td></tr>	
+<tr><td class="left">Mail/Web:</td><td><%= @template.mail_web %></td></tr>	
+<tr><td class="left">Title:</td><td><%= @template.title %></td></tr>	
+<tr><td class="left">Body:</td><td><%=raw @template.html_body %></td></tr>	
+<tr><td class="left">Footer:</td><td><%=raw @template.footer %></td></tr>	
+<tr><td class="left">Group:</td><td><%= @template.group ? @template.group.name : @template.group_id %></td></tr>	
+<tr><td class="left">Dialog:</td><td><%= @template.dialog_id.to_i %></td></tr>	
+<tr><td class="left">round:</td><td><%= @template.round_id %></td></tr>	
+<tr><td class="left">Created:</td><td><%= @template.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @template.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+<p>
+<a href="javascript:editrec1()">Edit</a> | 
+<a href="javascript:delrec1()">Delete</a>
+</p>
+
+<script>
+curid1 = <%= @template.id %>;
+</script>

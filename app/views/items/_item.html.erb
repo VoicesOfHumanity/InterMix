@@ -1,0 +1,149 @@
+<% showlong = (item.media_type!='text' or from=='individual' or (item.short_content.to_s != '' and (item.html_content.length < 140 or item.html_content == "<p>#{item.short_content}</p>"))) -%>
+<% showlong = false unless showlong -%>
+
+	<% if @error_message.to_s != '' -%>
+	<p><%= @error_message %></p>
+	<% end -%>
+
+	<div class="subject subject<%= odd_or_even %>" title="<%= item.subject %>"><%= item.subject %></div>
+		
+	<div class="itemvoting">
+
+		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if not item.dialog or item.dialog.voting_open %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
+			<div id="intshort_<%= item.id %>" class="intshort">
+				<img src="/images/sface.gif"/>
+				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= item['hasrating'].to_i %> current_participant:<%= current_participant.id %> interest:<%= item['interest'].to_i %>"><%= item['hasrating'].to_i > 0 ? item['rateinterest'].to_i : '-'%></span>
+				<img src="/images/aface.gif"/>
+			</div>
+			<div id="intlong_<%= item.id %>" class="intlong" style="display:none">
+				<div class="title">interest rating</div>
+				<div class="slot">&nbsp;</div><div class="slot">&nbsp;</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">4</div><div class="slot">&nbsp;</div><br/>
+				<div class="slot">&nbsp;</div>
+				<div class="slot"><img src="/images/sface.gif"/></div>
+				<div class="slot"><%= radio_button_tag "int_#{item.id}", '0', is_interest?(item,0), :onclick=>"rate('int',#{item.id},0)" %></div>
+				<div class="slot"><%= radio_button_tag "int_#{item.id}", '1', is_interest?(item,1), :onclick=>"rate('int',#{item.id},1)" %></div>
+				<div class="slot"><%= radio_button_tag "int_#{item.id}", '2', is_interest?(item,2), :onclick=>"rate('int',#{item.id},2)" %></div>
+				<div class="slot"><%= radio_button_tag "int_#{item.id}", '3', is_interest?(item,3), :onclick=>"rate('int',#{item.id},3)" %></div>
+				<div class="slot"><%= radio_button_tag "int_#{item.id}", '4', is_interest?(item,4), :onclick=>"rate('int',#{item.id},4)" %></div>
+				<div class="slot"><img src="/images/aface.gif"/></div><br/>
+				<div class="bigslot left">boring!</div><div class="bigslot right">must&nbsp;see!</div>
+			</div>				
+		</div>
+				
+		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if not item.dialog or item.dialog.voting_open %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
+			<div id="appshort_<%= item.id %>" class="appshort">
+				<img src="/images/fface.gif"/>				
+			<span id="vote_app_rate_<%= item.id %>"><%= item['hasrating'].to_i > 0 ? item['rateapproval'].to_i : '-'%></span>
+			<img src="/images/hface.gif"/>
+			</div>
+			<div id="applong_<%= item.id %>" class="applong" style="display:none">
+				<div class="title">approval rating</div>
+				<div class="slot">&nbsp;</div><div class="slot">-3</div><div class="slot">-2</div><div class="slot">-1</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">&nbsp;</div><br/>
+				<div class="slot"><img src="/images/fface.gif"/></div>
+				<div class="slot"><%= radio_button_tag "app_#{item.id}", '-3', is_approval?(item,-3), :onclick=>"rate('app',#{item.id},-3)" %></div>	
+				<div class="slot"><%= radio_button_tag "app_#{item.id}", '-2', is_approval?(item,-2), :onclick=>"rate('app',#{item.id},-2)" %></div>	
+				<div class="slot"><%= radio_button_tag "app_#{item.id}", '-1', is_approval?(item,-1), :onclick=>"rate('app',#{item.id},-1)" %></div>	
+				<div class="slot"><%= radio_button_tag "app_#{item.id}", '0', is_approval?(item,0), :onclick=>"rate('app',#{item.id},0)" %></div>	
+				<div class="slot"><%= radio_button_tag "app_#{item.id}", '1', is_approval?(item,1), :onclick=>"rate('app',#{item.id},1)" %></div>	
+				<div class="slot"><%= radio_button_tag "app_#{item.id}", '2', is_approval?(item,2), :onclick=>"rate('app',#{item.id},2)" %></div>	
+				<div class="slot"><%= radio_button_tag "app_#{item.id}", '3', is_approval?(item,3), :onclick=>"rate('app',#{item.id},3)" %></div>
+				<div class="slot"><img src="/images/hface.gif"/></div>
+				<br/>
+				<div class="bigslot left">disapprove</div><div class="bigslot right">approve</div>
+			</div>	
+		</div>				
+						
+		<div id="iteminfotxt_<%= item.id %>" class="votesection summary" onmouseover="summary(<%= item.id %>,<%= top %>)" onmouseout="nosummary(<%= item.id %>,<%= top %>)">
+			sum
+		</div>
+		<div id="sum_<%= item.id %>" class="iteminfo_summary" style="display:none">
+<%= render :partial => "items/rating_summary", :locals => { :item => item} %>
+		</div>
+		
+	</div><!--itemvoting-->		
+
+
+	<% if params[:test].to_i==1 and not is_reply -%>
+	<div style="background-color:#eee">
+		Sort Explanation: <%= item.explanation if item['explanation'] %><br>
+	</div>
+	<% end -%>
+		
+	<% if item.media_type == 'picture' -%>
+		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+		<div id="shortcontent_<%= item.id %>" class="htmlcontent"><img src="/images/data/items/<%= item.id %>/thumb.jpg" class="item_img_sm"><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none"><img src="/images/data/items/<%= item.id %>/big.jpg" class="item_img_lr"><br><%=raw item.short_content %></div>
+	
+	<% elsif item.media_type == 'link' -%>	
+	
+		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">−</div>
+		<div id="shortcontent_<%= item.id %>" class="htmlcontent" style="display:none"><%=raw item.link %></div>
+		<div id="htmlcontent_<%= item.id %>" class="htmlcontent"><%=raw item.link %></div>
+
+	<% elsif item.media_type == 'video' -%>
+
+		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+		<div id="shortcontent_<%= item.id %>"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm_w\">" : 'video' %><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\">" : 'video' %><br><%=raw item.short_content %></div>
+		
+	<% elsif item.media_type == 'audio' -%>
+			
+		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+		<div id="shortcontent_<%= item.id %>"><%=raw item.oembed_response['thumbnail_url'].to_s!='' ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm\">" : 'audio' %><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw item.oembed_response['thumbnail_url'].to_s!='' ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\">" : 'audio' %><br><%=raw item.short_content %></div>
+		
+	<% else -%>
+		
+		<% if showlong -%>
+			<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">−</div>
+			<div id="shortcontent_<%= item.id %>" class="htmlcontent" style="display:none"><%=raw item.short_content %></div>
+			<div id="htmlcontent_<%= item.id %>" class="htmlcontent"><%=raw sanitizethis(item.html_content) if item.html_content.to_s != '' %></div>
+		<% else -%>
+			<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+			<div id="shortcontent_<%= item.id %>" class="htmlcontent"><%=raw item.short_content %><span onclick="expand(<%= item.id %>)" class="dot_expand" title="click to expand">...</span></div>
+			<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none"><%=raw sanitizethis(item.html_content) if item.html_content.to_s != '' %></div>
+		<% end -%>
+		
+	<% end -%>
+	
+	
+	<div class="iteminfo">
+		<div class="iteminfotxt">
+		<% if @from.to_s == 'forum' or @from.to_s != 'wall' -%>	
+		by 
+		<% if item.dialog and item.dialog.in_voting_round and not item.dialog.names_visible_voting -%>
+		[name withheld during voting]
+		<% elsif item.dialog and not item.dialog.profiles_visible -%>
+		<%= item.participant ? item.participant.name : item.posted_by %>
+		<% else -%>
+		<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>
+		<% end -%>
+			<% if @show_meta and item.participant and item.participant.metamap_node_participants -%>
+				(<%= item.participant.metamap_node_participants[0].metamap_node.name %>)
+			<% end -%>
+		<% end -%>
+		<%= link_to_function 'edit', "edititem(#{item.id})" if item.posted_by == current_participant.id and not item.edit_locked %>
+		<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
+		</div>
+
+		<div class="iteminfotxt">
+			<% if not item.dialog or item.dialog.allow_replies -%>
+		<%= link_to_function "Reply", "reply(#{item.id},#{is_reply})" %>	
+			<% end -%>
+		</div>
+		
+		<div class="iteminfotxt">
+		<a href="/items/<%= item.id %>/view" title="permalink">#</a>	
+		</div>	
+		
+		<div class="iteminfotxt">
+		<%= "Group: " + (item.group ? item.group.name : item.group_id.to_s) if item.group_id.to_i > 0 and @from != 'group' %>
+		</div>
+			
+		<div class="iteminfotxt">	
+			<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
+		</div>
+
+				
+	</div><!--iteminfo-->
+			

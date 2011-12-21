@@ -1,0 +1,19 @@
+<h3>Discussions</h3>
+
+<% if @dialogsin.length > 0 -%>
+<p>You can participate in these discussions:</p>
+<% else -%>
+<p>You don't have access to any discussions</p>
+<% end -%>
+
+<ul>
+<% for dg in @dialogsin -%>
+<% dom = ((dg.dialog.shortname.to_s != "") ? "#{dg.dialog.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
+<li><a href="/dialogs/<%= dg.dialog.id %>/forum"><%= dg.dialog.name %></a>
+	<a href="/dialogs/<%= dg.dialog.id %>/view">info</a>
+	<% if @admin4.include?(dg.dialog.id) then %><a href="/dialogs/<%= dg.dialog.id %>/edit">edit</a><% end -%>
+</li>
+<% end -%>
+</ul>
+
+<p><a href="/dialogs/new">Create a new discussion</a></p>

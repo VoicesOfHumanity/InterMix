@@ -1,0 +1,216 @@
+<%= render(:partial => 'dialogs/menu')%>
+
+<% for metamap in @metamaps -%>
+	<h3><%= metamap.name %></h3>
+
+	<div>
+	<% for c in @data[metamap.id]['nodes'] -%>
+		<b><%= c['metamap_node_name'] %>:</b><br>
+			<%= c['usercount'] %> members<br>
+			<%= c['num_items'] %> messages<br>
+			<%= c['num_ratings'] %> ratings<br>
+			<%= sprintf("%.1f",c['avg_ratings']) %> average ratings/item<br>
+			average value: <%= sprintf("%.1f",c['avg_value']) %><br>
+			winner: <%= c['value_winner'] > 0 ? "##{c['value_winner']}" : 'none' %><br>
+			all items, regardless of raters category:<br>
+			<% for i in c['itemlist'] -%>
+				#<%= i['id'] %>: <%= i['name'] %>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %> adjusted:<%= '?' %><br>
+			<% end -%>
+			Ratings by meta category:<br>
+			<% for metamap_id,data2 in c['metaratings'] %>
+				<%= data2['name'] %><br>
+				<% for metamap_node_id,data3 in data2['nodes'] -%>
+					<%= data3['name'] %>: <%= data3['num_interest'] %>/<%= data3['num_approval']%> ratings:<br>
+					<% for rating in data3['ratings'] -%>
+						<%= rating.particpant %> rated int:<%= rating.interest.to_i %> app:<%= rating.appoval.to_i %><br>
+					<% end -%>
+				<% end -%>
+			<% end -%>
+			
+			<br>
+	<% end -%>
+	<br>
+	</div>
+
+<% end -%>
+
+
+  def meta_old
+
+    @section = 'dialogs'
+    @dsection = 'meta'
+    @from = 'dialog'
+    @dialog_id = params[:id].to_i
+    @dialog = Dialog.find(@dialog_id)
+
+    @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
+
+    #r = Participant.joins(:groups=>:dialogs).joins(:metamap_nodes).where("dialogs.id=3").where("metamap_nodes.metamap_id=2").select("participants.id,first_name,metamap_nodes.name as metamap_node_name")
+
+    #-- Find how many people and items for each metamap_node
+    @data = []
+    
+    #-- Find how many people & items for each metamap category
+    counts = Participant.joins(:groups=>:dialogs).joins(:metamap_nodes).joins(:items).where("dialogs.id=#{@dialog_id}").where("metamap_nodes.metamap_id=#{metamap.id}").select("metamap_nodes.id as metamap_node_id,metamap_nodes.name as metamap_node_name,count(distinct(participants.id)) as usercount,count(distinct(items.id)) as itemcount").group("metamap_nodes.id").order("metamap_nodes.sortorder,metamap_nodes.name")
+
+    for count in counts
+      #-- Going through metamap categories of posters
+      metamap_node_id = count.metamap_node_id
+      mdata = {}
+      mdata['metamap_node_id'] = count.metamap_node_id
+      mdata['metamap_node_name'] = count.metamap_node_name
+      mdata['usercount'] = count.usercount
+      mdata['itemcount'] = count.usercount
+      mdata['itemlist'] = []
+      mdata['metaratings'] = []
+      mdata['num_items'] = 0
+      mdata['num_ratings'] = 0
+      mdata['avg_ratings'] = 0
+      mdata['avg_approval_rating'] = 0.0
+      mdata['avg_interest_rating'] = 0.0
+      mdata['avg_value'] = 0.0
+      mdata['value_winner'] = 0
+
+      #-- Go through the items tagged as posted by that metamap node, to find the best, the averages, etc
+      items = Item.scoped
+      items = items.where("items.dialog_id = ?", @dialog_id)    
+      items = items.where("is_first_in_thread=1")
+      items = items.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
+      items = items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
+      items = items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
+      items = items.where("metamap_nodes.id=#{metamap_node_id}")
+
+      total_votes = 0
+      num_items = items.length
+      num_ratings = 0
+      total_interest = 0
+      total_interest_ratings = 0
+      total_approval = 0
+      total_approval_ratings = 0
+
+      value_winner = 0
+      max_value = 0
+
+      itemlist = []
+      metaratings = {}
+
+      for item in items
+        #-- All items posted by people in that meta category
+        ratings = Rating.where("item_id=#{item.id}")
+        num_ratings +=  ratings.length
+        if item.value > max_value
+          max_value = item.value
+          value_winner = item.id
+        end
+        item_tot_interest = 0
+        item_tot_approval = 0
+        item_num_interest = 0
+        item_num_approval = 0
+        for rating in ratings
+          #-- All ratings, no matter the meta category of the people
+          if rating.approval.to_i > 0
+            total_approval += rating.approval
+            total_approval_ratings += 1
+            item_tot_approval += rating.approval
+            item_num_approval += 1
+          end
+          if rating.interest.to_i > 0
+            total_interest += rating.interest
+            total_interest_ratings += 1
+            item_tot_interest += rating.interest
+            item_num_interest += 1
+          end
+        end
+        if item_num_approval > 0
+          item_avg_approval = 1.0 * item_tot_approval / item_num_approval
+        else
+          item_avg_approval = 0
+        end
+        if item_num_interest > 0
+          item_avg_interest = 1.0 * item_tot_interest / item_num_interest
+        else
+          item_avg_interest = 0
+        end
+        item_value = item_avg_interest * item_avg_approval
+        
+        #-- Go through ratings again, this time breaking down by meta categories of raters
+        ratings = Rating.where("item_id=#{item.id}").includes(:participant=>{:metamap_node_participants=>[:metamap_node,:metamap]})
+        
+        for rating in ratings
+          #-- Ratings for that particular item, to meta categorize by raters
+          if item.participant.metamap_node_participants[0].metamap_node
+            metamap_id = item.participant.metamap_node_participants[0].metamap_node.metamap_id
+            metamap_name = item.participant.metamap_node_participants[0].metamap_node.metamap.name
+            metamap_node_id = item.participant.metamap_node_participants[0].metamap_node_id
+            metamap_node_name = item.participant.metamap_node_participants[0].metamap_node.name
+            if not metaratings[metamap_id]
+              metaratings[metamap_id] = {'name'=>metamap_name,'nodes'=>{}}
+            end
+            if not metaratings[metamap_id]['nodes'][metamap_node_id]
+              metaratings[metamap_id]['nodes'][metamap_node_id] = {'name'=>metamap_node_name,'total_interest'=>0,'total_approval'=>0,'num_interest'=>0,'num_approval'=>0,'ratings'=>[]}
+            end
+            if rating.approval.to_i > 0
+              metaratings[metamap_id]['nodes'][metamap_node_id]['total_approval'] += rating.approval
+              metaratings[metamap_id]['nodes'][metamap_node_id]['num_approval'] += 1
+              if metaratings[metamap_id]['nodes'][metamap_node_id]['num_approval'] > 0
+                metaratings[metamap_id]['nodes'][metamap_node_id]['avg_approval'] = 1.0 * metaratings[metamap_id]['nodes'][metamap_node_id]['total_approval'] / metaratings[metamap_id]['nodes'][metamap_node_id]['num_approval']
+              else
+                metaratings[metamap_id]['nodes'][metamap_node_id]['avg_approval'] = 0
+              end
+            end
+            if rating.interest.to_i > 0
+              metaratings[metamap_id]['nodes'][metamap_node_id]['total_interest'] += rating.interest
+              metaratings[metamap_id]['nodes'][metamap_node_id]['num_interest'] += 1
+              if metaratings[metamap_id]['nodes'][metamap_node_id]['num_interest'] > 0
+                metaratings[metamap_id]['nodes'][metamap_node_id]['avg_interest'] = 1.0 * metaratings[metamap_id]['nodes'][metamap_node_id]['total_interest'] / metaratings[metamap_id]['nodes'][metamap_node_id]['num_interest']
+              else
+                metaratings[metamap_id]['nodes'][metamap_node_id]['avg_interest'] = 0
+              end
+            end
+            #-- Assign the items
+            metaratings[metamap_id]['nodes'][metamap_node_id]['ratings'] << rating
+          end
+        end
+        
+        itemlist << {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'avg_approval'=>item_avg_approval,'num_approval'=>item_num_approval,'avg_interest'=>item_avg_interest,'num_interest'=>item_num_interest,'value'=>item_value,'adjvalue'=>0',ratings'=>ratings}
+      end #-- end of going through items posted in a certain meta category
+      
+      mdata['itemlist'] = itemlist
+      mdata['metaratings'] = metaratings
+
+      if num_ratings > 0 and num_items > 0
+        avg_ratings = 1.0 * num_ratings / num_items
+      else
+        avg_ratings = 0
+      end
+      
+      if total_approval_ratings > 0
+        avg_approval_rating = 1.0 * total_approval / total_approval_ratings
+      else
+        avg_approval_rating = 0
+      end
+      if total_interest_ratings > 0
+        avg_interest_rating = 1.0 * total_interest / total_interest_ratings
+      else
+        avg_interest_rating = 0
+      end
+
+      #-- Summary for what was posted in a certain meta category
+      mdata['num_items'] = num_items
+      mdata['num_ratings'] = num_ratings
+      mdata['avg_ratings'] = avg_ratings
+      mdata['avg_approval_rating'] = avg_approval_rating
+      mdata['avg_interest_rating'] = avg_interest_rating
+      mdata['avg_value'] = avg_approval_rating * avg_interest_rating
+      
+      mdata['value_winner'] = value_winner
+      
+      @data[metamap.id]['postedby'] << mdata
+      
+    end
+          
+    
+  end
+
+end
+s

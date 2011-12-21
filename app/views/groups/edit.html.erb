@@ -1,0 +1,26 @@
+<h3>Group: <%= @group.name %></h3>
+
+<% semantic_form_for( @group, :html => { :multipart => true } ) do |f| %>
+
+	<% f.inputs do %>
+		<%= f.input :name, :required => true %>
+		<%= f.input :shortname, :label => "Prefix", :required => true %>
+		<%= f.input :owner, :as => :select, :collection=>@group.participants.collect{|p| [p.name,p.id]} %>
+		<%= f.input :description %>
+		<%= f.input :moderation %>
+		<%= f.input :openness, :label => "Membership", :as => :select, :collection =>GROUP_OPENNESS %>
+		<%= f.input :visibility, :as=>:select, :collection =>GROUP_VISIBILITY %>
+		<%= f.input :has_mail_list, :label => "Has mailing list" %>
+		<%= f.input :logo, :as=>:file %>		
+		<%= f.input :front_template %>
+		<%= f.input :member_template %>
+		<%= f.input :alt_logins, :label=>"Allow Facebook/Twitter logins?", :as => :boolean %>
+	<% end %>
+
+	<p>
+	  <input type="button" value="Cancel" onclick="viewrec1(<%= @group.id.to_i %>)" />
+	  <input type="submit" value="Save" />
+	</p>
+
+<% end %>
+

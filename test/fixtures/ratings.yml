@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  participant_id: 1
+  rating_type: MyString
+
+two:
+  participant_id: 1
+  rating_type: MyString

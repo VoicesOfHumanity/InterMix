@@ -1,0 +1,21 @@
+<table class="edittable">
+<% if @from != 'group' -%>
+<tr><td class="left">Group:</td><td><%= @group_participant.group ? @group_participant.group.name : @group_participant.group_id %></td></tr>
+<% end -%>	
+<% if @from != 'participant' -%>
+<tr><td class="left">Participant:</td><td><%= @group_participant.participant ? @group_participant.participant.name : @group_participant.participant_id %></td></tr>	
+<% end -%>	
+<tr><td class="left">Moderator?:</td><td><%= @group_participant.moderator ? 'yes' : 'no' %></td></tr>	
+<tr><td class="left">Active?:</td><td><%= @group_participant.active ? 'yes' : 'no' %></td></tr>	
+<tr><td class="left">Created:</td><td><%= @group_participant.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @group_participant.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+<p>
+<a href="javascript:editrec2()">Edit</a> | 
+<a href="javascript:delrec2('<%= @group_participant.participant.name.gsub("'","&quot;") if @group_participant.participant %>')">Delete</a>
+</p>
+
+<script>
+curid2 = <%= @group_participant.id %>;
+</script>

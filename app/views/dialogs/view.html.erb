@@ -1,0 +1,45 @@
+<%= render(:partial => 'dialogs/menu')%>
+
+<% if @dialog.logo.exists? then -%>
+<p><%= image_tag @dialog.logo.url(:thumb) %></p>
+<% else %>
+<p>[no logo]</p>
+<% end -%>
+
+<p><b>Name:</b> <%= @dialog.name %></p>
+
+<p><b>Prefix:</b> <%= @dialog.shortname %></p>
+
+<p><b>Description:</b> <%= @dialog.description %></p>
+
+<p><b>Created:</b> <%= @dialog.created_at.strftime("%m/%d/%Y") %></p>
+
+<p><b>Owner:</b> <%= @dialog.creator.name if @dialog.creator %></p>
+
+<p><b>Visibility:</b> <%= @dialog.visibility %></p>
+
+<p><b>Openness:</b> <%= @dialog.openness %></p>
+
+<p><b>Multigroup?</b> <%= @dialog.multigroup ? 'yes' : 'no' %></p>
+
+<p><b>Max Characters:</b> <%= @dialog.max_characters %></p>
+
+<p><b>Voting by Metamap:</b> <%= @dialog.metamap_vote_own %></p>
+
+<p><b>Metamaps:</b><br/>
+<% @dialog.metamaps.each do |metamap_id,metamap_name| -%>
+<%= metamap_id %>:<%= metamap_name %><br/>
+<% end -%>
+
+<p><b>Participating Groups:</b>
+<% if @dialog.groups.length == 0 -%>
+	none
+<% else -%>
+	<% for group in @dialog.groups -%>
+		<br><a href="/groups/<%= group.id %>/forum"><%= group.name %></a>
+	<% end -%>
+<% end -%>	
+<p>	
+
+
+</p>

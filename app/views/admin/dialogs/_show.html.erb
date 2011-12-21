@@ -1,0 +1,32 @@
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @dialog.id %></td></tr>	
+<tr><td class="left">Code:</td><td><%= @dialog.shortname %></td></tr>	
+<tr><td class="left">Name:</td><td><%= @dialog.name %></td></tr>	
+<tr><td class="left">Description:</td><td><%= @dialog.description %></td></tr>	
+<tr><td class="left">Visibility:</td><td><%= @dialog.visibility %></td></tr>	
+<tr><td class="left">Openness:</td><td><%= @dialog.openness %></td></tr>	
+<tr><td class="left">Origin group:</td><td><%= @dialog.maingroup.name if @dialog.maingroup %></td></tr>	
+<tr><td class="left">Created by:</td><td><%= @dialog.creator.name if @dialog.creator %></td></tr>	
+<tr><td class="left">Created:</td><td><%= @dialog.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Multigroup:</td><td><%= @dialog.multigroup ? 'yes' : 'no' %></td></tr>	
+<tr><td class="left">Metamaps:</td><td>
+	<% @dialog.metamaps.each do |metamap_id,metamap_name| -%>
+	<%= metamap_id %>:<%= metamap_name %><br/>
+	<% end -%>
+</td></tr>	
+<tr><td class="left">Voting by Metamap:</td><td><%= @dialog.metamap_vote_own %></td></tr>	
+<tr><td class="left">Max characters:</td><td><%= @dialog.max_characters %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @dialog.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+
+<p>
+<a href="javascript:editrec1()">Edit</a> | 
+<a href="javascript:delrec1()">Delete</a> |&nbsp;&nbsp;&nbsp;
+<a href="javascript:list2()">Admins</a> | 
+<a href="javascript:list3()">Groups</a>
+</p>
+
+<script>
+curid1 = <%= @dialog.id %>;
+</script>

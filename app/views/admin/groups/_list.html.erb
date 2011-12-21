@@ -1,0 +1,39 @@
+<% if !@groups or !@groups.class==Array or @groups.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
+		<th>ID</th>
+		<th>Code</th>
+    <th>Name</th>
+    <th>Openness</th>
+    <th>Moderation</th>
+    <th>Network</th>
+		<th>Members</th>
+		<th>Items</th>
+    <th>Created</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @groups.each do |group| %>
+  <% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= group.id %>" /></td>
+		<td><a href="#" onclick="viewrec1(<%= group.id %>)"><%= group.id %></a></td>
+		<td><a href="#" onclick="viewrec1(<%= group.id %>)"><%= group.shortname %></a></td>
+    <td><a href="#" onclick="viewrec1(<%= group.id %>)"><%= group.name %></a></td>
+		<td><%= group.openness %></td>
+		<td><%= group.moderation ? 'yes' : '' %></td>
+		<td><%= group.is_network ? 'yes' : '' %></td>
+		<td align="right"><%= link_to_function group.group_participants_count.to_s, "getlist2(#{group.id})" %></td>
+		<td align="right"><%= group.items_count %></td>
+		<td><%= group.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+  </tr>
+<% end %>
+</table>
+
+<% end -%>

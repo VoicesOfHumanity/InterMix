@@ -1,0 +1,82 @@
+<form id="searchform">
+
+		<div class="lefttitle">Sort by:</div>
+		<div class="leftfield">
+	<%= select_tag "sortby", options_for_select([['Last name','last_name,first_name'],['First name','first_name,last_name'],['Join date','created_at desc'],['ID','id desc']],@sortby), :onchange=>"list()" %>
+		</div>
+
+		<div class="lefttitle">Show:</div>
+		<div class="leftfield">
+		<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list()" %>
+		</div>
+
+		<% if @groupsin -%>
+		<div class="lefttitle">Group:</div>
+		<div class="leftfield">
+		<%= select_tag "group_id", options_for_select([['All messages',0]]+@groupsin.collect{|c| [c.group.name,c.group.id]},@group_id), :onchange=>"list()" %>
+		</div>
+		<% end -%>
+
+		<% if @dialogsin -%>
+		<div class="lefttitle">Dialog:</div>
+		<div class="leftfield">
+		<%= select_tag "dialog_id", options_for_select([['All messages',0]]+@dialogsin.collect{|c| [c.dialog.name,c.dialog.id]},@dialog_id), :onchange=>"list()" %>
+		</div>
+		<% end -%>
+
+	<%= hidden_field_tag :page, 1 %>
+
+</form>
+
+<div id="plist">
+<%= render(:partial => 'list')%>
+</div>
+
+<script>
+var optionsshowing = false;
+function toggleoptions() {
+	if (optionsshowing) {		
+		$('#optcontrol').css("height","29px");
+		$('#optionbutton').attr("value","More Options");
+		optionsshowing = false;
+	} else {
+		$('#optcontrol').css("height","auto");
+		$('#optionbutton').attr("value","Fewer Options");
+		optionsshowing = true;
+	}
+}
+function list() {
+  $('#plist').css('opacity','0.5');
+	showworking();
+	var pars = $("#searchform").serialize();
+	$.ajax({
+     type: "GET",
+     url: "/people/list",
+     data: pars,
+     complete: function(t){	
+       $("#plist").html(t.responseText);
+		 listdone();
+     }
+   });	
+}
+var listdone = function(t) {
+  $('#plist').show();
+  hideworking();
+  $('#plist').css('opacity','1.0');
+}
+var gotopage = function(page) {
+    $('#plist').css('opacity','0.5');
+  	showworking();
+    $('#page').val(page);
+	var pars = $("#searchform").serialize();
+	$.ajax({
+		type: "GET",
+		url: "/people/list",
+		data: pars,
+		complete: function(t){	
+            $("#plist").html(t.responseText);
+     		 listdone();
+		}
+	});	
+}
+</script>

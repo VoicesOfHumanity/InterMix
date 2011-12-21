@@ -1,0 +1,41 @@
+<% if !@participants or !@participants.class==Array or @participants.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
+		<th>ID</th>
+		<th>Name</th>
+		<th>E-mail</th>
+    <th>Status</th>
+		<th>Items</th>
+		<th>Tags</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @participants.each do |participant| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= participant.id %>" /></td>
+		<td><a href="#" onclick="viewrec1(<%= participant.id %>)"><%= participant.id %></a></td>
+		<td><a href="#" onclick="viewrec1(<%= participant.id %>)"><%= participant.name %></a></td>
+		<td><%= participant.email %></td>	
+		<td><%= participant.status %></td>	
+		<td align="right"><%= participant.items_count %></td>	
+		<td><%= participant.tag_list if participant.tag_list %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= "#{(@participants.current_page-1)*@participants.per_page+1}-#{[@participants.total_entries,@participants.current_page*@participants.per_page].min} of #{@participants.total_entries} items" if @participants.respond_to?('total_entries') and @participants.total_entries.to_i>1 %>
+&nbsp;&nbsp;&nbsp;
+<%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 and @participants.respond_to?('current_page') and @participants.current_page>1 %>
+<%= raw %(<a href="javascript:gotopage(#{@participants.previous_page})">&lt;</a>) if @participants.respond_to?('previous_page') and @participants.previous_page %>
+<%= raw "page #{@participants.current_page} of #{@participants.total_pages}" if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 %>
+<%= raw %(<a href="javascript:gotopage(#{@participants.next_page})">&gt;</a>) if @participants.respond_to?('next_page') and @participants.next_page %>
+<%= raw %(<a href="javascript:gotopage(#{@participants.total_pages})">&gt;&gt;</a>) if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 and @participants.current_page<@participants.total_pages %>
+
+<% end -%>

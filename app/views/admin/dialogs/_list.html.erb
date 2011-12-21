@@ -1,0 +1,35 @@
+<% if !@dialogs or !@dialogs.class==Array or @dialogs.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
+    <th>ID</th>
+		<th>Code</th>
+    <th>Name</th>
+		<th>Visibility</th>
+		<th>Openness</th>
+		<th>Created by</th>
+		<th>Origin Group</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @dialogs.each do |dialog| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= dialog.id %>" /></td>
+		<td><a href="#" onclick="viewrec1(<%= dialog.id %>)"><%= dialog.id %></a></td>
+		<td><a href="#" onclick="viewrec1(<%= dialog.id %>)"><%= dialog.shortname %></a></td>
+    <td><a href="#" onclick="viewrec1(<%= dialog.id %>)"><%= dialog.name %></a></td>
+		<td><%= dialog.visibility %></td>
+		<td><%= dialog.openness %></td>
+		<td><%= dialog.creator.name if dialog.creator %></td>
+		<td><%= dialog.maingroup.name if dialog.maingroup %></td>
+  </tr>
+<% end %>
+</table>
+
+<% end -%>

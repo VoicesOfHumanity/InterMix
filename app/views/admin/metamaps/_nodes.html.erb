@@ -1,0 +1,29 @@
+<% if !@metamap_nodes or !@metamap_nodes.class==Array or @metamap_nodes.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+    <th></th>
+		<th>ID</th>
+		<th>Name</th>
+		<th>Sort</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @metamap_nodes.each do |metamap_node| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="admmark" title="mark" value="<%= metamap_node.id %>" /></td>
+		<td><%= metamap_node.id %></td>
+		<td><%= metamap_node.name %></td>
+		<td><%= metamap_node.sortorder %></td>
+  </tr>
+<% end %>
+</table>
+
+<% end -%>
+
+<p><a href="javascript:add_node()">Add</a>: <%= text_field_tag :new_node_name %> | <a href="javascript:del_node()">Delete marked</a></p>

@@ -1,0 +1,13 @@
+<%= render(:partial => 'groups/menu')%>
+
+<h3 style="clear:both">Sub-group / tag</h3>
+
+<form action="/groups/<%= @group.id %>/subtag_save" method="post">
+<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+<%= hidden_field_tag :group_subtag_id, @group_subtag_id %>
+
+<p>Tag: <%= text_field :group_subtag, :tag, :size => 30 %></p>
+
+<p><input type="submit" value="Save"></p>
+
+</form>

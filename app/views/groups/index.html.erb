@@ -1,0 +1,36 @@
+<h3>Groups</h3>
+
+<% if @groupsin.length > 0 -%>
+<p>You are a member<%= @ismoderator ? "/moderator" : "" %> of these groups:</p>
+<% else -%>
+<p>You're not a member of any groups</p>
+<% end -%>
+
+<ul>
+<% for gp in @groupsin -%>
+	<% dom = ((gp.group.shortname.to_s != "") ? "#{gp.group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
+	<li><a href="/groups/<%= gp.group.id %>/forum"><%= gp.group.name %></a>
+		<a href="/groups/<%= gp.group.id %>/view">info</a>
+	<a href="/groups/<%= gp.group.id %>/admin">administrate</a> <a href="/groups/<%= gp.group.id %>/unjoin" onclick="confirm('Are you sure you want to leave this group?')">leave</a></li>
+<% end -%>
+</ul>
+
+
+<% if @groupsopen.length > 0 -%>
+
+	<p>These are <%= @groupsin.length > 0 ? 'other ' : '' %>groups you might be able to join:</p>
+
+	<ul>
+	<% for group in @groupsopen -%>
+		<% if not @groupsina.include?(group.id) -%>
+			<% dom = ((group.shortname.to_s != "") ? "#{group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
+			<li><a href="http://<%= dom %>/groups/<%= group.id %>/view"><%= group.name %></a> - Description: <%= group.description %> Members: <%= group.group_participants_count.to_i %> <a href="http://<%= dom %>/groups/<%= group.id %>/join"><%= group.openness=='open' ? "Join" : '' %></a></li>
+		<% end -%>
+	<% end -%>
+	</ul>
+
+<% else -%>
+	<p>There are no other groups open to joining</p>
+<% end -%>
+
+<p><a href="/groups/new">Create a new group</a></p>

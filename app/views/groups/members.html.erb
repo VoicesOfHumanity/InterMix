@@ -1,0 +1,38 @@
+<%= render(:partial => 'groups/menu')%>
+
+<h3>Members of: <%= @group.name %></h3>
+
+<table class="listtable">
+<tr><th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th><th>Name</th><th>Sub-groups / tags</th></tr>	
+<% for member in @group.group_participants -%>
+<tr>
+	<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= member.participant_id %>" /></td>
+	<td><a href="/participant/<%= member.participant_id %>/profile"><%= member.participant.name %></a></td>
+	<td><%= member.subtags %></td>
+</tr>
+<% end -%>
+</table>
+
+<p>Tag selected as sub-group
+	<%= select_tag :group_subtag_id, [['',0]]+GroupSubtag.where(:group_id=>@group.id).collect {|p| [ "#{p.tag}".raw, p.id ] } %>
+</p>
+
+<script>
+var allmarked = false;
+function markall() {
+	var marks = $('input.cammark');
+	for (var x=0;x<marks.length;x++) {
+		var mark = marks[x];
+		if (allmarked) {
+			mark.checked = false;
+		} else {
+			mark.checked = true;
+		}	
+	}
+	if (allmarked) {
+		allmarked = false;
+	} else {
+		allmarked = true;
+	}
+}
+</script>

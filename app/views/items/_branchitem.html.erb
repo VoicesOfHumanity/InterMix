@@ -1,0 +1,67 @@
+<% showlong = (item.media_type!='text' or (item.short_content.to_s != '' and (item.html_content.length < 140 or item.html_content == "<p>#{item.short_content}</p>"))) -%>
+
+<% if @error_message.to_s != '' -%>
+<p><%= @error_message %></p>
+<% end -%>
+
+
+<% if false -%>
+
+<span class="<%= level < 1 ? 'folder' : 'file' %>"><a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>:<b><%= item.subject %></b>:<%=raw item.short_content %>...</span>
+
+<% elsif true -%>
+
+<div class="forumbranchitem <%= level < 1 ? 'folder' : 'file' %>">
+	<div class="subject subject<%= odd_or_even %>"><%= item.subject %></div>
+	<% if false -%>
+	<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+	<div id="shortcontent_<%= item.id %>" class="htmlcontent"><%=raw item.short_content %><span onclick="expand(<%= item.id %>)" class="dot_expand" title="click to expand">...</span></div>
+	<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none;border:1px dotted #000;padding:5px"><%=raw sanitizethis(item.html_content) %></div>
+	<% end -%>
+
+	<% if item.media_type == 'picture' -%>
+		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+		<div id="shortcontent_<%= item.id %>" class="htmlcontent"><img src="/images/data/items/<%= item.id %>/thumb.jpg" class="item_img_sm"><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none;border:1px dotted #000;padding:5px"><img src="/images/data/items/<%= item.id %>/big.jpg" class="item_img_lr"><br><%=raw item.short_content %></div>
+	
+	<% elsif item.media_type == 'link' -%>	
+	
+		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">−</div>
+		<div id="shortcontent_<%= item.id %>" class="htmlcontent" style="display:none"><%=raw item.link %></div>
+		<div id="htmlcontent_<%= item.id %>" class="htmlcontent"><%=raw item.link %></div>
+
+	<% elsif item.media_type == 'video' -%>
+
+		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+		<div id="shortcontent_<%= item.id %>"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm_w\">" : 'video' %><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\">" : 'video' %><br><%=raw item.short_content %></div>
+		
+	<% elsif item.media_type == 'audio' -%>
+			
+		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+		<div id="shortcontent_<%= item.id %>"><%=raw item.oembed_response['thumbnail_url'].to_s!='' ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm\">" : 'audio' %><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw item.oembed_response['thumbnail_url'].to_s!='' ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\">" : 'audio' %><br><%=raw item.short_content %></div>
+		
+	<% else -%>
+		
+		<% if showlong -%>
+			<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">−</div>
+			<div id="shortcontent_<%= item.id %>" class="htmlcontent" style="display:none"><%=raw item.short_content %></div>
+			<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="border:1px dotted #000;padding:5px"><%=raw sanitizethis(item.html_content) %></div>
+		<% else -%>
+			<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+			<div id="shortcontent_<%= item.id %>" class="htmlcontent"><%=raw item.short_content %><span onclick="expand(<%= item.id %>)" class="dot_expand" title="click to expand">...</span></div>
+			<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none;border:1px dotted #000;padding:5px"><%=raw sanitizethis(item.html_content) %></div>
+		<% end -%>
+		
+	<% end -%>
+
+</div>
+
+<% else -%>
+
+<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
+<div id="shortcontent_<%= item.id %>" class="htmlcontent"><%=raw item.short_content %><span onclick="expand(<%= item.id %>)" class="dot_expand" title="click to expand">...</span></div>
+<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none"><%=raw sanitizethis(item.html_content) %></div>
+
+<% end -%>

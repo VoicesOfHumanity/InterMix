@@ -1,0 +1,310 @@
+<form id="searchform" name="searchform" action="">
+<input type="hidden" name="page" id="page" value="<%= @page || 1 %>"/>
+<table class="edittable">
+<tr><td class="left">ID</td><td><%= text_field_tag :item_id, "", "size"=>6 %></td></tr>
+<tr><td class="left">By</td><td><%= select_tag :posted_by, options_for_select(
+[['',0]] + Participant.order(:last_name,:first_name).all.collect {|p| [p.name,p.id]} ) %></td></tr>
+<tr><td class="left">Group</td><td><%= select_tag :group_id, options_for_select(
+[['',0]] + Group.order(:name).all.collect {|g| [g.name,g.id]} ) %></td></tr>
+<tr><td class="left">Tags</td><td><%= text_field_tag :tags, "", "size"=>50 %>&nbsp;&nbsp;
+<span style="font-size:10px"><%= raw Tagging.tags_for('Item','addtag') %></span></td></tr>
+<tr><td class="left">Flagged</td><td><%= check_box_tag :is_flagged %></td></tr>
+
+<tr></tr>
+<tr><td class="left">Sort</td><td>
+<% xsort = [['',''],["created",'created_at desc'],['ID','id desc']] %>
+<% for x in (1..2).to_a -%>
+<%= select_tag "sort#{x}", options_for_select(xsort,@sort[x-1]) %>
+<% end -%>
+&nbsp;&nbsp;
+Per Page <%= select_tag(:per_page, options_for_select([10,20,30,50,100,200,500,1000,['* all *','9999']],30)) %>
+</td></tr>
+
+</table>
+
+<table width="100%"><tr><td>
+<input type="button" value="Search/List" onclick="search()"/>
+</td><td align="right">
+<%= link_to_function 'New item', "newrec1()" %>&nbsp;&nbsp;&nbsp;
+</td></tr>	
+</table>	
+
+</form>
+
+
+
+<div id="list1box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('list1')" title="Close" /></div>
+<div class="nav_icon" id="maxlist1im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('list1')" title="Maximize" /></div>
+<div class="nav_icon" id="minlist1im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('list1')" title="Minimize" /></div>
+<a name="list1"></a>
+<h3 id="list1title">List of Items</h3>
+<div id="list1boxcontent"></div>
+</div>
+
+<div id="rec1box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('rec1')" title="Close" /></div>
+<div class="nav_icon" id="maxrec1im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('rec1')" title="Maximize" /></div>
+<div class="nav_icon" id="minrec1im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('rec1')" title="Minimize" /></div>
+<a name="cam"></a>
+<h3 id="rec1title">Item Record</h3>
+<div id="rec1boxcontent"></div>
+</div>
+
+<div id="list2box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('list2')" title="Close" /></div>
+<div class="nav_icon" id="maxlist2im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('list2')" title="Maximize" /></div>
+<div class="nav_icon" id="minlist2im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('list2')" title="Minimize" /></div>
+<a name="list2"></a>
+<h3 id="list2title">Ratings</h3>
+<div id="list2boxcontent"></div>
+</div>
+
+<div id="rec2box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('rec2')" title="Close" /></div>
+<div class="nav_icon" id="maxrec2im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('rec2')" title="Maximize" /></div>
+<div class="nav_icon" id="minrec2im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('rec2')" title="Minimize" /></div>
+<a name="cam"></a>
+<h3 id="rec2title">Rating</h3>
+<div id="rec2boxcontent"></div>
+</div>
+
+<script type="text/javascript">
+var curid1 = 0;
+var curid2 = 0;
+function search() {
+	$('#list1box').show();
+	$('#list1box').css('opacity','0.5');
+	showworking();
+	var pars = $("#searchform").serialize();
+	$.ajax({
+		type: "GET",
+		url: "/admin/items",
+		data: pars,
+		complete: function(t){	
+			$("#list1boxcontent").html(t.responseText);
+			searchdone();
+		}
+	});	
+}
+var searchdone = function(t) {
+  $('#list1box').show();
+  $('#list1boxcontent').show();
+  hideworking();
+  $('#list1box').css('opacity','1.0');
+  boxmax('list1');
+}
+var gotopage = function(page) {
+	$('#list1box').show();
+	$('#list1box').css('opacity','0.5');
+	showworking();
+  $('#page').val(page);
+	var pars = $("#searchform").serialize();
+	$.ajax({
+		type: "GET",
+		url: "/admin/items",
+		data: pars,
+		complete: function(t){	
+			$("#list1boxcontent").html(t.responseText);
+			searchdone();
+		}
+	});	
+}
+function viewrec1(id) {
+  curid1 = id;
+  $("#rec1boxcontent").html("<br/><br/>working...<br/>");
+	$.ajax({
+    type: "GET",
+    url: "/admin/items/"+id,
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+    }
+  });	
+}
+function editrec1() {
+  id = curid1;
+  $('#rec1box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/items/"+id+'/edit',
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+     }
+   });	
+}
+function newrec1() {
+	curid1 = 0;
+  $('#rec1box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/items/new",
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+     }
+   });	
+}
+function delrec1() {
+	if (confirm("Are you sure you want to delete item #" + curid1 + "?")) {
+    $('rec1box').css('opacity','0.5');
+		$.ajax({
+	    type: 'DELETE',
+	    url: '/admin/items/'+curid1,
+	    complete: function(t){	
+	      $("#rec1boxcontent").html(t.responseText);
+			  $('#rec1box').css('opacity','1.0');
+				search();
+	     }
+	   });			
+	}
+}
+function saverec1() {
+  id = curid1;
+  if (id>0) {
+		var pars = $("#edit_item_"+id).serialize();
+    var url = "/admin/items/"+id;
+		var xtype = 'PUT';
+  } else {
+		var pars = $("#new_item").serialize();
+    var url = "/admin/items";
+		var xtype = 'POST';
+  }
+  $('#rec1box').css('opacity','0.5');
+	$.ajax({
+    type: xtype,
+    url: url,
+    data: pars,
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+			search();
+     }
+   });	
+}
+
+function getlist2() {
+  $('#list2box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/ratings",
+		data: "from=item&item_id="+curid1,
+    complete: function(t){	
+      $("#list2boxcontent").html(t.responseText);
+		  $('#list2box').css('opacity','1.0');
+     }
+   });		
+}
+function viewrec2(id) {
+  curid2 = id;
+  $("#rec2boxcontent").html("<br/><br/>working...<br/>");
+	$.ajax({
+    type: "GET",
+    url: "/admin/ratings/"+id,
+		data: "from=item&item_id="+curid1,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+    }
+  });	
+}
+function editrec2() {
+  id = curid2;
+  $('#rec2box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/ratings/"+id+'/edit',
+		data: "from=item&item_id="+curid1,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+     }
+   });	
+}
+function newrec2() {
+	curid2 = 0;
+  $('#rec2box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/ratings/new",
+		data: "from=item&item_id="+curid1,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+     }
+   });	
+}
+function delrec2() {
+	if (confirm("Are you sure you want to remove rating #" + curid2 + "?")) {
+    $('rec2box').css('opacity','0.5');
+		$.ajax({
+	    type: 'DELETE',
+	    url: '/admin/ratings/'+curid2,
+			data: "from=item&item_id="+curid1,
+	    complete: function(t){	
+	      $("#rec2boxcontent").html(t.responseText);
+			  $('#rec2box').css('opacity','1.0');
+				search();
+	     }
+	   });			
+	}
+}
+function saverec2() {
+  id = curid2;
+  if (id>0) {
+		var pars = $("#edit_rating_"+id).serialize();
+    var url = "/admin/ratings/"+id;
+		var xtype = 'PUT';
+  } else {
+		var pars = $("#new_rating").serialize();
+    var url = "/admin/ratings";
+		var xtype = 'POST';
+  }
+	pars += "&from=item&item_id="+curid1
+  $('#rec2box').css('opacity','0.5');
+	$.ajax({
+    type: xtype,
+    url: url,
+    data: pars,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+			getlist2(curid1);
+     }
+   });	
+}
+var allmarked = false;
+function markall() {
+	var marks = $('input.cammark');
+	for (var x=0;x<marks.length;x++) {
+		var mark = marks[x];
+		if (allmarked) {
+			mark.checked = false;
+		} else {
+			mark.checked = true;
+		}	
+	}
+	if (allmarked) {
+		allmarked = false;
+	} else {
+		allmarked = true;
+	}
+}
+function addtag(id,name) {
+	if ((', '+$('#tags').val()+', ').indexOf(', '+name+',')>-1) {
+		var stags = (', '+$('#tags').val()+', ').replace(', '+name+', ' , ', ');
+		$('#tags').val( stags.slice(2,stags.length-2) );
+	} else {
+	  if ($('#tags').val()!="") {
+	    $('#tags').val( $('#tags').val() + ', ' );
+	  }
+    $('#tags').val( $('#tags').val() + name );
+	}
+}
+
+
+
+search();
+</script>
+

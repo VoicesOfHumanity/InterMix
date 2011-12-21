@@ -1,0 +1,9 @@
+From: <%= @message.sender ? @message.sender.name : @message.from_participant_id %><br/>
+To: <%= @message.recipient ? @message.recipient.name : @message.to_participant_id %>
+<% if @message.group -%>
+as a member of <%= @message.group.name %>
+<% end -%>
+<br/>
+Sent <%= @message.created_at.strftime("%m/%d/%Y %H:%M") %><br/>
+Subject: <%= @message.subject %><br/>
+Message: <%= @message.message %><br/>

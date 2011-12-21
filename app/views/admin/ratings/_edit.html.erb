@@ -1,0 +1,33 @@
+<% semantic_form_for [:admin, @rating] do |f| %>
+
+	<% f.inputs do %>
+	
+		<%= f.input :rating_type, :as => :select, :collection =>RATING_TYPES, :required => true, :include_blank => false %>
+	
+		<% if @from != 'item' %>
+			<%= f.input :item_id, :as => :select, :collection => Item.order(:id).all.collect {|p| [p.subject,p.id]}, :required => true %>	
+		<% else -%>	
+			<%= f.input :item_id, :as => :hidden  %>	
+		<% end -%>
+		<% if @from != 'participant' %>
+			<%= f.input :participant_id, :as => :select, :collection => Participant.order(:last_name,:first_name).all.collect {|p| [p.name,p.id]}, :required => true %>	
+		<% else -%>	
+			<%= f.input :participant_id, :as => :hidden  %>	
+		<% end -%>
+		<% if @from != 'group' -%>
+			<%= f.input :group_id, :as => :select, :collection => Group.order(:name).all.collect {|g| [g.name,g.id]}, :required => false  %>	
+		<% else -%>
+			<%= f.input :group_id, :as => :hidden %>
+		<% end -%>	
+		
+		<%= f.input :approval, :as => :select, :collection =>['+3','+2','+1','0','-1','-2','-3'], :required => true, :include_blank => false %>
+		<%= f.input :interest, :as => :select, :collection =>[4,3,2,1,0], :required => true, :include_blank => false %>
+		
+	<% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec2(<%= @rating.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec2()" />
+</p>

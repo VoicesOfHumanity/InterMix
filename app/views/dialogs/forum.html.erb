@@ -1,0 +1,75 @@
+<%= render(:partial => 'dialogs/menu')%>
+
+<form id="searchform" style="clear:both">
+<div id="forumcontrol">
+	
+	<div class="right">
+	<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
+	<% if (@dialog.max_messages == 0 or @previous_messages < @dialog.max_messages) and @dialog.posting_open -%>
+	<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" id="newthreadbutton" onclick="newitem()">
+	<% end -%>
+	</div>
+
+	<div class="lefttitle">Sort by:</div>
+	<div class="leftfield">
+		<% sortarr = [['Custom','default'],['Date','items.id desc'],['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']] %>
+		<% if false -%>
+			<% for m in @dialog.metamaps -%>
+				<% sortarr << [m[1],"meta:#{m[0]}"] %>
+			<% end -%>	
+		<% end -%>
+		<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list()" %>
+	</div>
+
+	<% if false -%>
+	<div class="lefttitle">Threads:</div>
+	<div class="leftfield">
+	<%= select_tag "threads", options_for_select([['None',''],['First+Replies','flat'],['Tree View','tree']],@threads), :onchange=>"list()" %>
+	</div>
+	<% else -%>
+	<%= hidden_field_tag :threads, 'flat' %>	
+	<% end -%>
+
+	<div class="lefttitle">Show:</div>
+	<div class="leftfield">
+	<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list()" %>
+	</div>
+
+	<% if false -%>
+		<% if @groups.length > 1 -%>
+		<div class="lefttitle">Group:</div>
+		<div class="leftfield">
+		<%= select_tag "group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.group.name,c.group.id]},@group_id), :onchange=>"list()" %>
+		</div>
+		<% else -%>
+		<%= hidden_field_tag :group_id, @groups.length>0 ? @groups[0].id : @group_id %>	
+		<% end -%>
+	<% else %>
+		<%= hidden_field_tag :group_id, 0 %>
+	<% end -%>
+	
+	<%= hidden_field_tag :dialog_id, @dialog_id %>
+	<%= hidden_field_tag "from", "dialog" %>
+	<%= hidden_field_tag :page, 1 %>
+	<%= hidden_field_tag :test, params[:test] %>
+	
+</div>
+</form>
+
+<div id="newforumitem" class="newforumitem" style="display:none"></div>
+
+<div id="itemlist">
+<%= render(:partial => 'items/list')%>
+</div>
+
+
+<% if @new_signup -%>
+<div id="welcomepopup" class="modaldiv">
+<%= render(:partial => 'dialogs/welcome')%>
+</div>
+<script>
+$('#welcomepopup').modal();
+</script>
+
+<% end -%>
+

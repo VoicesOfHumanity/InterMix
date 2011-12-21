@@ -1,0 +1,13 @@
+<h3 style="clear:both"><%= @group.name %></h3>
+
+<ul class="horizmenu">
+<li><a class="menu<%= ' selected' if @gsection=='info' %>" href="/groups/<%= @group.id %>/view">Info</a></li>
+<li><a class="menu<%= ' selected' if @gsection=='forum' %>" href="/groups/<%= @group.id %>/forum">Forum</a></li>
+<li><a class="menu<%= ' selected' if @gsection=='invite' %>" href="/groups/<%= @group.id %>/invite">Invite</a></li>
+<% if @is_member and @is_moderator -%>
+<li><a class="menu<%= ' selected' if @gsection=='admin' %>" href="/groups/<%= @group.id %>/admin">Admin</a></li>
+<% end -%>
+<li><a  class="menu<%= ' selected' if @gsection=='' %>" href="/groups">All Groups</a></li>
+</ul>
+
+<div style="clear:both;height:1px"></div>

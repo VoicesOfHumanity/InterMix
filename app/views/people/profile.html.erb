@@ -1,0 +1,16 @@
+<div><%= render(:partial => 'profiles/public')%></div>
+
+<div id="followdiv"><%= render(:partial => 'follow') %></div>
+
+<script>
+function follow(onoff) {
+	$.ajax({
+    type: 'GET',
+    url: '/people/follow',
+    data: 'id=<%= @participant_id %>&onoff=' + onoff,
+    complete: function(t){	
+      $("#followdiv").html(t.responseText);
+    }
+  });	
+}
+</script>

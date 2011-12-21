@@ -1,0 +1,23 @@
+<% semantic_form_for [:admin, @group_participant] do |f| %>
+
+	<% f.inputs do %>
+		<% if @from != 'group' -%>
+			<%= f.input :group_id, :as => :select, :collection => Group.order(:name).all.collect {|g| [g.name,g.id]}, :required => true  %>	
+		<% else -%>
+			<%= f.input :group_id, :as => :hidden %>
+		<% end -%>	
+		<% if @from != 'participant' %>
+			<%= f.input :participant_id, :as => :select, :collection => Participant.order(:last_name,:first_name).all.collect {|p| [p.name,p.id]}, :required => true %>	
+		<% else -%>	
+			<%= f.input :participant_id, :as => :hidden  %>	
+		<% end -%>
+		<%= f.input :moderator, :as => :boolean %>
+		<%= f.input :active, :as => :boolean %>
+	<% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec2(<%= @group_participant.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec2()" />
+</p>

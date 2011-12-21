@@ -1,0 +1,17 @@
+<h3 style="clear:both"><%= @dialog.name %></h3>
+
+<% if session[:dialog_id].to_i == 0 -%>
+<ul class="horizmenu">
+<li><a class="menu<%= ' selected' if @dsection=='info' %>" href="/dialogs/<%= @dialog.id %>/view">Info</a></li>
+<li><a class="menu<%= ' selected' if @dsection=='forum' %>" href="/dialogs/<%= @dialog.id %>/forum">Forum</a></li>
+<li><a class="menu<%= ' selected' if @dsection=='meta' %>" href="/dialogs/<%= @dialog.id %>/meta">Overview</a></li>
+<% if @is_admin -%>
+<li><a class="menu<%= ' selected' if @dsection=='edit' %>" href="/dialogs/<%= @dialog.id %>/edit">Admin</a></li>
+<% end -%>
+<% if false -%>
+<li><a  class="menu<%= ' selected' if @dsection=='' %>" href="/dialogs">All Discussions</a></li>
+<% end -%>
+</ul>
+<% end -%>
+
+<div style="clear:both;height:1px"></div>

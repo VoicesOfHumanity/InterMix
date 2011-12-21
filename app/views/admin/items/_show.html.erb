@@ -1,0 +1,34 @@
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @item.id %></td></tr>	
+<tr><td class="left">Type:</td><td><%= @item.item_type %></td></tr>	
+<tr><td class="left">Media Type:</td><td><%= @item.media_type %></td></tr>
+<tr><td class="left">Posted Via:</td><td><%= @item.posted_via %></td></tr>
+<tr><td class="left">Group:</td><td><%= @item.group_id %></td></tr>	
+<tr><td class="left">Dialog:</td><td><%= @item.dialog_id %></td></tr>	
+<tr><td class="left">Round:</td><td><%= @item.dialog_round_id %></td></tr>	
+<tr><td class="left">Subject:</td><td><%= @item.subject %></td></tr>
+<tr><td class="left">Link:</td><td><%= @item.link %></td></tr>
+<tr><td class="left">Short:</td><td><%=raw @item.short_content %></td></tr>	
+<tr><td class="left">HTML:</td><td><%=raw @item.html_content %></td></tr>	
+<tr><td class="left">XML:</td><td><pre><%= @item.xml_content %></pre></td></tr>	
+<tr><td class="left">Oembed Data:</td><td><pre><%= h(@item.oembed_response.inspect).gsub(', ',',<br>') %></pre></td></tr>	
+<tr><td class="left">Embed Code:</td><td><pre><%= h(@item.embed_code).gsub('&gt;&lt;','&gt;<br>&lt;') %></pre></td></tr>	
+<tr><td class="left">Tags:</td><td><%= @item.tag_list if @item.tag_list %></td></tr>
+<tr><td class="left">Promoted to forum:</td><td><%= @item.promoted_to_forum ? 'yes' : 'no' %></td></tr>	
+<tr><td class="left">Election area type:</td><td><%= @item.election_area_type %></td></tr>	
+<tr><td class="left">Moderation status:</td><td><%= @item.moderation_status %></td></tr>	
+<tr><td class="left">Moderated date:</td><td><%= @item.moderated_at ? @group.moderated_at.strftime("%Y-%m-%d %H:%M") : "" %></td></tr>	
+<tr><td class="left">Moderated by:</td><td><%= @item.moderated_by %></td></tr>	
+<tr><td class="left">Created:</td><td><%= @item.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @item.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+<p>
+<a href="javascript:editrec1()">Edit</a> | 
+<a href="javascript:delrec1()">Delete</a> |
+<a href="javascript:getlist2()">Ratings</a>
+</p>
+
+<script>
+curid1 = <%= @item.id %>;
+</script>	

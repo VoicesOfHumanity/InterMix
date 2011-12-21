@@ -1,0 +1,41 @@
+<%= render(:partial => 'groups/menu')%>
+
+<h3 style="clear:both">Group Administration</h3>
+
+<p><b>Group:</b> <%= @group.name %></p>
+
+<% if not ( @is_moderator or @group.owner.to_s == current_participant.id ) -%>
+	<p>You are not an administrator of this group.</p>
+<% else -%>
+
+	<p><b>Members:</b> <a href="/groups/<%= @group.id %>/members"><%= @group.group_participants_count.to_i %></a></p>
+
+	<p><b>Items Posted:</b> <a href="/forum?group_id=<%= @group.id %>"><%= @group.items_count.to_i %></a></p>
+
+	<p><b>Periods:</b><ul>
+	<% for period in @group.periods -%>
+		<li><a href="/groups/<%= @group.id %>/period_edit?period_id=<%= period.id %>"><%= period.startdate %> - <%= period.enddate -%>: <%= period.name %></a></li>
+	<% end -%>
+	</ul>	
+	<a href="/groups/<%= @group.id %>/period_edit?period_id=0">Add a period</a>	
+	</p>
+
+	<p><b>Sub-groups (tags):</b><ul>
+	<% for group_subtag in @group.group_subtags -%>
+		<li><a href="/groups/<%= @group.id %>/subtag_edit?group_subtag_id=<%= group_subtag.id %>"><%= group_subtag.tag %></a></li>
+	<% end -%>	
+	</ul>
+	<a href="/groups/<%= @group.id %>/subtag_edit?group_subtag_id=0">Add a sub-group</a>	
+	</p>
+
+	<p>You are a group moderator. You can <a href="/groups/<%= @group.id %>/moderate">moderate</a> the group members, or <a href="/groups/<%= @group.id %>/edit">edit</a> the group information and settings</p>
+
+	<p><a href="/groups/<%= @group.id %>/invite">Invite more members</a></p>
+
+<% end -%>
+
+<% if @group.logo.exists? then -%>
+<p><%= image_tag @group.logo.url %></p>
+<% end -%>
+
+

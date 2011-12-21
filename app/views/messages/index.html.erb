@@ -1,0 +1,110 @@
+<%= render(:partial => 'menu')%>
+
+<div id="messagelist"><%= render(:partial => 'list') %></div>
+<div id="messageview" style="display:none;border:1px dotted #666;padding:10px"></div>
+
+<script>
+var curid = 0;
+var curinout = 'in';
+function showinout(inout) {
+  $('#messagelist').css('opacity','0.5');
+	curinout = inout;
+	$.ajax({
+    type: 'GET',
+    url: '/messages/list',
+    data: 'inout='+inout,
+    complete: function(t){	
+      $("#messagelist").html(t.responseText);
+		  $('#messagelist').css('opacity','1.0');
+     }
+   });	
+}
+var showingnew = false;
+function showmess(id) {
+	if (showingnew) {
+		$('#messageview').hide();
+		showingnew = false;
+		return;
+	}
+	$("#messageview").html("Just a moment...");
+  $('#messageview').show();	
+  $.ajax({
+    type: 'GET',
+    url: '/messages/'+id,
+    complete: function(t){	
+      $("#messageview").html(t.responseText);
+		  $('#messageview').show();
+			showingnew = true;
+     }
+   });	
+}
+function newmess() {
+	if (showingnew) {
+		$('#messageview').hide();
+		showingnew = false;
+		return;
+	}
+	$.ajax({
+    type: 'GET',
+    url: '/messages/new',
+    complete: function(t){	
+      $("#messageview").html(t.responseText);
+		  $('#messageview').show();
+			showingnew = true;
+     }
+   });	
+}
+var oldval = '';
+function editmess(id) {
+	if (showingnew) {
+		$('#messageview').hide();
+		showingnew = false;
+		return;
+	}
+	curid = id;
+	$.ajax({
+    type: "GET",
+    url: '/messages/edit?message_id='+id,
+    complete: function(t){	
+      $("#messageview").html(t.responseText);
+		  $('#messageview').show();
+			showingnew = true;
+     }
+   });	
+}
+function savemess() {
+	id = curid;
+	if (id>0) {
+		var pars = $("#edit_message_"+id).serialize();
+		var url = "/messages/"+id;
+		var xtype = 'PUT';
+	} else {
+		var pars = $("#new_message").serialize();
+		var url = "/messages";
+		var xtype = 'POST';
+	}
+ 	$('#messageview').css('opacity','0.5');
+	$.ajax({
+	  type: xtype,
+	  url: url,
+	  data: pars,
+	  complete: function(t){	
+			$('#messageview').html(t.responseText);
+			$('#messageview').css('opacity','1.0');
+			/* $('#messageview').hide(); */
+			messlist();
+		}
+	 });	
+}
+function messlist() {
+	$.ajax({
+    type: 'GET',
+    url: '/messages/list',
+    data: 'inout='+curinout,
+    complete: function(t){	
+      $("#messagelist").html(t.responseText);
+		  $('#messagelist').css('opacity','1.0');
+     }
+   });	
+}
+</script>

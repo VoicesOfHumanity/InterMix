@@ -1,0 +1,31 @@
+<% if !@group_members or !@group_members.class==Array or @group_members.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
+		<th>ID</th>
+		<th>Name</th>
+		<th>E-mail</th>
+    <th>Status</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @group_participants.each do |group_participant| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= group_participant.id %>" /></td>
+		<td><%= link_to_function group_participant.participant.id, "viewrec2(#{group_participant.id})" %></td>
+		<td><%= link_to_function group_participant.participant.name, "viewrec2(#{group_participant.id})" %></td>
+		<td><%= group_participant.participant.email %></td>	
+		<td><%= group_participant.participant.status %></td>		
+  </tr>
+<% end %>
+</table>
+
+<% end -%>
+
+<p><%= link_to_function 'Add member', "newrec2()" %</p>
