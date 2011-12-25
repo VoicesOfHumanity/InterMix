@@ -13,9 +13,8 @@ set :rvm_ruby_string, '1.9.2'        # Or whatever env you want it to run in.
 #}
 
 set :application, "Intermix"
-#set :repository,  "/home/git/intermix"
-set :repository,  "ploy@sirius.cr8.com:/home/git/intermix"
-set :local_repository, "ploy@sirius.cr8.com:/home/git/intermix"
+set :repository, "git@github.com:VoiceOfHumanity/InterMix.git"
+#set :local_repository, "ploy@sirius.cr8.com:/home/git/intermix"
 set :user, 'ploy'
 set :password, 'eu4bd8%t'
 set :ssh_options, { :user => "ploy", :port => 22 }
