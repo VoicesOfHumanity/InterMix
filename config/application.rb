@@ -70,11 +70,11 @@ METAMAP_VOTE_OWN = ['mainly', 'only', 'never']
 METAMAP_VOTE_OWN_TEXT = {'mainly'=>"Primarily vote on own category's posts", 'only'=>"Only vote on own category's posts", 'never'=>"Can't vote on own category's posts"}
 SYSTEM_SENDER = 'noreply@intermix.org'
 
-TWITTER_CONSUMER_KEY = 'Ew8NROMK7YbDa3XIph6gA'   # = API key. And this is for the Posting app, not the Login app
-TWITTER_CONSUMER_SECRET = 'ghQ41Vu377BAh3oVRACpKdYzeUo5SJardQunvALkj8'
+TWITTER_CONSUMER_KEY = 'xxxxxx'   # = API key. And this is for the Posting app, not the Login app
+TWITTER_CONSUMER_SECRET = 'xxxxxx'
 
-FACEBOOK_APP_ID          = '151526481561013'
-FACEBOOK_API_SECRET      = '3653366f2b6d4778e09db3d666d1fedf'
+FACEBOOK_APP_ID          = 'xxxxxx'
+FACEBOOK_API_SECRET      = 'xxxxxx'
 
 
 
