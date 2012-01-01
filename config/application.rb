@@ -35,7 +35,8 @@ module Intermix
     # config.i18n.default_locale = :de
 
     # JavaScript files you want as :defaults (application.js is always included).
-    config.action_view.javascript_expansions[:defaults] = %w(jquery-1.4.2.min jquery-ui-1.8.6.custom.min ui.selectmenu.js rails)
+    #config.action_view.javascript_expansions[:defaults] = %w(jquery-1.4.2.min jquery-ui-1.8.6.custom.min ui.selectmenu.js rails)
+    config.action_view.javascript_expansions[:defaults] = %w(https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js ui.selectmenu.js rails)
     
     #-- This is for ckeditor
     config.autoload_paths += %W( #{config.root}/app/models/ckeditor )
@@ -70,11 +71,12 @@ METAMAP_VOTE_OWN = ['mainly', 'only', 'never']
 METAMAP_VOTE_OWN_TEXT = {'mainly'=>"Primarily vote on own category's posts", 'only'=>"Only vote on own category's posts", 'never'=>"Can't vote on own category's posts"}
 SYSTEM_SENDER = 'noreply@intermix.org'
 
-TWITTER_CONSUMER_KEY = 'xxxxxx'   # = API key. And this is for the Posting app, not the Login app
-TWITTER_CONSUMER_SECRET = 'xxxxxx'
-
-FACEBOOK_APP_ID          = 'xxxxxx'
-FACEBOOK_API_SECRET      = 'xxxxxx'
+# These are in localsettings.rb
+#TWITTER_CONSUMER_KEY = 'xxxxxx'   # = API key. And this is for the Posting app, not the Login app
+#TWITTER_CONSUMER_SECRET = 'xxxxxx'
+#
+#FACEBOOK_APP_ID          = 'xxxxxx'
+#FACEBOOK_API_SECRET      = 'xxxxxx'
 
 
 
