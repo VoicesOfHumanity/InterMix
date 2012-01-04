@@ -46,7 +46,7 @@ var gotopage = function(page) {
 		}
 	});	
 }
-function newitem() {
+function newitem(token) {
 	curid = 0;
 	$('#newforumitem').html("working...");
 	$('#newforumitem').show();
@@ -57,7 +57,7 @@ function newitem() {
 	if ($('#dialog_id').val()>0) {
 		pars += "&dialog_id="+$('#dialog_id').val();
 	}
-    pars += "&authenticity_token=<%= form_authenticity_token %>";
+    pars += "&authenticity_token="+token;
 	$.ajax({
 		type: "GET",
 		url: '/items/new?xtime=' + (new Date()).getTime(),
