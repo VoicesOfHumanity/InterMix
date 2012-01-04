@@ -1,11 +1,11 @@
 class Participant < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable
-  devise :database_authenticatable, :registerable, :omniauthable,
+  devise :database_authenticatable, :token_authenticatable, :registerable, :omniauthable,
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :title, :address1, :address2, :city, :admin1uniq, :county_code, :county_name, :state_code, :state_name, :country_code, :country_name, :phone, :zip, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :status, :self_description, :tag_list, :visibility, :twitter_post, :twitter_username, :forum_email, :group_email, :private_email, :system_email
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :title, :address1, :address2, :city, :admin1uniq, :county_code, :county_name, :state_code, :state_name, :country_code, :country_name, :phone, :zip, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :status, :self_description, :tag_list, :visibility, :twitter_post, :twitter_username, :forum_email, :group_email, :private_email, :system_email, :authentication_token
   acts_as_taggable
 
   has_many :group_participants
@@ -91,6 +91,11 @@ class Participant < ActiveRecord::Base
 
   def password_required?
     (authentications.empty? || !password.blank?) && super
+  end
+  
+  def ensure_authentication_token!   
+    # http://yekmer.posterous.com/single-access-token-using-devise
+    reset_authentication_token! if authentication_token.blank?   
   end
   
   def groups_in

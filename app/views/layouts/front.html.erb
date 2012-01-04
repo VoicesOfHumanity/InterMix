@@ -96,8 +96,11 @@
 	
 	<div class="span-24 last">
 		<div style="margin-bottom:5px;padding:3px 10px;background-color: #d1cec3;text-align:center">
-	<a href="/privacy">Privacy</a> |
-	Contact
+	<a href="/privacy">Privacy</a>
+	<% if false and participant_signed_in? -%>
+	| <%= link_to_function "Easy Opt Out", 'open("/optout", "", "toolbar=no,menubar=no,location=no,scrollbars=no,resizable=yes,width=500,height=200")' %>
+	<% end -%>
+	| Contact
 		</div>
 	</div>
 </div>

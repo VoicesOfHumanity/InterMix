@@ -158,6 +158,8 @@ Intermix::Application.routes.draw do
   #   end
 
   match 'privacy' => 'front#privacy'
+  match 'optout' => 'front#optout'
+  match 'optout_confirm' => 'front#optout_confirm'
   match 'front/getadmin1s' => 'front#getadmin1s'
   match 'front/getadmin2s' => 'front#getadmin2s'
   match 'front/getmetro' => 'front#getmetro'

@@ -12,13 +12,15 @@
 <% end -%>
 <br/><br/>
 
+<p><a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a> to see this post, to access more features, or if you're having trouble seeing this.</p>
+
 <div>
 <%=raw @message %>
 </div>
 
 <hr/>
 
-To respond to <a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view">this post</a>, log into the <a href="http://<%= BASEDOMAIN %>/groups/<%= @cdata['item'].group_id.to_i %>/forum">Forum</a>, or simply reply to this message. Please remove quotes and footers from previous messages. For available e-mail commands, send a blank message to <%= @cdata['group'].shortname %>-admin@intermix.cr8.com for an automated answer. If you have problems, write to the moderator at <%= @cdata['group'].shortname %>-owner@intermix.cr8.com.
+To respond to <a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">this post</a>, log into the <a href="http://<%= BASEDOMAIN %>/groups/<%= @cdata['item'].group_id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>">Forum</a>, or simply reply to this message. Please remove quotes and footers from previous messages. For available e-mail commands, send a blank message to <%= @cdata['group'].shortname %>-admin@intermix.cr8.com for an automated answer. If you have problems, write to the moderator at <%= @cdata['group'].shortname %>-owner@intermix.cr8.com.
 
 <img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['item'].id.to_i if @cdata['item'] %>_<%= @cdata['recipient'].id.to_i if @cdata['recipient'] %>.gif" width="0" height="0" border="0" style="display:none">
 

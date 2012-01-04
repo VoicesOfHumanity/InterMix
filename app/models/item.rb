@@ -79,12 +79,11 @@ class Item < ActiveRecord::Base
     #-- E-mail it to everybody who needs to get it in e-mail
     #-- Post it to twitter
     create_xml
-    # NB: LEAVING E-MAILING OUT FOR NOW
-    #if old_message_id.to_i == 0
-    #  #-- Only twitter and e-mail if it really is a new message just being posted
-    #  personal_twitter
-    #  emailit
-    #end
+    if old_message_id.to_i == 0
+      #-- Only twitter and e-mail if it really is a new message just being posted
+      personal_twitter
+      emailit
+    end
     self.save
   end  
   
@@ -124,6 +123,10 @@ class Item < ActiveRecord::Base
         next
       end      
       logger.info("sending e-mail to #{recipient.id}:#{recipient.name}")
+      
+      # Make sure we have an authentication token for them to log in with
+      # http://yekmer.posterous.com/single-access-token-using-devise
+      recipient.ensure_authentication_token!
       
       cdata = {}
       cdata['item'] = self

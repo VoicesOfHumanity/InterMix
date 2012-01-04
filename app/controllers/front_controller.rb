@@ -73,6 +73,15 @@ class FrontController < ApplicationController
     #-- Privacy statement
   end  
   
+  def optout
+    #-- Optout pop-up screen    
+    render :action=>:optout, :layout=>'blank'
+  end
+  
+  def optout_confirm
+    #-- Opt this person out of e-mailing
+  end
+  
   def instantjoinform
     #-- For including in another site, e.g. in a sidebar, in an iframe to make it easy to join
     #render :partial=>'instantjoinform', :layout=>false

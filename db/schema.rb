@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111221021413) do
+ActiveRecord::Schema.define(:version => 20120104011117) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -512,6 +512,7 @@ ActiveRecord::Schema.define(:version => 20111221021413) do
     t.text     "forum_settings"
     t.string   "last_url"
     t.string   "handle"
+    t.string   "authentication_token"
   end
 
   add_index "participants", ["confirmation_token"], :name => "index_participants_on_confirmation_token", :unique => true

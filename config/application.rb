@@ -36,7 +36,7 @@ module Intermix
 
     # JavaScript files you want as :defaults (application.js is always included).
     #config.action_view.javascript_expansions[:defaults] = %w(jquery-1.4.2.min jquery-ui-1.8.6.custom.min ui.selectmenu.js rails)
-    config.action_view.javascript_expansions[:defaults] = %w(https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js ui.selectmenu.js rails)
+    config.action_view.javascript_expansions[:defaults] = %w(https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js ui.selectmenu.js rails)
     
     #-- This is for ckeditor
     config.autoload_paths += %W( #{config.root}/app/models/ckeditor )

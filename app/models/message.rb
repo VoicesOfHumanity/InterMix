@@ -20,6 +20,10 @@ class Message < ActiveRecord::Base
       return
     end      
     
+    # Make sure we have an authentication token for them to log in with
+    # http://yekmer.posterous.com/single-access-token-using-devise
+    recipient.ensure_authentication_token!
+    
     cdata = {}
 
     cdata['recipient'] = recipient
