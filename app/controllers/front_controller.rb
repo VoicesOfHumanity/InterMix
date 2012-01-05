@@ -75,11 +75,18 @@ class FrontController < ApplicationController
   
   def optout
     #-- Optout pop-up screen    
-    render :action=>:optout, :layout=>'blank'
+    if params[:layout].to_s != ''
+      layout = params[:layout].to_s
+    else
+      layout = 'front'
+    end
+    render :action=>:optout, :layout=>layout
   end
   
   def optout_confirm
     #-- Opt this person out of e-mailing
+    current_participant.no_email = true
+    current_participant.save!
   end
   
   def instantjoinform
