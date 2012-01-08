@@ -1,6 +1,6 @@
-<% semantic_form_for [:admin, @template] do |f| %>
+<%= semantic_form_for [:admin, @template] do |f| %>
 
-	<% f.inputs do %>
+	<%= f.inputs do %>
 		<%= f.input :name, :required => true %>
 		<%= f.input :section, :as => :select, :collection => SECTIONS %>
 		<%= f.input :mail_web, :as => :select, :collection => ['web','mail'], :include_blank => false %>

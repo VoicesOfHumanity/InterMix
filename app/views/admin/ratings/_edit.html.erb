@@ -1,6 +1,6 @@
-<% semantic_form_for [:admin, @rating] do |f| %>
+<%= semantic_form_for [:admin, @rating] do |f| %>
 
-	<% f.inputs do %>
+	<%= f.inputs do %>
 	
 		<%= f.input :rating_type, :as => :select, :collection =>RATING_TYPES, :required => true, :include_blank => false %>
 	
