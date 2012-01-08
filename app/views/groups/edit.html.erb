@@ -1,8 +1,8 @@
-<h3>Group: <%= @group.name %></h3>
+<%= render(:partial => 'groups/menu')%>
 
-<% semantic_form_for( @group, :html => { :multipart => true } ) do |f| %>
+<%= semantic_form_for( @group, :html => { :multipart => true } ) do |f| %>
 
-	<% f.inputs do %>
+	<%= f.inputs do %>
 		<%= f.input :name, :required => true %>
 		<%= f.input :shortname, :label => "Prefix", :required => true %>
 		<%= f.input :owner, :as => :select, :collection=>@group.participants.collect{|p| [p.name,p.id]} %>
@@ -23,4 +23,5 @@
 	</p>
 
 <% end %>
+
 

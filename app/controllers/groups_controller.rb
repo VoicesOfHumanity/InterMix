@@ -61,10 +61,12 @@ class GroupsController < ApplicationController
   def edit
     #-- Editing group information, only for administrators
     @section = 'groups'
-    @group = Group.includes(:group_participants=>:participant).find(params[:id])
+    #@group = Group.includes(:group_participants=>:participant).find(params[:id])
+    @group = Group.includes(:owner_participant).find(params[:id])
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
     @is_moderator = @group_participant and @group_participant.moderator
+    render :action=>'edit'
   end  
   
   def update

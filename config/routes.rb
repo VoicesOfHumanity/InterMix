@@ -71,6 +71,7 @@ Intermix::Application.routes.draw do
     member do
       get :view
       get :edit
+      get :new
       get :forum
       get :admin
       get :moderate
@@ -90,6 +91,7 @@ Intermix::Application.routes.draw do
     member do
       get :view
       get :edit
+      get :new
       get :forum
       get :meta
     end

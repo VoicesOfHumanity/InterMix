@@ -1,8 +1,8 @@
 <%= render(:partial => 'dialogs/menu')%>
 
-<% semantic_form_for( @dialog, :html => { :multipart => true } ) do |f| %>
+<%= semantic_form_for( @dialog, :html => { :multipart => true } ) do |f| %>
 
-	<% f.inputs do %>
+	<%= f.inputs do %>
 		<%= f.input :name, :required => true %>		
 		<%= f.input :shortname, :label=>"Prefix", :required => true %>
 		<%= f.input :description %>
