@@ -15,7 +15,7 @@
 		<%= f.input :private_email, :label => 'User messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :group_email, :label => 'Group messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :forum_email, :label => 'Forum postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
-		<%= f.input :no_email, :label => 'Block all emails?', :as => :boolean %>	
+		<%= f.input :no_email, :label => 'Block all emails?', :as => :radio %>	
 
 		<li><label>E-mail Posting:</label>w+<%= @participant.direct_email_code %>@intermix.org<br></li>
 		
