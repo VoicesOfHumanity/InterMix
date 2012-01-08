@@ -12,6 +12,7 @@
 
 	<p><b>Items Posted:</b> <a href="/forum?group_id=<%= @group.id %>"><%= @group.items_count.to_i %></a></p>
 
+	<% if false -%>
 	<p><b>Periods:</b><ul>
 	<% for period in @group.periods -%>
 		<li><a href="/groups/<%= @group.id %>/period_edit?period_id=<%= period.id %>"><%= period.startdate %> - <%= period.enddate -%>: <%= period.name %></a></li>
@@ -19,6 +20,7 @@
 	</ul>	
 	<a href="/groups/<%= @group.id %>/period_edit?period_id=0">Add a period</a>	
 	</p>
+	<% end -%>
 
 	<p><b>Sub-groups (tags):</b><ul>
 	<% for group_subtag in @group.group_subtags -%>

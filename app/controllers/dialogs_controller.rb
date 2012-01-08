@@ -44,7 +44,12 @@ class DialogsController < ApplicationController
     @section = 'dialogs'
     @dsection = 'edit'
     @dialog = Dialog.new
-    @group.created_by = current_participant.id
+    @dialog.created_by = current_participant.id
+    @dialog.visibility = 'public'
+    @dialog.openness = 'open'
+    @dialog.metamap_vote_own = 'never'
+    @dialog.multigroup = true
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
     render :action=>'edit'
   end  
   
@@ -57,8 +62,24 @@ class DialogsController < ApplicationController
     if dialogadmin.length == 0
       redirect_to :action=>:view
     end 
-    @is_admin = true   
+    @is_admin = true
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all   
     @dialog = Dialog.find_by_id(@dialog_id)
+  end  
+
+  def create
+    @dialog = Dialog.new(params[:dialog])
+    respond_to do |format|
+      if dvalidate and @dialog.save
+        @dialog.participants << current_participant  # Add as admin
+        logger.info("dialogs_controller#create New dialog created: #{@dialog.id}")
+        flash[:notice] = 'Discussion was successfully created.'
+        format.html { redirect_to :action=>:view, :id=>@dialog.id }
+      else
+        logger.info("dialogs_controller#create Failed creating new discussion")
+        format.html { render :action=>:edit }
+      end
+    end
   end  
   
   def update
@@ -150,6 +171,40 @@ class DialogsController < ApplicationController
     end
 
   end   
+  
+  def period_edit
+    @dialog_id = params[:id].to_i
+    @dialog = Dialog.find(@dialog_id)
+    dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
+    if dialogadmin.length == 0
+      redirect_to :action=>:view
+    end 
+    @is_admin = true       
+    @period_id = params[:period_id].to_i
+    if @period_id == 0
+      @period = Period.new(:dialog_id=>@dialog_id,:group_dialog=>'dialog')
+    else
+      @period = Period.find(@period_id)
+    end
+  end
+  
+  def period_save
+    @dialog_id = params[:id].to_i
+    @dialog = Dialog.find(@dialog_id)
+    @period_id = params[:period_id].to_i    
+    if @period_id > 0
+      @period = Period.find(@period_id)
+    else
+      @period = Period.new()
+      @period.dialog_id = @dialog_id
+      @period.group_dialog = 'dialog'
+    end  
+    @period.startdate = params[:period][:startdate]
+    @period.enddate = params[:period][:enddate]
+    @period.name = params[:period][:name]
+    @period.save!
+    redirect_to :action=>:edit
+  end
   
   def meta
     #-- Show some stats, according to the metamaps

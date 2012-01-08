@@ -10,6 +10,7 @@
 		<%= f.input :openness, :as => :select, :collection =>GROUP_OPENNESS %>	
 		<%= f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
 		<%= f.input :multigroup, :as => :boolean %>
+		<%= f.input :group_id, :as => :select, :collection =>@groupsin.collect{|c| [c.group.name,c.group.id]}, :label=>"Home group" %>			
 		<%= f.input :max_characters %>
 		<%= f.input :front_template %>
 		<%= f.input :signup_template %>
@@ -38,4 +39,15 @@
 	</p>
 	
 <% end %>
+
+<p><br><b>(Voting) Periods:</b><ul>
+<% for period in @dialog.periods -%>
+	<li><a href="/dialogs/<%= @dialog.id %>/period_edit?period_id=<%= period.id %>"><%= period.startdate %> - <%= period.enddate -%>: <%= period.name %></a></li>
+<% end -%>
+</ul>	
+<a href="/dialogs/<%= @dialog.id %>/period_edit?period_id=0">Add a period</a>	
+</p>
+
+<p>Save any changes for the discussion above before adding or editing periods</p>
+
 

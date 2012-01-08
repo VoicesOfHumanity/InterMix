@@ -5,7 +5,6 @@ class Dialog < ActiveRecord::Base
   has_many :dialog_metamaps
   has_many :metamaps, :through => :dialog_metamaps
   has_many :items
-  has_many :group_participants
   has_many :participants, :through => :dialog_admins
   belongs_to :creator, :class_name => "Participant", :foreign_key => :created_by
   belongs_to :maingroup, :class_name => "Group", :foreign_key => :group_id
