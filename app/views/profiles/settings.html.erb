@@ -2,9 +2,9 @@
 
 <h1>Settings</h1>
 
-<% semantic_form_for :participant, @particicipant, :url => '/me/profile/update' do |f| %>
+<%= semantic_form_for(:participant, :url => '/me/profile/update') do |f| %>
 
-	<% f.inputs do %>
+	<%= f.inputs do %>
 		<%= f.input :visibility, :label => 'Profile visibility', :as => :select, :collection =>PARTICIPANT_VISIBILITY_TEXT.invert %>	
 		<%= f.input :wall_visibility, :label => 'Wall visibility', :as => :select, :collection =>PARTICIPANT_WALL_VISIBILITY_TEXT.invert %>	
 		<%= f.input :item_to_forum, :label=>'Post wall items to the forum?', :as => :radio %>
