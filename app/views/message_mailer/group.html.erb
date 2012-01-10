@@ -19,10 +19,16 @@
 <hr/>
 
 
-This is a message sent to a group you're a member of. <a href="<%= "http://unday.#{ROOTDOMAIN}/autologin?code=#{@cdata['recipient'].confirmation_token}" %>">Log in</a>
+This is a message sent to a group you're a member of. 
 <% if false -%>
-You can also see it in your <a href="http://<%= BASEDOMAIN %>/messages">Message Area</a>
+<a href="<%= "http://unday.#{ROOTDOMAIN}/autologin?code=#{@cdata['recipient'].confirmation_token}" %>">Log in</a>
 <% end -%>
+<a href="http://<%= BASEDOMAIN %>/groups/<%= @cdata['group'].id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a>
+<% if false -%>
+You can also see it in your <a href="http://<%= BASEDOMAIN %>/messages?auth_token=<%= @cdata['recipient'].authentication_token %>">Message Area</a>
+<% end -%>
+To not receive any more emails <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
+
 <img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['message'].id.to_i if @cdata['message'] %>.gif" width="0" height="0" border="0" style="display:none">
 
 </body>

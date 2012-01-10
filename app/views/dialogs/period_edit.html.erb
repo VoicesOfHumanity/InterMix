@@ -7,7 +7,9 @@
 <%= hidden_field_tag :period_id, @period_id %>
 
 <p>Title: <%= text_field :period, :name, :size => 30 %></p>
-<p>Dates: <%= text_field :period, :startdate, :size => 10 %> - <%= text_field :period, :enddate, :size => 10 %> YYYY-MM-DD</p>
+<p>Start date: <%= text_field :period, :startdate, :size => 10 %> YYYY-MM-DD</p>
+<p>Posting end: <%= text_field :period, :postingend, :size => 10 %> YYYY-MM-DD</p>
+<p>Rating end: <%= text_field :period, :ratingend, :size => 10 %> YYYY-MM-DD</p>
 
 <p><input type="submit" value="Save"></p>
 

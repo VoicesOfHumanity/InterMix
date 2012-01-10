@@ -31,6 +31,7 @@
 		<%= f.input :in_voting_round,:label=>"In voting round?" ,:as=>:boolean %>
 		<%= f.input :posting_open,:label=>"Open for posting?" ,:as=>:boolean %>
 		<%= f.input :voting_open,:label=>"Open for voting?" ,:as=>:boolean %>
+		<%= f.input :current_period, :as => :select, :collection =>[['*none*',0]]+@dialog.periods.collect{|c| ["#{c.startdate}-#{c.enddate}: #{c.name}",c.id]} %>			
 	<% end %>
 
 	<p>

@@ -13,7 +13,7 @@
 
 <hr/>
 
-Manage your contacts in the <a href="http://<%= BASEDOMAIN %>/me/friends">Friends</a> Area<img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['message'].id.to_i if @cdata['message'] %>.gif" width="0" height="0" border="0" style="display:none">
+Manage your contacts in the <a href="http://<%= BASEDOMAIN %>/me/friends?auth_token=<%= @cdata['recipient'].authentication_token %>">Friends</a> Area<img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['message'].id.to_i if @cdata['message'] %>.gif" width="0" height="0" border="0" style="display:none">. To not receive any more emails <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
 
 </body>
 </html>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120104011117) do
+ActiveRecord::Schema.define(:version => 20120110022027) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(:version => 20120104011117) do
     t.boolean  "in_voting_round",         :default => false
     t.boolean  "posting_open",            :default => true
     t.boolean  "voting_open",             :default => true
+    t.integer  "current_period"
   end
 
   add_index "dialogs", ["name"], :name => "index_dialogs_on_name", :length => {"name"=>30}
@@ -369,6 +370,7 @@ ActiveRecord::Schema.define(:version => 20120104011117) do
   add_index "items", ["first_in_thread", "id"], :name => "index_items_on_first_in_thread_and_id"
   add_index "items", ["group_id", "created_at"], :name => "index_items_on_group_id_and_created_at"
   add_index "items", ["old_message_id"], :name => "index_items_on_old_message_id"
+  add_index "items", ["period_id", "id"], :name => "index_items_on_period_id_and_id"
   add_index "items", ["posted_by", "created_at"], :name => "index_items_on_posted_by_and_created_at"
 
   create_table "messages", :force => true do |t|
@@ -451,20 +453,20 @@ ActiveRecord::Schema.define(:version => 20120104011117) do
     t.string   "address1"
     t.string   "address2"
     t.string   "city"
-    t.string   "admin2uniq",           :limit => 30
-    t.string   "county_code",          :limit => 15
+    t.string   "admin2uniq",             :limit => 30
+    t.string   "county_code",            :limit => 15
     t.string   "county_name"
-    t.string   "admin1uniq",           :limit => 15
-    t.string   "state_code",           :limit => 10
+    t.string   "admin1uniq",             :limit => 15
+    t.string   "state_code",             :limit => 10
     t.string   "state_name"
-    t.string   "country_code",         :limit => 2
+    t.string   "country_code",           :limit => 2
     t.string   "country_name"
     t.string   "zip"
     t.string   "phone"
-    t.decimal  "latitude",                            :precision => 11, :scale => 6
-    t.decimal  "longitude",                           :precision => 11, :scale => 6
+    t.decimal  "latitude",                              :precision => 11, :scale => 6
+    t.decimal  "longitude",                             :precision => 11, :scale => 6
     t.string   "timezone"
-    t.decimal  "timezone_offset",                     :precision => 5,  :scale => 1
+    t.decimal  "timezone_offset",                       :precision => 5,  :scale => 1
     t.string   "metropolitan_area"
     t.integer  "metro_area_id"
     t.string   "bioregion"
@@ -474,13 +476,14 @@ ActiveRecord::Schema.define(:version => 20120104011117) do
     t.string   "political"
     t.integer  "political_id"
     t.string   "status"
-    t.string   "email",                                                              :default => "",               :null => false
-    t.string   "encrypted_password",   :limit => 128,                                :default => "",               :null => false
-    t.string   "password_salt",                                                      :default => "",               :null => false
+    t.string   "email",                                                                :default => "",               :null => false
+    t.string   "encrypted_password",     :limit => 128,                                :default => "",               :null => false
+    t.string   "password_salt",                                                        :default => "",               :null => false
     t.string   "reset_password_token"
+    t.string   "reset_password_sent_at"
     t.string   "remember_token"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                                                      :default => 0
+    t.integer  "sign_in_count",                                                        :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -488,26 +491,26 @@ ActiveRecord::Schema.define(:version => 20120104011117) do
     t.string   "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.boolean  "sysadmin",                                                           :default => false
-    t.integer  "items_count",                                                        :default => 0
+    t.boolean  "sysadmin",                                                             :default => false
+    t.integer  "items_count",                                                          :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "fb_uid"
     t.string   "fb_link"
-    t.string   "visibility",                                                         :default => "visible_to_all"
-    t.string   "wall_visibility",                                                    :default => "visible_to_all"
-    t.boolean  "item_to_forum",                                                      :default => true
-    t.boolean  "twitter_post",                                                       :default => true
+    t.string   "visibility",                                                           :default => "visible_to_all"
+    t.string   "wall_visibility",                                                      :default => "visible_to_all"
+    t.boolean  "item_to_forum",                                                        :default => true
+    t.boolean  "twitter_post",                                                         :default => true
     t.string   "twitter_username"
     t.string   "twitter_oauth_token"
     t.string   "twitter_oauth_secret"
-    t.string   "forum_email",                                                        :default => "never"
-    t.string   "group_email",                                                        :default => "instant"
-    t.string   "private_email",                                                      :default => "instant"
-    t.string   "system_email",                                                       :default => "instant"
-    t.boolean  "no_email",                                                           :default => false
+    t.string   "forum_email",                                                          :default => "never"
+    t.string   "group_email",                                                          :default => "instant"
+    t.string   "private_email",                                                        :default => "instant"
+    t.string   "system_email",                                                         :default => "instant"
+    t.boolean  "no_email",                                                             :default => false
     t.string   "direct_email_code"
-    t.boolean  "has_participated",                                                   :default => false
+    t.boolean  "has_participated",                                                     :default => false
     t.integer  "old_user_id"
     t.text     "forum_settings"
     t.string   "last_url"
@@ -526,12 +529,18 @@ ActiveRecord::Schema.define(:version => 20120104011117) do
   create_table "periods", :force => true do |t|
     t.date     "startdate"
     t.date     "enddate"
+    t.date     "endposting"
+    t.date     "endrating"
     t.string   "name"
-    t.string   "group_dialog", :default => "dialog"
+    t.string   "shortname"
+    t.string   "group_dialog",    :default => "dialog"
     t.integer  "group_id"
     t.integer  "dialog_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "description"
+    t.text     "metamaps"
+    t.boolean  "metamaps_frozen", :default => false
   end
 
   add_index "periods", ["dialog_id", "startdate"], :name => "index_periods_on_dialog_id_and_startdate"

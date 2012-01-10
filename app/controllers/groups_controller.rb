@@ -156,7 +156,7 @@ class GroupsController < ApplicationController
     @member_id = @follow_id if @follow_id > 0
     if @member_id > 0
       @recipient = Participant.find_by_id(@member_id)
-      messtext = "<a href=\"http://#{BASEDOMAIN}/participants/#{current_participant.id}/profile\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view\">#{@group.name}</a>"
+      messtext = "<a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@recipient.authentication_token}\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view?auth_token=#{@recipient.authentication_token}\">#{@group.name}</a>"
       if @recipient
         group_participants = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{@recipient.id}").all
         if group_participants.length == 0
