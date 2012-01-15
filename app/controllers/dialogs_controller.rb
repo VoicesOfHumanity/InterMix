@@ -107,6 +107,7 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id].to_i if not @dialog_id
     @dialog = Dialog.includes(:groups).find_by_id(@dialog_id)
     @groups = @dialog.groups if @dialog and @dialog.groups
+    @periods = @dialog.periods if @dialog and @dialog.periods
     
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)

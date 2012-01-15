@@ -188,6 +188,100 @@ class GroupsController < ApplicationController
     redirect_to :action => :invite
 
   end
+
+  def import
+    #-- Invite screen
+    @section = 'groups'
+    @gsection = 'import'
+    @group_id = params[:id]
+    @group = Group.includes(:group_participants=>:participant).find(@group_id)
+    @participant = Participant.includes(:idols).find(current_participant.id)  
+    @members = Participant.order("first_name,last_name").all  
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+    @is_member = @group_participant ? true : false
+    @is_moderator = @group_participant and @group_participant.moderator
+  end  
+  
+  def importdo
+    #-- Import members directly
+    @section = 'groups'
+    @gsection = 'import'
+    @group_id = params[:id]
+    @group = Group.includes(:group_participants=>:participant).find(@group_id)
+    logger.info("groups#importdo")  
+    flash[:notice] = ''
+    flash[:alert] = ''
+
+    @new_text = params[:new_text].to_s
+
+    lines = @new_text.split("[\r\n]+")
+    flash[:notice] += "#{lines.length} lines"
+    x = 0
+    for line in lines do
+      x += 1
+      next if x == 1
+      line = line.force_encoding("ISO-8859-1").encode("UTF-8").strip
+      xarr = line.split(',')
+
+      email = xarr[1]
+      if xarr.length != 3
+        flash[:notice] += "#{email} incorrect number of fields (#{xarr.length})<br>"
+        next
+      end
+      first_name = xarr[2]
+      last_name = xarr[3]
+      
+      flash[:notice] += "#{email}, #{first_name}, #{last_name}<br>"
+
+      if email.to_s == ''
+        next
+      end
+
+      participant = Participant.find_by_email(email)
+
+      if participant
+        flash[:notice] += "- already have it<br>"
+        next
+      end
+       
+      participant = Participant.new
+      participant.first_name = first_name
+      participant.last_name = last_name
+      participant.email = email
+      participant.save
+      
+      #-- Add to group
+      group_participants = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{@recipient.id}").all
+      if group_participants.length == 0
+        GroupParticipant.create(:group_id=>@group.id, :participant_id=>@recipient.id,:active=>true)
+      end
+      
+      #-- Send an e-mail
+      @message = Message.new
+      @message.to_participant_id = participant.id 
+      @message.from_participant_id = current_participant.id
+      @message.subject = "You were added to a group"
+      @message.message = messtext
+      @message.sendmethod = 'web'
+      @message.sent_at = Time.now
+      if @message.save
+        if participant.private_email == 'instant' and not participant.no_email
+          #-- Send as an e-mail. 
+          @message.sendmethod = 'email'
+          @message.emailit
+        end  
+        flash[:notice] += "An message was sent to #{participant.name}<br>"
+      else
+        logger.info("groups#importdo Couldn't save message")  
+        flash[:alert] += "There was a problem sending a message to #{participant.name}."         
+      end
+
+    end
+
+    redirect_to :action => :import
+
+  end
+
   
   def join
     #-- Join a group

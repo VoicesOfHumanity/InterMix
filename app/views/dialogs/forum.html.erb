@@ -35,18 +35,24 @@
 	<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list()" %>
 	</div>
 
-	<% if false -%>
-		<% if @groups.length > 1 -%>
-		<div class="lefttitle">Group:</div>
-		<div class="leftfield">
-		<%= select_tag "group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.group.name,c.group.id]},@group_id), :onchange=>"list()" %>
-		</div>
-		<% else -%>
-		<%= hidden_field_tag :group_id, @groups.length>0 ? @groups[0].id : @group_id %>	
-		<% end -%>
-	<% else %>
-		<%= hidden_field_tag :group_id, 0 %>
+	<% if @groups.length > 1 -%>
+	<div class="lefttitle">Group:</div>
+	<div class="leftfield">
+	<%= select_tag "group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.group.name,c.group.id]},@group_id), :onchange=>"list()" %>
+	</div>
+	<% else -%>
+	<%= hidden_field_tag :group_id, @groups.length>0 ? @groups[0].id : @group_id %>	
 	<% end -%>
+	
+	<% if @periods.length > 0 -%>
+	<div class="lefttitle">Focus Period:</div>
+	<div class="leftfield">
+	<%= select_tag "period_id", options_for_select([['All messages',0]]+@periods.collect{|c| [c.name,c.id]},@period_id), :onchange=>"list()" %>
+	</div>
+	<% else -%>
+	<%= hidden_field_tag :period_id, 0 %>	
+	<% end -%>
+	
 	
 	<%= hidden_field_tag :dialog_id, @dialog_id %>
 	<%= hidden_field_tag "from", "dialog" %>

@@ -78,6 +78,8 @@ Intermix::Application.routes.draw do
       get :members
       get :invite
       post :invitedo
+      get :import
+      post :importdo
       get :join
       get :unjoin
       get :period_edit
