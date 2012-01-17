@@ -99,7 +99,7 @@ class ItemsController < ApplicationController
       @dialog_name = (@dialog ? @dialog.name : '???')
     end  
     @item.dialog_id = @dialog_id
-    @max_characters = @dialog ? @dialog.max_characters : 0
+    @max_characters = @dialog ? @dialog.max_characters : 0    
     
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
@@ -121,7 +121,18 @@ class ItemsController < ApplicationController
     end   
 
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all       
-    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all     
+    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all  
+    @dialoggroupsin = []
+    if @dialog
+      #-- The user might be a member of several of the groups participating in the current dialog, if any
+      for group1 in @dialog.groups
+        for group2 in @groupsin
+          if group2.group.id == group1.id
+            @dialoggroupsin << group1
+          end
+        end
+      end
+    end   
 
     #-- Don't allow sending to group or dialog one isn't a member of
     if @item.group_id > 0

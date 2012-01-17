@@ -211,9 +211,7 @@ class GroupsController < ApplicationController
         flash[:alert] = 'Recipient not found'
       end  
     end
-
     redirect_to :action => :invite
-
   end
 
   def import
@@ -341,14 +339,10 @@ class GroupsController < ApplicationController
           flash[:alert] += "- problem sending message"         
         end
       end
-
     end
-
     redirect_to :action => :import
-
   end
 
-  
   def join
     #-- Join a group
     @group_id = params[:id].to_i

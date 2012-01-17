@@ -4,7 +4,6 @@
 	<input name="_method" type="hidden" value="<%= @item.id.to_i > 0 ? 'put' : 'post' %>" />
 	<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 	<%= hidden_field :item, :reply_to %>
-	<%= hidden_field :item, :group_id %>
 	<%= hidden_field :item, :dialog_id %>
 </div>
 
@@ -33,9 +32,34 @@
 		</li>	
 		<% end -%>
 		
-		<% if session[:dialog_id].to_i > 0 -%>
+		<% if @item.dialog_id.to_i > 0 -%>
+		<li class="string optional" id="dialog_name"><label for="dialog_name">Discussion</label>
+				<%= @dialog_name %>
+		</li>
+		<% end -%>
+
+		<% if @item.dialog_id.to_i > 0 or session[:dialog_id].to_i > 0 -%>
 			<%= hidden_field_tag :send_to, @send_to %>
+
+			<% if @item.group_id.to_i == 0 -%>
+				<% if @dialoggroupsin.length > 1 -%>
+					<% @item.group_id = @dialoggroupsin[0].id %>
+					<li class="select optional" id="item_group_id_input"><label for="item_group_id">Group</label>
+					<%= select :item, :group_id, @dialoggroupsin.collect{|g| [g.name,g.id]} %>
+					</li>
+				<% elsif @dialoggroupsin.length == 1 -%>
+					<% @item.group_id = @dialoggroupsin[0].id %>
+					<%= hidden_field :item, :group_id %>
+				<% else -%>
+					<%= hidden_field :item, :group_id %>
+				<% end -%>
+			<% else -%>			
+				<%= hidden_field :item, :group_id %>
+			<% end -%>
+			
+			
 		<% else -%>
+			<%= hidden_field :item, :group_id %>
 			<li class="select optional" id="send_to_input"><label for="send_to">To</label>
 				<% if @item.reply_to.to_i > 0 or @item.group_id.to_i > 0 or @item.dialog_id.to_i > 0 -%>
 					<%= hidden_field_tag :send_to, @send_to %>
@@ -44,12 +68,6 @@
 					<%= select_tag :send_to, options_for_select( [['*everybody forum / my wall*','all'],['*my wall*','wall']] + @groupsin.collect{|c| ["Group: #{c.group.name}","G#{c.group.id}"]} + @dialogsin.collect{|c| ["Dialog: #{c.dialog.name}","D#{c.dialog.id}"]}, @send_to ) %>
 				<% end -%>
 			</li>	
-		<% end -%>
-
-		<% if @item.dialog_id.to_i > 0 -%>
-		<li class="string optional" id="dialog_name"><label for="dialog_name">Discussion</label>
-				<%= @dialog_name %>
-		</li>
 		<% end -%>
 		
 

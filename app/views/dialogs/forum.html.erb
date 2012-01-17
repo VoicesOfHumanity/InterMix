@@ -38,7 +38,7 @@
 	<% if @groups.length > 1 -%>
 	<div class="lefttitle">Group:</div>
 	<div class="leftfield">
-	<%= select_tag "group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.group.name,c.group.id]},@group_id), :onchange=>"list()" %>
+	<%= select_tag "group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.name,c.id]},@group_id), :onchange=>"list()" %>
 	</div>
 	<% else -%>
 	<%= hidden_field_tag :group_id, @groups.length>0 ? @groups[0].id : @group_id %>	
