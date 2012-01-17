@@ -134,6 +134,7 @@ class GroupsController < ApplicationController
     @gsection = 'invite'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
+    @messtext = @group.import_template
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @members = Participant.order("first_name,last_name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
@@ -152,11 +153,12 @@ class GroupsController < ApplicationController
     @follow_id = params[:follow_id].to_i
     @member_id = params[:member_id].to_i
     @new_text = params[:new_text].to_s
+    @messtext = params[:messtext].to_s
 
     @member_id = @follow_id if @follow_id > 0
     if @member_id > 0
       @recipient = Participant.find_by_id(@member_id)
-      messtext = "<a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@recipient.authentication_token}\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view?auth_token=#{@recipient.authentication_token}\">#{@group.name}</a>"
+      @messtext += "<hr><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@recipient.authentication_token}\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view?auth_token=#{@recipient.authentication_token}\">#{@group.name}</a>"
       if @recipient
         group_participants = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{@recipient.id}").all
         if group_participants.length == 0
@@ -166,7 +168,32 @@ class GroupsController < ApplicationController
         @message.to_participant_id = @recipient.id 
         @message.from_participant_id = current_participant.id
         @message.subject = "Group invitation"
-        @message.message = messtext
+        
+        cdata = {}
+        cdata['item'] = @item
+        cdata['recipient'] = @recipient     
+        cdata['participant'] = @recipient 
+        cdata['group'] = @group if @group
+        cdata['logo'] = @logo if @logo
+        cdata['password'] = password
+
+        if @messtext.to_s != ''
+          template = Liquid::Template.parse(@messtext)
+          html_content = template.render(cdata)
+        else    
+          html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
+          html_content += "password: #{password}<br/>" if password != '???'
+
+          html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+          html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}<br/><br/>"
+          html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
+
+          html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
+          html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
+          html_content += "</p>"
+        end        
+                
+        @message.message = html_content
         @message.sendmethod = 'web'
         @message.sent_at = Time.now
         if @message.save
@@ -195,6 +222,7 @@ class GroupsController < ApplicationController
     @gsection = 'import'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
+    @messtext = @group.import_template
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @members = Participant.order("first_name,last_name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
@@ -206,30 +234,31 @@ class GroupsController < ApplicationController
     #-- Import members directly
     @section = 'groups'
     @gsection = 'import'
-    @group_id = params[:id]
+    @group_id = params[:id].to_i
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
-    logger.info("groups#importdo")  
+    logger.info("groups#importdo #{@group_id}")  
     flash[:notice] = ''
     flash[:alert] = ''
 
     @new_text = params[:new_text].to_s
+    @messtext = params[:messtext].to_s
 
     lines = @new_text.split("[\r\n]+")
-    flash[:notice] += "#{lines.length} lines"
+    flash[:notice] += "#{lines.length} lines<br>"
     x = 0
     for line in lines do
       x += 1
-      next if x == 1
+      #next if x == 1
       line = line.force_encoding("ISO-8859-1").encode("UTF-8").strip
       xarr = line.split(',')
 
-      email = xarr[1]
+      email = xarr[0]
       if xarr.length != 3
         flash[:notice] += "#{email} incorrect number of fields (#{xarr.length})<br>"
         next
       end
-      first_name = xarr[2]
-      last_name = xarr[3]
+      first_name = xarr[1]
+      last_name = xarr[2]
       
       flash[:notice] += "#{email}, #{first_name}, #{last_name}<br>"
 
@@ -240,40 +269,77 @@ class GroupsController < ApplicationController
       participant = Participant.find_by_email(email)
 
       if participant
-        flash[:notice] += "- already have it<br>"
-        next
+        flash[:notice] += "- already a member<br>"
+      else
+        participant = Participant.new
+        participant.first_name = first_name
+        participant.last_name = last_name
+        participant.email = email
+        password = ''
+        3.times do
+          conso = 'bcdfghkmnprstvw'[rand(15)]
+          vowel = 'aeiouy'[rand(6)]
+          password += conso +  vowel
+          password += (1+rand(9)).to_s if rand(3) == 2
+        end
+        participant.password = password
+        participant.forum_email = 'never'
+        participant.group_email = 'never'
+        participant.private_email = 'instant'  
+        participant.status = 'active'
+        participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + email)
+        if participant.save
+          flash[:notice] += "- added as member<br>"
+        else
+          flash[:notice] += "- problem adding as member<br>"
+          next          
+        end
       end
-       
-      participant = Participant.new
-      participant.first_name = first_name
-      participant.last_name = last_name
-      participant.email = email
-      participant.save
       
       #-- Add to group
-      group_participants = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{@recipient.id}").all
+      added_to_group = false
+      group_participants = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{participant.id}").all
       if group_participants.length == 0
-        GroupParticipant.create(:group_id=>@group.id, :participant_id=>@recipient.id,:active=>true)
+        GroupParticipant.create(:group_id=>@group.id, :participant_id=>participant.id,:active=>true)
+        flash[:notice] += "- added to the group<br>"
+        added_to_group = true
+      else
+        flash[:notice] += "- already in the group<br>"
       end
       
-      #-- Send an e-mail
-      @message = Message.new
-      @message.to_participant_id = participant.id 
-      @message.from_participant_id = current_participant.id
-      @message.subject = "You were added to a group"
-      @message.message = messtext
-      @message.sendmethod = 'web'
-      @message.sent_at = Time.now
-      if @message.save
-        if participant.private_email == 'instant' and not participant.no_email
-          #-- Send as an e-mail. 
-          @message.sendmethod = 'email'
-          @message.emailit
-        end  
-        flash[:notice] += "An message was sent to #{participant.name}<br>"
-      else
-        logger.info("groups#importdo Couldn't save message")  
-        flash[:alert] += "There was a problem sending a message to #{participant.name}."         
+      if @messtext.to_s != '' and added_to_group
+        #-- Send an e-mail
+        @message = Message.new
+        @message.to_participant_id = participant.id 
+        @message.from_participant_id = current_participant.id
+        @message.subject = "You were added to a group"
+        
+        cdata = {}
+        cdata['item'] = @item
+        cdata['recipient'] = @recipient     
+        cdata['participant'] = @recipient 
+        cdata['group'] = @group if @group
+        cdata['logo'] = @logo if @logo
+        cdata['password'] = password
+
+        template = Liquid::Template.parse(@messtext)
+        html_content = template.render(cdata)
+        
+        #@messtext += "<hr>username: #{participant.email}<br>password: #{password}"
+        @message.message = html_content
+        @message.sendmethod = 'web'
+        @message.sent_at = Time.now
+        if @message.save
+          if participant.private_email == 'instant' and not participant.no_email
+            #-- Send as an e-mail. 
+            @message.sendmethod = 'email'
+            @message.emailit
+          end  
+          flash[:notice] += "- message was sent<br>"
+        else
+          logger.info("groups#importdo Couldn't save message")  
+          flash[:alert] += "- problem sending message"         
+        end
       end
 
     end

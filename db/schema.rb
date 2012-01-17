@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120110022027) do
+ActiveRecord::Schema.define(:version => 20120117010927) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -256,6 +256,8 @@ ActiveRecord::Schema.define(:version => 20120110022027) do
     t.datetime "logo_updated_at"
     t.text     "front_template"
     t.text     "member_template"
+    t.text     "invite_template"
+    t.text     "import_template"
     t.boolean  "alt_logins",               :default => true
   end
 

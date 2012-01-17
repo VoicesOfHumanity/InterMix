@@ -72,6 +72,10 @@ class DialogsController < ApplicationController
     respond_to do |format|
       if dvalidate and @dialog.save
         @dialog.participants << current_participant  # Add as admin
+        if @dialog.group_id.to_i > 0
+          @group = Group.find(@dialog.group_id)
+          @dialog.groups << @group
+        end
         logger.info("dialogs_controller#create New dialog created: #{@dialog.id}")
         flash[:notice] = 'Discussion was successfully created.'
         format.html { redirect_to :action=>:view, :id=>@dialog.id }
