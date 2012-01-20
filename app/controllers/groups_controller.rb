@@ -167,6 +167,7 @@ class GroupsController < ApplicationController
         if group_participants.length == 0
           GroupParticipant.create(:group_id=>@group.id, :participant_id=>@recipient.id,:active=>false)
         end
+        @recipient.ensure_authentication_token!
         @message = Message.new
         @message.to_participant_id = @recipient.id 
         @message.from_participant_id = current_participant.id
@@ -294,6 +295,7 @@ class GroupsController < ApplicationController
 
       if participant
         flash[:notice] += "- already a member<br>"
+        password = "[as entered]"
       else
         participant = Participant.new
         participant.first_name = first_name
@@ -333,6 +335,8 @@ class GroupsController < ApplicationController
       
       if @messtext.to_s != '' and added_to_group
         #-- Send an e-mail
+        participant.ensure_authentication_token!
+        @recipient = participant
         @message = Message.new
         @message.to_participant_id = participant.id 
         @message.from_participant_id = current_participant.id
@@ -340,8 +344,8 @@ class GroupsController < ApplicationController
         
         cdata = {}
         cdata['item'] = @item
-        cdata['recipient'] = @recipient     
-        cdata['participant'] = @recipient 
+        cdata['recipient'] = participant     
+        cdata['participant'] = participant 
         cdata['group'] = @group if @group
         cdata['logo'] = @logo if @logo
         cdata['password'] = password
