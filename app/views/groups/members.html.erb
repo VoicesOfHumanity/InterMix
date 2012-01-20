@@ -14,7 +14,7 @@
 </table>
 
 <p>Tag selected as sub-group
-	<%= select_tag :group_subtag_id, [['',0]]+GroupSubtag.where(:group_id=>@group.id).collect {|p| [ "#{p.tag}".raw, p.id ] } %>
+	<%= select_tag :group_subtag_id, [['',0]]+GroupSubtag.where(:group_id=>@group.id).collect {|p| [ raw("#{p.tag}"), p.id ] } %>
 </p>
 
 <script>

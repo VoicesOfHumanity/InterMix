@@ -134,7 +134,7 @@ class GroupsController < ApplicationController
     @gsection = 'invite'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
-    @messtext = @group.import_template
+    @messtext = @group.invite_template
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @members = Participant.order("first_name,last_name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
@@ -149,6 +149,8 @@ class GroupsController < ApplicationController
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
     logger.info("groups#invitedo")  
+    flash[:notice] = ''
+    flash[:alert] = ''
 
     @follow_id = params[:follow_id].to_i
     @member_id = params[:member_id].to_i
@@ -157,6 +159,7 @@ class GroupsController < ApplicationController
 
     @member_id = @follow_id if @follow_id > 0
     if @member_id > 0
+      #-- An existing member
       @recipient = Participant.find_by_id(@member_id)
       @messtext += "<hr><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@recipient.authentication_token}\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view?auth_token=#{@recipient.authentication_token}\">#{@group.name}</a>"
       if @recipient
@@ -175,21 +178,12 @@ class GroupsController < ApplicationController
         cdata['participant'] = @recipient 
         cdata['group'] = @group if @group
         cdata['logo'] = @logo if @logo
-        cdata['password'] = password
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
           html_content = template.render(cdata)
         else    
-          html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
-          html_content += "password: #{password}<br/>" if password != '???'
-
-          html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-          html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}<br/><br/>"
-          html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
-
-          html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
-          html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
+          html_content = "<p>You have been invited to join the group: #{@group.name}<br/>"
           html_content += "</p>"
         end        
                 
@@ -202,14 +196,46 @@ class GroupsController < ApplicationController
             @message.sendmethod = 'email'
             @message.emailit
           end  
-          flash[:notice] = "An invitation message was sent to #{@recipient.name}"
+          flash[:notice] += "An invitation message was sent to #{@recipient.name}"
         else
           logger.info("groups#invitedo Couldn't save message")  
-          flash[:alert] = "There was a problem creating the invitation message for #{@recipient.name}."         
+          flash[:alert] += "There was a problem creating the invitation message for #{@recipient.name}."         
         end
       else
-        flash[:alert] = 'Recipient not found'
+        flash[:alert] += 'Recipient not found'
       end  
+      
+    else
+      #-- Some non-members
+      lines = @new_text.split("[\r\n]+")
+      flash[:notice] += "#{lines.length} lines<br>"
+      x = 0
+      for line in lines do
+        email = line.strip
+
+        cdata = {}
+        cdata['group'] = @group
+
+        if @messtext.to_s != ''
+          template = Liquid::Template.parse(@messtext)
+          html_content = template.render(cdata)
+        else
+          html_content = "<p>You have been invited to join the group: #{@group.name}<br/>"
+          html_content += "</p>"
+        end
+
+        email = SystemMailer.generic("do-not-reply@intermix.org", email, "Group invitation", html_content, email, cdata)
+        logger.info("groups#invitedo delivering email to #{email}")
+        begin
+          email.deliver
+          flash[:notice] += "An invitation message was sent to #{@recipient.name}"
+        rescue
+          logger.info("groups#invitedo FAILED delivering email to #{email}")
+          flash[:notice] += "Failed to send an invitation to #{@recipient.name}"
+        end
+
+      end
+      
     end
     redirect_to :action => :invite
   end
