@@ -2,7 +2,7 @@
 
 <h3>Edit your profile</h3>
 
-<%= semantic_form_for :participant, @particicipant, :url => '/me/profile/update', :html=>{:id=>"profile_edit"} do |f| %>
+<%= semantic_form_for :participant, :url => '/me/profile/update', :html=>{:id=>"profile_edit"} do |f| %>
 
 	<%= f.inputs do %>
 

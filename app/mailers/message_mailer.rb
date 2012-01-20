@@ -18,8 +18,7 @@ class MessageMailer < ActionMailer::Base
 
   def individual(subject,message,email,cdata={})
     #-- Message to send to a participant, usually a private messarequire 'mailers/system_mailer'
-    ge sent by somebody else
-    
+        
     @message = message
     @cdata = cdata
     

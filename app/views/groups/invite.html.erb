@@ -14,7 +14,7 @@
 
 <p><%= select_tag 'member_id', raw("<option></option>") + options_from_collection_for_select(@members, "id", "name") %></p>
 
-<p>Invite new people to join:</p>
+<p>Invite non-members to join (one e-mail per line):</p>
 
 <p><%= text_area_tag 'new_text', nil, :rows => 5, :cols => 30 %></p>
 
