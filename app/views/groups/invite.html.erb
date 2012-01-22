@@ -10,9 +10,10 @@
 
 <p><%= select_tag 'follow_id', raw("<option></option>") + options_from_collection_for_select(@participant.idols, "id", "name") %></p>
 
+<% if false %>
 <p>Invite any member:</p>
-
 <p><%= select_tag 'member_id', raw("<option></option>") + options_from_collection_for_select(@members, "id", "name") %></p>
+<% end %>
 
 <p>Invite non-members to join (one e-mail per line):</p>
 

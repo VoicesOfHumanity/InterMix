@@ -6,7 +6,7 @@ class GroupsController < ApplicationController
   def index
     #-- Show an overview of groups this person has access to
     @section = 'groups'
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id),moderator").includes(:group)
     @groupsina = @groupsin.collect{|g| g.group.id}
     @ismoderator = false
     for group in @groupsin
@@ -447,7 +447,7 @@ class GroupsController < ApplicationController
     
     @items = @items.order(@sortby)
     @items = @items.paginate :page=>@page, :per_page => @per_page    
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all      
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id),moderator").includes(:group)
 
     @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all      
 

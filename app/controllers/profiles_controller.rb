@@ -14,7 +14,6 @@ class ProfilesController < ApplicationController
     @section = 'profile'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.includes(:metro_area).find(@participant_id)
-    
     render :action=>:index
     update_last_url
   end  
