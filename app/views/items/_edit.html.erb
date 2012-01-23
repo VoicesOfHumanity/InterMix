@@ -14,7 +14,7 @@
 <fieldset class="inputs"><ol>
         <li class="hidden optional" id="item_media_type_input"><input id="item_media_type" name="item[media_type]" type="hidden" value="<%= @item.media_type.to_s!='' ? @item.media_type : 'text' %>" /></li>
 
-		<% if Rails.env['warden'] and Rails.env['warden'].session[:dialog_id].to_i == 0 and not @dialog -%>
+		<% if session[:dialog_id].to_i == 0 and not @dialog -%>
 		<li><label>Media</label>
 		<% xarr = ['text','picture','video','audio','link'] -%>
 		<% x = 0 -%>
@@ -38,7 +38,7 @@
 		</li>
 		<% end -%>
 
-		<% if @item.dialog_id.to_i > 0 or (Rails.env['warden'] and Rails.env['warden'].session[:dialog_id].to_i > 0) -%>
+		<% if @item.dialog_id.to_i > 0 or session[:dialog_id].to_i > 0 -%>
 			<%= hidden_field_tag :send_to, @send_to %>
 
 			<% if @item.group_id.to_i == 0 -%>

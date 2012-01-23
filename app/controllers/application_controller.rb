@@ -164,11 +164,11 @@ class ApplicationController < ActionController::Base
       @dialog = Dialog.find_by_shortname(subdomain)
       if @dialog
         @dialog_id = @dialog.id
-        if participant_signed_in? and env['warden']
+        if participant_signed_in?
           session[:dialog_id] = @dialog_id
           session[:dialog_name] = @dialog.name
-          env['warden'].session[:dialog_id] = @dialog_id
-          env['warden'].session[:dialog_name] = @dialog.name
+          #env['warden'].session[:dialog_id] = @dialog_id
+          #env['warden'].session[:dialog_name] = @dialog.name
         end
       else
         if subdomain != 'intermix'
@@ -178,8 +178,8 @@ class ApplicationController < ActionController::Base
             if participant_signed_in? and env['warden']
               session[:group_id] = @group_id
               session[:group_name] = @group.name
-              env['warden'].session[:group_id] = @group_id
-              env['warden'].session[:group_name] = @group.name
+              #env['warden'].session[:group_id] = @group_id
+              #env['warden'].session[:group_name] = @group.name
             end
           end
         end

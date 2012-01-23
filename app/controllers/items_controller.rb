@@ -288,8 +288,8 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     @item_id = params[:id]
     @item = Item.find(@item_id)
-    if env['warden'].session[:dialog_id].to_i > 0
-      @dialog = Dialog.find_by_id(env['warden'].session[:dialog_id])
+    if session[:dialog_id].to_i > 0
+      @dialog = Dialog.find_by_id(session[:dialog_id])
     end
     render :action=>'item'
   end  
