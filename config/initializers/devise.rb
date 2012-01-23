@@ -200,10 +200,10 @@ Devise.setup do |config|
   # http://rubydoc.info/github/hassox/warden/master/Warden/Hooks
   Warden::Manager.before_logout do |user, auth, opts|
   # session variables weren't available for some reason. Using this instead: https://github.com/hassox/warden/wiki/Authenticated-Session-Data
-    Rails.env['session'][:dialog_id] = nil if Rails.env['session'][:dialog_id]
-    Rails.env['session'][:dialog_name] = nil if Rails.env['session'][:dialog_name]
-    Rails.env['session'][:group_id] = nil if Rails.env['session'][:group_id]
-    Rails.env['session'][:group_name] = nil if Rails.env['session'][:group_name]
+    auth.session[:dialog_id] = nil if auth.session[:dialog_id]
+    auth.session[:dialog_name] = nil if auth.session[:dialog_name]
+    auth.session[:group_id] = nil if auth.session[:group_id]
+    auth.session[:group_name] = nil if auth.session[:group_name]
   end
   
 end
