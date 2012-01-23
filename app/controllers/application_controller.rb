@@ -160,12 +160,11 @@ class ApplicationController < ActionController::Base
     #-- If we've gotten a group and/or dialog shortname in the subdomain
     @group_id = nil
     @dialog_id = nil
-    if participant_signed_in?
-      for subdomain in request.subdomains
+    for subdomain in request.subdomains
         @dialog = Dialog.find_by_shortname(subdomain)
         if @dialog
           @dialog_id = @dialog.id
-          if env['warden']
+          if participant_signed_in? and env['warden']
             env['warden'].session[:dialog_id] = @dialog_id
             env['warden'].session[:dialog_name] = @dialog.name
           end
@@ -174,7 +173,7 @@ class ApplicationController < ActionController::Base
             @group = Group.find_by_shortname(subdomain)
             if @group
               @group_id = @group.id
-              if env['warden']
+              if participant_signed_in? and env['warden']
                 env['warden'].session[:group_id] = @group_id
                 env['warden'].session[:group_name] = @group.name
               end
