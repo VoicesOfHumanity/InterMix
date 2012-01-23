@@ -43,7 +43,7 @@
 				<% end -%>
 				
 				<li class="menu<%= ' full' if session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='groups' %>" href="/groups">Groups</a></li>
-				<% if not showingfull and session[:dialog_id].to_i > 0 -%>
+				<% if not showingfull and (session[:dialog_id].to_i > 0 or session[:group_id].to_i > 0) -%>
 				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>
 				<% else -%>
 				<li class="menu<%= ' full' if session[:dialog_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs">Discussions</a></li>
