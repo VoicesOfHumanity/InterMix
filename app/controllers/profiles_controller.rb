@@ -341,7 +341,7 @@ class ProfilesController < ApplicationController
   
   def check_group_and_dialog    
     if session[:dialog_id].to_i > 0
-      @dialog = Dialog.find_by_id(.session[:dialog_id])
+      @dialog = Dialog.find_by_id(session[:dialog_id])
     end
   end
   
