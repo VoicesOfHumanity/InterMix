@@ -164,15 +164,15 @@ class ApplicationController < ActionController::Base
       @dialog = Dialog.find_by_shortname(subdomain)
       if @dialog
         @dialog_id = @dialog.id
-        session[:dialog_id] = @dialog_id
-        session[:dialog_name] = @dialog.name
+        env['warden'].session[:dialog_id] = @dialog_id
+        env['warden'].session[:dialog_name] = @dialog.name
       else
         if subdomain != 'intermix'
           @group = Group.find_by_shortname(subdomain)
           if @group
             @group_id = @group.id
-            session[:group_id] = @group_id
-            session[:group_name] = @group.name
+            env['warden'].session[:group_id] = @group_id
+            env['warden'].session[:group_name] = @group.name
           end
         end
       end

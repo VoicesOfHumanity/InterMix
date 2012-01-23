@@ -17,8 +17,8 @@ class WallController < ApplicationController
     @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
     @items = @items.order(@sortby)
     @items = @items.paginate :page=>@page, :per_page => @per_page    
-    if session[:dialog_id].to_i > 0
-      @dialog = Dialog.find_by_id(session[:dialog_id])
+    if env['warden'].session[:dialog_id].to_i > 0
+      @dialog = Dialog.find_by_id(env['warden'].session[:dialog_id])
     end
     update_last_url
   end  
