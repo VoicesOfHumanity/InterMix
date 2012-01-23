@@ -81,6 +81,8 @@
 					<%= "in the discussion: #{Rails.env['warden'].session[:dialog_name]}" if Rails.env['warden'] and Rails.env['warden'].session[:dialog_id].to_i > 0 %>
 				</p>
 		  <% end %>
+		<p>env['warden']:<%= Rails.env['warden'].inspect if Rails.env['warden'] %></p>
+		<p>session:<%= session.inspect if session %></p>
 			</div>
 
 		</div>
