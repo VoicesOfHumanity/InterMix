@@ -7,11 +7,11 @@
 <% end -%>
 
 <ul>
-<% for dg in @dialogsin -%>
-<% dom = ((dg.dialog.shortname.to_s != "") ? "#{dg.dialog.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
-<li><a href="/dialogs/<%= dg.dialog.id %>/forum"><%= dg.dialog.name %></a>
-	<a href="/dialogs/<%= dg.dialog.id %>/view">info</a>
-	<% if @admin4.include?(dg.dialog.id) then %><a href="/dialogs/<%= dg.dialog.id %>/edit">edit</a><% end -%>
+<% for dialog in @dialogsin -%>
+<% dom = ((dialog.shortname.to_s != "") ? "#{dialog.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
+<li><a href="/dialogs/<%= dialog.id %>/forum"><%= dialog.name %></a>
+	<a href="/dialogs/<%= dialog.id %>/view">info</a>
+	<% if @admin4.include?(dialog.id) then %><a href="/dialogs/<%= dialog.id %>/edit">edit</a><% end -%>
 </li>
 <% end -%>
 </ul>

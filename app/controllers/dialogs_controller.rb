@@ -9,15 +9,16 @@ class DialogsController < ApplicationController
     @gpin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id)").includes(:group).all
     @groupsina = @gpin.collect{|g| g.group.id}
     @dialogsin = []
-    gpdone = {}
+    ddone = {}
     for gp in @gpin
-      if not gpdone[gp.group.id]
-        gdialogsin = DialogGroup.where("group_id=#{gp.group.id}").includes(:dialog).all
-        @dialogsin << gdialogsin
-        gpdone[gp.group.id] = true
-      end
+      gdialogsin = DialogGroup.where("group_id=#{gp.group.id}").includes(:dialog).all
+      for gd in gdialogsin
+        if not ddone[gd.dialog.id]
+          @dialogsin << gd.dialog
+          ddone[gd.dialog.id] = true
+        end
+      end  
     end  
-    @dialogsin.flatten!.uniq!
     
     @admin4 = DialogAdmin.where("participant_id=?",current_participant.id).collect{|r| r.dialog_id}
     
