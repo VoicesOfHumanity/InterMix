@@ -10,7 +10,7 @@
 
 <p><b>Prefix:</b> <%= @dialog.shortname %></p>
 
-<p><b>Description:</b> <%= @dialog.description %></p>
+<p><b>Description:</b> <%=raw @dialog.description %></p>
 
 <p><b>Created:</b> <%= @dialog.created_at.strftime("%m/%d/%Y") %></p>
 
