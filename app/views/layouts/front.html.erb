@@ -31,7 +31,7 @@
 			<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Home</a></li>
 			
 			<% if participant_signed_in? -%>
-				<% if (Rails.env['warden'].session[:dialog_id].to_i>0 or Rails.env['warden'].session[:group_id].to_i>0) and not session[:fullmenu] -%>
+				<% if (Rails.env['warden'] and (Rails.env['warden'].session[:dialog_id].to_i>0 or Rails.env['warden'].session[:group_id].to_i>0)) and not session[:fullmenu] -%>
 					<% showingfull = false -%>
 				<% else -%>
 					<% showingfull = true -%>
@@ -42,11 +42,11 @@
 				<li class="menu full"><a  class="<%= 'selected' if @section=='photos' %>" href="/photos">Photos</a></li>
 				<% end -%>
 				
-				<li class="menu<%= ' full' if Rails.env['warden'].session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='groups' %>" href="/groups">Groups</a></li>
-				<% if not showingfull and Rails.env['warden'].session[:dialog_id].to_i > 0 -%>
-				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs/<%= Rails.env['warden'].session[:dialog_id] %>/forum">Discussion</a></li>
+				<li class="menu<%= ' full' if Rails.env['warden'] and Rails.env['warden'].session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='groups' %>" href="/groups">Groups</a></li>
+				<% if not showingfull and Rails.env['warden'] and Rails.env['warden'].session[:dialog_id].to_i > 0 -%>
+				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs/<%= Rails.env['warden'] and Rails.env['warden'].session[:dialog_id] %>/forum">Discussion</a></li>
 				<% else -%>
-				<li class="menu<%= ' full' if Rails.env['warden'].session[:dialog_id].to_i==0 and Rails.env['warden'].session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs">Discussions</a></li>
+				<li class="menu<%= ' full' if Rails.env['warden'] and Rails.env['warden'].session[:dialog_id].to_i==0 and Rails.env['warden'].session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs">Discussions</a></li>
 				<% end -%>
 					
 				<li class="menu full"><a  class="<%= 'selected' if @section=='people' %>" href="/people">People</a></li>
@@ -61,7 +61,7 @@
 			<% end -%>
 		  <%= render 'devise/menu/login_items' %>
 		  <%= render 'devise/menu/registration_items' %>
-			<% if participant_signed_in? and (Rails.env['warden'].session[:dialog_id].to_i>0 or Rails.env['warden'].session[:group_id].to_i>0) %>
+			<% if participant_signed_in? and Rails.env['warden'] and (Rails.env['warden'].session[:dialog_id].to_i>0 or Rails.env['warden'].session[:group_id].to_i>0) %>
 				<li class="moreless" style="display:none">
 					<a href="#" onclick="menumoreless();return false" id="morelesslink">
 				<% if showingfull -%>
@@ -77,8 +77,8 @@
 			<div class="sidebarbox">
 		  <% if current_participant %>
 		    <p>You're logged in as:<br/><%= current_participant.name %><br><%= current_participant.email %>
-					<%= "participating as a member of the group: #{Rails.env['warden'].session[:group_name]}" if Rails.env['warden'].session[:group_id].to_i > 0 %>
-					<%= "in the discussion: #{Rails.env['warden'].session[:dialog_name]}" if Rails.env['warden'].session[:dialog_id].to_i > 0 %>
+					<%= "participating as a member of the group: #{Rails.env['warden'].session[:group_name]}" if Rails.env['warden'] and ails.env['warden'].session[:group_id].to_i > 0 %>
+					<%= "in the discussion: #{Rails.env['warden'].session[:dialog_name]}" if Rails.env['warden'] and Rails.env['warden'].session[:dialog_id].to_i > 0 %>
 				</p>
 		  <% end %>
 			</div>
@@ -110,7 +110,7 @@
 
 </body>
 </html>
-<% if participant_signed_in? and (Rails.env['warden'].session[:dialog_id].to_i>0 or Rails.env['warden'].session[:group_id].to_i>0) %>
+<% if participant_signed_in? and Rails.env['warden'] and (Rails.env['warden'].session[:dialog_id].to_i>0 or Rails.env['warden'].session[:group_id].to_i>0) %>
 <script>
 var showingfull = true;
 <% if not showingfull -%>
