@@ -196,4 +196,13 @@ Devise.setup do |config|
       throw(:warden, :message => "User not active")
     end
   end
+  
+  # http://rubydoc.info/github/hassox/warden/master/Warden/Hooks
+  Warden::Manager.before_logout do |user, auth, opts|
+    session[:dialog_id] = nil if session[:dialog_id]
+    session[:dialog_name] = nil if session[:dialog_name]
+    session[:group_id] = nil if session[:group_id]
+    session[:group_name] = nil if session[:group_name]
+  end
+  
 end
