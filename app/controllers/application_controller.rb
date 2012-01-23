@@ -161,22 +161,21 @@ class ApplicationController < ActionController::Base
     @group_id = nil
     @dialog_id = nil
     for subdomain in request.subdomains
-        @dialog = Dialog.find_by_shortname(subdomain)
-        if @dialog
-          @dialog_id = @dialog.id
-          if participant_signed_in? and env['warden']
-            env['warden'].session[:dialog_id] = @dialog_id
-            env['warden'].session[:dialog_name] = @dialog.name
-          end
-        else
-          if subdomain != 'intermix'
-            @group = Group.find_by_shortname(subdomain)
-            if @group
-              @group_id = @group.id
-              if participant_signed_in? and env['warden']
-                env['warden'].session[:group_id] = @group_id
-                env['warden'].session[:group_name] = @group.name
-              end
+      @dialog = Dialog.find_by_shortname(subdomain)
+      if @dialog
+        @dialog_id = @dialog.id
+        if participant_signed_in? and env['warden']
+          env['warden'].session[:dialog_id] = @dialog_id
+          env['warden'].session[:dialog_name] = @dialog.name
+        end
+      else
+        if subdomain != 'intermix'
+          @group = Group.find_by_shortname(subdomain)
+          if @group
+            @group_id = @group.id
+            if participant_signed_in? and env['warden']
+              env['warden'].session[:group_id] = @group_id
+              env['warden'].session[:group_name] = @group.name
             end
           end
         end
