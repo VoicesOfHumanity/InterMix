@@ -43,7 +43,7 @@
 
 <p><br><b>Focus Periods:</b><ul>
 <% for period in @dialog.periods -%>
-	<li><a href="/dialogs/<%= @dialog.id %>/period_edit?period_id=<%= period.id %>"><%= period.startdate %> - <%= period.enddate -%>: <%= period.name %></a></li>
+	<li><a href="/dialogs/<%= @dialog.id %>/period_edit?period_id=<%= period.id %>"><%= period.startdate %> - <%= period.endposting -%>/<%= period.endrating %>: <%= period.name %></a></li>
 <% end -%>
 </ul>	
 <a href="/dialogs/<%= @dialog.id %>/period_edit?period_id=0">Add a period</a>	
