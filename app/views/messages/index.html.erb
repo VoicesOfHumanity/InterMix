@@ -7,6 +7,11 @@
 var curid = 0;
 var curinout = 'in';
 function showinout(inout) {
+	if (showingnew) {
+		$('#messageview').hide();
+		showingnew = false;
+		return;
+	}
   $('#messagelist').css('opacity','0.5');
 	curinout = inout;
 	$.ajax({
