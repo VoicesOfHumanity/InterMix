@@ -210,7 +210,8 @@ class DialogsController < ApplicationController
       @period.group_dialog = 'dialog'
     end  
     @period.startdate = params[:period][:startdate]
-    @period.enddate = params[:period][:enddate]
+    @period.endposting = params[:period][:endposting]
+    @period.endrating = params[:period][:endrating]
     @period.name = params[:period][:name]
     @period.save!
     redirect_to :action=>:edit

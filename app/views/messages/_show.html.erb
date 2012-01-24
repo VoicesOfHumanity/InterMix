@@ -6,4 +6,4 @@ as a member of <%= @message.group.name %>
 <br/>
 Sent <%= @message.created_at.strftime("%m/%d/%Y %H:%M") %><br/>
 Subject: <%= @message.subject %><br/>
-Message: <%= @message.message %><br/>
+Message: <%=raw @message.message %><br/>
