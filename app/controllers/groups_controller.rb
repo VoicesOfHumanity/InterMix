@@ -278,8 +278,10 @@ class GroupsController < ApplicationController
       xarr = line.split(',')
 
       email = xarr[0]
+      #if xarr.length < 3 or xarr.length > 5
       if xarr.length != 3
-        flash[:notice] += "#{email} incorrect number of fields (#{xarr.length})<br>"
+        flash[:notice] += "#{email} incorrect number of fields (#{xarr.length}).<br>"
+        #flash[:notice] += "#{email} incorrect number of fields (#{xarr.length}). Need 3-5<br>"
         next
       end
       first_name = xarr[1]

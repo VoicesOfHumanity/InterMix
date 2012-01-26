@@ -5,8 +5,12 @@
 
 <form action="/groups/<%= @group.id %>/importdo" method="post">
 <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-	
-<p>Enter names and addresses, in this format: email,first,last, one person per line:</p>
+
+<% if false -%>	
+<p>Enter names and addresses, in this format: Email,First,Last,Gender(M/F),Country of origin. Last two optional. One person per line:</p>
+<% end -%>
+
+<p>Enter names and addresses, in this format: Email,First,Last. One person per line:</p>
 
 <p><%= text_area_tag 'new_text', nil, :rows => 5, :cols => 30 %></p>
 

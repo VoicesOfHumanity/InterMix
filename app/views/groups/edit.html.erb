@@ -12,10 +12,10 @@
 		<%= f.input :visibility, :as=>:select, :collection =>GROUP_VISIBILITY %>
 		<%= f.input :has_mail_list, :label => "Has mailing list" %>
 		<%= f.input :logo, :as=>:file %>		
-		<%= f.input :front_template %>
-		<%= f.input :member_template %>
-		<%= f.input :invite_template %>
-		<%= f.input :import_template %>
+		<%= f.input :front_template, :label => "Front Page template" %>
+		<%= f.input :member_template, :label => "Home Page template" %>
+		<%= f.input :invite_template, :label => "Invitation e-mail template" %>
+		<%= f.input :import_template, :label => "Import e-mail template" %>
 		<%= f.input :alt_logins, :label=>"Allow Facebook/Twitter logins?", :as => :boolean %>
 	<% end %>
 
