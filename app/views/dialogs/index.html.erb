@@ -16,4 +16,6 @@
 <% end -%>
 </ul>
 
+<% if @is_group_moderator or @is_hub_admin -%>
 <p><a href="/dialogs/new">Create a new discussion</a></p>
+<% end -%>
