@@ -7,10 +7,17 @@
 <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
 <% if false -%>	
-<p>Enter names and addresses, in this format: Email,First,Last,Gender(M/F),Country of origin. Last two optional. One person per line:</p>
+<p>Enter names and addresses, in this format: Email;First;Last,Gender(M/F),Country of origin. Last two optional. One person per line:</p>
 <% end -%>
 
-<p>Enter names and addresses, in this format: Email,First,Last. One person per line:</p>
+<p>Enter names and addresses, in this format: Email;First;Last;... One person per line:</p>
+
+<p>Optional metatag fields after the three fixed fields:<br>
+	<%= select_tag "meta_1", options_for_select([['',0]]+@metamaps.collect{|m| ["#{m.id}: #{m.name}",m.id]}) %>
+	<%= select_tag "meta_2", options_for_select([['',0]]+@metamaps.collect{|m| ["#{m.id}: #{m.name}",m.id]}) %>
+	<%= select_tag "meta_3", options_for_select([['',0]]+@metamaps.collect{|m| ["#{m.id}: #{m.name}",m.id]}) %><br>
+	Alternatively, add arbitary metatag fields after the first 3, of the format tagname:tagvalue.<br>E.g. ;Gender:Male;Nationality:Albanian
+</p>
 
 <p><%= text_area_tag 'new_text', nil, :rows => 5, :cols => 30 %></p>
 

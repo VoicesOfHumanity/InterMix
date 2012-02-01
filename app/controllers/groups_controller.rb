@@ -242,14 +242,14 @@ class GroupsController < ApplicationController
   end
 
   def import
-    #-- Invite screen
+    #-- Import members
     @section = 'groups'
     @gsection = 'import'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
     @messtext = @group.import_template
     @participant = Participant.includes(:idols).find(current_participant.id)  
-    @members = Participant.order("first_name,last_name").all  
+    @metamaps = Metamap.order("name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
     @is_moderator = @group_participant and @group_participant.moderator
@@ -262,11 +262,22 @@ class GroupsController < ApplicationController
     @group_id = params[:id].to_i
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
     logger.info("groups#importdo #{@group_id}")  
+    @meta_1 = params[:meta_1].to_i
+    @meta_2 = params[:meta_2].to_i
+    @meta_3 = params[:meta_3].to_i
     flash[:notice] = ''
     flash[:alert] = ''
 
     @new_text = params[:new_text].to_s
     @messtext = params[:messtext].to_s
+
+    metamapnames = {}
+    metamapids = {}
+    metamaprecs = Metamap.all
+    for metamap in metamaprecs
+      metamapnames[metamap.name.downcase] = metamap.id
+      metamapids[metamap.id] = metamap.name
+    end
 
     lines = @new_text.split("[\r\n]+")
     flash[:notice] += "#{lines.length} lines<br>"
@@ -275,20 +286,18 @@ class GroupsController < ApplicationController
       x += 1
       #next if x == 1
       line = line.force_encoding("ISO-8859-1").encode("UTF-8").strip
-      xarr = line.split(',')
+      xarr = line.split(';')
 
       email = xarr[0]
-      #if xarr.length < 3 or xarr.length > 5
-      if xarr.length != 3
-        flash[:notice] += "#{email} incorrect number of fields (#{xarr.length}).<br>"
-        #flash[:notice] += "#{email} incorrect number of fields (#{xarr.length}). Need 3-5<br>"
+      if xarr.length < 3
+        flash[:notice] += "#{email} incorrect number of fields (#{xarr.length}). Need 3+<br>"
         next
       end
       first_name = xarr[1]
       last_name = xarr[2]
-      
-      flash[:notice] += "#{email}, #{first_name}, #{last_name}<br>"
 
+      flash[:notice] += "#{email}, #{first_name}, #{last_name}<br>"
+      
       if email.to_s == ''
         next
       end
@@ -333,6 +342,64 @@ class GroupsController < ApplicationController
         added_to_group = true
       else
         flash[:notice] += "- already in the group<br>"
+      end
+      
+      #-- Handle metatag fields      
+      for pos in [3,4,5,6,7,8,9,10,11,12,13,14,15]
+        if not xarr[pos] or xarr[pos].to_s == ''
+          next
+        end
+        metamap_name = ""
+        varval = xarr[pos].strip
+        if varval.split(':').length > 1
+          zarr = varval.split(':')
+          metamap_name = zarr[0].strip.downcase
+          if metamapnames[metamap_name]
+            metamap_id = metamapnames[metamap_name]
+          else
+            flash[:notice] += "- UNKNOWN META NAME: #{metamap_name}<br>"
+            next
+          end
+          value = zarr[1].strip
+        else
+          metamap_id = 0
+          value = varval
+        end
+        if metamap_id > 0
+        elsif pos == 3
+          metamap_id = params[:meta_1].to_i
+        elsif pos == 4
+          metamap_id = params[:meta_2].to_i
+        elsif pos == 5
+          metamap_id = params[:meta_3].to_i
+        end
+        if metamap_name == "" and metamapids[metamap_id]
+          metamap_name = metamapids[metamap_id]
+        end
+        if metamap_id > 0
+          metamap = Metamap.find_by_id(metamap_id)
+          if not metamap
+             flash[:notice] += "- UNKNOWN META ID: #{metamap_id}<br>"
+          else
+            metamap_nodes = MetamapNode.where(:metamap_id=>metamap_id,:name=>value)
+            if metamap_nodes.length > 0
+              metamap_node_id = metamap_nodes[0]
+              mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>participant.id).first
+              if mnp
+                mnp.metamap_node_id = metamap_node_id
+                mnp.save
+                flash[:notice] += "- updated meta #{metamap_name}: #{value}<br>"
+              else
+                MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>metamap_node_id,:participant_id=>participant.id)
+                flash[:notice] += "- added meta #{metamap_name}: #{value}<br>"
+              end                  
+            else
+               flash[:notice] += "- UNKNOWN VALUE for #{metamap_name}: #{value}<br>"
+            end
+          end
+        else
+          flash[:notice] +=  "- UNKNOWN: #{value}<br>"
+        end  
       end
       
       if @messtext.to_s != '' and added_to_group
