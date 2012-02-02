@@ -77,8 +77,8 @@
 			<div class="sidebarbox">
 		  <% if current_participant %>
 		    <p>You're logged in as:<br/><%= current_participant.name %><br><%= current_participant.email %>
-					<%= "participating as a member of the group: <b>#{session[:group_name]}</b>" if session[:group_id].to_i > 0 %>
-					<%= "in the discussion: <b>#{session[:dialog_name]}</b>" if session[:dialog_id].to_i > 0 %>
+					<%=raw "participating as a member of the group: <b>#{session[:group_name]}</b>" if session[:group_id].to_i > 0 %>
+					<%=raw "in the discussion: <b>#{session[:dialog_name]}</b>" if session[:dialog_id].to_i > 0 %>
 				</p>
 		  <% end %>
 			</div>
