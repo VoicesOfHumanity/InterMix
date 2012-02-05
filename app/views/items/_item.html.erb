@@ -127,7 +127,7 @@
 		</div>
 
 		<div class="iteminfotxt">
-			<% if not item.dialog or item.dialog.allow_replies -%>
+			<% if (item.dialog and item.dialog.allow_replies) or (item.group and @is_member) -%>
 		<%= link_to_function "Reply", "reply(#{item.id},#{is_reply})" %>	
 			<% end -%>
 		</div>
