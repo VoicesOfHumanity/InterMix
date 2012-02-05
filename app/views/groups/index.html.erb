@@ -18,10 +18,10 @@
 
 <% if @groupsopen.length > 0 -%>
 
-	<p>These are <%= @groupsin.length > 0 ? 'other ' : '' %>groups you might be able to join:</p>
+	<p>These are <%= @groupspublic.length > 0 ? 'other ' : '' %>groups you might be able to access or join:</p>
 
 	<ul>
-	<% for group in @groupsopen -%>
+	<% for group in @groupspublic -%>
 		<% if not @groupsina.include?(group.id) -%>
 			<% dom = ((group.shortname.to_s != "") ? "#{group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
 			<li><a href="http://<%= dom %>/groups/<%= group.id %>/view"><%= group.name %></a> - Description: <%= group.description %> Members: <%= group.group_participants_count.to_i %> <a href="http://<%= dom %>/groups/<%= group.id %>/join"><%= group.openness=='open' ? "Join" : '' %></a></li>
