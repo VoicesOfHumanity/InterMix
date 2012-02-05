@@ -601,13 +601,19 @@ class GroupsController < ApplicationController
   def update_prefix
     #-- Update the current group, and the prefix and base url
     return if not @group
-    session[:group_id] = @group.id
-    session[:group_name] = @group.name
-    session[:group_prefix] = @group.shortname
+    if @is_member
+      session[:group_id] = @group.id
+      session[:group_name] = @group.name
+      session[:group_prefix] = @group.shortname
+    else
+      session[:group_id] = 0
+      session[:group_name] = ''
+      session[:group_prefix] = ''
+    end
+    session[:cur_prefix] = @group.shortname
     session[:dialog_id] = 0
     session[:dialog_name] = ''
     session[:dialog_prefix] = ''
-    session[:cur_prefix] = session[:group_prefix]
     if session[:cur_prefix] != ''
       session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
     else
