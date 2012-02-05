@@ -9,9 +9,9 @@
 <ul>
 <% for dialog in @dialogsin -%>
 <% dom = ((dialog.shortname.to_s != "") ? "#{dialog.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
-<li><a href="<%= session[:cur_baseurl].to_s %>/dialogs/<%= dialog.id %>/forum"><%= dialog.name %></a>
-	<a href="<%= session[:cur_baseurl].to_s %>/dialogs/<%= dialog.id %>/view">info</a>
-	<% if @admin4.include?(dialog.id) then %><a href="<%= session[:cur_baseurl].to_s %>/dialogs/<%= dialog.id %>/edit">edit</a><% end -%>
+<li><a href="http://<%= dom %>/dialogs/<%= dialog.id %>/forum"><%= dialog.name %></a>
+	<a href="http://<%= dom %>/dialogs/<%= dialog.id %>/view">info</a>
+	<% if @admin4.include?(dialog.id) then %><a href="http://<%= dom %>/dialogs/<%= dialog.id %>/edit">edit</a><% end -%>
 </li>
 <% end -%>
 </ul>
