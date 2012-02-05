@@ -71,31 +71,6 @@ class ApplicationController < ActionController::Base
     str.gsub(/[^a-zA-Z0-9_\.\-]/n) {|s| sprintf('%%%02x', s[0]) }
   end
   
-  def update_last_url(url='')
-    #-- Record where the user last was, so they can get back there next time they log in
-    url = request.env['PATH_INFO'] if url == ''
-    if current_participant
-      current_participant.last_url = url
-      current_participant.save()
-    end  
-  end  
-  
-  def after_sign_in_path_for(resource_or_scope)
-    #-- Overrides the devise function to go to our remembered URL after logging in
-    group_id,dialog_id = get_group_dialog_from_subdomain
-    if params[:fb_sig_in_iframe].to_i == 1
-      '/fbapp'
-    elsif dialog_id.to_i > 0
-      "/dialogs/#{dialog_id}/forum"
-    elsif group_id.to_i > 0
-      "/groups/#{group_id}/forum"      
-    elsif current_participant.last_url.to_s != ''
-      current_participant.last_url
-    else  
-      super
-    end  
-  end
-  
   def emailit(toemail, subject, message)
     #-- E-mail a message that isn't associated with a message or item
     
@@ -156,6 +131,59 @@ class ApplicationController < ActionController::Base
     )
   end
 
+  def update_last_url(url='')
+    #-- Record where the user last was, so they can get back there next time they log in
+    url = request.env['PATH_INFO'] if url == ''
+    if current_participant
+      current_participant.last_url = url
+      current_participant.save()
+    end  
+  end  
+    
+  def after_sign_in_path_for(resource_or_scope)
+    #-- Overrides the devise function to go to our remembered URL after logging in
+    
+    #-- Also do a few other things we need to do when somebody logs in
+    
+    session[:cur_prefix] = ''
+    session[:cur_baseurl] = ''
+    session[:group_id] = 0
+    session[:group_name] = ''
+    session[:group_prefix] = ''
+    session[:dialog_id] = 0
+    session[:dialog_name] = ''
+    session[:dialog_prefix] = ''
+    
+    group_id,dialog_id = get_group_dialog_from_subdomain
+
+    if session[:dialog_prefix] != '' and session[:group_prefix] != ''
+      session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
+    elsif session[:group_prefix] != ''
+      session[:cur_prefix] = session[:group_prefix]
+    elsif session[:dialog_prefix] != ''
+      session[:cur_prefix] = session[:dialog_prefix]
+    end
+    
+    if session[:cur_prefix] != ''
+      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+    else
+      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+    end
+  
+    if params[:fb_sig_in_iframe].to_i == 1
+      session[:cur_baseurl] + '/fbapp'
+    elsif dialog_id.to_i > 0
+      session[:cur_baseurl] + "/dialogs/#{dialog_id}/forum"
+    elsif group_id.to_i > 0
+      session[:cur_baseurl] + "/groups/#{group_id}/forum"      
+    elsif current_participant.last_url.to_s != ''
+      current_participant.last_url
+    else  
+      super
+    end  
+  end
+
+
   def get_group_dialog_from_subdomain
     #-- If we've gotten a group and/or dialog shortname in the subdomain
     @group_id = nil
@@ -167,6 +195,7 @@ class ApplicationController < ActionController::Base
         if participant_signed_in?
           session[:dialog_id] = @dialog_id
           session[:dialog_name] = @dialog.name
+          session[:dialog_prefix] = @dialog.shortname
           #env['warden'].session[:dialog_id] = @dialog_id
           #env['warden'].session[:dialog_name] = @dialog.name
         end
@@ -178,6 +207,7 @@ class ApplicationController < ActionController::Base
             if participant_signed_in? and env['warden']
               session[:group_id] = @group_id
               session[:group_name] = @group.name
+              session[:group_prefix] = @group.shortname
               #env['warden'].session[:group_id] = @group_id
               #env['warden'].session[:group_name] = @group.name
             end

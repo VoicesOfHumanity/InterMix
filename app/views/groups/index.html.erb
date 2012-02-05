@@ -9,9 +9,9 @@
 <ul>
 <% for gp in @groupsin -%>
 	<% dom = ((gp.group.shortname.to_s != "") ? "#{gp.group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
-	<li><a href="/groups/<%= gp.group.id %>/forum"><%= gp.group.name %></a>
-		<a href="/groups/<%= gp.group.id %>/view">info</a>
-	<a href="/groups/<%= gp.group.id %>/admin">administrate</a> <a href="/groups/<%= gp.group.id %>/unjoin" onclick="confirm('Are you sure you want to leave this group?')">leave</a></li>
+	<li><a href="<%= dom %>/groups/<%= gp.group.id %>/forum"><%= gp.group.name %></a>
+		<a href="<%= dom %>/groups/<%= gp.group.id %>/view">info</a>
+	<a href="<%= dom %>/groups/<%= gp.group.id %>/admin">administrate</a> <a href="<%= dom %>/groups/<%= gp.group.id %>/unjoin" onclick="confirm('Are you sure you want to leave this group?')">leave</a></li>
 <% end -%>
 </ul>
 

@@ -14,6 +14,7 @@ class GroupsController < ApplicationController
     end  
     @groupsopen = Group.where("(openness='open' or openness='open_to_apply')").order("id desc").all
     update_last_url
+    update_prefix
   end  
   
   def view
@@ -25,6 +26,7 @@ class GroupsController < ApplicationController
     @is_member = @group_participant ? true : false
     @is_moderator = @group_participant and @group_participant.moderator
     update_last_url
+    update_prefix
   end  
   
   def admin
@@ -36,6 +38,7 @@ class GroupsController < ApplicationController
     @is_member = @group_participant ? true : false
     @is_moderator = @group_participant and @group_participant.moderator
     update_last_url
+    update_prefix
   end
   
   def moderate
@@ -47,6 +50,7 @@ class GroupsController < ApplicationController
     @is_member = @group_participant ? true : false
     @is_moderator = @group_participant and @group_participant.moderator
     update_last_url
+    update_prefix
   end  
   
   def new
@@ -67,6 +71,7 @@ class GroupsController < ApplicationController
     @is_member = @group_participant ? true : false
     @is_moderator = @group_participant and @group_participant.moderator
     render :action=>'edit'
+    update_prefix
   end  
   
   def update
@@ -115,6 +120,7 @@ class GroupsController < ApplicationController
         format.html { render :action=>:edit }
       end
     end
+    update_prefix
   end  
   
   def members
@@ -126,6 +132,7 @@ class GroupsController < ApplicationController
     @is_member = @group_participant ? true : false
     @is_moderator = @group_participant and @group_participant.moderator
     update_last_url
+    update_prefix
   end  
   
   def invite
@@ -462,6 +469,7 @@ class GroupsController < ApplicationController
       flash[:notice] = 'This group is not open to join'
     end
     redirect_to :action => :view 
+    update_prefix
   end
   
   def unjoin
@@ -523,6 +531,7 @@ class GroupsController < ApplicationController
     @dialogsin = DialogGroup.where("group_id=#{@group_id}").includes(:dialog).all      
 
     update_last_url
+    update_prefix
   end   
 
   def period_edit
@@ -585,6 +594,24 @@ class GroupsController < ApplicationController
     @group_subtag.save!
     redirect_to :action=>:admin
   end
-  
+
+  protected
+ 
+  def update_prefix
+    #-- Update the current group, and the prefix and base url
+    return if not @group
+    session[:group_id] = @group.id
+    session[:group_name] = @group.name
+    session[:group_prefix] = @group.shortname
+    session[:dialog_id] = 0
+    session[:dialog_name] = ''
+    session[:dialog_prefix] = ''
+    session[:cur_prefix] = session[:group_prefix]
+    if session[:cur_prefix] != ''
+      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+    else
+      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+    end
+  end
 
 end

@@ -28,6 +28,8 @@ class DialogsController < ApplicationController
     
     @admin4 = DialogAdmin.where("participant_id=?",current_participant.id).collect{|r| r.dialog_id}
     
+    update_last_url
+    update_prefix
   end  
 
   def view
@@ -38,6 +40,8 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
+    update_last_url
+    update_prefix
   end  
 
   def admin
@@ -48,6 +52,8 @@ class DialogsController < ApplicationController
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
     @is_moderator = @group_participant and @group_participant.moderator
+    update_last_url
+    update_prefix
   end
 
   def new
@@ -76,6 +82,7 @@ class DialogsController < ApplicationController
     @is_admin = true
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all   
     @dialog = Dialog.find_by_id(@dialog_id)
+    update_prefix
   end  
 
   def create
@@ -95,6 +102,7 @@ class DialogsController < ApplicationController
         format.html { render :action=>:edit }
       end
     end
+    update_prefix
   end  
   
   def update
@@ -185,6 +193,9 @@ class DialogsController < ApplicationController
     elsif params[:new_signup].to_i == 1
       @new_signup = true
     end
+    
+    update_last_url
+    update_prefix
 
   end   
   
@@ -412,6 +423,9 @@ class DialogsController < ApplicationController
 
     end # metamaps
 
+    update_last_url
+    update_prefix
+
   end
 
   protected 
@@ -431,6 +445,26 @@ class DialogsController < ApplicationController
     end
     logger.info("dialogs_controller#dvalidate failed: #{flash[:alert]}") if flash[:alert] != ''
     flash[:alert] == ''
+  end
+
+  def update_prefix
+    #-- Update the current dialog, and the prefix and base url
+    return if not @dialog
+    session[:dialog_id] = @dialog.id
+    session[:dialog_name] = @dialog.name
+    session[:dialog_prefix] = @dialog.shortname
+    if session[:dialog_prefix] != '' and session[:group_prefix] != ''
+      session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
+    elsif session[:group_prefix] != ''
+      session[:cur_prefix] = session[:group_prefix]
+    elsif session[:dialog_prefix] != ''
+      session[:cur_prefix] = session[:dialog_prefix]
+    end
+    if session[:cur_prefix] != ''
+      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+    else
+      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+    end
   end
 
 end
