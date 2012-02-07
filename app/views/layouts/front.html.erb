@@ -31,10 +31,17 @@
 			<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Home</a></li>
 			
 			<% if participant_signed_in? -%>
-				<% if ((session[:dialog_id].to_i>0 or session[:group_id].to_i>0)) and not session[:fullmenu] -%>
-					<% showingfull = false -%>
-				<% else -%>
+				<% if session[:is_group_moderator] or session[:is_hub_admin] -%>
 					<% showingfull = true -%>
+				<% else -%>
+					<% showingfull = false -%>			
+				<% end -%>
+				<% if false -%>
+					<% if ((session[:dialog_id].to_i>0 or session[:group_id].to_i>0)) and not session[:fullmenu] -%>
+						<% showingfull = false -%>
+					<% else -%>
+						<% showingfull = true -%>
+					<% end -%>
 				<% end -%>
 
 				<% if false -%>

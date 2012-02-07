@@ -169,6 +169,12 @@ class ApplicationController < ActionController::Base
     else
       session[:cur_baseurl] = "http://" + BASEDOMAIN    
     end
+
+    #-- See if they're a moderator of a group, or a hub admin. Only those can add new discussions.
+    groupsmodof = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").all
+    session[:is_group_moderator] = (groupsmodof.length > 0)
+    hubadmins = HubAdmin.where("participant_id=#{current_participant.id} and active=1").all
+    session[:is_hub_admin] = (hubadmins.length > 0)
   
     if params[:fb_sig_in_iframe].to_i == 1
       session[:cur_baseurl] + '/fbapp'
