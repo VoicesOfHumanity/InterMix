@@ -1,13 +1,13 @@
 <h3>Discussions</h3>
 
-<% if @dialogsin.length > 0 -%>
-<p>You can participate in these discussions:</p>
+<% if @dialogsingroup.length > 0 -%>
+	<p>You can participate in these discussions:</p>
 <% else -%>
-<p>You don't have access to any discussions</p>
+	<p>None</p>
 <% end -%>
 
 <ul>
-<% for dialog in @dialogsin -%>
+<% for dialog in @dialogsingroup -%>
 <% dom = ((dialog.shortname.to_s != "") ? "#{dialog.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
 <li><a href="http://<%= dom %>/dialogs/<%= dialog.id %>/forum"><%= dialog.name %></a>
 	<a href="http://<%= dom %>/dialogs/<%= dialog.id %>/view">info</a>
