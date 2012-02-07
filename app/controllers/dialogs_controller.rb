@@ -16,7 +16,7 @@ class DialogsController < ApplicationController
       for gd in gdialogsin
         if not ddone[gd.dialog.id]
           @dialogsin << gd.dialog
-          @dialogsingroup << gd.dialog if gd.group_id = session[:group_id].to_i
+          @dialogsingroup << gd.dialog if session[:group_id].to_i > 0 and gd.group_id = session[:group_id].to_i
           ddone[gd.dialog.id] = true
         end
       end  
