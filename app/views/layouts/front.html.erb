@@ -31,7 +31,7 @@
 			<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Home</a></li>
 			
 			<% if participant_signed_in? -%>
-				<% if session[:is_group_moderator] or session[:is_hub_admin] -%>
+				<% if session[:is_anyadmin] -%>
 					<% showingfull = true -%>
 				<% else -%>
 					<% showingfull = false -%>			

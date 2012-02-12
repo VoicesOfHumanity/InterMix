@@ -175,6 +175,8 @@ class ApplicationController < ActionController::Base
     session[:is_group_moderator] = (groupsmodof.length > 0)
     hubadmins = HubAdmin.where("participant_id=#{current_participant.id} and active=1").all
     session[:is_hub_admin] = (hubadmins.length > 0)
+    session[:is_sysadmin] = current_participant.sysadmin
+    session[:is_anyadmin] = session[:is_group_moderator] or session[:is_hub_admin] or session[:is_sysadmin]
   
     if params[:fb_sig_in_iframe].to_i == 1
       session[:cur_baseurl] + '/fbapp'
