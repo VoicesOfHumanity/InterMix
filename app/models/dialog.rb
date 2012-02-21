@@ -44,8 +44,8 @@ class Dialog < ActiveRecord::Base
       "posting_open" => self.posting_open,
       "voting_open" => self.voting_open
     }
-    if current_period.to_i > 0
-      period = Period.find_by_id(current_period)
+    if self.current_period.to_i > 0
+      period = Period.find_by_id(self.current_period)
       settings["max_characters"] = period.max_characters if period.max_characters.to_i > 0
       settings["metamap_vote_own"] = period.metamap_vote_own
       settings["default_message"] = period.default_message if period.default_message.to_s != ""

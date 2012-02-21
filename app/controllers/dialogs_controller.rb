@@ -253,11 +253,8 @@ class DialogsController < ApplicationController
       @period.dialog_id = @dialog_id
       @period.group_dialog = 'dialog'
     end  
-    @period.startdate = params[:period][:startdate]
-    @period.endposting = params[:period][:endposting]
-    @period.endrating = params[:period][:endrating]
-    @period.name = params[:period][:name]
-    @period.save!
+    @period.save!    
+    @period.update_attributes(params[:period])
     redirect_to :action=>:edit
   end
   
