@@ -232,16 +232,31 @@ class ItemsController < ApplicationController
     
     itemprocess
     
-    if @item.dialog_id > 0
-      if @item.reply_to.to_i == 0 and @dialog and @dialog.max_messages > 0
+    if @item.dialog_id > 0 and @dialog
+      #-- Various controls set by either a discussion or by a focus group in a discussion
+      # open for posting?
+      if not @dialog.settings_with_period["posting_open"]
+        render :text=>"Sorry, this discussion is not open for new messages", :layout=>false
+        return
+      end      
+      if @item.reply_to.to_i == 0 and @dialog.settings_with_period["max_messages"].to_i > 0
+        max_messages = @dialog.settings_with_period["max_messages"].to_i
         previous_messages = Item.where("posted_by=?",current_participant.id).count
-        if previous_messages >= @dialog.max_messages
-          render :text=>"Sorry, you can only post #{@dialog.max_messages} message#{@dialog.max_messages > 1 ? 's' : ''} here", :layout=>false
+        if previous_messages >= max_messages
+          render :text=>"Sorry, you can only post #{max_messages} message#{max_messages > 1 ? 's' : ''} here", :layout=>false
           return
         end
       end
-      if @dialog and @item.reply_to.to_i > 0 and not @dialog.settings_with_period["allow_replies"]
+      if @item.reply_to.to_i > 0 and not @dialog.settings_with_period["allow_replies"]
         render :text=>'Sorry, replies are not permitted here', :layout=>false
+        return
+      end    
+      if @dialog.settings_with_period["required_subject"] and @item.subject.to_s == ""
+        render :text=>"A subject is required", :layout=>false
+        return
+      end
+      if @dialog.settings_with_period["max_characters"].to_i > 0 and @item.html_content.gsub(/<\/?[^>]*>/, "").length > @dialog.settings_with_period["max_characters"]
+        render :text=>"That's too many characters", :layout=>false
         return
       end
     end
