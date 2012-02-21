@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120117010927) do
+ActiveRecord::Schema.define(:version => 20120212190040) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -535,14 +535,30 @@ ActiveRecord::Schema.define(:version => 20120117010927) do
     t.date     "endrating"
     t.string   "name"
     t.string   "shortname"
-    t.string   "group_dialog",    :default => "dialog"
+    t.string   "group_dialog",          :default => "dialog"
     t.integer  "group_id"
     t.integer  "dialog_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
     t.text     "metamaps"
-    t.boolean  "metamaps_frozen", :default => false
+    t.boolean  "metamaps_frozen",       :default => false
+    t.integer  "max_characters"
+    t.string   "metamap_vote_own"
+    t.text     "default_message"
+    t.boolean  "required_message",      :default => true
+    t.boolean  "required_subject",      :default => true
+    t.integer  "max_messages",          :default => 0
+    t.string   "new_message_title"
+    t.boolean  "allow_replies",         :default => true
+    t.boolean  "required_meta",         :default => true
+    t.string   "value_calc",            :default => "total"
+    t.boolean  "profiles_visible",      :default => true
+    t.boolean  "names_visible_voting",  :default => true
+    t.boolean  "names_visible_general", :default => true
+    t.boolean  "in_voting_round",       :default => false
+    t.boolean  "posting_open",          :default => true
+    t.boolean  "voting_open",           :default => true
   end
 
   add_index "periods", ["dialog_id", "startdate"], :name => "index_periods_on_dialog_id_and_startdate"

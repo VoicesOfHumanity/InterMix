@@ -286,9 +286,9 @@ class FrontController < ApplicationController
       return
     end  
 
-    if @message.to_s == '' and ((@dialog and @dialog.required_message) or @subject.to_s != '')
+    if @message.to_s == '' and ((@dialog and @dialog.settings_with_period["required_message"]) or @subject.to_s != '')
       flash[:alert] += "Please include at least a short message<br>"
-    elsif @dialog and @dialog.max_characters.to_i > 0 and @message.length > @dialog.max_characters  
+    elsif @dialog and @dialog.settings_with_period["max_characters"].to_i > 0 and @message.length > @dialog.settings_with_period["max_characters"]  
       flash[:alert] += "The maximum message length is #{@dialog.max_characters} characters<br>"
     elsif @dialog.required_subject and @subject.to_s == '' and @message.gsub(/<\/?[^>]*>/, "").strip != ''
       flash[:alert] += "Please choose a subject line<br>"

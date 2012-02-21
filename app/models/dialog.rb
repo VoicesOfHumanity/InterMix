@@ -24,6 +24,48 @@ class Dialog < ActiveRecord::Base
     metamaps.uniq
   end  
   
+  def settings_with_period
+    #-- Get some settings, either from the dialog record, or, if a period is active, from the period
+    settings = {
+      "max_characters" => self.max_characters,
+      "metamap_vote_own" => self.metamap_vote_own,
+      "default_message" => self.default_message,
+      "required_message" => self.required_message,
+      "required_subject" => self.required_subject,
+      "max_messages" => self.max_messages,
+      "new_message_title" => self.new_message_title,
+      "allow_replies" => self.allow_replies,
+      "required_meta" => self.required_meta,
+      "value_calc" => self.value_calc,
+      "profiles_visible" => self.profiles_visible,
+      "names_visible_voting" => self.names_visible_voting,
+      "names_visible_general" => self.names_visible_general,
+      "in_voting_round" => self.in_voting_round,
+      "posting_open" => self.posting_open,
+      "voting_open" => self.voting_open
+    }
+    if self.current_period.to_i > 0
+      period = Period.find(self.current_period)
+      settings["max_characters"] = period.max_characters if period.max_characters.to_i > 0
+      settings["metamap_vote_own"] = period.metamap_vote_own
+      settings["default_message"] = period.default_message if period.default_message.to_s != ""
+      settings["required_message"] = period.required_message if period.required_message.to_s != ""
+      settings["required_subject"] = period.required_subject if period.required_subject.to_s != ""
+      settings["max_messages"] = period.max_messages if period.max_messages.to_s > 0
+      settings["new_message_title"] = period.new_message_title if period.new_message_title.to_s != ""
+      settings["allow_replies"] = period.allow_replies
+      settings["required_meta"] = period.required_meta
+      settings["value_calc"] = period.value_calc if period.value_calc.to_s != ""
+      settings["profiles_visible"] = period.profiles_visible
+      settings["names_visible_voting"] = period.names_visible_voting
+      settings["names_visible_general"] = period.names_visible_general
+      settings["in_voting_round"] = period.in_voting_round
+      settings["posting_open"] = period.posting_open
+      settings["voting_open"] = period.voting_open
+    end
+    settings
+  end
+  
   def to_liquid
       {'id'=>id,'name'=>name,'shortname'=>shortname,'description'=>description}
   end

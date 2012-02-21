@@ -9,7 +9,7 @@
 		
 	<div class="itemvoting">
 
-		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if not item.dialog or item.dialog.voting_open %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if not item.dialog or item.dialog.settings_with_period["voting_open"] %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="intshort_<%= item.id %>" class="intshort">
 				<img src="/images/sface.gif"/>
 				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= item['hasrating'].to_i %> current_participant:<%= current_participant.id %> interest:<%= item['interest'].to_i %>"><%= item['hasrating'].to_i > 0 ? item['rateinterest'].to_i : '-'%></span>
@@ -30,7 +30,7 @@
 			</div>				
 		</div>
 				
-		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if not item.dialog or item.dialog.voting_open %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if not item.dialog or item.dialog.settings_with_period["voting_open"] %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="appshort_<%= item.id %>" class="appshort">
 				<img src="/images/fface.gif"/>				
 			<span id="vote_app_rate_<%= item.id %>"><%= item['hasrating'].to_i > 0 ? item['rateapproval'].to_i : '-'%></span>
@@ -111,9 +111,9 @@
 		<div class="iteminfotxt">
 		<% if @from.to_s == 'forum' or @from.to_s != 'wall' -%>	
 		by 
-		<% if item.dialog and item.dialog.in_voting_round and not item.dialog.names_visible_voting -%>
+		<% if item.dialog and item.dialog.settings_with_period["in_voting_round"] and not item.dialog.settings_with_period["names_visible_voting"] -%>
 		[name withheld during voting]
-		<% elsif item.dialog and not item.dialog.profiles_visible -%>
+		<% elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"] -%>
 		<%= item.participant ? item.participant.name : item.posted_by %>
 		<% else -%>
 		<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>
@@ -127,7 +127,7 @@
 		</div>
 
 		<div class="iteminfotxt">
-			<% if (item.dialog and item.dialog.allow_replies) or (item.group and @is_member) -%>
+			<% if (item.dialog and item.dialog.settings_with_period["allow_replies"]) or (item.group and @is_member) -%>
 		<%= link_to_function "Reply", "reply(#{item.id},#{is_reply})" %>	
 			<% end -%>
 		</div>

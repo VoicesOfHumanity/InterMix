@@ -115,8 +115,8 @@ class ItemsController < ApplicationController
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
       end
     else
-      if @dialog and @dialog.default_message.to_s != ''
-        @item.html_content = @dialog.default_message
+      if @dialog and @dialog.settings_with_period["default_message"].to_s != ''
+        @item.html_content = @dialog.settings_with_period["default_message"]
       end    
     end   
 
@@ -234,7 +234,7 @@ class ItemsController < ApplicationController
           return
         end
       end
-      if @dialog and @item.reply_to.to_i > 0 and not @dialog.allow_replies
+      if @dialog and @item.reply_to.to_i > 0 and not @dialog.settings_with_period["allow_replies"]
         render :text=>'Sorry, replies are not permitted here', :layout=>false
         return
       end
@@ -369,11 +369,11 @@ class ItemsController < ApplicationController
     dialog = Dialog.find_by_id(dialog_id) if dialog_id
     html_content = params[:item][:html_content].to_s
     subject = params[:item][:subject].to_s
-    if html_content == '' and ((dialog and dialog.required_message) or subject != '')
+    if html_content == '' and ((dialog and dialog.settings_with_period["required_message"]) or subject != '')
       @xmessage += "Please include at least a short message<br>"
-    elsif dialog and dialog.max_characters.to_i > 0 and html_content.length > dialog.max_characters  
-      @xmessage += "The maximum message length is #{dialog.max_characters} characters<br>"
-    elsif dialog and dialog.required_subject and subject.to_s == '' and html_content.gsub(/<\/?[^>]*>/, "").strip != ''
+    elsif dialog and dialog.settings_with_period["max_characters"].to_i > 0 and html_content.length > dialog.settings_with_period["max_characters"]  
+      @xmessage += "The maximum message length is #{dialog.settings_with_period["max_characters"]} characters<br>"
+    elsif dialog and dialog.settings_with_period["required_subject"] and subject.to_s == '' and html_content.gsub(/<\/?[^>]*>/, "").strip != ''
       @xmessage += "Please choose a subject line<br>"
     elsif subject != '' and subject.length > 48
       @xmessage += "Maximum 48 characters for the subject line, please<br>"        

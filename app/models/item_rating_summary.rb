@@ -69,9 +69,9 @@ class ItemRatingSummary < ActiveRecord::Base
 
     puts "stored averages: int:#{self.int_average} app:#{self.app_average}" if explain
     
-    #logger.info("item_rating_summary#recalculate item:#{self.item_id} dialog:#{dialog.id} value_calc:#{dialog.value_calc}")
+    #logger.info("item_rating_summary#recalculate item:#{self.item_id} dialog:#{dialog.id} value_calc:#{dialog.settings_with_period['value_calc']}")
     
-    if dialog and dialog.value_calc == 'avg'
+    if dialog and dialog.settings_with_period["value_calc"] == 'avg'
       self.value = xint_average * xapp_average
       puts "value, #{xint_average}(int_average) * #{xapp_average}(app_average) = #{self.value}" if explain
     else

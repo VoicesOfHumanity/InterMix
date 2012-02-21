@@ -2,7 +2,7 @@
 <img src="http://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" />
 <% end -%>
 
-<% if @dialog and not @dialog.profiles_visible -%>
+<% if @dialog and not @dialog.settings_with_period["profiles_visible"] -%>
 	<h3>Posted by <%= @participant.name %>:</h3>
 <% else -%>
 <h3>Posted by <a href="/participant/<%= @participant.id %>/profile"><%= @participant.name %></a>:</h3>

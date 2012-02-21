@@ -5,7 +5,7 @@
 	
 	<div class="right">
 	<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
-	<% if (@dialog.max_messages == 0 or @previous_messages < @dialog.max_messages) and @dialog.posting_open -%>
+	<% if (@dialog.max_messages == 0 or @previous_messages < @dialog.max_messages) and @dialog.settings_with_period["posting_open"] -%>
 	<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
 	<% end -%>
 	</div>

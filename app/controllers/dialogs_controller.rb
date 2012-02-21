@@ -67,7 +67,17 @@ class DialogsController < ApplicationController
     @dialog.visibility = 'public'
     @dialog.openness = 'open'
     @dialog.metamap_vote_own = 'never'
-    @dialog.multigroup = true
+    @dialog.multigroup = true 
+    @dialog.required_meta = true
+    @dialog.required_message = false
+    @dialog.value_calc = 'total'
+    @dialog.allow_replies = true
+    @dialog.profiles_visible = true
+    @dialog.names_visible_voting = false
+    @dialog.names_visible_general = true
+    @dialog.posting_open = true
+    @dialog.voting_open = true
+    
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
     render :action=>'edit'
   end  
@@ -212,6 +222,16 @@ class DialogsController < ApplicationController
     @period_id = params[:period_id].to_i
     if @period_id == 0
       @period = Period.new(:dialog_id=>@dialog_id,:group_dialog=>'dialog')
+      @period.metamap_vote_own = 'never'
+      @period.required_meta = true
+      @period.required_message = false
+      @period.value_calc = 'total'
+      @period.allow_replies = true
+      @period.profiles_visible = true
+      @period.names_visible_voting = false
+      @period.names_visible_general = true
+      @period.posting_open = true
+      @period.voting_open = true
     else
       @period = Period.find(@period_id)
     end

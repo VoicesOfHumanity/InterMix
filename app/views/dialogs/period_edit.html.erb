@@ -2,15 +2,34 @@
 
 <h3 style="clear:both">Focus Period</h3>
 
-<form action="/dialogs/<%= @dialog.id %>/period_save" method="post">
-<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-<%= hidden_field_tag :period_id, @period_id %>
+<%= semantic_form_for :period, :url => "/dialogs/#{@dialog.id}/period_save", :html=>{:id=>"period_edit"} do |f| %>
 
-<p>Title: <%= text_field :period, :name, :size => 30 %></p>
-<p>Start date: <%= text_field :period, :startdate, :size => 10 %> YYYY-MM-DD</p>
-<p>Posting end: <%= text_field :period, :endposting, :size => 10 %> YYYY-MM-DD</p>
-<p>Rating end: <%= text_field :period, :endrating, :size => 10 %> YYYY-MM-DD</p>
+	<%= f.inputs do %>
 
-<p><input type="submit" value="Save"></p>
+		<%= hidden_field_tag :period_id, @period_id %>
 
-</form>
+		<%= f.input :name, :label=>"Title" %>
+		<%= f.input :startdate, :label=>"Start date (YYYY-MM-DD)" %>
+		<%= f.input :endposting, :label=>"Posting end (YYYY-MM-DD)" %>
+		<%= f.input :endrating, :label=>"Rating end (YYYY-MM-DD)" %>
+		<%= f.input :required_meta, :as=>:boolean %>
+		<%= f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
+		<%= f.input :max_characters %>
+		<%= f.input :required_message,:label=>"Must a message be entered to join?" ,:as=>:boolean %>
+		<%= f.input :required_subject,:label=>"Is a subject required for messages?" ,:as=>:boolean %>
+		<%= f.input :max_messages %>
+		<%= f.input :default_message, :as=>:text %>
+		<%= f.input :allow_replies, :as=>:boolean %>
+		<%= f.input :profiles_visible,:label=>"Should user profiles be visible?" ,:as=>:boolean %>
+		<%= f.input :names_visible_voting,:label=>"Should names be visible in a voting phase?" ,:as=>:boolean %>
+		<%= f.input :names_visible_general,:label=>"Should names be visible in general?" ,:as=>:boolean %>
+		<%= f.input :in_voting_round,:label=>"In voting round?" ,:as=>:boolean %>
+		<%= f.input :posting_open,:label=>"Open for posting?" ,:as=>:boolean %>
+		<%= f.input :voting_open,:label=>"Open for voting?" ,:as=>:boolean %>
+		<%= f.input :value_calc, :as=>:select, :collection=>['total','avg']  %>
+
+	<% end %>
+
+	<p><input type="submit" value="Save"></p>
+
+<% end %>
