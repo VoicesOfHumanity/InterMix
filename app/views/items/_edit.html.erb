@@ -45,7 +45,7 @@
 				<% if @dialoggroupsin.length > 1 -%>
 					<% @item.group_id = @dialoggroupsin[0].id %>
 					<li class="select optional" id="item_group_id_input"><label for="item_group_id">Group</label>
-					<%= select :item, :group_id, @dialoggroupsin.collect{|g| [g.name,g.id]} %>
+					<%= select :item, :group_id, @dialoggroupsin.collect{|g| [g.name,g.id]}, session[:group_id].to_i %>
 					</li>
 				<% elsif @dialoggroupsin.length == 1 -%>
 					<% @item.group_id = @dialoggroupsin[0].id %>
