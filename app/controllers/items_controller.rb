@@ -113,7 +113,7 @@ class ItemsController < ApplicationController
         elsif @olditem.subject != ''
           @item.subject = @olditem.subject 
         end
-        @item.group_id = @olditem.group_id if @olditem.group_id.to_i > 0
+        @item.group_id = @olditem.group_id if @item.group_id.to_i == 0 and @olditem.group_id.to_i > 0
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
       end
     else
