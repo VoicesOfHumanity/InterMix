@@ -91,6 +91,7 @@ class ItemsController < ApplicationController
     end
     if params[:dialog_id].to_i > 0
       @dialog_id = params[:dialog_id].to_i
+      @item.group_id = session[:group_id].to_i if @item.group_id == 0
     else
       @dialog_id = 0      
     end
