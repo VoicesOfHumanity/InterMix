@@ -16,6 +16,7 @@ class ItemsController < ApplicationController
     @threads = params[:threads] || 'flat'
     @group_id = (params[:group_id] || 0).to_i
     @dialog_id = (params[:dialog_id] || 0).to_i
+    @period_id = (params[:period_id] || 0).to_i
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
     @perscr = 25 if @perscr < 1
@@ -29,6 +30,9 @@ class ItemsController < ApplicationController
     end
     if @dialog_id > 0
       @items = @items.where("items.dialog_id = ?", @dialog_id)    
+    end
+    if @period_id > 0
+      @items = @items.where("items.period_id = ?", @period_id)    
     end
     @threads = 'flat' if @threads == ''
     if @threads == 'flat' or @threads == 'tree'

@@ -44,6 +44,7 @@ class DialogsController < ApplicationController
     @dsection = 'info'
     @dialog_id = params[:id]
     @dialog = Dialog.includes(:creator).find(@dialog_id)
+    @current_period = Period.find(@dialog.current_period) if @dialog.current_period.to_i > 0
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
     update_last_url
