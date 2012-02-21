@@ -5,6 +5,7 @@
 	<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 	<%= hidden_field :item, :reply_to %>
 	<%= hidden_field :item, :dialog_id %>
+	<%= hidden_field :item, :period_id %>
 </div>
 
 <% if @item.reply_to.to_i > 0 -%>
