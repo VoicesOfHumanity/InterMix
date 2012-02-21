@@ -98,6 +98,7 @@ class ItemsController < ApplicationController
     if @dialog_id > 0
       @dialog = Dialog.find_by_id(@dialog_id)
       @dialog_name = (@dialog ? @dialog.name : '???')
+      @item.period_id = @dialog.current_period if @dialog
     end  
     @item.dialog_id = @dialog_id
     @max_characters = @dialog ? @dialog.max_characters : 0    
