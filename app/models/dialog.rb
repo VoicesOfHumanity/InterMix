@@ -27,12 +27,12 @@ class Dialog < ActiveRecord::Base
   def settings_with_period
     #-- Get some settings, either from the dialog record, or, if a period is active, from the period
     settings = {
-      "max_characters" => self.max_characters,
+      "max_characters" => self.max_characters.to_i,
       "metamap_vote_own" => self.metamap_vote_own,
       "default_message" => self.default_message,
       "required_message" => self.required_message,
       "required_subject" => self.required_subject,
-      "max_messages" => self.max_messages,
+      "max_messages" => self.max_messages.to_i,
       "new_message_title" => self.new_message_title,
       "allow_replies" => self.allow_replies,
       "required_meta" => self.required_meta,
@@ -44,8 +44,8 @@ class Dialog < ActiveRecord::Base
       "posting_open" => self.posting_open,
       "voting_open" => self.voting_open
     }
-    if self.current_period.to_i > 0
-      period = Period.find(self.current_period)
+    if current_period.to_i > 0
+      period = Period.find_by_id(current_period)
       settings["max_characters"] = period.max_characters if period.max_characters.to_i > 0
       settings["metamap_vote_own"] = period.metamap_vote_own
       settings["default_message"] = period.default_message if period.default_message.to_s != ""
