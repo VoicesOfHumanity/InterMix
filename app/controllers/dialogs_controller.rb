@@ -10,14 +10,18 @@ class DialogsController < ApplicationController
     @groupsina = @gpin.collect{|g| g.group.id}
     @dialogsin = []   # All dialogs they're in
     @dialogsingroup = []   # Dialogs for the current group, if any
-    ddone = {}
+    ddone1 = {}
+    ddone2 = {}
     for gp in @gpin
       gdialogsin = DialogGroup.where("group_id=#{gp.group.id}").includes(:dialog).all
       for gd in gdialogsin
-        if not ddone[gd.dialog.id]
+        if not ddone1[gd.dialog.id]
           @dialogsin << gd.dialog
-          @dialogsingroup << gd.dialog if session[:group_id].to_i > 0 and gp.group_id == session[:group_id].to_i
-          ddone[gd.dialog.id] = true
+          ddone1[gd.dialog.id] = true
+        end  
+        if not ddone2[gd.dialog.id] and session[:group_id].to_i > 0 and gp.group_id == session[:group_id].to_i
+          @dialogsingroup << gd.dialog
+          ddone2[gd.dialog.id] = true
         end
       end  
     end  
