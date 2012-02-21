@@ -51,7 +51,7 @@ class Dialog < ActiveRecord::Base
       settings["default_message"] = period.default_message if period.default_message.to_s != ""
       settings["required_message"] = period.required_message if period.required_message.to_s != ""
       settings["required_subject"] = period.required_subject if period.required_subject.to_s != ""
-      settings["max_messages"] = period.max_messages if period.max_messages.to_s > 0
+      settings["max_messages"] = period.max_messages if period.max_messages.to_i > 0
       settings["new_message_title"] = period.new_message_title if period.new_message_title.to_s != ""
       settings["allow_replies"] = period.allow_replies
       settings["required_meta"] = period.required_meta
