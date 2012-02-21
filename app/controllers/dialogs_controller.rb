@@ -265,7 +265,9 @@ class DialogsController < ApplicationController
     @from = 'dialog'
     @dialog_id = params[:id].to_i
     @dialog = Dialog.find(@dialog_id)
-
+    dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
+    @is_admin = (dialogadmin.length > 0)
+    
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
 
     #r = Participant.joins(:groups=>:dialogs).joins(:metamap_nodes).where("dialogs.id=3").where("metamap_nodes.metamap_id=2").select("participants.id,first_name,metamap_nodes.name as metamap_node_name")
