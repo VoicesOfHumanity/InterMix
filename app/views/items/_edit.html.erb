@@ -41,22 +41,9 @@
 		<% if @item.dialog_id.to_i > 0 or session[:dialog_id].to_i > 0 -%>
 			<%= hidden_field_tag :send_to, @send_to %>
 
-			<% if @item.group_id.to_i == 0 -%>
-				<% if @dialoggroupsin.length > 1 -%>
-					<% @item.group_id = @dialoggroupsin[0].id %>
-					<li class="select optional" id="item_group_id_input"><label for="item_group_id">Group</label>
-					<%= select :item, :group_id, @dialoggroupsin.collect{|g| [g.name,g.id]} %>
-					</li>
-				<% elsif @dialoggroupsin.length == 1 -%>
-					<% @item.group_id = @dialoggroupsin[0].id %>
-					<%= hidden_field :item, :group_id %>
-				<% else -%>
-					<%= hidden_field :item, :group_id %>
-				<% end -%>
-			<% else -%>			
-				<%= hidden_field :item, :group_id %>
-			<% end -%>
-			
+			<li class="select optional" id="item_group_id_input"><label for="item_group_id">Group</label>
+			<%= select :item, :group_id, @dialoggroupsin.collect{|g| [g.name,g.id]} %>
+			</li>			
 			
 		<% else -%>
 			<%= hidden_field :item, :group_id %>
