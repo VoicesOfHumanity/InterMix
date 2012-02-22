@@ -264,7 +264,7 @@ class DialogsController < ApplicationController
     @dsection = 'meta'
     @from = 'dialog'
     @dialog_id = params[:id].to_i
-    @dialog = Dialog.find(@dialog_id)
+    @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
     
