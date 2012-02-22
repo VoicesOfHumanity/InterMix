@@ -2,6 +2,12 @@
 
 <%= render(:partial => 'dialogs/menu') %>
 
+<% if @periods.length > 0 -%>
+<p>Focus Period:
+<%= select_tag "period_id", options_for_select([['* All *',0]]+@dialog.periods.collect{|c| [c.name,c.id]},@period_id) %>
+<input type="button" value="Update" onclick="updatemeta()">
+<% end -%>
+
 
 <% for metamap in @metamaps -%>
 	<h2><%= metamap.name %></h2>
@@ -45,4 +51,9 @@
 
 <% end -%>
 
-
+<script>
+function updatemeta() {
+	var period_id = $('period_id').val();
+	window.location.href = "?period_id=" +  period_id;
+}
+</script>
