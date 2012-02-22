@@ -2,7 +2,7 @@
 
 <%= render(:partial => 'dialogs/menu') %>
 
-<% if @periods.length > 0 -%>
+<% if @dialog.periods.length > 0 -%>
 <p>Focus Period:
 <%= select_tag "period_id", options_for_select([['* All *',0]]+@dialog.periods.collect{|c| [c.name,c.id]},@period_id) %>
 <input type="button" value="Update" onclick="updatemeta()">
