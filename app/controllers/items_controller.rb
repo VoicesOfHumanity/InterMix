@@ -345,8 +345,12 @@ class ItemsController < ApplicationController
       item_rating_summary.recalculate(false,item.dialog)
     end
     if (dialog_id > 0 and rating.dialog_id.to_i == 0) or (group_id > 0 and rating.group_id.to_i == 0)
-      rating.dialog_id = dialog_id
       rating.group_id = group_id
+      rating.dialog_id = dialog_id
+      if dialog_id > 0
+        dialog = Dialog.find_by_id(dialog_id)
+        rating.period_id = dialog.current_period if dialog
+      end
       rating.save
     end
     
