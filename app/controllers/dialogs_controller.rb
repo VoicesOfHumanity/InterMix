@@ -267,6 +267,7 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
+    @period_id = params[:period_id].to_i
     
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
 
@@ -294,11 +295,13 @@ class DialogsController < ApplicationController
       @data[metamap.id]['items'] = {}     # To keep track of the meta cat for each item
       @data[metamap.id]['ratings'] = {}     # To keep track of the meta cat for each rating
 
+      pwhere = (@period_id > 0) ? "items.period_id=#{@period_id}" : ""
+
       #-- Everything posted, with metanode info
-      items = Item.where("items.dialog_id=#{@dialog_id}").includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
       
       #-- Everything rated, with metanode info
-      ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
       
       #-- Going through everything posted, group by meta node
       for item in items
