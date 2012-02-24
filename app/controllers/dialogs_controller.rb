@@ -255,17 +255,17 @@ class DialogsController < ApplicationController
     end  
     @period.save!    
     @period.update_attributes(params[:period])
-    @period.required_meta = params[:period][:required_meta]
-		@period.required_message = params[:period][:required_message]
-		@period.required_subject = params[:period][:required_subject]
-		@period.allow_replies = params[:period][:allow_replies]
-		@period.profiles_visible = params[:period][:profiles_visible]
-		@period.names_visible_voting = params[:period][:names_visible_voting]
-		@period.names_visible_general = params[:period][:names_visible_general]
-		@period.in_voting_round = params[:period][:in_voting_round]
-		@period.posting_open = params[:period][:posting_open]
-		@period.voting_open = params[:period][:voting_open]
-		@period.save!
+    #@period.required_meta = params[:period][:required_meta]
+		#@period.required_message = params[:period][:required_message]
+		#@period.required_subject = params[:period][:required_subject]
+		#@period.allow_replies = params[:period][:allow_replies]
+		#@period.profiles_visible = params[:period][:profiles_visible]
+		#@period.names_visible_voting = params[:period][:names_visible_voting]
+		#@period.names_visible_general = params[:period][:names_visible_general]
+		#@period.in_voting_round = params[:period][:in_voting_round]
+		#@period.posting_open = params[:period][:posting_open]
+		#@period.voting_open = params[:period][:voting_open]
+		#@period.save!
     redirect_to :action=>:edit
   end
   

@@ -2,7 +2,7 @@
 
 <h3 style="clear:both">Focus Period</h3>
 
-<%= semantic_form_for :period, :url => "/dialogs/#{@dialog.id}/period_save", :html=>{:id=>"period_edit"} do |f| %>
+<%= semantic_form_for @period, :url => "/dialogs/#{@dialog.id}/period_save", :html=>{:id=>"period_edit"} do |f| %>
 
 	<%= f.inputs do %>
 
