@@ -98,6 +98,7 @@ Intermix::Application.routes.draw do
       get :meta
       get :period_edit
       post :period_save
+      put :period_save
     end
   end 
   
