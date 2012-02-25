@@ -101,12 +101,13 @@ function edititem(id) {
 	}
 	curid = id;
 	oldval = $('#htmlcontent_'+id).html();
+	var token = $('#authenticity_token') ? $('#authenticity_token').val() : '';
 	$('#shortcontent_'+id).hide();	
 	$('#htmlcontent_'+id).show();
 	$.ajax({
         type: "GET",
         url: '/items/'+id+'/edit?xtime=' + (new Date()).getTime(),
-        data: "authenticity_token=<%= form_authenticity_token %>",
+        data: "authenticity_token="+token,
         complete: function(t){	
           $('#htmlcontent_'+id).html(t.responseText);
         }

@@ -1,6 +1,7 @@
 <%= render(:partial => 'dialogs/menu')%>
 
 <form id="searchform" style="clear:both">
+<input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">	
 <div id="forumcontrol">
 	
 	<div class="right">
