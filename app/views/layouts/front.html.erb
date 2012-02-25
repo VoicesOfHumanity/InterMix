@@ -88,6 +88,12 @@
 					<%=raw "participating as a member of the group: <b>#{session[:group_name]}</b>" if session[:group_id].to_i > 0 %>
 					<%=raw "in the discussion: <b>#{session[:dialog_name]}</b>" if session[:dialog_id].to_i > 0 %>
 				</p>
+				<p>
+					test:<br>
+					dialog: <%= session[:dialog_prefix] %><br>
+					group: <%= session[:group_prefix] %><br>
+					prefix: <%= session[:cur_prefix] %>
+				</p>	
 		  <% end %>
 			</div>
 
