@@ -181,10 +181,24 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     @item_id = params[:id]
     @item = Item.find(@item_id)
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all 
-    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all    
     @group = Group.find_by_id(@item.group_id) if @item.group_id > 0
-    @dialog = Dialog.find_by_id(@item.dialog_id) if @item.dialog_id > 0
+    if @dialog_id > 0
+      @dialog = Dialog.find_by_id(@dialog_id)
+      @dialog_name = (@dialog ? @dialog.name : '???')
+    end  
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all       
+    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all  
+    @dialoggroupsin = []
+    if @dialog
+      #-- The user might be a member of several of the groups participating in the current dialog, if any
+      for group1 in @dialog.groups
+        for group2 in @groupsin
+          if group2.group.id == group1.id
+            @dialoggroupsin << group1
+          end
+        end
+      end
+    end   
     @max_characters = @dialog ? @dialog.max_characters : 0
     if @item.group_id > 0
       @send_to = "G#{@item.group_id}"
