@@ -154,7 +154,7 @@ class DialogsController < ApplicationController
     @is_admin = (dialogadmin.length > 0)
 
     if @dialog.max_messages > 0
-      @previous_messages = Item.where("posted_by=? and dialog_id=?",current_participant.id,@dialog.id).count
+      @previous_messages = Item.where("posted_by=? and dialog_id=? and reply_to is null",current_participant.id,@dialog.id).count
     else
       @previous_messages = 0
     end  
