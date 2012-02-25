@@ -182,8 +182,9 @@ class ItemsController < ApplicationController
     @item_id = params[:id]
     @item = Item.find(@item_id)
     @group = Group.find_by_id(@item.group_id) if @item.group_id > 0
-    if @dialog_id > 0
-      @dialog = Dialog.find_by_id(@dialog_id)
+    if @item.dialog_id.to_i > 0
+      @dialog_id = @item.dialog_id
+      @dialog = Dialog.find_by_id(@item.dialog_id)
       @dialog_name = (@dialog ? @dialog.name : '???')
     end  
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all       
