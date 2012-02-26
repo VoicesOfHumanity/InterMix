@@ -256,7 +256,7 @@ class ItemsController < ApplicationController
       end      
       if @item.reply_to.to_i == 0 and @dialog.settings_with_period["max_messages"].to_i > 0
         max_messages = @dialog.settings_with_period["max_messages"].to_i
-        previous_messages = Item.where("posted_by=?",current_participant.id).count
+        previous_messages = Item.where("posted_by=? and dialog_id=? and reply_to is null",current_participant.id,@dialog.id).count
         if previous_messages >= max_messages
           render :text=>"Sorry, you can only post #{max_messages} message#{max_messages > 1 ? 's' : ''} here", :layout=>false
           return
