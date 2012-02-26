@@ -46,16 +46,16 @@ class Dialog < ActiveRecord::Base
     }
     if self.current_period.to_i > 0
       period = Period.find_by_id(self.current_period)
-      settings["max_characters"] = period.max_characters if period.max_characters.to_i > 0
+      settings["max_characters"] = period.max_characters
       settings["metamap_vote_own"] = period.metamap_vote_own
-      settings["default_message"] = period.default_message if period.default_message.to_s != ""
-      settings["required_message"] = period.required_message if period.required_message.to_s != ""
-      settings["required_subject"] = period.required_subject if period.required_subject.to_s != ""
-      settings["max_messages"] = period.max_messages if period.max_messages.to_i > 0
-      settings["new_message_title"] = period.new_message_title if period.new_message_title.to_s != ""
+      settings["default_message"] = period.default_message
+      settings["required_message"] = period.required_message
+      settings["required_subject"] = period.required_subject
+      settings["max_messages"] = period.max_messages
+      settings["new_message_title"] = period.new_message_title
       settings["allow_replies"] = period.allow_replies
       settings["required_meta"] = period.required_meta
-      settings["value_calc"] = period.value_calc if period.value_calc.to_s != ""
+      settings["value_calc"] = period.value_calc
       settings["profiles_visible"] = period.profiles_visible
       settings["names_visible_voting"] = period.names_visible_voting
       settings["names_visible_general"] = period.names_visible_general
