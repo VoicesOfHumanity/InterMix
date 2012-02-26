@@ -152,12 +152,8 @@ class DialogsController < ApplicationController
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
-
-    if @dialog.settings_with_period['max_messages'].to_i > 0
-      @previous_messages = Item.where("posted_by=? and dialog_id=? and reply_to is null",current_participant.id,@dialog.id).count
-    else
-      @previous_messages = 0
-    end  
+    
+    @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
     
     if participant_signed_in? and current_participant.forum_settings
       set = current_participant.forum_settings
