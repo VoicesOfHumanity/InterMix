@@ -1,5 +1,7 @@
 <%= render(:partial => 'dialogs/menu')%>
 
+<p>Test: max_messages: <%= @dialog.settings_with_period['max_messages'] %></p>
+
 <form id="searchform" style="clear:both">
 <input type="hidden" id="authenticity_token" name="authenticity_token" value="<%= form_authenticity_token %>">	
 <div id="forumcontrol">
