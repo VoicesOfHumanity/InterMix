@@ -19,6 +19,7 @@
 		<%= f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
 		<%= f.input :logo, :as=>:file %>
 		<%= f.input :alt_logins, :label=>"Allow Facebook/Twitter logins?", :as => :boolean %>
+		<%= f.input :required_meta, :label=>"Are metatags required?", :as=>:boolean %>		
 		<%= f.input :required_message,:label=>"Must a message be entered to join?" ,:as=>:boolean %>
 		<%= f.input :required_subject,:label=>"Is a subject required for messages?" ,:as=>:boolean %>
 		<%= f.input :max_messages %>
