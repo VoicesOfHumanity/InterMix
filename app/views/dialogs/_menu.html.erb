@@ -1,4 +1,4 @@
-<h3 style="clear:both"><%= @dialog.name %><%= @dialog.active_period ? ": #{@dialog.active_period.name}" : "" %></h3>
+<p style=":clear:both;margin:0 19px 0 0"><span style="font-size:20px"<%= @dialog.name %></span><span style="font-size:16px"><%= @dialog.active_period ? ": #{@dialog.active_period.name}" : "" %></span></p>
 
 <% if true or session[:dialog_id].to_i == 0 -%>
 <ul class="horizmenu">
