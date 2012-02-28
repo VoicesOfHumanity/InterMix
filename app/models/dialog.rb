@@ -9,7 +9,6 @@ class Dialog < ActiveRecord::Base
   belongs_to :creator, :class_name => "Participant", :foreign_key => :created_by
   belongs_to :maingroup, :class_name => "Group", :foreign_key => :group_id
   has_many :periods
-  has_one :active_period, :class_name => "Period", :foreign_key => :current_period
 
   serialize :coordinators
 
@@ -65,6 +64,14 @@ class Dialog < ActiveRecord::Base
       #settings["voting_open"] = period.voting_open
     end
     settings
+  end
+  
+  def active_period
+    if self.current_period.to_is >0
+      active_period = Period.find_by_id(self.current_period)
+    else
+      nil
+    end
   end
   
   def to_liquid
