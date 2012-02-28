@@ -9,6 +9,7 @@ class Dialog < ActiveRecord::Base
   belongs_to :creator, :class_name => "Participant", :foreign_key => :created_by
   belongs_to :maingroup, :class_name => "Group", :foreign_key => :group_id
   has_many :periods
+  has_one :active_period, :class_name => "Period", :foreign_key => :current_period
 
   serialize :coordinators
 
@@ -50,7 +51,7 @@ class Dialog < ActiveRecord::Base
       settings["metamap_vote_own"] = period.metamap_vote_own
       settings["default_message"] = period.default_message
       settings["required_message"] = period.required_message
-      settings["required_subject"] = period.required_subject
+      #settings["required_subject"] = period.required_subject
       settings["max_messages"] = period.max_messages
       settings["new_message_title"] = period.new_message_title
       settings["allow_replies"] = period.allow_replies
@@ -59,9 +60,9 @@ class Dialog < ActiveRecord::Base
       settings["profiles_visible"] = period.profiles_visible
       settings["names_visible_voting"] = period.names_visible_voting
       settings["names_visible_general"] = period.names_visible_general
-      settings["in_voting_round"] = period.in_voting_round
-      settings["posting_open"] = period.posting_open
-      settings["voting_open"] = period.voting_open
+      #settings["in_voting_round"] = period.in_voting_round
+      #settings["posting_open"] = period.posting_open
+      #settings["voting_open"] = period.voting_open
     end
     settings
   end

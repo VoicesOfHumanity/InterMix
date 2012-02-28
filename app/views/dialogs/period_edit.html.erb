@@ -14,18 +14,14 @@
 		<%= f.input :endrating, :label=>"Rating end (YYYY-MM-DD)" %>
 		<%= f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
 		<%= f.input :max_characters %>
-		<%= f.input :required_meta, :label=>"Are metatags required?", :as=>:boolean %>
 		<%= f.input :required_message,:label=>"Must a message be entered to join?" ,:as=>:boolean %>
 		<%= f.input :required_subject,:label=>"Is a subject required for messages?" ,:as=>:boolean %>
-		<%= f.input :max_messages %>
+		<%= f.input :max_messages, :label=>"Max room messages" %>
 		<%= f.input :default_message, :as=>:text %>
 		<%= f.input :allow_replies, :as=>:boolean %>
 		<%= f.input :profiles_visible,:label=>"Should user profiles be visible?" ,:as=>:boolean %>
 		<%= f.input :names_visible_voting,:label=>"Should names be visible in a voting phase?" ,:as=>:boolean %>
 		<%= f.input :names_visible_general,:label=>"Should names be visible in general?" ,:as=>:boolean %>
-		<%= f.input :in_voting_round,:label=>"In voting round?" ,:as=>:boolean %>
-		<%= f.input :posting_open,:label=>"Open for posting?" ,:as=>:boolean %>
-		<%= f.input :voting_open,:label=>"Open for voting?" ,:as=>:boolean %>
 		<%= f.input :value_calc, :as=>:select, :collection=>['total','avg']  %>
 
 	<% end %>
