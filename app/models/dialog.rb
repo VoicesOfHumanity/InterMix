@@ -67,7 +67,7 @@ class Dialog < ActiveRecord::Base
   end
   
   def active_period
-    if self.current_period.to_is >0
+    if self.current_period.to_i >0
       active_period = Period.find_by_id(self.current_period)
     else
       nil
