@@ -36,13 +36,6 @@
 				<% else -%>
 					<% showingfull = false -%>			
 				<% end -%>
-				<% if false -%>
-					<% if ((session[:dialog_id].to_i>0 or session[:group_id].to_i>0)) and not session[:fullmenu] -%>
-						<% showingfull = false -%>
-					<% else -%>
-						<% showingfull = true -%>
-					<% end -%>
-				<% end -%>
 
 				<% if false -%>
 				<li class="menu full"><a  class="<%= 'selected' if @section=='forum' %>" href="/forum">Forum</a></li>
@@ -118,7 +111,7 @@
 
 </body>
 </html>
-<% if participant_signed_in? and (session[:dialog_id].to_i>0 or session[:group_id].to_i>0) %>
+<% if participant_signed_in? %>
 <script>
 var showingfull = true;
 <% if not showingfull -%>
