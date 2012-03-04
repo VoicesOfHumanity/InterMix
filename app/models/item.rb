@@ -205,8 +205,130 @@ class Item < ActiveRecord::Base
     item['WebLinkToOriginal'] = ''
     self.xml_content = item.to_xml  
   end  
-   
+
   def self.custom_item_sort(items, page, perscr, participant_id)
+    #-- Create the default sort for items:
+    #-- current user's own item first
+    #-- items he hasn't yet rated, alternating:
+    #-- - from own country
+    #-- - from other countries
+    #-- already rated items
+    
+    metamap_id = 4
+    
+    mnps = MetamapNodeParticipant.where(:metamap_id=>metamap_id).where(:participant_id=>participant_id)
+    if mnps.length > 0
+      own_node_id = mnps[0].metamap_node_id
+    else
+      own_node_id = 0  
+    end
+    
+    own_items = []
+    own_country = []
+    other_country = []
+    rated = []
+    
+    xorder = 0
+    
+    #-- Let's go through them and put them in different piles
+    for item in items
+      #xitem = item.clone
+      if item.posted_by == participant_id
+        xorder += 1
+        item.explanation = "##{xorder}: own item" if item['explanation']
+        own_items << item
+      elsif item['hasrating'].to_i > 0 or item['rateapproval'] or item['rateinterest']
+        rated << item
+      else
+        xcountry = -1
+        if item.participant and item.participant.metamap_node_participants
+          for mnp in item.participant.metamap_node_participants
+            if mnp.metamap_id == metamap_id
+              xcountry = mnp.metamap_node_id
+              break
+            end
+          end
+        end        
+        if xcountry == own_node_id
+          own_country << item
+        else
+          other_country << item
+        end
+      end
+    end
+
+    logger.info("item#custom_item_sort own_items:#{own_items.length} own_country:#{own_country.length} other_country:#{other_country.length} rated:#{rated.length}")
+    
+    newitems = own_items
+    
+    gotown = 0
+    gotother = 0
+    gotrated = 0
+    
+    isdone = false
+    
+    #-- Mix them together
+    while not isdone
+      if gotother < other_country.length or gotown < own_country.length
+        if gotother < other_country.length
+          item = other_country[gotother]
+          xcountry = '???'
+          for mnp in item.participant.metamap_node_participants
+            if mnp.metamap_id == metamap_id
+              xcountry = mnp.metamap_node.name
+              break
+            end
+          end
+          xorder += 1
+          item.explanation = "##{xorder}: other country (#{xcountry})" if item['explanation']
+          newitems << item
+          gotother += 1
+        end
+        if gotown < own_country.length
+          item = own_country[gotown]
+          xcountry = '???'
+          for mnp in item.participant.metamap_node_participants
+            if mnp.metamap_id == metamap_id
+              xcountry = mnp.metamap_node.name
+              break
+            end
+          end
+          xorder += 1
+          item.explanation = "##{xorder}: own country (#{xcountry})" if item['explanation']
+          newitems << item
+          gotown += 1
+        end
+      elsif gotrated < rated.length
+        item = rated[gotrated]
+        xorder += 1
+        item.explanation = "##{xorder}: previously rated (#{item.rateinterest}/#{item.rateapproval})" if item['explanation']        
+        newitems << item
+        gotrated += 1
+      else
+        isdone = true
+        break
+      end  
+    end
+    
+    #-- Now paginate
+    first = (page - 1) * perscr
+    if first + perscr <= newitems.length
+      last = first + perscr - 1
+    else
+      last = newitems.length - 1
+    end
+
+    logger.info("item#custom_item_sort paginating: #{first} -  #{last}")
+        
+    outitems = []
+    for inum in (first..last).to_a
+      outitems << newitems[inum]
+    end
+  
+    outitems
+  end
+   
+  def self.custom_item_sort_OLD(items, page, perscr, participant_id)
     #-- Create the default sort for items:
     #-- current user's own item first
     #-- items he hasn't yet rated, alternating:

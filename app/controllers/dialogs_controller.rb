@@ -140,7 +140,7 @@ class DialogsController < ApplicationController
 
   def forum
     #-- Show most recent items that this user is allowed to see
-    @group_id,@dialog_id = get_group_dialog_from_subdomain
+    #@group_id,@dialog_id = get_group_dialog_from_subdomain
     @section = 'dialogs'
     @dsection = 'forum'
     @from = 'dialog'

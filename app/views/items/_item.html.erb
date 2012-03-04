@@ -139,7 +139,9 @@
 		</div>	
 		
 		<div class="iteminfotxt">
-		<%= "Group: " + (item.group ? item.group.name : item.group_id.to_s) if item.group_id.to_i > 0 and @from != 'group' %>
+			<% if @group_id.to_i > 0 %><span style="color:#f99"><% end %>
+			<%= "Group: " + (item.group ? item.group.name : item.group_id.to_s) if item.group_id.to_i > 0 and @from != 'group' %>
+			<% if @group_id.to_i > 0 %></span><% end %>
 		</div>
 			
 		<div class="iteminfotxt">	
