@@ -11,7 +11,10 @@
 	<% dom = ((gp.group.shortname.to_s != "") ? "#{gp.group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
 	<li><a href="http://<%= dom %>/groups/<%= gp.group.id %>/forum"><%= gp.group.name %></a>
 		<a href="http://<%= dom %>/groups/<%= gp.group.id %>/view">info</a>
-	<a href="http://<%= dom %>/groups/<%= gp.group.id %>/admin">administrate</a> <a href="http://<%= dom %>/groups/<%= gp.group.id %>/unjoin" onclick="confirm('Are you sure you want to leave this group?')">leave</a></li>
+	  <% if gp.moderator -%>
+	  <a href="http://<%= dom %>/groups/<%= gp.group.id %>/admin">administrate</a> 
+	  <% end -%>
+	<a href="http://<%= dom %>/groups/<%= gp.group.id %>/unjoin" onclick="confirm('Are you sure you want to leave this group?')">leave</a></li>
 <% end -%>
 </ul>
 
@@ -24,7 +27,7 @@
 	<% for group in @groupspublic -%>
 		<% if not @groupsina.include?(group.id) -%>
 			<% dom = ((group.shortname.to_s != "") ? "#{group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
-			<li><a href="http://<%= dom %>/groups/<%= group.id %>/view"><%= group.name %></a> - Description: <%= group.description %> Members: <%= group.group_participants_count.to_i %> <a href="http://<%= dom %>/groups/<%= group.id %>/join"><%= group.openness=='open' ? "Join" : '' %></a></li>
+			<li><a href="http://<%= dom %>/groups/<%= group.id %>/view"><%= group.name %></a> - Description: <%=raw group.description %> Members: <%= group.group_participants_count.to_i %> <a href="http://<%= dom %>/groups/<%= group.id %>/join"><%= group.openness=='open' ? "Join" : '' %></a></li>
 		<% end -%>
 	<% end -%>
 	</ul>
