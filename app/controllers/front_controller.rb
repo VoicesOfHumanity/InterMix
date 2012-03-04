@@ -246,7 +246,7 @@ class FrontController < ApplicationController
     #-- What the join form posts to
     @dialog_id = params[:dialog_id].to_i
     @group_id = params[:group_id].to_i
-    logger.info("Front#dialogjoin dialog:#{dialog_id} group:#{group_id}")
+    logger.info("Front#dialogjoin dialog:#{@dialog_id} group:#{@group_id}")
     
     @dialog = Dialog.find_by_id(@dialog_id)
     if @dialog and @group_id == 0
