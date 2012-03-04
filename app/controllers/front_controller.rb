@@ -219,7 +219,6 @@ class FrontController < ApplicationController
   
   def dialogjoinform
     #-- Form for submitting to join a dialog
-    redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
     @group_id,@dialog_id = get_group_dialog_from_subdomain    
     @dialog_id = params[:dialog_id].to_i if not @dialog_id
     @dialog_id = params[:id].to_i if not @dialog_id or @dialog_id == 0
@@ -247,6 +246,8 @@ class FrontController < ApplicationController
     #-- What the join form posts to
     @dialog_id = params[:dialog_id].to_i
     @group_id = params[:group_id].to_i
+    logger.info("Front#dialogjoin dialog:#{dialog_id} group:#{group_id}")
+    
     @dialog = Dialog.find_by_id(@dialog_id)
     if @dialog and @group_id == 0
       @group_id = @dialog.group_id.to_i
