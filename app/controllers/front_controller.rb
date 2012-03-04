@@ -219,6 +219,7 @@ class FrontController < ApplicationController
   
   def dialogjoinform
     #-- Form for submitting to join a dialog
+    redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
     @group_id,@dialog_id = get_group_dialog_from_subdomain    
     @dialog_id = params[:dialog_id].to_i if not @dialog_id
     @dialog_id = params[:id].to_i if not @dialog_id or @dialog_id == 0
