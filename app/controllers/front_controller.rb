@@ -229,10 +229,10 @@ class FrontController < ApplicationController
     end 
     @group = Group.find_by_id(@group_id)
         
-    if @dialog and participant_signed_in?
+    if @dialog and current_participant and participant_signed_in?
       redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
       return
-    elsif @group and participant_signed_in?
+    elsif @group and current_participant and participant_signed_in?
       redirect_to "http://#{@group.shortname}.#{ROOTDOMAIN}/"
       return
     end
