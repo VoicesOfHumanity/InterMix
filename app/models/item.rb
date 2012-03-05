@@ -210,11 +210,11 @@ class Item < ActiveRecord::Base
     #-- Create the default sort for items:
     #-- current user's own item first
     #-- items he hasn't yet rated, alternating:
-    #-- - from own country
-    #-- - from other countries
+    #-- - from own gender
+    #-- - from other genders
     #-- already rated items
     
-    metamap_id = 4
+    metamap_id = 3
     
     mnps = MetamapNodeParticipant.where(:metamap_id=>metamap_id).where(:participant_id=>participant_id)
     if mnps.length > 0
@@ -224,8 +224,8 @@ class Item < ActiveRecord::Base
     end
     
     own_items = []
-    own_country = []
-    other_country = []
+    own_cat = []
+    other_cat = []
     rated = []
     
     xorder = 0
@@ -240,24 +240,24 @@ class Item < ActiveRecord::Base
       elsif item['hasrating'].to_i > 0 or item['rateapproval'] or item['rateinterest']
         rated << item
       else
-        xcountry = -1
+        xcat = -1
         if item.participant and item.participant.metamap_node_participants
           for mnp in item.participant.metamap_node_participants
             if mnp.metamap_id == metamap_id
-              xcountry = mnp.metamap_node_id
+              xcat = mnp.metamap_node_id
               break
             end
           end
         end        
-        if xcountry == own_node_id
-          own_country << item
+        if xcat == own_node_id
+          own_cat << item
         else
-          other_country << item
+          other_cat << item
         end
       end
     end
 
-    logger.info("item#custom_item_sort own_items:#{own_items.length} own_country:#{own_country.length} other_country:#{other_country.length} rated:#{rated.length}")
+    logger.info("item#custom_item_sort own_items:#{own_items.length} own_cat:#{own_cat.length} other_cat:#{other_cat.length} rated:#{rated.length}")
     
     newitems = own_items
     
@@ -269,32 +269,32 @@ class Item < ActiveRecord::Base
     
     #-- Mix them together
     while not isdone
-      if gotother < other_country.length or gotown < own_country.length
-        if gotother < other_country.length
-          item = other_country[gotother]
-          xcountry = '???'
+      if gotother < other_cat.length or gotown < own_cat.length
+        if gotother < other_cat.length
+          item = other_cat[gotother]
+          xcat = '???'
           for mnp in item.participant.metamap_node_participants
             if mnp.metamap_id == metamap_id
-              xcountry = mnp.metamap_node.name
+              xcat = mnp.metamap_node.name
               break
             end
           end
           xorder += 1
-          item.explanation = "##{xorder}: other country (#{xcountry})" if item['explanation']
+          item.explanation = "##{xorder}: other cat (#{xcat})" if item['explanation']
           newitems << item
           gotother += 1
         end
-        if gotown < own_country.length
-          item = own_country[gotown]
-          xcountry = '???'
+        if gotown < own_cat.length
+          item = own_cat[gotown]
+          xcat = '???'
           for mnp in item.participant.metamap_node_participants
             if mnp.metamap_id == metamap_id
-              xcountry = mnp.metamap_node.name
+              xcat = mnp.metamap_node.name
               break
             end
           end
           xorder += 1
-          item.explanation = "##{xorder}: own country (#{xcountry})" if item['explanation']
+          item.explanation = "##{xorder}: own cat (#{xcat})" if item['explanation']
           newitems << item
           gotown += 1
         end
