@@ -6,7 +6,7 @@ class DialogsController < ApplicationController
   def index
     #-- Show an overview of dialogs this person has access to
     @section = 'dialogs'
-    @gpin = GroupParticipant.where("participant_id=#{lo_participant.id}").select("distinct(group_id)").includes(:group).all
+    @gpin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id)").includes(:group).all
     @groupsina = @gpin.collect{|g| g.group.id}
     @dialogsin = []   # All dialogs they're in
     @dialogsingroup = []   # Dialogs for the current group, if any
