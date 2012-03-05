@@ -12,7 +12,7 @@
 		<%= f.input :startdate, :label=>"Start date (YYYY-MM-DD)" %>
 		<%= f.input :endposting, :label=>"Posting end (YYYY-MM-DD)" %>
 		<%= f.input :endrating, :label=>"Rating end (YYYY-MM-DD)" %>
-		<%= f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
+		<% f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
 		<%= f.input :max_characters %>
 		<%= f.input :required_message,:label=>"Must a message be entered to join?" ,:as=>:boolean %>
 		<%= f.input :required_subject,:label=>"Is a subject required for messages?" ,:as=>:boolean %>

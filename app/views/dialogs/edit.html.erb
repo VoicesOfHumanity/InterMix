@@ -8,7 +8,7 @@
 		<%= f.input :description %>
 		<%= f.input :visibility, :as => :select, :collection =>GROUP_VISIBILITY %>	
 		<%= f.input :openness, :as => :select, :collection =>GROUP_OPENNESS %>	
-		<%= f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
+		<% f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
 		<%= f.input :multigroup, :as => :boolean %>
 		<%= f.input :group_id, :as => :select, :collection =>@groupsin.collect{|c| [c.group.name,c.group.id]}, :label=>"Home group" %>			
 		<%= f.input :max_characters %>
@@ -28,7 +28,6 @@
 		<%= f.input :value_calc, :as=>:select, :collection=>['total','avg']  %>
 		<%= f.input :profiles_visible,:label=>"Should user profiles be visible?" ,:as=>:boolean %>
 		<%= f.input :names_visible_general,:label=>"Should names be visible?" ,:as=>:boolean %>
-		xxx<%= f.input :in_voting_round,:label=>"In voting round?" ,:as=>:boolean %>
 		<%= f.input :posting_open,:label=>"Open for posting?" ,:as=>:boolean %>
 		<%= f.input :voting_open,:label=>"Open for voting?" ,:as=>:boolean %>
 		<%= f.input :current_period, :as => :select, :collection =>[['*none*',0]]+@dialog.periods.collect{|c| ["#{c.startdate}-#{c.enddate}: #{c.name}",c.id]} %>			
