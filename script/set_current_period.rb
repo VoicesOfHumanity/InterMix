@@ -15,14 +15,14 @@ for dialog in dialogs
   
   for period in periods
     if period.startdate.to_s != '' and period.endposting.to_s != '' and period.endrating.to_s != ''
-      print " - #{period.startdate} - #{period.endposting}/#{period.endrating}\n"
+      print " - #{period.startdate} - #{period.endposting}/#{period.endrating}: #{period.name}\n"
       if  today >= period.startdate and (today <= period.endposting or today <= period.endrating)
         if dialog.current_period == period.id
+          print " - - was already current\n"          
+        else  
           dialog.current_period = period.id
           dialog.save!
           print " - - set to CURRENT\n"          
-        else  
-          print " - - was already current\n"          
         end
       end
     end
