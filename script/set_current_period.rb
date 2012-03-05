@@ -4,7 +4,7 @@
 
 require File.dirname(__FILE__)+'/cron_helper'
 
-today = Time.now.strftime("%Y-%m-%d")
+today = Time.now
 
 dialogs = Dialog.order("id")
 
