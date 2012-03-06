@@ -265,20 +265,19 @@ class ItemsController < ApplicationController
         max_messages = @dialog.settings_with_period["max_messages"].to_i
         previous_messages = Item.where("posted_by=? and dialog_id=? and reply_to is null",current_participant.id,@dialog.id).count
         if previous_messages >= max_messages
-          flash.now[:alert] = "Sorry, you can only post #{max_messages} message#{max_messages > 1 ? 's' : ''} here", :layout=>false
+          flash.now[:alert] = "Sorry, you can only post #{max_messages} message#{max_messages > 1 ? 's' : ''} here"
          end
       end
       if @item.reply_to.to_i > 0 and not @dialog.settings_with_period["allow_replies"]
         flash.now[:alert] = 'Sorry, replies are not permitted here'
       elsif @dialog.settings_with_period["required_subject"] and @item.subject.to_s == ""
-        flash.now[:alert] = "A subject is required", :layout=>false
+        flash.now[:alert] = "A subject is required"
       elsif @dialog.settings_with_period["max_characters"].to_i > 0 and @item.html_content.gsub(/<\/?[^>]*>/, "").length > @dialog.settings_with_period["max_characters"]
-        flash.now[:alert] = "That's too many characters", :layout=>false
+        flash.now[:alert] = "That's too many characters"
       end
     end
     
     if flash[:alert]
-    
       prepare_edit
       render :partial=>'edit', :layout=>false
     
