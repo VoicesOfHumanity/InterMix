@@ -239,12 +239,8 @@ function rate(intapp,id,vote) {
         url: '/items/' + id + '/rate',
     	data: 'intapp='+intapp+'&item_id='+id+'&vote='+vote,
         complete: function(t){	
-            if (t.responseText=='error') {
-                
-            } else {
-                $('#vote_'+intapp+'_rate_'+id).html(t.responseText);
-                get_summary(id);
-            }
+            $('#vote_'+intapp+'_rate_'+id).html(t.responseText);
+            get_summary(id);
          }
     });	
 }
