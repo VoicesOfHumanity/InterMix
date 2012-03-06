@@ -231,12 +231,6 @@ class ItemsController < ApplicationController
     @item.item_type = 'message'
     @item.posted_by = current_participant.id
     
-    if not itemvalidate
-      logger.info("items#create by #{@item.posted_by}: failing validation: #{@xmessage}")
-      render :text=>@xmessage, :layout=>false
-      return
-    end
-    
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
       @olditem = Item.find_by_id(@item.reply_to)
@@ -258,8 +252,7 @@ class ItemsController < ApplicationController
       #-- Various controls set by either a discussion or by a focus group in a discussion
       # open for posting?
       if not @dialog.settings_with_period["posting_open"]
-        render :text=>"Sorry, this discussion is not open for new messages", :layout=>false
-        return
+        flash.now[:alert] = "Sorry, this discussion is not open for new messages"
       end      
       if @item.reply_to.to_i == 0 and @dialog.settings_with_period["max_messages"].to_i > 0
         max_messages = @dialog.settings_with_period["max_messages"].to_i
@@ -276,7 +269,12 @@ class ItemsController < ApplicationController
         flash.now[:alert] = "That's too many characters"
       end
     end
-    
+
+    if not itemvalidate
+      logger.info("items#create by #{@item.posted_by}: failing validation: #{@xmessage}")
+      flash.now[:alert] = @xmessage
+    end
+        
     if flash[:alert]
       prepare_edit
       render :partial=>'edit', :layout=>false
