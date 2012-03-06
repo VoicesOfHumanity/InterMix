@@ -255,7 +255,7 @@ class GroupsController < ApplicationController
     @gsection = 'import'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
-    @messtext = @group.import_template
+    @messtext = flash[:messtext] ? flash[:messtext] : @group.import_template
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @metamaps = Metamap.order("name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
@@ -287,7 +287,7 @@ class GroupsController < ApplicationController
       metamapids[metamap.id] = metamap.name
     end
 
-    lines = @new_text.split("[\r\n]+")
+    lines = @new_text.split(/[\r\n]+/)
     flash[:notice] += "#{lines.length} lines<br>"
     x = 0
     for line in lines do
@@ -446,7 +446,8 @@ class GroupsController < ApplicationController
           flash[:alert] += "- problem sending message"         
         end
       end
-    end
+    end   
+    flash[:messtext] = @messtext
     redirect_to :action => :import
   end
 
