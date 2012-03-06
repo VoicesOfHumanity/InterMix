@@ -12,6 +12,13 @@
 <h3>Reply</h3>
 <% end -%>
 
+<% if flash[:notice].to_s !="" -%>
+<p style="color: green"><%=raw flash[:notice] %></p>
+<% end -%>
+<% if flash[:alert].to_s !="" -%>
+<p style="color: red"><%=raw flash[:alert] %></p>
+<% end -%>
+
 <fieldset class="inputs"><ol>
         <li class="hidden optional" id="item_media_type_input"><input id="item_media_type" name="item[media_type]" type="hidden" value="<%= @item.media_type.to_s!='' ? @item.media_type : 'text' %>" /></li>
 

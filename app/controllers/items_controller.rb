@@ -181,6 +181,27 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     @item_id = params[:id]
     @item = Item.find(@item_id)
+
+    prepare_edit
+
+    if @item.group_id > 0
+      @send_to = "G#{@item.group_id}"
+      @send_to_name = 'Group: ' + (@group ? @group.name : '???')
+    elsif @item.dialog_id > 0
+      @send_to = "D#{@item.dialog_id}"
+      @send_to_name = 'Dialog: ' + (@dialog ? @dialog.name : '???')
+    elsif @item.posted_to_forum
+      @send_to = 'all'  
+      @send_to_name = '*everybody forum / my wall*'
+    else
+      @send_to = 'wall'
+      @send_to_name = '*my wall*'
+    end   
+    render :partial=>'edit', :layout=>false
+  end  
+  
+  def prepare_edit
+    #-- Get a few things ready for editing or adding an item
     @group = Group.find_by_id(@item.group_id) if @item.group_id > 0
     if @item.dialog_id.to_i > 0
       @dialog_id = @item.dialog_id
@@ -201,22 +222,8 @@ class ItemsController < ApplicationController
       end
     end   
     @max_characters = @dialog ? @dialog.max_characters : 0
-    if @item.group_id > 0
-      @send_to = "G#{@item.group_id}"
-      @send_to_name = 'Group: ' + (@group ? @group.name : '???')
-    elsif @item.dialog_id > 0
-      @send_to = "D#{@item.dialog_id}"
-      @send_to_name = 'Dialog: ' + (@dialog ? @dialog.name : '???')
-    elsif @item.posted_to_forum
-      @send_to = 'all'  
-      @send_to_name = '*everybody forum / my wall*'
-    else
-      @send_to = 'wall'
-      @send_to_name = '*my wall*'
-    end   
-    render :partial=>'edit', :layout=>false
-  end  
-  
+  end
+    
   def create
     @from = params[:from] || ''
     @item = Item.new(params[:item])
@@ -258,25 +265,24 @@ class ItemsController < ApplicationController
         max_messages = @dialog.settings_with_period["max_messages"].to_i
         previous_messages = Item.where("posted_by=? and dialog_id=? and reply_to is null",current_participant.id,@dialog.id).count
         if previous_messages >= max_messages
-          render :text=>"Sorry, you can only post #{max_messages} message#{max_messages > 1 ? 's' : ''} here", :layout=>false
-          return
-        end
+          flash.now[:alert] = "Sorry, you can only post #{max_messages} message#{max_messages > 1 ? 's' : ''} here", :layout=>false
+         end
       end
       if @item.reply_to.to_i > 0 and not @dialog.settings_with_period["allow_replies"]
-        render :text=>'Sorry, replies are not permitted here', :layout=>false
-        return
-      end    
-      if @dialog.settings_with_period["required_subject"] and @item.subject.to_s == ""
-        render :text=>"A subject is required", :layout=>false
-        return
-      end
-      if @dialog.settings_with_period["max_characters"].to_i > 0 and @item.html_content.gsub(/<\/?[^>]*>/, "").length > @dialog.settings_with_period["max_characters"]
-        render :text=>"That's too many characters", :layout=>false
-        return
+        flash.now[:alert] = 'Sorry, replies are not permitted here'
+      elsif @dialog.settings_with_period["required_subject"] and @item.subject.to_s == ""
+        flash.now[:alert] = "A subject is required", :layout=>false
+      elsif @dialog.settings_with_period["max_characters"].to_i > 0 and @item.html_content.gsub(/<\/?[^>]*>/, "").length > @dialog.settings_with_period["max_characters"]
+        flash.now[:alert] = "That's too many characters", :layout=>false
       end
     end
     
-    if @item.save
+    if flash[:alert]
+    
+      prepare_edit
+      render :partial=>'edit', :layout=>false
+    
+    elsif @item.save
       if @item.is_first_in_thread
         @item.first_in_thread = @item.id    
         @item.save    
