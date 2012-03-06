@@ -454,11 +454,11 @@ class Item < ActiveRecord::Base
     #-- Decide whether the current user is allowed to rate the current item
     #-- The main reason should either be that voting manually is turned off, or voting period is over, and they already rated it
     if self.dialog
-      if self.period_id
+      if self.period_id.to_i > 0
         period = Period.find_by_id(self.period_id)
       end
       if not self.dialog.voting_open
-      elsif period and period.endposting.to_s != '' and Time.now > period.endrating and self.hasrating
+      elsif period and period.endrating.to_s != '' and Time.now > period.endrating # and self.hasrating
         #-- The rating in the period is over, and this person rated the item
       else
         return true
