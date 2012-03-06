@@ -25,6 +25,15 @@ for dialog in dialogs
           print " - - set to CURRENT\n"          
         end
       end
+      #if  today >= period.startdate and today <= period.endrating
+      #  if dialog.voting_open
+      #    print " - - voting was already open\n"          
+      #  else  
+      #    dialog.voting_open = true
+      #    dialog.save!
+      #    print " - - voting set to OPEN\n"          
+      #  end
+      #end
     end
   end
 

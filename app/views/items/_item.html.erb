@@ -9,7 +9,7 @@
 		
 	<div class="itemvoting">
 
-		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if not item.dialog or item.dialog.settings_with_period["voting_open"] %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if item.voting_ok %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="intshort_<%= item.id %>" class="intshort">
 				<img src="/images/sface.gif"/>
 				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= item['hasrating'].to_i %> current_participant:<%= current_participant.id %> interest:<%= item['interest'].to_i %>"><%= item['hasrating'].to_i > 0 ? item['rateinterest'].to_i : '-'%></span>
@@ -30,7 +30,7 @@
 			</div>				
 		</div>
 				
-		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if not item.dialog or item.dialog.settings_with_period["voting_open"] %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if item.voting_ok %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="appshort_<%= item.id %>" class="appshort">
 				<img src="/images/fface.gif"/>				
 			<span id="vote_app_rate_<%= item.id %>"><%= item['hasrating'].to_i > 0 ? item['rateapproval'].to_i : '-'%></span>
