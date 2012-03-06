@@ -176,17 +176,18 @@ function saveitem() {
     	   if (replyingid>0) {
     			$('#reply_'+replyingid).html(t.responseText);	
     		 	$('#reply_'+replyingid).css('opacity','1.0');
-        		window.setTimeout("$('#reply_'+replyingid).remove();list();", 3000);
+        		//window.setTimeout("$('#reply_'+replyingid).remove();list();", 3000);
     	  	} else if (id>0) {
     	    	$('#htmlcontent_'+id).html(t.responseText);
     			$('#htmlcontent_'+id).css('opacity','1.0');
-        		window.setTimeout("list();", 3000);
+        		//window.setTimeout("list();", 3000);
     		} else {
     	    	$("#newforumitem").html(t.responseText);
     	  		$('#newforumitem').css('opacity','1.0');
     			//$('#newforumitem').html('');
-        		window.setTimeout("list();$('#newforumitem').hide();", 3000);
+        		//window.setTimeout("list();$('#newforumitem').hide();", 3000);
     		}
+    		list()
     		replyingid = 0;
 		}
 	 });	
