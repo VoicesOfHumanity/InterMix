@@ -263,7 +263,7 @@ class ItemsController < ApplicationController
       end
       if @item.reply_to.to_i > 0 and not @dialog.settings_with_period["allow_replies"]
         flash.now[:alert] = 'Sorry, replies are not permitted here'
-      elsif @dialog.settings_with_period["required_subject"] and @item.subject.to_s == ""
+      elsif @dialog.settings_with_period["required_subject"] and @item.subject.to_s.strip == ""
         flash.now[:alert] = "A subject is required"
       elsif @dialog.settings_with_period["max_characters"].to_i > 0 and @item.html_content.gsub(/<\/?[^>]*>/, "").length > @dialog.settings_with_period["max_characters"]
         flash.now[:alert] = "That's too many characters"
