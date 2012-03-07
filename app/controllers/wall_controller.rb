@@ -15,6 +15,7 @@ class WallController < ApplicationController
     @items = @items.where(:posted_by => @participant_id)
     @items = @items.includes([:group,:item_rating_summary])
     @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
+    @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
     @items = @items.order(@sortby)
     @items = @items.paginate :page=>@page, :per_page => @per_page    
     if session[:dialog_id].to_i > 0
