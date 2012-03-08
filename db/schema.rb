@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120212190040) do
+ActiveRecord::Schema.define(:version => 20120308020659) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -352,8 +352,8 @@ ActiveRecord::Schema.define(:version => 20120212190040) do
     t.datetime "updated_at"
     t.decimal  "approval",           :precision => 6, :scale => 2, :default => 0.0
     t.decimal  "interest",           :precision => 6, :scale => 2, :default => 0.0
-    t.decimal  "value",              :precision => 6, :scale => 2
-    t.decimal  "controversy",        :precision => 6, :scale => 2
+    t.decimal  "value",              :precision => 6, :scale => 2, :default => 0.0
+    t.decimal  "controversy",        :precision => 6, :scale => 2, :default => 0.0
     t.text     "oembed_response"
     t.text     "embed_code"
     t.boolean  "has_picture",                                      :default => false
