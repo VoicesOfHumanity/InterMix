@@ -22,7 +22,7 @@
 		<%= f.input :required_meta, :label=>"Meta choices required at signup?", :as=>:boolean %>		
 		<%= f.input :required_message,:label=>"Must a message be entered to join?" ,:as=>:boolean %>
 		<%= f.input :required_subject,:label=>"Is a subject required for messages?" ,:as=>:boolean %>
-		<%= f.input :max_messages, :label=>"Max room messages" %>
+		<%= f.input :max_messages, :label=>"Max root messages" %>
 		<%= f.input :default_message %>
 		<%= f.input :allow_replies, :as=>:boolean %>
 		<%= f.input :value_calc, :as=>:select, :collection=>['total','avg']  %>

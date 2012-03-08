@@ -8,7 +8,8 @@
 
 	<div class="lefttitle">Sort by:</div>
 	<div class="leftfield">
-<%= select_tag "sortby", options_for_select([['Date','items.id desc'],['Value','items.value desc'],['Approval','items.approval desc'],['Interest','items.interest desc'],['Controversy','items.controversy desc']],@sortby), :onchange=>"list()" %>
+		<% sortarr = [['Date','items.id desc'],['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']] %>
+		<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list()" %>
 	</div>
 
 	<div class="lefttitle">Threads:</div>

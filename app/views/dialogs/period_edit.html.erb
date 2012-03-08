@@ -16,7 +16,7 @@
 		<%= f.input :max_characters %>
 		<%= f.input :required_message,:label=>"Must a message be entered to join?" ,:as=>:boolean %>
 		<%= f.input :required_subject,:label=>"Is a subject required for messages?" ,:as=>:boolean %>
-		<%= f.input :max_messages, :label=>"Max room messages" %>
+		<%= f.input :max_messages, :label=>"Max root messages" %>
 		<%= f.input :default_message, :as=>:text %>
 		<%= f.input :allow_replies, :as=>:boolean %>
 		<%= f.input :profiles_visible,:label=>"Should user profiles be visible?" ,:as=>:boolean %>
