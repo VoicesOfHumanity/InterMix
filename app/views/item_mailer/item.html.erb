@@ -22,7 +22,7 @@
 
 <hr/>
 
-To respond to <a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">this post</a>, log into the <a href="http://<%= BASEDOMAIN %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>">Forum</a>, or simply reply to this message. Please remove quotes and footers from previous messages. To not receive any more emails <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
+To respond to <a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">this post</a>, log into the <a href="http://<%= BASEDOMAIN %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>">Forum</a>, or simply reply to this message. Please remove quotes and footers from previous messages. To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
 
 <img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['item'].id.to_i if @cdata['item'] %>_<%= @cdata['recipient'].id.to_i if @cdata['recipient'] %>.gif" width="0" height="0" border="0" style="display:none">
 
