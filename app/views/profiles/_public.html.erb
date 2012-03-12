@@ -21,10 +21,10 @@
 <tr><td class="label">Faith Tradition:</td><td><%= @participant.faith_tradition %></td></tr>	
 <tr><td class="label">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %> GMT</td></tr>	
 <tr><td class="label">Member #:</td><td><%= @participant.id %></td></tr>	
-<% @participant.metamaps.each do |metamap_id,metamap_name| -%>
-<% metamap_nodes = @participant.metamap_nodes %>
-<% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
-<tr><td class="label"><%= metamap_name %></td><td><%= info[2] if info %></td></tr>
+<% @participant.metamaps_h.each do |metamap| -%>
+<% metamap_nodes = @participant.metamap_nodes_h %>
+<% info = metamap_nodes[metamap.id] if metamap_nodes[metamap.id] %>
+<tr><td class="label"><%= metamap.name %></td><td><%= info[2] if info %></td></tr>
 <% end -%>
 
 <tr><td class="label">Groups:</td><td>

@@ -39,8 +39,8 @@
 		<%= f.input :tag_list, :as => :string, :input_html => {:size=>80}  %>
 		<%= f.input :visibility, :as => :select, :collection =>PARTICIPANT_VISIBILITY %>	
 		
-		<% @participant.metamaps.each do |metamap_id,metamap_name| -%>
-		<% metamap_nodes = @participant.metamap_nodes %>
+		<% @participant.metamaps_h.each do |metamap_id,metamap_name| -%>
+		<% metamap_nodes = @participant.metamap_nodes_h %>
 		<% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
 		<li class="select required" id="meta_#{metamap_id}_input">
 			<div style="width:25%;float:left"><%= metamap_name %></div>

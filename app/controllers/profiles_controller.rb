@@ -59,7 +59,7 @@ class ProfilesController < ApplicationController
       
       # Save any metamap assignments
       if params[:meta]
-        @participant.metamaps.each do |metamap_id,metamap_name|
+        @participant.metamaps_h.each do |metamap_id,metamap_name|
           val = params[:meta]["#{metamap_id}"].to_i
           if val > 0
             mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>@participant.id).first

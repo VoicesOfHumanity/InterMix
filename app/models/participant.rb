@@ -125,9 +125,10 @@ class Participant < ActiveRecord::Base
     dialogsin.uniq
   end
   
-  def metamaps
+  def metamaps_h
     #-- Figure out what metamaps/nodes apply to this person, based on groups or discussions they are in
     #-- [[2, "Nationality"], [3, "Gender"]]
+    #-- NB: This was colliding with the metamaps association
     dialogsin = dialogs_in
     metamaps = []
     for d in dialogsin
@@ -139,9 +140,10 @@ class Participant < ActiveRecord::Base
     metamaps.uniq
   end
   
-  def metamap_nodes
+  def metamap_nodes_h
     #-- Get the current value/name for each, for this user
     #-- {2=>["Nationality", 59, "Danish"], 3=>["Gender", 207, "Male"]}
+    #-- NB: This was colliding with the metamap_nodes association
     metamap_nodes = {}
     for m in metamaps
       metamap_id = m[0]
