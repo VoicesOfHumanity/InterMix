@@ -391,8 +391,8 @@ class GroupsController < ApplicationController
           else
             metamap_nodes = MetamapNode.where(:metamap_id=>metamap_id,:name=>value)
             if metamap_nodes.length > 0
-              metamap_node_id = metamap_nodes[0]
-              flash[:notice] += "- #{metamap_nodes.length} nodes matching metamap_id:#{metamap_id} name:#{value} Choosing:#{metamap_node_id}<br>"
+              metamap_node_id = metamap_nodes[0].id
+              #flash[:notice] += "- #{metamap_nodes.length} nodes matching metamap_id:#{metamap_id} name:#{value} Choosing:#{metamap_node_id}<br>"
               mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>participant.id).first
               if mnp
                 mnp.metamap_node_id = metamap_node_id
