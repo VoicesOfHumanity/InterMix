@@ -146,8 +146,10 @@ class Participant < ActiveRecord::Base
     #-- NB: This was colliding with the metamap_nodes association
     metamap_nodes = {}
     for m in metamaps
-      metamap_id = m[0]
-      metamap_name = m[1]
+      #metamap_id = m[0]
+      #metamap_name = m[1]
+      metamap_id = m.id
+      metamap_name = m.name
       mnps = MetamapNodeParticipant.where(:metamap_id=>metamap_id, :participant_id=>id).includes(:metamap_node)
       if mnps.length > 0
         mnp = mnps[0]
