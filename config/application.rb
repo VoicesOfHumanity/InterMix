@@ -46,6 +46,11 @@ module Intermix
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
+    
+    #-- Using postmark for mailing
+    config.action_mailer.delivery_method   = :postmark
+    config.action_mailer.postmark_settings = { :api_key => "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb" }
+    
   end
 end
 
@@ -70,6 +75,9 @@ MEDIA_TYPES = ['text','picture','video','audio','link']
 METAMAP_VOTE_OWN = ['mainly', 'only', 'never']
 METAMAP_VOTE_OWN_TEXT = {'mainly'=>"Primarily vote on own category's posts", 'only'=>"Only vote on own category's posts", 'never'=>"Can't vote on own category's posts"}
 SYSTEM_SENDER = 'noreply@intermix.org'
+
+MAIL_SYSTEM = 'postmark'   # postmark or system
+
 
 # These are in localsettings.rb
 #TWITTER_CONSUMER_KEY = 'xxxxxx'   # = API key. And this is for the Posting app, not the Login app

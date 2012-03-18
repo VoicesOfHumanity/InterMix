@@ -3,7 +3,7 @@
 class SystemMailer < ActionMailer::Base
   #-- Various messages the system sends to users, which aren't stored in messages
   
-  default :from => "do-not-reply@intermix.org"
+  default :from => "noreply@intermix.org"
   
   def generic(from=nil,to,subject,message,cdata)
     #-- For messages about follows, friends, etc

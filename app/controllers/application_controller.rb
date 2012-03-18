@@ -224,6 +224,6 @@ class ApplicationController < ActionController::Base
       end
     end
     return @group_id, @dialog_id
-  end    
+  end  
   
 end
