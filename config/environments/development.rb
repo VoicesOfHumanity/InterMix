@@ -17,7 +17,8 @@ Intermix::Application.configure do
   ### ActionMailer Config
   config.action_mailer.default_url_options = { :host => 'intermix.dev' }
   if true
-    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.delivery_method   = :postmark
+    #config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
       :address => "mail.worldtrans.org",
       :port => 25,
