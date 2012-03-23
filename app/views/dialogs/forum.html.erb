@@ -22,14 +22,12 @@
 		<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list()" %>
 	</div>
 
-	<% if false -%>
 	<div class="lefttitle">Threads:</div>
 	<div class="leftfield">
 	<%= select_tag "threads", options_for_select([['None',''],['First+Replies','flat'],['Tree View','tree']],@threads), :onchange=>"list()" %>
 	</div>
 	<% else -%>
 	<%= hidden_field_tag :threads, 'flat' %>	
-	<% end -%>
 
 	<div class="lefttitle">Show:</div>
 	<div class="leftfield">
