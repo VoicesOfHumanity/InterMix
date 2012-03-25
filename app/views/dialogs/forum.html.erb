@@ -26,8 +26,6 @@
 	<div class="leftfield">
 	<%= select_tag "threads", options_for_select([['None',''],['First+Replies','flat'],['Tree View','tree']],@threads), :onchange=>"list()" %>
 	</div>
-	<% else -%>
-	<%= hidden_field_tag :threads, 'flat' %>	
 
 	<div class="lefttitle">Show:</div>
 	<div class="leftfield">
