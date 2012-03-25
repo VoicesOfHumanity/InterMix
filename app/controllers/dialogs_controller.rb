@@ -165,9 +165,10 @@ class DialogsController < ApplicationController
     @perscr = (params[:perscr] || set['perscr'] || 25).to_i
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
+    @threads = params[:threads] || set['threads'] || ''
     #@threads = params[:threads] || set['threads'] || 'flat'
     #@threads = 'flat' if @threads == ''
-    @threads = 'flat'
+    #@threads = 'flat'
 
     @items = Item.scoped
     @items = @items.where("items.dialog_id = ?", @dialog_id)    
