@@ -7,16 +7,17 @@ require File.dirname(__FILE__)+'/cron_helper'
 
 require 'net/pop'
 
-if RAILS_ENV == "test"
-  SLEEP_TIME = 10
-else
-  SLEEP_TIME = 60
-end
+#if RAILS_ENV == "test"
+#  SLEEP_TIME = 10
+#else
+#  SLEEP_TIME = 60
+#end
 
 puts "Starting Mail Fetcher"
 
 #loop do
-  pop = Net::POP3.new("mail.intermix.org")
+  #pop = Net::POP3.new("mail.intermix.org")
+  pop = Net::POP3.new(ROOTDOMAIN)
   pop.enable_ssl(OpenSSL::SSL::VERIFY_NONE) if false
   pop.start("intermix", "im45tyu")
   unless pop.mails.empty?
