@@ -13,7 +13,7 @@ require 'net/pop'
 #  SLEEP_TIME = 60
 #end
 
-puts "Starting Mail Fetcher"
+puts "Starting Mail Fetcher to #{ROOTDOMAIN}/intermix"
 
 #loop do
   #pop = Net::POP3.new("mail.intermix.org")
@@ -25,6 +25,8 @@ puts "Starting Mail Fetcher"
       ReceiveMailer.receive(m.pop)
       m.delete
     end
+  else
+    puts "- no mail"
   end
   pop.finish
   
