@@ -20,13 +20,13 @@ puts "Starting Mail Fetcher to #{ROOTDOMAIN}/intermix"
   pop = Net::POP3.new(ROOTDOMAIN)
   pop.enable_ssl(OpenSSL::SSL::VERIFY_NONE) if false
   pop.start("intermix", "im45tyu")
-  unless pop.mails.empty?
+  if pop.mails.empty?
+    puts "- no mail"
+  else
     pop.each_mail do |m|
       ReceiveMailer.receive(m.pop)
       m.delete
     end
-  else
-    puts "- no mail"
   end
   pop.finish
   

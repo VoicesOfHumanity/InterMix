@@ -18,6 +18,7 @@ Intermix::Application.configure do
   config.action_mailer.default_url_options = { :host => 'intermix.dev' }
   if true
     config.action_mailer.delivery_method   = :postmark
+    #config.action_mailer.postmark_settings = { :api_key => "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb" }
     #config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
       :address => "mail.worldtrans.org",
@@ -39,6 +40,8 @@ Intermix::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 end
+
+SYSTEM_SENDER = "noreply@intermix.cr8.com"
 
 if File.dirname(__FILE__) =~ /_websites/
   BASEDOMAIN = 'intermix.dev'
