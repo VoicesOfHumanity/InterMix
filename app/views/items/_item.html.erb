@@ -12,7 +12,7 @@
 		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if item.voting_ok %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="intshort_<%= item.id %>" class="intshort">
 				<img src="/images/sface.gif" alt="face"/>
-				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= item['hasrating'].to_i if item['hasrating'] %> current_participant:<%= current_participant.id %> interest:<%= item['interest'].to_i %>"><%= item['hasrating'] and item['hasrating'].to_i > 0 ? item['rateinterest'].to_i : '-'%></span>
+				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= item.hasrating.to_i %> current_participant:<%= current_participant.id %> interest:<%= item['interest'].to_i %>"><%= item.hasrating.to_i > 0 ? item['rateinterest'].to_i : '-'%></span>
 				<img src="/images/aface.gif" alt="face"/>
 			</div>
 			<div id="intlong_<%= item.id %>" class="intlong" style="display:none">
