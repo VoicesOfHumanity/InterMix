@@ -20,13 +20,13 @@ class ItemMailer < ActionMailer::Base
     #-- A group forum item
     @message = message
     @cdata = cdata  
-    if @cdata['group'] and @cdata['group'].has_mail_list and @cdata['group'].shortname.to_s != ''
-      @from = "#{@cdata['group'].shortname}-list@intermix.cr8.com"
-    else
+    #if @cdata['group'] and @cdata['group'].has_mail_list and @cdata['group'].shortname.to_s != ''
+    #  @from = "#{@cdata['group'].shortname}-list@#{ROOTDOMAIN}"
+    #else
       @from = "noreply@intermix.org"      
-    end  
+    #end  
     headers["InterMix-ID"] = "i#{cdata['item'].id}" if cdata['item']
-    headers["Reply-To"] = "#{@cdata['group'].shortname}-#{@cdata['item'].id}-list@intermix.cr8.com"
+    headers["Reply-To"] = "#{@cdata['group'].shortname}-#{@cdata['item'].id}-list@#{ROOTDOMAIN}"
     mail(
       :reply_to => @from,
       :to => email,

@@ -41,7 +41,7 @@ Intermix::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 end
 
-SYSTEM_SENDER = "noreply@intermix.cr8.com"
+#SYSTEM_SENDER = "noreply@intermix.cr8.com"
 
 if File.dirname(__FILE__) =~ /_websites/
   BASEDOMAIN = 'intermix.dev'
