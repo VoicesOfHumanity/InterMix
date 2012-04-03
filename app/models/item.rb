@@ -469,10 +469,10 @@ class Item < ActiveRecord::Base
     end
   end  
   
-  def hasrating
-    #-- Normally this is part of the query done, but in case it isn't let's look it up
-    rating = Rating.where("item_id=#{self.id} and ratings.participant_id=#{current_participant.id}")
-    rating.participant_id
-  end  
+  #def hasrating
+  #  #-- Normally this is part of the query done, but in case it isn't let's look it up
+  #  rating = Rating.where("item_id=#{self.id} and ratings.participant_id=#{current_participant.id}")
+  #  rating.participant_id
+  #end  
       
 end
