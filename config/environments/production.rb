@@ -2,9 +2,11 @@
 if (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ /ovh.net/) or (File.dirname(__FILE__) =~ /cr8/) or (ENV['HTTP_HOST'] =~ /cr8/ ) or (`hostname` =~ /sirius/ )
   BASEDOMAIN = 'intermix.cr8.com'
   ROOTDOMAIN = 'intermix.cr8.com'
+  MAILDOMAIN = 'trantor.cr8.com'
 else
   BASEDOMAIN = 'go.intermix.org'
   ROOTDOMAIN = 'intermix.org'
+  MAILDOMAIN = 'intermix.org'
 end
 
 DATADIR = '/home/apps/intermix/shared/data'

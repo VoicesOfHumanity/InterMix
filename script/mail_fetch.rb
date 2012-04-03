@@ -13,11 +13,11 @@ require 'net/pop'
 #  SLEEP_TIME = 60
 #end
 
-puts "Starting Mail Fetcher to #{ROOTDOMAIN}/intermix"
+puts "Starting Mail Fetcher to #{MAILDOMAIN}/intermix"
 
 #loop do
   #pop = Net::POP3.new("mail.intermix.org")
-  pop = Net::POP3.new(ROOTDOMAIN)
+  pop = Net::POP3.new(MAILDOMAIN)
   pop.enable_ssl(OpenSSL::SSL::VERIFY_NONE) if false
   pop.start("intermix", "im45tyu")
   if pop.mails.empty?

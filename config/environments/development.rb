@@ -52,6 +52,7 @@ else
   ROOTDOMAIN = 'intermix.cr8.com'
   DATADIR = '/home/apps/intermix/shared/data'
 end
+MAILDOMAIN = 'trantor.cr8.com'
 
 Paperclip.options[:command_path] = "/opt/local/bin"
 
