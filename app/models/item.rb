@@ -458,7 +458,7 @@ class Item < ActiveRecord::Base
         period = Period.find_by_id(self.period_id)
       end
       if not self.dialog.voting_open
-      elsif period and period.endrating.to_s != '' and Time.now > period.endrating and self.hasrating
+      elsif period and period.endrating.to_s != '' and Time.now > period.endrating and defined?(self.hasrating) and self.hasrating
         #-- The rating in the period is over, and this person rated the item
       else
         return true
