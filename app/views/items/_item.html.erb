@@ -11,35 +11,35 @@
 
 		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if item.voting_ok %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="intshort_<%= item.id %>" class="intshort">
-				<img src="/images/sface.gif"/>
+				<img src="/images/sface.gif" alt="face"/>
 				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= item['hasrating'].to_i %> current_participant:<%= current_participant.id %> interest:<%= item['interest'].to_i %>"><%= item['hasrating'].to_i > 0 ? item['rateinterest'].to_i : '-'%></span>
-				<img src="/images/aface.gif"/>
+				<img src="/images/aface.gif" alt="face"/>
 			</div>
 			<div id="intlong_<%= item.id %>" class="intlong" style="display:none">
 				<div class="title">interest rating</div>
 				<div class="slot">&nbsp;</div><div class="slot">&nbsp;</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">4</div><div class="slot">&nbsp;</div><br/>
 				<div class="slot">&nbsp;</div>
-				<div class="slot"><img src="/images/sface.gif"/></div>
+				<div class="slot"><img src="/images/sface.gif" alt="face"/></div>
 				<div class="slot"><%= radio_button_tag "int_#{item.id}", '0', is_interest?(item,0), :onclick=>"rate('int',#{item.id},0)" %></div>
 				<div class="slot"><%= radio_button_tag "int_#{item.id}", '1', is_interest?(item,1), :onclick=>"rate('int',#{item.id},1)" %></div>
 				<div class="slot"><%= radio_button_tag "int_#{item.id}", '2', is_interest?(item,2), :onclick=>"rate('int',#{item.id},2)" %></div>
 				<div class="slot"><%= radio_button_tag "int_#{item.id}", '3', is_interest?(item,3), :onclick=>"rate('int',#{item.id},3)" %></div>
 				<div class="slot"><%= radio_button_tag "int_#{item.id}", '4', is_interest?(item,4), :onclick=>"rate('int',#{item.id},4)" %></div>
-				<div class="slot"><img src="/images/aface.gif"/></div><br/>
+				<div class="slot"><img src="/images/aface.gif" alt="face"/></div><br/>
 				<div class="bigslot left">boring!</div><div class="bigslot right">must&nbsp;see!</div>
 			</div>				
 		</div>
 				
 		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if item.voting_ok %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="appshort_<%= item.id %>" class="appshort">
-				<img src="/images/fface.gif"/>				
+				<img src="/images/fface.gif" alt="face"/>				
 			<span id="vote_app_rate_<%= item.id %>"><%= item['hasrating'].to_i > 0 ? item['rateapproval'].to_i : '-'%></span>
-			<img src="/images/hface.gif"/>
+			<img src="/images/hface.gif" alt="face"/>
 			</div>
 			<div id="applong_<%= item.id %>" class="applong" style="display:none">
 				<div class="title">approval rating</div>
 				<div class="slot">&nbsp;</div><div class="slot">-3</div><div class="slot">-2</div><div class="slot">-1</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">&nbsp;</div><br/>
-				<div class="slot"><img src="/images/fface.gif"/></div>
+				<div class="slot"><img src="/images/fface.gif" alt="face"/></div>
 				<div class="slot"><%= radio_button_tag "app_#{item.id}", '-3', is_approval?(item,-3), :onclick=>"rate('app',#{item.id},-3)" %></div>	
 				<div class="slot"><%= radio_button_tag "app_#{item.id}", '-2', is_approval?(item,-2), :onclick=>"rate('app',#{item.id},-2)" %></div>	
 				<div class="slot"><%= radio_button_tag "app_#{item.id}", '-1', is_approval?(item,-1), :onclick=>"rate('app',#{item.id},-1)" %></div>	
@@ -47,7 +47,7 @@
 				<div class="slot"><%= radio_button_tag "app_#{item.id}", '1', is_approval?(item,1), :onclick=>"rate('app',#{item.id},1)" %></div>	
 				<div class="slot"><%= radio_button_tag "app_#{item.id}", '2', is_approval?(item,2), :onclick=>"rate('app',#{item.id},2)" %></div>	
 				<div class="slot"><%= radio_button_tag "app_#{item.id}", '3', is_approval?(item,3), :onclick=>"rate('app',#{item.id},3)" %></div>
-				<div class="slot"><img src="/images/hface.gif"/></div>
+				<div class="slot"><img src="/images/hface.gif" alt="face"/></div>
 				<br/>
 				<div class="bigslot left">disapprove</div><div class="bigslot right">approve</div>
 			</div>	
@@ -71,8 +71,8 @@
 		
 	<% if item.media_type == 'picture' -%>
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
-		<div id="shortcontent_<%= item.id %>" class="htmlcontent"><img src="/images/data/items/<%= item.id %>/thumb.jpg" class="item_img_sm"><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
-		<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none"><img src="/images/data/items/<%= item.id %>/big.jpg" class="item_img_lr"><br><%=raw item.short_content %></div>
+		<div id="shortcontent_<%= item.id %>" class="htmlcontent"><img src="/images/data/items/<%= item.id %>/thumb.jpg" class="item_img_sm" alt="thumbnail"><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none"><img src="/images/data/items/<%= item.id %>/big.jpg" class="item_img_lr" alt="picture"><br><%=raw item.short_content %></div>
 	
 	<% elsif item.media_type == 'link' -%>	
 	
@@ -83,14 +83,14 @@
 	<% elsif item.media_type == 'video' -%>
 
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
-		<div id="shortcontent_<%= item.id %>"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm_w\">" : 'video' %><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
-		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\">" : 'video' %><br><%=raw item.short_content %></div>
+		<div id="shortcontent_<%= item.id %>"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm_w\" alt=\"thumbnail\">" : 'video' %><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\" alt=\"play\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\" alt=\"thumbnail\">" : 'video' %><br><%=raw item.short_content %></div>
 		
 	<% elsif item.media_type == 'audio' -%>
 			
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
-		<div id="shortcontent_<%= item.id %>"><%=raw item.oembed_response['thumbnail_url'].to_s!='' ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm\">" : 'audio' %><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
-		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw item.oembed_response['thumbnail_url'].to_s!='' ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\">" : 'audio' %><br><%=raw item.short_content %></div>
+		<div id="shortcontent_<%= item.id %>"><%=raw item.oembed_response['thumbnail_url'].to_s!='' ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm\" alt=\"thumbnail\">" : 'audio' %><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw item.oembed_response['thumbnail_url'].to_s!='' ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\" alt=\"play\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\" alt=\"thumbnail\">" : 'audio' %><br><%=raw item.short_content %></div>
 		
 	<% else -%>
 		

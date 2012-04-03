@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="UTF-8">
   <title>Intermix</title>
 	<%= stylesheet_link_tag('blueprint/screen', :media => "all") %>
 	<%= stylesheet_link_tag('blueprint/print', :media => "print") %>
@@ -18,7 +19,7 @@
 		
 		<div id="header">
 			<div id="mainheader1">&nbsp;</div>
-			<div id="mainheader2"><img src="/images/beta.png" style="position:absolute;margin:5px 0 0 860px;width:72px;height:72px;"><img height="84" alt="" src="/images/logo.gif" width="290"></div>
+			<div id="mainheader2"><img src="/images/beta.png" style="position:absolute;margin:5px 0 0 860px;width:72px;height:72px;" alt="Beta"><img height="84" alt="logo" src="/images/logo.gif" width="290"></div>
 			<div id="mainheader3">intermix</div>
 			<div id="mainheader4">&nbsp;</div>
 		</div>
@@ -108,8 +109,6 @@
 	</div>
 </div>
 
-</body>
-</html>
 <% if participant_signed_in? %>
 <script>
 var showingfull = true;
@@ -134,3 +133,6 @@ function menumoreless() {
 }
 </script>
 <% end -%>
+
+</body>
+</html>
