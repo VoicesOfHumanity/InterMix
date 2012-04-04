@@ -23,9 +23,12 @@ puts "Starting Mail Fetcher to #{MAILDOMAIN}/intermix"
   if pop.mails.empty?
     puts "- no mail"
   else
+    x = 1
     pop.each_mail do |m|
+      puts '- #{x}'
       ReceiveMailer.receive(m.pop)
       m.delete
+      x += 1
     end
   end
   pop.finish
