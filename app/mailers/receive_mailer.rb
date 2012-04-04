@@ -128,6 +128,7 @@ end
         email = SystemMailer.generic("#{@group.shortname}-admin@#{ROOTDOMAIN}", from, msubject, mmessage)
         email.deliver
         logger.info("receive_mailer#receive sent back admin instructions")
+        puts "  finished responding"
         return
       end
       
