@@ -97,6 +97,7 @@ end
     
       @in_group = false
       if @participant
+        puts "  participant: #{@participant.name}"
         for xgroup in @participant.groups
           @in_group = true if xgroup.id == @group.id
         end  
