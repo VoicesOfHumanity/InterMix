@@ -125,6 +125,7 @@ end
           mmessage = ""
         end    
         mmessage += render_to_string :action=>"receive_mailer/instructions"
+        puts "  sending system message"
         email = SystemMailer.generic("#{@group.shortname}-admin@#{ROOTDOMAIN}", from, msubject, mmessage)
         email.deliver
         logger.info("receive_mailer#receive sent back admin instructions")

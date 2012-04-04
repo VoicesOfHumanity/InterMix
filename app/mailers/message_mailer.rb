@@ -3,7 +3,7 @@
 class MessageMailer < ActionMailer::Base
   #-- For sending messages, i.e. internal mail that doesn't go on the forum
   
-  default :from => "noreply@intermix.org"
+  default :from => SYSTEM_SENDER
 
   def contacts(subject,message,email,cdata={})
     #-- For messages about follows, friends, etc
