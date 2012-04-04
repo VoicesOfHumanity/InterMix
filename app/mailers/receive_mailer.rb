@@ -106,6 +106,7 @@ end
     
       if @group and  type_list_message == 'admin'
         #-- Respond to admin requests or send back admin instructions.
+        puts "  responding to admin request"
         xcommand = short_content.strip.split(/[\r\n]+/)[0]
         if xcommand != ''
           msubject = "[#{@group.shortname}] Mailing list administration"
@@ -143,6 +144,8 @@ end
       end
 
     end
+
+    puts "  ready to move on"
 
     if not @participant
       puts "  no participant identified"
