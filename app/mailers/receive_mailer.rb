@@ -103,36 +103,7 @@ end
         end  
         puts "  is group member: #{@in_group}"
       end
-    
-      if @group and  type_list_message == 'admin'
-        #-- Respond to admin requests or send back admin instructions.
-        puts "  responding to admin request"
-        xcommand = short_content.strip.split(/[\r\n]+/)[0]
-        if xcommand != ''
-          msubject = "[#{@group.shortname}] Mailing list administration"
-          mmessage = "<p>What you sent: \"#{xcommand}\"</p>"
-          if xcommand =~ %r{^help}
-            mmessage += "<p>You can find instructions below</p>"
-          elsif xcommand =~ %r{^subscribe}
-            mmessage += "<p>Thank you for your subscription request</p>"
-          elsif xcommand =~ %r{^unsubscribe}
-            mmessage += "<p>Thank you for your unsubscription request</p>"
-          else
-            mmessage += "<p>We didn't recognize that as a command</p>"  
-          end  
-        else
-          msubject = "[#{@group.shortname}] Mailing list instructions"
-          mmessage = ""
-        end    
-        puts "  preparing and sending system message"
-        mmessage += render_to_string :action=>"receive_mailer/instructions"
-        email = SystemMailer.generic("#{@group.shortname}-admin@#{ROOTDOMAIN}", from, msubject, mmessage)
-        email.deliver
-        logger.info("receive_mailer#receive sent back admin instructions")
-        puts "  finished responding"
-        return
-      end
-      
+          
       if not @participant
         puts "  no participant identified"
         logger.info("receive_mailer#receive no participant identified")
@@ -191,9 +162,37 @@ end
     short_content = short_content[0,140] if short_content.length > 140
     puts "  got it"                
            
-    #-- Now, let's see where we'll send it, to list or auto-answer or message to somebody...       
-           
-    if @group and  type_list_message == 'owner'
+    #-- Now, let's see where we'll send it, to list or auto-answer or message to somebody...    
+    
+    
+    if @group and  type_list_message == 'admin'
+      #-- Respond to admin requests or send back admin instructions.
+      puts "  responding to admin request"
+      xcommand = short_content.strip.split(/[\r\n]+/)[0]
+      if xcommand != ''
+        msubject = "[#{@group.shortname}] Mailing list administration"
+        mmessage = "<p>What you sent: \"#{xcommand}\"</p>"
+        if xcommand =~ %r{^help}
+          mmessage += "<p>You can find instructions below</p>"
+        elsif xcommand =~ %r{^subscribe}
+          mmessage += "<p>Thank you for your subscription request</p>"
+        elsif xcommand =~ %r{^unsubscribe}
+          mmessage += "<p>Thank you for your unsubscription request</p>"
+        else
+          mmessage += "<p>We didn't recognize that as a command</p>"  
+        end  
+      else
+        msubject = "[#{@group.shortname}] Mailing list instructions"
+        mmessage = ""
+      end    
+      puts "  preparing and sending system message"
+      mmessage += render_to_string :action=>"receive_mailer/instructions"
+      email = SystemMailer.generic("#{@group.shortname}-admin@#{ROOTDOMAIN}", from, msubject, mmessage)
+      email.deliver
+      logger.info("receive_mailer#receive sent back admin instructions")
+      puts "  finished responding"
+      return
+    elsif @group and  type_list_message == 'owner'
       #-- Don't post. Forward the message to the list owner
       if @group.owner.to_i > 0
         owner = Participant.find_by_id(@group.owner)
