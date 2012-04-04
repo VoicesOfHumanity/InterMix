@@ -186,11 +186,19 @@ end
         mmessage = ""
       end    
       puts "  preparing and sending system message"
-      mmessage += render_to_string :action=>"receive_mailer/instructions"
-      email = SystemMailer.generic("#{@group.shortname}-admin@#{ROOTDOMAIN}", from, msubject, mmessage)
-      email.deliver
-      logger.info("receive_mailer#receive sent back admin instructions")
-      puts "  finished responding"
+      begin
+        mmessage += render_to_string :action=>"receive_mailer/instructions"
+      rescue
+        puts "  couldn't render template"
+      end
+      begin
+        email = SystemMailer.generic("#{@group.shortname}-admin@#{ROOTDOMAIN}", from, msubject, mmessage)
+        email.deliver
+        logger.info("receive_mailer#receive sent back admin instructions")
+        puts "  finished responding"
+      rescue
+        puts "  couldn't send message"
+      end
       return
     elsif @group and  type_list_message == 'owner'
       #-- Don't post. Forward the message to the list owner
