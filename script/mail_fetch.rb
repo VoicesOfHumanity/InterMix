@@ -23,6 +23,7 @@ puts "Starting Mail Fetcher to #{MAILDOMAIN}/intermix"
   if pop.mails.empty?
     puts "- no mail"
   else
+    puts "- accessing mail"
     x = 1
     pop.each_mail do |m|
       puts '- #{x}'
@@ -31,6 +32,7 @@ puts "Starting Mail Fetcher to #{MAILDOMAIN}/intermix"
       x += 1
     end
   end
+  puts '- finishing'
   pop.finish
   
 #  sleep(SLEEP_TIME)
