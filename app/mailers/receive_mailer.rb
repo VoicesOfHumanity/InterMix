@@ -244,6 +244,11 @@ end
       @olditem = Item.find_by_id(@item.reply_to)
       if @olditem
         @item.first_in_thread = @olditem.first_in_thread
+        @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
+        if @item.dialog_id
+          @dialog = Dialog.find_by_id(@item.dialog_id)
+          @item.period_id = @dialog.current_period if @dialog
+        end
       end
     else
       @item.is_first_in_thread = true
