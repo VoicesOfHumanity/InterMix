@@ -101,6 +101,7 @@ end
         for xgroup in @participant.groups
           @in_group = true if xgroup.id == @group.id
         end  
+        puts "  is group member: #{@in_group}"
       end
     
       if @group and  type_list_message == 'admin'
