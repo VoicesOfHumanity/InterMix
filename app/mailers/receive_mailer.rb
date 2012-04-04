@@ -182,8 +182,7 @@ end
     end 
     short_content = ( html_content.gsub(/(<[^>]*>)|\n|\t/s) {" "} )[0,140] if short_content.to_s == ""
     short_content = short_content[0,140] if short_content.length > 140
-    puts "  got it"       
-           
+    puts "  got it"                
            
     #-- Now, let's see where we'll send it, to list or auto-answer or message to somebody...       
            
