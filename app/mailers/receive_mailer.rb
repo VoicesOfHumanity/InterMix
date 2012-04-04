@@ -122,7 +122,7 @@ end
           mmessage = ""
         end    
         mmessage += render_to_string :action=>"receive_mailer/instructions"
-        email = SystemMailer.generic("#{@group.shortname}-admin@intermix.cr8.com", from, msubject, mmessage)
+        email = SystemMailer.generic("#{@group.shortname}-admin@#{ROOTDOMAIN}", from, msubject, mmessage)
         email.deliver
         logger.info("receive_mailer#receive sent back admin instructions")
         return
@@ -150,7 +150,8 @@ end
 
     logger.info("receive_mailer#receive participant:#{@participant.id}")
 
-    #-- Get the actual message  
+    #-- Get the actual message 
+    puts "  getting the actual message" 
     html_content = ''
     short_content = '' 
     if email.multipart? then
@@ -181,6 +182,8 @@ end
     end 
     short_content = ( html_content.gsub(/(<[^>]*>)|\n|\t/s) {" "} )[0,140] if short_content.to_s == ""
     short_content = short_content[0,140] if short_content.length > 140
+    puts "  got it"       
+           
            
     #-- Now, let's see where we'll send it, to list or auto-answer or message to somebody...       
            
