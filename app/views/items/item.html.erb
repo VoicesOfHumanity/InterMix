@@ -1,3 +1,15 @@
 <div class="forumitem forummain" id="item_<%= @item.id %>">
 <%= render :partial => "item", :locals => { :item => @item, :is_reply => false, :odd_or_even=>0, :from=>'individual', :top=>@item.id, :showlong=>true } %>
 </div>
+
+<ul>
+<% if -%>
+<li><a href="/items/<%= @item.id %>/thread">Whole thread</a></li>
+<% end -%>
+<% if @item.dialog_id.to_i > 0 -%>
+<li><a href="/dialogs/<%= @item.dialog_id %>/forum">Discussion</a></li>
+<% end -%>
+<% if @item.group_id.to_i > 0 -%>
+<li><a href="/groups/<%= @item.group_id %>/forum">Group Forum</a></li>
+<% end -%>
+</ul>
