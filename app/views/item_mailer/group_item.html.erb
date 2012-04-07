@@ -5,7 +5,9 @@
 </head>
 <body>
 	
-<p>The following message was posted on <a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['group'].name %>' forum, where you are a member:</p>
+<% dom = ((@cdata['group'].shortname.to_s != "") ? "#{@cdata['group'].shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") -%>
+	
+<p>The following message was posted on <a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['group'].name %>' forum, where you are a member:</p>
 
 <hr/>
 
@@ -15,7 +17,7 @@
 
 <hr/><br/>
 
-To respond to <a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">this post</a>, log into the <a href="http://<%= BASEDOMAIN %>/groups/<%= @cdata['item'].group_id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>">Forum</a>, or simply reply to this message. Please remove quotes and footers from previous messages. For available e-mail commands, send a blank message to <%= @cdata['group'].shortname %>-admin@intermix.cr8.com for an automated answer. If you have problems, write to the moderator at <%= @cdata['group'].shortname %>-owner@intermix.cr8.com. To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
+To respond to <a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">this post</a>, log into the <a href="http://<%= BASEDOMAIN %>/groups/<%= @cdata['item'].group_id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>">Forum</a>, or simply reply to this message. Please remove quotes and footers from previous messages. For available e-mail commands, send a blank message to <%= @cdata['group'].shortname %>-admin@intermix.cr8.com for an automated answer. If you have problems, write to the moderator at <%= @cdata['group'].shortname %>-owner@intermix.cr8.com. To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
 
 <hr/>
 
@@ -33,3 +35,5 @@ To respond to <a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i
 
 </body>
 </html>
+
+

@@ -347,6 +347,9 @@ class ItemsController < ApplicationController
       @is_moderator = @group_participant and @group_participant.moderator
     end
 
+    update_last_url
+    update_prefix
+
     render :action=>'item'
   end  
   
@@ -354,7 +357,7 @@ class ItemsController < ApplicationController
     #-- Show the whole thread, based on an item
     @from = params[:from] || ''
     @item_id = params[:id]
-    @item = Item.find(@item_id)
+    @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary]).find(@item_id)
     
     @dialog_id = @item.dialog_id
     if @dialog_id.to_i > 0
@@ -383,6 +386,9 @@ class ItemsController < ApplicationController
 
     @first_item_id = @item.first_in_thread
     @first_item = Item.find(@first_item_id )
+
+    update_last_url
+    update_prefix
 
     render :action=>'thread'
   end
