@@ -327,9 +327,26 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     @item_id = params[:id]
     @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary]).find_by_id(@item_id)
-    if session[:dialog_id].to_i > 0
-      @dialog = Dialog.find_by_id(session[:dialog_id])
+
+    @dialog_id = @item.dialog_id
+    if @dialog_id.to_i > 0
+      @dialog = Dialog.includes(:groups).find_by_id(@dialog_id)   
+      @groups = @dialog.groups if @dialog and @dialog.groups
+      @periods = @dialog.periods if @dialog and @dialog.periods
+      @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
+      dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
+      @is_admin = (dialogadmin.length > 0)
+      @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
     end
+
+    @group_id = @item.group_id
+    if @group_id.to_i > 0
+      @group = Group.includes(:owner_participant).find(@group_id)
+      @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+      @is_member = @group_participant ? true : false
+      @is_moderator = @group_participant and @group_participant.moderator
+    end
+
     render :action=>'item'
   end  
   
@@ -364,10 +381,6 @@ class ItemsController < ApplicationController
       set = {}
     end    
 
-    @perscr = 100
-    @page = 1
-    @threads = params[:threads] || set['threads'] || ''
-    
     @first_item_id = @item.first_in_thread
     @first_item = Item.find(@first_item_id )
 
