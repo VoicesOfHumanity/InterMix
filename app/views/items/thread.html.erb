@@ -8,7 +8,7 @@
 			<% for reply in @replies -%>
 				<% odd_or_even = 1-odd_or_even%>
 				<div class="forumitem forumreply forum<%= odd_or_even %>" id="item_<%= reply.id %>">
-					<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id } %>
+					<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>@first_item.id } %>
 				</div>
 			<% end -%>
 		</div><!--forumitem-->
