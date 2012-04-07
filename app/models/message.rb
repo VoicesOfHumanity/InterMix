@@ -39,15 +39,25 @@ class Message < ActiveRecord::Base
       msubject = self.subject
     end  
       
-    if from_participant_id.to_i == 0
+    if self.mail_template.to_s == 'message_system'  
+      email = MessageMailer.system(msubject, self.message, recipient.email_address_with_name, cdata)
+    elsif self.mail_template.to_s == 'message_contacts'  
+      email = MessageMailer.contacts(msubject, self.message, recipient.email_address_with_name, cdata)
+    elsif self.mail_template.to_s == 'message_group'  
+      email = MessageMailer.group(msubject, self.message, recipient.email_address_with_name, cdata)
+    elsif self.mail_template.to_s == 'message_individual'  
+      email = MessageMailer.individual(msubject, self.message, recipient.email_address_with_name, cdata)
+    elsif from_participant_id.to_i == 0
       #-- Must be a system message
-      #email = MessageMailer.contacts(msubject, self.message, recipient.email_address_with_name, cdata)
-      email = SystemMailer.generic(SYSTEM_SENDER, recipient.email_address_with_name, msubject, self.message,  cdata)
+      email = MessageMailer.contacts(msubject, self.message, recipient.email_address_with_name, cdata)
+      self.mail_template = 'message_contacts'
     elsif to_group_id.to_i > 0
       #-- A group messages  
       email = MessageMailer.group(msubject, self.message, recipient.email_address_with_name, cdata)
+      self.mail_template = 'message_group'
     else    
       email = MessageMailer.individual(msubject, self.message, recipient.email_address_with_name, cdata)
+      self.mail_template = 'message_individual'
     end
     
     logger.info("Message#emailit delivering email to #{recipient.id}:#{recipient.name}")

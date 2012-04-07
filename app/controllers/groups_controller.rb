@@ -431,6 +431,8 @@ class GroupsController < ApplicationController
           cdata['logo'] = @logo if @logo
         end
         cdata['password'] = password
+        
+        cdata['template'] = 'system_generic'
 
         template = Liquid::Template.parse(@messtext)
         html_content = template.render(cdata)
@@ -443,6 +445,7 @@ class GroupsController < ApplicationController
           if participant.private_email == 'instant' and not participant.no_email
             #-- Send as an e-mail. 
             @message.sendmethod = 'email'
+            @message.mail_template = 'message_system'
             @message.emailit
           end  
           flash[:notice] += "- message was sent<br>"

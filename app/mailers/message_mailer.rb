@@ -47,6 +47,17 @@ class MessageMailer < ActionMailer::Base
       :subject => (subject ? subject : "InterMix Group Message")
     )
   end  
+
+  def system(subject,message,email,cdata={})
+    #-- For system messages, or import messages, or similar
+    @message = message
+    @cdata = cdata 
+    headers["InterMix-ID"] = "m#{cdata['message'].id}" if cdata['message']   
+    mail(
+      :to => email,
+      :subject => (subject ? subject : "InterMix Group Message")
+    )
+  end  
   
 
 end
