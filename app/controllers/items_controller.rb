@@ -326,7 +326,7 @@ class ItemsController < ApplicationController
     #-- Show an individual post
     @from = params[:from] || ''
     @item_id = params[:id]
-    @item = Item.find(@item_id)
+    @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary]).find_by_id(@item_id)
     if session[:dialog_id].to_i > 0
       @dialog = Dialog.find_by_id(session[:dialog_id])
     end
