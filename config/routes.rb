@@ -109,6 +109,7 @@ Intermix::Application.routes.draw do
     get :get_summary, :on => :member
     get :play, :on => :member
     get :view, :on => :member
+    get :thread, :on => :member
     get :pubgallery, :on => :collection
   end  
   
