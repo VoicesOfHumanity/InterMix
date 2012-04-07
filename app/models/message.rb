@@ -41,7 +41,8 @@ class Message < ActiveRecord::Base
       
     if from_participant_id.to_i == 0
       #-- Must be a system message
-      email = MessageMailer.contacts(msubject, self.message, recipient.email_address_with_name, cdata)
+      #email = MessageMailer.contacts(msubject, self.message, recipient.email_address_with_name, cdata)
+      email = SystemMailer.generic(SYSTEM_SENDER, recipient.email_address_with_name, msubject, self.message,  cdata)
     elsif to_group_id.to_i > 0
       #-- A group messages  
       email = MessageMailer.group(msubject, self.message, recipient.email_address_with_name, cdata)
