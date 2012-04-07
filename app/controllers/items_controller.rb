@@ -625,5 +625,45 @@ class ItemsController < ApplicationController
     
   end
 
-
+  def update_prefix
+    #-- Update the current dialog, and the prefix and base url    
+    if @group
+      if @is_member
+        session[:group_id] = @group.id
+        session[:group_name] = @group.name
+        session[:group_prefix] = @group.shortname
+      else
+        session[:group_id] = 0
+        session[:group_name] = ''
+        session[:group_prefix] = ''
+      end
+      session[:cur_prefix] = @group.shortname
+      session[:dialog_id] = 0
+      session[:dialog_name] = ''
+      session[:dialog_prefix] = ''
+      if session[:cur_prefix] != ''
+        session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+      else
+        session[:cur_baseurl] = "http://" + BASEDOMAIN    
+      end
+    end
+    if @dialog
+      session[:dialog_id] = @dialog.id
+      session[:dialog_name] = @dialog.name
+      session[:dialog_prefix] = @dialog.shortname
+      if session[:dialog_prefix] != '' and session[:group_prefix] != ''
+        session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
+      elsif session[:group_prefix] != ''
+        session[:cur_prefix] = session[:group_prefix]
+      elsif session[:dialog_prefix] != ''
+        session[:cur_prefix] = session[:dialog_prefix]
+      end
+      if session[:cur_prefix] != ''
+        session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+      else
+        session[:cur_baseurl] = "http://" + BASEDOMAIN    
+      end
+    end 
+  end
+    
 end
