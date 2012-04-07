@@ -425,7 +425,11 @@ class GroupsController < ApplicationController
         cdata['recipient'] = participant     
         cdata['participant'] = participant 
         cdata['group'] = @group if @group
-        cdata['logo'] = @logo if @logo
+        if @group.logo.exists? then
+         cdata['logo'] = "#{BASEDOMAIN}#{@group.logo.url}"
+        else
+          cdata['logo'] = @logo if @logo
+        end
         cdata['password'] = password
 
         template = Liquid::Template.parse(@messtext)
