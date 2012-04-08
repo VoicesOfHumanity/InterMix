@@ -18,8 +18,8 @@
 		<%= f.input :required_subject,:label=>"Is a subject required for messages?" ,:as=>:boolean %>
 		<%= f.input :max_messages, :label=>"Max root messages" %>
 		<%= f.input :default_message, :as=>:text %>
-		<% f.input :sort_metamap_id, :label=>"Metamap to sort by", :as => :select, :collection => [['',0]]+@metamaps.collect{|m| ["#{m.id}: #{m.name}",m.id]} %>
-		<% f.input :sort_order, :label=>"Secondary sort", :as => :select, :collection=>['date','value'] %>
+		<%= f.input :sort_metamap_id, :label=>"Metamap to sort by", :as => :select, :collection => [['',0]]+@metamaps.collect{|m| ["#{m.id}: #{m.name}",m.id]} %>
+		<%= f.input :sort_order, :label=>"Secondary sort", :as => :select, :collection=>['date','value'] %>
 		<%= f.input :allow_replies, :as=>:boolean %>
 		<%= f.input :profiles_visible,:label=>"Should user profiles be visible?" ,:as=>:boolean %>
 		<%= f.input :names_visible_voting,:label=>"Should names be visible in a voting phase?" ,:as=>:boolean %>
