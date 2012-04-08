@@ -425,7 +425,15 @@ class FrontController < ApplicationController
     end
     logger.info("front#dialogjoin @logo set to #{@logo}")
 
-    dom = (@dialog.shortname.to_s != "") ? "#{@dialog.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}"
+    if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
+      dom = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}"
+    elsif @dialog.shortname.to_s != ""
+      dom = "#{@dialog.shortname}.#{ROOTDOMAIN}"
+    elsif @group.shortname.to_s != ""
+      dom = "#{@group.shortname}.#{ROOTDOMAIN}"
+    else
+      dom = BASEDOMAIN
+    end
     
     #-- Send an e-mail to the member
     recipient = @participant
