@@ -104,7 +104,12 @@
 	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
 	</p>
 
+	<% if flash[:alert].to_s != "" -%>
+	<input type="hidden" id="saveresult" name="saveresult" value="error">;
+	<% end -%>
+
 </form>
+
 
 <script>
 CKEDITOR.instances['item_html_content_editor'].on('instanceReady', function() {
@@ -115,7 +120,4 @@ function editor_change() {
 }
 var cur_media_type = $('#item_media_type').val();
 mediachange(cur_media_type);
-<% if flash[:alert].to_s != "" -%>
-result = 'error';
-<% end -%>
 </script>
