@@ -237,6 +237,7 @@ class DialogsController < ApplicationController
     else
       @period = Period.find(@period_id)
     end
+    @metamaps = Metamap.order("name").all  
   end
   
   def period_save
