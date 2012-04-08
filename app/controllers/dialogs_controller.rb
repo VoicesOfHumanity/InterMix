@@ -194,10 +194,10 @@ class DialogsController < ApplicationController
     @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
     @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
     
-    @items = @items.order(sortby)
     if @sortby == 'default'
-      @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id)
+      @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id, @dialog)
     else
+      @items = @items.order(sortby)
       @items = @items.paginate :page=>@page, :per_page => @perscr  
     end
     

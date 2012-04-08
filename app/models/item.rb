@@ -206,15 +206,32 @@ class Item < ActiveRecord::Base
     self.xml_content = item.to_xml  
   end  
 
-  def self.custom_item_sort(items, page, perscr, participant_id)
-    #-- Create the default sort for items:
+  def self.custom_item_sort(items, page, perscr, participant_id, dialog)
+    #-- Create the default sort for items in a discussion:
     #-- current user's own item first
     #-- items he hasn't yet rated, alternating:
     #-- - from own gender
     #-- - from other genders
     #-- already rated items
-    
+
     metamap_id = 3
+    sort2 = 'date'
+
+    if dialog and dialog.active_period
+      metamap_id = dialog.active_period.sort_metamap_id if dialog.active_period.sort_metamap_id.to_i > 0
+      sort2 = dialog.active_period.sort_order if dialog.active_period.sort_order.to_s != ''
+    end
+    
+    if sort2 == 'value'
+      sort2key = 'value desc'
+    elsif sort2 = 'date'
+      sort2key = 'id desc'
+    else
+      sort2key = 'id desc'
+    end  
+    
+    #-- Sort by the secondary key first, so they're in that order already before putting them into different piles
+    items = items.order(sort2key)
     
     mnps = MetamapNodeParticipant.where(:metamap_id=>metamap_id).where(:participant_id=>participant_id)
     if mnps.length > 0
