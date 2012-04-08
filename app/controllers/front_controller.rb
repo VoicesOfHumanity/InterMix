@@ -492,14 +492,14 @@ class FrontController < ApplicationController
   def confirm
     #-- Confirmation link in e-mail, when signing up
     @participant = Participant.find_by_confirmation_token(params[:code])
-    group_id,dialog_id = get_group_dialog_from_subdomain
-    dialog_id = params[:dialog_id].to_i if dialog_id.to_i == 0
     @content = ""
     @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
     if @participant
       @participant.status = 'active'
       @participant.save
       sign_in(:participant, @participant)
+      group_id,dialog_id = get_group_dialog_from_subdomain
+      dialog_id = params[:dialog_id].to_i if dialog_id.to_i == 0
       @dialog = Dialog.find_by_id(dialog_id) if dialog_id > 0
       if @dialog
         @content += "<p>Thank you for confirming!<br><br>You are already logged in.<br><br>Click on <a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/dialogs/#{@dialog.id}/forum\">Discussion</a> on the left to see the messages.<br><br>Bookmark this link so you can come back later:<br><br><a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/\">http://#{@dialog.shortname}.#{ROOTDOMAIN}/</a>.</p>"
