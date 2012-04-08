@@ -19,6 +19,8 @@ class Message < ActiveRecord::Base
       logger.info("Message#emailit #{recipient.id}:#{recipient.name} has no e-mail, so skipping")
       return
     end      
+
+    @group ||= Group.find_by_id(self.group_id) if self.group_id.to_i > 0
     
     # Make sure we have an authentication token for them to log in with
     # http://yekmer.posterous.com/single-access-token-using-devise

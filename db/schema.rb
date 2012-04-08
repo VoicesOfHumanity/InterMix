@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120407233720) do
+ActiveRecord::Schema.define(:version => 20120408000654) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -395,6 +395,8 @@ ActiveRecord::Schema.define(:version => 20120407233720) do
     t.datetime "updated_at"
     t.string   "message_id"
     t.string   "mail_template"
+    t.integer  "group_id"
+    t.integer  "dialog_id"
   end
 
   add_index "messages", ["from_participant_id", "id"], :name => "index_messages_on_from_participant_id_and_id"

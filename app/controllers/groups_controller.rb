@@ -441,6 +441,7 @@ class GroupsController < ApplicationController
         @message.message = html_content
         @message.sendmethod = 'web'
         @message.sent_at = Time.now
+        @message.group_id = @group.id
         if @message.save
           if participant.private_email == 'instant' and not participant.no_email
             #-- Send as an e-mail. 
