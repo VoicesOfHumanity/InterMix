@@ -187,7 +187,7 @@ function saveitem() {
     			//$('#newforumitem').html('');
         		//window.setTimeout("list();$('#newforumitem').hide();", 3000);
     		}
-    		list()
+    		//list();
     		replyingid = 0;
 		}
 	 });	
