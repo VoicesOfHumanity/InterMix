@@ -115,4 +115,7 @@ function editor_change() {
 }
 var cur_media_type = $('#item_media_type').val();
 mediachange(cur_media_type);
+<% if flash[:alert].to_s != "" -%>
+result = 'error';
+<% end -%>
 </script>

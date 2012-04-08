@@ -172,7 +172,8 @@ function saveitem() {
 	   type: xtype,
 	   url: url,
 	   data: pars,
-	   complete: function(t){	
+	   complete: function(t){
+	       var result = '';	
     	   if (replyingid>0) {
     			$('#reply_'+replyingid).html(t.responseText);	
     		 	$('#reply_'+replyingid).css('opacity','1.0');
@@ -187,8 +188,10 @@ function saveitem() {
     			//$('#newforumitem').html('');
         		//window.setTimeout("list();$('#newforumitem').hide();", 3000);
     		}
-    		//list();
-    		replyingid = 0;
+    		if (result != 'error') {
+    		    list();
+    		    replyingid = 0;
+		    }
 		}
 	 });	
 }
