@@ -87,7 +87,7 @@ Intermix::Application.routes.draw do
       get :subtag_edit
       post :subtag_save
       get :dialog_settings
-      post :dialog_settings_save
+      put :dialog_settings_save
     end
   end 
   
