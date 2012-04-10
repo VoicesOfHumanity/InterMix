@@ -254,6 +254,11 @@ class FrontController < ApplicationController
     end 
     @group = Group.find_by_id(@group_id)
     
+    if @group and @dialog
+      #-- Look up the dialog/group setting, which might contain a template
+      @dialog_group = DialogGroup.where("group_id=#{@group.id} and dialog_id=#{@dialog.id}").first
+    end
+    
     @subject = params[:subject].to_s
     @message = params[:message].to_s
     @name = params[:name].to_s
@@ -447,7 +452,10 @@ class FrontController < ApplicationController
     cdata['password'] = password
     cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}"
     
-    if @dialog.confirm_email_template.to_s != ''
+    if @dialog_group and @dialog_group.confirm_email_template.to_s != ''
+      template = Liquid::Template.parse(@dialog_group.confirm_email_template)
+      html_content = template.render(cdata)
+    elsif @dialog.confirm_email_template.to_s != ''
       template = Liquid::Template.parse(@dialog.confirm_email_template)
       html_content = template.render(cdata)
     else    
@@ -475,7 +483,10 @@ class FrontController < ApplicationController
       logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}")
     end
 
-    if @dialog.confirm_template.to_s != ''
+    if @dialog_group and @dialog_group.confirm_template.to_s != ''
+      template = Liquid::Template.parse(@dialog_group.confirm_template)
+      @content = template.render(cdata)
+    elsif @dialog.confirm_template.to_s != ''
       template = Liquid::Template.parse(@dialog.confirm_template)
       @content = template.render(cdata)
     else
@@ -564,8 +575,21 @@ class FrontController < ApplicationController
         meta << m
       end
       @message = "" if not @message
-      cdata = {'group'=>@group, 'dialog'=>@dialog, 'meta'=>meta, 'message'=>@message, 'name'=>@name, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
-      if @dialog.signup_template.to_s != ''
+      
+      if @group
+        if ! @dialog_group
+          #-- Look up the dialog/group setting, which might contain a template
+          @dialog_group = DialogGroup.where("group_id=#{@group.id} and dialog_id=#{@dialog.id}").first
+        end
+      else
+        @dialog_group = nil 
+      end
+      
+      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'meta'=>meta, 'message'=>@message, 'name'=>@name, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
+      if @dialog_group and @dialog_group.signup_template.to_s != ''
+        template = Liquid::Template.parse(@dialog_group.signup_template)
+        @content = template.render(cdata)
+      elsif @dialog.signup_template.to_s != ''
         template = Liquid::Template.parse(@dialog.signup_template)
         @content = template.render(cdata)
       else

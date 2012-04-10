@@ -36,7 +36,7 @@
 
 	<p><a href="/groups/<%= @group.id %>/import">Import members</a></p>
 
-	<p><b>Discussions:</b>
+	<p><b>Discussions:</b><ul>
 	<% if @group.dialogs.length == 0 -%>
 		none
 	<% else -%>
@@ -44,7 +44,7 @@
 			<br><a href="/groups/<%= @group.id %>/dialog_settings?dialog_id=<%= dialog.id %>"><%= dialog.name %></a>
 		<% end -%>
 	<% end -%>	
-	<p>	
+	</ul><p>	
 
 
 <% end -%>
