@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120408170914) do
+ActiveRecord::Schema.define(:version => 20120409230532) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -52,9 +52,12 @@ ActiveRecord::Schema.define(:version => 20120408170914) do
   create_table "dialog_groups", :force => true do |t|
     t.integer  "dialog_id"
     t.integer  "group_id"
-    t.boolean  "active",     :default => true
+    t.boolean  "active",                 :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "signup_template"
+    t.text     "confirm_template"
+    t.text     "confirm_email_template"
   end
 
   add_index "dialog_groups", ["dialog_id", "group_id"], :name => "index_dialog_groups_on_dialog_id_and_group_id"

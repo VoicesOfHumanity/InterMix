@@ -1,0 +1,19 @@
+<%= render(:partial => 'groups/menu')%>
+
+<h3 style="clear:both">Discussion</h3>
+
+<%= semantic_form_for @dialog_group, :url => "/groups/#{@group.id}/dialog_settings_save", :html=>{:id=>"dialog_group"} do |f| %>
+
+	<%= f.inputs do %>
+
+		<%= hidden_field_tag :dialog_group_id, @period_id %>
+
+		<%= f.input :signup_template, :label => "Signup Page template" %>
+		<%= f.input :confirm_template, :label => "Confirmation Page template" %>
+		<%= f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
+
+	<% end %>
+
+	<p><input type="submit" value="Save"></p>
+
+<% end %>

@@ -606,6 +606,30 @@ class GroupsController < ApplicationController
     redirect_to :action=>:admin
   end
 
+  def dialog_settings
+    #-- Show/edit the specifics for the group dialog membership
+    @group_id = params[:id].to_i
+    @group = Group.find(@group_id)
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+    @is_member = @group_participant ? true : false
+    @is_moderator = @group_participant and @group_participant.moderator
+    @dialog_id = params[:dialog_id].to_i
+    @dialog = Dialog.find_by_id(@dialog_id)
+    @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first   
+  end
+  
+  def dialog_settings_save
+    @group_id = params[:id].to_i
+    @group = Group.find(@group_id)
+    @dialog_group_id = params[:dialog_group_id]
+    @dialog_group = DialogGroup.find_by_id(@dialog_group_id)
+    @dialog_group.signup_template = params[:dialog_group][:signup_template]
+    @dialog_group.confirm_template = params[:dialog_group][:confirm_template]
+    @dialog_group.confirm_email_template = params[:dialog_group][:confirm_email_template]
+    @dialog_group.save!
+    redirect_to :action=>:admin
+  end
+
   protected
  
   def update_prefix
