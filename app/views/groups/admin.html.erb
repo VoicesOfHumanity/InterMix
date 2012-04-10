@@ -41,7 +41,7 @@
 		none
 	<% else -%>
 		<% for dialog in @group.dialogs -%>
-			<br><a href="/groups/<%= @group.id %>/dialog_settings?dialog_id=<%= dialog.id %>"><%= dialog.name %></a>
+			<li><a href="/groups/<%= @group.id %>/dialog_settings?dialog_id=<%= dialog.id %>"><%= dialog.name %></a></li>
 		<% end -%>
 	<% end -%>	
 	</ul><p>	
