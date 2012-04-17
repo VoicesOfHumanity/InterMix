@@ -533,7 +533,7 @@ class GroupsController < ApplicationController
       #- Show original message followed by all replies in a flat list
       @items = @items.where("is_first_in_thread=1")
     end
-    @items = @items.includes([:group,:participant,:item_rating_summary])
+    @items = @items.includes([:group,:participant,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
     @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
     @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval,ratings.interest")
     

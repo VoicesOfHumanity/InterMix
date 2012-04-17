@@ -176,7 +176,7 @@ class DialogsController < ApplicationController
       #- Show original message followed by all replies in a flat list
       @items = @items.where("is_first_in_thread=1")
     end
-    @items = @items.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
+    @items = @items.includes([:group,:participant,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
 
     @show_meta = false
     if @sortby == 'default'
