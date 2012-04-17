@@ -25,7 +25,7 @@ class GroupsController < ApplicationController
     @group = Group.includes(:owner_participant).find(params[:id])
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
     update_last_url
     update_prefix
   end  
@@ -37,7 +37,7 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
     update_last_url
     update_prefix
   end
@@ -49,7 +49,7 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
     update_last_url
     update_prefix
   end  
@@ -70,7 +70,7 @@ class GroupsController < ApplicationController
     @group = Group.includes(:owner_participant).find(params[:id])
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
     render :action=>'edit'
     update_prefix
   end  
@@ -131,7 +131,7 @@ class GroupsController < ApplicationController
     @group = Group.includes(:group_participants=>:participant).find(params[:id])
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
     update_last_url
     update_prefix
   end  
@@ -147,7 +147,7 @@ class GroupsController < ApplicationController
     @members = Participant.order("first_name,last_name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
   end  
   
   def invitedo
@@ -260,7 +260,7 @@ class GroupsController < ApplicationController
     @metamaps = Metamap.order("name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
   end  
   
   def importdo
@@ -506,7 +506,7 @@ class GroupsController < ApplicationController
     @group = Group.includes(:owner_participant).find(@group_id)
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
     
     if participant_signed_in? and current_participant.forum_settings
       set = current_participant.forum_settings
@@ -550,7 +550,7 @@ class GroupsController < ApplicationController
     @group = Group.find(@group_id)
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
     @period_id = params[:period_id].to_i
     if @period_id == 0
       @period = Period.new(:group_id=>@group_id,:group_dialog=>'group')
@@ -582,7 +582,7 @@ class GroupsController < ApplicationController
     @group = Group.find(@group_id)
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
     @group_subtag_id = params[:group_subtag_id].to_i
     if @group_subtag_id == 0
       @group_subtag = GroupSubtag.new(:group_id=>@group_id)
@@ -612,7 +612,7 @@ class GroupsController < ApplicationController
     @group = Group.find(@group_id)
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = (@group_participant and @group_participant.moderator)
     @dialog_id = params[:dialog_id].to_i
     @dialog = Dialog.find_by_id(@dialog_id)
     @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first   
