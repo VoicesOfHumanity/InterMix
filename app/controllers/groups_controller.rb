@@ -114,6 +114,10 @@ class GroupsController < ApplicationController
     respond_to do |format|
       if gvalidate and @group.save
         logger.info("groups_controller#create New group created: #{@group.id}")
+        @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+        @group_participant.moderator = true
+        @group_participant.active = true
+        @group_participant.save
         flash[:notice] = 'Group was successfully created.'
         format.html { redirect_to :action=>:view, :id=>@group.id }
       else
