@@ -406,6 +406,12 @@ class ItemsController < ApplicationController
     group_id = item.group_id.to_i
     dialog_id = item.dialog_id.to_i
     
+    #-- Check if they're allowed to rate it
+    if not item.voting_ok
+      render :text=>'', :layout=>false
+      return
+    end
+    
     #-- See if that user already has rated that item, or create a new rating if they haven't
     rating = Rating.find_or_initialize_by_item_id_and_participant_id_and_rating_type(item_id,current_participant.id,'AllRatings')
     
