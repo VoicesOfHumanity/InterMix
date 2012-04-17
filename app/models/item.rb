@@ -3,6 +3,7 @@ class Item < ActiveRecord::Base
   belongs_to :moderatedparticipant, :class_name => "Participant", :foreign_key => :moderated_by
   belongs_to :group, :counter_cache => true
   belongs_to :dialog
+  belongs_to :period
   has_many :allratings, :class_name=>"Rating"
   has_one :item_rating_summary
   serialize :oembed_response
