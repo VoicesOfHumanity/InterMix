@@ -109,6 +109,12 @@
 	
 	<div class="iteminfo">
 		<div class="iteminfotxt">
+
+
+			ok:<%= item.voting_ok %>	dialog:<%= item.dialog.id if item.dialog %> period:<%= item.period.name %>
+
+
+
 		<% if @from.to_s == 'forum' or @from.to_s != 'wall' -%>	
 		by 
 		<% if item.dialog and item.dialog.current_period.to_i > 0 and not item.dialog.settings_with_period["names_visible_voting"] -%>
