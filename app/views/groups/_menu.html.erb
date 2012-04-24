@@ -1,3 +1,16 @@
+<p style="clear:both;padding:0 19px 0 0"><span style="font-size:20px"><%= @dialog.name %></span>
+<% if not @is_member -%>	
+<br><span style="font-size:16px;font-weight:bold">JUST VISITING
+<% if @group.openness == 'open' -%>	
+- <a href="/groups/<%= @group.id %>/join">join this group</a>
+<% elsif @group.openness == 'open_to_apply' -%>
+apply to join this group
+<% end -%>
+</span>
+<% end -%>
+</p>
+
+
 <h3 style="clear:both"><%= @group.name %></h3>
 
 <ul class="horizmenu">
