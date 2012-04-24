@@ -1,13 +1,13 @@
 <h3>Discussions</h3>
 
-<% if @dialogsingroup.length > 0 -%>
+<% if @group.dialogs.length > 0 -%>
 	<p>You can participate in these discussions:</p>
 <% else -%>
 	<p>None</p>
 <% end -%>
 
 <ul>
-<% for dialog in @dialogsingroup -%>
+<% for dialog in @group.dialogs -%>
 
 <% 
 if dialog.shortname.to_s != "" and session[:group_prefix] != ""

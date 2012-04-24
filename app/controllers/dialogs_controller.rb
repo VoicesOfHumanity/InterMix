@@ -6,25 +6,32 @@ class DialogsController < ApplicationController
   def index
     #-- Show an overview of dialogs this person has access to
     @section = 'dialogs'
-    @gpin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id)").includes(:group).all
-    @groupsina = @gpin.collect{|g| g.group.id}
-    @dialogsin = []   # All dialogs they're in
-    @dialogsingroup = []   # Dialogs for the current group, if any
-    ddone1 = {}
-    ddone2 = {}
-    for gp in @gpin
-      gdialogsin = DialogGroup.where("group_id=#{gp.group.id}").includes(:dialog).all
-      for gd in gdialogsin
-        if not ddone1[gd.dialog.id]
-          @dialogsin << gd.dialog
-          ddone1[gd.dialog.id] = true
+    if false
+      @gpin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id)").includes(:group).all
+      @groupsina = @gpin.collect{|g| g.group.id}      
+      @dialogsin = []   # All dialogs they're in
+      @dialogsingroup = []   # Dialogs for the current group, if any
+      ddone1 = {}
+      ddone2 = {}
+      for gp in @gpin
+        gdialogsin = DialogGroup.where("group_id=#{gp.group.id}").includes(:dialog).all
+        for gd in gdialogsin
+          if not ddone1[gd.dialog.id]
+            @dialogsin << gd.dialog
+            ddone1[gd.dialog.id] = true
+          end  
+          if not ddone2[gd.dialog.id] and session[:group_id].to_i > 0 and gp.group_id == session[:group_id].to_i
+            @dialogsingroup << gd.dialog
+            ddone2[gd.dialog.id] = true
+          end
         end  
-        if not ddone2[gd.dialog.id] and session[:group_id].to_i > 0 and gp.group_id == session[:group_id].to_i
-          @dialogsingroup << gd.dialog
-          ddone2[gd.dialog.id] = true
-        end
       end  
-    end  
+    else
+      #-- We now no longer care if they're a member. Just list dialogs for the last group looked at.
+      if session[:group_id].to_i > 0
+        @group = Group.includes(:dialogs).find(session[:group_id])
+      end  
+    end
     
     #-- See if they're a moderator of a group, or a hub admin. Only those can add new discussions.
     groupsmodof = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").all
