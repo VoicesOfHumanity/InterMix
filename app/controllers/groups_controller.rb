@@ -643,6 +643,7 @@ class GroupsController < ApplicationController
       session[:group_id] = @group.id
       session[:group_name] = @group.name
       session[:group_prefix] = @group.shortname
+      session[:group_is_member] = @is_member
     #else
     #  session[:group_id] = 0
     #  session[:group_name] = ''
