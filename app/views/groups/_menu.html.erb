@@ -1,4 +1,4 @@
-<p style="clear:both;padding:0 19px 0 0"><span style="font-size:20px"><%= @dialog.name %></span>
+<p style="clear:both;padding:0 19px 0 0"><span style="font-size:20px"><%= @group.name %></span>
 <% if not @is_member -%>	
 <br><span style="font-size:16px;font-weight:bold">JUST VISITING
 <% if @group.openness == 'open' -%>	
@@ -9,9 +9,6 @@ apply to join this group
 </span>
 <% end -%>
 </p>
-
-
-<h3 style="clear:both"><%= @group.name %></h3>
 
 <ul class="horizmenu">
 <li><a class="menu<%= ' selected' if @gsection=='info' %>" href="/groups/<%= @group.id %>/view">Info</a></li>
