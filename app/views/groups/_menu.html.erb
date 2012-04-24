@@ -1,6 +1,6 @@
 <p style="clear:both;padding:0 19px 0 0"><span style="font-size:20px"><%= @group.name %></span>
 <% if not @is_member -%>	
-<br><span style="font-size:16px;font-weight:bold">JUST VISITING
+<br><span style="font-size:12px;font-weight:bold">JUST VISITING
 <% if @group.openness == 'open' -%>	
 - <a href="/groups/<%= @group.id %>/join">join this group</a>
 <% elsif @group.openness == 'open_to_apply' -%>
