@@ -1,7 +1,7 @@
 <h3>Groups</h3>
 
 <% if @groupsin.length > 0 -%>
-<p>You are a member<%= @ismoderator ? "/moderator" : "" %> of these groups:</p>
+<p>You are a member<%= (@ismoderator or session[:is_hub_admin] or session[:is_sysadmin]) ? "/moderator" : "" %> of these groups:</p>
 <% else -%>
 <p>You're not a member of any groups</p>
 <% end -%>

@@ -4,7 +4,7 @@
 
 <p><b>Group:</b> <%= @group.name %></p>
 
-<% if not ( @is_moderator or @group.owner.to_s == current_participant.id ) -%>
+<% if not ( @is_moderator or @group.owner.to_s == current_participant.id or session[:is_hub_admin] or session[:is_sysadmin]) -%>
 	<p>You are not an administrator of this group.</p>
 <% else -%>
 

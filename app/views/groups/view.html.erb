@@ -48,7 +48,7 @@ Apply
 	<% else -%>
 		<p>You are a member of this group. <a href="/groups/<%= @group.id %>/unjoin" onclick="confirm('Are you sure you want to leave this group?')">Leave</a></p>
 	<% end -%>	
-	<% if @is_moderator -%>
+	<% if (@is_moderator or session[:is_hub_admin] or session[:is_sysadmin]) -%>
 	<p>You are a group moderator. You can <a href="/groups/<%= @group.id %>/admin">administer</a> the group</p>
 	<% end -%>
 <% end -%>
