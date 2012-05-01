@@ -51,4 +51,6 @@ Apply
 	<% if (@is_moderator or session[:is_hub_admin] or session[:is_sysadmin]) -%>
 	<p>You are a group moderator. You can <a href="/groups/<%= @group.id %>/admin">administer</a> the group</p>
 	<% end -%>
+<% elsif session[:is_hub_admin] or session[:is_sysadmin] -%>
+<p>You can <a href="/groups/<%= @group.id %>/admin">administer</a> the group</p>
 <% end -%>
