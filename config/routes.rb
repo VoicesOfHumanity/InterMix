@@ -104,7 +104,7 @@ Intermix::Application.routes.draw do
       put :period_save
     end
   end 
-  match 'dialogs/results' => 'dialogs#results'
+  match 'voting_results' => 'dialogs#results'
   
   resources :group_participants
   
