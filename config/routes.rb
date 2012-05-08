@@ -103,8 +103,8 @@ Intermix::Application.routes.draw do
       post :period_save
       put :period_save
     end
-    get :results, :on => :collection
   end 
+  match 'dialogs/resultsprivacy' => 'dialogs#results'
   
   resources :group_participants
   
