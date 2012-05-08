@@ -103,9 +103,7 @@ Intermix::Application.routes.draw do
       post :period_save
       put :period_save
     end
-    collection do
-      get :results      
-    end
+    get :results, :on => :collection
   end 
   
   resources :group_participants
