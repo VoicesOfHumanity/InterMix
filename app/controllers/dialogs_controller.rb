@@ -488,7 +488,7 @@ class DialogsController < ApplicationController
     #-- Is this an admin?
     @is_group_admin = false
     @group = Group.find_by_id(@group_id)
-    @group_participant = GroupParticipant.where(:participant_id=>current_participant.id).where(:group_id=>@group_id)
+    @group_participant = GroupParticipant.where(:participant_id=>current_participant.id).where(:group_id=>@group_id).first
     if @group_participant and @group_participant.moderator
       @is_group_admin = true
     elsif session[:is_hub_admin] or session[:is_sysadmin]   
