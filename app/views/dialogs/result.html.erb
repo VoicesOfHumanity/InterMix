@@ -1,0 +1,57 @@
+<% require 'pp' %>
+
+<%= render(:partial => 'dialogs/menu') %>
+
+<h2>Overall winner</h2>
+
+
+
+
+<% for metamap in @metamaps -%>
+	<h2><%= metamap.name %></h2>
+
+	<div>
+	<% for metamap_node_id,metamap_node_name in @data[metamap.id]['nodes'] -%>
+		<h3><%= metamap_node_name %>:</h3>
+		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
+			<b>posted these:</b><br>
+			<% for item_id,i in @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] -%>
+			<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
+			<% end -%>
+		<% else -%>
+			posted nothing<br>
+		<% end -%>
+		<br>
+		
+		<% if @data[metamap.id]['ratedby']['nodes'][metamap_node_id] and @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
+			<b>rated these:</b><br>
+			<% for item_id,i in @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] -%>
+				<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
+			<% end -%>
+		<% else -%>
+			rated nothing<br>
+		<% end -%>
+		<br>
+		
+		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length > 0 -%>
+			<b>breakdown of raters:</b><br>
+			<% for rate_metamap_node_id,rdata in @data[metamap.id]['matrix']['post_rate'][metamap_node_id] %>
+				<b><%= @data[metamap.id]['nodes'][rate_metamap_node_id] %></b><br>
+				<% for item_id,i in @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] -%>
+					<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
+				<% end -%>
+			<% end -%>
+		<% end -%>
+		<br>
+	<% end -%>
+	<br>
+	</div>
+
+<% end -%>
+
+<script>
+function updatemeta() {
+	var period_id = $('#period_id').val();
+	window.location.href = "?period_id=" +  period_id;
+}
+</script>

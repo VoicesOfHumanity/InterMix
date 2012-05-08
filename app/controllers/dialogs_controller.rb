@@ -475,8 +475,199 @@ class DialogsController < ApplicationController
 
   def result
     #-- Results for a particular dialog/period
-    meta
-    render :action=>'meta'
+    @section = 'results'    
+    @dsection = 'meta'
+    
+    @from = 'dialog'
+    @dialog_id = params[:id].to_i
+    @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
+    dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
+    @is_admin = (dialogadmin.length > 0)
+    @period_id = params[:period_id].to_i
+    
+    @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
+
+    #r = Participant.joins(:groups=>:dialogs).joins(:metamap_nodes).where("dialogs.id=3").where("metamap_nodes.metamap_id=2").select("participants.id,first_name,metamap_nodes.name as metamap_node_name")
+
+    #-- Find how many people and items for each metamap_node
+    @data = {}
+    for metamap in @metamaps
+
+      metamap_id = metamap.id
+
+      @data[metamap.id] = {}
+      @data[metamap.id]['name'] = metamap.name
+      @data[metamap.id]['nodes'] = {}  # All nodes that have been used, for posting or rating
+      @data[metamap.id]['postedby'] = { # stats for what was posted by people in those meta categories
+        'nodes' => {}
+      }    
+      @data[metamap.id]['ratedby'] = {     # stats for what was rated by people in those meta categories
+        'nodes' => {}      
+      }
+      @data[metamap.id]['matrix'] = {      # stats for posted by meta cats crossed by rated by metacats
+        'post_rate' => {},
+        'rate_post' => {}
+      }
+      @data[metamap.id]['items'] = {}     # To keep track of the meta cat for each item
+      @data[metamap.id]['ratings'] = {}     # To keep track of the meta cat for each rating
+
+      pwhere = (@period_id > 0) ? "items.period_id=#{@period_id}" : ""
+
+      #-- Everything posted, with metanode info
+      items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      
+      #-- Everything rated, with metanode info
+      ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      
+      #-- Going through everything posted, group by meta node
+      for item in items
+        item_id = item.id
+        poster_id = item.posted_by
+        metamap_node_id = item.participant.metamap_node_participants[0].metamap_node_id
+        metamap_node_name = item.participant.metamap_node_participants[0].metamap_node.name
+        @data[metamap.id]['items'][item.id] = metamap_node_id
+        if not @data[metamap.id]['nodes'][metamap_node_id]
+          @data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
+        end
+        if not @data[metamap.id]['postedby']['nodes'][metamap_node_id]
+          @data[metamap.id]['postedby']['nodes'][metamap_node_id] = {
+            'name' => item.participant.metamap_node_participants[0].metamap_node.name,
+            'items' => {},
+            'itemsproc' => {},
+            'posters' => {},
+            'ratings' => {}
+          }
+        end
+        if not @data[metamap.id]['matrix']['post_rate'][metamap_node_id]
+          @data[metamap.id]['matrix']['post_rate'][metamap_node_id] = {}
+        end
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['items'][item_id] = item
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['posters'][poster_id] = item.participant
+      end
+
+      #-- Going through everything rated, group by meta node
+      for rating in ratings
+        rating_id = rating.id
+        item_id = rating.item_id
+        rater_id = rating.participant_id
+        metamap_node_id = rating.participant.metamap_node_participants[0].metamap_node_id
+        metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name
+        if not @data[metamap.id]['nodes'][metamap_node_id]
+          @data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
+        end
+        @data[metamap.id]['ratings'][rating.id] = metamap_node_id
+        if not @data[metamap.id]['ratedby']['nodes'][metamap_node_id]
+          @data[metamap.id]['ratedby']['nodes'][metamap_node_id] = {
+            'name' => rating.participant.metamap_node_participants[0].metamap_node.name,
+            'items' => {},
+            'itemsproc' => {},
+            'raters' => {},
+            'ratings' => {}
+          }
+        end
+        if not @data[metamap.id]['matrix']['rate_post'][metamap_node_id]
+          @data[metamap.id]['matrix']['rate_post'][metamap_node_id] = {}
+        end
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['items'][item_id] = rating.item
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['raters'][rater_id] = rating.participant
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['ratings'][rating_id] = rating
+        item_metamap_node_id = @data[metamap.id]['items'][item_id]
+        @data[metamap.id]['postedby']['nodes'][item_metamap_node_id]['ratings'][rating_id] = rating
+        if not @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id] = {
+            'post_name' => '',
+            'rate_name' => '',
+            'items' => {},
+            'itemsproc' => {},
+            'ratings' => {}
+          }
+        end
+        @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['ratings'][rating_id] = rating
+        @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['items'][item_id] = rating.item
+        @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['post_name'] = @data[metamap.id]['nodes'][item_metamap_node_id]
+        @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_name'] = metamap_node_name
+      end  # ratings
+
+      #-- Adding up stats for postedby items
+      @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
+        # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
+        mdata['items'].each do |item_id,item|
+          iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
+          mdata['ratings'].each do |rating_id,rating|
+            if rating.item_id == item.id
+              if rating.interest.to_i > 0
+                iproc['num_interest'] += 1
+                iproc['tot_interest'] += rating.interest
+                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+              end
+              if rating.approval.to_i > 0
+                iproc['num_approval'] += 1
+                iproc['tot_approval'] += rating.approval
+                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+              end
+              iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+            end
+          end
+          @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+        end
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
+      end
+      
+      #-- Adding up stats for ratedby items
+      @data[metamap.id]['ratedby']['nodes'].each do |metamap_node_id,mdata|
+        # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
+        mdata['items'].each do |item_id,item|
+          iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
+          mdata['ratings'].each do |rating_id,rating|
+            if rating.item_id == item.id
+              if rating.interest.to_i > 0
+                iproc['num_interest'] += 1
+                iproc['tot_interest'] += rating.interest
+                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+              end
+              if rating.approval.to_i > 0
+                iproc['num_approval'] += 1
+                iproc['tot_approval'] += rating.approval
+                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+              end
+              iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+            end
+          end
+          @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+        end
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
+      end
+      
+      #-- Adding up matrix stats
+      @data[metamap.id]['matrix']['post_rate'].each do |item_metamap_node_id,rdata|
+        rdata.each do |rate_metamap_node_id,mdata|
+
+          mdata['items'].each do |item_id,item|
+            iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
+            mdata['ratings'].each do |rating_id,rating|
+              if rating.item_id == item.id
+                if rating.interest.to_i > 0
+                  iproc['num_interest'] += 1
+                  iproc['tot_interest'] += rating.interest
+                  iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+                end
+                if rating.approval.to_i > 0
+                  iproc['num_approval'] += 1
+                  iproc['tot_approval'] += rating.approval
+                  iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+                end
+                iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+              end
+            end
+            @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id] = iproc
+          end
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'] = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
+
+        end
+      end
+
+    end # metamaps
+    
   end
   
   def results
