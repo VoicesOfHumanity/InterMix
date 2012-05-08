@@ -473,6 +473,41 @@ class DialogsController < ApplicationController
 
   end
 
+  def result
+    #-- Results for a particular dialog/period
+    meta
+    render :action=>'meta'
+  end
+  
+  def results
+    #-- List of voting results that apply to the current group. Current dialog is of no importance.
+    #-- This should maybe have been in the groups controller, rather than here.
+    @section = 'results'
+    @group_id = session[:group_id]
+
+    #-- Is this an admin?
+    @is_group_admin = false
+    @group = Group.find_by_id(@group_id)
+    @group_participant = GroupParticipant.where(:participant_id=>current_participant.id).where(:group_id=>@group_id)
+    if @group_participant and @group_participant.moderator
+      @is_group_admin = true
+    elsif session[:is_hub_admin] or session[:is_sysadmin]   
+      @is_group_admin = true
+    end
+
+    #-- What dialogs is the group in?
+    dialog_ids = @group.dialogs.collect{|d| d.id}
+    
+    today = Time.now
+    
+    @periods = Period.where("dialog_id = ?",dialog_ids)
+    if not @is_group_admin
+      #-- Only (group) admins can see periods that aren't done
+      @periods = @periods.where("endrating IS NOT NULL").where("endrating<?",today)
+    end
+    
+  end
+  
   protected 
   
   def dvalidate

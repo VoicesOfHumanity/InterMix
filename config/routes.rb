@@ -98,9 +98,13 @@ Intermix::Application.routes.draw do
       get :new
       get :forum
       get :meta
+      get :result
       get :period_edit
       post :period_save
       put :period_save
+    end
+    collection do
+      get :results      
     end
   end 
   
