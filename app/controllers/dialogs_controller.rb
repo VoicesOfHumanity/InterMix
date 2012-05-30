@@ -517,9 +517,9 @@ class DialogsController < ApplicationController
       @data[0]['ratings'][rating.id] = rating
     end
     
-    items.each do |item_id,item|
+    @data[0]['items'].each do |item_id,item|
       iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
-      ratings.each do |rating_id,rating|
+      @data[0]['ratings'].each do |rating_id,rating|
         if rating.item_id == item.id
           if rating.interest.to_i > 0
             iproc['num_interest'] += 1
