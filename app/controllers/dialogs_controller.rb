@@ -541,6 +541,8 @@ class DialogsController < ApplicationController
     @overall_winner_id = @data[0]['itemsproc'].first[1]['id']
     @overall_winner = @data[0]['items'][@overall_winner_id]
 
+    logger.info("dialogs#result Overall winner: #{@overall_winner_id}") 
+
     #-- And now we'll look at meta categories    
     
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
