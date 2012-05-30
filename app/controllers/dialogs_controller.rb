@@ -538,7 +538,8 @@ class DialogsController < ApplicationController
     end
     @data[0]['itemsproc'] = @data[0]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
 
-    @overall_winner = @data[0]['itemsproc'].first[1]['id']
+    @overall_winner_id = @data[0]['itemsproc'].first[1]['id']
+    @overall_winner = @data[0]['items'][@overall_winner_id]
 
     #-- And now we'll look at meta categories    
     
