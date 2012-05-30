@@ -4,6 +4,11 @@
 
 <h2>Overall winner</h2>
 
+<p><a href="/participant/<%= @overall_winner.participant.id %>/profile"><%= @overall_winner.participant.name %></a>: <%= @overall_winner.subject %>: interest:<%= @data[0]['itemsproc'][@overall_winner_id]['num_interest']%>:<%= sprintf("%.1f",@data[0]['itemsproc'][@overall_winner_id]['avg_interest']) %>, approval:<%= @data[0]['itemsproc'][@overall_winner_id]['num_approval'] %>:<%= sprintf("%.1f",@data[0]['itemsproc'][@overall_winner_id]['avg_approval']) %>, value:<%= sprintf("%.1f",@data[0]['itemsproc'][@overall_winner_id]['value']) %></p>
+
+
+
+
 
 
 

@@ -484,13 +484,69 @@ class DialogsController < ApplicationController
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
     @period_id = params[:period_id].to_i
+
+    #-- Criterion, if we're limiting by period
+    pwhere = (@period_id > 0) ? "items.period_id=#{@period_id}" : ""
+
+    @data = {}       # The stats, by meta category, and overall
+    
+    #-- Who's the overall winner?
+    #@overall_winner = Item.where(:dialog_id=>@dialog_id).where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).order("value desc").first
+    
+    #-- All items/ratings, regardless of meta categories
+    @data[0] = {}
+    @data[0]['name'] = 'Total'
+    @data[0]['items'] = {}     # All items in the dialog/period
+    @data[0]['itemsproc'] = {}     # All items in the dialog/period
+    @data[0]['ratings'] = {}     # All the ratings of those items
+        
+    items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant).includes(:item_rating_summary)
+        
+    for item in items
+      item_id = item.id
+      poster_id = item.posted_by
+      @data[0]['items'][item.id] = item
+    end
+
+    ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant).includes(:item=>:item_rating_summary)
+    
+    for rating in ratings
+      rating_id = rating.id
+      item_id = rating.item_id
+      rater_id = rating.participant_id
+      @data[0]['ratings'][rating.id] = rating
+    end
+    
+    items.each do |item_id,item|
+      iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
+      ratings.each do |rating_id,rating|
+        if rating.item_id == item.id
+          if rating.interest.to_i > 0
+            iproc['num_interest'] += 1
+            iproc['tot_interest'] += rating.interest
+            iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+          end
+          if rating.approval.to_i > 0
+            iproc['num_approval'] += 1
+            iproc['tot_approval'] += rating.approval
+            iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+          end
+          iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+        end
+      end
+      @data[0]['itemsproc'][item_id] = iproc
+    end
+    @data[0]['itemsproc'] = @data[0]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
+
+    @overall_winner = @data[0]['itemsproc'].first[1]['id']
+
+    #-- And now we'll look at meta categories    
     
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
 
     #r = Participant.joins(:groups=>:dialogs).joins(:metamap_nodes).where("dialogs.id=3").where("metamap_nodes.metamap_id=2").select("participants.id,first_name,metamap_nodes.name as metamap_node_name")
 
     #-- Find how many people and items for each metamap_node
-    @data = {}
     for metamap in @metamaps
 
       metamap_id = metamap.id
@@ -508,10 +564,8 @@ class DialogsController < ApplicationController
         'post_rate' => {},
         'rate_post' => {}
       }
-      @data[metamap.id]['items'] = {}     # To keep track of the meta cat for each item
-      @data[metamap.id]['ratings'] = {}     # To keep track of the meta cat for each rating
-
-      pwhere = (@period_id > 0) ? "items.period_id=#{@period_id}" : ""
+      @data[metamap.id]['items'] = {}     # To keep track of the items marked with that meta cat
+      @data[metamap.id]['ratings'] = {}     # Keep track of the ratings of items in that meta cat
 
       #-- Everything posted, with metanode info
       items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
