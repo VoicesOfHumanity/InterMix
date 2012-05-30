@@ -2,12 +2,11 @@
 
 <%= render(:partial => 'dialogs/menu') %>
 
-<h2>Overall winner</h2>
+<h2>Overall<%= " winner" if not @all %></h2>
 
-<% if @overall_winner_id.to_i > 0 and @overall_winner and @overall_winner.participant and @data[0]['itemsproc'][@overall_winner_id] -%>
-<p><a href="/participant/<%= @overall_winner.participant.id %>/profile"><%= @overall_winner.participant.name %></a>: <%= @overall_winner.subject %>: interest:<%= @data[0]['itemsproc'][@overall_winner_id]['num_interest']%>:<%= sprintf("%.1f",@data[0]['itemsproc'][@overall_winner_id]['avg_interest']) %>, approval:<%= @data[0]['itemsproc'][@overall_winner_id]['num_approval'] %>:<%= sprintf("%.1f",@data[0]['itemsproc'][@overall_winner_id]['avg_approval']) %>, value:<%= sprintf("%.1f",@data[0]['itemsproc'][@overall_winner_id]['value']) %></p>
-<% else -%>
-<p>NONE</p>
+<% for item_id,i in @data[0]['itemsproc'] -%>
+<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
+<% break if not @all %>
 <% end -%>
 
 
@@ -20,9 +19,14 @@
 	<% for metamap_node_id,metamap_node_name in @data[metamap.id]['nodes'] -%>
 		<h3><%= metamap_node_name %>:</h3>
 		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
+			<% if @all -%>
 			<b>posted these:</b><br>
+			<% else -%>
+			<b>posted:</b><br>
+			<% end -%>
 			<% for item_id,i in @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] -%>
 			<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
+			<% break if not @all %>
 			<% end -%>
 		<% else -%>
 			posted nothing<br>
@@ -30,9 +34,14 @@
 		<br>
 		
 		<% if @data[metamap.id]['ratedby']['nodes'][metamap_node_id] and @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
+			<% if @all -%>
 			<b>rated these:</b><br>
+			<% else -%>
+			<b>rated:</b><br>			
+			<% end -%>
 			<% for item_id,i in @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] -%>
 				<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
+				<% break if not @all %>
 			<% end -%>
 		<% else -%>
 			rated nothing<br>
@@ -45,6 +54,7 @@
 				<b><%= @data[metamap.id]['nodes'][rate_metamap_node_id] %></b><br>
 				<% for item_id,i in @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] -%>
 					<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
+					<% break if not @all %>
 				<% end -%>
 			<% end -%>
 		<% end -%>
