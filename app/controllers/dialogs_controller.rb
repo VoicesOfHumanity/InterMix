@@ -485,7 +485,7 @@ class DialogsController < ApplicationController
     @is_admin = (dialogadmin.length > 0)
     @period_id = params[:period_id].to_i
     
-    @all = (params[:all].to_i = 1)
+    @all = (params[:all].to_i == 1)
 
     #-- Criterion, if we're limiting by period
     pwhere = (@period_id > 0) ? "items.period_id=#{@period_id}" : ""
