@@ -4,11 +4,12 @@
 
 <h2>Overall<%= " winner" if not @all %></h2>
 
+<div>
 <% for item_id,i in @data[0]['itemsproc'] -%>
 <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
 <% break if not @all %>
 <% end -%>
-
+</div>
 
 <% for metamap in @metamaps -%>
 	<h2><%= metamap.name %></h2>

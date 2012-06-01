@@ -647,6 +647,9 @@ class DialogsController < ApplicationController
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_name'] = metamap_node_name
       end  # ratings
 
+      #-- Put nodes in alphabetical order
+      @data[metamap.id]['nodes'] = @data[metamap.id]['nodes'].sort {|a,b| b[1]<=>a[1]}
+
       #-- Adding up stats for postedby items
       @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
         # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
