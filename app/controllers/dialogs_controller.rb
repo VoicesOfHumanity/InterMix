@@ -648,7 +648,7 @@ class DialogsController < ApplicationController
       end  # ratings
 
       #-- Put nodes in alphabetical order
-      @data[metamap.id]['nodes'] = @data[metamap.id]['nodes'].sort {|a,b| b[1]<=>a[1]}
+      @data[metamap.id]['nodes'] = @data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
 
       #-- Adding up stats for postedby items
       @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
