@@ -6,7 +6,7 @@
 
 <div>
 <% for item_id,i in @data[0]['itemsproc'] -%>
-<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, ratings:<%= i['votes'] %><br>
+<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>:  <a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, ratings:<%= i['votes'] %><br>
 <% break if not @all %>
 <% end -%>
 <br>
