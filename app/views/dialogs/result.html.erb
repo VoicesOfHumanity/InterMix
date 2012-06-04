@@ -13,7 +13,7 @@
 </div>
 
 <% for metamap in @metamaps -%>
-	<h2><%= metamap.name %></h2>
+	<h2 title="<%= metamap.id %>"><%= metamap.name %></h2>
 
 	<div>
 	<% for metamap_node_id,metamap_node_name in @data[metamap.id]['nodes'] -%>
