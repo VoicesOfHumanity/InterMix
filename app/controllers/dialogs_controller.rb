@@ -484,6 +484,7 @@ class DialogsController < ApplicationController
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
     @period_id = params[:period_id].to_i
+    @period = Period.find_by_id(@period_id)
     
     @all = (params[:all].to_i == 1)
 
