@@ -16,7 +16,7 @@
 	<h2 title="<%= metamap.id %>"><%= metamap.name %></h2>
 
 	<div>
-	<% for metamap_node_id,metamap_node_name in @data[metamap.id]['nodes'] -%>
+	<% for metamap_node_id,metamap_node_name in @data[metamap.id]['nodes_sorted'] -%>
 		<h3 title="<%= metamap_node_id %>"><%= metamap_node_name %>:</h3>
 		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
 			<% if @all -%>
@@ -56,7 +56,6 @@
 			<% end -%>
 			<% for rate_metamap_node_id,rdata in @data[metamap.id]['matrix']['post_rate'][metamap_node_id] %>
 				<b>meta:<%= @data[metamap.id]['nodes'][rate_metamap_node_id] ? @data[metamap.id]['nodes'][rate_metamap_node_id] : "Don't know name from  @data[#{metamap.id}]['nodes'][#{rate_metamap_node_id}]" %></b><br>
-				<%= "inspect @data[#{metamap.id}]: " + @data[metamap.id].inspect %><br>
 				<% for item_id,i in @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] -%>
 					<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
 					<% break if not @all %>

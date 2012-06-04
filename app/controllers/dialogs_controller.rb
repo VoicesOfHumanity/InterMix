@@ -558,7 +558,7 @@ class DialogsController < ApplicationController
 
       @data[metamap.id] = {}
       @data[metamap.id]['name'] = metamap.name
-      @data[metamap.id]['nodes'] = {}  # All nodes that have been used, for posting or rating
+      @data[metamap.id]['nodes'] = {}  # All nodes that have been used, for posting or rating, with their names
       @data[metamap.id]['postedby'] = { # stats for what was posted by people in those meta categories
         'nodes' => {}
       }    
@@ -657,7 +657,7 @@ class DialogsController < ApplicationController
       end  # ratings
 
       #-- Put nodes in alphabetical order
-      @data[metamap.id]['nodes'] = @data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
+      @data[metamap.id]['nodes_sorted'] = @data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
 
       #-- Adding up stats for postedby items. I.e. items posted by people in that meta.
       @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
