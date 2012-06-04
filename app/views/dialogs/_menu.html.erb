@@ -8,7 +8,7 @@
 <ul class="horizmenu">
 <li><a class="menu<%= ' selected' if @dsection=='info' %>" href="/dialogs/<%= @dialog.id %>/view">Info</a></li>
 <li><a class="menu<%= ' selected' if @dsection=='forum' %>" href="/dialogs/<%= @dialog.id %>/forum">Forum</a></li>
-<li><a class="menu<%= ' selected' if @dsection=='meta' %>" href="/dialogs/<%= @dialog.id %>/meta">Overview</a></li>
+<li><a class="menu<%= ' selected' if @dsection=='meta' %>" href="/dialogs/<%= @dialog.id %>/result">Overview</a></li>
 <% if @is_admin -%>
 <li><a class="menu<%= ' selected' if @dsection=='edit' %>" href="/dialogs/<%= @dialog.id %>/edit">Admin</a></li>
 <% end -%>

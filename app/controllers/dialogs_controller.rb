@@ -750,6 +750,11 @@ class DialogsController < ApplicationController
     
   end
   
+  def result2
+    #-- More simple version
+    result
+  end
+  
   def results
     #-- List of voting results that apply to the current group. Current dialog is of no importance.
     #-- This should maybe have been in the groups controller, rather than here.
