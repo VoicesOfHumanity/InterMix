@@ -590,7 +590,7 @@ class DialogsController < ApplicationController
 
         if not @data[metamap.id]['nodes'][metamap_node_id]
           @data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
-          logger.inf("dialogs#result @data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
+          logger.info("dialogs#result @data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
         end
         if not @data[metamap.id]['postedby']['nodes'][metamap_node_id]
           @data[metamap.id]['postedby']['nodes'][metamap_node_id] = {
