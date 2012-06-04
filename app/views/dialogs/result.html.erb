@@ -28,7 +28,7 @@
 			<% break if not @all %>
 			<% end -%>
 		<% else -%>
-			posted nothing<br>
+			<%= metamap_node_name %> posted nothing<br>
 		<% end -%>
 		<br>
 		
@@ -43,7 +43,7 @@
 				<% break if not @all %>
 			<% end -%>
 		<% else -%>
-			rated nothing<br>
+			<%= metamap_node_name %> rated nothing<br>
 		<% end -%>
 		<br>
 		
@@ -54,7 +54,7 @@
 			<b><%= metamap_node_name %> winner chosen by raters from different groups:</b><br>			
 			<% end -%>
 			<% for rate_metamap_node_id,rdata in @data[metamap.id]['matrix']['post_rate'][metamap_node_id] %>
-				<b>meta:<%= @data[metamap.id]['nodes'][rate_metamap_node_id] %></b><br>
+				<b>meta:<%= @data[metamap.id]['nodes'][rate_metamap_node_id] ? @data[metamap.id]['nodes'][rate_metamap_node_id] : "Don't know name of node #{rate_metamap_node_id}" %></b><br>
 				<% for item_id,i in @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] -%>
 					<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
 					<% break if not @all %>

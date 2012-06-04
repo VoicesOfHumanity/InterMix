@@ -578,7 +578,7 @@ class DialogsController < ApplicationController
       #-- Everything rated, with metanode info
       ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
       
-      #-- Going through everything posted, group by meta node
+      #-- Going through everything posted, group by meta node of poster
       for item in items
         item_id = item.id
         poster_id = item.posted_by
@@ -604,7 +604,7 @@ class DialogsController < ApplicationController
         @data[metamap.id]['postedby']['nodes'][metamap_node_id]['posters'][poster_id] = item.participant
       end
 
-      #-- Going through everything rated, group by meta node
+      #-- Going through everything rated, group by meta node of rater
       for rating in ratings
         rating_id = rating.id
         item_id = rating.item_id
@@ -641,16 +641,18 @@ class DialogsController < ApplicationController
             'ratings' => {}
           }
         end
+        #-- Store a matrix crossing the item's meta with the rater's meta (within a particular metamap, e.g. gender)
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['ratings'][rating_id] = rating
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['items'][item_id] = rating.item
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['post_name'] = @data[metamap.id]['nodes'][item_metamap_node_id]
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_name'] = metamap_node_name
+        @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_metamap_id'] = rating.metamap_id
       end  # ratings
 
       #-- Put nodes in alphabetical order
       @data[metamap.id]['nodes'] = @data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
 
-      #-- Adding up stats for postedby items
+      #-- Adding up stats for postedby items. I.e. items posted by people in that meta.
       @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
         # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
         mdata['items'].each do |item_id,item|
@@ -675,7 +677,7 @@ class DialogsController < ApplicationController
         @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
       end
       
-      #-- Adding up stats for ratedby items
+      #-- Adding up stats for ratedby items. I.e. items rated by people in that meta.
       @data[metamap.id]['ratedby']['nodes'].each do |metamap_node_id,mdata|
         # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
         mdata['items'].each do |item_id,item|
@@ -702,9 +704,11 @@ class DialogsController < ApplicationController
       
       #-- Adding up matrix stats
       @data[metamap.id]['matrix']['post_rate'].each do |item_metamap_node_id,rdata|
+        #-- Going through all metas with items that have been rated
         rdata.each do |rate_metamap_node_id,mdata|
-
+          #-- Going through all the metas that have rated items in that meta (all within a particular metamap, like gender)
           mdata['items'].each do |item_id,item|
+            #-- Going through the items of the second meta that have rated the first meta
             iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
             mdata['ratings'].each do |rating_id,rating|
               if rating.item_id == item.id
