@@ -540,7 +540,7 @@ class DialogsController < ApplicationController
       end
       @data[0]['itemsproc'][item_id] = iproc
     end
-    @data[0]['itemsproc'] = @data[0]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
+    @data[0]['itemsproc'] = @data[0]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
 
     @overall_winner_id = @data[0]['itemsproc'].first[1]['id']
     @overall_winner = @data[0]['items'][@overall_winner_id]
@@ -712,7 +712,7 @@ class DialogsController < ApplicationController
           end
           @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
         end
-        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
       end
       
       #-- Adding up matrix stats
@@ -741,7 +741,7 @@ class DialogsController < ApplicationController
             end
             @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id] = iproc
           end
-          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'] = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'] = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
 
         end
       end
