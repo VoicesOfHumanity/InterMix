@@ -718,9 +718,10 @@ class DialogsController < ApplicationController
           #-- Going through all the metas that have rated items in that meta (all within a particular metamap, like gender)
           mdata['items'].each do |item_id,item|
             #-- Going through the items of the second meta that have rated the first meta
-            iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
+            iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
             mdata['ratings'].each do |rating_id,rating|
               if rating.item_id == item.id
+                iproc['votes'] += 1
                 if rating.interest.to_i > 0
                   iproc['num_interest'] += 1
                   iproc['tot_interest'] += rating.interest
