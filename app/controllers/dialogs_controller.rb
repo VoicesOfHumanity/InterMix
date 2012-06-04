@@ -585,8 +585,12 @@ class DialogsController < ApplicationController
         metamap_node_id = item.participant.metamap_node_participants[0].metamap_node_id
         metamap_node_name = item.participant.metamap_node_participants[0].metamap_node.name
         @data[metamap.id]['items'][item.id] = metamap_node_id
+
+        logger.info("dialogs#result item ##{item.id} poster meta:#{metamap_node_id}/#{metamap_node_name}") 
+
         if not @data[metamap.id]['nodes'][metamap_node_id]
           @data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
+          logger.inf("dialogs#result @data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
         end
         if not @data[metamap.id]['postedby']['nodes'][metamap_node_id]
           @data[metamap.id]['postedby']['nodes'][metamap_node_id] = {
