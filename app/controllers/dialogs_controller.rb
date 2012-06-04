@@ -618,10 +618,10 @@ class DialogsController < ApplicationController
         metamap_node_id = rating.participant.metamap_node_participants[0].metamap_node_id
         metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name
 
-        logger.info("dialogs#result rating ##{rating_id} of item ##{item.id} rater meta:#{metamap_node_id}/#{metamap_node_name}") 
+        logger.info("dialogs#result rating ##{rating_id} of item ##{item_id} rater meta:#{metamap_node_id}/#{metamap_node_name}") 
        
-        if not @data[metamap.id]['postedby']['nodes'][item_metamap_node_id]
-          logger.info("dialogs#result item ##{item.id} doesn't exist. Skipping.")
+        if not @data[0]['itemsproc'][item_id]
+          logger.info("dialogs#result item ##{item_id} doesn't exist. Skipping.")
           next
         end
 
