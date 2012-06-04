@@ -641,7 +641,7 @@ class DialogsController < ApplicationController
         @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['raters'][rater_id] = rating.participant
         @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['ratings'][rating_id] = rating
         item_metamap_node_id = @data[metamap.id]['items'][item_id]
-        @data[metamap.id]['postedby']['nodes'][item_metamap_node_id]['ratings'][rating_id] = rating
+        @data[metamap.id]['postedby']['nodes'][item_metamap_node_id]['ratings'][rating_id] = rating if @data[metamap.id]['postedby']['nodes'][item_metamap_node_id]
         if not @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]
           @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id] = {
             'post_name' => '',

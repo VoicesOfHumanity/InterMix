@@ -4,11 +4,11 @@
 
 <p>
 <% if @all -%>
-[<a href="/dialogs/<%= @dialog_id %>/result<%= @period_id > 0 ? "?period_id=#{@period_id}&amp;" : "" %>">short</a>]
+[<a href="/dialogs/<%= @dialog_id %>/result<%= @period_id > 0 ? "?period_id=#{@period_id}" : "" %>">short</a>]
 <% else -%>
 [<a href="/dialogs/<%= @dialog_id %>/result?<%= @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>all=1">full</a>]
 <% end -%>
-[<a href="/dialogs/<%= @dialog_id %>/result<%= @period_id > 0 ? "?period_id=#{@period_id}&amp;" : "" %>">plain</a>]</p>
+[<a href="/dialogs/<%= @dialog_id %>/result<%= @period_id > 0 ? "?period_id=#{@period_id}" : "" %>">plain</a>]</p>
 
 <h2>Overall<%= " winner" if not @all %> (<%= @data[0]['ratings'].length %> ratings)</h2>
 
