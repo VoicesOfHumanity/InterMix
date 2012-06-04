@@ -646,7 +646,6 @@ class DialogsController < ApplicationController
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['items'][item_id] = rating.item
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['post_name'] = @data[metamap.id]['nodes'][item_metamap_node_id]
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_name'] = metamap_node_name
-        @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_metamap_id'] = rating.metamap_id
       end  # ratings
 
       #-- Put nodes in alphabetical order
