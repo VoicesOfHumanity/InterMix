@@ -9,6 +9,7 @@
 <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
 <% break if not @all %>
 <% end -%>
+<br>
 </div>
 
 <% for metamap in @metamaps -%>
@@ -19,9 +20,9 @@
 		<h3><%= metamap_node_name %>:</h3>
 		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
 			<% if @all -%>
-			<b>highest rated <%= metamap_node_name %> items by all votes:</b><br>
+			<b>highest rated <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> items by all votes:</b><br>
 			<% else -%>
-			<b>winning <%= metamap_node_name %> item by all votes:</b><br>
+			<b>winning <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> item by all votes:</b><br>
 			<% end -%>
 			<% for item_id,i in @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] -%>
 			<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
@@ -34,9 +35,9 @@
 		
 		<% if @data[metamap.id]['ratedby']['nodes'][metamap_node_id] and @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
 			<% if @all -%>
-			<b>items highest rated by <%= metamap_node_name %> of all items:</b><br>
+			<b>items highest rated by <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> of all items:</b><br>
 			<% else -%>
-			<b>pick for winner by <%= metamap_node_name %> out of all items:</b><br>			
+			<b>pick for winner by <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> out of all items:</b><br>			
 			<% end -%>
 			<% for item_id,i in @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] -%>
 				<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %><br>
@@ -49,9 +50,9 @@
 		
 		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length > 0 -%>
 			<% if @all -%>
-			<b>highest rated <%= metamap_node_name %> items chosen by different groups:</b><br>
+			<b>highest rated <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> items chosen by different groups:</b><br>
 			<% else -%>
-			<b><%= metamap_node_name %> winner chosen by raters from different groups:</b><br>			
+			<b><span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> winner chosen by raters from different groups:</b><br>			
 			<% end -%>
 			<% for rate_metamap_node_id,rdata in @data[metamap.id]['matrix']['post_rate'][metamap_node_id] %>
 				<b>meta:<%= @data[metamap.id]['nodes'][rate_metamap_node_id] ? @data[metamap.id]['nodes'][rate_metamap_node_id] : "Don't know name of node #{rate_metamap_node_id}" %></b><br>
