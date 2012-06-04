@@ -1,3 +1,5 @@
+<% if @particpant -%>
+
 <div><%= render(:partial => 'profiles/public')%></div>
 
 <div id="followdiv"><%= render(:partial => 'follow') %></div>
@@ -14,3 +16,9 @@ function follow(onoff) {
   });	
 }
 </script>
+
+<% else -%>
+
+<p>That user doesn't exist</p>
+
+<% end -%>

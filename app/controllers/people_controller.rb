@@ -57,9 +57,11 @@ class PeopleController < ApplicationController
     #-- show somebody's profile
     @participant_id = ( params[:id] || current_participant.id ).to_i
     #@participant = Participant.find(@participant_id)
-    @participant = Participant.includes(:followers,:idols).find(@participant_id)
-    follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").find(:first)
-    @is_following = (follow ? true : false)    
+    @participant = Participant.includes(:followers,:idols).find_by_id(@participant_id)
+    if @participant
+      follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").find(:first)
+      @is_following = (follow ? true : false)   
+    end 
     update_last_url
   end    
   
