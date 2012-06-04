@@ -35,9 +35,9 @@
 		
 		<% if @data[metamap.id]['ratedby']['nodes'][metamap_node_id] and @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
 			<% if @all -%>
-			<b>items highest rated by <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> of all items:</b><br>
+			<b>items highest rated by <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> of all items (<%=  @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['ratings'].length %> ratings):</b><br>
 			<% else -%>
-			<b>pick for winner by <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> out of all items:</b><br>			
+			<b>pick for winner by <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> out of all items (<%=  @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['ratings'].length %> ratings):</b><br>			
 			<% end -%>
 			<% for item_id,i in @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] -%>
 				<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <%= i['subject'] %>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, votes:<%= i['votes'] %><br>
