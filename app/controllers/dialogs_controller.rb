@@ -663,9 +663,10 @@ class DialogsController < ApplicationController
       @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
         # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
         mdata['items'].each do |item_id,item|
-          iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
+          iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
           mdata['ratings'].each do |rating_id,rating|
             if rating.item_id == item.id
+              iproc['votes'] += 1
               if rating.interest.to_i > 0
                 iproc['num_interest'] += 1
                 iproc['tot_interest'] += rating.interest
@@ -688,9 +689,10 @@ class DialogsController < ApplicationController
       @data[metamap.id]['ratedby']['nodes'].each do |metamap_node_id,mdata|
         # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
         mdata['items'].each do |item_id,item|
-          iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
+          iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
           mdata['ratings'].each do |rating_id,rating|
             if rating.item_id == item.id
+              iproc['votes'] += 1
               if rating.interest.to_i > 0
                 iproc['num_interest'] += 1
                 iproc['tot_interest'] += rating.interest
