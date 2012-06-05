@@ -61,7 +61,7 @@ class ItemsController < ApplicationController
         if params["posted_by_metamap_#{metamap.id}"].to_i != 0
           posted_by_metamap_node_id = params["posted_by_metamap_#{metamap.id}"].to_i
           logger.info("items#list Posted by metamap #{metamap.id}: #{posted_by_metamap_node_id}")
-          @items = @items.joins("inner join metamap_node_participants p_mnp_#{metamap.id} on (p_mnp_#{metamap.id}.participant_id=#{items.posted_by} and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id})")
+          @items = @items.joins("inner join metamap_node_participants p_mnp_#{metamap.id} on (p_mnp_#{metamap.id}.participant_id=items.posted_by and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id})")
           #@items = @items.where("p_mnp_#{metamap.id}.participant_id=#{current_participant.id} and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id}")
         end
         if params["rated_by_metamap_#{metamap.id}"].to_i != 0
