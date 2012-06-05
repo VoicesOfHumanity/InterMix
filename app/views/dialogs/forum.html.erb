@@ -24,7 +24,7 @@
 
 	<div class="lefttitle">Threads:</div>
 	<div class="leftfield">
-	<%= select_tag "threads", options_for_select([['None',''],['First+Replies','flat'],['Tree View','tree']],@threads), :onchange=>"list()" %>
+	<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list()" %>
 	</div>
 
 	<div class="lefttitle">Show:</div>
