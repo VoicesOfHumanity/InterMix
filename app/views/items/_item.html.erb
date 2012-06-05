@@ -120,9 +120,11 @@
 		<% else -%>
 		<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>
 		<% end -%>
-			<% if @show_meta and item.participant and item.participant.metamap_node_participants -%>
-				(<%= item.participant.metamap_node_participants[0].metamap_node.name %>)
-			<% end -%>
+			<% if @show_meta and item.participant and item.participant.metamap_node_participants -%>(
+				<% for metamap_node_participant in item.participant.metamap_node_participants -%>
+					<%= "#{metamap_node_participant.metamap_node.name} " %>
+				<% end -%>
+			)<% end -%>
 		<% end -%>
 		<%= link_to_function 'edit', "edititem(#{item.id})" if item.posted_by == current_participant.id and not item.edit_locked %>
 		<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
