@@ -204,7 +204,7 @@ class DialogsController < ApplicationController
     @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
     
     if @sortby == 'default'
-      @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id, @dialog)
+      @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
     else
       @items = @items.order(sortby)
       @items = @items.paginate :page=>@page, :per_page => @perscr  

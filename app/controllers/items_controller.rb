@@ -60,6 +60,7 @@ class ItemsController < ApplicationController
       for metamap in @metamaps
         if params["posted_by_metamap_#{metamap.id}"].to_i != 0
           posted_by_metamap_node_id = params["posted_by_metamap_#{metamap.id}"].to_i
+          logger.info("items#list Posted by metamap #{metamap.id}: #{posted_by_metamap_node_id}")
           @items = @items.joins("left join metamap_node_participants p_mnp_#{metamap.id} on (p_mnp_#{metamap.id}.participant_id=#{current_participant.id} and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id})")
           @items = @items.where("p_mnp_#{metamap.id}.id is not null")
         end
@@ -88,7 +89,7 @@ class ItemsController < ApplicationController
     
     if @sortby == 'default'
       @dialog = Dialog.find_by_id(@dialog_id)
-      @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
+      @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id, @dialog)`.paginate :page=>@page, :per_page => @perscr`
     else
       @items = @items.order(sortby)
       @items = @items.paginate :page=>@page, :per_page => @perscr   
