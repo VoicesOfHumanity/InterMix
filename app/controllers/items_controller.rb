@@ -87,6 +87,8 @@ class ItemsController < ApplicationController
       sortby = @sortby
     end
     
+    @show_extra = @items.to_sql
+    
     if @sortby == 'default'
       @dialog = Dialog.find_by_id(@dialog_id)
       @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
