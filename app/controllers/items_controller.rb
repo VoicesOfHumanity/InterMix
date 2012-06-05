@@ -67,7 +67,7 @@ class ItemsController < ApplicationController
         if params["rated_by_metamap_#{metamap.id}"].to_i != 0
           rated_by_metamap_node_id = params["rated_by_metamap_#{metamap.id}"].to_i
           #@items = @items.joins("join ratings r_#{metamap_id} on (items.id=ratings.item_id)")
-          @items = @items.where("(select count(*) from ratings r_#{metamap.id} inner join participants r_p_#{metamap.id} on (r_#{metamap.id}.participant_id=r_p_#{metamap.id}.id) inner join metamap_node_participants r_mnp_#{metamap.id} on (r_mnp_#{metamap.id}.participant_id=r_p_#{metamap.id} and r_mnp_#{metamap.id}.metamap_node_id=rated_by_metamap_node_id) where r_#{metamap.id}.item_id=items.id)>0")
+          @items = @items.where("(select count(*) from ratings r_#{metamap.id} inner join participants r_p_#{metamap.id} on (r_#{metamap.id}.participant_id=r_p_#{metamap.id}.id) inner join metamap_node_participants r_mnp_#{metamap.id} on (r_mnp_#{metamap.id}.participant_id=r_p_#{metamap.id}.id and r_mnp_#{metamap.id}.metamap_node_id=rated_by_metamap_node_id) where r_#{metamap.id}.item_id=items.id)>0")
         end
       end
     end
