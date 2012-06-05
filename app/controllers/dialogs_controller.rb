@@ -156,6 +156,8 @@ class DialogsController < ApplicationController
     @groups = @dialog.groups if @dialog and @dialog.groups
     @periods = @dialog.periods if @dialog and @dialog.periods
     
+    @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
+    
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)

@@ -51,6 +51,13 @@
 	<% end -%>
 	
 	
+	<% for metamap in @metamaps -%>
+	<div class="lefttitle">Posted by <%= metamap.name %>:</div>
+	<div class="leftfield">
+	<%= select_tag "posted_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name'), :onchange=>"list()" %>
+	</div>  	
+	<% end -%>
+	
 	<%= hidden_field_tag :dialog_id, @dialog_id %>
 	<%= hidden_field_tag "from", "dialog" %>
 	<%= hidden_field_tag :page, 1 %>
