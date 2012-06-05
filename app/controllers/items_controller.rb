@@ -1,3 +1,5 @@
+require 'will_paginate/array'
+
 class ItemsController < ApplicationController
 
   layout "front"
