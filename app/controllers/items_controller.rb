@@ -52,7 +52,22 @@ class ItemsController < ApplicationController
     @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
     @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
     
-    @show_meta = false
+    if @dialog_id > 0
+      #-- For a dialog we might need to filter by metamap for poster and/or rater
+      @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
+      for metamap in @metamaps
+        if params["posted_by_metamap_#{metamap.id}"].to_i != 0
+          posted_by_metamap_node_id = params["posted_by_metamap_#{metamap.id}"].to_i
+          #@items = @items.where()
+        end
+        if params["rated_by_metamap_#{metamap.id}"].to_i != 0
+          rated_by_metamap_node_id = params["rated_by_metamap_#{metamap.id}"].to_i
+          
+        end
+      end
+    end
+    
+    @show_meta = true
     if @sortby == 'default'
       sortby = 'items.id desc'
       #@items = @items.where("metamap_nodes.metamap_id=4")
