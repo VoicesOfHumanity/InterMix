@@ -627,7 +627,7 @@ class DialogsController < ApplicationController
 
         if not @data[metamap.id]['nodes'][metamap_node_id]
           @data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
-          logger.inf("dialogs#result @data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
+          #logger.info("dialogs#result @data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
         end
         @data[metamap.id]['ratings'][rating.id] = metamap_node_id
         if not @data[metamap.id]['ratedby']['nodes'][metamap_node_id]
@@ -646,7 +646,13 @@ class DialogsController < ApplicationController
         @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['raters'][rater_id] = rating.participant
         @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['ratings'][rating_id] = rating
         item_metamap_node_id = @data[metamap.id]['items'][item_id]
-        @data[metamap.id]['postedby']['nodes'][item_metamap_node_id]['ratings'][rating_id] = rating if @data[metamap.id]['postedby']['nodes'][item_metamap_node_id]
+        
+        if not @data[metamap.id]['nodes'][item_metamap_node_id]
+          logger.info("dialogs#result @data[#{metamap.id}]['nodes'][#{item_metamap_node_id}] doesn't exist. Skipping.")
+          next
+        end  
+        
+        @data[metamap.id]['postedby']['nodes'][item_metamap_node_id]['ratings'][rating_id] = rating
         if not @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]
           @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id] = {
             'post_name' => '',
