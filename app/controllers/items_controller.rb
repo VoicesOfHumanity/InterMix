@@ -37,7 +37,7 @@ class ItemsController < ApplicationController
       @items = @items.where("items.period_id = ?", @period_id)    
     end
     #@threads = 'flat' if @threads == ''
-    if @threads == 'flat' or @threads == 'tree'
+    if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
       #- Show original message followed by all replies in a flat list
       @items = @items.where("is_first_in_thread=1")
     end
