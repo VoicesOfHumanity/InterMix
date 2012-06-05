@@ -187,7 +187,7 @@ class DialogsController < ApplicationController
     end
     @items = @items.includes([:group,:participant,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
 
-    @show_meta = false
+    @show_meta = true
     if @sortby == 'default'
       sortby = 'items.id desc'
       #@items = @items.where("metamap_nodes.metamap_id=4")

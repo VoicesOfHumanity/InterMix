@@ -58,7 +58,8 @@ class ItemsController < ApplicationController
       for metamap in @metamaps
         if params["posted_by_metamap_#{metamap.id}"].to_i != 0
           posted_by_metamap_node_id = params["posted_by_metamap_#{metamap.id}"].to_i
-          #@items = @items.where()
+          @items = @items.joins("left join metamap_node_participants p_mnp_#{metamap.id} on (p_mnp_#{metamap.id}.participant_id=#{current_participant.id} and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id})")
+          @items = @items.where("p_mnp_#{metamap.id}.id is not null")
         end
         if params["rated_by_metamap_#{metamap.id}"].to_i != 0
           rated_by_metamap_node_id = params["rated_by_metamap_#{metamap.id}"].to_i
