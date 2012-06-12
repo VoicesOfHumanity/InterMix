@@ -188,6 +188,24 @@ class DialogsController < ApplicationController
     end
     @items = @items.includes([:group,:participant,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
 
+    if @dialog_id > 0
+      #-- For a dialog we might need to filter by metamap for poster and/or rater
+      @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
+      for metamap in @metamaps
+        if params["posted_by_metamap_#{metamap.id}"].to_i != 0
+          posted_by_metamap_node_id = params["posted_by_metamap_#{metamap.id}"].to_i
+          #logger.info("items#list Posted by metamap #{metamap.id}: #{posted_by_metamap_node_id}")
+          @items = @items.joins("inner join metamap_node_participants p_mnp_#{metamap.id} on (p_mnp_#{metamap.id}.participant_id=items.posted_by and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id})")
+          #@items = @items.where("p_mnp_#{metamap.id}.participant_id=#{current_participant.id} and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id}")
+        end
+        if params["rated_by_metamap_#{metamap.id}"].to_i != 0
+          rated_by_metamap_node_id = params["rated_by_metamap_#{metamap.id}"].to_i
+          #@items = @items.joins("join ratings r_#{metamap_id} on (items.id=ratings.item_id)")
+          @items = @items.where("(select count(*) from ratings r_#{metamap.id} inner join participants r_p_#{metamap.id} on (r_#{metamap.id}.participant_id=r_p_#{metamap.id}.id) inner join metamap_node_participants r_mnp_#{metamap.id} on (r_mnp_#{metamap.id}.participant_id=r_p_#{metamap.id}.id and r_mnp_#{metamap.id}.metamap_node_id=#{rated_by_metamap_node_id}) where r_#{metamap.id}.item_id=items.id)>0")
+        end
+      end
+    end
+
     @show_meta = true
     if @sortby == 'default'
       sortby = 'items.id desc'
