@@ -199,7 +199,7 @@ class DialogsController < ApplicationController
     
     @posted_meta={}
     @rated_meta={}
-    params.each |var,val|
+    params.each do |var,val|
       if var[0,18] == 'posted_by_metamap_'
         metamap_id = var[18,].to_i
         if params["posted_by_metamap_#{metamap.id}"].to_i > 0

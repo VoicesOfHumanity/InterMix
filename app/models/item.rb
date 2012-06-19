@@ -302,7 +302,7 @@ class Item < ActiveRecord::Base
         items = Item.custom_item_sort(items, current_participant.id, @dialog)
       elsif sortby == '*value*'
         outitems = []
-        itemsproc.each |item_id,item|
+        itemsproc.each do |item_id,item|
           outitems << item
         end
         items = outitems        
