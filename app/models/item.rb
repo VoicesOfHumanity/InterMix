@@ -206,8 +206,117 @@ class Item < ActiveRecord::Base
     item['WebLinkToOriginal'] = ''
     self.xml_content = item.to_xml  
   end  
+  
+  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0)
+    #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
+    #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
+    #-- An array is being returned, optionally sorted
+    
+    dialog = Dialog.includes(:periods).find_by_id(dialog_id) if dialog_id > 0
+    period = Period.find_by_id(period_id) if period_id > 0
+    
+    items = Item.scoped
+    
+    items = items.where("items.group_id = ?", group_id) if group_id > 0
+    items = items.where("items.dialog_id = ?", dialog_id) if dialog_id > 0
+    items = items.where("items.period_id = ?", period_id) if period_id > 0  
+    items = items.where("is_first_in_thread=1") if rootonly
+    items = items.where(:posted_by => posted_by) if posted_by > 0
 
-  def self.custom_item_sort(items, page, perscr, participant_id, dialog)
+    #-- We'll add up the stats, but we're including the overall rating summary anyway
+    items = items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
+    #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
+    items = items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{participant.id})") if participant_id > 0
+    items = items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation") if participant_id > 0
+    
+    posted_meta.each do |metamap_id,metamap_node_id| 
+      if metamap_node_id.to_i > 0
+        #-- Items must be posted by a participant in a particular meta category
+        items = items.joins("inner join metamap_node_participants p_mnp_#{metamap_id} on (p_mnp_#{metamap_id}.participant_id=items.posted_by and p_mnp_#{metamap_id}.metamap_id=#{metamap_id} and p_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id})")
+      end
+    end
+    rated_meta.each do |metamap_id,metamap_node_id| 
+      if metamap_node_id.to_i > 0
+        #-- Items must be rated, at least once, by a participant in a particular meta category
+        items = items.where("(select count(*) from ratings r_#{metamap_id} inner join participants r_p_#{metamap_id} on (r_#{metamap_id}.participant_id=r_p_#{metamap_id}.id) inner join metamap_node_participants r_mnp_#{metamap_id} on (r_mnp_#{metamap_id}.participant_id=r_p_#{metamap_id}.id and r_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id}) where r_#{metamap_id}.item_id=items.id)>0")
+      end
+    end
+    
+    #-- Now we have the items. We'll sort them further down, after we have stats for them, in case we sort by that.
+
+    #-- Get the actual ratings
+    ratings = Rating.scoped
+    ratings = ratings.where("ratings.dialog_id=#{dialog_id}") if dialog_id > 0
+    ratings = ratings.where("items.period_id=#{period_id}") if period_id >0
+    ratings = ratings.includes(:participant).includes(:item=>:item_rating_summary)
+    rated_meta.each do |metamap_id,metamap_node_id| 
+      if metamap_node_id.to_i > 0
+        #-- Ratings must be by a participant in a particular meta category
+        ratings = ratings.joins("inner join metamap_node_participants r_mnp_#{metamap_id} on (r_mnp_#{metamap_id}.participant_id=ratings.participant_id and r_mnp_#{metamap_id}.metamap_id=#{metamap_id} and r_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id})")
+      end
+    end
+
+    itemsproc = {}  # Stats for each item
+    
+    for item in items
+      iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
+      for rating in ratings
+        if rating.item_id == item.id
+          iproc['votes'] += 1
+          if rating.interest.to_i > 0
+            iproc['num_interest'] += 1
+            iproc['tot_interest'] += rating.interest
+            iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+          end
+          if rating.approval.to_i > 0
+            iproc['num_approval'] += 1
+            iproc['tot_approval'] += rating.approval
+            iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+          end
+          iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+        end
+      end
+     itemsproc[item_id] = iproc
+    end
+    
+    #-- Sort by descending value
+    itemsproc = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
+
+    if sortby != ''
+
+      if sortby == 'default'
+        sortby = 'items.id desc'
+      elsif sortby[0,5] == 'meta:'
+        metamap_id = sortby[5,10].to_i
+        sortby = "metamap_nodes.name"
+        items = items.where("metamap_nodes.metamap_id=#{metamap_id}")
+      elsif sortby[0,5] == 'meta:'
+        sortby = 'items.id desc'
+      end
+    
+      logger.info("item#list_and_results SQL: #{items.to_sql}")
+    
+      if sortby == 'default'
+        @dialog = Dialog.find_by_id(@dialog_id)
+        #items = Item.custom_item_sort(items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
+        items = Item.custom_item_sort(items, current_participant.id, @dialog)
+      elsif sortby == '*value*'
+        outitems = []
+        itemsproc.each |item_id,item|
+          outitems << item
+        end
+        items = outitems        
+      else
+        items = items.order(sortby)
+      end
+
+    end
+    
+    items
+    
+  end
+
+  def self.custom_item_sort(items, participant_id, dialog)
     #-- Create the default sort for items in a discussion:
     #-- current user's own item first
     #-- items he hasn't yet rated, alternating:
@@ -329,21 +438,23 @@ class Item < ActiveRecord::Base
     end
     
     #-- Now paginate
-    first = (page - 1) * perscr
-    if first + perscr <= newitems.length
-      last = first + perscr - 1
-    else
-      last = newitems.length - 1
-    end
+    #first = (page - 1) * perscr
+    #if first + perscr <= newitems.length
+    #  last = first + perscr - 1
+    #else
+    #  last = newitems.length - 1
+    #end
 
-    logger.info("item#custom_item_sort paginating: #{first} -  #{last}")
+    #logger.info("item#custom_item_sort paginating: #{first} -  #{last}")
         
-    outitems = []
-    for inum in (first..last).to_a
-      outitems << newitems[inum]
-    end
+    #outitems = []
+    #for inum in (first..last).to_a
+    #  outitems << newitems[inum]
+    #end
   
-    outitems
+    #outitems
+  
+    newitems
   end
    
   def self.custom_item_sort_OLD(items, page, perscr, participant_id)
