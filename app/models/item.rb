@@ -312,7 +312,7 @@ class Item < ActiveRecord::Base
 
     end
     
-    items
+    items, itemsproc
     
   end
 

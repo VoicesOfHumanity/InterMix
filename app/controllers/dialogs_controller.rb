@@ -217,7 +217,7 @@ class DialogsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
 
-      @items = Item.list_and_results(@group_id,@dialog_id,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id)
+      @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id)
 
     else
       #-- The old way
