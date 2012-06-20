@@ -13,7 +13,7 @@
 
 	<div class="lefttitle">Sort by:</div>
 	<div class="leftfield">
-		<% sortarr = [['Custom','default'],['Date','items.id desc'],['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']] %>
+		<% sortarr = [['Custom','default'],['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
 		<% if false -%>
 			<% for m in @dialog.metamaps -%>
 				<% sortarr << [m[1],"meta:#{m[0]}"] %>
