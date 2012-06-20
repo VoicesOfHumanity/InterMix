@@ -276,7 +276,7 @@ class Item < ActiveRecord::Base
           iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
         end
       end
-     itemsproc[item_id] = iproc
+     itemsproc[item.id] = iproc
     end
     
     #-- Sort by descending value
