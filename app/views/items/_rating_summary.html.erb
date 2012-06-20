@@ -9,6 +9,7 @@ Average approval: <b><%= sprintf("%.1f", @isum['app_average'] ? @isum['app_avera
 Value: <b><%= sprintf("%.1f", @isum['value'] ? @isum['value'] : 0.0) %></b> (value = interest x approval)<br/>
 Controversy: <b><%= sprintf("%.1f", @isum['controversy'] ? @isum['controversy'] : 0.0) %></b> (maximum=9)<br/>
 Number of raters: <b><%= (@isum['num_interest'] or @isum['num_approval']) ? [@isum['num_interest'],@isum['num_approval']].max : 0 %></b><br/>
+(calculated for criteria)<br/>
 
 <% else -%>
 
@@ -20,5 +21,6 @@ Average approval: <b><%= sprintf("%.1f", item.item_rating_summary ? item.item_ra
 Value: <b><%= sprintf("%.1f", item.item_rating_summary ? item.item_rating_summary.value : 0.0) %></b> (value = interest x approval)<br/>
 Controversy: <b><%= sprintf("%.1f", item.item_rating_summary ? item.item_rating_summary.controversy : 0.0) %></b> (maximum=9)<br/>
 Number of raters: <b><%= item.item_rating_summary ? [item.item_rating_summary.int_count,item.item_rating_summary.app_count].max : 0 %></b><br/>
+(stored total)<br/>
 
 <% end -%>
