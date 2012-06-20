@@ -203,12 +203,12 @@ class DialogsController < ApplicationController
       if var[0,18] == 'posted_by_metamap_'
         metamap_id = var[18,].to_i
         if params["posted_by_metamap_#{metamap.id}"].to_i > 0
-          @posted_meta[metamap_id] = params["posted_by_metamap_#{metamap.id}"].to_i
+          @posted_meta[metamap_id] = params["posted_by_metamap_#{metamap_id}"].to_i
         end
       elsif var[0,17] == 'rated_by_metamap_'
         metamap_id = var[17,].to_i
         if params["rated_by_metamap_#{metamap.id}"].to_i > 0
-          @rated_meta[metamap_id] = params["rated_by_metamap_#{metamap.id}"].to_i
+          @rated_meta[metamap_id] = params["rated_by_metamap_#{metamap_id}"].to_i
         end
       end
     end
