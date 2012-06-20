@@ -309,37 +309,50 @@ class Item < ActiveRecord::Base
       itemsproc[item.id] = iproc
     end
     
-    #-- Sort by descending value
-    itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
+    #logger.info("item#list_and_results SQL: #{items.to_sql}")
 
-    if sortby != ''
-
-      if sortby == 'default'
-        sortby = 'items.id desc'
-      elsif sortby[0,5] == 'meta:'
-        metamap_id = sortby[5,10].to_i
-        sortby = "metamap_nodes.name"
-        items = items.where("metamap_nodes.metamap_id=#{metamap_id}")
-      elsif sortby[0,5] == 'meta:'
-        sortby = 'items.id desc'
+    # We're probably no longer using the global numbers, as we've added them up just now
+    # ['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']
+  
+    if sortby.to_s == 'default'
+      @dialog = Dialog.find_by_id(@dialog_id)
+      #items = Item.custom_item_sort(items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
+      items = Item.custom_item_sort(items, current_participant.id, @dialog)
+    elsif sortby.to_s == '*value*' or sortby.to_s == ''
+      itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[0]]<=>[a[1]['value'],a[1]['votes'],a[0]]}
+      outitems = []
+      itemsproc_sorted.each do |item_id,item|
+        outitems << item
       end
-    
-      logger.info("item#list_and_results SQL: #{items.to_sql}")
-    
-      if sortby == 'default'
-        @dialog = Dialog.find_by_id(@dialog_id)
-        #items = Item.custom_item_sort(items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
-        items = Item.custom_item_sort(items, current_participant.id, @dialog)
-      elsif sortby == '*value*'
-        outitems = []
-        itemsproc_sorted.each do |item_id,item|
-          outitems << item
-        end
-        items = outitems        
-      else
-        items = items.order(sortby)
+      items = outitems
+    elsif sortby == '*approval*'      
+      itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_approval'],b[1]['votes'],b[0]]<=>[a[1]['avg_approval'],a[1]['votes'],a[0]]}
+      outitems = []
+      itemsproc_sorted.each do |item_id,item|
+        outitems << item
       end
-
+      items = outitems
+    elsif sortby == '*interest*'      
+      itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_interest'],b[1]['votes'],b[0]]<=>[a[1]['avg_interest'],a[1]['votes'],a[0]]}
+      outitems = []
+      itemsproc_sorted.each do |item_id,item|
+        outitems << item
+      end
+      items = outitems
+    elsif sortby == '*controversy*'      
+      itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['controversy'],b[1]['votes'],b[0]]<=>[a[1]['controversy'],a[1]['votes'],a[0]]}
+      outitems = []
+      itemsproc_sorted.each do |item_id,item|
+        outitems << item
+      end
+      items = outitems
+    elsif sortby[0,5] == 'meta:'
+      #-- NB: Not sure this is working !!
+      metamap_id = sortby[5,10].to_i
+      sortby = "metamap_nodes.name"
+      items = items.where("metamap_nodes.metamap_id=#{metamap_id}")
+    else
+      items = items.order(sortby)
     end
     
     [items, itemsproc]
