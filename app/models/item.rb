@@ -280,7 +280,7 @@ class Item < ActiveRecord::Base
     end
     
     #-- Sort by descending value
-    itemsproc = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
+    itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
 
     if sortby != ''
 
@@ -302,7 +302,7 @@ class Item < ActiveRecord::Base
         items = Item.custom_item_sort(items, current_participant.id, @dialog)
       elsif sortby == '*value*'
         outitems = []
-        itemsproc.each do |item_id,item|
+        itemsproc_sorted.each do |item_id,item|
           outitems << item
         end
         items = outitems        
