@@ -259,7 +259,7 @@ class Item < ActiveRecord::Base
     itemsproc = {}  # Stats for each item
     
     for item in items
-      iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0}
+      iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'item'=>item}
       
       for rating in ratings
         if rating.item_id == item.id
@@ -321,29 +321,29 @@ class Item < ActiveRecord::Base
     elsif sortby.to_s == '*value*' or sortby.to_s == ''
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[0]]<=>[a[1]['value'],a[1]['votes'],a[0]]}
       outitems = []
-      itemsproc_sorted.each do |item_id,item|
-        outitems << item
+      itemsproc_sorted.each do |item_id,iproc|
+        outitems << iproc['item']
       end
       items = outitems
     elsif sortby == '*approval*'      
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_approval'],b[1]['votes'],b[0]]<=>[a[1]['avg_approval'],a[1]['votes'],a[0]]}
       outitems = []
-      itemsproc_sorted.each do |item_id,item|
-        outitems << item
+      itemsproc_sorted.each do |item_id,iproc|
+        outitems << iproc['item']
       end
       items = outitems
     elsif sortby == '*interest*'      
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_interest'],b[1]['votes'],b[0]]<=>[a[1]['avg_interest'],a[1]['votes'],a[0]]}
       outitems = []
-      itemsproc_sorted.each do |item_id,item|
-        outitems << item
+      itemsproc_sorted.each do |item_id,iproc|
+        outitems << iproc['item']
       end
       items = outitems
     elsif sortby == '*controversy*'      
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['controversy'],b[1]['votes'],b[0]]<=>[a[1]['controversy'],a[1]['votes'],a[0]]}
       outitems = []
-      itemsproc_sorted.each do |item_id,item|
-        outitems << item
+      itemsproc_sorted.each do |item_id,iproc|
+        outitems << iproc['item']
       end
       items = outitems
     elsif sortby[0,5] == 'meta:'
