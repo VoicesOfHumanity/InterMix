@@ -226,8 +226,8 @@ class Item < ActiveRecord::Base
     #-- We'll add up the stats, but we're including the overall rating summary anyway
     items = items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
-    items = items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{participant.id})") if participant_id > 0
-    items = items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation") if participant_id > 0
+    items = items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{participant_id})") if participant_id.to_i > 0
+    items = items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation") if participant_id.to_i > 0
     
     posted_meta.each do |metamap_id,metamap_node_id| 
       if metamap_node_id.to_i > 0
