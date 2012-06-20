@@ -60,6 +60,7 @@
 	<% else -%>
 		<% for item in @items -%>
 			<% odd_or_even = 1-odd_or_even%>
+			<% logger.info("items#_list item: #{item.inspect}") %>
 			<div class="forumitem forummain forum<%= odd_or_even %>" id="item_<%= item.id %>">
 				<%= render :partial => "items/item", :locals => { :item => item, :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0 } %>
 			
