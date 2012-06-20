@@ -259,7 +259,8 @@ class Item < ActiveRecord::Base
     itemsproc = {}  # Stats for each item
     
     for item in items
-      iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
+      iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0)
+      
       for rating in ratings
         if rating.item_id == item.id
           iproc['votes'] += 1
@@ -267,16 +268,45 @@ class Item < ActiveRecord::Base
             iproc['num_interest'] += 1
             iproc['tot_interest'] += rating.interest
             iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+            case rating.interest
+            when 0
+              iproc['int_0_count'] += 1
+            when 1
+              iproc['int_1_count'] += 1
+            when 2
+              iproc['int_2_count'] += 1
+            when 3
+              iproc['int_3_count'] += 1
+            when 4
+              iproc['int_4_count'] += 1
+            end        
           end
           if rating.approval.to_i > 0
             iproc['num_approval'] += 1
             iproc['tot_approval'] += rating.approval
             iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+            case rating.approval
+            when -3
+              iproc['app_n3_count'] +=1   
+            when -2
+              iproc['app_n2_count'] +=1   
+            when -1
+              iproc['app_n1_count'] +=1   
+            when 0
+              iproc['app_0_count'] +=1   
+            when 1
+              iproc['app_p1_count'] +=1   
+            when 2
+              iproc['app_p2_count'] +=1   
+            when 3
+              iproc['app_p3_count'] +=1   
+            end  
           end
           iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
         end
       end
-     itemsproc[item.id] = iproc
+      iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval'])
+      itemsproc[item.id] = iproc
     end
     
     #-- Sort by descending value
