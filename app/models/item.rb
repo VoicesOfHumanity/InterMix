@@ -217,11 +217,11 @@ class Item < ActiveRecord::Base
     
     items = Item.scoped
     
-    items = items.where("items.group_id = ?", group_id) if group_id > 0
-    items = items.where("items.dialog_id = ?", dialog_id) if dialog_id > 0
-    items = items.where("items.period_id = ?", period_id) if period_id > 0  
+    items = items.where("items.group_id = ?", group_id) if group_id.to_i > 0
+    items = items.where("items.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
+    items = items.where("items.period_id = ?", period_id) if period_id.to_i > 0  
     items = items.where("is_first_in_thread=1") if rootonly
-    items = items.where(:posted_by => posted_by) if posted_by > 0
+    items = items.where(:posted_by => posted_by) if posted_by.to_i > 0
 
     #-- We'll add up the stats, but we're including the overall rating summary anyway
     items = items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])

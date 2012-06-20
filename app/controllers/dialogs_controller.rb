@@ -154,6 +154,7 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id].to_i if not @dialog_id
     @period_id = (params[:period_id] || 0).to_i
     @dialog = Dialog.includes(:groups).find_by_id(@dialog_id)
+    @group_id = (params[:group_id] || 0).to_i
     @groups = @dialog.groups if @dialog and @dialog.groups
     @periods = @dialog.periods if @dialog and @dialog.periods
     
