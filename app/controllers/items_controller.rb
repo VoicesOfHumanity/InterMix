@@ -70,6 +70,8 @@ class ItemsController < ApplicationController
 
       @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id)
       
+      logger.info("items_controller#list @items: #{@items.inspect}")
+      
     else
       # old way
         

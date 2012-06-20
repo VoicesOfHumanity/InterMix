@@ -355,7 +355,7 @@ class Item < ActiveRecord::Base
       items = items.order(sortby)
     end
     
-    [items, itemsproc]
+    return [items, itemsproc]
     
   end
 
