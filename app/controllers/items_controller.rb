@@ -23,81 +23,104 @@ class ItemsController < ApplicationController
     @page = 1 if @page < 1
     @perscr = 25 if @perscr < 1
     
-    @items = Item.scoped
-    #@items = @items.tagged_with(params[:tags]) if params[:tags].to_s != ''
-    #@items = @items.where(:group_id => params[:group_id]) if params[:group_id].to_i > 0
-    #@items = @items.includes([:group,:participant,:ratings,:item_rating_summary]).where("ratings.participant_id=#{current_participant.id} or ratings.participant_id is null")
-    if @group_id > 0
-      @items = @items.where("items.group_id = ?", @group_id)    
-    end
-    if @dialog_id > 0
-      @items = @items.where("items.dialog_id = ?", @dialog_id)    
-    end
-    if @period_id > 0
-      @items = @items.where("items.period_id = ?", @period_id)    
-    end
-    #@threads = 'flat' if @threads == ''
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
-      #- Show original message followed by all replies in a flat list
-      @items = @items.where("is_first_in_thread=1")
+      @rootonly = true
     end
-    
+
     if @from == 'wall'
-      @participant_id = ( params[:id] || current_participant.id ).to_i
+      @posted_by = ( params[:id] || current_participant.id ).to_i
       @participant = Participant.find(@participant_id)
-      @items = @items.where(:posted_by => @participant_id)
-    elsif @from == 'forum' and @group_id == 0 and @dialog_id == 0
-      @items = @items.where(:posted_to_forum => true)  
+    else
+      @posted_by = 0  
     end   
-    
-    @items = @items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
-    @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
-    @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
-    
-    if @dialog_id > 0
-      #-- For a dialog we might need to filter by metamap for poster and/or rater
-      @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
-      for metamap in @metamaps
-        if params["posted_by_metamap_#{metamap.id}"].to_i != 0
-          posted_by_metamap_node_id = params["posted_by_metamap_#{metamap.id}"].to_i
-          #logger.info("items#list Posted by metamap #{metamap.id}: #{posted_by_metamap_node_id}")
-          @items = @items.joins("inner join metamap_node_participants p_mnp_#{metamap.id} on (p_mnp_#{metamap.id}.participant_id=items.posted_by and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id})")
-          #@items = @items.where("p_mnp_#{metamap.id}.participant_id=#{current_participant.id} and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id}")
-        end
-        if params["rated_by_metamap_#{metamap.id}"].to_i != 0
-          rated_by_metamap_node_id = params["rated_by_metamap_#{metamap.id}"].to_i
-          #@items = @items.joins("join ratings r_#{metamap_id} on (items.id=ratings.item_id)")
-          @items = @items.where("(select count(*) from ratings r_#{metamap.id} inner join participants r_p_#{metamap.id} on (r_#{metamap.id}.participant_id=r_p_#{metamap.id}.id) inner join metamap_node_participants r_mnp_#{metamap.id} on (r_mnp_#{metamap.id}.participant_id=r_p_#{metamap.id}.id and r_mnp_#{metamap.id}.metamap_node_id=#{rated_by_metamap_node_id}) where r_#{metamap.id}.item_id=items.id)>0")
-        end
-      end
-    end
-    
+
     @show_meta = true
     if @sortby == 'default'
       sortby = 'items.id desc'
-      #@items = @items.where("metamap_nodes.metamap_id=4")
     elsif @sortby[0,5] == 'meta:' and @from == 'dialog'
       metamap_id = @sortby[5,10].to_i
       sortby = "metamap_nodes.name"
-      @items = @items.where("metamap_nodes.metamap_id=#{metamap_id}")
-      @show_meta = true
+      #@items = @items.where("metamap_nodes.metamap_id=#{metamap_id}")
+      #@show_meta = true
     elsif @sortby[0,5] == 'meta:'
       sortby = 'items.id desc'
       @sortby = sortby
     else
       sortby = @sortby
     end
+            
+    if true
+      #-- Get the records, while adding up the stats on the fly
+
+      @items = Item.list_and_results(@group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id)
+      
+    else
+      # old way
+        
+      @items = Item.scoped
+      #@items = @items.tagged_with(params[:tags]) if params[:tags].to_s != ''
+      #@items = @items.where(:group_id => params[:group_id]) if params[:group_id].to_i > 0
+      #@items = @items.includes([:group,:participant,:ratings,:item_rating_summary]).where("ratings.participant_id=#{current_participant.id} or ratings.participant_id is null")
+      if @group_id > 0
+        @items = @items.where("items.group_id = ?", @group_id)    
+      end
+      if @dialog_id > 0
+        @items = @items.where("items.dialog_id = ?", @dialog_id)    
+      end
+      if @period_id > 0
+        @items = @items.where("items.period_id = ?", @period_id)    
+      end
+      #@threads = 'flat' if @threads == ''
+      if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
+        #- Show original message followed by all replies in a flat list
+        @items = @items.where("is_first_in_thread=1")
+      end
+    
+      if @from == 'wall'
+        @participant_id = ( params[:id] || current_participant.id ).to_i
+        @participant = Participant.find(@participant_id)
+        @items = @items.where(:posted_by => @participant_id)
+      elsif @from == 'forum' and @group_id == 0 and @dialog_id == 0
+        @items = @items.where(:posted_to_forum => true)  
+      end   
+
+      @items = @items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
+      @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
+      @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
+
+      if @dialog_id > 0
+        #-- For a dialog we might need to filter by metamap for poster and/or rater
+        @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
+        for metamap in @metamaps
+          if params["posted_by_metamap_#{metamap.id}"].to_i != 0
+            posted_by_metamap_node_id = params["posted_by_metamap_#{metamap.id}"].to_i
+            #logger.info("items#list Posted by metamap #{metamap.id}: #{posted_by_metamap_node_id}")
+            @items = @items.joins("inner join metamap_node_participants p_mnp_#{metamap.id} on (p_mnp_#{metamap.id}.participant_id=items.posted_by and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id})")
+            #@items = @items.where("p_mnp_#{metamap.id}.participant_id=#{current_participant.id} and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id}")
+          end
+          if params["rated_by_metamap_#{metamap.id}"].to_i != 0
+            rated_by_metamap_node_id = params["rated_by_metamap_#{metamap.id}"].to_i
+            #@items = @items.joins("join ratings r_#{metamap_id} on (items.id=ratings.item_id)")
+            @items = @items.where("(select count(*) from ratings r_#{metamap.id} inner join participants r_p_#{metamap.id} on (r_#{metamap.id}.participant_id=r_p_#{metamap.id}.id) inner join metamap_node_participants r_mnp_#{metamap.id} on (r_mnp_#{metamap.id}.participant_id=r_p_#{metamap.id}.id and r_mnp_#{metamap.id}.metamap_node_id=#{rated_by_metamap_node_id}) where r_#{metamap.id}.item_id=items.id)>0")
+          end
+        end
+      end
+
+    end
+
     
     #@show_extra = @items.to_sql
-    logger.info("items#list SQL: #{@items.to_sql}")
+    #logger.info("items#list SQL: #{@items.to_sql}")
     
-    if @sortby == 'default'
-      @dialog = Dialog.find_by_id(@dialog_id)
-      @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
-    else
-      @items = @items.order(sortby)
-      @items = @items.paginate :page=>@page, :per_page => @perscr   
-    end
+    #if @sortby == 'default'
+    #  @dialog = Dialog.find_by_id(@dialog_id)
+    #  @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
+    #else
+    #  @items = @items.order(sortby)
+    #  @items = @items.paginate :page=>@page, :per_page => @perscr   
+    #end
+    
+    @items = @items.paginate :page=>@page, :per_page => @perscr  
 
     if participant_signed_in?
       current_participant.forum_settings = {'sortby'=>sortby,'perscr'=>@perscr,'threads'=>@threads,'group_id'=>@group_id,'dialog_id'=>@dialog_id}
