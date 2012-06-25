@@ -250,8 +250,8 @@ class Item < ActiveRecord::Base
 
     #-- Get the actual ratings
     ratings = Rating.scoped
-    ratings = ratings.where("ratings.dialog_id=#{dialog_id}") if dialog_id > 0
-    ratings = ratings.where("items.period_id=#{period_id}") if period_id >0
+    ratings = ratings.where("ratings.dialog_id=#{dialog_id}") if dialog_id.to_i > 0
+    ratings = ratings.where("items.period_id=#{period_id}") if period_id.to_i >0
     ratings = ratings.includes(:participant).includes(:item=>:item_rating_summary)
     rated_meta.each do |metamap_id,metamap_node_id| 
       if metamap_node_id.to_i > 0
