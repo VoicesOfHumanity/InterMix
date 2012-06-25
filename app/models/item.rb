@@ -212,8 +212,8 @@ class Item < ActiveRecord::Base
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
     
-    dialog = Dialog.includes(:periods).find_by_id(dialog_id) if dialog_id > 0
-    period = Period.find_by_id(period_id) if period_id > 0
+    dialog = Dialog.includes(:periods).find_by_id(dialog_id) if dialog_id.to_i > 0
+    period = Period.find_by_id(period_id) if period_id.to_i > 0
     
     items = Item.scoped
     
