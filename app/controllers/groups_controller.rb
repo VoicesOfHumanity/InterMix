@@ -521,28 +521,44 @@ class GroupsController < ApplicationController
     @perscr = (params[:perscr] || set['perscr'] || 25).to_i
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
-    @threads = params[:threads] || set['threads'] || ''
 
     if @sortby[0,5] == 'meta:'
        @sortby = 'items.id desc'
     end
-
-    @items = Item.scoped
-    @items = @items.where("items.group_id = ?", @group_id)    
-    if @threads == 'flat' or @threads == 'tree'
-      #- Show original message followed by all replies in a flat list
-      @items = @items.where("is_first_in_thread=1")
-    end
-    @items = @items.includes([:group,:participant,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
-    @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
-    @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval,ratings.interest")
     
-    @items = @items.order(@sortby)
-    @items = @items.paginate :page=>@page, :per_page => @per_page    
+    @threads = params[:threads] || set['threads'] || ''
+    if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
+      @rootonly = true
+    end
+
+    if true
+      #-- Get the records, while adding up the stats on the fly
+
+      @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id)
+
+    else
+      #-- The old way
+
+      @items = Item.scoped
+      @items = @items.where("items.group_id = ?", @group_id)    
+      if @threads == 'flat' or @threads == 'tree'
+        #- Show original message followed by all replies in a flat list
+        @items = @items.where("is_first_in_thread=1")
+      end
+      @items = @items.includes([:group,:participant,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
+      @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
+      @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval,ratings.interest")
+    
+      @items = @items.order(@sortby)
+      @items = @items.paginate :page=>@page, :per_page => @per_page    
+    
+    end
+    
+    @items = @items.paginate :page=>@page, :per_page => @perscr  
+        
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id),moderator").includes(:group)
 
     @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all      
-
     @dialogsin = DialogGroup.where("group_id=#{@group_id}").includes(:dialog).all      
 
     update_last_url

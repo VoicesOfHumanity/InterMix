@@ -10,9 +10,9 @@
 	<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
 	<% else -%>
 		<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" title="<%= 
-		if not session[:group_is_member] then "NotGroupMember" elsif not @dialog.settings_with_period["posting_open"] then "PostingNotOpen"
-elsif not (@dialog.settings_with_period['max_messages'] == 0 or @previous_messages < @dialog.settings_with_period['max_messages']) then "MaxMessages"
-else "Unknown" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
+		if not session[:group_is_member] then "Not group member" elsif not @dialog.settings_with_period["posting_open"] then "Posting is not open"
+elsif not (@dialog.settings_with_period['max_messages'] == 0 or @previous_messages < @dialog.settings_with_period['max_messages']) then "Maximum messages have been reached"
+else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
 	<% end -%>
 	</div>
 
