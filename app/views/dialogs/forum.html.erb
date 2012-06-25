@@ -6,12 +6,12 @@
 	
 	<div class="right">
 	<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
-	<% if session[:group_is_member] and (@dialog.settings_with_period['max_messages'] == 0 or @previous_messages < @dialog.settings_with_period['max_messages']) and @dialog.settings_with_period["posting_open"] -%>
+	<% if session[:group_is_member] and ((@active_period_id > 0 and (@active_period.max_messages.to_i == 0 or @previous_messages_period < @active_period.max_messages.to_i)) or (@active_period_id == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
 	<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
 	<% else -%>
 		<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" title="<%= 
 		if not session[:group_is_member] then "Not group member" elsif not @dialog.settings_with_period["posting_open"] then "Posting is not open"
-elsif not (@dialog.settings_with_period['max_messages'] == 0 or @previous_messages < @dialog.settings_with_period['max_messages']) then "Maximum messages have been reached"
+elsif not ((@active_period_id > 0 and (@active_period.max_messages.to_i == 0 or @previous_messages_period < @active_period.max_messages.to_i)) or (@active_period_id == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) then "Maximum messages have been reached"
 else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
 	<% end -%>
 	</div>
