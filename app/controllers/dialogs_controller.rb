@@ -157,7 +157,6 @@ class DialogsController < ApplicationController
     @group_id = (params[:group_id] || 0).to_i
     @groups = @dialog.groups if @dialog and @dialog.groups
     @periods = @dialog.periods if @dialog and @dialog.periods
-    @active_period_id = @dialog.active_period.to_i
     
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
     
@@ -166,9 +165,8 @@ class DialogsController < ApplicationController
     @is_admin = (dialogadmin.length > 0)
     
     @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
-    if @active_period_id > 0
-      @active_period = Period.find_by_id(@active_period_id)
-      @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@active_period).count      
+    if @dialog.current_period.to_i > 0
+      @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
     end
     
     if participant_signed_in? and current_participant.forum_settings
