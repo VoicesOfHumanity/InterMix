@@ -216,6 +216,9 @@ class ApplicationController < ActionController::Base
               session[:group_id] = @group_id
               session[:group_name] = @group.name
               session[:group_prefix] = @group.shortname
+              @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+              @is_member = @group_participant ? true : false
+              session[:group_is_member] = @is_member
               #env['warden'].session[:group_id] = @group_id
               #env['warden'].session[:group_name] = @group.name
             end
