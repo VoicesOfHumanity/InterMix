@@ -6,7 +6,13 @@
 	
 	<div class="right">
 	<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
-	<% if session[:group_is_member] and (@dialog.settings_with_period['max_messages'] == 0 or @previous_messages < @dialog.settings_with_period['max_messages']) and @dialog.settings_with_period["posting_open"] -%>
+	<% if not session[:group_is_member] -%>
+	NotGroupMember
+	<% elsif not @dialog.settings_with_period["posting_open"] -%>
+	PostingNotOpen
+	<% elsif not (@dialog.settings_with_period['max_messages'] == 0 or @previous_messages < @dialog.settings_with_period['max_messages']) -%>
+	MaxMessages
+	<% elsif session[:group_is_member] and (@dialog.settings_with_period['max_messages'] == 0 or @previous_messages < @dialog.settings_with_period['max_messages']) and @dialog.settings_with_period["posting_open"] -%>
 	<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
 	<% end -%>
 	</div>
