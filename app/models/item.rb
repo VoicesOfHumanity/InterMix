@@ -253,10 +253,12 @@ class Item < ActiveRecord::Base
     ratings = ratings.where("ratings.dialog_id=#{dialog_id}") if dialog_id.to_i > 0
     ratings = ratings.where("items.period_id=#{period_id}") if period_id.to_i >0
     ratings = ratings.includes(:participant).includes(:item=>:item_rating_summary)
-    rated_meta.each do |metamap_id,metamap_node_id| 
-      if metamap_node_id.to_i > 0
-        #-- Ratings must be by a participant in a particular meta category
-        ratings = ratings.joins("inner join metamap_node_participants r_mnp_#{metamap_id} on (r_mnp_#{metamap_id}.participant_id=ratings.participant_id and r_mnp_#{metamap_id}.metamap_id=#{metamap_id} and r_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id})")
+    if rated_meta
+      rated_meta.each do |metamap_id,metamap_node_id| 
+        if metamap_node_id.to_i > 0
+          #-- Ratings must be by a participant in a particular meta category
+          ratings = ratings.joins("inner join metamap_node_participants r_mnp_#{metamap_id} on (r_mnp_#{metamap_id}.participant_id=ratings.participant_id and r_mnp_#{metamap_id}.metamap_id=#{metamap_id} and r_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id})")
+        end
       end
     end
 
