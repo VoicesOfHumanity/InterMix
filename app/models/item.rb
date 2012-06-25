@@ -229,16 +229,20 @@ class Item < ActiveRecord::Base
     items = items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{participant_id})") if participant_id.to_i > 0
     items = items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation") if participant_id.to_i > 0
     
-    posted_meta.each do |metamap_id,metamap_node_id| 
-      if metamap_node_id.to_i > 0
-        #-- Items must be posted by a participant in a particular meta category
-        items = items.joins("inner join metamap_node_participants p_mnp_#{metamap_id} on (p_mnp_#{metamap_id}.participant_id=items.posted_by and p_mnp_#{metamap_id}.metamap_id=#{metamap_id} and p_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id})")
+    if posted_meta
+      posted_meta.each do |metamap_id,metamap_node_id| 
+        if metamap_node_id.to_i > 0
+          #-- Items must be posted by a participant in a particular meta category
+          items = items.joins("inner join metamap_node_participants p_mnp_#{metamap_id} on (p_mnp_#{metamap_id}.participant_id=items.posted_by and p_mnp_#{metamap_id}.metamap_id=#{metamap_id} and p_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id})")
+        end
       end
     end
-    rated_meta.each do |metamap_id,metamap_node_id| 
-      if metamap_node_id.to_i > 0
-        #-- Items must be rated, at least once, by a participant in a particular meta category
-        items = items.where("(select count(*) from ratings r_#{metamap_id} inner join participants r_p_#{metamap_id} on (r_#{metamap_id}.participant_id=r_p_#{metamap_id}.id) inner join metamap_node_participants r_mnp_#{metamap_id} on (r_mnp_#{metamap_id}.participant_id=r_p_#{metamap_id}.id and r_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id}) where r_#{metamap_id}.item_id=items.id)>0")
+    if rated_meta
+      rated_meta.each do |metamap_id,metamap_node_id| 
+        if metamap_node_id.to_i > 0
+          #-- Items must be rated, at least once, by a participant in a particular meta category
+          items = items.where("(select count(*) from ratings r_#{metamap_id} inner join participants r_p_#{metamap_id} on (r_#{metamap_id}.participant_id=r_p_#{metamap_id}.id) inner join metamap_node_participants r_mnp_#{metamap_id} on (r_mnp_#{metamap_id}.participant_id=r_p_#{metamap_id}.id and r_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id}) where r_#{metamap_id}.item_id=items.id)>0")
+        end
       end
     end
     
