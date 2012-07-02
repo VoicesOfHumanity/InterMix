@@ -382,11 +382,11 @@ class Item < ActiveRecord::Base
     end
     
     if sort2 == 'value'
-      sort2key = 'value desc'
+      sort2key = 'items.value desc'
     elsif sort2 = 'date'
-      sort2key = 'id desc'
+      sort2key = 'items.id desc'
     else
-      sort2key = 'id desc'
+      sort2key = 'items.id desc'
     end  
     
     #-- Sort by the secondary key first, so they're in that order already before putting them into different piles
