@@ -150,7 +150,7 @@ class DialogsController < ApplicationController
     #@group_id,@dialog_id = get_group_dialog_from_subdomain
     @section = 'dialogs'
     @dsection = 'forum'
-    @from = 'dialog'
+    @from = params[:from] || 'dialog'
     @dialog_id = params[:id].to_i if not @dialog_id
     @period_id = (params[:period_id] || 0).to_i
     @dialog = Dialog.includes(:groups).find_by_id(@dialog_id)

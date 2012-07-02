@@ -91,6 +91,9 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 </div>
 <script>
 $('#welcomepopup').modal();
+<% if @from == 'result' -%> 
+toggleoptions();
+<% end -%>
 </script>
 
 <% end -%>
