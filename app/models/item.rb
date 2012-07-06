@@ -245,6 +245,8 @@ class Item < ActiveRecord::Base
         end
       end
     end
+
+    #logger.info("item#list_and_results SQL: #{items.to_sql}")
     
     #-- Now we have the items. We'll sort them further down, after we have stats for them, in case we sort by that.
 
@@ -315,8 +317,6 @@ class Item < ActiveRecord::Base
       itemsproc[item.id] = iproc
     end
     
-    #logger.info("item#list_and_results SQL: #{items.to_sql}")
-
     # We're probably no longer using the global numbers, as we've added them up just now
     # ['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']
   
