@@ -637,7 +637,7 @@ class Item < ActiveRecord::Base
       end
       if not self.dialog.voting_open
       elsif self.period_id.to_i > 0 and not period
-      elsif period and period.endrating.to_s != '' and Time.now.strftime("%Y-%m-%d") > period.endrating and self['hasrating'].to_i > 0
+      elsif period and period.endrating.to_s != '' and Time.now.strftime("%Y-%m-%d") > period.endrating.strftime("%Y-%m-%d") and self['hasrating'].to_i > 0
         #-- The rating in the period is over, and this person rated the item
         logger.info("item#voting_ok #{self.id} already rated and period #{self.period_id} is over (#{Time.now.strftime("%Y-%m-%d")} > #{period.endrating})")
       else
