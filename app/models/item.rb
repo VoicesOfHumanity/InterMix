@@ -639,7 +639,7 @@ class Item < ActiveRecord::Base
       elsif self.period_id.to_i > 0 and not period
       elsif period and period.endrating.to_s != '' and Time.now > period.endrating and self['hasrating'].to_i > 0
         #-- The rating in the period is over, and this person rated the item
-        logger.info("item#voting_ok already rated and period is over")
+        logger.info("item#voting_ok #{self.id} already rated and period #{self.period_id} is over")
       else
         return true
       end
