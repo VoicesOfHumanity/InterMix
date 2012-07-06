@@ -246,7 +246,7 @@ class Item < ActiveRecord::Base
       end
     end
 
-    #logger.info("item#list_and_results SQL: #{items.to_sql}")
+    logger.info("item#list_and_results SQL: #{items.to_sql}")
     
     #-- Now we have the items. We'll sort them further down, after we have stats for them, in case we sort by that.
 
