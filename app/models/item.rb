@@ -272,44 +272,40 @@ class Item < ActiveRecord::Base
       for rating in ratings
         if rating.item_id == item.id
           iproc['votes'] += 1
-          if rating.interest.to_i > 0
-            iproc['num_interest'] += 1
-            iproc['tot_interest'] += rating.interest
-            iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
-            case rating.interest
-            when 0
-              iproc['int_0_count'] += 1
-            when 1
-              iproc['int_1_count'] += 1
-            when 2
-              iproc['int_2_count'] += 1
-            when 3
-              iproc['int_3_count'] += 1
-            when 4
-              iproc['int_4_count'] += 1
-            end        
-          end
-          if rating.approval.to_i > 0
-            iproc['num_approval'] += 1
-            iproc['tot_approval'] += rating.approval
-            iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
-            case rating.approval
-            when -3
-              iproc['app_n3_count'] +=1   
-            when -2
-              iproc['app_n2_count'] +=1   
-            when -1
-              iproc['app_n1_count'] +=1   
-            when 0
-              iproc['app_0_count'] +=1   
-            when 1
-              iproc['app_p1_count'] +=1   
-            when 2
-              iproc['app_p2_count'] +=1   
-            when 3
-              iproc['app_p3_count'] +=1   
-            end  
-          end
+          iproc['num_interest'] += 1
+          iproc['tot_interest'] += rating.interest.to_i
+          iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+          case rating.interest.to_i
+          when 0
+            iproc['int_0_count'] += 1
+          when 1
+            iproc['int_1_count'] += 1
+          when 2
+            iproc['int_2_count'] += 1
+          when 3
+            iproc['int_3_count'] += 1
+          when 4
+            iproc['int_4_count'] += 1
+          end        
+          iproc['num_approval'] += 1
+          iproc['tot_approval'] += rating.approval.to_i
+          iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+          case rating.approval.to_i
+          when -3
+            iproc['app_n3_count'] +=1   
+          when -2
+            iproc['app_n2_count'] +=1   
+          when -1
+            iproc['app_n1_count'] +=1   
+          when 0
+            iproc['app_0_count'] +=1   
+          when 1
+            iproc['app_p1_count'] +=1   
+          when 2
+            iproc['app_p2_count'] +=1   
+          when 3
+            iproc['app_p3_count'] +=1   
+          end  
           iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
         end
       end
