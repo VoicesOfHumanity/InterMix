@@ -581,16 +581,12 @@ class DialogsController < ApplicationController
       @data[0]['ratings'].each do |rating_id,rating|
         if rating.item_id == item.id
           iproc['votes'] += 1
-          if rating.interest.to_i > 0
-            iproc['num_interest'] += 1
-            iproc['tot_interest'] += rating.interest
-            iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
-          end
-          if rating.approval.to_i > 0
-            iproc['num_approval'] += 1
-            iproc['tot_approval'] += rating.approval
-            iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
-          end
+          iproc['num_interest'] += 1
+          iproc['tot_interest'] += rating.interest.to_i
+          iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+          iproc['num_approval'] += 1
+          iproc['tot_approval'] += rating.approval.to_i
+          iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
           iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
         end
       end
@@ -764,16 +760,12 @@ class DialogsController < ApplicationController
           mdata['ratings'].each do |rating_id,rating|
             if rating.item_id == item.id
               iproc['votes'] += 1
-              if rating.interest.to_i > 0
-                iproc['num_interest'] += 1
-                iproc['tot_interest'] += rating.interest
-                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
-              end
-              if rating.approval.to_i > 0
-                iproc['num_approval'] += 1
-                iproc['tot_approval'] += rating.approval
-                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
-              end
+              iproc['num_interest'] += 1
+              iproc['tot_interest'] += rating.interest.to_i
+              iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+              iproc['num_approval'] += 1
+              iproc['tot_approval'] += rating.approval.to_i
+              iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
               iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
             end
           end
@@ -793,16 +785,12 @@ class DialogsController < ApplicationController
             mdata['ratings'].each do |rating_id,rating|
               if rating.item_id == item.id
                 iproc['votes'] += 1
-                if rating.interest.to_i > 0
-                  iproc['num_interest'] += 1
-                  iproc['tot_interest'] += rating.interest
-                  iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
-                end
-                if rating.approval.to_i > 0
-                  iproc['num_approval'] += 1
-                  iproc['tot_approval'] += rating.approval
-                  iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
-                end
+                iproc['num_interest'] += 1
+                iproc['tot_interest'] += rating.interest.to_i
+                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+                iproc['num_approval'] += 1
+                iproc['tot_approval'] += rating.approval.to_i
+                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
                 iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
               end
             end
