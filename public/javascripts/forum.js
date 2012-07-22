@@ -136,6 +136,7 @@ function canceledit(id) {
 		$('#reply_'+replyingid).hide();	
 	}
 	$('#newforumitem').hide();
+	$('#newforumitem').html('');
 	replyingid = 0;
 }
 function saveitem() {
