@@ -188,6 +188,16 @@ function saveitem() {
     	  		$('#newforumitem').css('opacity','1.0');
     			//$('#newforumitem').html('');
         		//window.setTimeout("list();$('#newforumitem').hide();", 3000);
+        		if ($('#max_messages') && $('#previous_messages')) {
+        		    var previous_messages = $('#previous_messages').val() + 1;
+    		        $('#previous_messages').val(previous_messages);
+        		    if (parseInt($('#previous_messages').val()) >= parseInt($('#max_messages').val())) {
+        		        if ($('#newthreadbutton')) {
+        		            $('#newthreadbutton').css("opacity","0.5");
+        		            $('#newthreadbutton').attr('disabled','disabled');
+    		            }
+        		    }
+        		}
     		}
     		if (!$('#saveresult') || $('#saveresult').val() != 'error') {
     		    list();

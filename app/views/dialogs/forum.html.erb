@@ -1,7 +1,9 @@
 <%= render(:partial => 'dialogs/menu')%>
 
 <form id="searchform" style="clear:both">
-<input type="hidden" id="authenticity_token" name="authenticity_token" value="<%= form_authenticity_token %>">	
+<input type="hidden" id="authenticity_token" name="authenticity_token" value="<%= form_authenticity_token %>">
+<input type="hidden" id="max_messages" value="<%= @dialog.settings_with_period["max_messages"].to_i %>">	
+<input type="hidden" id="previous_messages" value="<%= @dialog.active_period and @dialog.active_period.max_messages.to_i > 0 ? @previous_messages_period : @previous_messages %>">	
 <div id="forumcontrol">
 	
 	<div class="right">

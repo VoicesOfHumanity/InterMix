@@ -211,7 +211,13 @@ class ItemsController < ApplicationController
       for gp in @groupsin
         ingroup = true if gp.group_id == @item.group_id
       end 
-      @item.group_id = 0 if not ingroup
+      if not ingroup
+        @item.group_id = 0 
+        if @item.reply_to.to_i == 0
+          render :text=>"<p>You're not a member of that group</p>", :layout=>false
+          return
+        end
+      end
     end
     #if @item.dialog_id > 0
     #  indialog = false
@@ -237,6 +243,24 @@ class ItemsController < ApplicationController
       @send_to = 'wall'
       @send_to_name = '*my wall*'
     end    
+    
+    #-- Check if they're not allowed to post a new root message, based on dialog/period settings, etc.
+    if @dialog and @item.reply_to.to_i == 0
+      if @dialog.active_period.max_messages.to_i > 0
+        @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
+        if @previous_messages_period >= @dialog.active_period.max_messages.to_i
+          render :text=>"<p>You've already reached the maximum number of messages for this period</p>", :layout=>false
+          return
+        end
+      end  
+      if @dialog.max_messages.to_i > 0
+        @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
+        if @previous_messages >= @dialog.max_messages.to_i
+          render :text=>"<p>You've already reached the maximum number of messages for this discussion</p>", :layout=>false
+          return
+        end
+      end
+    end
     
     render :partial=>'edit', :layout=>false
   end  

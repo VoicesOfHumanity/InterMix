@@ -50,7 +50,7 @@ end
       @participant = Participant.where("direct_email_code=?",code).first
 
     elsif to =~ %r{-list@} or to =~ %r{-admin@} or to =~ %r{-owner@}
-      #-- Apparently to a mailing list
+      #-- Apparently to a mailing list (group)
     
       if to =~ %r{-admin@}
         type_list_message = 'admin'
@@ -248,11 +248,19 @@ end
         if @item.dialog_id
           @dialog = Dialog.find_by_id(@item.dialog_id)
           @item.period_id = @dialog.current_period if @dialog
+          #-- Check if replies are allowed for that dialog/period
+          if not dialog.settings_with_period['allow_replies']
+            #-- They're not
+            puts "  replies not allowed"
+            logger.info("receive_mailer#receive replies not allowed for dialog/period #{@item.dialog_id}/#{@item.period_id.to_i}")
+            return
+          end
         end
       end
     else
       @item.is_first_in_thread = true
     end
+    
     @item.save!
     puts "  item #{@item.id} created"
     logger.info("receive_mailer#receive item #{@item.id} created")
