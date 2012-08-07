@@ -249,7 +249,7 @@ end
           @dialog = Dialog.find_by_id(@item.dialog_id)
           @item.period_id = @dialog.current_period if @dialog
           #-- Check if replies are allowed for that dialog/period
-          if not dialog.settings_with_period['allow_replies']
+          if not @dialog.settings_with_period['allow_replies']
             #-- They're not
             puts "  replies not allowed"
             logger.info("receive_mailer#receive replies not allowed for dialog/period #{@item.dialog_id}/#{@item.period_id.to_i}")
