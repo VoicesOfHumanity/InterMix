@@ -65,7 +65,7 @@
 			
 				<% if @threads == 'flat' -%>
 					<% @replies = Item.where("is_first_in_thread=0 and first_in_thread=#{item.id}").order("id").all -%>
-					<% for reply in @replies -%>
+					<% for reply in @itemsproc[item.id]['replies'] -%>
 						<% odd_or_even = 1-odd_or_even%>
 						<div class="forumitem forumreply forum<%= odd_or_even %>" id="item_<%= reply.id %>">
 							<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id } %>

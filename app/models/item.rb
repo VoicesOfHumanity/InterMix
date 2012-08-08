@@ -212,6 +212,8 @@ class Item < ActiveRecord::Base
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
     
+    logger.info("item#list_and_results group:#{group_id},dialog:#{dialog_id},period:#{period_id},posted_by:#{posted_by},posted_meta:#{posted_meta.to_s},rated_meta:#{rated_meta.to_s},rootonly:#{rootonly},sortby:#{sortby},participant:#{participant_id}")
+    
     dialog = Dialog.includes(:periods).find_by_id(dialog_id) if dialog_id.to_i > 0
     period = Period.find_by_id(period_id) if period_id.to_i > 0
     
@@ -220,8 +222,9 @@ class Item < ActiveRecord::Base
     items = items.where("items.group_id = ?", group_id) if group_id.to_i > 0
     items = items.where("items.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
     items = items.where("items.period_id = ?", period_id) if period_id.to_i > 0  
-    items = items.where("is_first_in_thread=1") if rootonly
+    #items = items.where("is_first_in_thread=1") if rootonly
     items = items.where(:posted_by => posted_by) if posted_by.to_i > 0
+    #items = items.where(:first_in_thread => root_id) if root_id.to_i > 0
 
     #-- We'll add up the stats, but we're including the overall rating summary anyway
     items = items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
@@ -245,10 +248,13 @@ class Item < ActiveRecord::Base
         end
       end
     end
+    
+    items = items.order(:id)
 
     logger.info("item#list_and_results SQL: #{items.to_sql}")
     
     #-- Now we have the items. We'll sort them further down, after we have stats for them, in case we sort by that.
+    #-- Even if we've asked for root only, we have all of them, including replies. Sorted out later.
 
     #-- Get the actual ratings
     ratings = Rating.scoped
@@ -265,9 +271,11 @@ class Item < ActiveRecord::Base
     end
 
     itemsproc = {}  # Stats for each item
+    items2 = []     # The items for the next step
     
     for item in items
-      iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item}
+      #-- Add up stats, and filter out non-roots, if necessary, into items2
+      iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[]}
       
       for rating in ratings
         if rating.item_id == item.id
@@ -311,50 +319,72 @@ class Item < ActiveRecord::Base
       end
       iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
       itemsproc[item.id] = iproc
+      
+      if rootonly
+        #-- If we need roots only
+        if item.is_first_in_thread
+          #-- This is a root, put it on the main list
+          items2 << item  
+        elsif item.first_in_thread.to_i > 0 and itemsproc[item.first_in_thread]
+          #-- This is a reply, store it with the proper root
+          itemsproc[item.first_in_thread]['replies'] << item
+        end
+      else
+        items2 << item  
+      end
+
     end
     
     # We're probably no longer using the global numbers, as we've added them up just now
-    # ['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']
+    # ['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']  
   
     if sortby.to_s == 'default'
       @dialog = Dialog.find_by_id(@dialog_id)
       #items = Item.custom_item_sort(items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
-      items = Item.custom_item_sort(items, participant_id, @dialog)
+      items = Item.custom_item_sort(items2, participant_id, @dialog)
     elsif sortby.to_s == '*value*' or sortby.to_s == ''
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[1]['id']]<=>[a[1]['value'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|
-        outitems << iproc['item']
+        if not rootonly or iproc['item'].first_in_thread
+          outitems << iproc['item']
+        end
       end
       items = outitems
     elsif sortby == '*approval*'      
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_approval'],b[1]['votes'],b[1]['id']]<=>[a[1]['avg_approval'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|
-        outitems << iproc['item']
+        if not rootonly or iproc['item'].first_in_thread
+          outitems << iproc['item']
+        end
       end
       items = outitems
     elsif sortby == '*interest*'      
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_interest'],b[1]['votes'],b[1]['id']]<=>[a[1]['avg_interest'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|
-        outitems << iproc['item']
+        if not rootonly or iproc['item'].first_in_thread
+          outitems << iproc['item']
+        end
       end
       items = outitems
     elsif sortby == '*controversy*'      
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['controversy'],b[1]['votes'],b[1]['id']]<=>[a[1]['controversy'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|
-        outitems << iproc['item']
+        if not rootonly or iproc['item'].first_in_thread
+          outitems << iproc['item']
+        end
       end
       items = outitems
     elsif sortby[0,5] == 'meta:'
       #-- NB: Not sure this is working !!
       metamap_id = sortby[5,10].to_i
       sortby = "metamap_nodes.name"
-      items = items.where("metamap_nodes.metamap_id=#{metamap_id}")
+      items = items2.where("metamap_nodes.metamap_id=#{metamap_id}")
     else
-      items = items.order(sortby)
+      items = items2.order(sortby)
     end
     
     return [items, itemsproc]
@@ -379,14 +409,21 @@ class Item < ActiveRecord::Base
     
     if sort2 == 'value'
       sort2key = 'items.value desc'
+      asort2key = 'value'
     elsif sort2 = 'date'
       sort2key = 'items.id desc'
+      asort2key = 'id'
     else
       sort2key = 'items.id desc'
+      asort2key = 'id'
     end  
     
     #-- Sort by the secondary key first, so they're in that order already before putting them into different piles
-    items = items.order(sort2key)
+    if items.class == Array
+      items.sort! { |a,b| b.send(asort2key) <=> a.send(asort2key) }
+    else  
+      items = items.order(sort2key)
+    end
     
     mnps = MetamapNodeParticipant.where(:metamap_id=>metamap_id).where(:participant_id=>participant_id)
     if mnps.length > 0
