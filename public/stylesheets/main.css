@@ -315,7 +315,7 @@ div.forumitem div.item_expand:hover {
 
 div.forumitem div.iteminfo {
 	color: #999;
-	height: 18px;
+	min-height: 18px;
 	position: relative;
 	overflow: hidden;
 }
