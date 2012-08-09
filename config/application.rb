@@ -66,8 +66,8 @@ GROUP_VISIBILITY = ['private','public']
 GROUP_VISIBILITY_TEXT = {'private'=>'Private, unlisted', 'public'=>'Public, visible to all'}
 GROUP_OPENNESS = ['open','open_to_apply','by_invitation_only','private']
 GROUP_OPENNESS_TEXT = {'open'=>'Open to join','open_to_apply'=>'Open to applications','by_invitation_only'=>'By invitation only','private'=>'Closed/Private'}
-EMAIL_PREFS = ['instant','daily','never']
-EMAIL_PREFS_TEXT = {'instant'=>'E-mail each one right away','daily'=>'E-mail in a daily batch','never'=>'Never e-mail'}
+EMAIL_PREFS = ['instant','daily','weekly','never']
+EMAIL_PREFS_TEXT = {'instant'=>'E-mail each one right away','daily'=>'E-mail in a daily batch','weekly'=>'E-mail in a weekly batch','never'=>'Never e-mail'}
 ITEM_TYPES = ['message']
 RATING_TYPES = ['AllRatings','ElectionRating']
 SECTIONS = ['home','forum','wall','profile']

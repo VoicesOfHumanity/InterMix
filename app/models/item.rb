@@ -383,8 +383,13 @@ class Item < ActiveRecord::Base
       metamap_id = sortby[5,10].to_i
       sortby = "metamap_nodes.name"
       items = items2.where("metamap_nodes.metamap_id=#{metamap_id}")
-    else
+    elsif items2.class != Array
       items = items2.order(sortby)
+    elsif sortby == 'items.id desc'
+      items = items2.sort {|a,b| b.id <=> a.id}
+    else  
+      #-- Already sorted in ID order
+      items = items2
     end
     
     return [items, itemsproc]
