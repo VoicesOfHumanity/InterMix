@@ -5,9 +5,11 @@
 <%= semantic_form_for(:participant, :url => '/me/profile/update') do |f| %>
 
 	<%= f.inputs do %>
-		<%= f.input :visibility, :label => 'Profile visibility', :as => :select, :collection =>PARTICIPANT_VISIBILITY_TEXT.invert %>	
+		<%= f.input :visibility, :label => 'Profile visibility', :as => :select, :collection =>PARTICIPANT_VISIBILITY_TEXT.invert %>
+		<% if false %>	
 		<%= f.input :wall_visibility, :label => 'Wall visibility', :as => :select, :collection =>PARTICIPANT_WALL_VISIBILITY_TEXT.invert %>	
 		<%= f.input :item_to_forum, :label=>'Post wall items to the forum?', :as => :radio %>
+		<% end %>
 		
 		<li><h3>E-mail preferences</h3></li>
 
@@ -17,6 +19,7 @@
 		<%= f.input :forum_email, :label => 'Forum postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :no_email, :label => 'Block all emails?', :as => :radio %>	
 
+		<% if false %>	
 		<li><label>E-mail Posting:</label>w+<%= @participant.direct_email_code %>@intermix.org<br></li>
 		
 		<li><h3>Twitter</h3></li>
@@ -25,6 +28,9 @@
 		<%= f.input :twitter_username %>
 		
 		<li><label>Twitter access</label><%= @participant.twitter_post and @participant.twitter_username.to_s != '' ? ( @participant.twitter_oauth_token.to_s != '' ? 'authorized' : 'not yet authorized'  ) : 'none' %></li>
+		
+		<% end %>
+		
 		
 	<% end %>
 
