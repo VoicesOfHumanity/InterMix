@@ -594,8 +594,8 @@ class DialogsController < ApplicationController
     @data[0]['avg_votes_app'] = ( items.length / @data[0]['num_approval'] ).to_i if @data[0]['num_approval'] > 0
     @data[0]['avg_votes_int'] = 20 if @data[0]['avg_votes_int'] > 20
     @data[0]['avg_votes_app'] = 20 if @data[0]['avg_votes_app'] > 20
-    @data[0]['avg_interest'] = @data[0]['tot_interest'] / @data[0]['num_interest'] if @data[0]['num_interest'] > 0
-    @data[0]['avg_approval'] = @data[0]['tot_approval'] / @data[0]['num_approval'] if @data[0]['num_approval'] > 0
+    @data[0]['avg_interest'] = 1.0 * @data[0]['tot_interest'] / @data[0]['num_interest'] if @data[0]['num_interest'] > 0
+    @data[0]['avg_approval'] = 1.0 * @data[0]['tot_approval'] / @data[0]['num_approval'] if @data[0]['num_approval'] > 0
     
     @avg_votes_int = @data[0]['avg_votes_int']
     @avg_votes_app = @data[0]['avg_votes_app']
@@ -626,12 +626,12 @@ class DialogsController < ApplicationController
       #-- Go through the items again and do a regression to the mean
       @data[0]['items'].each do |item_id,item|
         iproc = @data[0]['itemsproc'][item_id]
-        if iproc['num_interest'] < @avg_votes_int
+        if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
           iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
           iproc['num_interest'] = @avg_votes_int
           iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
         end  
-        if iproc['num_approval'] < @avg_votes_app
+        if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
           iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
           iproc['num_approval'] = @avg_votes_app
           iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
@@ -799,12 +799,12 @@ class DialogsController < ApplicationController
           #-- Go through the items again and do a regression to the mean
           mdata['items'].each do |item_id,item|
             iproc = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
-            if iproc['num_interest'] < @avg_votes_int
+            if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
               iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
               iproc['num_interest'] = @avg_votes_int
               iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
             end  
-            if iproc['num_approval'] < @avg_votes_app
+            if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
               iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
               iproc['num_approval'] = @avg_votes_app
               iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
@@ -845,12 +845,12 @@ class DialogsController < ApplicationController
           #-- Go through the items again and do a regression to the mean
           mdata['items'].each do |item_id,item|
             iproc = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
-            if iproc['num_interest'] < @avg_votes_int
+            if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
               iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
               iproc['num_interest'] = @avg_votes_int
               iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
             end  
-            if iproc['num_approval'] < @avg_votes_app
+            if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
               iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
               iproc['num_approval'] = @avg_votes_app
               iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
@@ -892,12 +892,12 @@ class DialogsController < ApplicationController
             #-- Go through the items again and do a regression to the mean
             mdata['items'].each do |item_id,item|
               iproc = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id]
-              if iproc['num_interest'] < @avg_votes_int
+              if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
                 iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
                 iproc['num_interest'] = @avg_votes_int
                 iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
               end  
-              if iproc['num_approval'] < @avg_votes_app
+              if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
                 iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
                 iproc['num_approval'] = @avg_votes_app
                 iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
