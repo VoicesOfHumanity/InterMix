@@ -10,6 +10,13 @@
 <% end -%>
 [<a href="/dialogs/<%= @dialog_id %>/result<%= @period_id > 0 ? "?period_id=#{@period_id}" : "" %>">simple</a>]</p>
 
+<% if @regmean -%>
+<h3>Regression to the Mean</h3>
+<p>Interest: avg: <%= @avg_votes_int %> votes of <%= @avg_interest %><br>
+Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
+
+<% end -%>
+
 <h2>Overall<%= " winner" if not @all %> (<%= @data[0]['ratings'].length %> ratings)</h2>
 
 <div>
