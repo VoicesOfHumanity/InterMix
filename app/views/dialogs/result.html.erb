@@ -80,6 +80,24 @@
 
 <% end -%>
 
+<p>
+<% if @regmean -%>
+	<% if not @all -%>
+	[<a href="/dialogs/<%= @dialog_id %>/result<%=raw @period_id > 0 ? "?period_id=#{@period_id}&amp;regmean=0" : "" %>">no regression to mean</a>]
+	<% else -%>
+	[<a href="/dialogs/<%= @dialog_id %>/result?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;regmean=0&amp;" : "" %>all=1">no regression to mean</a>]
+	<% end -%>
+<% else -%>
+	<% if not @all -%>
+	[<a href="/dialogs/<%= @dialog_id %>/result<%=raw @period_id > 0 ? "?period_id=#{@period_id}&amp;regmean=1" : "" %>">regression to mean</a>]
+	<% else -%>
+	[<a href="/dialogs/<%= @dialog_id %>/result?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;regmean=1&amp;" : "" %>all=1">regression to mean</a>]
+<% end -%>
+
+<% end -%>
+</p>
+
+
 <script>
 function updatemeta() {
 	var period_id = $('#period_id').val();

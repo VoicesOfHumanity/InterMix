@@ -543,6 +543,7 @@ class DialogsController < ApplicationController
     @is_admin = (dialogadmin.length > 0)
     @period_id = params[:period_id].to_i
     @period = Period.find_by_id(@period_id)
+    @regmean = ((params[:regmean] || 1).to_i == 1)
     
     @all = (params[:all].to_i == 1)
 
@@ -560,6 +561,14 @@ class DialogsController < ApplicationController
     @data[0]['items'] = {}     # All items in the dialog/period
     @data[0]['itemsproc'] = {}     # All items in the dialog/period
     @data[0]['ratings'] = {}     # All the ratings of those items
+    @data[0]['num_interest'] = 0   # Number of interest votes
+    @data[0]['num_approval'] = 0   # Number of approval votes
+    @data[0]['tot_interest'] = 0   # Total interest
+    @data[0]['tot_approval'] = 0   # Total approval
+    @data[0]['avg_votes_int'] = 0   # Average number of interest votes
+    @data[0]['avg_votes_app'] = 0   # Average number of approval votes
+    @data[0]['avg_interest'] = 0   # Average interest rating
+    @data[0]['avg_approval'] = 0   # Average approval rating
         
     items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant).includes(:item_rating_summary)
         
@@ -576,23 +585,60 @@ class DialogsController < ApplicationController
       item_id = rating.item_id
       rater_id = rating.participant_id
       @data[0]['ratings'][rating.id] = rating
+      @data[0]['num_interest'] += 1 if rating.interest
+      @data[0]['num_approval'] += 1 if rating.approval
+      @data[0]['tot_interest'] += rating.interest.to_i if rating.interest
+      @data[0]['tot_approval'] += rating.approval.to_i if rating.approval
     end
+    @data[0]['avg_votes_int'] = ( items.length / @data[0]['num_interest'] ).to_i if @data[0]['num_interest'] > 0
+    @data[0]['avg_votes_app'] = ( items.length / @data[0]['num_approval'] ).to_i if @data[0]['num_approval'] > 0
+    @data[0]['avg_votes_int'] = 20 if @data[0]['avg_votes_int'] > 20
+    @data[0]['avg_votes_app'] = 20 if @data[0]['avg_votes_app'] > 20
+    @data[0]['avg_interest'] = @data[0]['tot_interest'] / @data[0]['num_interest'] if @data[0]['num_interest'] > 0
+    @data[0]['avg_approval'] = @data[0]['tot_approval'] / @data[0]['num_approval'] if @data[0]['num_approval'] > 0
+    
+    @avg_votes_int = @data[0]['avg_votes_int']
+    @avg_votes_app = @data[0]['avg_votes_app']
+    @avg_interest = @data[0]['avg_interest']
+    @avg_approval = @data[0]['avg_approval']
     
     @data[0]['items'].each do |item_id,item|
       iproc = {'id'=>item.id,'name'=>item.participant.name,'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0}
       @data[0]['ratings'].each do |rating_id,rating|
         if rating.item_id == item.id
           iproc['votes'] += 1
-          iproc['num_interest'] += 1
-          iproc['tot_interest'] += rating.interest.to_i
-          iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
-          iproc['num_approval'] += 1
-          iproc['tot_approval'] += rating.approval.to_i
-          iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+          if rating.interest
+            iproc['num_interest'] += 1
+            iproc['tot_interest'] += rating.interest.to_i
+            iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+          end
+          if rating.approval
+            iproc['num_approval'] += 1
+            iproc['tot_approval'] += rating.approval.to_i
+            iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+          end
           iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
         end
       end
       @data[0]['itemsproc'][item_id] = iproc
+    end   
+    if @regmean
+      #-- Go through the items again and do a regression to the mean
+      @data[0]['items'].each do |item_id,item|
+        iproc = @data[0]['itemsproc'][item_id]
+        if iproc['num_interest'] < @avg_votes_int
+          iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
+          iproc['num_interest'] = @avg_votes_int
+          iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+        end  
+        if iproc['num_approval'] < @avg_votes_app
+          iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
+          iproc['num_approval'] = @avg_votes_app
+          iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+        end  
+        iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+        @data[0]['itemsproc'][item_id] = iproc
+      end
     end
     @data[0]['itemsproc'] = @data[0]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
 
@@ -734,12 +780,12 @@ class DialogsController < ApplicationController
           mdata['ratings'].each do |rating_id,rating|
             if rating.item_id == item.id
               iproc['votes'] += 1
-              if rating.interest.to_i > 0
+              if rating.interest
                 iproc['num_interest'] += 1
                 iproc['tot_interest'] += rating.interest
                 iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
               end
-              if rating.approval.to_i > 0
+              if rating.approval
                 iproc['num_approval'] += 1
                 iproc['tot_approval'] += rating.approval
                 iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
@@ -748,6 +794,24 @@ class DialogsController < ApplicationController
             end
           end
           @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+        end
+        if @regmean
+          #-- Go through the items again and do a regression to the mean
+          mdata['items'].each do |item_id,item|
+            iproc = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
+            if iproc['num_interest'] < @avg_votes_int
+              iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
+              iproc['num_interest'] = @avg_votes_int
+              iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+            end  
+            if iproc['num_approval'] < @avg_votes_app
+              iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
+              iproc['num_approval'] = @avg_votes_app
+              iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+            end  
+            iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+            @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+          end
         end
         #@data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
         @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
@@ -762,16 +826,38 @@ class DialogsController < ApplicationController
           mdata['ratings'].each do |rating_id,rating|
             if rating.item_id == item.id
               iproc['votes'] += 1
-              iproc['num_interest'] += 1
-              iproc['tot_interest'] += rating.interest.to_i
-              iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
-              iproc['num_approval'] += 1
-              iproc['tot_approval'] += rating.approval.to_i
-              iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+              if rating.interest
+                iproc['num_interest'] += 1
+                iproc['tot_interest'] += rating.interest.to_i
+                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+              end
+              if rating.approval
+                iproc['num_approval'] += 1
+                iproc['tot_approval'] += rating.approval.to_i
+                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+              end
               iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
             end
           end
           @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+        end        
+        if @regmean
+          #-- Go through the items again and do a regression to the mean
+          mdata['items'].each do |item_id,item|
+            iproc = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
+            if iproc['num_interest'] < @avg_votes_int
+              iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
+              iproc['num_interest'] = @avg_votes_int
+              iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+            end  
+            if iproc['num_approval'] < @avg_votes_app
+              iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
+              iproc['num_approval'] = @avg_votes_app
+              iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+            end  
+            iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+            @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+          end
         end
         @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
       end
@@ -787,16 +873,38 @@ class DialogsController < ApplicationController
             mdata['ratings'].each do |rating_id,rating|
               if rating.item_id == item.id
                 iproc['votes'] += 1
-                iproc['num_interest'] += 1
-                iproc['tot_interest'] += rating.interest.to_i
-                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
-                iproc['num_approval'] += 1
-                iproc['tot_approval'] += rating.approval.to_i
-                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+                if rating.interest
+                  iproc['num_interest'] += 1
+                  iproc['tot_interest'] += rating.interest.to_i
+                  iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+                end
+                if rating.approval                
+                  iproc['num_approval'] += 1
+                  iproc['tot_approval'] += rating.approval.to_i
+                  iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+                end
                 iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
               end
             end
             @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id] = iproc
+          end
+          if @regmean
+            #-- Go through the items again and do a regression to the mean
+            mdata['items'].each do |item_id,item|
+              iproc = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id]
+              if iproc['num_interest'] < @avg_votes_int
+                iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
+                iproc['num_interest'] = @avg_votes_int
+                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+              end  
+              if iproc['num_approval'] < @avg_votes_app
+                iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
+                iproc['num_approval'] = @avg_votes_app
+                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+              end  
+              iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+              @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id] = iproc
+            end
           end
           @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'] = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
 
