@@ -150,4 +150,13 @@
 
 				
 	</div><!--iteminfo-->
-			
+	
+	<% if params[:showratings].to_i == 1 -%>
+	<div>Ratings: 
+	<% ratings = Rating.where(:item_id=>item.id).includes(:participant).order(:id) %>
+	<%=raw ratings.length > 0 ? "<br>" : "none" %>
+	<% for rating in ratings -%>
+	<%= "#{rating.created_at.strftime('%Y-%m-%d %H:%M')}: #{rating.participant.name}: int:#{rating.interest ? rating.interest.to_i : 'none'} app:#{rating.approval ? rating.approval.to_i : 'none'}" %>
+	<% end -%>
+	</div>		
+	<% end -%>

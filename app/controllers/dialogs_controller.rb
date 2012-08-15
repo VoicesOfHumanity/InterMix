@@ -590,8 +590,8 @@ class DialogsController < ApplicationController
       @data[0]['tot_interest'] += rating.interest.to_i if rating.interest
       @data[0]['tot_approval'] += rating.approval.to_i if rating.approval
     end
-    @data[0]['avg_votes_int'] = ( items.length / @data[0]['num_interest'] ).to_i if @data[0]['num_interest'] > 0
-    @data[0]['avg_votes_app'] = ( items.length / @data[0]['num_approval'] ).to_i if @data[0]['num_approval'] > 0
+    @data[0]['avg_votes_int'] = ( @data[0]['num_interest'] / items.length ).to_i if @data[0]['num_interest'] > 0
+    @data[0]['avg_votes_app'] = ( @data[0]['num_approval'] / items.length ).to_i if @data[0]['num_approval'] > 0
     @data[0]['avg_votes_int'] = 20 if @data[0]['avg_votes_int'] > 20
     @data[0]['avg_votes_app'] = 20 if @data[0]['avg_votes_app'] > 20
     @data[0]['avg_interest'] = 1.0 * @data[0]['tot_interest'] / @data[0]['num_interest'] if @data[0]['num_interest'] > 0

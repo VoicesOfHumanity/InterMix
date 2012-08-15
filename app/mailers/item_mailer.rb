@@ -34,5 +34,15 @@ class ItemMailer < ActionMailer::Base
       :subject => subject
     )
   end  
+  
+  def digest(subject,message,email,cdata={})
+    #-- Daily or weekly digests of items, personal or system messages
+    @message = message
+    @cdata = cdata if cdata   
+    mail(
+      :to => email,
+      :subject => (subject ? subject : "InterMix Message Digest")
+    )
+  end
 
 end
