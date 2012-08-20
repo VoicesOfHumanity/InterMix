@@ -288,11 +288,14 @@ class Item < ActiveRecord::Base
     
     if regmean
       #-- Prepare regression to the mean
-      xrates = Rating.select("count(interest) as num_interest,sum(interest) as tot_interest,count(approval) as num_approval,sum(approval) as tot_approval").first
-      num_interest = xrates.num_interest
-      tot_interest = xrates.tot_interest
-      num_approval = xrates.num_approval
-      tot_approval = xrates.tot_approval
+      xrates = Rating.select("count(interest) as num_interest,sum(interest) as tot_interest,count(approval) as num_approval,sum(approval) as tot_approval")
+      xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
+      xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
+      xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
+      num_interest = xrates.first.num_interest
+      tot_interest = xrates.first.tot_interest
+      num_approval = xrates.first.num_approval
+      tot_approval = xrates.first.tot_approval
       avg_votes_int = num_items_total > 0 ? ( num_interest / num_items_total ).to_i : 0 
       avg_votes_app = num_items_total > 0 ? ( num_approval / num_items_total ).to_i : 0
       avg_votes_int = 20 if avg_votes_int > 20
