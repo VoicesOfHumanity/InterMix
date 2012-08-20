@@ -207,7 +207,7 @@ class Item < ActiveRecord::Base
     self.xml_content = item.to_xml  
   end  
   
-  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0)
+  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='')
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
@@ -222,9 +222,14 @@ class Item < ActiveRecord::Base
     items = items.where("items.group_id = ?", group_id) if group_id.to_i > 0
     items = items.where("items.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
     items = items.where("items.period_id = ?", period_id) if period_id.to_i > 0  
+    
+    num_items_total = items.length if regmean
+    
     #items = items.where("is_first_in_thread=1") if rootonly
     items = items.where(:posted_by => posted_by) if posted_by.to_i > 0
     #items = items.where(:first_in_thread => root_id) if root_id.to_i > 0
+    items = items.where("created_at>='#{start_at.strftime("%Y-%m-%d %H:%M:%S")}'") if start_at.to_s != ''
+    items = items.where("created_at<'#{end_at.strftime("%Y-%m-%d %H:%M:%S")}'") if end_at.to_s != ''
 
     #-- We'll add up the stats, but we're including the overall rating summary anyway
     items = items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
@@ -249,6 +254,17 @@ class Item < ActiveRecord::Base
       end
     end
     
+    if visible_by.to_i > 0
+      #-- Only items that a certain user has a right to see. I.e. mainly groups he's in
+      gpin = GroupParticipant.where("participant_id=#{visible_by}").all
+      xgpin = ''
+      for gp in gpin
+        xgpin += "," if xgpin != ''
+        xgpin += "#{gp.group_id}"
+      end
+      items = items.where("group_id in (#{xgpin})")
+    end
+    
     items = items.order(:id)
 
     logger.info("item#list_and_results SQL: #{items.to_sql}")
@@ -268,6 +284,21 @@ class Item < ActiveRecord::Base
           ratings = ratings.joins("inner join metamap_node_participants r_mnp_#{metamap_id} on (r_mnp_#{metamap_id}.participant_id=ratings.participant_id and r_mnp_#{metamap_id}.metamap_id=#{metamap_id} and r_mnp_#{metamap_id}.metamap_node_id=#{metamap_node_id})")
         end
       end
+    end
+    
+    if regmean
+      #-- Prepare regression to the mean
+      xrates = Rating.select("count(interest) as num_interest,sum(interest) as tot_interest,count(approval) as num_approval,sum(approval) as tot_approval").first
+      num_interest = xrates.num_interest
+      tot_interest = xrates.tot_interest
+      num_approval = xrates.num_approval
+      tot_approval = xrates.tot_approval
+      avg_votes_int = num_items_total > 0 ? ( num_interest / num_items_total ).to_i : 0 
+      avg_votes_app = num_items_total > 0 ? ( num_approval / num_items_total ).to_i : 0
+      avg_votes_int = 20 if avg_votes_int > 20
+      avg_votes_app = 20 if avg_votes_app > 20
+      avg_interest = 1.0 * tot_interest / num_interest if num_interest > 0
+      avg_approval = 1.0 * tot_approval / num_approval if num_approval > 0   
     end
 
     itemsproc = {}  # Stats for each item
@@ -341,6 +372,25 @@ class Item < ActiveRecord::Base
     
     # We're probably no longer using the global numbers, as we've added them up just now
     # ['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']  
+  
+    if regmean
+      #-- Go through the items again and adjust them with a regression to the mean
+      for item in items
+        iproc = itemsproc[item.id]
+        if iproc['num_interest'] < avg_votes_int and iproc['num_interest'] > 0
+          iproc['tot_interest'] += (avg_votes_int - iproc['num_interest']) * avg_interest
+          iproc['num_interest'] = avg_votes_int
+          iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+        end  
+        if iproc['num_approval'] < avg_votes_app and iproc['num_approval'] > 0
+          iproc['tot_approval'] += (avg_votes_app - iproc['num_approval']) * avg_approval
+          iproc['num_approval'] = avg_votes_app
+          iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+        end  
+        iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+        itemsproc[item.id] = iproc
+      end
+    end
   
     if sortby.to_s == 'default'
       @dialog = Dialog.find_by_id(@dialog_id)

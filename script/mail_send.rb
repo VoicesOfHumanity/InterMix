@@ -2,11 +2,16 @@
 
 #-- mail_send.rb --- send daily/weekly batch mail
 #-- Right now we'll assume we only run this once per day. Later we might have a preferential hour set in each user's settings, and run it hourly.
+#-- We'll send everything for the last day/week, up until last midnight. So, this should run a bit after midnight.
 
 require File.dirname(__FILE__)+'/cron_helper'
 
-if Time.now.wday == 5
-  #-- If it is Friday
+wstart = Time.now.midnight - 1.week
+dstart = Time.now.midnight - 1.day
+pend = Time.now.midnight
+
+if Time.now.wday == 6
+  #-- If it is Saturday
   is_weekly = true
 else
   is_weekly = false 
@@ -21,17 +26,51 @@ for p in participants
   tdaily = ''
   tweekly = ''
   
-  #-- Private Messages
+  if p.private_email == 'daily' or (p.private_email == 'weekly' and is_weekly)
+    #-- Private Messages
+  end
   
+  if p.system_email == 'daily' or (p.system_email == 'weekly' and is_weekly)
+    #-- System Messages
+  end
   
-  #-- System Messages
-  
-  
-  #-- Forum Items
-  
-  
-  
-  
+  if p.forum_email == 'daily' or (p.forum_email == 'weekly' and is_weekly)
+    #-- Forum Items
+    
+    #-- We want sort by descending regressed value, using total interest
+    pstart = (p.forum_email == 'weekly' and is_weekly) ? wstart : dstart
+    items, itemsproc = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p.id,true,p.id,pstart,pend)
+    
+    for item in items
+      itext += "<h3>#{item.subject}</h3>"
+      itext += "<div>"
+      itext += item.html_content
+      itext += "</div>"
+      
+      itext += "<p>by "
+
+  		if item.dialog and item.dialog.current_period.to_i > 0 and not item.dialog.settings_with_period["names_visible_voting"]
+  		  itext += "[name withheld during focus period]"
+  		elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"]
+  		  itext += "[name withheld for this discussion]"  		
+  		elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"]
+  		  itext += item.participant ? item.participant.name : item.posted_by
+  		else
+  		  itext += "<a href=\"http://#{BASEDOMAIN}/participant/#{item.posted_by}/wall\">#{item.participant ? item.participant.name : item.posted_by}</a>"
+  		end
+  		itext += " " + item.created_at.strftime("%Y-%m-%d %H:%M")
+  		itext += " <a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view\" title=\"permalink\">#</a>"
+  		itext += " Group: #{item.group.name}" if item.group
+      itext += "</p>"
+    end  
+
+    if p.forum_email == 'weekly' and is_weekly
+      tweekly += itext
+    else
+      tdaily += itext
+    end  
+    
+  end
   
   if tdaily != ''
   
