@@ -69,12 +69,13 @@ for p in participants
   		itext += " <a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view\" title=\"permalink\">#</a>"
   		itext += " Group: #{item.group.name}" if item.group
       itext += "</p>"
-    end  
-
-    if p.forum_email == 'weekly' and is_weekly
-      tweekly += itext
-    else
-      tdaily += itext
+      
+      if p.forum_email == 'weekly' and is_weekly
+        tweekly += itext
+      else
+        tdaily += itext
+      end  
+      
     end  
     
   end
