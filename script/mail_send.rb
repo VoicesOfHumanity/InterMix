@@ -67,8 +67,12 @@ for p in participants
   		end
   		itext += " " + item.created_at.strftime("%Y-%m-%d %H:%M")
   		itext += " <a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view\" title=\"permalink\">#</a>"
-  		itext += " Group: #{item.group.name}" if item.group
+  		
+  		itext += " Discussion: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum\">#{item.dialog.name}</a>" if item.dialog
+  		itext += " Period: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}\">#{item.period.name}</a>" if item.period  		
+  		itext += " Group: <a href=\"http://#{BASEDOMAIN}/groups/#{item.group_id}/forum\">#{item.group.name}</a>" if item.group
       itext += "</p>"
+      itext += "<hr>"
       
       if p.forum_email == 'weekly' and is_weekly
         tweekly += itext
