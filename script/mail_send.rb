@@ -38,14 +38,17 @@ for p in participants
   if p.forum_email == 'daily' or (p.forum_email == 'weekly' and is_weekly)
     #-- Forum Items
     
+    ptext = (p.forum_email == 'weekly' and is_weekly) ? "weekly" : "daily"
+    
     #-- We want sort by descending regressed value, using total interest
     pstart = (p.forum_email == 'weekly' and is_weekly) ? wstart : dstart
     items, itemsproc = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p.id,true,p.id,pstart,pend)
     
-    puts "  #{items.length} items"
+    puts "  #{ptext}: #{items.length} items"
     
     for item in items
       puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject}"
+      itext = ""
       itext += "<h3>#{item.subject}</h3>"
       itext += "<div>"
       itext += item.html_content
