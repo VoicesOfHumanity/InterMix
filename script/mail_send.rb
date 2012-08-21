@@ -10,8 +10,6 @@ wstart = Time.now.midnight - 1.week
 dstart = Time.now.midnight - 1.day
 pend = Time.now.midnight - 1.second
 
-pstart = (p.forum_email == 'weekly' and is_weekly) ? wstart : dstart
-
 if Time.now.wday == 2
 #if Time.now.wday == 6
   #-- If it is Saturday
@@ -25,6 +23,8 @@ puts "#{participants.length} participants"
 
 for p in participants
   puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} forum:#{p.forum_email}"
+
+  pstart = (p.forum_email == 'weekly' and is_weekly) ? wstart : dstart
   
   tdaily = ''
   tweekly = ''
