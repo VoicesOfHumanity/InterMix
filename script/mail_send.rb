@@ -81,7 +81,6 @@ for p in participants
   
   cdata = {}
   cdata['recipient'] = p      
-  cdata['group'] = p.group if p.group  
   
   if tdaily != ''
   
