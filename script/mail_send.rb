@@ -90,7 +90,7 @@ for p in participants
   
   if tdaily != ''
   
-    subject = "InterMix Daily Digest, #{pstart.strftime("%Y-%m-%d")} - #{pend.strftime("%Y-%m-%d")}"
+    subject = "InterMix Daily Digest, #{pstart.strftime("%Y-%m-%d")}"
   
     email = ItemMailer.digest(subject, tdaily, p.email_address_with_name, cdata)
   
@@ -108,7 +108,7 @@ for p in participants
 
   if is_weekly and tweekly != ''
   
-    subject = "InterMix Weekly Digest"
+    subject = "InterMix Weekly Digest, #{pstart.strftime("%Y-%m-%d")} - #{pend.strftime("%Y-%m-%d")}"
   
     email = ItemMailer.digest(subject, tweekly, p.email_address_with_name, cdata)
   
