@@ -10,7 +10,8 @@ wstart = Time.now.midnight - 1.week
 dstart = Time.now.midnight - 1.day
 pend = Time.now.midnight
 
-if Time.now.wday == 6
+if Time.now.wday == 2
+#if Time.now.wday == 6
   #-- If it is Saturday
   is_weekly = true
 else
@@ -41,7 +42,10 @@ for p in participants
     pstart = (p.forum_email == 'weekly' and is_weekly) ? wstart : dstart
     items, itemsproc = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p.id,true,p.id,pstart,pend)
     
+    puts "  #{items.length} items"
+    
     for item in items
+      puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject}"
       itext += "<h3>#{item.subject}</h3>"
       itext += "<div>"
       itext += item.html_content

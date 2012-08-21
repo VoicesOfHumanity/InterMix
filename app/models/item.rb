@@ -228,8 +228,8 @@ class Item < ActiveRecord::Base
     #items = items.where("is_first_in_thread=1") if rootonly
     items = items.where(:posted_by => posted_by) if posted_by.to_i > 0
     #items = items.where(:first_in_thread => root_id) if root_id.to_i > 0
-    items = items.where("created_at>='#{start_at.strftime("%Y-%m-%d %H:%M:%S")}'") if start_at.to_s != ''
-    items = items.where("created_at<'#{end_at.strftime("%Y-%m-%d %H:%M:%S")}'") if end_at.to_s != ''
+    items = items.where("items.created_at>='#{start_at.strftime("%Y-%m-%d %H:%M:%S")}'") if start_at.to_s != ''
+    items = items.where("items.created_at<'#{end_at.strftime("%Y-%m-%d %H:%M:%S")}'") if end_at.to_s != ''
 
     #-- We'll add up the stats, but we're including the overall rating summary anyway
     items = items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
