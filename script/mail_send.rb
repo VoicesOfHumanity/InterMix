@@ -92,6 +92,7 @@ for p in participants
       Rails.logger.info("mail_send delivering daily email to #{p.id}:#{p.name}")
       email.deliver
       message_id = email.message_id
+      puts "    e-mail sent: #{email.message_id}"
     rescue
       puts "    e-mail delivery problem"
       Rails.logger.info("mail_send problem delivering daily email to #{p.id}:#{p.name}")
@@ -109,6 +110,7 @@ for p in participants
       Rails.logger.info("mail_send delivering weekly email to #{p.id}:#{p.name}")
       email.deliver
       message_id = email.message_id
+      puts "    e-mail sent: #{email.message_id}"
     rescue
       puts "    e-mail delivery problem"
       Rails.logger.info("mail_send problem delivering weekly email to #{p.id}:#{p.name}")
