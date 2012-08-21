@@ -8,7 +8,9 @@ require File.dirname(__FILE__)+'/cron_helper'
 
 wstart = Time.now.midnight - 1.week
 dstart = Time.now.midnight - 1.day
-pend = Time.now.midnight
+pend = Time.now.midnight - 1.second
+
+pstart = (p.forum_email == 'weekly' and is_weekly) ? wstart : dstart
 
 if Time.now.wday == 2
 #if Time.now.wday == 6
@@ -41,7 +43,6 @@ for p in participants
     ptext = (p.forum_email == 'weekly' and is_weekly) ? "weekly" : "daily"
     
     #-- We want sort by descending regressed value, using total interest
-    pstart = (p.forum_email == 'weekly' and is_weekly) ? wstart : dstart
     items, itemsproc = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p.id,true,p.id,pstart,pend)
     
     puts "  #{ptext}: #{items.length} items"
@@ -49,7 +50,7 @@ for p in participants
     for item in items
       puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject}"
       itext = ""
-      itext += "<h3>#{item.subject}</h3>"
+      itext += "<h3><a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view\">#{item.subject}</a></h3>"
       itext += "<div>"
       itext += item.html_content
       itext += "</div>"
@@ -89,7 +90,7 @@ for p in participants
   
   if tdaily != ''
   
-    subject = "InterMix Daily Digest"
+    subject = "InterMix Daily Digest, #{pstart.strftime("%Y-%m-%d")} - #{pend.strftime("%Y-%m-%d")}"
   
     email = ItemMailer.digest(subject, tdaily, p.email_address_with_name, cdata)
   
