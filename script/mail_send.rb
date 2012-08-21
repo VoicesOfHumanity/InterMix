@@ -89,11 +89,12 @@ for p in participants
     email = ItemMailer.digest(subject, tdaily, p.email_address_with_name, cdata)
   
     begin
-      logger.info("mail_send delivering daily email to #{p.id}:#{p.name}")
+      Rails.logger.info("mail_send delivering daily email to #{p.id}:#{p.name}")
       email.deliver
       message_id = email.message_id
     rescue
-      logger.info("mail_send problem delivering daily email to #{p.id}:#{p.name}")
+      puts "    e-mail delivery problem"
+      Rails.logger.info("mail_send problem delivering daily email to #{p.id}:#{p.name}")
     end
   
   end
@@ -105,11 +106,12 @@ for p in participants
     email = ItemMailer.digest(subject, tweekly, p.email_address_with_name, cdata)
   
     begin
-      logger.info("mail_send delivering weekly email to #{p.id}:#{p.name}")
+      Rails.logger.info("mail_send delivering weekly email to #{p.id}:#{p.name}")
       email.deliver
       message_id = email.message_id
     rescue
-      logger.info("mail_send problem delivering weekly email to #{p.id}:#{p.name}")
+      puts "    e-mail delivery problem"
+      Rails.logger.info("mail_send problem delivering weekly email to #{p.id}:#{p.name}")
     end
   
   end
