@@ -262,7 +262,7 @@ class Item < ActiveRecord::Base
         xgpin += "," if xgpin != ''
         xgpin += "#{gp.group_id}"
       end
-      items = items.where("group_id in (#{xgpin})")
+      items = items.where("items.group_id in (#{xgpin})")
     end
     
     items = items.order(:id)
