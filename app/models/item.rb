@@ -115,7 +115,9 @@ class Item < ActiveRecord::Base
       #elsif group and not (recipient.group_email=='instant' or recipient.forum_email=='instant')
       #  logger.info("#{recipient.id}:#{recipient.name} is not set for instant group mail, so skipping")
       #  next
-      elsif not group and not recipient.forum_email=='instant'
+      elsif not group
+        next
+      elsif not recipient.forum_email=='instant'
         logger.info("#{recipient.id}:#{recipient.name} is not set for instant forum mail, so skipping")
         next
       end  
