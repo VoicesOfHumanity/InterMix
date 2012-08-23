@@ -10,7 +10,7 @@ wstart = Time.now.midnight - 1.week
 dstart = Time.now.midnight - 1.day
 pend = Time.now.midnight - 1.second
 
-if Time.now.wday == 3
+if Time.now.wday == 4
 #if Time.now.wday == 6
   #-- If it is Saturday
   is_weekly = true
@@ -50,7 +50,7 @@ for p in participants
     for item in items
       puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject}"
       itext = ""
-      itext += "<h3><a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view\">#{item.subject}</a></h3>"
+      itext += "<h3><a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
       itext += "<div>"
       itext += item.html_content
       itext += "</div>"
@@ -64,14 +64,14 @@ for p in participants
   		elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"]
   		  itext += item.participant ? item.participant.name : item.posted_by
   		else
-  		  itext += "<a href=\"http://#{BASEDOMAIN}/participant/#{item.posted_by}/wall\">#{item.participant ? item.participant.name : item.posted_by}</a>"
+  		  itext += "<a href=\"http://#{BASEDOMAIN}/participant/#{item.posted_by}/wall?auth_token=#{p.authentication_token}\">#{item.participant ? item.participant.name : item.posted_by}</a>"
   		end
   		itext += " " + item.created_at.strftime("%Y-%m-%d %H:%M")
   		itext += " <a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view\" title=\"permalink\">#</a>"
   		
-  		itext += " Discussion: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum\">#{item.dialog.name}</a>" if item.dialog
-  		itext += " Period: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}\">#{item.period.name}</a>" if item.period  		
-  		itext += " Group: <a href=\"http://#{BASEDOMAIN}/groups/#{item.group_id}/forum\">#{item.group.name}</a>" if item.group
+  		itext += " Discussion: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{item.dialog.name}</a>" if item.dialog
+  		itext += " Focus Period: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}&auth_token=#{p.authentication_token}\">#{item.period.name}</a>" if item.period  		
+  		itext += " Group: <a href=\"http://#{BASEDOMAIN}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if item.group
       itext += "</p>"
       itext += "<hr>"
       
