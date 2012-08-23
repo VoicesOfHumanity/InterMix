@@ -303,7 +303,10 @@ class Item < ActiveRecord::Base
       avg_votes_int = 20 if avg_votes_int > 20
       avg_votes_app = 20 if avg_votes_app > 20
       avg_interest = 1.0 * tot_interest / num_interest if num_interest > 0
-      avg_approval = 1.0 * tot_approval / num_approval if num_approval > 0   
+      avg_approval = 1.0 * tot_approval / num_approval if num_approval > 0 
+      logger.info("item#list_and_results regression to mean. avg_votes_int:#{avg_votes_int} avg_interest:#{avg_interest} avg_votes_app:#{avg_votes_app} avg_approval:#{avg_approval}")
+    else
+       logger.info("item#list_and_results no regression to mean")   
     end
 
     itemsproc = {}  # Stats for each item
