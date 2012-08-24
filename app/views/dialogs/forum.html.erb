@@ -22,7 +22,7 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	<div class="lefttitle">Sort by:</div>
 	<div class="leftfield">
 		<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
-		<% sortarr = [['Custom','default']] + sortarr if @dialog.current_period.to_i > 0 %>
+		<% sortarr = [['Custom','default']] + sortarr if @dialog.current_period.to_i > 0 and Item.where(:period_id=>@dialog.current_period).count > 0 %>
 
 		<% if false -%>
 			<% for m in @dialog.metamaps -%>
