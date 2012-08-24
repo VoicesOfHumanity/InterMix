@@ -407,9 +407,8 @@ class Item < ActiveRecord::Base
     end
   
     if sortby.to_s == 'default'
-      @dialog = Dialog.find_by_id(@dialog_id)
       #items = Item.custom_item_sort(items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
-      items = Item.custom_item_sort(items2, participant_id, @dialog)
+      items = Item.custom_item_sort(items2, participant_id, dialog)
     elsif sortby.to_s == '*value*' or sortby.to_s == ''
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[1]['id']]<=>[a[1]['value'],a[1]['votes'],a[1]['id']]}
       outitems = []
