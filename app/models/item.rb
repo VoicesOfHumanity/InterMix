@@ -290,16 +290,22 @@ class Item < ActiveRecord::Base
     
     if regmean
       #-- Prepare regression to the mean
-      xrates = Rating.select("count(interest) as num_interest,sum(interest) as tot_interest,count(approval) as num_approval,sum(approval) as tot_approval")
+      xrates = Rating.where("not interest is null").select("count(distinct(item_id)) as num_int_items,count(interest) as num_interest,sum(interest) as tot_interest")
       xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
       xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
       xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
+      num_int_items = xrates.first.num_int_items
       num_interest = xrates.first.num_interest
-      tot_interest = xrates.first.tot_interest
+      tot_interest = xrates.first.tot_interest      
+      xrates = Rating.where("not approval is null").select("count(distinct(item_id)) as num_app_items,count(approval) as num_approval,sum(approval) as tot_approval")
+      xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
+      xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
+      xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
+      num_app_items = xrates.first.num_app_items
       num_approval = xrates.first.num_approval
       tot_approval = xrates.first.tot_approval
-      avg_votes_int = num_items_total > 0 ? ( num_interest / num_items_total ).to_i : 0 
-      avg_votes_app = num_items_total > 0 ? ( num_approval / num_items_total ).to_i : 0
+      avg_votes_int = num_int_items > 0 ? ( num_interest / num_int_items ).to_i : 0 
+      avg_votes_app = num_app_items > 0 ? ( num_approval / num_app_items ).to_i : 0
       avg_votes_int = 20 if avg_votes_int > 20
       avg_votes_app = 20 if avg_votes_app > 20
       avg_interest = 1.0 * tot_interest / num_interest if num_interest > 0

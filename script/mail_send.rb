@@ -67,7 +67,7 @@ for p in participants
   		  itext += "<a href=\"http://#{BASEDOMAIN}/participant/#{item.posted_by}/wall?auth_token=#{p.authentication_token}\">#{item.participant ? item.participant.name : item.posted_by}</a>"
   		end
   		itext += " " + item.created_at.strftime("%Y-%m-%d %H:%M")
-  		itext += " <a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view\" title=\"permalink\">#</a>"
+  		itext += " <a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		
   		itext += " Discussion: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{item.dialog.name}</a>" if item.dialog
   		itext += " Focus Period: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}&auth_token=#{p.authentication_token}\">#{item.period.name}</a>" if item.period  		

@@ -561,6 +561,8 @@ class DialogsController < ApplicationController
     @data[0]['items'] = {}     # All items in the dialog/period
     @data[0]['itemsproc'] = {}     # All items in the dialog/period
     @data[0]['ratings'] = {}     # All the ratings of those items
+    @data[0]['num_int_items'] = 0   # Number of unique items with interest ratings
+    @data[0]['num_app_items'] = 0   # Number of unique items with approval ratings
     @data[0]['num_interest'] = 0   # Number of interest votes
     @data[0]['num_approval'] = 0   # Number of approval votes
     @data[0]['tot_interest'] = 0   # Total interest
@@ -580,6 +582,8 @@ class DialogsController < ApplicationController
 
     ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant).includes(:item=>:item_rating_summary)
     
+    item_int_uniq = {}
+    item_app_uniq = {}
     for rating in ratings
       rating_id = rating.id
       item_id = rating.item_id
@@ -589,9 +593,15 @@ class DialogsController < ApplicationController
       @data[0]['num_approval'] += 1 if rating.approval
       @data[0]['tot_interest'] += rating.interest.to_i if rating.interest
       @data[0]['tot_approval'] += rating.approval.to_i if rating.approval
+      item_int_uniq[item_id] = true if rating.interest
+      item_app_uniq[item_id] = true if rating.approval
     end
-    @data[0]['avg_votes_int'] = ( @data[0]['num_interest'] / items.length ).to_i if @data[0]['num_interest'] > 0
-    @data[0]['avg_votes_app'] = ( @data[0]['num_approval'] / items.length ).to_i if @data[0]['num_approval'] > 0
+    @data[0]['num_int_items'] = item_int_uniq.length
+    @data[0]['num_app_items'] = item_app_uniq.length
+    
+    
+    @data[0]['avg_votes_int'] = ( @data[0]['num_interest'] / @data[0]['num_int_items'] ).to_i if@data[0]['num_int_items'] > 0
+    @data[0]['avg_votes_app'] = ( @data[0]['num_approval'] / @data[0]['num_app_items'] ).to_i if @data[0]['num_app_items'] > 0
     @data[0]['avg_votes_int'] = 20 if @data[0]['avg_votes_int'] > 20
     @data[0]['avg_votes_app'] = 20 if @data[0]['avg_votes_app'] > 20
     @data[0]['avg_interest'] = 1.0 * @data[0]['tot_interest'] / @data[0]['num_interest'] if @data[0]['num_interest'] > 0
