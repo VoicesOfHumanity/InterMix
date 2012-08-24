@@ -515,6 +515,10 @@ class Item < ActiveRecord::Base
     #-- Let's go through them and put them in different piles
     for item in items
       #xitem = item.clone
+      if dialog and dialog.current_period.to_i > 0 and item.period_id.to_i != dialog.current_period.to_i
+        #-- Only include items from current period
+        next
+      end      
       if item.posted_by == participant_id
         xorder += 1
         item.explanation = "##{xorder}: own item" if item['explanation']
