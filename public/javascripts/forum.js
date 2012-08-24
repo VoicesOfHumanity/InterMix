@@ -15,6 +15,7 @@ var replyingid = 0;
 function list() {
   $('#itemlist').css('opacity','0.5');
 	showworking();
+	$('#page').val(1);
 	var pars = $("#searchform").serialize();
 	$.ajax({
      type: "GET",
