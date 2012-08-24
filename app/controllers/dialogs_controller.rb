@@ -659,7 +659,9 @@ class DialogsController < ApplicationController
 
     #-- And now we'll look at meta categories    
     
-    @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
+    #@metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
+    # temporarily we hardcode it:
+    @metamaps = Metamap.where(:id=>[3,5])
 
     #r = Participant.joins(:groups=>:dialogs).joins(:metamap_nodes).where("dialogs.id=3").where("metamap_nodes.metamap_id=2").select("participants.id,first_name,metamap_nodes.name as metamap_node_name")
 
