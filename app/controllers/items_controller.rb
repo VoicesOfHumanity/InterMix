@@ -334,6 +334,11 @@ class ItemsController < ApplicationController
       @item.is_first_in_thread = true 
     end    
     logger.info("items#create by #{@item.posted_by}")
+
+    if not itemvalidate
+      logger.info("items#create by #{@item.posted_by}: failing validation: #{@xmessage}")
+      flash.now[:alert] = @xmessage
+    end
     
     itemprocess
     
@@ -357,11 +362,6 @@ class ItemsController < ApplicationController
       elsif @dialog.settings_with_period["max_characters"].to_i > 0 and @item.html_content.gsub(/<\/?[^>]*>/, "").length > @dialog.settings_with_period["max_characters"]
         flash.now[:alert] = "That's too many characters"
       end
-    end
-
-    if not itemvalidate
-      logger.info("items#create by #{@item.posted_by}: failing validation: #{@xmessage}")
-      flash.now[:alert] = @xmessage
     end
         
     if flash[:alert] or flash.now[:alert]
@@ -710,11 +710,13 @@ class ItemsController < ApplicationController
       return
     end  
       
-    if not @item.id  
-      @item.save
-    end
+    if not (flash[:alert] or flash.now[:alert])
+      if not @item.id  
+        @item.save
+      end
 
-    @item.add_image(tempfilepath)
+      @item.add_image(tempfilepath)
+    end
     
     `rm -f #{tempfilepath}`
     
