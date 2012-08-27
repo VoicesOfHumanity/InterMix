@@ -364,7 +364,7 @@ class ItemsController < ApplicationController
       flash.now[:alert] = @xmessage
     end
         
-    if flash[:alert]
+    if flash[:alert] or flash.now[:alert]
       prepare_edit
       render :partial=>'edit', :layout=>false
     
