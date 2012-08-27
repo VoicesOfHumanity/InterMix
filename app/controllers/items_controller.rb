@@ -568,7 +568,9 @@ class ItemsController < ApplicationController
     dialog = Dialog.find_by_id(dialog_id) if dialog_id
     html_content = params[:item][:html_content].to_s
     subject = params[:item][:subject].to_s
-    if html_content == '' and ((dialog and dialog.settings_with_period["required_message"]) or subject != '')
+    if html_content == '' and @item.media_type =='text' and ((dialog and dialog.settings_with_period["required_message"]) or subject != '')
+      @xmessage += "Please include at least a brief message<br>"
+    elsif @item.short_content == ''
       @xmessage += "Please include at least a short message<br>"
     elsif dialog and dialog.settings_with_period["max_characters"].to_i > 0 and html_content.length > dialog.settings_with_period["max_characters"]  
       @xmessage += "The maximum message length is #{dialog.settings_with_period["max_characters"]} characters<br>"
