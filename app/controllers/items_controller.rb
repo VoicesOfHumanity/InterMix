@@ -367,6 +367,7 @@ class ItemsController < ApplicationController
     if flash[:alert] or flash.now[:alert]
       prepare_edit
       render :partial=>'edit', :layout=>false
+      return
     
     elsif @item.save
       if @item.is_first_in_thread
