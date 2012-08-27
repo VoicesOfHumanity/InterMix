@@ -12,7 +12,7 @@
 
 	<div class="lefttitle">Sort by:</div>
 	<div class="leftfield">
-		<% sortarr = [['Date','items.id desc'],['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']] %>
+		<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
 		<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list()" %>
 	</div>
 
