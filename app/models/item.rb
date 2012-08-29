@@ -413,7 +413,7 @@ class Item < ActiveRecord::Base
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[1]['id']]<=>[a[1]['value'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|
-        if (not rootonly) or iproc['item'].first_in_thread
+        if (not rootonly) or iproc['item'].is_first_in_thread
           outitems << iproc['item']
         end
       end
@@ -422,7 +422,7 @@ class Item < ActiveRecord::Base
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_approval'],b[1]['votes'],b[1]['id']]<=>[a[1]['avg_approval'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|
-        if (not rootonly) or iproc['item'].first_in_thread
+        if (not rootonly) or iproc['item'].is_first_in_thread
           outitems << iproc['item']
         end
       end
@@ -431,7 +431,7 @@ class Item < ActiveRecord::Base
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_interest'],b[1]['votes'],b[1]['id']]<=>[a[1]['avg_interest'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|
-        if (not rootonly) or iproc['item'].first_in_thread
+        if (not rootonly) or iproc['item'].is_first_in_thread
           outitems << iproc['item']
         end
       end
@@ -440,7 +440,7 @@ class Item < ActiveRecord::Base
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['controversy'],b[1]['votes'],b[1]['id']]<=>[a[1]['controversy'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|
-        if (not rootonly) or iproc['item'].first_in_thread
+        if (not rootonly) or iproc['item'].is_first_in_thread
           outitems << iproc['item']
         end
       end
