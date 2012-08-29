@@ -10,7 +10,7 @@ wstart = Time.now.midnight - 1.week
 dstart = Time.now.midnight - 1.day
 pend = Time.now.midnight - 1.second
 
-if Time.now.wday == 3
+if Time.now.wday == 4
 #if Time.now.wday == 6
   #-- If it is Saturday
   is_weekly = true

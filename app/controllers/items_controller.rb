@@ -705,7 +705,9 @@ class ItemsController < ApplicationController
       end
       f = File.new(tempfilepath, "wb")
       f.write response.body
-      f.close      
+      f.close
+    else
+      logger.info("items#itempicupload apparently didn't get anything: #{params[:uploadfile].inspect}")      
     end    
        
     if not File.exist?(tempfilepath)
