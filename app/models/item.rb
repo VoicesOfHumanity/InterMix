@@ -267,7 +267,7 @@ class Item < ActiveRecord::Base
       items = items.where("items.group_id in (#{xgpin})")
     end
     
-    items = items.order(:id)
+    items = items.order("items.id")
 
     logger.info("item#list_and_results SQL: #{items.to_sql}")
     
