@@ -522,7 +522,7 @@ class Item < ActiveRecord::Base
         xorder += 1
         item.explanation = "##{xorder}: own item" if item['explanation']
         own_items << item
-      elsif item['hasrating'].to_i > 0 or item['rateapproval'] or item['rateinterest']
+      elsif item['rateapproval'].to_i > 0 and item['rateinterest'].to_i > 0
         rated << item
       else
         xcat = -1
@@ -543,6 +543,9 @@ class Item < ActiveRecord::Base
     end
 
     logger.info("item#custom_item_sort own_items:#{own_items.length} own_cat:#{own_cat.length} other_cat:#{other_cat.length} rated:#{rated.length}")
+    
+    #-- Sort the rated items in descending value order
+    rated.sort! {|a,b| [b['value'],b['votes'],b['id']]<=>[a['value'],a['votes'],a['id']]}
     
     newitems = own_items
     
