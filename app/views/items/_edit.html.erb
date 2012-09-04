@@ -22,7 +22,6 @@
 <fieldset class="inputs"><ol>
         <li class="hidden optional" id="item_media_type_input"><input id="item_media_type" name="item[media_type]" type="hidden" value="<%= @item.media_type.to_s!='' ? @item.media_type : 'text' %>" /></li>
 
-		<% if session[:dialog_id].to_i == 0 and not @dialog -%>
 		<li><label>Media</label>
 		<% xarr = ['text','picture','video','audio','link'] -%>
 		<% x = 0 -%>
@@ -32,7 +31,6 @@
 			<% x += 1 -%>
 		<% end -%>
 		</li>
-		<% end -%>
 
 		<% if false -%>
 		<li class="select optional" id="item_group_id_input"><label for="item_group_id">To</label>
