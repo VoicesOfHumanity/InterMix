@@ -656,7 +656,10 @@ class ItemsController < ApplicationController
       logger.info("items#itempicupload uploaded file:#{original_filename}")      
       f = File.new(tempfilepath, "wb")
       f.write params[:uploadfile].read
-      f.close   
+      f.close
+    elsif params[:photo_id].to_i > 0
+      #-- Use one of the user's photos
+      tempfilepath = "#{DATADIR}/photos/#{@participant_id}/#{params[:photo_id]}.jpg"     
     elsif @item.link != ''
       #-- Grab file from url
       logger.info("items#itempicupload grabbing:#{@item.link}")      

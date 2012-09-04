@@ -69,12 +69,20 @@
 		<li class="string optional" id="item_subject_input"><label for="item_subject">Subject</label><input id="item_subject" maxlength="255" name="item[subject]" size="50" type="text" value="<%= @item.subject %>" /></li>
 
 
+		<% if false -%>
 		<li id="uploadli" style="<%= @item.media_type!='picture' ? 'display:none' : '' %>">
 			<div id="mediatitle1" style="width:25%;float:left"><b>Upload file</b></div>
 			<div style="width:75%;float:left">
 				<div id="uploaddiv">
 					<input type="file" id="uploadfile" name="uploadfile" />
 				</div>						
+		</li>			
+		<% end -%>
+		<li id="uploadli" style="<%= @item.media_type!='picture' ? 'display:none' : '' %>">
+			<div id="mediatitle1" style="width:25%;float:left"><b>Include your picture</b></div>
+			<div style="width:75%;float:left">
+				<%= select_tag :photo_id, options_for_select([['',0]]+Photo.where(:participant_id=>current_participant.id).all.collect{|p| ["#{p.filename} (#{p.width}x#{p.height})",p.id]}) %>
+			</div>						
 		</li>			
 		
 		<li>

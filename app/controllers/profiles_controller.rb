@@ -198,9 +198,12 @@ class ProfilesController < ApplicationController
         
       end  
     end
-    responds_to_parent do |page|
-      page << %(uploadpicturedone();)
-    end    
+    #responds_to_parent do
+    #  render :update do |page|
+    #    page << %(uploadpicturedone();)
+    #  end
+    #end  
+    render :text=>%s(<script>window.parent.uploadpicturedone();</script>),:layout=>false  
   end  
   
   def picdelete
