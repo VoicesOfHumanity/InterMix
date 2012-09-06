@@ -127,6 +127,12 @@
 		<%= link_to_function 'edit', "edititem(#{item.id})" if item.posted_by == current_participant.id and not item.edit_locked %>
 		<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
 		</div>
+		
+		<% if @sortby == 'default' and itemproc['replies'].length > 0 %>
+		<div class="iteminfotxt">
+		<a href="/items/3286/thread" target="_blank">Show Replies</a>
+		</div>
+		<% end -%>
 
 		<div class="iteminfotxt">
 			<% if (@from == 'dialog' and item.dialog and item.dialog.settings_with_period["allow_replies"] and session[:group_is_member]) or (@from == 'group' and item.group and @is_member) -%>
