@@ -3,7 +3,7 @@
 class ParticipantsController < ApplicationController
   
 	layout "admin"
-  before_filter :authenticate_participant!
+  before_filter :authenticate_participant!, :except=>:create
   respond_to :html, :xml, :json
   
   def search
