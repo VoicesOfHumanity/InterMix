@@ -324,7 +324,11 @@ class ItemsController < ApplicationController
       @item.is_first_in_thread = false 
       @olditem = Item.find_by_id(@item.reply_to)
       if @olditem
-        @item.first_in_thread = @olditem.first_in_thread
+        if @olditem.first_in_thread.to_i > 0
+          @item.first_in_thread = @olditem.first_in_thread
+        else
+          @item.first_in_thread = @item.reply_to
+        end 
         if current_participant.id != @olditem.posted_by
           @olditem.edit_locked = true
           @olditem.save
