@@ -5,7 +5,7 @@
   </li>
 <% else %>
   <li class="menu">
-		<% if (@dialog and not @dialog.alt_logins) or (@group and not @group.alt_logins) %>
+		<% if true or (@dialog and not @dialog.alt_logins) or (@group and not @group.alt_logins) %>
 			<%= link_to "Sign in", "/participants/sign_in" %>
   	<% else -%>
 			<%= link_to "Sign in", "/authentications" %>

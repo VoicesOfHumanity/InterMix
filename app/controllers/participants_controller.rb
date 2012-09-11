@@ -86,6 +86,7 @@ class ParticipantsController < ApplicationController
   # POST /participants
   # POST /participants.xml
   def create
+    # NB: There's no validation right now, so this will not be called. We'll redirect sign_up to djoin instead
     @participant = Participant.new(params[:participant])
     geoupdate
 
