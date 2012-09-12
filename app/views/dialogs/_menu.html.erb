@@ -1,7 +1,9 @@
 <% if @dsection == 'meta' -%>
 <p style="clear:both;padding:0 19px 0 0"><span style="font-size:20px"><%= @dialog.name %></span><span style="font-size:16px"><%= @period ? ": #{@period.name}" : "" %></span></p>
-<% else -%>
+<% elsif @sortby == 'default' -%>
 <p style="clear:both;padding:0 19px 0 0"><span style="font-size:20px"><%= @dialog.name %></span><span style="font-size:16px"><%= @dialog.active_period ? ": #{@dialog.active_period.name}" : "" %></span></p>
+<% else -%>
+<p style="clear:both;padding:0 19px 0 0"><span style="font-size:20px"><%= @dialog.name %></span></p>
 <% end -%>
 
 <% if true or session[:dialog_id].to_i == 0 -%>
