@@ -246,7 +246,7 @@ class ItemsController < ApplicationController
     
     #-- Check if they're not allowed to post a new root message, based on dialog/period settings, etc.
     if @dialog and @item.reply_to.to_i == 0
-      if @dialog.active_period.max_messages.to_i > 0
+      if @dialog.active_period and @dialog.active_period.max_messages.to_i > 0
         @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
         if @previous_messages_period >= @dialog.active_period.max_messages.to_i
           render :text=>"<p>You've already reached the maximum number of messages for this period</p>", :layout=>false
