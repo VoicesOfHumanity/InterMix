@@ -737,16 +737,19 @@ class ItemsController < ApplicationController
   end
 
   def update_prefix
-    #-- Update the current dialog, and the prefix and base url    
+    #-- Update the current dialog, and the prefix and base url 
+    logger.info("items#update_prefix")   
     if @group
       if @is_member
         session[:group_id] = @group.id
         session[:group_name] = @group.name
         session[:group_prefix] = @group.shortname
+        session[:group_is_member] = true
       else
         session[:group_id] = 0
         session[:group_name] = ''
         session[:group_prefix] = ''
+        session[:group_is_member] = false
       end
       session[:cur_prefix] = @group.shortname
       session[:dialog_id] = 0
