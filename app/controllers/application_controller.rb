@@ -143,6 +143,8 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(resource_or_scope)
     #-- Overrides the devise function to go to our remembered URL after logging in
     
+    logger.info("application#after_sign_in_path_for")
+    
     #-- Also do a few other things we need to do when somebody logs in
     
     session[:cur_prefix] = ''
@@ -194,6 +196,7 @@ class ApplicationController < ActionController::Base
 
   def get_group_dialog_from_subdomain
     #-- If we've gotten a group and/or dialog shortname in the subdomain
+    logger.info("application#get_group_dialog_from_subdomain")
     @group_id = nil
     @dialog_id = nil
     for subdomain in request.subdomains
