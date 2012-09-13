@@ -5,6 +5,7 @@
 <input type="hidden" id="max_messages" value="<%= @dialog.settings_with_period["max_messages"].to_i %>">	
 <input type="hidden" id="previous_messages" value="<%= @dialog.active_period and @dialog.active_period.max_messages.to_i > 0 ? @previous_messages_period : @previous_messages %>">	
 <input type="hidden" id="showratings" name="showratings" value="<%= params[:showratings].to_i %>">	
+<input type="hidden" id="active_period_name" value="<%= @dialog.active_period ? @dialog.active_period.name : "" %>">
 <div id="forumcontrol">
 	
 	<div class="right">

@@ -16,6 +16,15 @@ function list() {
   $('#itemlist').css('opacity','0.5');
 	showworking();
 	if ($('#sortby') && $('#sortby').val()=='default') {
+	    if ($('#active_period_name')) {
+	        var period_name = $('#active_period_name').val();
+	        $('#period_name_heading').html(": "+period_name);
+        }
+	    $('#period_name_heading').show();	    
+	} else if ($('#period_id') && parseInt($('#period_id').val())>0) {
+	    var period_id = $('#period_id').val();
+        var period_name = $("#period_id option[value='"+period_id+"']").text();
+        $('#period_name_heading').html(": "+period_name);
 	    $('#period_name_heading').show();
 	} else {
 	    $('#period_name_heading').hide();
