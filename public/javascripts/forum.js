@@ -15,6 +15,11 @@ var replyingid = 0;
 function list() {
   $('#itemlist').css('opacity','0.5');
 	showworking();
+	if ($('#sortby') && $('#sortby').val()=='default') {
+	    $('#period_name_heading').show();
+	} else {
+	    $('#period_name_heading').hide();
+	}
 	$('#page').val(1);
 	var pars = $("#searchform").serialize();
 	$.ajax({
