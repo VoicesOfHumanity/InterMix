@@ -12,6 +12,7 @@ function toggleoptions() {
 }
 var curid = 0;
 var replyingid = 0;
+var had_default = false;
 function list() {
   $('#itemlist').css('opacity','0.5');
 	showworking();
@@ -28,6 +29,19 @@ function list() {
 	    $('#period_name_heading').show();
 	} else {
 	    $('#period_name_heading').hide();
+	}
+	if ($('#period_id')) {
+	    var first = $("#sortby > option:first").attr("value");
+	    if ($('#period_id').val()>0) {
+	        if (first=='default') {
+	            $("#sortby > option:first").remove();
+	            had_default = true;
+	        }	        
+	    } else {
+	        if (first!='default' && had_default) {
+	            $('#sortby').prepend('<option value="default">Focus special</option>');
+	        }	        
+	    }
 	}
 	$('#page').val(1);
 	var pars = $("#searchform").serialize();
