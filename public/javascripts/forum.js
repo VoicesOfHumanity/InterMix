@@ -43,6 +43,9 @@ function list() {
 	        }	        
 	    }
 	}
+	if ($('#sortby').val()=='default') {
+	    $('#threads').val('root');
+	}
 	$('#page').val(1);
 	var pars = $("#searchform").serialize();
 	$.ajax({
