@@ -107,7 +107,7 @@ function reply(item_id,to_reply) {
 	if (to_reply) {
 		$('#item_'+item_id).after(newcontent);		
 	} else {
-		$('#item_'+item_id).append(newcontent);
+		$('#iteminfo_'+item_id).after(newcontent);
 	}
 	$('#reply_'+item_id).show();
 	var params = 'reply_to=' + item_id;
