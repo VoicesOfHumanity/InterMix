@@ -777,5 +777,10 @@ class Item < ActiveRecord::Base
       0
     end  
   end 
+  
+  def num_replies
+    #-- How many replies does this item have?
+    Item.where(:reply_to=>self.id).count
+  end
       
 end

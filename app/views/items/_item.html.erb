@@ -148,7 +148,7 @@
 			<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
 		</div>
 
-		<% if (@sortby == 'default' and itemproc['replies'].length > 0) or @threads=='root' %>
+		<% if (@sortby == 'default' and itemproc['replies'].length > 0) or (@threads=='root' and item.num_replies > 0) %>
 		<div class="iteminfotxt">
 		<a href="/items/<%= item.id %>/thread" target="_blank">Show Replies</a>
 		</div>
