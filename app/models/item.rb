@@ -765,6 +765,17 @@ class Item < ActiveRecord::Base
   #  #-- Normally this is part of the query done, but in case it isn't let's look it up
   #  rating = Rating.where("item_id=#{self.id} and ratings.participant_id=#{current_participant.id}")
   #  rating.participant_id
-  #end  
+  #end 
+  
+  def num_in_thread
+    #-- How many items are there in the whole thread for this item
+    first = self.first_in_thread.to_i
+    first = self.id if first == 0 and self.is_first_in_thread
+    if first > 0
+      Item.where(:first_in_thread=>first).count
+    else  
+      0
+    end  
+  end 
       
 end

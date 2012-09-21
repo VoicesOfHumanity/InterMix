@@ -3,7 +3,7 @@
 </div>
 
 <ul>
-<% if -%>
+<% if @item.num_in_thread > 1 -%>
 <li><a href="/items/<%= @item.id %>/thread">Whole thread</a></li>
 <% end -%>
 <% if @item.dialog_id.to_i > 0 -%>
