@@ -89,6 +89,9 @@ function newitem(token) {
 	if ($('#dialog_id').val()>0) {
 		pars += "&dialog_id="+$('#dialog_id').val();
 	}
+	if ($('#from')) {
+	    params += '&from=' + $('#from').val();
+	}	
     pars += "&authenticity_token="+token;
 	$.ajax({
 		type: "GET",
@@ -117,6 +120,9 @@ function reply(item_id,to_reply) {
 	if ($('#dialog_id') && $('#dialog_id').val() > 0 ) {
 	    params += '&dialog_id=' + $('#dialog_id').val();
 	}
+	if ($('#from')) {
+	    params += '&from=' + $('#from').val();
+	}	
 	$.ajax({
 		type: "GET",
 		url: '/items/new',

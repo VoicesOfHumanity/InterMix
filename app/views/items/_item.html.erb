@@ -139,9 +139,13 @@
 		</div>	
 		
 		<div class="iteminfotxt">
-			<% if item.group and @group_id.to_i > 0 and @group_id != item.group.id %><span style="color:#f99"><% end %>
-			<%= "Group: " + (item.group ? item.group.name : item.group_id.to_s) if item.group_id.to_i > 0 and @from != 'group' %>
-			<% if item.group and @group_id.to_i > 0 and @group_id != item.group.id %></span><% end %>
+			<% if @group_id.to_i > 0 and item.group and item.group_id != @group_id %><span style="color:#f99"><% end %>
+			<%= "Group: " + (item.group ? item.group.name : item.group_id.to_s) if item.group %>
+			<% if @group_id.to_i > 0 and item.group and item.group_id != @group_id %></span><% end %>
+		</div>
+
+		<div class="iteminfotxt">
+			<%= "Discussion: " + (item.dialog ? item.dialog.name : item.dialog_id.to_s) if item.dialog %>
 		</div>
 			
 		<div class="iteminfotxt">	

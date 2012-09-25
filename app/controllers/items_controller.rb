@@ -184,6 +184,11 @@ class ItemsController < ApplicationController
         end
         @item.group_id = @olditem.group_id if @item.group_id.to_i == 0 and @olditem.group_id.to_i > 0
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
+        if @item.dialog_id.to_i > 0
+          @dialog = Dialog.find_by_id(@item.dialog_id)
+          @dialog_name = (@dialog ? @dialog.name : '???')
+          @item.period_id = @dialog.current_period if @dialog
+        end  
       end
     else
       if @dialog and @dialog.settings_with_period["default_message"].to_s != ''

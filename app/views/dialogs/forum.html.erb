@@ -77,7 +77,7 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	<% end -%>
 	
 	<%= hidden_field_tag :dialog_id, @dialog_id %>
-	<%= hidden_field_tag "from", "dialog" %>
+	<%= hidden_field_tag :from, "dialog" %>
 	<%= hidden_field_tag :page, 1 %>
 	<%= hidden_field_tag :test, params[:test] %>
 	
