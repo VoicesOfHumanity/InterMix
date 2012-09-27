@@ -782,5 +782,45 @@ class Item < ActiveRecord::Base
     #-- How many replies does this item have?
     Item.where(:reply_to=>self.id).count
   end
+  
+  def reply_ok(participant_id)
+    #-- Decide whether the current user is allowed to reply on this item
+    #(@from == 'dialog' and item.dialog and item.dialog.settings_with_period["allow_replies"] and session[:group_is_member]) or (@from == 'group' and item.group and @is_member)
+
+    if self.dialog_id.to_i > 0
+      #-- This item belongs to a discussion
+      
+      dialog = Dialog.includes(:groups).find(self.dialog_id)
+      if not dialog.settings_with_period["allow_replies"]
+        #-- Nobody's allowed to reply in that discussion
+        return false
+      end
+
+      #-- Is he a member of a group that's a member of the discussion?
+      groupsin = GroupParticipant.where("participant_id=#{participant.id}").includes(:group).all       
+      dialoggroupsin = []
+      for group1 in dialog.groups
+        for group2 in groupsin
+          if group2.group.id == group1.id
+            #-- He's a member of one of those groups, so it is ok
+            return true
+          end
+        end
+      end
+      
+    elsif self.group_id.to_i > 0  
+      #-- This message belongs to a grop
+      group = Group.includes(:owner_participant).find(self.group_id)
+      group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant.id).find(:first)
+      if not group_participant
+        #-- He's not a member
+        return false
+      end
+    end
+    
+    #-- If the item is not in a discussion or group, then anybody can reply. Probably not true, but let's pretend that for now
+    return true
+
+  end
       
 end

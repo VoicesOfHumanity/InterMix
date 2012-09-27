@@ -129,8 +129,8 @@
 		</div>
 		
 		<div class="iteminfotxt">
-			<% if (@from == 'dialog' and item.dialog and item.dialog.settings_with_period["allow_replies"] and session[:group_is_member]) or (@from == 'group' and item.group and @is_member) -%>
-		<%= link_to_function "Reply", "reply(#{item.id},#{is_reply})" %>	
+			<% if item.reply_ok(current_participant.id) -%>
+				<%= link_to_function "Reply", "reply(#{item.id},#{is_reply})" %>	
 			<% end -%>
 		</div>
 		
