@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120823205213) do
+ActiveRecord::Schema.define(:version => 20120928211755) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -333,8 +333,8 @@ ActiveRecord::Schema.define(:version => 20120823205213) do
   add_index "item_rating_summaries", ["value"], :name => "index_item_rating_summaries_on_value"
 
   create_table "items", :force => true do |t|
-    t.string   "item_type",                                        :default => "message"
-    t.string   "media_type",                                       :default => "text"
+    t.string   "item_type",                                              :default => "message"
+    t.string   "media_type",                                             :default => "text"
     t.integer  "posted_by"
     t.integer  "group_id"
     t.integer  "dialog_id"
@@ -342,7 +342,7 @@ ActiveRecord::Schema.define(:version => 20120823205213) do
     t.string   "subject"
     t.integer  "subject_id"
     t.boolean  "promoted_to_forum"
-    t.boolean  "posted_to_forum",                                  :default => true
+    t.boolean  "posted_to_forum",                                        :default => true
     t.string   "election_area_type"
     t.string   "moderation_status"
     t.datetime "moderated_at"
@@ -353,21 +353,22 @@ ActiveRecord::Schema.define(:version => 20120823205213) do
     t.string   "link"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "approval",           :precision => 6, :scale => 2, :default => 0.0
-    t.decimal  "interest",           :precision => 6, :scale => 2, :default => 0.0
-    t.decimal  "value",              :precision => 6, :scale => 2, :default => 0.0
-    t.decimal  "controversy",        :precision => 6, :scale => 2, :default => 0.0
+    t.decimal  "approval",                 :precision => 6, :scale => 2, :default => 0.0
+    t.decimal  "interest",                 :precision => 6, :scale => 2, :default => 0.0
+    t.decimal  "value",                    :precision => 6, :scale => 2, :default => 0.0
+    t.decimal  "controversy",              :precision => 6, :scale => 2, :default => 0.0
     t.text     "oembed_response"
     t.text     "embed_code"
-    t.boolean  "has_picture",                                      :default => false
-    t.string   "posted_via",                                       :default => "web"
+    t.boolean  "has_picture",                                            :default => false
+    t.string   "posted_via",                                             :default => "web"
     t.integer  "reply_to"
     t.boolean  "is_first_in_thread"
     t.integer  "first_in_thread"
     t.integer  "old_message_id"
-    t.boolean  "is_flagged",                                       :default => false
-    t.boolean  "edit_locked",                                      :default => false
+    t.boolean  "is_flagged",                                             :default => false
+    t.boolean  "edit_locked",                                            :default => false
     t.integer  "period_id"
+    t.integer  "first_in_thread_group_id"
   end
 
   add_index "items", ["created_at"], :name => "index_items_on_created_at"

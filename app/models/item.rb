@@ -482,7 +482,7 @@ class Item < ActiveRecord::Base
     if sort2 == 'value'
       sort2key = 'items.value desc'
       asort2key = 'value'
-    elsif sort2 = 'date'
+    elsif sort2 == 'date'
       sort2key = 'items.id desc'
       asort2key = 'id'
     else

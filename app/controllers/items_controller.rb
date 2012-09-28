@@ -334,6 +334,11 @@ class ItemsController < ApplicationController
         else
           @item.first_in_thread = @item.reply_to
         end 
+        if @olditem.first_in_thread_group_id.to_i > 0
+          @item.first_in_thread_group_id = @olditem.first_in_thread_group_id
+        else  
+          @item.first_in_thread_group_id = @olditem.group_id
+        end  
         if current_participant.id != @olditem.posted_by
           @olditem.edit_locked = true
           @olditem.save
@@ -341,6 +346,7 @@ class ItemsController < ApplicationController
       end
     else
       @item.is_first_in_thread = true 
+      @item.first_in_thread_group_id = @item.group_id
     end    
     logger.info("items#create by #{@item.posted_by}")
 
