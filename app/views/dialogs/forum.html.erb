@@ -61,6 +61,10 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	<%= hidden_field_tag :period_id, 0 %>	
 	<% end -%>
 	
+	<div class="lefttitle">Posted by Country:</div>
+	<div class="leftfield">
+		<%= select_tag "posted_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name'), :onchange=>"list()" %>
+	</div>
 	
 	<% for metamap in @metamaps -%>
 	<div class="lefttitle">Posted by <%= metamap.name %>:</div>

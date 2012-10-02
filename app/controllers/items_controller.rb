@@ -19,6 +19,7 @@ class ItemsController < ApplicationController
     @group_id = (params[:group_id] || 0).to_i
     @dialog_id = (params[:dialog_id] || 0).to_i
     @period_id = (params[:period_id] || 0).to_i
+    @posted_by_country_code = (params[:posted_by_country_code] || '').to_s
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
     @perscr = 25 if @perscr < 1
@@ -68,7 +69,7 @@ class ItemsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
 
-      @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id)
+      @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id,true,0,'','',@posted_by_country_code)
       
       #logger.info("items_controller#list @items: #{@items.inspect}")
       

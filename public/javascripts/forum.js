@@ -18,32 +18,38 @@ function list() {
 	showworking();
 	if ($('#sortby') && $('#sortby').val()=='default') {
 	    if ($('#active_period_name')) {
+	        // Put period in heading for the currently active group if we have the Focus Special sort
 	        var period_name = $('#active_period_name').val();
 	        $('#period_name_heading').html(": "+period_name);
         }
 	    $('#period_name_heading').show();	    
 	} else if ($('#period_id') && parseInt($('#period_id').val())>0) {
+	    // Put the selected historical period in the heading
 	    var period_id = $('#period_id').val();
         var period_name = $("#period_id option[value='"+period_id+"']").text();
         $('#period_name_heading').html(": "+period_name);
 	    $('#period_name_heading').show();
 	} else {
+	    // No period heading
 	    $('#period_name_heading').hide();
 	}
+    var firstsort = $("#sortby > option:first").attr("value");
 	if ($('#period_id')) {
-	    var first = $("#sortby > option:first").attr("value");
 	    if ($('#period_id').val()>0) {
-	        if (first=='default') {
+	        if (firstsort=='default') {
+	            // If a historical period is selected, remove the Focus Special sort
 	            $("#sortby > option:first").remove();
 	            had_default = true;
 	        }	        
 	    } else {
-	        if (first!='default' && had_default) {
+	        if (firstsort!='default' && had_default) {
+	            // If no historical period is selected, put the Focus Special sort option back, if it is missing
 	            $('#sortby').prepend('<option value="default">Focus special</option>');
 	        }	        
 	    }
 	}
 	if ($('#sortby').val()=='default') {
+	    // If the Focus Special sort is selected, make sure we're showing root only
 	    $('#threads').val('root');
 	}
 	$('#page').val(1);

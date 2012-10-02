@@ -209,7 +209,7 @@ class Item < ActiveRecord::Base
     self.xml_content = item.to_xml  
   end  
   
-  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='')
+  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='')
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
@@ -238,6 +238,10 @@ class Item < ActiveRecord::Base
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
     items = items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{participant_id})") if participant_id.to_i > 0
     items = items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation") if participant_id.to_i > 0
+
+    if posted_by_country_code != ''
+      items = items.where("participants.country_code=?",posted_by_country_code)
+    end  
     
     if posted_meta
       posted_meta.each do |metamap_id,metamap_node_id| 
