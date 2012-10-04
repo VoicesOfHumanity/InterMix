@@ -13,7 +13,8 @@ function toggleoptions() {
 var curid = 0;
 var replyingid = 0;
 var had_default = false;
-function list() {
+function list(whatchanged) {
+  whatchanged = (typeof whatchanged === "undefined") ? "" : whatchanged;
   $('#itemlist').css('opacity','0.5');
 	showworking();
 	if ($('#sortby') && $('#sortby').val()=='default') {
@@ -48,10 +49,15 @@ function list() {
 	        }	        
 	    }
 	}
-	if ($('#sortby').val()=='default') {
+	if ((whatchanged=='sortby' || whatchanged=='') && $('#sortby').val()=='default') {	
 	    // If the Focus Special sort is selected, make sure we're showing root only
 	    $('#threads').val('root');
-	}
+    } 
+    if (whatchanged=='threads' && $('#threads').val()!='root' && $('#sortby').val()=='default') {
+        // If we change threads to anything other than roots only, make sure we're not in focus special
+        $('#sortby').val('items.id desc');
+    }
+	
 	$('#page').val(1);
 	var pars = $("#searchform").serialize();
 	$.ajax({

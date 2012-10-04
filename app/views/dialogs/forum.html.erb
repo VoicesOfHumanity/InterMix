@@ -30,23 +30,23 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 				<% sortarr << [m[1],"meta:#{m[0]}"] %>
 			<% end -%>	
 		<% end -%>
-		<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list()" %>
+		<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list('sortby')" %>
 	</div>
 
 	<div class="lefttitle">Threads:</div>
 	<div class="leftfield">
-	<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list()" %>
+	<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list('threads')" %>
 	</div>
 
 	<div class="lefttitle">Show:</div>
 	<div class="leftfield">
-	<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list()" %>
+	<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list('perscr')" %>
 	</div>
 
 	<% if @groups.length > 1 -%>
 	<div class="lefttitle">Group:</div>
 	<div class="leftfield">
-	<%= select_tag "group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.name,c.id]},@group_id), :onchange=>"list()" %>
+	<%= select_tag "group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.name,c.id]},@group_id), :onchange=>"list('group_id')" %>
 	</div>
 	<% else -%>
 	<%= hidden_field_tag :group_id, @groups.length>0 ? @groups[0].id : @group_id %>	
@@ -55,7 +55,7 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	<% if @periods.length > 0 -%>
 	<div class="lefttitle">Focus Period:</div>
 	<div class="leftfield">
-	<%= select_tag "period_id", options_for_select([['All messages',0]]+@periods.collect{|c| [c.name,c.id]},@period_id), :onchange=>"list()" %>
+	<%= select_tag "period_id", options_for_select([['All messages',0]]+@periods.collect{|c| [c.name,c.id]},@period_id), :onchange=>"list('period_id')" %>
 	</div>
 	<% else -%>
 	<%= hidden_field_tag :period_id, 0 %>	
@@ -67,15 +67,15 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	</div>
 	<div class="lefttitle">Posted from State/Region:</div>
 	<div class="leftfield">
-		<%= select_tag "posted_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list()" %>
+		<%= select_tag "posted_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list('posted_by_admin1uniq')" %>
 	or Metro Area:
-		<%= select_tag "posted_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list()" %>
+		<%= select_tag "posted_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list('posted_by_metro_area_id')" %>
 	</div>
 	
 	<% for metamap in @metamaps -%>
 	<div class="lefttitle">Posted by <%= metamap.name %>:</div>
 	<div class="leftfield">
-	<%= select_tag "posted_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["posted_by_metamap_#{metamap.id}"].to_i), :onchange=>"list()" %>
+	<%= select_tag "posted_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["posted_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('posted_by_metamap_#{metamap.id}')" %>
 	</div>  	
 	<% end -%>
 	
@@ -85,16 +85,16 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	</div>
 	<div class="lefttitle">Rated from State/Region:</div>
 	<div class="leftfield">
-		<%= select_tag "rated_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list()" %>
+		<%= select_tag "rated_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list('rated_by_admin1uniq')" %>
 	or Metro Area:
-		<%= select_tag "rated_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list()" %>
+		<%= select_tag "rated_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list('rated_by_metro_area_id')" %>
 	</div>
 	
 
 	<% for metamap in @metamaps -%>
 	<div class="lefttitle">Rated by <%= metamap.name %>:</div>
 	<div class="leftfield">
-	<%= select_tag "rated_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["rated_by_metamap_#{metamap.id}"].to_i), :onchange=>"list()" %>
+	<%= select_tag "rated_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["rated_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('rated_by_metamap_#{metamap.id}')" %>
 	</div>  	
 	<% end -%>
 	
@@ -154,7 +154,7 @@ function chgcountry(what) {
 	    }
 	    $("select#"+what+"_by_metro_area_id").html(options);
 		})
-		list();
+		list(what+'_country_code');
 	})
   
 }
