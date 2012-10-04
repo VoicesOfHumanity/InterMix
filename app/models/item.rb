@@ -239,7 +239,7 @@ class Item < ActiveRecord::Base
     items = items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{participant_id})") if participant_id.to_i > 0
     items = items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation") if participant_id.to_i > 0
 
-    if posted_by_country_code != ''
+    if posted_by_country_code != '0' and posted_by_country_code != ''
       items = items.where("participants.country_code=?",posted_by_country_code)
     end 
     if posted_by_metro_area_id != 0 and posted_by_metro_area_id != '0' and posted_by_metro_area_id != ''
@@ -252,7 +252,7 @@ class Item < ActiveRecord::Base
       items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.metro_area_id='#{rated_by_metro_area_id}'))>0")
     elsif rated_by_admin1uniq != '' and rated_by_admin1uniq != '0'
       items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.admin1uniq='#{rated_by_admin1uniq}'))>0")
-    elsif rated_by_country_code != ''
+    elsif rated_by_country_code != '0' and rated_by_country_code != ''
       items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.country_code='#{rated_by_country_code}'))>0")
     end  
     
