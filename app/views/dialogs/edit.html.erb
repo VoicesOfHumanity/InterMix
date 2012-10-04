@@ -40,7 +40,7 @@
 	
 <% end %>
 
-<p><br><b>Focus Periods:</b><ul>
+<p><br><b>Decision Periods:</b><ul>
 <% for period in @dialog.periods -%>
 	<li><a href="/dialogs/<%= @dialog.id %>/period_edit?period_id=<%= period.id %>"><%= period.startdate %> - <%= period.endposting -%>/<%= period.endrating %>: <%= period.name %></a></li>
 <% end -%>
