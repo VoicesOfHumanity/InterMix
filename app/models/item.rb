@@ -249,11 +249,11 @@ class Item < ActiveRecord::Base
     end  
 
     if rated_by_metro_area_id != 0 and rated_by_metro_area_id != '0' and rated_by_metro_area_id != ''
-      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.metro_area_id='#{rated_by_metro_area_id}'))>0")
+      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.metro_area_id='#{rated_by_metro_area_id}') where r_geo.item_id=items.id)>0")
     elsif rated_by_admin1uniq != '' and rated_by_admin1uniq != '0'
-      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.admin1uniq='#{rated_by_admin1uniq}'))>0")
+      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.admin1uniq='#{rated_by_admin1uniq}') where r_geo.item_id=items.id)>0")
     elsif rated_by_country_code != '0' and rated_by_country_code != ''
-      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.country_code='#{rated_by_country_code}'))>0")
+      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.country_code='#{rated_by_country_code}') where r_geo.item_id=items.id)>0")
     end  
     
     if posted_meta
