@@ -242,7 +242,7 @@ class Item < ActiveRecord::Base
     if posted_by_country_code != ''
       items = items.where("participants.country_code=?",posted_by_country_code)
     end 
-    if posted_by_metro_area_id != '0'
+    if posted_by_metro_area_id != 0 and posted_by_metro_area_id != '0'
       items = items.where("participants.metro_area_id=?",posted_by_metro_area_id)
     elsif posted_by_admin1uniq != '0'
       items = items.where("participants.admin1uniq=?",posted_by_admin1uniq)
