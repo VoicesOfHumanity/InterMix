@@ -61,11 +61,11 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	<%= hidden_field_tag :period_id, 0 %>	
 	<% end -%>
 	
-	<div class="lefttitle">Posted by Country:</div>
+	<div class="lefttitle">Posted from Country:</div>
 	<div class="leftfield">
 		<%= select_tag "posted_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name',@posted_by_country_code), :onchange=>"chgcountry('posted');" %>
 	</div>
-	<div class="lefttitle">Posted by State/Region:</div>
+	<div class="lefttitle">Posted from State/Region:</div>
 	<div class="leftfield">
 		<%= select_tag "posted_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list()" %>
 	or Metro Area:
