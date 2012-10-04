@@ -209,7 +209,7 @@ class Item < ActiveRecord::Base
     self.xml_content = item.to_xml  
   end  
   
-  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='')
+  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0)
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
@@ -241,6 +241,11 @@ class Item < ActiveRecord::Base
 
     if posted_by_country_code != ''
       items = items.where("participants.country_code=?",posted_by_country_code)
+    end 
+    if posted_by_metro_area_id > 0
+      items = items.where("participants.metro_area_id=?",posted_by_metro_area_id)
+    elsif posted_by_admin1uniq != ''
+      items = items.where("participants.admin1uniq=?",posted_by_admin1uniq)
     end  
     
     if posted_meta

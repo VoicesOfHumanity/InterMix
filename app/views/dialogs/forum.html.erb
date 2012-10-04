@@ -63,8 +63,16 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	
 	<div class="lefttitle">Posted by Country:</div>
 	<div class="leftfield">
-		<%= select_tag "posted_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name'), :onchange=>"list()" %>
+		<%= select_tag "posted_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name',@posted_by_country_code), :onchange=>"chgcountry('posted');" %>
 	</div>
+	<div class="lefttitle">Posted by State/Region:</div>
+	<div class="leftfield">
+		<%= select_tag "posted_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list()" %>
+	or Metro Area:
+		<%= select_tag "posted_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list()" %>
+	</div>
+
+	
 	
 	<% for metamap in @metamaps -%>
 	<div class="lefttitle">Posted by <%= metamap.name %>:</div>
@@ -108,4 +116,37 @@ $('#welcomepopup').modal();
 toggleoptions();
 </script>
 <% end -%>
+<script>
+var posted_by_country_code = '<%= @posted_by_country_code %>';
+var posted_by_admin1uniq = '<%= @posted_by_admin1uniq %>';
+var posted_by_admin2uniq = '';
+var posted_by_metro_area_id = '<%= @posted_by_metro_area_id %>'
+function chgcountry(what) {
+	$.getJSON("/front/getadmin1s",{country_code: $("#"+what+"_by_country_code").val()}, function(j){
+	  var options = '';
+	  for (var i = 0; i < j.length; i++) {
+			if (j[i].val==0) {
+				options += '<option value="0">*any*</option>';
+			} else {
+	    	options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+			}
+	  }
+	  $("select#"+what+"_by_admin1uniq").html(options);
+
+		$.getJSON("/front/getmetro",{country_code: $("#"+what+"_by_country_code").val()}, function(j){
+	    var options = '';
+	    for (var i = 0; i < j.length; i++) {
+				if (j[i].val==0) {
+					options += '<option value="0">*any*</option>';
+				} else {
+	      	options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+				}
+	    }
+	    $("select#"+what+"_by_metro_area_id").html(options);
+		})
+		list();
+	})
+  
+}
+</script>
 
