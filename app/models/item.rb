@@ -209,7 +209,7 @@ class Item < ActiveRecord::Base
     self.xml_content = item.to_xml  
   end  
   
-  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0)
+  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0)
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
@@ -246,6 +246,14 @@ class Item < ActiveRecord::Base
       items = items.where("participants.metro_area_id=?",posted_by_metro_area_id)
     elsif posted_by_admin1uniq != '' and posted_by_admin1uniq != '0'
       items = items.where("participants.admin1uniq=?",posted_by_admin1uniq)
+    end  
+
+    if rated_by_metro_area_id != 0 and rated_by_metro_area_id != '0' and rated_by_metro_area_id != ''
+      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.metro_area_id='#{rated_by_metro_area_id}'))>0")
+    elsif rated_by_admin1uniq != '' and rated_by_admin1uniq != '0'
+      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.admin1uniq='#{rated_by_admin1uniq}'))>0")
+    elsif rated_by_country_code != ''
+      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.country_code='#{rated_by_country_code}'))>0")
     end  
     
     if posted_meta
