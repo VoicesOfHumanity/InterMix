@@ -23,7 +23,7 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	<div class="lefttitle">Sort by:</div>
 	<div class="leftfield">
 		<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
-		<% sortarr = [['Focus Special','default']] + sortarr if @dialog.current_period.to_i > 0 and Item.where(:period_id=>@dialog.current_period).count > 0 %>
+		<% sortarr = [['Decision Special','default']] + sortarr if @dialog.current_period.to_i > 0 and Item.where(:period_id=>@dialog.current_period).count > 0 %>
 
 		<% if false -%>
 			<% for m in @dialog.metamaps -%>
@@ -66,9 +66,11 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 		<%= select_tag "posted_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name',@posted_by_country_code), :onchange=>"chgcountry('posted');" %>
 	</div>
 	<div class="lefttitle">Posted from State/Region:</div>
-	<div class="leftfield">
+	<div class="leftfield">&nbsp;&nbsp;&nbsp;
 		<%= select_tag "posted_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list('posted_by_admin1uniq')" %>
-	or Metro Area:
+	</div>
+	<div class="lefttitle">or Metro Area:</div>	
+	<div class="leftfield">&nbsp;&nbsp;&nbsp;
 		<%= select_tag "posted_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list('posted_by_metro_area_id')" %>
 	</div>
 	
@@ -84,9 +86,11 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 		<%= select_tag "rated_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name',@rated_by_country_code), :onchange=>"chgcountry('rated');" %>
 	</div>
 	<div class="lefttitle">Rated from State/Region:</div>
-	<div class="leftfield">
+	<div class="leftfield">&nbsp;&nbsp;&nbsp;
 		<%= select_tag "rated_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list('rated_by_admin1uniq')" %>
-	or Metro Area:
+	</div>
+	<div class="lefttitle">or Metro Area:</div>
+	<div class="leftfield">&nbsp;&nbsp;&nbsp;
 		<%= select_tag "rated_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list('rated_by_metro_area_id')" %>
 	</div>
 	

@@ -38,14 +38,14 @@ function list(whatchanged) {
 	if ($('#period_id')) {
 	    if ($('#period_id').val()>0) {
 	        if (firstsort=='default') {
-	            // If a historical period is selected, remove the Focus Special sort
+	            // If a historical period is selected, remove the Decision Special sort
 	            $("#sortby > option:first").remove();
 	            had_default = true;
 	        }	        
 	    } else {
 	        if (firstsort!='default' && had_default) {
-	            // If no historical period is selected, put the Focus Special sort option back, if it is missing
-	            $('#sortby').prepend('<option value="default">Focus special</option>');
+	            // If no historical period is selected, put the Decision Special sort option back, if it is missing
+	            $('#sortby').prepend('<option value="default">Decision Special</option>');
 	        }	        
 	    }
 	}
@@ -57,7 +57,16 @@ function list(whatchanged) {
         // If we change threads to anything other than roots only, make sure we're not in focus special
         $('#sortby').val('items.id desc');
     }
-	
+    if (whatchanged=='posted_by_metro_area_id' && $('#posted_by_metro_area_id').val()!='0') {
+        $('#posted_by_admin1uniq').val('0');
+    } else if (whatchanged=='posted_by_admin1uniq' && $('#posted_by_admin1uniq').val()!='0') {
+        $('#posted_by_metro_area_id').val('0');
+    }
+    if (whatchanged=='rated_by_metro_area_id' && $('#rated_by_metro_area_id').val()!='0') {
+        $('#rated_by_admin1uniq').val('0');
+    } else if (whatchanged=='rated_by_admin1uniq' && $('#rated_by_admin1uniq').val()!='0') {
+        $('#rated_by_metro_area_id').val('0');
+    }	
 	$('#page').val(1);
 	var pars = $("#searchform").serialize();
 	$.ajax({
