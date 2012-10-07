@@ -259,7 +259,7 @@ function saveitem() {
         		}
     		}
     		if (!$('#saveresult') || $('#saveresult').val() != 'error') {
-    		    if ($('#from')=='tread') {
+    		    if ($('#from') && $('#from').val()=='tread') {
     		        window.location.reload();
     		    } else {
     		        list();
