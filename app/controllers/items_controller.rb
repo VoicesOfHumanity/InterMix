@@ -782,11 +782,11 @@ class ItemsController < ApplicationController
       session[:dialog_id] = @dialog.id
       session[:dialog_name] = @dialog.name
       session[:dialog_prefix] = @dialog.shortname
-      if session[:dialog_prefix] != '' and session[:group_prefix] != ''
+      if session[:dialog_prefix].to_s != '' and session[:group_prefix].to_s != ''
         session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
-      elsif session[:group_prefix] != ''
+      elsif session[:group_prefix].to_s != ''
         session[:cur_prefix] = session[:group_prefix]
-      elsif session[:dialog_prefix] != ''
+      elsif session[:dialog_prefix].to_s != ''
         session[:cur_prefix] = session[:dialog_prefix]
       end
       if session[:cur_prefix] != ''
