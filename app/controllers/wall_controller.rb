@@ -11,16 +11,18 @@ class WallController < ApplicationController
     @participant = Participant.find(@participant_id)
     @sortby = params[:sortby] || "items.id desc"
     @perscr = params[:perscr].to_i || 25
-    @items = Item.scoped
-    @items = @items.where(:posted_by => @participant_id)
-    @items = @items.includes([:group,:item_rating_summary])
-    @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
-    @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
-    @items = @items.order(@sortby)
-    @items = @items.paginate :page=>@page, :per_page => @per_page    
-    if session[:dialog_id].to_i > 0
-      @dialog = Dialog.find_by_id(session[:dialog_id])
-    end
+    
+    #@items = Item.scoped
+    #@items = @items.where(:posted_by => @participant_id)
+    #@items = @items.includes([:group,:item_rating_summary])
+    #@items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
+    #@items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
+    #@items = @items.order(@sortby)
+    #@items = @items.paginate :page=>@page, :per_page => @per_page    
+    
+    
+    @items, @itemsproc = Item.list_and_results(nil,nil,nil,@participant_id,{},{},false,nil,current_participant.id)
+    
     update_last_url
   end  
 

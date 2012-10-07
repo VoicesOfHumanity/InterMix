@@ -259,7 +259,11 @@ function saveitem() {
         		}
     		}
     		if (!$('#saveresult') || $('#saveresult').val() != 'error') {
-    		    list();
+    		    if ($('#from')=='tread') {
+    		        window.location.reload();
+    		    } else {
+    		        list();
+		        }
     		    replyingid = 0;
 		    }
 		}

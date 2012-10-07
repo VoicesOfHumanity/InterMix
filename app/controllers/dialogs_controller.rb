@@ -190,6 +190,7 @@ class DialogsController < ApplicationController
     if @sortby == 'default'
       sortby = 'items.id desc'
       #@items = @items.where("metamap_nodes.metamap_id=4")
+      @threads = 'root'
     elsif @sortby[0,5] == 'meta:'
       metamap_id = @sortby[5,10].to_i
       sortby = "metamap_nodes.name"

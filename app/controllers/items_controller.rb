@@ -468,7 +468,7 @@ class ItemsController < ApplicationController
   
   def thread
     #-- Show the whole thread, based on an item
-    @from = params[:from] || ''
+    @from = params[:from] || 'thread'
     @item_id = params[:id]
     @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary]).find(@item_id)
     
