@@ -111,7 +111,7 @@ function newitem(token) {
 		pars += "&dialog_id="+$('#dialog_id').val();
 	}
 	if ($('#from')) {
-	    params += '&from=' + $('#from').val();
+	    pars += '&from=' + $('#from').val();
 	}	
     pars += "&authenticity_token="+token;
 	$.ajax({
