@@ -3,14 +3,6 @@
 <%= render(:partial => 'dialogs/menu') %>
 
 <p>
-<% if @all -%>
-[<a href="/dialogs/<%= @dialog_id %>/result<%= @period_id > 0 ? "?period_id=#{@period_id}" : "" %>">short</a>]
-<% else -%>
-[<a href="/dialogs/<%= @dialog_id %>/result?<%= @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>all=1">full</a>]
-<% end -%>
-[<a href="/dialogs/<%= @dialog_id %>/result<%= @period_id > 0 ? "?period_id=#{@period_id}" : "" %>">simple</a>]</p>
-
-<p>
 	<%= select_tag :short_full, options_for_select([['short list','short'],['full list','full']],@short_full), :onchange=>"reload()" %>
 	<%= select_tag :less_more, options_for_select([['less info','less'],['more info','more']],@less_more), :onchange=>"reload()" %>
 </p>
@@ -119,6 +111,7 @@ function updatemeta() {
 function reload() {
 	var short_full = $('#short_full').val();
 	var less_more = $('#less_more').val();
-	window.location.href = "?short_full=" +  short_full + '&less_more=' + less_more;	
+	var period_id = <%= @period_id > 0 ? @period_id.to_i : 0 %>;
+	window.location.href = "?period_id=" + period_id + "&short_full=" +  short_full + '&less_more=' + less_more;	
 }
 </script>
