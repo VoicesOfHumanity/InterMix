@@ -669,6 +669,7 @@ class DialogsController < ApplicationController
     end   
     if @regmean
       #-- Go through the items again and do a regression to the mean
+      logger.info("dialogs#result regression to mean)
       @data[0]['items'].each do |item_id,item|
         iproc = @data[0]['itemsproc'][item_id]
         if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
