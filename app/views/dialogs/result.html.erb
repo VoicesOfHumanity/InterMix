@@ -23,7 +23,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 <a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
 <% break if not @all %>
 <% end -%>
-[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=items.value+desc,items.id+desc&amp;from=result" target="_blank">see all in the forum</a>]<br>
+[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;from=result" target="_blank">see all in the forum</a>]<br>
 <br>
 </div>
 
@@ -43,7 +43,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 			<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
 			<% break if not @all %>
 			<% end -%>
-			[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=items.value+desc,items.id+desc&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br>
+			[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br>
 		<% else -%>
 			<%= metamap_node_name %> posted nothing<br>
 		<% end -%>
@@ -59,7 +59,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 				<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
 				<% break if not @all %>
 			<% end -%>
-			[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=items.value+desc,items.id+desc&amp;from=result&amp;rated_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br>
+			[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;from=result&amp;rated_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br>
 		<% else -%>
 			<%= metamap_node_name %> rated nothing<br>
 		<% end -%>
@@ -76,7 +76,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 					<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
 					<% break if not @all %>
 				<% end -%>
-				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=items.value+desc,items.id+desc&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br>
+				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br>
 			<% end -%>
 		<% end -%>
 		<br>
