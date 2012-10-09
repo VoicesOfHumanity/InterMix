@@ -549,7 +549,7 @@ class DialogsController < ApplicationController
     @regress = params[:regress] || 'regress'
     
     #@regmean = ((params[:regmean] || 1).to_i == 1)
-    @regmean = (@regress == 'regress' ? 1 : 0)
+    @regmean = (@regress == 'regress')
     #@all = (params[:all].to_i == 1)
     @all = (@short_full == 'full')
 
