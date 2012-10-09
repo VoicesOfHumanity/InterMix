@@ -548,7 +548,8 @@ class DialogsController < ApplicationController
     @short_full = params[:short_full] || 'short'
     @less_more = params[:less_more] || 'less'
     
-    @all = (params[:all].to_i == 1)
+    #@all = (params[:all].to_i == 1)
+    @all = (@short_full == 'full')
 
     #-- Criterion, if we're limiting by period
     pwhere = (@period_id > 0) ? "items.period_id=#{@period_id}" : ""
