@@ -17,7 +17,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 
 <% end -%>
 
-<h2>Overall<%= " winner" if not @all %> (<%= @data[0]['ratings'].length %> ratings)</h2>
+<h2>Overall<%= " winner" if not @all %> chosen by all voters (<%= @data[0]['ratings'].length %> ratings)</h2>
 
 <div>
 <% for item_id,i in @data[0]['itemsproc'] -%>
@@ -36,9 +36,9 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 		<h3 title="<%= metamap_node_id %>"><%= metamap_node_name %>:</h3>
 		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
 			<% if @all -%>
-			<b>highest rated <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> items by all raters (<%= @data[metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %>):</b><br>
+			<b>highest rated <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> chosen by all voters (<%= @data[metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %>):</b><br>
 			<% else -%>
-			<b>winning <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> item by all raters (<%= @data[metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %>):</b><br>
+			<b><span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> winner chosen by all voters (<%= @data[metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %>):</b><br>
 			<% end -%>
 			<% for item_id,i in @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] -%>
 			<a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a>: <a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a>: interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, ratings:<%= i['votes'] %><br>
