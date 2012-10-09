@@ -18,7 +18,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 <% end -%>
 
 <h2>Overall<%= " winner" if not @all %></h2>
-<% chosen by all voters (<%= @data[0]['items'].length %> items, <%= @data[0]['ratings'].length %> votes) %>
+<% if false %>chosen by all voters (<%= @data[0]['items'].length %> items, <%= @data[0]['ratings'].length %> votes)<% end %>
 
 <div>
 <% for item_id,i in @data[0]['itemsproc'] -%>
