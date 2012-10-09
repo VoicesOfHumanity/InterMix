@@ -5,6 +5,7 @@
 <p>
 	<%= select_tag :short_full, options_for_select([['short list','short'],['full list','full']],@short_full), :onchange=>"reload()" %>
 	<%= select_tag :less_more, options_for_select([['less info','less'],['more info','more']],@less_more), :onchange=>"reload()" %>
+	<%= select_tag :regress, options_for_select([['regress to mean','regress'],['raw scores','raw']],@regress), :onchange=>"reload()" %>
 </p>
 
 <% if @regmean -%>
@@ -111,7 +112,8 @@ function updatemeta() {
 function reload() {
 	var short_full = $('#short_full').val();
 	var less_more = $('#less_more').val();
+	var regress = $('#regress').val();
 	var period_id = <%= @period_id > 0 ? @period_id.to_i : 0 %>;
-	window.location.href = "?period_id=" + period_id + "&short_full=" +  short_full + '&less_more=' + less_more;	
+	window.location.href = "?period_id=" + period_id + "&short_full=" +  short_full + '&less_more=' + less_more + '&regress=' + regress;	
 }
 </script>
