@@ -545,6 +545,8 @@ class DialogsController < ApplicationController
     @period_id = params[:period_id].to_i
     @period = Period.find_by_id(@period_id)
     @regmean = ((params[:regmean] || 0).to_i == 1)
+    @short_full = params[:short_full] || 'short'
+    @less_more = params[:less_more] || 'less'
     
     @all = (params[:all].to_i == 1)
 
