@@ -544,7 +544,7 @@ class DialogsController < ApplicationController
     @is_admin = (dialogadmin.length > 0)
     @period_id = params[:period_id].to_i
     @period = Period.find_by_id(@period_id)
-    @regmean = ((params[:regmean] || 1).to_i == 1)
+    @regmean = ((params[:regmean] || 0).to_i == 1)
     
     @all = (params[:all].to_i == 1)
 
