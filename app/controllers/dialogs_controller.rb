@@ -578,7 +578,7 @@ class DialogsController < ApplicationController
     @data[0]['avg_interest'] = 0   # Average interest rating
     @data[0]['avg_approval'] = 0   # Average approval rating
         
-    items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant).includes(:item_rating_summary)
+    items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where("is_first_in_thread=1").includes(:participant).includes(:item_rating_summary)
         
     for item in items
       item_id = item.id
