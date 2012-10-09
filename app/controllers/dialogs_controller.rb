@@ -722,7 +722,7 @@ class DialogsController < ApplicationController
       @data[metamap.id]['ratings'] = {}     # Keep track of the ratings of items in that meta cat
 
       #-- Everything posted, with metanode info
-      items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where("is_first_in_thread=1").includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
       
       #-- Everything rated, with metanode info
       ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
