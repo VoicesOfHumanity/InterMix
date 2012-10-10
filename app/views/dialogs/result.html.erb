@@ -77,6 +77,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 				<% end -%>
 				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br>
 			<% end -%>
+			<br>
 		<% end -%>
 		<br>
 	<% end -%>
