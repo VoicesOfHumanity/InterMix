@@ -352,18 +352,19 @@ function html_to_short() {
 	if ($('#item_long_length')) {
 	    $('#item_long_length').html(newval.length);
 	}
-	xtext = newval.substring(0,140);
+	xtext = newval.substring(0,124);
 	$('#item_short_content').val(xtext);
 }
 function update_characters() {
 	var count = $('#item_short_content').val().length;
-	if (count>140) {
+	if (count>124) {
 		var oldval = $('#item_short_content').val();
-		var newval = oldval.substring(0,140);
+		var newval = oldval.substring(0,124);
 		$('#item_short_content').val(newval);
-		count = 140;
+		count = 124;
 	}
 	$('#charsused').html(count);
+	short_updated = true;
 }
 function expand(id) {
 	var oldval = $('#expand_'+id).html();
