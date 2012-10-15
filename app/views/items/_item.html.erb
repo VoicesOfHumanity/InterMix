@@ -112,7 +112,7 @@
 		<% if @from.to_s == 'forum' or @from.to_s != 'wall' -%>	
 		by 
 		<% if item.dialog and item.dialog.current_period.to_i > 0 and item.period_id=item.dialog.current_period and not item.dialog.settings_with_period["names_visible_voting"] -%>
-		[name withheld during decision period]
+		[name withheld during decision period <%= "current_period:#{item.dialog.current_period} item.period_id:#{item.period_id} names_visible_voting:#{item.dialog.settings_with_period["names_visible_voting"]}" %>]
 		<% elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"] -%>
 		[name withheld for this discussion]
 		<% elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"] -%>
