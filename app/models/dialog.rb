@@ -45,20 +45,20 @@ class Dialog < ActiveRecord::Base
       "voting_open" => self.voting_open
     }
     if self.current_period.to_i > 0
-      period = Period.find_by_id(self.current_period)
-      settings["max_characters"] = period.max_characters
-      settings["metamap_vote_own"] = period.metamap_vote_own
-      settings["default_message"] = period.default_message
-      settings["required_message"] = period.required_message
+      xperiod = Period.find_by_id(self.current_period)
+      settings["max_characters"] = xperiod.max_characters
+      settings["metamap_vote_own"] = xperiod.metamap_vote_own
+      settings["default_message"] = xperiod.default_message
+      settings["required_message"] = xperiod.required_message
       #settings["required_subject"] = period.required_subject
-      settings["max_messages"] = period.max_messages
-      settings["new_message_title"] = period.new_message_title
-      settings["allow_replies"] = period.allow_replies
-      settings["required_meta"] = period.required_meta
-      settings["value_calc"] = period.value_calc
-      settings["profiles_visible"] = period.profiles_visible
-      settings["names_visible_voting"] = period.names_visible_voting
-      settings["names_visible_general"] = period.names_visible_general
+      settings["max_messages"] = xperiod.max_messages
+      settings["new_message_title"] = xperiod.new_message_title
+      settings["allow_replies"] = xperiod.allow_replies
+      settings["required_meta"] = xperiod.required_meta
+      settings["value_calc"] = xperiod.value_calc
+      settings["profiles_visible"] = xperiod.profiles_visible
+      settings["names_visible_voting"] = xperiod.names_visible_voting
+      settings["names_visible_general"] = xperiod.names_visible_general
       #settings["in_voting_round"] = period.in_voting_round
       #settings["posting_open"] = period.posting_open
       #settings["voting_open"] = period.voting_open
