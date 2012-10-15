@@ -354,6 +354,7 @@ function html_to_short() {
 	}
 	xtext = newval.substring(0,124);
 	$('#item_short_content').val(xtext);
+	$('#charsused').html(xtext.length);
 }
 function update_characters() {
 	var count = $('#item_short_content').val().length;
