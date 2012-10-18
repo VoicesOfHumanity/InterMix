@@ -1,21 +1,58 @@
 
-<p>You are successfully signed up!</p>
+<div id="welcome_1">
+<p>Welcome to InterMix, a new form of social media.</p>
 
-<p>How to Participate</p>
+<p>InterMix raises up six great Voices of Humanity:</p>
 
-<ul>
-	<li>If you have not written your message yet, click the "Add Message" button in the upper right.</li>
- 	<li>The "+" expands the messages.</li>
-	<li>Run the cursor over the smilies on the right to open the two voting panels. This is your vote. Rate each message twice, once for interest and once for approval. Both ratings are needed for your vote to count.</li>
-	<li>Your awesome voting power is what will make the event a success. Please come back again and again.</li>
-	<li>Click "reply" to respond to any of the messages.</li>
+<ul style="font-size:16px;margin-left:auto;margin-right:auto;width:350px">
+	<li>the Voice of Women</li>
+	<li>the Voice of Men</li>
+	<li>the Voice of Youth</li>
+	<li>the Voice of Experience (middle-age)</li>
+	<li>the Voice of Wisdom (seniors)</li>
+	<li>the Voice of Humanity as One</li>
 </ul>
 
-<p>For the Curious</p>
+<p><a href="" onclick="welcome_next(2);return false">Continue</a></p>
+</div>
 
-<ul>
-	<li>The elected overall messages will be sent to Sec. General Ban Ki-moon and we expect he will answer.</li>
-	<li>The discussion will continue after the voting is over.</li>
-	<li>Controversy is calculated as the mathematical variance of the approval scores.</li>
-	<li>The InterMix software used for this discussion will go open source in November and will continue to be improved.</li>
-</ul>
+<div id="welcome_2" style="display:none">
+	<p>The three main building blocks of InterMix are its people, its groups and its discussions.</p>
+
+	<p>It is simple: people join groups and groups participate together in discussions.</p>
+	<p><a href="" onclick="welcome_next(1);return false">Previous</a> <a href="" onclick="welcome_next(3);return false">Continue</a></p>
+</div>
+
+<div id="welcome_3" style="display:none">
+	<p>One last thing. </p>
+
+	<p>Discussions may have special "decision periods” with a particular topic.</p>
+
+	<p>In a decision period, people post comments to be rated by others.  At the end of the decision period highly rated messages for each participating group and for each of the six voices of humanity are shared with all participants in the discussion.</p>
+	<p><a href="" onclick="welcome_next(2);return false">Previous</a> <a href="" onclick="welcome_next(4);return false">Continue</a></p>
+</div>
+
+<div id="welcome_4" style="display:none">
+	<p>So it is still simple:</p>
+
+	<ol style="font-size:16px;font-weight:bold;margin-left:auto;margin-right:auto;width:350px">
+	<li>People join groups.</li>
+	<li>Groups participate in discussions.</li>
+	<li>Discussions may concentrate on a topic in a decision period.</li>
+	</ol>
+
+	<p>Have fun!</p>
+
+	<p><a href="" onclick="$.modal.close();return false">Continue to InterMix</a></p>
+	
+	<p><a href="" onclick="welcome_next(3);return false">Previous</a></p>
+</div>
+
+<script>
+var welcome_current = 1;
+function welcome_next(pg) {
+	$('#welcome_'+welcome_current).hide();
+	welcome_current = pg;
+	$('#welcome_'+welcome_current).show();	
+}
+</script>
