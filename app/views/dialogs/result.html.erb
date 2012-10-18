@@ -4,7 +4,7 @@
 
 <p>
 	<%= select_tag :short_full, options_for_select([['short list','short'],['medium list','medium'],['full list','full']],@short_full), :onchange=>"reload()" %>
-	<%= select_tag :less_more, options_for_select([['less info','less'],['more info','more']],@less_more,:style=>"display:none",:onchange=>"reload()" %>
+	<%= select_tag :less_more, options_for_select([['less info','less'],['more info','more']],@less_more),:style=>"display:none",:onchange=>"reload()" %>
 	<%= select_tag :regress, options_for_select([['regress to mean','regress'],['raw scores','raw']],@regress),:style=>"display:none",:onchange=>"reload()" %>
 </p>
 
