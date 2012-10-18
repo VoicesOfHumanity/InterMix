@@ -1131,7 +1131,7 @@ class DialogsController < ApplicationController
 		if dialog.current_period.to_i > 0 and item.period_id==dialog.current_period and not dialog.settings_with_period["names_visible_voting"]
 		  #-- Item is in the current period and it says to now show it
 			"[name withheld during decision period]"
-		elsif period > 0 and not period.names_visible_general
+		elsif period and not period.names_visible_general
 			"[name withheld for this decision period]"
 		elsif not dialog.names_visible_general
 			"[name withheld for this discussion]"
