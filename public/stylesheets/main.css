@@ -638,16 +638,19 @@ div.modaldiv {
     display:none
 }
 div.modaldiv p {
-    font-size:16px;
+    font-size:18px;
     font-family: verdana;    
-    text-align: center;
+    text-align: left;
+}
+div.modaldiv ul, div.modaldiv ol {
+    font-size:18px;
 }
 #basic-modal-content {display:none;}
 /* Overlay */
 #simplemodal-overlay {background-color:#000; cursor:wait;}
 /* Container */
 #simplemodal-container {
-    height:500px; width:640px; 
+    height:420px; width:550px; 
     color:#000; 
     background-color:#f2f7f7; 
     border:4px solid #aa1919; padding:12px;
@@ -667,6 +670,8 @@ div.modaldiv p {
 #simplemodal-container a {color:#000;}
 #simplemodal-container a.modalCloseImg {background:url(/images/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
 #simplemodal-container h3 {color:#84b8d9;}
+
+
 
 tr.line0 td {
    background: #e0f8f8;	
