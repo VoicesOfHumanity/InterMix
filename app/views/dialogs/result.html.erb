@@ -14,7 +14,12 @@
 Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 <% end -%>
 
+<% if @short_full=='full' -%>
 <h2>Overall<%= " winner" if not @all %></h2>
+<% else -%>
+<h2>Voice of Humanity as One</h2>
+<% end -%>
+
 <% if false %>chosen by all voters (<%= @data[0]['items'].length %> items, <%= @data[0]['ratings'].length %> votes)<% end %>
 
 <div>
@@ -27,11 +32,14 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 </div>
 
 <% for metamap in @metamaps -%>
+	<% if false -%>
 	<h2 title="<%= metamap.id %>"><%= metamap.name %></h2>
+	<% end -%>
 
 	<div>
 	<% for metamap_node_id,metamap_node_name in @data[metamap.id]['nodes_sorted'] -%>
-		<h3 title="<%= metamap_node_id %>"><%= metamap_node_name %>:</h3>
+		<h3 title="<%= metamap_node_id %>">Voice of <%= metamap_node.name_as_group ? metamap_node.name_as_group : metamap_node.name %></h3>
+
 		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
 			<% if @all -%>
 			<b>highest rated <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> chosen by all voters (<%= @data[metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %> items, <%= @data[metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %> votes):</b><br>
