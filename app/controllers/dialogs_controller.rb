@@ -764,7 +764,7 @@ class DialogsController < ApplicationController
         item_id = rating.item_id
         rater_id = rating.participant_id
         metamap_node_id = rating.participant.metamap_node_participants[0].metamap_node_id
-        metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name
+        metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name_as_group ? rating.participant.metamap_node_participants[0].metamap_node.name_as_group : rating.participant.metamap_node_participants[0].metamap_node.name
 
         logger.info("dialogs#result rating ##{rating_id} of item ##{item_id} rater meta:#{metamap_node_id}/#{metamap_node_name}") 
        

@@ -38,7 +38,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 
 	<div>
 	<% for metamap_node_id,metamap_node_name in @data[metamap.id]['nodes_sorted'] -%>
-		<h3 title="<%= metamap_node_id %>">Voice of <%= metamap_node.name_as_group ? metamap_node.name_as_group : metamap_node.name %></h3>
+		<h3 title="<%= metamap_node_id %>">Voice of <%= metamap_node_name %></h3>
 
 		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
 			<% if @all -%>
