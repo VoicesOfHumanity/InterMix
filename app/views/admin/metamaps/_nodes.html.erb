@@ -9,6 +9,7 @@
     <th></th>
 		<th>ID</th>
 		<th>Name</th>
+		<th>Group</th>
 		<th>Sort</th>
   </tr>
 
@@ -19,6 +20,7 @@
 		<td><input type="checkbox" name="mark[]" class="admmark" title="mark" value="<%= metamap_node.id %>" /></td>
 		<td><%= metamap_node.id %></td>
 		<td><%= metamap_node.name %></td>
+		<td><%= metamap_node.name_as_group %></td>
 		<td><%= metamap_node.sortorder %></td>
   </tr>
 <% end %>

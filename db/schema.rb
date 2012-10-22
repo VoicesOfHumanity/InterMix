@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120928211755) do
+ActiveRecord::Schema.define(:version => 20121022195434) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -422,6 +422,7 @@ ActiveRecord::Schema.define(:version => 20120928211755) do
   create_table "metamap_nodes", :force => true do |t|
     t.integer  "metamap_id"
     t.string   "name"
+    t.string   "name_as_group"
     t.integer  "parent_id"
     t.text     "description"
     t.string   "sortorder"

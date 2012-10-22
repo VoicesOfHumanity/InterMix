@@ -1077,10 +1077,10 @@ class DialogsController < ApplicationController
     today = Time.now
     
     @periods = Period.where("dialog_id = ?",dialog_ids)
-    if not @is_group_admin
-      #-- Only (group) admins can see periods that aren't done
-      @periods = @periods.where("endrating IS NOT NULL").where("endrating<?",today)
-    end
+    #if not @is_group_admin
+    #  #-- Only (group) admins can see periods that aren't done
+    #  @periods = @periods.where("endrating IS NOT NULL").where("endrating<?",today)
+    #end
 
     update_last_url
     update_prefix
