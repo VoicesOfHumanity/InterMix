@@ -733,7 +733,7 @@ class DialogsController < ApplicationController
         item_id = item.id
         poster_id = item.posted_by
         metamap_node_id = item.participant.metamap_node_participants[0].metamap_node_id
-        metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name_as_group ? rating.participant.metamap_node_participants[0].metamap_node.name_as_group : rating.participant.metamap_node_participants[0].metamap_node.name
+        metamap_node_name = item.participant.metamap_node_participants[0].metamap_node.name_as_group ? item.participant.metamap_node_participants[0].metamap_node.name_as_group : item.participant.metamap_node_participants[0].metamap_node.name
         
         @data[metamap.id]['items'][item.id] = metamap_node_id
 
