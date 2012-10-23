@@ -38,16 +38,23 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 		<h3 title="<%= metamap_node_id %>">Voice of <%= metamap_node_name %></h3>
 		<% if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>			
 			<% if @data[metamap.id]['matrix']['post_rate'][metamap_node_id][metamap_node_id] -%>
+				<% xcount = 0 %>
 				<% for item_id,i in @data[metamap.id]['matrix']['post_rate'][metamap_node_id][metamap_node_id]['itemsproc'] -%>
-				<a href="/items/<%= item_id %>/view" style="font-size:14px;font-weight:bold"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
+				<% if xcount == 0 and !@all and i['value'] <= 0 %>
+					no positive results<br>
+					<% break %>
+				<% else -%>
+					<a href="/items/<%= item_id %>/view" style="font-size:14px;font-weight:bold"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest:<%= i['num_interest']%>:<%= sprintf("%.1f",i['avg_interest']) %>, approval:<%= i['num_approval'] %>:<%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
+				<% end -%>
 				<% break if not @all %>
+				<% xcount += 0 %>
 				<% end -%>
 			<% else -%>
-				no positive results<br>
+				no messages<br>
 			<% end -%>
 			[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all in the forum</a>]<br>
 		<% else -%>
-			no results<br>
+			no messages<br>
 		<% end -%>
 		<br>
 		
