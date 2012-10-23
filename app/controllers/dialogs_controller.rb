@@ -740,7 +740,8 @@ class DialogsController < ApplicationController
         logger.info("dialogs#result item ##{item.id} poster meta:#{metamap_node_id}/#{metamap_node_name}") 
 
         if not @data[metamap.id]['nodes'][metamap_node_id]
-          @data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
+          #@data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
+          @data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,item.participant.metamap_node_participants[0].metamap_node]
           logger.info("dialogs#result @data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
         end
         if not @data[metamap.id]['postedby']['nodes'][metamap_node_id]
@@ -775,7 +776,8 @@ class DialogsController < ApplicationController
         end
 
         if not @data[metamap.id]['nodes'][metamap_node_id]
-          @data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
+          #@data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
+          @data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,rating.participant.metamap_node_participants[0].metamap_node]
           #logger.info("dialogs#result @data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
         end
         @data[metamap.id]['ratings'][rating.id] = metamap_node_id
@@ -814,12 +816,13 @@ class DialogsController < ApplicationController
         #-- Store a matrix crossing the item's meta with the rater's meta (within a particular metamap, e.g. gender)
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['ratings'][rating_id] = rating
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['items'][item_id] = rating.item
-        @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['post_name'] = @data[metamap.id]['nodes'][item_metamap_node_id]
+        @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['post_name'] = @data[metamap.id]['nodes'][item_metamap_node_id][0]
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_name'] = metamap_node_name
       end  # ratings
 
-      #-- Put nodes in alphabetical order
-      @data[metamap.id]['nodes_sorted'] = @data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
+      #-- Put nodes in sorting order and/or alphabetical order
+      #@data[metamap.id]['nodes_sorted'] = @data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
+      @data[metamap.id]['nodes_sorted'] = @data[metamap.id]['nodes'].sort {|a,b| [a[1][1].sortorder,a[1][0]]<=>[b[1][1].sortorder,b[1][0]]}
 
       #-- Adding up stats for postedby items. I.e. items posted by people in that meta.
       @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
