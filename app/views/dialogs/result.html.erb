@@ -6,6 +6,7 @@
 	<%= select_tag :short_full, options_for_select([['short list','short'],['medium list','medium'],['full list','full']],@short_full), :onchange=>"reload()" %>
 	<%= select_tag :less_more, options_for_select([['less info','less'],['more info','more']],@less_more),:style=>"display:#{@short_full=='short' ? "none" : "inline"}",:onchange=>"reload()" %>
 	<%= select_tag :regress, options_for_select([['regress to mean','regress'],['raw scores','raw']],@regress),:style=>"display:#{@short_full=='short' ? "none" : "inline"}",:onchange=>"reload()" %>
+	<%= select_tag :group_id, options_for_select([['all groups',0]]+@dialog.groups.collect{|c| [c.name,c.id]},@group_id), :style=>"display:#{@short_full=='short' ? "none" : "inline"}", :onchange=>"reload()" %>	
 </p>
 
 <% if false and @regmean -%>
@@ -23,11 +24,15 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 <% if false %>chosen by all voters (<%= @data[0]['items'].length %> items, <%= @data[0]['ratings'].length %> votes)<% end %>
 
 <div>
-<% for item_id,i in @data[0]['itemsproc'] -%>
-<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
-<% break if not @all %>
+<% if @data[0]['itemsproc'].length == 0 -%>
+	no overall winner<br>
+<% else -%>	
+	<% for item_id,i in @data[0]['itemsproc'] -%>
+		<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
+		<% break if not @all %>
+	<% end -%>
+	[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @group_id > 0 ? "group_id=#{@group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result" target="_blank">see all in the forum</a>]<br>
 <% end -%>
-[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result" target="_blank">see all in the forum</a>]<br>
 <br>
 </div>
 
@@ -57,7 +62,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 				<% else -%>
 					no messages<br>
 				<% end -%>
-				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all in the forum</a>]<br>
+				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @group_id > 0 ? "group_id=#{@group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all in the forum</a>]<br>
 			<% else -%>
 				no messages<br>
 			<% end -%>
@@ -75,7 +80,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 				<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
 				<% break if not @all %>
 				<% end -%>
-				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br>
+				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @group_id > 0 ? "group_id=#{@group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all in the forum</a>]<br>
 			<% else -%>
 				<%= metamap_node_name %> posted nothing<br>
 			<% end -%>
@@ -91,7 +96,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 					<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
 					<% break if not @all %>
 				<% end -%>
-				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;rated_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br>
+				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @group_id > 0 ? "group_id=#{@group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;rated_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>" target="_blank">see all in the forum</a>]<br>
 			<% else -%>
 				<%= metamap_node_name %> rated nothing<br>
 			<% end -%>
@@ -108,7 +113,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 						<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
 						<% break if not @all %>
 					<% end -%>
-					[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>" target="_blank">see all<%= @all ? " in the forum" : "" %></a>]<br><br>
+					[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @group_id > 0 ? "group_id=#{@group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>" target="_blank">see all in the forum</a>]<br><br>
 				<% end -%>
 			<% end -%>	
 				
@@ -118,6 +123,25 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 	<br>
 	</div>
 
+<% end -%>
+
+<% if @group_id == 0 -%>
+<% for group in @dialog.groups.sort {|a,b| a.name <=> b.name} -%>
+	<% group_id = group.id %>
+	<div>
+	<h3 title="<%= metamap_node_id %>">Voice of <%= group.name %></h3>
+	<% if @data['groups'][group_id]['itemsproc'].length == 0 -%>
+		no messages<br>
+	<% else -%>	
+		<% for item_id,i in @data['groups'][group_id]['itemsproc'] -%>
+			<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <a href="/participant/<%= i['id'] %>/profile"><%= i['name'] %></a><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
+			<% break if not @all %>
+		<% end -%>
+		[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>group_id=<%= group_id %>&amp;sortby=*value*&amp;threads=root&amp;from=result" target="_blank">see all in the forum</a>]<br>
+	<% end -%>
+	<br>
+	</div>
+<% end -%>
 <% end -%>
 
 <script>
@@ -130,6 +154,7 @@ function reload() {
 	var less_more = $('#less_more').val();
 	var regress = $('#regress').val();
 	var period_id = <%= @period_id > 0 ? @period_id.to_i : 0 %>;
+	var group_id = $('#group_id').val();
 	if (short_full=='short') {
 		$('#less_more').hide();
 		$('#regress').hide();
@@ -137,6 +162,6 @@ function reload() {
 		$('#less_more').show();
 		$('#regress').show();
 	}
-	window.location.href = "?period_id=" + period_id + "&short_full=" +  short_full + '&less_more=' + less_more + '&regress=' + regress;	
+	window.location.href = "?period_id=" + period_id + "&short_full=" +  short_full + '&less_more=' + less_more + '&regress=' + regress + '&group_id=' + group_id;	
 }
 </script>

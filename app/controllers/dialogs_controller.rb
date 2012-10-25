@@ -544,6 +544,8 @@ class DialogsController < ApplicationController
     @is_admin = (dialogadmin.length > 0)
     @period_id = params[:period_id].to_i
     @period = Period.find_by_id(@period_id)
+    @group_id = (params[:group_id] || 0).to_i
+    @group = Group.find_by_id(@group_id) if @group_id > 0
     @short_full = params[:short_full] || 'short'
     @less_more = params[:less_more] || 'less'
     @regress = params[:regress] || 'regress'
@@ -555,6 +557,9 @@ class DialogsController < ApplicationController
 
     #-- Criterion, if we're limiting by period
     pwhere = (@period_id > 0) ? "items.period_id=#{@period_id}" : ""
+
+    #-- or by group
+    gwhere = (@group_id > 0) ? "items.group_id=#{@group_id}" : ""
 
     @data = {}       # The stats, by meta category, and overall
     
@@ -578,7 +583,7 @@ class DialogsController < ApplicationController
     @data[0]['avg_interest'] = 0   # Average interest rating
     @data[0]['avg_approval'] = 0   # Average approval rating
         
-    items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where("is_first_in_thread=1").includes(:participant).includes(:item_rating_summary)
+    items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").includes(:participant).includes(:item_rating_summary)
         
     for item in items
       item_id = item.id
@@ -586,7 +591,7 @@ class DialogsController < ApplicationController
       @data[0]['items'][item.id] = item
     end
 
-    ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant).includes(:item=>:item_rating_summary)
+    ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).where(gwhere).includes(:participant).includes(:item=>:item_rating_summary)
     
     item_int_uniq = {}
     item_app_uniq = {}
@@ -688,10 +693,146 @@ class DialogsController < ApplicationController
     end
     @data[0]['itemsproc'] = @data[0]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
 
-    @overall_winner_id = @data[0]['itemsproc'].first[1]['id']
-    @overall_winner = @data[0]['items'][@overall_winner_id]
+    if @data[0]['itemsproc'].length > 0
+      @overall_winner_id = @data[0]['itemsproc'].first[1]['id']
+      @overall_winner = @data[0]['items'][@overall_winner_id]
+      logger.info("dialogs#result Overall winner: #{@overall_winner_id}") 
+    else
+      @overall_winner_id = nil
+      @overall_winner = nil
+      logger.info("dialogs#result No Overall winner") 
+    end
 
-    logger.info("dialogs#result Overall winner: #{@overall_winner_id}") 
+    if @group_id == 0
+      #-- Stats by group
+      @data['groups'] = {}
+      for group in @dialog.groups
+        group_id = group.id     
+        @data['groups'][group_id] = {}
+        @data['groups'][group_id]['name'] = 'Group:' + group.name
+        @data['groups'][group_id]['items'] = {}     # All items posted by that group
+        @data['groups'][group_id]['itemsproc'] = {}     # All items posted by that group
+        @data['groups'][group_id]['ratings'] = {}     # All the ratings by that group
+        @data['groups'][group_id]['num_int_items'] = 0   # Number of unique items with interest ratings
+        @data['groups'][group_id]['num_app_items'] = 0   # Number of unique items with approval ratings
+        @data['groups'][group_id]['num_interest'] = 0   # Number of interest votes
+        @data['groups'][group_id]['num_approval'] = 0   # Number of approval votes
+        @data['groups'][group_id]['tot_interest'] = 0   # Total interest
+        @data['groups'][group_id]['tot_approval'] = 0   # Total approval
+        @data['groups'][group_id]['avg_votes_int'] = 0   # Average number of interest votes
+        @data['groups'][group_id]['avg_votes_app'] = 0   # Average number of approval votes
+        @data['groups'][group_id]['avg_interest'] = 0   # Average interest rating
+        @data['groups'][group_id]['avg_approval'] = 0   # Average approval rating
+
+        items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where(:group_id=>group_id).where("is_first_in_thread=1").includes(:participant).includes(:item_rating_summary)
+
+        for item in items
+          item_id = item.id
+          poster_id = item.posted_by
+          @data['groups'][group_id]['items'][item.id] = item
+        end
+
+        ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).where(:group_id=>group_id).includes(:participant).includes(:item=>:item_rating_summary)
+
+        item_int_uniq = {}
+        item_app_uniq = {}
+        for rating in ratings
+          rating_id = rating.id
+          item_id = rating.item_id
+          rater_id = rating.participant_id
+          @data['groups'][group_id]['ratings'][rating.id] = rating
+          @data['groups'][group_id]['num_interest'] += 1 if rating.interest
+          @data['groups'][group_id]['num_approval'] += 1 if rating.approval
+          @data['groups'][group_id]['tot_interest'] += rating.interest.to_i if rating.interest
+         @data['groups'][group_id]['tot_approval'] += rating.approval.to_i if rating.approval
+          item_int_uniq[item_id] = true if rating.interest
+          item_app_uniq[item_id] = true if rating.approval
+        end
+        @data['groups'][group_id]['num_int_items'] = item_int_uniq.length
+        @data['groups'][group_id]['num_app_items'] = item_app_uniq.length
+
+        @data['groups'][group_id]['avg_votes_int'] = ( @data['groups'][group_id]['num_interest'] / @data['groups'][group_id]['num_int_items'] ).to_i if @data['groups'][group_id]['num_int_items'] > 0
+        @data['groups'][group_id]['avg_votes_app'] = ( @data['groups'][group_id]['num_approval'] / @data['groups'][group_id]['num_app_items'] ).to_i if @data['groups'][group_id]['num_app_items'] > 0
+        @data['groups'][group_id]['avg_votes_int'] = 20 if @data['groups'][group_id]['avg_votes_int'] > 20
+        @data['groups'][group_id]['avg_votes_app'] = 20 if @data['groups'][group_id]['avg_votes_app'] > 20
+        @data['groups'][group_id]['avg_interest'] = 1.0 * @data['groups'][group_id]['tot_interest'] / @data['groups'][group_id]['num_interest'] if @data['groups'][group_id]['num_interest'] > 0
+        @data['groups'][group_id]['avg_approval'] = 1.0 * @data['groups'][group_id]['tot_approval'] / @data['groups'][group_id]['num_approval'] if @data['groups'][group_id]['num_approval'] > 0
+
+        @avg_votes_int = @data['groups'][group_id]['avg_votes_int']
+        @avg_votes_app = @data['groups'][group_id]['avg_votes_app']
+        @avg_interest = @data['groups'][group_id]['avg_interest']
+        @avg_approval = @data['groups'][group_id]['avg_approval']
+
+        @data['groups'][group_id]['items'].each do |item_id,item|
+          iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0}
+          @data['groups'][group_id]['ratings'].each do |rating_id,rating|
+            if rating.item_id == item.id
+              iproc['votes'] += 1
+              if rating.interest
+                iproc['num_interest'] += 1
+                iproc['tot_interest'] += rating.interest.to_i
+                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+                case rating.interest.to_i
+                when 0
+                  iproc['int_0_count'] += 1
+                when 1
+                  iproc['int_1_count'] += 1
+                when 2
+                  iproc['int_2_count'] += 1
+                when 3
+                  iproc['int_3_count'] += 1
+                when 4
+                  iproc['int_4_count'] += 1
+                end  
+              end
+              if rating.approval
+                iproc['num_approval'] += 1
+                iproc['tot_approval'] += rating.approval.to_i
+                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+                case rating.approval.to_i
+                when -3
+                  iproc['app_n3_count'] +=1   
+                when -2
+                  iproc['app_n2_count'] +=1   
+                when -1
+                  iproc['app_n1_count'] +=1   
+                when 0
+                  iproc['app_0_count'] +=1   
+                when 1
+                  iproc['app_p1_count'] +=1   
+                when 2
+                  iproc['app_p2_count'] +=1   
+                when 3
+                  iproc['app_p3_count'] +=1   
+                end  
+              end
+              iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+            end
+          end
+          iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
+          @data['groups'][group_id]['itemsproc'][item_id] = iproc
+        end   
+        if @regmean
+          #-- Go through the items again and do a regression to the mean
+          @data['groups'][group_id]['items'].each do |item_id,item|
+            iproc = @data['groups'][group_id]['itemsproc'][item_id]
+            if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
+              iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
+              iproc['num_interest'] = @avg_votes_int
+              iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+            end  
+            if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
+              iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
+              iproc['num_approval'] = @avg_votes_app
+              iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+            end  
+            iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+            @data['groups'][group_id]['itemsproc'][item_id] = iproc
+          end
+        end
+        @data['groups'][group_id]['itemsproc'] = @data['groups'][group_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
+      end  #-- groups
+    end #-- If no specific group is selected
 
     #-- And now we'll look at meta categories    
     
@@ -723,10 +864,10 @@ class DialogsController < ApplicationController
       @data[metamap.id]['ratings'] = {}     # Keep track of the ratings of items in that meta cat
 
       #-- Everything posted, with metanode info
-      items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where("is_first_in_thread=1").includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
       
       #-- Everything rated, with metanode info
-      ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      ratings = Rating.where("ratings.dialog_id=#{@dialog_id}").where(pwhere).where(gwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
       
       #-- Going through everything posted, group by meta node of poster
       for item in items
