@@ -13,6 +13,7 @@ function toggleoptions() {
 var curid = 0;
 var replyingid = 0;
 var had_default = false;
+var last_sort = '';
 function list(whatchanged) {
   whatchanged = (typeof whatchanged === "undefined") ? "" : whatchanged;
   $('#itemlist').css('opacity','0.5');
@@ -50,9 +51,12 @@ function list(whatchanged) {
 	    }
 	}
 	if ((whatchanged=='sortby' || whatchanged=='') && $('#sortby').val()=='default') {	
-	    // If the Focus Special sort is selected, make sure we're showing root only
+	    // If the Decision Special sort is selected, make sure we're showing root only
 	    $('#threads').val('root');
-    } 
+    } else if (whatchanged=='sortby' && last_sort && last_sort == 'default' && $('#sortby').val()!='default') {
+        // Moving away from Decision Special. Change threads to Roots+Replies
+        $('#threads').val('flat');
+    }
     if (whatchanged=='threads' && $('#threads').val()!='root' && $('#sortby').val()=='default') {
         // If we change threads to anything other than roots only, make sure we're not in focus special
         $('#sortby').val('items.id desc');

@@ -109,7 +109,7 @@
 	
 	<div class="iteminfo" id="iteminfo_<%= item.id %>">
 		<div class="iteminfotxt">
-		<% if @from.to_s == 'forum' or @from.to_s != 'wall' -%>	
+		<% if @from.to_s == 'individual' || @from.to_s == 'perma' -%>	
 		by 
 		<% if item.dialog and item.dialog.current_period.to_i > 0 and item.period_id==item.dialog.current_period and not item.dialog.settings_with_period["names_visible_voting"] -%>
 		[name withheld during decision period]

@@ -435,7 +435,7 @@ class ItemsController < ApplicationController
   
   def view
     #-- Show an individual post
-    @from = params[:from] || ''
+    @from = params[:from] || 'individual'
     @item_id = params[:id]
     @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary]).find_by_id(@item_id)
 
@@ -445,7 +445,7 @@ class ItemsController < ApplicationController
       @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
       @is_member = @group_participant ? true : false
       @is_moderator = @group_participant and @group_participant.moderator
-      @from = "group"
+      #@from = "group"
     end
 
     @dialog_id = @item.dialog_id
@@ -457,7 +457,7 @@ class ItemsController < ApplicationController
       dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
       @is_admin = (dialogadmin.length > 0)
       @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
-      @from = "dialog"
+      #@from = "dialog"
     end
 
     update_last_url
