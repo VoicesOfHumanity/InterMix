@@ -6,12 +6,19 @@
 <p>[no logo]</p>
 <% end -%>
 
+<% if false -%>
 <p><b>Name:</b> <%= @dialog.name %></p>
 
 <p><b>Prefix:</b> <%= @dialog.shortname %></p>
 
-<p><b>Description:</b> <%=raw @dialog.description %></p>
+<p><b>Description:</b> 
+<% end -%>
 
+<div>
+<%=raw @dialog.description %>
+</div>
+
+<% if false -%>
 <p><b>Created:</b> <%= @dialog.created_at.strftime("%m/%d/%Y") %></p>
 
 <p><b>Owner:</b> <%= @dialog.creator.name if @dialog.creator %></p>
@@ -30,8 +37,9 @@
 <% @dialog.metamaps.each do |metamap_id,metamap_name| -%>
 <%= metamap_id %>:<%= metamap_name %><br/>
 <% end -%>
+<% end -%>
 
-<p><b>Current Focus Period:</b> <%= @current_period ? @current_period.name : "none" %></p>
+<p><b>Current Decision Period:</b> <%= @current_period ? @current_period.name : "none" %></p>
 
 <p><b>Participating Groups:</b>
 <% if @dialog.groups.length == 0 -%>
