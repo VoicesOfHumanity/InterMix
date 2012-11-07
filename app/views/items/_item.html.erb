@@ -121,7 +121,7 @@
 			<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>
 			<% end -%>
 		<% end -%>
-		<% if @show_meta and item.participant and item.participant.metamap_node_participants and ((item.dialog and @from.to_s == 'dialog' and item.period and item.period_id != item.dialog.current_period) or not item.period or not item.is_first_in_thread) -%>
+		<% if @show_meta and item.participant and item.participant.metamap_node_participants and ((item.dialog and @from.to_s == 'dialog' and item.period and item.period_id != item.dialog.current_period) or not item.period or not item.is_first_in_thread or @from.to_s != 'dialog') -%>
 		  (<%= item.participant.metamap_node_participants.collect{|mnp| mnp.metamap_node.name}.join('|') %>)
 		<% end -%>
 		<%= link_to_function 'edit', "edititem(#{item.id})" if item.posted_by == current_participant.id and not item.edit_locked %>
