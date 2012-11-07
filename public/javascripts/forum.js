@@ -56,6 +56,9 @@ function list(whatchanged) {
     } else if (whatchanged=='sortby' && last_sort && last_sort == 'default' && $('#sortby').val()!='default') {
         // Moving away from Decision Special. Change threads to Roots+Replies
         $('#threads').val('flat');
+    } else if (whatchanged=='period_id' && $('#period_id').val()>0) {
+        // If we selected a period the sort would no longer be default. Change threads to Roots+Replies
+        $('#threads').val('flat');
     }
     if (whatchanged=='threads' && $('#threads').val()!='root' && $('#sortby').val()=='default') {
         // If we change threads to anything other than roots only, make sure we're not in focus special
