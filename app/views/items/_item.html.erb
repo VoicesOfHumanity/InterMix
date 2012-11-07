@@ -109,20 +109,20 @@
 	
 	<div class="iteminfo" id="iteminfo_<%= item.id %>">
 		<div class="iteminfotxt">
-		<% if @from.to_s == 'individual' || @from.to_s == 'perma' -%>	
-		by 
-		<% if item.dialog and item.dialog.current_period.to_i > 0 and item.period_id==item.dialog.current_period and not item.dialog.settings_with_period["names_visible_voting"] -%>
-		[name withheld during decision period]
-		<% elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"] -%>
-		[name withheld for this discussion]
-		<% elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"] -%>
-		<%= item.participant ? item.participant.name : item.posted_by %>
-		<% else -%>
-		<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>
-		<% end -%>
-			<% if @show_meta and item.participant and item.participant.metamap_node_participants -%>
-			  (<%= item.participant.metamap_node_participants.collect{|mnp| mnp.metamap_node.name}.join('|') %>)
+			by 
+		<% if @from.to_s == 'individual' or @from.to_s != 'dialog' or not item.is_first_in_thread -%>	
+			<% if item.dialog and item.dialog.current_period.to_i > 0 and item.period_id==item.dialog.current_period and not item.dialog.settings_with_period["names_visible_voting"] and item.is_first_in_thread -%>
+			[name withheld during decision period]
+			<% elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"] and item.is_first_in_thread -%>
+			[name withheld for this discussion]
+			<% elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"] -%>
+			<%= item.participant ? item.participant.name : item.posted_by %>
+			<% else -%>
+			<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>
 			<% end -%>
+		<% end -%>
+		<% if @show_meta and item.participant and item.participant.metamap_node_participants and ((item.dialog and @from.to_s == 'dialog' and item.period and item.period_id != item.dialog.current_period) or not item.period or not item.is_first_in_thread) -%>
+		  (<%= item.participant.metamap_node_participants.collect{|mnp| mnp.metamap_node.name}.join('|') %>)
 		<% end -%>
 		<%= link_to_function 'edit', "edititem(#{item.id})" if item.posted_by == current_participant.id and not item.edit_locked %>
 		<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
