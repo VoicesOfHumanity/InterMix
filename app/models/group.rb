@@ -3,6 +3,8 @@ class Group < ActiveRecord::Base
   has_many :participants, :through => :group_participants
   has_many :dialog_groups
   has_many :dialogs, :through => :dialog_groups
+  has_many :group_metamaps
+  has_many :metamaps, :through => :group_metamaps
   #has_and_belongs_to_many :participants, :join_table => :group_participants
   has_many :items
   has_many :ratings
@@ -28,7 +30,11 @@ class Group < ActiveRecord::Base
     dialogsin.uniq 
   end
 
-  def metamaps
+  def metamaps_own
+    metamaps
+  end  
+    
+  def metamaps_all
     #-- Figure out what metamaps apply to this group, based on dialogs it is in
     #-- [[2, "Nationality"], [3, "Gender"]]
     dialogsin = dialogs_in

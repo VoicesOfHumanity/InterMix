@@ -1,0 +1,21 @@
+<h3 style="text-align:center">{{ group.name }}</h3>
+
+<p style="text-align:center"><img src="http://intermix.cr8.com/images/custom/unasflogo.jpg"></p>
+
+<form action="/front/groupjoin" method="post" enctype="multipart/form-data">
+<input type="hidden" name="group_id" value="{{ group.id }}">	
+<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">		
+{% for m in meta %}
+<tr><td>{{ m.name }}*</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}">{{ node.name }}</option>{% endfor %}</select></td>
+{% endfor %}
+<tr><td>Your Name*</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>	
+<tr><td>E-mail*</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>	
+</table>
+<input type="submit" value="Send!">	
+</form>
+
+<p>A confirmation email will be sent. Be sure to respond to that email.</p>
+
+<p>If you have questions, please contact the administrator, Roger Eaton, at <a href="mailto:rogerweaton@gmail.com">rogerweaton@gmail.com</a>.</p>
+
+</div>

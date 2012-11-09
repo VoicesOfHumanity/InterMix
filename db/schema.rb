@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121022195434) do
+ActiveRecord::Schema.define(:version => 20121109174931) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -201,6 +201,14 @@ ActiveRecord::Schema.define(:version => 20121022195434) do
   add_index "geocountries", ["iso"], :name => "iso"
   add_index "geocountries", ["name"], :name => "name"
 
+  create_table "group_metamaps", :force => true do |t|
+    t.integer  "group_id"
+    t.integer  "metamap_id"
+    t.integer  "sortorder"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "group_participants", :force => true do |t|
     t.integer  "group_id"
     t.integer  "participant_id"
@@ -261,6 +269,9 @@ ActiveRecord::Schema.define(:version => 20121022195434) do
     t.text     "member_template"
     t.text     "invite_template"
     t.text     "import_template"
+    t.text     "signup_template"
+    t.text     "confirm_template"
+    t.text     "confirm_email_template"
     t.boolean  "alt_logins",               :default => true
   end
 
@@ -284,6 +295,11 @@ ActiveRecord::Schema.define(:version => 20121022195434) do
   end
 
   add_index "hubs", ["name"], :name => "index_hubs_on_name"
+
+  create_table "item_deliveries", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "item_flags", :force => true do |t|
     t.integer  "item_id"
@@ -508,7 +524,7 @@ ActiveRecord::Schema.define(:version => 20121022195434) do
     t.string   "fb_uid"
     t.string   "fb_link"
     t.string   "visibility",                                                           :default => "visible_to_all"
-    t.string   "wall_visibility",                                                      :default => "visible_to_all"
+    t.string   "wall_visibility",                                                      :default => "all"
     t.boolean  "item_to_forum",                                                        :default => true
     t.boolean  "twitter_post",                                                         :default => true
     t.string   "twitter_username"
@@ -617,7 +633,7 @@ ActiveRecord::Schema.define(:version => 20121022195434) do
   end
 
   add_index "taggings", ["tag_id"], :name => "index_taggings_on_tag_id"
-  add_index "taggings", ["taggable_id", "taggable_type", "context"], :name => "index_taggings_on_taggable_id_and_taggable_type_and_context"
+  add_index "taggings", ["taggable_id", "taggable_type", "context"], :name => "index_taggings_on_taggable_id_and_taggable_type_and_context", :length => {"taggable_id"=>nil, "taggable_type"=>15, "context"=>20}
 
   create_table "tags", :force => true do |t|
     t.string "name"

@@ -186,6 +186,11 @@ Intermix::Application.routes.draw do
   match 'front/dialogjoinform', :controller=>:front, :action=>:dialogjoinform
   match 'front/dialogjoin', :controller=>:front, :action=>:dialogjoin
   match 'djoin', :controller=>:front, :action=>:dialogjoinform
+  match 'front/group', :controller=>:front, :action=>:group
+  match 'front/groupjoinform', :controller=>:front, :action=>:groupjoinform
+  match 'front/groupjoin', :controller=>:front, :action=>:groupjoin
+  match 'gjoin', :controller=>:front, :action=>:groupjoinform
+  
   match 'front/confirm', :controller=>:front, :action=>:confirm
   match 'autologin', :controller=>:front, :action=>:autologin
   match 'front/notconfirmed', :controller=>:front, :action=>:notconfirmed

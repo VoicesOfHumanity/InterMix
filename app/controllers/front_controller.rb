@@ -243,7 +243,7 @@ class FrontController < ApplicationController
   end
   
   def dialogjoin
-    #-- What the join form posts to
+    #-- What the discussion join form posts to
     @dialog_id = params[:dialog_id].to_i
     @group_id = params[:group_id].to_i
     logger.info("Front#dialogjoin dialog:#{@dialog_id} group:#{@group_id}")
@@ -500,6 +500,215 @@ class FrontController < ApplicationController
     render :action=>:confirm, :layout=>'front'
   end  
     
+  def groupjoinform
+    #-- Form for submitting to join a group
+    @group_id,@dialog_id = get_group_dialog_from_subdomain    
+    @dialog_id = params[:dialog_id].to_i if not @dialog_id
+    @dialog_id = params[:id].to_i if not @dialog_id or @dialog_id == 0
+    @group_id = params[:group_id].to_i if not @group_id or @group_id == 0
+    @dialog = Dialog.find_by_id(@dialog_id)
+    if @dialog and @group_id == 0
+      @group_id = @dialog.group_id.to_i
+    end 
+    @group = Group.find_by_id(@group_id)
+        
+    if @dialog and current_participant and participant_signed_in?
+      redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
+      return
+    elsif @group and current_participant and participant_signed_in?
+      redirect_to "http://#{@group.shortname}.#{ROOTDOMAIN}/"
+      return
+    end
+    
+    prepare_gjoin
+    
+    render :action=>:groupjoinform, :layout=>'blank'
+  end  
+    
+  def groupjoin
+    #-- What the group join form posts to
+    @group_id = params[:group_id].to_i
+    logger.info("Front#groupjoin group:#{@group_id}")
+    
+    @group = Group.find_by_id(@group_id)
+
+    @name = params[:name].to_s
+    @email = params[:email].to_s
+    tempfilepath = ''
+    
+    flash[:notice] = ''
+    flash[:alert] = '' 
+    if @group_id == 0
+      flash[:alert] += "Sorry, there's no indication of what group this would be added to<br>"
+    elsif @group_id > 0
+      @group = Group.find_by_id(@group_id)
+      if not @group
+        flash[:alert] += "Sorry, this group seems to no longer exist<br>"
+      elsif @group.openness != 'open'
+        flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
+      end    
+    end 
+    if flash[:alert] != ''
+      prepare_gjoin
+      render :action=>:groupjoinform, :layout=>'blank'
+      return
+    end  
+
+    if @name == ''
+      flash[:alert] += "What's your name?<br>"
+    end  
+    if @email == ''
+      flash[:alert] += "Please type in your e-mail address as well<br>"
+    elsif not @email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
+      flash[:alert] += "That doesn't look like a valid e-mail address<br>"
+    end  
+    @metamap_vals = {}
+    #if @group.required_meta
+      #-- Check any metamap categories, if they're required
+      metamaps = @group.metamaps_own
+      for metamap in metamaps
+        metamap_id = metamap[0]
+        metamap_name = metamap[1]
+        val = params["meta_#{metamap_id}"].to_i
+        if val == 0
+          flash[:alert] += "Please choose your #{metamap_name}<br>"
+        end
+        @metamap_vals[metamap_id] = val
+      end
+    #end
+    if flash[:alert] != ''
+      prepare_gjoin
+      render :action=>:groupjoinform, :layout=>'blank'
+      return
+    end  
+
+    narr = @name.split(' ')
+    last_name = narr[narr.length-1]
+    first_name = narr[0,narr.length-1].join(' ')
+    password = '???'    
+        
+    @participant = Participant.find_by_email(@email) 
+    previous_messages = 0
+    if @participant 
+      flash[:notice] = "You seem to already have an account. Please log into that.<br>"
+    else
+      #-- Create a password
+      password = ''
+      3.times do
+        conso = 'bcdfghkmnprstvw'[rand(15)]
+        vowel = 'aeiouy'[rand(6)]
+        password += conso +  vowel
+        password += (1+rand(9)).to_s if rand(3) == 2
+      end
+      @participant = Participant.new
+      @participant.first_name = first_name
+      @participant.last_name = last_name
+      @participant.email = @email
+      @participant.password = password
+      #@participant.country_code = 'US' if state.to_s != ''
+      @participant.forum_email = 'never'
+      @participant.group_email = 'never'
+      @participant.private_email = 'instant'  
+      @participant.status = 'unconfirmed'
+      @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+    end
+    
+    @participant.groups << @group if not @participant.groups.include?(@group)
+    
+    if not @participant.save!  
+      flash[:alert] = "Sorry, there's some kind of database problem<br>"
+      render :action=>:groupjoinform, :layout=>'blank'
+      return
+    end  
+
+    #-- Store their metamap category
+    metamaps = @group.metamaps_own
+    for metamap in metamaps
+      metamap_id = metamap[0]
+      val = params["meta_#{metamap_id}"].to_i
+      if val > 0
+        mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>@participant.id).first
+        if mnp
+          mnp.metamap_node_id = val
+          mnp.save
+        else
+          MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
+        end    
+      end
+    end
+
+    if flash[:alert] != ''
+      render :action=>:groupjoinform, :layout=>'blank'
+      return        
+    end
+    
+    # Pick an appropriate logo
+    if @group.logo.exists?
+      @logo = "http://#{BASEDOMAIN}#{@group.logo.url}"
+    else
+      @logo = nil
+    end
+    logger.info("front#groupjoin @logo set to #{@logo}")
+
+    if @group.shortname.to_s != ""
+      dom = "#{@group.shortname}.#{ROOTDOMAIN}"
+    else
+      dom = BASEDOMAIN
+    end
+    
+    #-- Send an e-mail to the member
+    recipient = @participant
+    cdata = {}
+    cdata['item'] = @item
+    cdata['recipient'] = @participant     
+    cdata['participant'] = @participant 
+    cdata['group'] = @group if @group
+    cdata['logo'] = @logo if @logo
+    cdata['password'] = password
+    cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}"
+    
+    if @group.confirm_email_template.to_s != ''
+      template = Liquid::Template.parse(@group.confirm_email_template)
+      html_content = template.render(cdata)
+    else    
+      html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
+      html_content += "password: #{password}<br/>" if password != '???'
+      
+      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
+      
+      html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
+      html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
+      html_content += "</p>"
+    end
+  
+    email = @participant.email
+    msubject = "[#{@group.shortname}] Signup"
+    email = SystemMailer.generic(SYSTEM_SENDER, @participant.email_address_with_name, msubject, html_content, cdata)
+
+    begin
+      logger.info("gront#groupjoin delivering email to #{recipient.id}:#{recipient.name}")
+      email.deliver
+      message_id = email.message_id
+    rescue
+      logger.info("front#groupjoin problem delivering email to #{recipient.id}:#{recipient.name}")
+    end
+
+    if @group.confirm_template.to_s != ''
+      template = Liquid::Template.parse(@group.confirm_template)
+      @content = template.render(cdata)
+    else
+      @content = ""
+      @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
+      @content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
+    end
+    
+    cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
+    
+    render :action=>:confirm, :layout=>'front'
+  end  
+    
   def confirm
     #-- Confirmation link in e-mail, when signing up
     @participant = Participant.find_by_confirmation_token(params[:code])
@@ -595,6 +804,36 @@ class FrontController < ApplicationController
       else
         @content = render_to_string(:partial=>'dialogjoinform_default',:layout=>false)
       end
+    end
+  end
+  
+  def prepare_gjoin
+    @content = "<p>No group was recognized</p>"
+    meta = []
+    metamaps = @group.metamaps
+    for metamap in metamaps
+      #m = OpenStruct.new
+      m = {}
+      m['id'] = metamap[0]
+      m['name'] = metamap[1]
+      m['val'] = params["meta_#{metamap[0]}"].to_i
+      m['nodes'] = [{'id'=>0,'name'=>'* choose *'}]
+      MetamapNode.where(:metamap_id=>m['id']).order(:sortorder,:name).each do |node|
+        #n = OpenStruct.new
+        n = {}
+        n['id'] = node.id
+        n['name'] = node.name
+        m['nodes'] << n
+      end
+      meta << m
+    end
+        
+    cdata = {'group'=>@group, 'name'=>@name, 'email'=>@email, 'cookies'=>cookies}
+    if @group and @group.signup_template.to_s != ''
+      template = Liquid::Template.parse(@group.signup_template)
+      @content = template.render(cdata)
+    else
+      @content = render_to_string(:partial=>'groupjoinform_default',:layout=>false)
     end
   end
     
