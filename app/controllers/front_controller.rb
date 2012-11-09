@@ -809,7 +809,7 @@ class FrontController < ApplicationController
   
   def prepare_gjoin
     @content = "<p>No group was recognized</p>"
-    meta = []
+    @meta = []
     metamaps = @group.metamaps
     for metamap in metamaps
       #m = OpenStruct.new
@@ -825,10 +825,10 @@ class FrontController < ApplicationController
         n['name'] = node.name
         m['nodes'] << n
       end
-      meta << m
+      @meta << m
     end
         
-    cdata = {'group'=>@group, 'name'=>@name, 'email'=>@email, 'cookies'=>cookies}
+    cdata = {'group'=>@group, 'name'=>@name, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies}
     if @group and @group.signup_template.to_s != ''
       template = Liquid::Template.parse(@group.signup_template)
       @content = template.render(cdata)
