@@ -40,8 +40,8 @@
 
 				<% if false -%>
 				<li class="menu full"><a  class="<%= 'selected' if @section=='forum' %>" href="/forum">Forum</a></li>
-				<li class="menu full"><a  class="<%= 'selected' if @section=='photos' %>" href="/photos">Photos</a></li>
 				<% end -%>
+				<li class="menu full"><a  class="<%= 'selected' if @section=='photos' %>" href="/photos">Photos</a></li>
 				
 				<li class="menu"><a class="<%= 'selected' if @section=='groups' %>" href="/groups">Groups</a></li>
 				<% if not showingfull and session[:dialog_id].to_i > 0 -%>

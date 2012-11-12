@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121109174931) do
+ActiveRecord::Schema.define(:version => 20121110012916) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -209,6 +209,9 @@ ActiveRecord::Schema.define(:version => 20121109174931) do
     t.datetime "updated_at", :null => false
   end
 
+  add_index "group_metamaps", ["group_id", "metamap_id"], :name => "index_group_metamaps_on_dialog_id_and_metamap_id"
+  add_index "group_metamaps", ["metamap_id", "group_id"], :name => "index_group_metamaps_on_metamap_id_and_group_id"
+
   create_table "group_participants", :force => true do |t|
     t.integer  "group_id"
     t.integer  "participant_id"
@@ -273,6 +276,7 @@ ActiveRecord::Schema.define(:version => 20121109174931) do
     t.text     "confirm_template"
     t.text     "confirm_email_template"
     t.boolean  "alt_logins",               :default => true
+    t.boolean  "required_meta",            :default => true
   end
 
   add_index "groups", ["name"], :name => "index_groups_on_name"

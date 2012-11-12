@@ -108,6 +108,11 @@ class DialogsController < ApplicationController
     @is_admin = true
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all   
     @dialog = Dialog.find_by_id(@dialog_id)
+    @metamaps = Metamap.all
+    @has_metamaps = {}
+    @dialog.metamaps.each do |metamap_id,name|
+      @has_metamaps[metamap_id] = true
+    end
     update_prefix
   end  
 
@@ -138,6 +143,15 @@ class DialogsController < ApplicationController
     @is_admin = (dialogadmin.length > 0)
     respond_to do |format|
       if dvalidate and @dialog.update_attributes(params[:dialog])
+        for metamap in Metamap.all
+          dialog_metamap = DialogMetamap.where(:dialog_id=>@dialog.id,:metamap_id=>metamap.id).first
+          if params[:metamap][metamap.id.to_s] and not dialog_metamap
+            dialog_metamap = DialogMetamap.new(:dialog_id=>@dialog.id,:metamap_id=>metamap.id)
+            dialog_metamap.save!
+          elsif not params[:metamap][metamap.id.to_s] and dialog_metamap
+            dialog_metamap.destroy
+          end  
+        end
         format.html { redirect_to :action=>:view, :notice => 'Discussion was successfully updated.' }
         format.xml  { head :ok }
       else

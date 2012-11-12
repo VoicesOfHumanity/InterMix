@@ -11,7 +11,17 @@
 		<%= f.input :openness, :label => "Membership", :as => :select, :collection =>GROUP_OPENNESS %>
 		<%= f.input :visibility, :as=>:select, :collection =>GROUP_VISIBILITY %>
 		<%= f.input :has_mail_list, :label => "Has mailing list" %>
-		<%= f.input :logo, :as=>:file %>		
+		<%= f.input :logo, :as=>:file %>			
+		<li class="select optional" id="group_has_mail_list_input">
+		<label>Meta Categories</label>
+		<div style="float:left">
+		<% for metamap in @metamaps %>
+			<% checked = @has_metamaps[metamap.id] ? "checked" : "" %>
+			<input <%= checked %> id="metamap_<%= metamap.id %>" name="metamap[<%= metamap.id %>]" type="checkbox" value="1"> <%= metamap.name %><br>		
+		<% end %>
+		</div>
+		</li>
+		<%= f.input :required_meta, :label=>"Meta choices required at signup?", :as=>:boolean %>		
 		<%= f.input :front_template, :label => "Front Page template" %>
 		<%= f.input :member_template, :label => "Home Page template" %>
 		<%= f.input :invite_template, :label => "Invitation e-mail template" %>

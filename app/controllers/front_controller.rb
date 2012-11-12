@@ -563,7 +563,7 @@ class FrontController < ApplicationController
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
     @metamap_vals = {}
-    #if @group.required_meta
+    if @group.required_meta
       #-- Check any metamap categories, if they're required
       metamaps = @group.metamaps_own
       for metamap in metamaps
@@ -575,7 +575,7 @@ class FrontController < ApplicationController
         end
         @metamap_vals[metamap_id] = val
       end
-    #end
+    end
     if flash[:alert] != ''
       prepare_gjoin
       render :action=>:groupjoinform, :layout=>'blank'

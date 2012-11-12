@@ -73,14 +73,34 @@ class GroupsController < ApplicationController
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
     @is_moderator = (@group_participant and @group_participant.moderator)
+    @metamaps = Metamap.all
+    @has_metamaps = {}
+    for metamap in @group.metamaps
+      @has_metamaps[metamap.id] = true
+    end
     render :action=>'edit'
     update_prefix
   end  
   
   def update
     @group = Group.find(params[:id])
+    #logger.info("groups#update metamap parameter: #{params[:metamap]}")
     respond_to do |format|
       if gvalidate and @group.update_attributes(params[:group])
+        for metamap in Metamap.all
+          group_metamap = GroupMetamap.where(:group_id=>@group.id,:metamap_id=>metamap.id).first
+          #logger.info("groups#update metamap:#{metamap.id} param:#{params[:metamap][metamap.id.to_s]} group_metamap:#{group_metamap}")
+          if params[:metamap][metamap.id.to_s] and not group_metamap
+            #logger.info("groups#update metamap:#{metamap.id} being set")
+            group_metamap = GroupMetamap.new(:group_id=>@group.id,:metamap_id=>metamap.id)
+            group_metamap.save!
+          elsif not params[:metamap][metamap.id.to_s] and group_metamap
+            #logger.info("groups#update metamap:#{metamap.id} being deleted")
+            group_metamap.destroy
+          else
+            #logger.info("groups#update metamap:#{metamap.id} no change")
+          end  
+        end
         format.html { redirect_to :action=>:view, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else

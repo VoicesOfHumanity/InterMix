@@ -18,6 +18,15 @@
 		<%= f.input :confirm_template, :label => "Confirmation Page template" %>
 		<%= f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
 		<%= f.input :logo, :as=>:file %>
+		<li class="select optional" id="group_has_mail_list_input">
+		<label>Meta Categories</label>
+		<div style="float:left">
+		<% for metamap in @metamaps %>
+			<% checked = @has_metamaps[metamap.id] ? "checked" : "" %>
+			<input <%= checked %> id="metamap_<%= metamap.id %>" name="metamap[<%= metamap.id %>]" type="checkbox" value="1"> <%= metamap.name %><br>		
+		<% end %>
+		</div>
+		</li>
 		<%= f.input :alt_logins, :label=>"Allow Facebook/Twitter logins?", :as => :boolean %>
 		<%= f.input :required_meta, :label=>"Meta choices required at signup?", :as=>:boolean %>		
 		<%= f.input :required_message,:label=>"Must a message be entered to join?" ,:as=>:boolean %>
