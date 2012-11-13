@@ -21,6 +21,13 @@
   <%= f.password_field :password_confirmation %></p>
 
 	<% end -%>
+	
+	<% for metamap in @metamaps %>
+	<p><b><%= metamap.name %></b><br/>
+			<%= select_tag "meta[#{metamap.id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name'), :id=>"meta_#{metamap.id}"%>
+	</p>		
+	<% end -%>
+	
 
   <p><%= f.submit "Sign up" %></p>
 <% end %>
