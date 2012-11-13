@@ -2,6 +2,7 @@
 
 	<%= f.inputs do %>
 		<%= f.input :name, :label=>"Name in Label", :required => true %>
+		<%= f.input :global_default, :as=>:boolean, :label=>"Global default", :required => true %>
 	<% end %>
 
 <% end %>

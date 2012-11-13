@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121110012916) do
+ActiveRecord::Schema.define(:version => 20121113213724) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -458,6 +458,7 @@ ActiveRecord::Schema.define(:version => 20121110012916) do
     t.integer  "created_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "global_default", :default => false
   end
 
   add_index "metamaps", ["created_at"], :name => "index_metamaps_on_created_at"

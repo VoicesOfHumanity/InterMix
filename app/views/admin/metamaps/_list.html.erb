@@ -9,6 +9,7 @@
 		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
     <th>ID</th>
     <th>Name</th>
+		<th></th>
   </tr>
 
 <% odd_or_even = 0 %>
@@ -18,6 +19,7 @@
 		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= metamap.id %>" /></td>
 		<td><a href="#" onclick="viewrec1(<%= metamap.id %>)"><%= metamap.id %></a></td>
     <td><a href="#" onclick="viewrec1(<%= metamap.id %>)"><%= metamap.name %></a></td>
+		<td><%= "*" if metamap.global_default %></td>
   </tr>
 <% end %>
 </table>

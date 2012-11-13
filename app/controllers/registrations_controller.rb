@@ -5,7 +5,12 @@ class RegistrationsController < Devise::RegistrationsController
 
   def create
     logger.debug("Registrations#create")
+    
+    
+    
+    
     super
+    
     session[:omniauth] = nil unless @participant.new_record?
   end
   
