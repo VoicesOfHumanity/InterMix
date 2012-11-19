@@ -12,6 +12,10 @@
   <p><%= f.label :email %><br />
   <%= f.text_field :email %></p>
 
+  <p><%= f.label "group" %><br />
+  <%= select_tag :group_id,raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(Group.where(:openness=>'open').order(:name),'id','name') %>
+	</p>
+
 	<% if !@participiant or @participiant.password_required? -%>
 	
   <p><%= f.label :password %><br />
@@ -24,7 +28,7 @@
 	
 	<% for metamap in @metamaps %>
 	<p><b><%= metamap.name %></b><br/>
-			<%= select_tag "meta[#{metamap.id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name'), :id=>"meta_#{metamap.id}"%>
+			<%= select_tag "meta[#{metamap.id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id).order("sortorder,name"),'id','name'), :id=>"meta_#{metamap.id}"%>
 	</p>		
 	<% end -%>
 	
