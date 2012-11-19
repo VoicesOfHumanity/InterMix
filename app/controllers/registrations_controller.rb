@@ -11,10 +11,10 @@ class RegistrationsController < Devise::RegistrationsController
   def create
     logger.debug("Registrations#create")
     
-    
-    
-    
     super
+
+    @metamaps = Metamap.where(:global_default=>true)
+
     
     session[:omniauth] = nil unless @participant.new_record?
   end
