@@ -751,53 +751,49 @@ class FrontController < ApplicationController
     #-- General join
     
     logger.info("Front#join")
+
+    @email = params[:email].to_s
+    @first_name = params[:first_name].to_s
+    @last_name = params[:last_name].to_s
+    @password = params[:password].to_s
+    @password_confirmation = params[:password_confirmation].to_s
+    @group_id = params[:group_id].to_i
     
     #-- Do a bit of validation
     flash[:alert] = ''
-    if params[:participant][:first_name].to_s == '' and params[:participant][:last_name].to_s == ''
+    if @first_name == '' and @last_name == ''
       flash[:alert] += "Please enter your name<br>"
-    elsif params[:participant][:first_name].to_s == ''
+    elsif @first_name == ''
       flash[:alert] += "Please enter your first name<br>"
-    elsif params[:participant][:last_name].to_s == ''
+    elsif @last_name == ''
       flash[:alert] += "Please enter your last name<br>"
     end
-    if params[:participant][:email] == ''
+    if @email == ''
       flash[:alert] += "Please type in your e-mail address as well<br>"
-    elsif not params[:participant][:email] =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
+    elsif not @email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
-    @participant = Participant.find_by_email(params[:participant][:email]) 
-    previous_messages = 0
-    if @participant 
-      previous_messages = Item.where("posted_by=? and dialog_id=?",@participant.id,@dialog.id).count
-      if @dialog.max_messages > 0 and @message.length > 0 and previous_messages >= @dialog.max_messages
-        flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: http://#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
-      elsif @message.length == 0
-        flash[:notice] = "You already have an account<br>"
-      else
-        flash[:notice] = "You seem to already have an account, so we posted it to that<br>"
-      end
-    end
-    if params[:group_id].to_i == 0
+    @participant = Participant.find_by_email(@email) 
+    if @group_id == 0
       flash[:alert] += "Please choose a group to join<br>"
-    elsif params[:group_id].to_i > 0
-      @group = Group.find_by_id(params[:group_id])
+    elsif @group_id > 0
+      @group = Group.find_by_id(@group_id)
       if not @group
         flash[:alert] += "Sorry, this group seems to no longer exist<br>"
       elsif @group.openness != 'open'
         flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
       end    
     end 
-    if params[:participant][:password] == ''
+    if @password == ''
       flash[:alert] += "Please choose a password<br>"
-    elsif params[:participant][:password_confirmation] == ''
+    elsif @password_confirmation == ''
       flash[:alert] += "Please enter your password a second time, to confirm<br>"
-    elsif params[:participant][:password_confirmation] != params[:participant][:password]
+    elsif @password_confirmation != @password
       flash[:alert] += "The two passwords don't match<br>"
     end
     @metamaps = Metamap.where(:global_default=>true)
     for metamap in @metamaps
-      if params[:meta][metamap.id.to_s].to_i == 0
+      if params["meta_{metamap.id}"].to_i == 0
         flash[:alert] += "Please choose your #{metamap.name}<br>"
       end
     end   
@@ -806,14 +802,6 @@ class FrontController < ApplicationController
       render :action=>:joinform
       return
     end  
-    
-    @group_id = params[:group_id].to_i
-    @group = Group.find_by_id(@group_id)
-
-    @email = params[:email]
-    @first_name = params[:first_name]
-    @last_name = params[:last_name]
-    @password = params[:password]
         
     @participant = Participant.find_by_email(@email) 
     if @participant 
