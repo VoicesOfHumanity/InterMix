@@ -1,3 +1,4 @@
+<div style="width:700px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
 <h3 style="text-align:center"><%= @group.name %></h3>
 
 <form action="/front/groupjoin" method="post" enctype="multipart/form-data">
@@ -6,7 +7,7 @@
 <% for m in @meta %>
 	<tr><td><%= m.name %>*</td><td><select name="meta_<%= m.id %>">
 	<% for node in m.nodes %><option value="<%= node.id %>"><%= node.name %></option><% end %>
-	</select></td>
+	</select></td></tr>
 <% end %>
 <tr><td>Your Name*</td><td><input type="text" name="name" value="<%= @name %>" size="30" style="width:200px"></td></tr>	
 <tr><td>E-mail*</td><td><input type="text" name="email" value="<%= @email %>" size="30" style="width:200px"></td></tr>	

@@ -739,6 +739,195 @@ class FrontController < ApplicationController
   def notconfirmed
   end
   
+  def joinform
+    #-- General join form where one can shoose a group
+    prepare_join
+    
+    render :action=>:joinform
+    
+  end  
+  
+  def join
+    #-- General join
+    
+    logger.info("Front#join")
+    
+    #-- Do a bit of validation
+    flash[:alert] = ''
+    if params[:participant][:first_name].to_s == '' and params[:participant][:last_name].to_s == ''
+      flash[:alert] += "Please enter your name<br>"
+    elsif params[:participant][:first_name].to_s == ''
+      flash[:alert] += "Please enter your first name<br>"
+    elsif params[:participant][:last_name].to_s == ''
+      flash[:alert] += "Please enter your last name<br>"
+    end
+    if params[:participant][:email] == ''
+      flash[:alert] += "Please type in your e-mail address as well<br>"
+    elsif not params[:participant][:email] =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
+      flash[:alert] += "That doesn't look like a valid e-mail address<br>"
+    end  
+    @participant = Participant.find_by_email(params[:participant][:email]) 
+    previous_messages = 0
+    if @participant 
+      previous_messages = Item.where("posted_by=? and dialog_id=?",@participant.id,@dialog.id).count
+      if @dialog.max_messages > 0 and @message.length > 0 and previous_messages >= @dialog.max_messages
+        flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: http://#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
+      elsif @message.length == 0
+        flash[:notice] = "You already have an account<br>"
+      else
+        flash[:notice] = "You seem to already have an account, so we posted it to that<br>"
+      end
+    end
+    if params[:group_id].to_i == 0
+      flash[:alert] += "Please choose a group to join<br>"
+    elsif params[:group_id].to_i > 0
+      @group = Group.find_by_id(params[:group_id])
+      if not @group
+        flash[:alert] += "Sorry, this group seems to no longer exist<br>"
+      elsif @group.openness != 'open'
+        flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
+      end    
+    end 
+    if params[:participant][:password] == ''
+      flash[:alert] += "Please choose a password<br>"
+    elsif params[:participant][:password_confirmation] == ''
+      flash[:alert] += "Please enter your password a second time, to confirm<br>"
+    elsif params[:participant][:password_confirmation] != params[:participant][:password]
+      flash[:alert] += "The two passwords don't match<br>"
+    end
+    @metamaps = Metamap.where(:global_default=>true)
+    for metamap in @metamaps
+      if params[:meta][metamap.id.to_s].to_i == 0
+        flash[:alert] += "Please choose your #{metamap.name}<br>"
+      end
+    end   
+    if flash[:alert] != ''
+      prepare_join
+      render :action=>:joinform
+      return
+    end  
+    
+    @group_id = params[:group_id].to_i
+    @group = Group.find_by_id(@group_id)
+
+    @email = params[:email]
+    @first_name = params[:first_name]
+    @last_name = params[:last_name]
+    @password = params[:password]
+        
+    @participant = Participant.find_by_email(@email) 
+    if @participant 
+      flash[:alert] = "You seem to already have an account. Please log into that.<br>"
+    else
+      @participant = Participant.new
+      @participant.first_name = @first_name
+      @participant.last_name = @last_name
+      @participant.email = @email
+      @participant.password = @password
+      #@participant.country_code = 'US' if state.to_s != ''
+      @participant.forum_email = 'never'
+      @participant.group_email = 'never'
+      @participant.private_email = 'instant'  
+      @participant.status = 'unconfirmed'
+      @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+    end
+    
+    @participant.groups << @group if not @participant.groups.include?(@group)
+    
+    if not @participant.save!  
+      flash[:alert] = "Sorry, there's some kind of database problem<br>"
+      prepare_join
+      render :action=>:joinform
+      return
+    end  
+
+    #-- Store their metamap category
+    for metamap in @metamaps
+      val = params["meta_#{metamap.id}"].to_i
+      if val > 0
+        mnp = MetamapNodeParticipant.where(:metamap_id=>metamap.id,:participant_id=>@participant.id).first
+        if mnp
+          mnp.metamap_node_id = val
+          mnp.save
+        else
+          MetamapNodeParticipant.create(:metamap_id=>metamap.id,:metamap_node_id=>val,:participant_id=>@participant.id)
+        end    
+      end
+    end
+
+    if flash[:alert] != ''
+      prepare_join
+      render :action=>:joinform
+      return        
+    end
+    
+    # Pick an appropriate logo
+    if @group.logo.exists?
+      @logo = "http://#{BASEDOMAIN}#{@group.logo.url}"
+    else
+      @logo = nil
+    end
+
+    if @group.shortname.to_s != ""
+      dom = "#{@group.shortname}.#{ROOTDOMAIN}"
+    else
+      dom = BASEDOMAIN
+    end
+    
+    #-- Send an e-mail to the member
+    recipient = @participant
+    cdata = {}
+    cdata['item'] = @item
+    cdata['recipient'] = @participant     
+    cdata['participant'] = @participant 
+    cdata['group'] = @group if @group
+    cdata['logo'] = @logo if @logo
+    cdata['password'] = @password
+    cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}"
+    
+    if @group.confirm_email_template.to_s != ''
+      template = Liquid::Template.parse(@group.confirm_email_template)
+      html_content = template.render(cdata)
+    else    
+      html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
+      html_content += "password: #{password}<br/>" if password != '???'
+      
+      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
+      
+      html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
+      html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
+      html_content += "</p>"
+    end
+  
+    email = @participant.email
+    msubject = "[#{@group.shortname}] Signup"
+    email = SystemMailer.generic(SYSTEM_SENDER, @participant.email_address_with_name, msubject, html_content, cdata)
+
+    begin
+      logger.info("front#join delivering email to #{recipient.id}:#{recipient.name}")
+      email.deliver
+      message_id = email.message_id
+    rescue
+      logger.info("front#join problem delivering email to #{recipient.id}:#{recipient.name}")
+    end
+
+    if @group.confirm_template.to_s != ''
+      template = Liquid::Template.parse(@group.confirm_template)
+      @content = template.render(cdata)
+    else
+      @content = ""
+      @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
+      @content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
+    end
+    
+    cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
+    
+    render :action=>:confirm, :layout=>'front'   
+    
+  end
+  
   def autologin
     @participant = Participant.find_by_confirmation_token(params[:code])
     group_id,dialog_id = get_group_dialog_from_subdomain
@@ -761,6 +950,27 @@ class FrontController < ApplicationController
   end    
   
   protected
+  
+  def prepare_join
+    @meta = []
+    @metamaps = Metamap.where(:global_default=>true)
+    for metamap in @metamaps
+      #m = OpenStruct.new
+      m = {}
+      m['id'] = metamap.id
+      m['name'] = metamap.name
+      m['val'] = params["meta_#{metamap[0]}"].to_i
+      m['nodes'] = [{'id'=>0,'name'=>'* choose *'}]
+      MetamapNode.where(:metamap_id=>m['id']).order(:sortorder,:name).each do |node|
+        #n = OpenStruct.new
+        n = {}
+        n['id'] = node.id
+        n['name'] = node.name
+        m['nodes'] << n
+      end
+      @meta << m
+    end    
+  end
   
   def prepare_djoin
     @content = "<p>No discussion was recognized</p>"

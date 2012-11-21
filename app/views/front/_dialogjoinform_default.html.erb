@@ -12,7 +12,7 @@
 <tr><td>Message</td><td><textarea name="message" class="editor" cols="80" rows="6" style="width:600px;height:200px">Dear Mr. Secretary General,
 </textarea></td></tr>	
 {% for m in meta %}
-<tr><td>{{ m.name }}*</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}">{{ node.name }}</option>{% endfor %}</select></td>
+<tr><td>{{ m.name }}*</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}">{{ node.name }}</option>{% endfor %}</select></td></tr>
 {% endfor %}
 <tr><td>Your Name*</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>	
 <tr><td>E-mail*</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>	

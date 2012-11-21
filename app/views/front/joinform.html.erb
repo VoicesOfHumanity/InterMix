@@ -1,0 +1,31 @@
+<div style="width:700px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
+
+<h2>Sign up</h2>
+
+<form action="/front/join" method="post" enctype="multipart/form-data">
+
+<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">		
+<tr><td>First Name*</td><td><input type="text" name="first_name" value="<%= @first_name %>" size="30" style="width:200px"></td></tr>	
+<tr><td>Last Name*</td><td><input type="text" name="last_name" value="<%= @last_name %>" size="30" style="width:200px"></td></tr>	
+<tr><td>Password*</td><td><input type="password" name="password" value="<%= @password %>" size="30" style="width:200px"></td></tr>	
+<tr><td>Password confirmation*</td><td><input type="password" name="password_confirmation" value="" size="30" style="width:200px"></td></tr>	
+<tr><td>Group</td><td>
+<%= select_tag :group_id,raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(Group.where(:openness=>'open').order(:name),'id','name') %>
+</td></tr>
+
+<% for m in @meta %>
+	<tr><td><%= m['name'] %>*</td><td><select name="meta_<%= m['id'] %>">
+	<% for node in m['nodes'] %><option value="<%= node['id'] %>"><%= node['name'] %></option><% end %>
+	</select></td></tr>
+<% end %>
+</table>
+<p><input type="submit" value="Send!"></p>	
+</form>
+
+<p>A confirmation email will be sent. Be sure to respond to that email.</p>
+
+<p>If you have questions, please contact the administrator, Roger Eaton, at <a href="mailto:rogerweaton@gmail.com">rogerweaton@gmail.com</a>.</p>
+
+</div>
+
+
