@@ -1,7 +1,7 @@
 <%= render(:partial => 'groups/menu')%>
 
 <% if @group.logo.exists? then -%>
-<p><%= image_tag @group.logo.url(:thumb) %></p>
+<p><%= image_tag @group.logo.url %></p>
 <% else %>
 <p>[no logo]</p>
 <% end -%>

@@ -1,7 +1,7 @@
 <%= render(:partial => 'dialogs/menu')%>
 
 <% if @dialog.logo.exists? then -%>
-<p><%= image_tag @dialog.logo.url(:thumb) %></p>
+<p><%= image_tag @dialog.logo.url %></p>
 <% else %>
 <p>[no logo]</p>
 <% end -%>
