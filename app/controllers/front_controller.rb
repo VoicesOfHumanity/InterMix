@@ -720,14 +720,20 @@ class FrontController < ApplicationController
       sign_in(:participant, @participant)
       group_id,dialog_id = get_group_dialog_from_subdomain
       dialog_id = params[:dialog_id].to_i if dialog_id.to_i == 0
+      group_id = params[:group_id].to_i if group_id.to_i == 0
       @dialog = Dialog.find_by_id(dialog_id) if dialog_id > 0
+      @group = Group.find_by_id(group_id) if group_id > 0
       if @dialog
         @content += "<p>Thank you for confirming!<br><br>You are already logged in.<br><br>Click on <a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/dialogs/#{@dialog.id}/forum\">Discussion</a> on the left to see the messages.<br><br>Bookmark this link so you can come back later:<br><br><a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/\">http://#{@dialog.shortname}.#{ROOTDOMAIN}/</a>.</p>"
         session[:new_signup] = 1
         redirect_to "/dialogs/#{@dialog.id}/forum"
         return
+      elsif @dialog  
+        @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum\">http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum</a> to see the messages. You are already logged in.</p>"
+      elsif @group  
+        @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/forum\">http://#{BASEDOMAIN}/groups/#{@group.id}/forum</a> to see the messages. You are already logged in.</p>"
       else
-        @content += "<p>Thank you for confirming! You can now log in: <a href=\"http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum\">http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum</a> to see the messages. You are already logged in.</p>"
+        @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/\">http://#{BASEDOMAIN}/</a>. You are already logged in.</p>"
       end
     else
       @content += "not recognized"
@@ -793,7 +799,7 @@ class FrontController < ApplicationController
     end
     @metamaps = Metamap.where(:global_default=>true)
     for metamap in @metamaps
-      if params["meta_{metamap.id}"].to_i == 0
+      if params["meta_#{metamap.id}"].to_i == 0
         flash[:alert] += "Please choose your #{metamap.name}<br>"
       end
     end   
@@ -805,7 +811,7 @@ class FrontController < ApplicationController
         
     @participant = Participant.find_by_email(@email) 
     if @participant 
-      flash[:alert] = "You seem to already have an account. Please log into that.<br>"
+      flash[:alert] = "You seem to already have an account for #{@email}. Please log into that.<br>"
     else
       @participant = Participant.new
       @participant.first_name = @first_name
@@ -878,7 +884,7 @@ class FrontController < ApplicationController
       html_content = template.render(cdata)
     else    
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
-      html_content += "password: #{password}<br/>" if password != '???'
+      html_content += "password: #{@password}<br/>" if @password != '???'
       
       html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
       html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"

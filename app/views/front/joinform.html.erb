@@ -11,12 +11,15 @@
 <tr><td>Password*</td><td><input type="password" name="password" value="<%= @password %>" size="30" style="width:200px"></td></tr>	
 <tr><td>Password confirmation*</td><td><input type="password" name="password_confirmation" value="" size="30" style="width:200px"></td></tr>	
 <tr><td>Group</td><td>
-<%= select_tag :group_id,raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(Group.where(:openness=>'open').order(:name),'id','name') %>
+<%= select_tag :group_id,raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(Group.where(:openness=>'open').order(:name),'id','name',@group_id) %>
 </td></tr>
 
 <% for m in @meta %>
 	<tr><td><%= m['name'] %>*</td><td><select name="meta_<%= m['id'] %>">
-	<% for node in m['nodes'] %><option value="<%= node['id'] %>"><%= node['name'] %></option><% end %>
+	<% for node in m['nodes'] %>
+	<% xselect = (params["meta_#{m['id']}"].to_i==node['id']) ? " selected" : "" %>
+	<option value="<%= node['id'] %>"<%= xselect %>><%= node['name'] %></option>
+	<% end %>
 	</select></td></tr>
 <% end %>
 </table>
