@@ -567,13 +567,11 @@ class FrontController < ApplicationController
       #-- Check any metamap categories, if they're required
       metamaps = @group.metamaps_own
       for metamap in metamaps
-        metamap_id = metamap[0]
-        metamap_name = metamap[1]
-        val = params["meta_#{metamap_id}"].to_i
+        val = params["meta_#{metamap.id}"].to_i
         if val == 0
-          flash[:alert] += "Please choose your #{metamap_name}<br>"
+          flash[:alert] += "Please choose your #{metamap.name}<br>"
         end
-        @metamap_vals[metamap_id] = val
+        @metamap_vals[metamap.id] = val
       end
     end
     if flash[:alert] != ''
@@ -624,15 +622,14 @@ class FrontController < ApplicationController
     #-- Store their metamap category
     metamaps = @group.metamaps_own
     for metamap in metamaps
-      metamap_id = metamap[0]
-      val = params["meta_#{metamap_id}"].to_i
+      val = params["meta_#{metamap.id}"].to_i
       if val > 0
-        mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>@participant.id).first
+        mnp = MetamapNodeParticipant.where(:metamap_id=>metamap.id,:participant_id=>@participant.id).first
         if mnp
           mnp.metamap_node_id = val
           mnp.save
         else
-          MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
+          MetamapNodeParticipant.create(:metamap_id=>metamap.id,:metamap_node_id=>val,:participant_id=>@participant.id)
         end    
       end
     end
