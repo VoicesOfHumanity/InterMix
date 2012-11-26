@@ -1,7 +1,18 @@
 <%= semantic_form_for @message do |f| %>
 
 	<%= f.inputs do %>
+		<%= f.input :response_to_id, :as => :hidden %>
+		<% if @message.to_participant_id.to_i > 0 -%>
+		<li class="select optional" id="to_participant_id_input">
+		<label>to Contact</label>
+		<div style="float:left">
+		<%= @to_participant_name %>
+		</div>
+		</li>
+		<%= f.input :to_participant_id, :as => :hidden %>	
+		<% else -%>
 		<%= f.input :to_participant_id, :label => 'to Contact', :as => :select, :collection => @participant.idols.collect{|c| [c.name,c.id]}+[['*yourself*',current_participant.id]] %>	
+		<% end -%>
 		<% if false -%>
 		<%= f.input :to_group_id, :label => 'or Group', :as => :select, :collection => @groupsin.collect{|c| [c.group.name,c.group.id]} %>	
 		<% end -%>
@@ -11,7 +22,7 @@
 
 	<p>
 	  <input type="button" value="Cancel" onclick="newmess()" />
-	  <input type="button" value="Save" onclick="savemess()" />
+	  <input type="button" value="Send" onclick="savemess()" />
 	</p>
 
 <% end %>

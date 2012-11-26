@@ -37,7 +37,20 @@ class MessagesController < ApplicationController
   def new
     #-- New message
     @from = params[:from] || ''
+    @response_to_id = params[:response_to_id].to_i
     @message = Message.new
+    @to_participant_id = 0
+    @to_participant_name = '???'
+    if @response_to_id > 0
+      @message.response_to_id = @response_to_id
+      @oldmessage = Message.find_by_id(@response_to_id)
+      if @oldmessage
+        @message.to_participant_id = @oldmessage.from_participant_id
+        @to_participant = Participant.find_by_id(@message.to_participant_id)
+        @to_participant_name = @to_participant.name if @to_participant
+        @message.subject = "Re: " + @oldmessage.subject if @oldmessage.subject[0,3] != 'Re:'
+      end
+    end
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all      
     render :partial=>'edit', :layout=>false
@@ -53,6 +66,7 @@ class MessagesController < ApplicationController
   
   def create
     @from = params[:from] || ''
+    @response_to_id = params[:response_to_id].to_i
     if params[:message][:to_group_id].to_i > 0
       #-- A message to all members of a group who allow it
       tosend = messsent = emailsent = 0
@@ -91,7 +105,7 @@ class MessagesController < ApplicationController
           @message.sendmethod = 'email'
           @message.emailit
         end  
-        render :text=>'Message was successfully created.', :layout=>false
+        render :text=>'Message was successfully sent.', :layout=>false
       else
         logger.info("messages#create Couldn't save message")  
         render :text=>'There was a problem creating the message.', :layout=>false          
@@ -100,15 +114,8 @@ class MessagesController < ApplicationController
 
   end  
   
-  def update
-    @from = params[:from] || ''
-    @message = Message.find(params[:item][:id])
-    if @message.update_attributes(params[:item])
-      render :text=>'Message was successfully updated.', :layout=>false
-    end   
-  end  
-  
   def show
+    @inout = params[:inout]
     @message_id = params[:id]
     @message = Message.includes(:sender,:recipient,:group).find(@message_id)
     if @message.to_participant_id == current_participant.id

@@ -7,3 +7,6 @@ as a member of <%= @message.group.name %>
 Sent <%= @message.created_at.strftime("%m/%d/%Y %H:%M") %><br/>
 Subject: <%= @message.subject %><br/>
 Message: <%=raw @message.message %><br/>
+<% if @inout == 'in' -%>
+<%= link_to_function 'Reply', "replymess(#{@message.id})" %>
+<% end -%>

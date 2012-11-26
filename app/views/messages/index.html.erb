@@ -2,15 +2,19 @@
 
 <div id="messagelist"><%= render(:partial => 'list') %></div>
 <div id="messageview" style="display:none;border:1px dotted #666;padding:10px"></div>
+<div id="messageedit" style="display:none;border:1px dotted #666;padding:10px"></div>
 
 <script>
 var curid = 0;
 var curinout = 'in';
 function showinout(inout) {
-	if (showingnew) {
+	if (showingedit) {
+		$('#messageedit').hide();
+		showingedit = false;
+	}
+	if (showingview) {
 		$('#messageview').hide();
-		showingnew = false;
-		return;
+		showingedit = false;
 	}
   $('#messagelist').css('opacity','0.5');
 	curinout = inout;
@@ -24,56 +28,65 @@ function showinout(inout) {
      }
    });	
 }
-var showingnew = false;
+var showingedit = false;
+var showingview = false;
+var replying_to = 0;
 function showmess(id) {
-	if (showingnew) {
-		$('#messageview').hide();
-		showingnew = false;
-		return;
-	}
 	$("#messageview").html("Just a moment...");
   $('#messageview').show();	
   $.ajax({
     type: 'GET',
     url: '/messages/'+id,
+	  data: 'inout='+curinout,
     complete: function(t){	
       $("#messageview").html(t.responseText);
 		  $('#messageview').show();
-			showingnew = true;
+			showingview = true;
+			if (showingedit) {
+				$('#messageedit').hide();
+				showingedit = false;
+			}
      }
    });	
 }
 function newmess() {
-	if (showingnew) {
+	if (showingview) {
 		$('#messageview').hide();
-		showingnew = false;
+		showingview = false;
+	}
+	if (showingedit && replying_to==0) {
+		$('#messageedit').hide();
+		showingedit = false;
+		replying_to = 0;
 		return;
 	}
 	$.ajax({
     type: 'GET',
     url: '/messages/new',
     complete: function(t){	
-      $("#messageview").html(t.responseText);
-		  $('#messageview').show();
-			showingnew = true;
+      $("#messageedit").html(t.responseText);
+		  $('#messageedit').show();
+			showingedit = true;
      }
    });	
 }
-var oldval = '';
-function editmess(id) {
-	if (showingnew) {
+function replymess(id) {
+	if (showingview) {
 		$('#messageview').hide();
-		showingnew = false;
-		return;
+		showingview = false;
 	}
-	curid = id;
+	replying_to = id;
+	var pars = {
+		response_to_id: id
+	}
 	$.ajax({
-    type: "GET",
-    url: '/messages/edit?message_id='+id,
+    type: 'GET',
+    url: '/messages/new',
+		data: pars,
     complete: function(t){	
-      $("#messageview").html(t.responseText);
-		  $('#messageview').show();
-			showingnew = true;
+      $("#messageedit").html(t.responseText);
+		  $('#messageedit').show();
+			showingedit = true;
      }
    });	
 }
@@ -88,14 +101,14 @@ function savemess() {
 		var url = "/messages";
 		var xtype = 'POST';
 	}
- 	$('#messageview').css('opacity','0.5');
+ 	$('#messageedit').css('opacity','0.5');
 	$.ajax({
 	  type: xtype,
 	  url: url,
 	  data: pars,
 	  complete: function(t){	
-			$('#messageview').html(t.responseText);
-			$('#messageview').css('opacity','1.0');
+			$('#messageedit').html(t.responseText);
+			$('#messageedit').css('opacity','1.0');
 			/* $('#messageview').hide(); */
 			messlist();
 		}
