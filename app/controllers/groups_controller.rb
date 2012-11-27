@@ -243,7 +243,7 @@ class GroupsController < ApplicationController
     else
       #-- Some non-members
       lines = @new_text.split("[\r\n]+")
-      flash[:notice] += "#{lines.length} lines<br>"
+      #flash[:notice] += "#{lines.length} lines<br>"
       x = 0
       for line in lines do
         email = line.strip
@@ -251,22 +251,23 @@ class GroupsController < ApplicationController
         cdata = {}
         cdata['group'] = @group
 
+        html_content = "<p>You have been invited to join the group: #{@group.name}<br/>"
+        html_content += "Go <a href=\"http://#{@group.shortname}.#{ROOTDOMAIN}/gjoin?group_id=#{@group.id}&email=#{email}\">here</a> to fill in your information and join.<br>"
+        html_content += "</p>"
+
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
-          html_content = template.render(cdata)
-        else
-          html_content = "<p>You have been invited to join the group: #{@group.name}<br/>"
-          html_content += "</p>"
+          html_content += template.render(cdata)
         end
 
-        email = SystemMailer.generic("do-not-reply@intermix.org", email, "Group invitation", html_content, email, cdata)
+        emailmess = SystemMailer.generic("do-not-reply@intermix.org", email, "Group invitation", html_content, cdata)
         logger.info("groups#invitedo delivering email to #{email}")
         begin
-          email.deliver
-          flash[:notice] += "An invitation message was sent to #{@recipient.name}"
+          emailmess.deliver
+          flash[:notice] += "An invitation message was sent to #{email}"
         rescue
           logger.info("groups#invitedo FAILED delivering email to #{email}")
-          flash[:notice] += "Failed to send an invitation to #{@recipient.name}"
+          flash[:notice] += "Failed to send an invitation to #{email}"
         end
 
       end

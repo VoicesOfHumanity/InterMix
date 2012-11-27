@@ -511,6 +511,7 @@ class FrontController < ApplicationController
       @group_id = @dialog.group_id.to_i
     end 
     @group = Group.find_by_id(@group_id)
+    @email = params[:email].to_s
         
     if @dialog and current_participant and participant_signed_in?
       redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
