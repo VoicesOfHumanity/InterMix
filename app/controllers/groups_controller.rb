@@ -214,10 +214,11 @@ class GroupsController < ApplicationController
         cdata['group'] = @group if @group
         cdata['logo'] = @logo if @logo
 
+
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
-          html_content = template.render(cdata)
-        else    
+          html_content += template.render(cdata)
+        else  
           html_content = "<p>You have been invited to join the group: #{@group.name}<br/>"
           html_content += "</p>"
         end        
@@ -251,7 +252,7 @@ class GroupsController < ApplicationController
         cdata = {}
         cdata['group'] = @group
 
-        html_content = "<p>You have been invited to join the group: #{@group.name}<br/>"
+        html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join the group: #{@group.name}<br/>"
         html_content += "Go <a href=\"http://#{@group.shortname}.#{ROOTDOMAIN}/gjoin?group_id=#{@group.id}&email=#{email}\">here</a> to fill in your information and join.<br>"
         html_content += "</p>"
 
