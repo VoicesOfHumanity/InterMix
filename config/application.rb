@@ -74,7 +74,7 @@ SECTIONS = ['home','forum','wall','profile']
 MEDIA_TYPES = ['text','picture','video','audio','link']
 METAMAP_VOTE_OWN = ['mainly', 'only', 'never']
 METAMAP_VOTE_OWN_TEXT = {'mainly'=>"Primarily vote on own category's posts", 'only'=>"Only vote on own category's posts", 'never'=>"Can't vote on own category's posts"}
-SYSTEM_SENDER = 'questions@intermix.org'
+SYSTEM_SENDER = 'webmaster@intermix.org'
 
 MAIL_SYSTEM = 'postmark'   # postmark or system
 
