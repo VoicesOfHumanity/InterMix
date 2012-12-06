@@ -3,7 +3,6 @@
 log/*.log
 tmp/**/*
 public/images/data
-public/assets/**
 config/database.yml
 config/deploy.rb
 config/localsettings.rb
