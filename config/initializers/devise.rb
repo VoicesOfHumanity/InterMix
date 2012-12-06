@@ -6,7 +6,7 @@
 Devise.setup do |config|
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in DeviseMailer.
-  config.mailer_sender = "noreply@intermix.org"
+  config.mailer_sender = "webmaster@intermix.org"
 
   # Configure the class responsible to send e-mails.
   # config.mailer = "Devise::Mailer"
