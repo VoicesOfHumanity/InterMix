@@ -58,6 +58,8 @@ Intermix::Application.routes.draw do
   #match 'admin' => 'admin/admin#index'
   #match 'admin/:controller(/:action(/:id))', :controller => /admin\/[^\/]+/
 
+  mount Ckeditor::Engine => "/ckeditor"
+
   match '/participants/auth/:provider/callback' => 'authentications#create'
   resources :authentications
 

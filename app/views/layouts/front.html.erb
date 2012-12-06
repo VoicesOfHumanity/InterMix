@@ -3,13 +3,14 @@
 <head>
 	<meta charset="UTF-8">
   <title>Intermix</title>
-	<%= stylesheet_link_tag('blueprint/screen', :media => "all") %>
-	<%= stylesheet_link_tag('blueprint/print', :media => "print") %>
-	<!--[if lt IE 8]>
-	<%= stylesheet_link_tag 'blueprint/ie', :media => "screen, projection" %>
-	<![endif]-->
-  <%= stylesheet_link_tag "main", "formtastic", "formtastic_changes", "jquery.treeview.css", "extra" %>
-  <%= javascript_include_tag :defaults, :ckeditor, "ckeditor/adapters/jquery", "forum", "jquery.treeview.js", "jquery.simplemodal.1.4.1" %>
+	<% if params[:compat].to_i==1 -%>
+	<script src="http://ie.microsoft.com/TestDrive/HTML5/CompatInspector/inspector.js"></script>
+	<% end -%>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+	<%= stylesheet_link_tag 'blueprint/print', :media => 'print' %>
+  <!--[if lt IE 8]>
+    <%= stylesheet_link_tag 'blueprint/ie' %>
+  <![endif]-->  <%= javascript_include_tag "application" %>
   <%= csrf_meta_tag %>
 </head>
 <body>
@@ -19,7 +20,7 @@
 		
 		<div id="header">
 			<div id="mainheader1">&nbsp;</div>
-			<div id="mainheader2"><img src="/images/beta.png" style="position:absolute;margin:5px 0 0 860px;width:72px;height:72px;" alt="Beta"><img height="84" alt="logo" src="/images/logo.gif" width="290"></div>
+			<div id="mainheader2"><img src="/assets/beta.png" style="position:absolute;margin:5px 0 0 860px;width:72px;height:72px;" alt="Beta"><img height="84" alt="logo" src="/assets/logo.gif" width="290"></div>
 			<div id="mainheader3">intermix</div>
 			<div id="mainheader4">&nbsp;</div>
 		</div>
@@ -98,7 +99,7 @@
 		  <% end %>
 			</div>
 			
-			<div class="sidebarbox">Send questions and comments to <a href="mailto:questions@intermix.org">questions@intermix.org</a>.</div>
+			<div class="sidebarbox">Send questions and comments to <a href="mailto:questions@intermix.org">questions@intermix.org</a></div>
 			
 
 		</div>

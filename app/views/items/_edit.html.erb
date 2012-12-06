@@ -4,6 +4,7 @@
 	<input name="_method" type="hidden" value="<%= @item.id.to_i > 0 ? 'put' : 'post' %>" />
 	<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 	<%= hidden_field :item, :reply_to %>
+	<%= hidden_field :item, :group_id %>
 	<%= hidden_field :item, :dialog_id %>
 	<%= hidden_field :item, :period_id %>
 </div>
@@ -82,7 +83,8 @@
 			</b></div>
 			<div style="width:75%;float:left">
 				<div id="textdiv" style="<%= @item.media_type!='text' ? 'display:none' : '' %>">
-				<%= ckeditor_textarea( :item, :html_content, :ajax => true, :width=>'97%', :height=>'250', :toolbar=>'Basic' ) %> 
+				<% "ckeditor_textarea( :item, :html_content, :ajax => true, :width=>'97%', :height=>'250', :toolbar=>'Basic' )" %> 
+				<%= cktext_area(:item, :html_content, :ajax => true, :width=>'97%', :height=>'250', :toolbar=>'Basic')%>
 				</div>
 				<div id="linkdiv" style="<%= @item.media_type=='text' ? 'display:none' : '' %>">
 				<input id="item_link" maxlength="255" name="item[link]" value="<%= @item.link %>" size="50" type="text" /> 
@@ -109,7 +111,8 @@
 
 
 <script>
-CKEDITOR.instances['item_html_content_editor'].on('instanceReady', function() {
+
+CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
 	this.document.on("keyup", editor_change);
 });
 var short_updated = false;

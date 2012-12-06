@@ -41,7 +41,7 @@ To respond to <a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/vie
 <% if @cdata and @cdata['logo'].to_s != '' -%>	
 <img src="<%= @cdata['logo'] %>"/>
 <% else -%>
-<img src="http://<%= BASEDOMAIN %>/images/logo.gif"/>
+<img src="http://<%= BASEDOMAIN %>/assets/logo.gif"/>
 <% end -%><br/>
 <%= @cdata['group'].name if @cdata['group'] %>
 

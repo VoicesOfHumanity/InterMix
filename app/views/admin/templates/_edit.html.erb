@@ -9,7 +9,8 @@
 		<li class="text required" id="item_html_content_input">
 			<div style="width:25%;float:left">HTML Body</div>
 			<div style="width:75%;float:left">
-			<%= ckeditor_textarea( :template, :html_body, :ajax => true, :width=>'97%', :height=>'300', :toolbar=>'Full' ) %> 
+			<% "ckeditor_textarea( :template, :html_body, :ajax => true, :width=>'97%', :height=>'300', :toolbar=>'Full' )" %> 
+			<%= cktext_area(:template, :html_body, :ajax => true, :width=>'97%', :height=>'300', :toolbar=>'Full')%>
 			</div>
 		</li>		
 

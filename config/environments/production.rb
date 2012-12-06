@@ -34,6 +34,9 @@ Intermix::Application.configure do
   # See everything in the log (default is :info)
   # config.log_level = :debug
 
+  # Prepend all log lines with the following tags
+  # config.log_tags = [ :subdomain, :uuid ]
+
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
 
@@ -51,12 +54,30 @@ Intermix::Application.configure do
   # In production, Apache or nginx will already do this
   config.serve_static_assets = false
 
+  # Compress JavaScripts and CSS
+  config.assets.compress = true
+
+  # Don't fallback to assets pipeline if a precompiled asset is missed
+  config.assets.compile = false
+
+  # Generate digests for assets URLs
+  config.assets.digest = true
+
+  # Defaults to nil and saved in location specified by config.assets.prefix
+  # config.assets.manifest = YOUR_PATH
+
   # Enable serving of images, stylesheets, and javascripts from an asset server
   #if `hostname` =~ /ovh.net/
     config.action_controller.asset_host = BASEDOMAIN   
   #else
   #  config.action_controller.asset_host = "http://go.intermix.org"
   #end
+
+  # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
+  # config.assets.precompile += %w( search.js )
+
+  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
+  # config.force_ssl = true
 
   # Enable threaded mode
   # config.threadsafe!
@@ -72,6 +93,8 @@ Intermix::Application.configure do
     :email_prefix => "[InterMix Bug] ",
     :sender_address => %{"Exception Notifier" <noreply@cr8.com>},
     :exception_recipients => %w{ffunch@gmail.com}
+
+    config.assets.precompile += Ckeditor.assets
   
 end
 

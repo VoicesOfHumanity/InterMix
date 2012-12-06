@@ -6,9 +6,12 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
-# If you have a Gemfile, require the gems listed there, including any gems
-# you've limited to :test, :development, or :production.
-Bundler.require(:default, Rails.env) if defined?(Bundler)
+if defined?(Bundler)
+  # If you precompile assets before deploying to production, use this line
+  Bundler.require(*Rails.groups(:assets => %w(development test)))
+  # If you want your assets lazily compiled in production, use this line
+  # Bundler.require(:default, :assets, Rails.env)
+end
 
 module Intermix
   class Application < Rails::Application
@@ -36,7 +39,7 @@ module Intermix
 
     # JavaScript files you want as :defaults (application.js is always included).
     #config.action_view.javascript_expansions[:defaults] = %w(jquery-1.4.2.min jquery-ui-1.8.6.custom.min ui.selectmenu.js rails)
-    config.action_view.javascript_expansions[:defaults] = %w(https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js ui.selectmenu.js rails)
+    #config.action_view.javascript_expansions[:defaults] = %w(https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js ui.selectmenu.js rails)
     
     #-- This is for ckeditor
     config.autoload_paths += %W( #{config.root}/app/models/ckeditor )
@@ -50,6 +53,26 @@ module Intermix
     #-- Using postmark for mailing
     config.action_mailer.delivery_method   = :postmark
     config.action_mailer.postmark_settings = { :api_key => "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb" }
+
+    # Enable escaping HTML in JSON.
+    config.active_support.escape_html_entities_in_json = true
+
+    # Use SQL instead of Active Record's schema dumper when creating the database.
+    # This is necessary if your schema can't be completely dumped by the schema dumper,
+    # like if you have constraints or database-specific column types
+    # config.active_record.schema_format = :sql
+
+    # Enforce whitelist mode for mass assignment.
+    # This will create an empty whitelist of attributes available for mass-assignment for all models
+    # in your app. As such, your models will need to explicitly whitelist or blacklist accessible
+    # parameters by using an attr_accessible or attr_protected declaration.
+    config.active_record.whitelist_attributes = false
+
+    # Enable the asset pipeline
+    config.assets.enabled = true
+
+    # Version of your assets, change this if you want to expire all your assets
+    config.assets.version = '1.0'
     
   end
 end

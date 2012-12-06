@@ -1,11 +1,14 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.1'
+#gem 'rails', '~> 3.1'
+gem 'rails'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2'
+
+gem 'jquery-rails'
 
 # Use unicorn as the web server
 # gem 'unicorn'
@@ -33,7 +36,8 @@ gem 'rest-graph'
 gem 'rmagick', :require => "RMagick"
 gem 'acts-as-taggable-on'
 #gem 'simple_captcha'
-gem 'ckeditor', '3.4.2.pre'
+#gem 'ckeditor', '3.4.2.pre'
+gem 'ckeditor'
 gem 'paperclip'
 gem 'sanitize'
 gem 'formtastic', '~> 1.2.4'
