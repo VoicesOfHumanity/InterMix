@@ -76,7 +76,7 @@
 		</li>			
 		
 		<li>
-			<div id="mediatitle2" style="width:25%;float:left"><b><%= (@item.reply_to.to_i>0) ? "Reply" : "Initial message" %>
+			<div id="mediatitle2" style="width:25%;float:left"><b><%= (@item.reply_to.to_i>0) ? "Reply" : "Message" %>
 			<% if @max_characters.to_i > 0 and @item.reply_to.to_i == 0 -%>
 			<br/>(<span id="item_long_length"><%= @item.html_content ? @item.html_content.length : 0 %></span> of <%= @max_characters.to_i %> char)
 			<% end -%>

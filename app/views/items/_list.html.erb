@@ -7,8 +7,10 @@
 
 	<% if @from.to_s == 'wall' -%>
 		<p>This person hasn't posted anything yet</p>
-	<% else -%>
+	<% elsif @can_post -%>
 		<p>There are currently no messages to see. How about adding some?</p>
+	<% else -%>
+		<p>There are currently no messages to see.</p>
 	<% end -%>	
 
 <% else -%>

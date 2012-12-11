@@ -151,6 +151,22 @@ class ItemsController < ApplicationController
       current_participant.save
     end  
     
+    #-- Try to figure out if the user is allowed to post. Mainly to know which message to show them if there are no messages.
+    @can_post = false
+    if @from == 'dialog'
+      if session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"]
+        @can_post = true
+      end
+    elsif @from == 'group'
+      if @is_member
+        @can_post = true        
+      end
+    elsif @from == 'wall'
+      if @posted_by == current_participant.id
+        @can_post = true
+      end
+    end
+    
     render :partial=>'list', :layout=>false  
   end  
   
