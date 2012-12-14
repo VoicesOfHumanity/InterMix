@@ -811,11 +811,19 @@ class FrontController < ApplicationController
     if @participant 
       flash[:alert] = "You seem to already have an account for #{@email}. Please log into that.<br>"
     else
+      #-- Create a password
+      password = ''
+      3.times do
+        conso = 'bcdfghkmnprstvw'[rand(15)]
+        vowel = 'aeiouy'[rand(6)]
+        password += conso +  vowel
+        password += (1+rand(9)).to_s if rand(3) == 2
+      end
       @participant = Participant.new
       @participant.first_name = @first_name
       @participant.last_name = @last_name
       @participant.email = @email
-      @participant.password = @password
+      @participant.password = password
       #@participant.country_code = 'US' if state.to_s != ''
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
