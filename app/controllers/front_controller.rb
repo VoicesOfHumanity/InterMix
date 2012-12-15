@@ -36,7 +36,7 @@ class FrontController < ApplicationController
       end
       @content += "<div>#{desc}</div>"
     else
-      @content += "<div style=\"text-align:right;margin:-3px -5px 0 0\"><img src=\"/images/composition.jpg\" width=\"285\" height=\"120\"></div>\n"
+      @content += "<div style=\"text-align:right;margin:-3px -5px 0 0\"><img src=\"/assets/composition.jpg\" width=\"285\" height=\"120\"></div>\n"
     end
     update_last_url
   end  
@@ -174,7 +174,7 @@ class FrontController < ApplicationController
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
-      @participant.status = 'inactive'
+      @participant.status = 'active'
       if not @participant.save!  
         flash[:alert] = "Sorry, there's some kind of database problem<br>"
         render :action=>:instantjoinform, :layout=>'blank'
@@ -333,7 +333,7 @@ class FrontController < ApplicationController
     narr = @name.split(' ')
     last_name = narr[narr.length-1]
     first_name = narr[0,narr.length-1].join(' ')
-    password = '???'    
+    @password = '???'    
         
     @participant = Participant.find_by_email(@email) 
     previous_messages = 0
@@ -348,23 +348,24 @@ class FrontController < ApplicationController
       end
     else
       #-- Create a password
-      password = ''
+      @password = ''
       3.times do
         conso = 'bcdfghkmnprstvw'[rand(15)]
         vowel = 'aeiouy'[rand(6)]
-        password += conso +  vowel
-        password += (1+rand(9)).to_s if rand(3) == 2
+        @password += conso +  vowel
+        @password += (1+rand(9)).to_s if rand(3) == 2
       end
       @participant = Participant.new
       @participant.first_name = first_name
       @participant.last_name = last_name
       @participant.email = @email
-      @participant.password = password
+      @participant.password = @password
       #@participant.country_code = 'US' if state.to_s != ''
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
-      @participant.status = 'unconfirmed'
+      #@participant.status = 'unconfirmed'
+      @participant.status = 'active'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
     
@@ -375,6 +376,8 @@ class FrontController < ApplicationController
       render :action=>:dialogjoinform, :layout=>'blank'
       return
     end  
+
+    @participant.ensure_authentication_token!
 
     #-- Store their metamap category
     metamaps = @dialog.metamaps
@@ -449,7 +452,7 @@ class FrontController < ApplicationController
     cdata['group'] = @group if @group
     cdata['dialog'] = @dialog if @dialog
     cdata['logo'] = @logo if @logo
-    cdata['password'] = password
+    cdata['password'] = @password
     cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}"
     
     if @dialog_group and @dialog_group.confirm_email_template.to_s != ''
@@ -460,14 +463,16 @@ class FrontController < ApplicationController
       html_content = template.render(cdata)
     else    
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
-      html_content += "password: #{password}<br/>" if password != '???'
+      html_content += "password: #{@password}<br/>" if @password != '???'
       
-      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}<br/><br/>"
+      #html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      #html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}<br/><br/>"
+      
+      html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
+      
       html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
       
-      html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
-      html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
+      #html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
       html_content += "</p>"
     end
   
@@ -584,7 +589,7 @@ class FrontController < ApplicationController
     narr = @name.split(' ')
     last_name = narr[narr.length-1]
     first_name = narr[0,narr.length-1].join(' ')
-    password = '???'    
+    @password = '???'    
         
     @participant = Participant.find_by_email(@email) 
     previous_messages = 0
@@ -592,23 +597,24 @@ class FrontController < ApplicationController
       flash[:notice] = "You seem to already have an account. Please log into that.<br>"
     else
       #-- Create a password
-      password = ''
+      @password = ''
       3.times do
         conso = 'bcdfghkmnprstvw'[rand(15)]
         vowel = 'aeiouy'[rand(6)]
-        password += conso +  vowel
-        password += (1+rand(9)).to_s if rand(3) == 2
+        @password += conso +  vowel
+        @password += (1+rand(9)).to_s if rand(3) == 2
       end
       @participant = Participant.new
       @participant.first_name = first_name
       @participant.last_name = last_name
       @participant.email = @email
-      @participant.password = password
+      @participant.password = @password
       #@participant.country_code = 'US' if state.to_s != ''
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
-      @participant.status = 'unconfirmed'
+      #@participant.status = 'unconfirmed'
+      @participant.status = 'active'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
     
@@ -619,6 +625,8 @@ class FrontController < ApplicationController
       render :action=>:groupjoinform, :layout=>'blank'
       return
     end  
+    
+   @participant.ensure_authentication_token!
 
     #-- Store their metamap category
     metamaps = @group.metamaps_own
@@ -670,14 +678,17 @@ class FrontController < ApplicationController
       html_content = template.render(cdata)
     else    
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
-      html_content += "password: #{password}<br/>" if password != '???'
+      html_content += "password: #{@password}<br/>" if @password != '???'
       
-      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      #html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      #html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      
+      html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
+      
       html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
       
-      html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
-      html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
+      #html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
+      #html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
       html_content += "</p>"
     end
   
@@ -759,8 +770,8 @@ class FrontController < ApplicationController
     @email = params[:email].to_s
     @first_name = params[:first_name].to_s
     @last_name = params[:last_name].to_s
-    @password = params[:password].to_s
-    @password_confirmation = params[:password_confirmation].to_s
+    #@password = params[:password].to_s
+    #@password_confirmation = params[:password_confirmation].to_s
     @group_id = params[:group_id].to_i
     
     #-- Do a bit of validation
@@ -788,13 +799,13 @@ class FrontController < ApplicationController
         flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
       end    
     end 
-    if @password == ''
-      flash[:alert] += "Please choose a password<br>"
-    elsif @password_confirmation == ''
-      flash[:alert] += "Please enter your password a second time, to confirm<br>"
-    elsif @password_confirmation != @password
-      flash[:alert] += "The two passwords don't match<br>"
-    end
+    #if @password == ''
+    #  flash[:alert] += "Please choose a password<br>"
+    #elsif @password_confirmation == ''
+    #  flash[:alert] += "Please enter your password a second time, to confirm<br>"
+    #elsif @password_confirmation != @password
+    #  flash[:alert] += "The two passwords don't match<br>"
+    #end
     @metamaps = Metamap.where(:global_default=>true)
     for metamap in @metamaps
       if params["meta_#{metamap.id}"].to_i == 0
@@ -806,29 +817,32 @@ class FrontController < ApplicationController
       render :action=>:joinform
       return
     end  
+
+    @password = '???'    
         
     @participant = Participant.find_by_email(@email) 
     if @participant 
       flash[:alert] = "You seem to already have an account for #{@email}. Please log into that.<br>"
     else
       #-- Create a password
-      password = ''
+      @password = ''
       3.times do
         conso = 'bcdfghkmnprstvw'[rand(15)]
         vowel = 'aeiouy'[rand(6)]
-        password += conso +  vowel
-        password += (1+rand(9)).to_s if rand(3) == 2
+        @password += conso +  vowel
+        @password += (1+rand(9)).to_s if rand(3) == 2
       end
       @participant = Participant.new
       @participant.first_name = @first_name
       @participant.last_name = @last_name
       @participant.email = @email
-      @participant.password = password
+      @participant.password = @password
       #@participant.country_code = 'US' if state.to_s != ''
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
-      @participant.status = 'unconfirmed'
+      #@participant.status = 'unconfirmed'
+      @participant.status = 'active'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
     
@@ -840,6 +854,8 @@ class FrontController < ApplicationController
       render :action=>:joinform
       return
     end  
+
+    @participant.ensure_authentication_token!
 
     #-- Store their metamap category
     for metamap in @metamaps
@@ -892,11 +908,14 @@ class FrontController < ApplicationController
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
       html_content += "password: #{@password}<br/>" if @password != '???'
       
-      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      #html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      #html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      
+      html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
+      
       html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
       
-      html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
+      #html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
       html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
       html_content += "</p>"
     end
