@@ -12,6 +12,7 @@ class ProfilesController < ApplicationController
   def profile
     #-- show your own profile
     @section = 'profile'
+    @subsection = 'view'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.includes(:metro_area).find(@participant_id)
     render :action=>:index
@@ -19,6 +20,8 @@ class ProfilesController < ApplicationController
   end  
   
   def edit
+    @section = 'profile'
+    @subsection = 'edit'
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find_by_id(@profile_id)
     if @participant.country_code.to_s != ''
@@ -29,6 +32,8 @@ class ProfilesController < ApplicationController
   end
 
   def settings
+    @section = 'profile'
+    @subsection = 'settings'
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@profile_id)
     if @participant.direct_email_code.to_s == ''
@@ -45,6 +50,8 @@ class ProfilesController < ApplicationController
   end
   
   def update
+    @section = 'profile'
+    @subsection = params[:subsection].to_s
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@profile_id)
     logger.info("profiles#update #{@participant.id}")
@@ -73,7 +80,11 @@ class ProfilesController < ApplicationController
         end 
       end 
       
-      @notice = "Profile updated."
+      if @subsection == 'settings'
+        @notice = "OK New Settings have been saved."
+      else
+        @notice = "Profile has been updated."
+      end
       @alert = ""
       
       old_pass = params[:old_pass].to_s
@@ -95,8 +106,10 @@ class ProfilesController < ApplicationController
         end
       end
       
+      @subsection = 'view'
       render :action=>'index', :notice => @notice, :alert => @alert
     else
+      @subsection = 'edit'
       render :action => "edit"
     end
   end
