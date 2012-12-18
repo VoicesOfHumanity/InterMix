@@ -261,8 +261,8 @@ class FrontController < ApplicationController
     
     @subject = params[:subject].to_s
     @message = params[:message].to_s
-    @has_subject = params.has_key['subject']
-    @has_message = params.has_key['message']
+    @has_subject = params.has_key?('subject')
+    @has_message = params.has_key?('message')
     @name = params[:name].to_s
     @email = params[:email].to_s
     tempfilepath = ''
@@ -295,7 +295,7 @@ class FrontController < ApplicationController
       return
     end  
 
-    if not has_message
+    if not @has_message
     elsif @message.to_s == '' and ((@dialog and @dialog.settings_with_period["required_message"]) or @subject.to_s != '')
       flash[:alert] += "Please include at least a short message<br>"
     elsif @dialog and @dialog.settings_with_period["max_characters"].to_i > 0 and @message.length > @dialog.settings_with_period["max_characters"]  
