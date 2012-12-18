@@ -261,6 +261,8 @@ class FrontController < ApplicationController
     
     @subject = params[:subject].to_s
     @message = params[:message].to_s
+    @has_subject = params.has_key['subject']
+    @has_message = params.has_key['message']
     @name = params[:name].to_s
     @email = params[:email].to_s
     tempfilepath = ''
@@ -293,7 +295,8 @@ class FrontController < ApplicationController
       return
     end  
 
-    if @message.to_s == '' and ((@dialog and @dialog.settings_with_period["required_message"]) or @subject.to_s != '')
+    if not has_message
+    elsif @message.to_s == '' and ((@dialog and @dialog.settings_with_period["required_message"]) or @subject.to_s != '')
       flash[:alert] += "Please include at least a short message<br>"
     elsif @dialog and @dialog.settings_with_period["max_characters"].to_i > 0 and @message.length > @dialog.settings_with_period["max_characters"]  
       flash[:alert] += "The maximum message length is #{@dialog.max_characters} characters<br>"
@@ -337,7 +340,7 @@ class FrontController < ApplicationController
         
     @participant = Participant.find_by_email(@email) 
     previous_messages = 0
-    if @participant 
+    if @participant and @has_message
       previous_messages = Item.where("posted_by=? and dialog_id=?",@participant.id,@dialog.id).count
       if @dialog.max_messages > 0 and @message.length > 0 and previous_messages >= @dialog.max_messages
         flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: http://#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
@@ -346,6 +349,8 @@ class FrontController < ApplicationController
       else
         flash[:notice] = "You seem to already have an account, so we posted it to that<br>"
       end
+    elsif @participant
+      flash[:notice] = "You already have an account<br>" 
     else
       #-- Create a password
       @password = ''
@@ -670,7 +675,7 @@ class FrontController < ApplicationController
     cdata['participant'] = @participant 
     cdata['group'] = @group if @group
     cdata['logo'] = @logo if @logo
-    cdata['password'] = password
+    cdata['password'] = @password
     cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}"
     
     if @group.confirm_email_template.to_s != ''
