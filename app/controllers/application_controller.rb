@@ -142,7 +142,6 @@ class ApplicationController < ActionController::Base
     
   def after_sign_in_path_for(resource_or_scope)
     #-- Overrides the devise function to go to our remembered URL after logging in
-    
     logger.info("application#after_sign_in_path_for")
     
     #-- Also do a few other things we need to do when somebody logs in
@@ -155,6 +154,13 @@ class ApplicationController < ActionController::Base
     session[:dialog_id] = 0
     session[:dialog_name] = ''
     session[:dialog_prefix] = ''
+    
+    if current_participant.status == 'unconfirmed'
+      #-- If they logged in, but are unconfirmed, it is probably the first time
+      current_participant.status = 'active'
+      current_participant.save
+      session[:new_signup] = 1
+    end
     
     group_id,dialog_id = get_group_dialog_from_subdomain
 

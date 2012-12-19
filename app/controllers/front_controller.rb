@@ -369,8 +369,7 @@ class FrontController < ApplicationController
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
-      #@participant.status = 'unconfirmed'
-      @participant.status = 'active'
+      @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
     
@@ -470,10 +469,10 @@ class FrontController < ApplicationController
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
       html_content += "password: #{@password}<br/>" if @password != '???'
       
-      #html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      #html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}<br/><br/>"
+      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}<br/><br/>"
       
-      html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
+      #html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
       
       html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
       
@@ -618,8 +617,7 @@ class FrontController < ApplicationController
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
-      #@participant.status = 'unconfirmed'
-      @participant.status = 'active'
+      @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
     
@@ -685,10 +683,10 @@ class FrontController < ApplicationController
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
       html_content += "password: #{@password}<br/>" if @password != '???'
       
-      #html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      #html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
       
-      html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
+      #html_content += "<br/>Click <a href=\"http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
       
       html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
       
@@ -846,8 +844,7 @@ class FrontController < ApplicationController
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
-      #@participant.status = 'unconfirmed'
-      @participant.status = 'active'
+      @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
     
@@ -913,10 +910,10 @@ class FrontController < ApplicationController
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
       html_content += "password: #{@password}<br/>" if @password != '???'
       
-      #html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      #html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
       
-      html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
+      #html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
       
       html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
       

@@ -189,12 +189,16 @@ Devise.setup do |config|
   # https://github.com/hassox/warden/wiki/callbacks
   Warden::Manager.after_set_user do |user, auth, opts|
     #-- What happens when a user is authenticated. Maybe better to put stuff in after_sign_in_path_for in application controller
+    #logger.info("devise#after_set_user")
     if not user.status
       auth.logout
       throw(:warden, :message => "The account has no status. Something is wrong.")
     elsif user.status == 'unconfirmed'
-      auth.logout
-      throw(:warden, :message => "Please confirm your account by click on the link in the e-mail we sent you")
+      user.status = 'active'
+      user.save
+      #session[:new_signup] = 1
+      #auth.logout
+      #throw(:warden, :message => "Please confirm your account by click on the link in the e-mail we sent you")
     elsif user.status != 'active'
       auth.logout
       throw(:warden, :message => "User not active")
