@@ -229,9 +229,10 @@ class FrontController < ApplicationController
     end 
     @group = Group.find_by_id(@group_id)
 
-    redirect_to "http://#{BASEDOMAIN}/" if not @dialog
-        
-    if @dialog and current_participant and participant_signed_in?
+    if not @dialog
+      redirect_to "http://#{BASEDOMAIN}/join" 
+      return
+    elsif @dialog and current_participant and participant_signed_in?
       redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group and current_participant and participant_signed_in?
@@ -524,9 +525,10 @@ class FrontController < ApplicationController
     @group = Group.find_by_id(@group_id)
     @email = params[:email].to_s
     
-    redirect_to "http://#{BASEDOMAIN}/" if not @group
-        
-    if @dialog and current_participant and participant_signed_in?
+    if not @group
+      redirect_to "http://#{BASEDOMAIN}/join"
+      return  
+    elsif @dialog and current_participant and participant_signed_in?
       redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group and current_participant and participant_signed_in?
