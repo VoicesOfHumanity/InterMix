@@ -97,6 +97,8 @@ SECTIONS = ['home','forum','wall','profile']
 MEDIA_TYPES = ['text','picture','video','audio','link']
 METAMAP_VOTE_OWN = ['mainly', 'only', 'never']
 METAMAP_VOTE_OWN_TEXT = {'mainly'=>"Primarily vote on own category's posts", 'only'=>"Only vote on own category's posts", 'never'=>"Can't vote on own category's posts"}
+DIALOG_GROUP_STATUS = ['','apply','approved','denied']
+DIALOG_GROUP_STATUS_TEXT = {''=>'','apply'=>'applied','approved'=>'approved','denied'=>'denied'}
 SYSTEM_SENDER = 'webmaster@intermix.org'
 
 MAIL_SYSTEM = 'postmark'   # postmark or system

@@ -1,0 +1,18 @@
+<%= render(:partial => 'dialogs/menu')%>
+
+<h3 style="clear:both">Group #<%= @group_id %>: <%= @group.name %></h3>
+
+<%= semantic_form_for @dialog_group, :url => "/dialogs/#{@dialog.id}/group_settings_save", :html=>{:id=>"dialog_group"} do |f| %>
+
+	<%= f.inputs do %>
+
+		<%= hidden_field_tag :dialog_group_id, @dialog_group.id %>
+
+		<%= f.input :apply_status, :as=>:select, :collection =>DIALOG_GROUP_STATUS %>
+		<%= f.input :active, :as=>:boolean %>
+
+	<% end %>
+
+	<p><input type="submit" value="Save"></p>
+
+<% end %>

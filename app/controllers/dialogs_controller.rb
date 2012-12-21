@@ -347,6 +347,28 @@ class DialogsController < ApplicationController
     redirect_to :action=>:edit
   end
   
+  def group_settings
+    #-- Show/edit the specifics for the group dialog membership
+    @dialog_id = params[:id].to_i
+    @dialog = Dialog.find_by_id(@dialog_id)
+    @group_id = params[:group_id].to_i
+    @group = Group.find(@group_id)
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+    @is_member = @group_participant ? true : false
+    @is_moderator = (@group_participant and @group_participant.moderator)
+    @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first   
+  end
+  
+  def group_settings_save
+    @dialog_group_id = params[:dialog_group_id]
+    @dialog_group = DialogGroup.find_by_id(@dialog_group_id)
+    @dialog_group.active = params[:dialog_group][:active]
+    @dialog_group.apply_status = params[:dialog_group][:apply_status]
+    @dialog_group.processed_by = current_participant.id
+    @dialog_group.save!
+    redirect_to :action=>:edit
+  end
+  
   def meta
     #-- Show some stats, according to the metamaps
     @section = 'dialogs'

@@ -49,6 +49,32 @@
 	
 <% end %>
 
+<p><br><br><b>Participating Groups:</b><br>
+<% if @dialog.active_groups.length == 0 -%>
+	none
+<% else -%>
+	<ul>
+	<% for group in @dialog.active_groups -%>
+		<li><a href="/dialogs/<%= @dialog.id %>/group_settings?group_id=<%= group.id %>"><%= group.name %></a></li>
+	<% end -%>
+	</ul>
+<% end -%>	
+</p>
+	
+<p><b>Applicant Groups:</b><br>
+<% if @dialog.pending_groups.length == 0 -%>
+	none
+<% else -%>
+	<ul>
+	<% for group in @dialog.pending_groups -%>
+		<li><a href="/dialogs/<%= @dialog.id %>/group_settings?group_id=<%= group.id %>"><%= group.name %></a></li>
+	<% end -%>
+	</ul>
+<% end -%>
+</p>
+
+
+
 <p><br><b>Decision Periods:</b><ul>
 <% for period in @dialog.periods -%>
 	<li><a href="/dialogs/<%= @dialog.id %>/period_edit?period_id=<%= period.id %>"><%= period.startdate %> - <%= period.endposting -%>/<%= period.endrating %>: <%= period.name %></a></li>

@@ -673,6 +673,15 @@ class GroupsController < ApplicationController
     @dialog_group.save!
     redirect_to :action=>:admin
   end
+  
+  def apply_dialog
+    #-- Apply to be a member of a discussion
+    @group_id = params[:id].to_i
+    @dialog_id = params[:apply_dialog_id].to_i
+    @dialog_group = DialogGroup.new(:group_id=>@group_id,:dialog_id=>@dialog_id,:active=>false,:apply_status=>'apply',:apply_by=>current_participant.id,:apply_at=>Time.now)
+    @dialog_group.save!
+    redirect_to :action=>:admin
+  end
 
   protected
  

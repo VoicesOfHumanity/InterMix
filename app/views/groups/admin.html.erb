@@ -36,15 +36,33 @@
 
 	<p><a href="/groups/<%= @group.id %>/import">Import members</a></p>
 
-	<p><b>Discussions:</b><ul>
-	<% if @group.dialogs.length == 0 -%>
+	<p><b>Participating in Discussions:</b><ul>
+	<% if @group.active_dialogs.length == 0 -%>
 		none
 	<% else -%>
-		<% for dialog in @group.dialogs -%>
+		<% for dialog in @group.active_dialogs -%>
 			<li><a href="/groups/<%= @group.id %>/dialog_settings?dialog_id=<%= dialog.id %>"><%= dialog.name %></a></li>
 		<% end -%>
 	<% end -%>	
-	</ul><p>	
+	</ul><p>
+		
+	<p><b>Other discussions:</b></p>
+		<% if @group.pending_dialogs.length > 0 -%>
+		<p>application pending for<br>
+		<ul>
+		<% for dialog in @group.pending_dialogs -%>
+			<li><a href="/dialog/<%= dialog.id %>/view"><%= dialog.name %></a></li>
+		<% end -%>
+		</ul></p>
+		<% end -%>
+		
+		<form action="/groups/<%= @group.id %>/apply_dialog" method="post">
+		<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+		<p>apply to join 
+		<%= select_tag :apply_dialog_id, options_from_collection_for_select(Dialog.where("not (id in (#{(@group.active_dialogs.collect{|d| d.id}+@group.pending_dialogs.collect{|d| d.id}+[0]).join(',')}))"), "id", "name") %>
+		<input type="submit" value="send">
+		</p>
+		</form>
 
 
 <% end -%>
@@ -52,5 +70,6 @@
 <% if @group.logo.exists? then -%>
 <p><%= image_tag @group.logo.url %></p>
 <% end -%>
+
 
 

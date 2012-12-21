@@ -3,6 +3,8 @@ class Group < ActiveRecord::Base
   has_many :participants, :through => :group_participants
   has_many :dialog_groups
   has_many :dialogs, :through => :dialog_groups
+  has_many :active_dialogs, :source => :dialog, :through => :dialog_groups, :conditions => "active=1"
+  has_many :pending_dialogs, :source => :dialog, :through => :dialog_groups, :conditions => "apply_status='apply'"
   has_many :group_metamaps
   has_many :metamaps, :through => :group_metamaps
   #has_and_belongs_to_many :participants, :join_table => :group_participants

@@ -2,6 +2,8 @@ class Dialog < ActiveRecord::Base
   has_many :dialog_admins
   has_many :dialog_groups
   has_many :groups, :through => :dialog_groups
+  has_many :active_groups, :source => :group, :through => :dialog_groups, :conditions => "dialog_groups.active=1"
+  has_many :pending_groups, :source => :group, :through => :dialog_groups, :conditions => "!(active=1)"
   has_many :dialog_metamaps
   has_many :metamaps, :through => :dialog_metamaps
   has_many :items

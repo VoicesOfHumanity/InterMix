@@ -90,6 +90,7 @@ Intermix::Application.routes.draw do
       post :subtag_save
       get :dialog_settings
       put :dialog_settings_save
+      post :apply_dialog
     end
   end 
   
@@ -104,6 +105,8 @@ Intermix::Application.routes.draw do
       get :period_edit
       post :period_save
       put :period_save
+      get :group_settings
+      put :group_settings_save
     end
   end 
   match 'voting_results' => 'dialogs#results'
