@@ -62,6 +62,8 @@ class GroupsController < ApplicationController
     @group = Group.new
     @group.owner = current_participant.id
     @group.participants << current_participant
+    @metamaps = Metamap.all
+    @has_metamaps = {}
     render :action=>'edit'
   end  
   
@@ -84,6 +86,7 @@ class GroupsController < ApplicationController
   
   def update
     @group = Group.find(params[:id])
+    @metamaps = Metamap.all
     #logger.info("groups#update metamap parameter: #{params[:metamap]}")
     respond_to do |format|
       if gvalidate and @group.update_attributes(params[:group])
@@ -104,6 +107,7 @@ class GroupsController < ApplicationController
         format.html { redirect_to :action=>:view, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
+        @has_metamaps = {}
         format.html { render :action => "edit" }
         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
       end
@@ -133,6 +137,7 @@ class GroupsController < ApplicationController
   def create
     @group = Group.new(params[:group])
     @group.participants << current_participant
+    @metamaps = Metamap.all
     respond_to do |format|
       if gvalidate and @group.save
         logger.info("groups_controller#create New group created: #{@group.id}")
@@ -677,9 +682,85 @@ class GroupsController < ApplicationController
   def apply_dialog
     #-- Apply to be a member of a discussion
     @group_id = params[:id].to_i
+    @group = Group.find(@group_id)
     @dialog_id = params[:apply_dialog_id].to_i
+    @dialog = Dialog.find_by_id(@dialog_id)
     @dialog_group = DialogGroup.new(:group_id=>@group_id,:dialog_id=>@dialog_id,:active=>false,:apply_status=>'apply',:apply_by=>current_participant.id,:apply_at=>Time.now)
     @dialog_group.save!
+    
+    for participant in @group.moderators
+      #-- Let all moderators of the group know that somebody has filed the application
+      @message = Message.new
+      @message.subject = "#{@dialog.name} discussion"
+      @message.message = "<p>#{current_participant.name} has applied for the group #{@group.name} to join the discussion #{@dialog.name}</p><p>You're receiving this because you're a moderator in #{@group.name}</p>"
+      @message.to_participant_id = participant.id
+      @message.from_participant_id = 0
+      @message.sendmethod = 'web'
+      @message.sent_at = Time.now
+      if @message.save        
+        @message.sendmethod = 'email'
+        @message.emailit
+      end
+    end
+    
+    #-- Let the discussion administrators know
+    @dgroup_id = @dialog.group_id
+    @dgroup = Group.find_by_id(@dgroup_id)
+    if @dgroup
+      for participant in @dgroup.moderators
+        #-- Let all moderators of the group owning the discussion know that somebody has filed the application
+        @message = Message.new
+        @message.subject = "#{@group.name} wants to join #{@dialog.name}"
+        @message.message = "<p>#{current_participant.name} has applied for the group #{@group.name} to join the discussion #{@dialog.name}</p><p>Somebody needs to approve the application before the membership becomes active.</p><p>You're receiving this because you're a moderator in #{@dgroup.name} which administers the #{@dialog.name} discussion</p>"
+        @message.to_participant_id = participant.id
+        @message.from_participant_id = 0
+        @message.sendmethod = 'web'
+        @message.sent_at = Time.now
+        if @message.save        
+          @message.sendmethod = 'email'
+          @message.emailit
+        end
+      end
+    end
+        
+    redirect_to :action=>:admin
+  end
+  
+  def add_moderator
+    #-- Add a new moderator. Called from admin screen. Must already be a group member
+    @group_id = params[:id].to_i
+    @group = Group.find(@group_id)
+    @participant_id = params[:participant_id].to_i
+    if @participant_id > 0
+      @group_participant = GroupParticipant.where(:group_id=>@group_id,:participant_id=>@participant_id).first
+      if @group_participant
+        @group_participant.active = true
+        @group_participant.moderator = true
+        @group_participant.save!
+      end
+    end   
+    redirect_to :action=>:admin
+  end
+  
+  def group_participant_edit
+    #-- Edit a membership in a group, for example to change active or moderator status
+    @is_member = true
+    @is_moderator = true
+    @group_id = params[:id].to_i
+    @group = Group.find(@group_id)
+    @participant_id = params[:participant_id]
+    @group_participant = GroupParticipant.includes(:participant).where(:group_id=>@group_id,:participant_id=>@participant_id).first
+  end
+  
+  def group_participant_save
+    #-- Save changes to a group membership
+    @group_id = params[:id].to_i
+    @group_participant_id = params[:group_participant_id]
+    @group_participant = GroupParticipant.find_by_id(@group_participant_id)
+    @group_participant.active = params[:group_participant][:active]
+    @group_participant.moderator = params[:group_participant][:moderator]
+    @group_participant.save!
+    flash[:notice] = "Group member settings updated"
     redirect_to :action=>:admin
   end
 

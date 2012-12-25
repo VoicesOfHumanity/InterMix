@@ -1,0 +1,18 @@
+<%= render(:partial => 'groups/menu')%>
+
+<h3 style="clear:both">Group Participant: <%= @group_participant.participant.name %></h3>
+
+<%= semantic_form_for @group_participant, :url => "/groups/#{@group.id}/group_participant_save", :html=>{:id=>"group_participant"} do |f| %>
+
+	<%= f.inputs do %>
+
+		<%= hidden_field_tag :group_participant_id, @group_participant.id %>
+
+		<%= f.input :moderator, :as=>:boolean %>
+		<%= f.input :active, :as=>:boolean %>
+
+	<% end %>
+
+	<p><input type="submit" value="Save"></p>
+
+<% end %>

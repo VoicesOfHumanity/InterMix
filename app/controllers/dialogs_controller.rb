@@ -91,6 +91,7 @@ class DialogsController < ApplicationController
     @dialog.names_visible_general = true
     @dialog.posting_open = true
     @dialog.voting_open = true
+    @metamaps = Metamap.all
     
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
     render :action=>'edit'

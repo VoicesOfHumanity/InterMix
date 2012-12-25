@@ -36,6 +36,20 @@
 
 	<p><a href="/groups/<%= @group.id %>/import">Import members</a></p>
 
+	<p><b>Moderators:</b><ul>
+	<% if @group.moderators.length == 0 -%>
+		none
+	<% else -%>
+		<% for moderator in @group.moderators -%>
+			<li><a href="/groups/<%= @group.id %>/group_participant_edit?participant_id=<%= moderator.id %>"><%= moderator.name %></a></li>
+		<% end -%>
+	<% end -%>	
+	</ul><p>		
+	<form action="/groups/<%= @group.id %>/add_moderator" method="post">
+	<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+	<p>Add moderator: <%= select_tag :participant_id, raw('<option value="0"></option>') + options_from_collection_for_select(@group.participants, 'id', 'name') %> <input type="submit" value="add"></p>	
+	</form>
+
 	<p><b>Participating in Discussions:</b><ul>
 	<% if @group.active_dialogs.length == 0 -%>
 		none
@@ -58,6 +72,7 @@
 		
 		<form action="/groups/<%= @group.id %>/apply_dialog" method="post">
 		<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+		<%= hidden_field_tag :group_id, @group.id %>
 		<p>apply to join 
 		<%= select_tag :apply_dialog_id, options_from_collection_for_select(Dialog.where("not (id in (#{(@group.active_dialogs.collect{|d| d.id}+@group.pending_dialogs.collect{|d| d.id}+[0]).join(',')}))"), "id", "name") %>
 		<input type="submit" value="send">
