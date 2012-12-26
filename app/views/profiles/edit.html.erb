@@ -27,13 +27,13 @@
 		<%= f.input :self_description, :as=>:text, :required => false %>
 		<%= f.input :address1, :required => false %>
 		<%= f.input :address2, :required => false %>
-		<%= f.input :city, :required => true %>
+		<%= f.input :city, :required => false %>
 		<%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
-		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]} %>
+		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]} %>
 		<%= f.input :zip, :required => false %>
 		<%= f.input :phone, :required => false %>
-		<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas %>
-		<%= f.input :bioregion %>
+		<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false %>
+		<%= f.input :bioregion, :required => false %>
 		<%= f.input :political, :required => false, :label => 'Political Affiliation' %>
 		<%= f.input :faith_tradition, :required => false %>
 		<%= f.input :tag_list, :required => false, :as => :string, :input_html => {:size=>80}  %>
@@ -43,7 +43,7 @@
 		<% metamap_nodes = @participant.metamap_nodes_h %>
 		<% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
 		<li class="select required" id="meta_#{metamap_id}_input">
-			<div style="width:25%;float:left;font-weight:bold"><%= metamap_name %></div>
+			<div style="width:25%;float:left;font-weight:bold"><%= metamap_name %><%= '*' if metamap_id==3 or metamap_id==5 %></div>
 			<div style="width:75%;float:left">
 				<%= select_tag "meta[#{metamap_id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap_id),'id','name',(info ? info[1] : 0)), :id=>"meta_#{metamap_id}"%>
 			</div>

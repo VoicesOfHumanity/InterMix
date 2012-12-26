@@ -55,14 +55,16 @@ class ProfilesController < ApplicationController
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@profile_id)
     logger.info("profiles#update #{@participant.id}")
+        
     geoupdate
     @participant.has_participated = true
     if @participant.update_attributes!(params[:participant])
-      if @participant.twitter_username == '' and @participant.twitter_oauth_token != ''
-        @participant.twitter_oauth_token = ''
-        @participant.twitter_oauth_secret = ''
-        @participant.save
-      end  
+
+      flash.now[:alert] = ''
+      flash.now[:alert] += 'First name is required<br>' if params[:participant].has_key?(:first_name) and @participant.first_name.to_s == ''
+      flash.now[:alert] += 'Last name is required<br>' if params[:participant].has_key?(:last_name) and @participant.last_name.to_s == ''
+      flash.now[:alert] += 'Country is required<br>' if params[:participant].has_key?(:country_code) and @participant.country_code.to_s == ''
+      flash.now[:alert] += 'Visibility is required<br>' if params[:participant].has_key?(:visibility) and @participant.visibility.to_s == ''
       
       # Save any metamap assignments
       if params[:meta]
@@ -75,17 +77,32 @@ class ProfilesController < ApplicationController
               mnp.save
             else
               MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
-            end    
+            end  
+          elsif metamap_id==3 or metamap_id==5   
+             flash.now[:alert] += "#{metamap_name} is required<br>"
           end
         end 
       end 
       
+
+      if flash.now[:alert] != ""
+        @subsection = 'edit'
+        render :action => "edit"
+        return
+      end
+      
+      if @participant.twitter_username == '' and @participant.twitter_oauth_token != ''
+        @participant.twitter_oauth_token = ''
+        @participant.twitter_oauth_secret = ''
+        @participant.save
+      end  
+      
+      @alert = ""
       if @subsection == 'settings'
         @notice = "OK New Settings have been saved."
       else
         @notice = "Profile has been updated."
       end
-      @alert = ""
       
       old_pass = params[:old_pass].to_s
       new_pass = params[:new_pass].to_s
