@@ -22,7 +22,8 @@ gem 'capistrano'
 # to do benchmarking
 gem 'ruby-prof'
 
-gem 'devise', :git => "http://github.com/plataformatec/devise.git"
+#gem 'devise', :git => "http://github.com/plataformatec/devise.git"
+gem 'devise'
 #gem "oauth2"
 gem "omniauth"
 #gem "oa-oauth", :require => "omniauth/oauth"
