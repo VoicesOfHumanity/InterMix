@@ -10,7 +10,7 @@
 
 	<p><b>Members:</b> <a href="/groups/<%= @group.id %>/members"><%= @group.group_participants_count.to_i %></a></p>
 
-	<p><b>Items Posted:</b> <a href="/forum?group_id=<%= @group.id %>"><%= @group.items_count.to_i %></a></p>
+	<p><b>Items Posted:</b> <a href="/groups/<%= @group.id %>/forum"><%= @group.items_count.to_i %></a></p>
 
 	<% if false -%>
 	<p><b>Periods:</b><ul>

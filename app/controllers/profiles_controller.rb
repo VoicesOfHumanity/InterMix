@@ -83,7 +83,6 @@ class ProfilesController < ApplicationController
           end
         end 
       end 
-      
 
       if flash.now[:alert] != ""
         @subsection = 'edit'

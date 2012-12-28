@@ -93,11 +93,11 @@ class GroupsController < ApplicationController
         for metamap in Metamap.all
           group_metamap = GroupMetamap.where(:group_id=>@group.id,:metamap_id=>metamap.id).first
           #logger.info("groups#update metamap:#{metamap.id} param:#{params[:metamap][metamap.id.to_s]} group_metamap:#{group_metamap}")
-          if params[:metamap][metamap.id.to_s] and not group_metamap
+          if params[:metamap] and params[:metamap][metamap.id.to_s] and not group_metamap
             #logger.info("groups#update metamap:#{metamap.id} being set")
             group_metamap = GroupMetamap.new(:group_id=>@group.id,:metamap_id=>metamap.id)
             group_metamap.save!
-          elsif not params[:metamap][metamap.id.to_s] and group_metamap
+          elsif (not params[:metamap] or not params[:metamap][metamap.id.to_s]) and group_metamap
             #logger.info("groups#update metamap:#{metamap.id} being deleted")
             group_metamap.destroy
           else
