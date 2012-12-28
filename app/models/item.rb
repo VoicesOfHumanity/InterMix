@@ -23,9 +23,19 @@ class Item < ActiveRecord::Base
     @bigfilepath = "#{@picdir}/big.jpg"
     @thumbfilepath = "#{@picdir}/thumb.jpg"
 
+    iwidth = iheight = 0
+    begin
+      open("#{tempfilepath}", "rb") do |fh|
+        iwidth,iheight = ImageSize.new(fh.read).get_size
+      end
+    rescue
+    end
+    
     p = Magick::Image.read("#{tempfilepath}").first
     if p
-      p.change_geometry('640x640') { |cols, rows, img| img.resize!(cols, rows) }
+      if iwidth > 640 or iheight > 640
+        p.change_geometry('640x640') { |cols, rows, img| img.resize!(cols, rows) }
+      end
       p.write("#{@bigfilepath}")
     end
     

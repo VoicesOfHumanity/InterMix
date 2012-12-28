@@ -590,6 +590,17 @@ class GroupsController < ApplicationController
     @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all      
     @dialogsin = DialogGroup.where("group_id=#{@group_id}").includes(:dialog).all      
 
+    if current_participant.new_signup
+      @new_signup = true
+      current_participant.new_signup = false
+      current_participant.save
+    elsif session[:new_signup].to_i == 1
+      @new_signup = true
+      session[:new_signup] = 0
+    elsif params[:new_signup].to_i == 1
+      @new_signup = true
+    end
+
     update_last_url
     update_prefix
   end   

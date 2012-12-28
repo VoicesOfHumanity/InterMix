@@ -43,3 +43,12 @@
 <div id="itemlist">
 <%= render(:partial => 'items/list')%>
 </div>
+
+<% if @new_signup -%>
+<div id="welcomepopup" class="modaldiv">
+<%= render(:partial => 'dialogs/welcome')%>
+</div>
+<script>
+$('#welcomepopup').modal();
+</script>
+<% end -%>
