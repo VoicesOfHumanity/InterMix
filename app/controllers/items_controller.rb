@@ -29,6 +29,8 @@ class ItemsController < ApplicationController
     @page = 1 if @page < 1
     @perscr = 25 if @perscr < 1
     
+    @dialog = Dialog.find_by_id(@dialog_id)
+    
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
       @rootonly = true
     end
