@@ -1001,7 +1001,7 @@ class FrontController < ApplicationController
   
   def prepare_djoin
     @content = "<p>No discussion was recognized</p>"
-    meta = []
+    @meta = []
     if @dialog
       metamaps = @dialog.metamaps
       for metamap in metamaps
@@ -1018,7 +1018,7 @@ class FrontController < ApplicationController
           n['name'] = node.name
           m['nodes'] << n
         end
-        meta << m
+        @meta << m
       end
       @message = "" if not @message
       
@@ -1031,7 +1031,7 @@ class FrontController < ApplicationController
         @dialog_group = nil 
       end
       
-      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'meta'=>meta, 'message'=>@message, 'name'=>@name, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
+      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
       if @dialog_group and @dialog_group.signup_template.to_s != ''
         template = Liquid::Template.parse(@dialog_group.signup_template)
         @content = template.render(cdata)

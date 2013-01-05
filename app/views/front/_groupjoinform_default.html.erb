@@ -5,8 +5,8 @@
 <input type="hidden" name="group_id" value="<%= @group.id %>">	
 <table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">		
 <% for m in @meta %>
-	<tr><td><%= m.name %>*</td><td><select name="meta_<%= m.id %>">
-	<% for node in m.nodes %><option value="<%= node.id %>"><%= node.name %></option><% end %>
+	<tr><td><%= m['name'] %>*</td><td><select name="meta_<%= m['id'] %>">
+	<% for node in m['nodes'] %><option value="<%= node['id'] %>"><%= node['name'] %></option><% end %>
 	</select></td></tr>
 <% end %>
 <tr><td>Your Name*</td><td><input type="text" name="name" value="<%= @name %>" size="30" style="width:200px"></td></tr>	
