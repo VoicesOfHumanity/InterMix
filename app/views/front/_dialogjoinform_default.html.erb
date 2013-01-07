@@ -3,7 +3,7 @@
 
 <p>Please enter your message to join this discussion</p>
 
-<form action="/front/dialogjoin" method="post" enctype="multipart/form-data">
+<form action="/front/dialogjoin" method="post">
 <input type="hidden" name="group_id" value="<%= @group.id %>">	
 <input type="hidden" name="dialog_id" value="<%= @dialog.id %>">	
 <table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">		
@@ -11,7 +11,7 @@
 </textarea></td></tr>	
 <% for m in @meta %>
 	<tr><td><%= m['name'] %>*</td><td><select name="meta_<%= m['id'] %>">
-	<% for node in m['nodes'] %><option value="<%= node['id'] %>"><%= node['name'] %></option><% end %>
+	<% for node in m['nodes'] %><option value="<%= node['id'] %>" <%= "selected" if node['id']==params["meta_#{m['id']}"].to_i %>><%= node['name'] %></option><% end %>
 	</select></td></tr>
 <% end %>
 <tr><td>Your Name*</td><td><input type="text" name="name" value="<%= @name %>" size="30" style="width:200px"></td></tr>	

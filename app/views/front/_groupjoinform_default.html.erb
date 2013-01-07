@@ -1,12 +1,14 @@
 <div style="width:700px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
 <h3 style="text-align:center"><%= @group.name %></h3>
 
-<form action="/front/groupjoin" method="post" enctype="multipart/form-data">
+<form action="/front/groupjoin" method="post">
 <input type="hidden" name="group_id" value="<%= @group.id %>">	
 <table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">		
 <% for m in @meta %>
 	<tr><td><%= m['name'] %>*</td><td><select name="meta_<%= m['id'] %>">
-	<% for node in m['nodes'] %><option value="<%= node['id'] %>"><%= node['name'] %></option><% end %>
+	<% for node in m['nodes'] -%>
+	<option value="<%= node['id'] %>" <%= "selected" if node['id']==params["meta_#{m['id']}"].to_i %>><%= node['name'] %></option>
+	<% end -%>
 	</select></td></tr>
 <% end %>
 <tr><td>Your Name*</td><td><input type="text" name="name" value="<%= @name %>" size="30" style="width:200px"></td></tr>	

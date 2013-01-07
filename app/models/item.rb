@@ -246,8 +246,8 @@ class Item < ActiveRecord::Base
     #-- We'll add up the stats, but we're including the overall rating summary anyway
     items = items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
-    items = items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{participant_id})") if participant_id.to_i > 0
-    items = items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation") if participant_id.to_i > 0
+    items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{participant_id})") if participant_id.to_i > 0
+    items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation") if participant_id.to_i > 0
 
     if posted_by_country_code != '0' and posted_by_country_code != ''
       items = items.where("participants.country_code=?",posted_by_country_code)
@@ -296,7 +296,8 @@ class Item < ActiveRecord::Base
     
     items = items.order("items.id")
 
-    logger.info("item#list_and_results SQL: #{items.to_sql}")
+    logger.info("item#list_and_results SQL: #{items.to_sql}")    
+    logger.info("item#list_and_results first attributes: #{items[0].attributes}")
     
     #-- Now we have the items. We'll sort them further down, after we have stats for them, in case we sort by that.
     #-- Even if we've asked for root only, we have all of them, including replies. Sorted out later.
@@ -347,8 +348,23 @@ class Item < ActiveRecord::Base
     
     for item in items
       #-- Add up stats, and filter out non-roots, if necessary, into items2
-      iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[]}
-      
+      iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[],'hasrating'=>0,'rateapproval'=>0,'rateinterest'=>0}
+      if participant_id.to_i > 0 
+        if item.respond_to?(:hasrating)
+          #-- item.attributes would show all attributes, not just item.inspect
+          iproc['hasrating'] = item.hasrating
+          iproc['rateapproval'] = item.rateapproval
+          iproc['rateinterest'] = item.rateinterest
+        else
+          #-- Horrible hack. Some kind of bug makes those joined fields sometimes not be there. Look them up.
+          p_rating = Rating.where(:item_id=>item.id,:participant_id=>participant_id).first
+          if p_rating
+            iproc['hasrating'] = participant_id
+            iproc['rateapproval'] = p_rating.approval
+            iproc['rateinterest'] = p_rating.interest
+          end
+        end
+      end
       for rating in ratings
         if rating.item_id == item.id
           iproc['votes'] += 1
