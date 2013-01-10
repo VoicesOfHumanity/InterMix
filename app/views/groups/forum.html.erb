@@ -50,5 +50,10 @@
 </div>
 <script>
 $('#welcomepopup').modal();
+$(document).ready(function() {
+	if (!CKEDITOR) {
+		alert('CKEDITOR not defined');
+	}
+});
 </script>
 <% end -%>
