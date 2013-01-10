@@ -233,7 +233,7 @@ class ItemsController < ApplicationController
       #-- The user might be a member of several of the groups participating in the current dialog, if any
       for group1 in @dialog.groups
         for group2 in @groupsin
-          if group2.group.id == group1.id
+          if group2.group and group2.group.id == group1.id
             @dialoggroupsin << group1
           end
         end
@@ -244,7 +244,7 @@ class ItemsController < ApplicationController
     if @item.group_id > 0
       ingroup = false
       for gp in @groupsin
-        ingroup = true if gp.group_id == @item.group_id
+        ingroup = true if gp.group and gp.group_id == @item.group_id
       end 
       if not ingroup
         @item.group_id = 0 
