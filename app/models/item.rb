@@ -297,7 +297,7 @@ class Item < ActiveRecord::Base
     items = items.order("items.id")
 
     logger.info("item#list_and_results SQL: #{items.to_sql}")    
-    logger.info("item#list_and_results first attributes: #{items[0].attributes}")
+    #logger.info("item#list_and_results first attributes: #{items[0].attributes} if items[0] ")
     
     #-- Now we have the items. We'll sort them further down, after we have stats for them, in case we sort by that.
     #-- Even if we've asked for root only, we have all of them, including replies. Sorted out later.

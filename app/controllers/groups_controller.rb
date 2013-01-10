@@ -9,7 +9,7 @@ class GroupsController < ApplicationController
     #-- Show an overview of groups this person has access to
     @section = 'groups'
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id),moderator").includes(:group)
-    @groupsina = @groupsin.collect{|g| g.group.id}
+    @groupsina = @groupsin.collect{|g| g.group.id if g.group }
     @ismoderator = false
     for group in @groupsin
       @ismoderator = true if group.moderator
