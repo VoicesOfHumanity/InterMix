@@ -116,7 +116,8 @@ $(document).ready(function() {
 		alert('CKEDITOR: ' + JSON.stringify(CKEDITOR));
 	} else if (!('item_html_content' in CKEDITOR.instances)) {
 		alert('CKEDITOR.instances: ' + JSON.stringify(CKEDITOR.instances));
-		CKEDITOR.replace('item_html_content', {"language":"en","ajax":true,"width":"97%","height":"250","toolbar":"Basic"}); 
+		var xinstance = CKEDITOR.replace('item_html_content', {"language":"en","ajax":true,"width":"97%","height":"250","toolbar":"Basic"}); 
+		alert('CKEDITOR instance: ' + JSON.stringify(xinstance));
 		CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
 			this.document.on("keyup", editor_change);
 		});
