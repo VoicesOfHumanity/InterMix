@@ -8,14 +8,16 @@
 
 <ul>
 <% for gp in @groupsin -%>
-	<% dom = ((gp.group.shortname.to_s != "") ? "#{gp.group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
-	<li><a href="http://<%= dom %>/groups/<%= gp.group.id %>/forum"><%= gp.group.name %></a>
-		(<%= gp.group.group_participants_count.to_i %>)
-		<a href="http://<%= dom %>/groups/<%= gp.group.id %>/view">info</a>
-	  <% if gp.moderator or session[:is_hub_admin] or session[:is_sysadmin] -%>
-	  <a href="http://<%= dom %>/groups/<%= gp.group.id %>/admin">administrate</a> 
-	  <% end -%>
-	<a href="http://<%= dom %>/groups/<%= gp.group.id %>/unjoin" onclick="return confirm('Are you sure you want to leave this group?')">leave</a></li>
+	<% if gp.group -%>
+		<% dom = ((gp.group.shortname.to_s != "") ? "#{gp.group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
+		<li><a href="http://<%= dom %>/groups/<%= gp.group.id %>/forum"><%= gp.group.name %></a>
+			(<%= gp.group.group_participants_count.to_i %>)
+			<a href="http://<%= dom %>/groups/<%= gp.group.id %>/view">info</a>
+		  <% if gp.moderator or session[:is_hub_admin] or session[:is_sysadmin] -%>
+		  <a href="http://<%= dom %>/groups/<%= gp.group.id %>/admin">administrate</a> 
+		  <% end -%>
+		<a href="http://<%= dom %>/groups/<%= gp.group.id %>/unjoin" onclick="return confirm('Are you sure you want to leave this group?')">leave</a></li>
+	<% end -%>
 <% end -%>
 </ul>
 
