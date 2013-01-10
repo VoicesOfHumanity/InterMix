@@ -112,7 +112,7 @@
 
 <script>
 $(document).ready(function() {
-	if (!('item_html_content' in CKEDITOR.instances))
+	if (!('item_html_content' in CKEDITOR.instances)) {
 		alert(JSON.stringify(CKEDITOR.instances));
 	} else {
 		CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
