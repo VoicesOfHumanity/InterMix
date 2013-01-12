@@ -12,6 +12,11 @@
     <%= stylesheet_link_tag 'blueprint/ie' %>
   <![endif]-->  
   <%= javascript_include_tag "application" %>
+	<script type="text/javascript">
+	var CKEDITOR_BASEPATH = '/javascripts/ckeditor/';
+	</script>
+  <%= javascript_include_tag "/javascripts/ckeditor/ckeditor.js" %>
+	<%= javascript_include_tag '/javascripts/ckeditor/config' %>
   <%= csrf_meta_tag %>
 </head>
 <body>
