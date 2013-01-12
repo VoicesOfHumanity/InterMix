@@ -55,9 +55,11 @@ Intermix::Application.configure do
   config.serve_static_assets = false
 
   # Compress JavaScripts and CSS
-  config.assets.compress = true
+  #config.assets.compress = true
+  config.assets.compress = false
 
   # fallback to assets pipeline if a precompiled asset is missed
+  #config.assets.compile = true
   config.assets.compile = true
 
   # Generate digests for assets URLs
