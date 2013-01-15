@@ -126,17 +126,30 @@ class Participant < ActiveRecord::Base
   end
   
   def metamaps_h
-    #-- Figure out what metamaps/nodes apply to this person, based on groups or discussions they are in
+    #-- Figure out what metamaps/nodes apply to this person, based on groups or discussions they are in,
+    #-- plus what is globally required
     #-- [[2, "Nationality"], [3, "Gender"]]
-    #-- NB: This was colliding with the metamaps association
-    dialogsin = dialogs_in
+    #-- NB: This was colliding with the metamaps association, so it had to be renamed
     metamaps = []
+    dialogsin = dialogs_in
     for d in dialogsin
       Metamap.joins(:dialogs).where("dialogs.id=?",d[0]).order("sortorder,metamaps.name").each do |m|
         val = [m.id,m.name]
         metamaps << val if not metamaps.include?(val)
       end
+    end   
+    groupsin = groups_in
+    for g in groupsin
+      Metamap.joins(:groups).where("groups.id=?",g[0]).order("sortorder,metamaps.name").each do |m|
+        val = [m.id,m.name]
+        metamaps << val if not metamaps.include?(val)
+      end
     end
+    rmetamaps = Metamap.where(:global_default).all
+    for m in rmetamaps
+      val = [m.id,m.name]
+      metamaps << val if not metamaps.include?(val)
+    end      
     metamaps.uniq
   end
   

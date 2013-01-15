@@ -411,7 +411,7 @@ function mediachange(media) {
 			$('#item_link').val("http://");
 		}
 	} else {
-		$('#mediatitle2').html("<b>Initial message</b>");
+		$('#mediatitle2').html("<b>Message</b>");
 		$('#item_media_type').val('text');
 	}
 	if (media=='text') {

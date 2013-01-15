@@ -94,7 +94,9 @@
 
     <li class="text optional" id="item_short_content_input"><label for="item_short_content">Short summary<br/>/ twitter version<br/>(<span id="charsused">0</span> of 124 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="height: 80px"><%= @item.short_content %></textarea></li>
 
+		<% if false -%>
     <li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Tags</label><input id="item_tag_list" name="item[tag_list]" size="80" type="text" value="" /></li>
+		<% end -%>
 
 </ol></fieldset>
 
