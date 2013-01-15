@@ -483,6 +483,22 @@ class ItemsController < ApplicationController
       @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
       #@from = "dialog"
     end
+    
+    @period_id = 0
+    @posted_by = 0
+    @posted_meta={}
+    @rated_meta={}
+    @rootonly = false
+    @sortby = "items.id desc"
+    @posted_by_country_code = ''
+    @posted_by_admin1uniq = ''
+    @posted_by_metro_area_id = 0
+    @rated_by_country_code = ''
+    @rated_by_admin1uniq = ''
+    @rated_by_metro_area_id = 0
+    
+    #-- Even though we're only showing one item, we still need to get the context, with the ratings, etc.
+    @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id)
 
     update_last_url
     update_prefix
