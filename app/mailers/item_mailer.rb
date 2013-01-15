@@ -3,7 +3,7 @@
 class ItemMailer < ActionMailer::Base
   #-- For sending forum items to those who have a right to see them, and are configured to receive them
   
-  default :from => "noreply@intermix.org"
+  default :from => SYSTEM_SENDER
   
   def item(subject,message,email,cdata={})
     #-- A forum item
