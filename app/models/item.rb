@@ -161,11 +161,13 @@ class Item < ActiveRecord::Base
         msubject = subject
       end  
       
+      content = self.html_content != '' ? self.html_content : self.short_content
+      
       if group
         #-- A group message  
-        email = ItemMailer.group_item(msubject, self.html_content, recipient.email_address_with_name, cdata)
+        email = ItemMailer.group_item(msubject, content, recipient.email_address_with_name, cdata)
       else    
-        email = ItemMailer.item(msubject, self.html_content, recipient.email_address_with_name, cdata)
+        email = ItemMailer.item(msubject, content, recipient.email_address_with_name, cdata)
       end
 
       begin
