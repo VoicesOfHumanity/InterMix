@@ -73,3 +73,25 @@ CKEDITOR.editorConfig = function( config ) {
 	// need to have in the Standard(s) toolbar.
 	config.removeButtons = 'Underline,Subscript,Superscript';
 };
+
+CKEDITOR.on( 'dialogDefinition', function( ev ) {
+  // Take the dialog name and its definition from the event data.
+  var dialogName = ev.data.name;
+  var dialogDefinition = ev.data.definition;
+
+  // Check if the definition is from the dialog we're
+  // interested in (the 'link' dialog).
+  if ( dialogName == 'link' )
+  {
+     // Remove the 'Target' and 'Advanced' tabs from the 'Link' dialog.
+     dialogDefinition.removeContents( 'target' );
+     dialogDefinition.removeContents( 'advanced' );
+
+     // Get a reference to the 'Link Info' tab.
+     var infoTab = dialogDefinition.getContents( 'info' );
+
+     // Remove unnecessary widgets from the 'Link Info' tab.         
+     infoTab.remove( 'linkType');
+     infoTab.remove( 'protocol');
+  }
+});
