@@ -14,8 +14,9 @@ var curid = 0;
 var replyingid = 0;
 var had_default = false;
 var last_sort = '';
-function list(whatchanged) {
+function list(whatchanged,gotopost) {
   whatchanged = (typeof whatchanged === "undefined") ? "" : whatchanged;
+  gotopost = (typeof gotopost === "undefined") ? "" : ""+gotopost;
   $('#itemlist').css('opacity','0.5');
 	showworking();
 	if ($('#sortby') && $('#sortby').val()=='default') {
@@ -83,6 +84,9 @@ function list(whatchanged) {
      complete: function(t){	
        $("#itemlist").html(t.responseText);
 		 listdone();
+         if (gotopost != '') {
+             window.location.hash = '#item_'+gotopost;
+         }
      }
    });	
 }
@@ -245,6 +249,12 @@ function saveitem() {
     			$('#reply_'+replyingid).html(t.responseText);	
     		 	$('#reply_'+replyingid).css('opacity','1.0');
         		//window.setTimeout("$('#reply_'+replyingid).remove();list();", 3000);
+        		if ($('#sortby').val()=='default') {
+        		    $('#sortby').val('items.id desc');
+        		}
+        		if ($('#threads').val()=='root') {
+        		    $('#threads').val('flat');
+    		    }        		
     	  	} else if (id>0) {
     	    	$('#htmlcontent_'+id).html(t.responseText);
     			$('#htmlcontent_'+id).css('opacity','1.0');
@@ -268,6 +278,8 @@ function saveitem() {
     		if (!$('#saveresult') || $('#saveresult').val() != 'error') {
     		    if ($('#from') && $('#from').val()=='thread') {
     		        window.location.reload();
+    		    } else if (replyingid>0) {
+    		        list(null,replyingid);
     		    } else {
     		        list();
 		        }
