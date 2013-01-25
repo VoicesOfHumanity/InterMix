@@ -12,6 +12,7 @@ function toggleoptions() {
 }
 var curid = 0;
 var replyingid = 0;
+var editingid = 0;
 var had_default = false;
 var last_sort = '';
 function list(whatchanged,gotopost) {
@@ -111,7 +112,18 @@ var gotopage = function(page) {
 	});	
 }
 function newitem(token) {
+	if (editingid>0) {
+	    alert("Please save or cancel the edit that is in progress");
+	    return;
+	} else if (replyingid>0) {
+	    alert("Please save or cancel the reply that is in progress");
+	    return;
+	}
 	curid = 0;
+	// Grey out all reply links
+	$('.reply_link').each(function(i,obj) {
+	    $(this).css('opacity','0.4');
+	});
 	$('#newforumitem').html("working...");
 	$('#newforumitem').show();
 	pars = 'a=1';
@@ -136,8 +148,20 @@ function newitem(token) {
 }
 function reply(item_id,to_reply) {
 	// Temporarily add an edit after the item we're replying to
+	if (editingid>0) {
+	    alert("Please save or cancel the edit that is in progress");
+	    return;
+	} else if (replyingid>0) {
+	    alert("Please save or cancel the reply that is in progress");
+	    return;
+	}
 	curid = 0;
 	replyingid = item_id;
+	// Grey out all reply links
+	$('.reply_link').each(function(i,obj) {
+	    $(this).css('opacity','0.4');
+	});
+	
 	var newcontent = '<div class="forumitem forumreply" id="reply_'+item_id+'">working...</div>';
 	if (to_reply) {
 		$('#item_'+item_id).after(newcontent);		
@@ -166,6 +190,18 @@ function reply(item_id,to_reply) {
 }
 var oldval = '';
 function edititem(id) {	
+	if (editingid>0) {
+	    alert("Please save or cancel the edit that is in progress");
+	    return;
+	} else if (replyingid>0) {
+	    alert("Please save or cancel the reply that is in progress");
+	    return;
+	}
+	editingid = id;
+	// Grey out all reply links
+	$('.reply_link').each(function(i,obj) {
+	    $(this).css('opacity','0.4');
+	});
 	if (CKEDITOR.instances['item_html_content_editor']) { 
 		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
 	}
@@ -209,6 +245,10 @@ function canceledit(id) {
 	$('#newforumitem').hide();
 	$('#newforumitem').html('');
 	replyingid = 0;
+	editingid = 0;
+	$('.reply_link').each(function(i,obj) {
+	    $(this).css('opacity','1.0');
+	});
 }
 function saveitem() {
 	id = curid;
@@ -297,6 +337,10 @@ function saveitem() {
     		        list();
 		        }
     		    replyingid = 0;
+    		    editingid = 0;
+            	$('.reply_link').each(function(i,obj) {
+            	    $(this).css('opacity','1.0');
+            	});
 		    }
 		}
 	 });	

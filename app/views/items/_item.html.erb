@@ -124,13 +124,13 @@
 		<% if @show_meta and item.participant and item.participant.metamap_node_participants and ((item.dialog and (@from.to_s == 'dialog' or @from.to_s == 'result') and item.period and item.period_id != item.dialog.current_period) or not item.period or not item.is_first_in_thread) or (@from.to_s != 'dialog' and @from.to_s != 'result') -%>
 		  (<%= item.participant.metamap_node_participants.collect{|mnp| mnp.metamap_node.name}.join('|') %>)
 		<% end -%>
-		<%= link_to_function 'edit', "edititem(#{item.id})" if item.posted_by == current_participant.id and not item.edit_locked %>
+		<%= link_to_function 'edit', "edititem(#{item.id})", {:class=>'reply_link'} if item.posted_by == current_participant.id and not item.edit_locked %>
 		<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
 		</div>
 		
 		<div class="iteminfotxt">
 			<% if item.reply_ok(current_participant.id) -%>
-				<%= link_to_function "Reply", "reply(#{item.id},#{is_reply})" %>	
+				<%= link_to_function "Reply", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %>	
 			<% end -%>
 		</div>
 		
