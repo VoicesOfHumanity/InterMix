@@ -435,17 +435,28 @@ function nosummary(id,top) {
 		$('#item_'+top).css("z-index",0);
 	}
 }
-function html_to_short() {
-	var oldval = CKEDITOR.instances['item_html_content'].getData();
-	var newval = $.trim(strip(oldval));
-	if ($('#item_long_length')) {
-	    $('#item_long_length').html(newval.length);
-	}
-	xtext = newval.substring(0,124);
+function html_to_short(htmlval,plainval) {
+    if (typeof htmlval === "undefined") {
+        htmlval = CKEDITOR.instances['item_html_content'].getData();
+    }
+    if (typeof plainval === "undefined") {
+	    plainval = $.trim(strip(htmlval));
+    }
+	xtext = plainval.substring(0,124);
 	$('#item_short_content').val(xtext);
 	$('#charsused').html(xtext.length);
 }
+function mess_characters(htmlval,plainval) {
+    // Count and display characters and words in the main message
+	var char_count = plainval.length;
+	if ($('#item_long_length')) {
+	    $('#item_long_length').html(char_count);
+	}
+    var word_count = plainval.match(/\S+/g).length;
+    $('#item_long_words').html(word_count);
+}
 function update_characters() {
+    // Count and display characters in the short summary
 	var count = $('#item_short_content').val().length;
 	if (count>124) {
 		var oldval = $('#item_short_content').val();

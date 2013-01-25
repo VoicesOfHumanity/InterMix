@@ -79,6 +79,9 @@
 			<div id="mediatitle2" style="width:25%;float:left"><b><%= (@item.reply_to.to_i>0) ? "Reply" : "Message" %>
 			<% if @max_characters.to_i > 0 and @item.reply_to.to_i == 0 -%>
 			<br/>(<span id="item_long_length"><%= @item.html_content ? @item.html_content.length : 0 %></span> of <%= @max_characters.to_i %> char)
+			<% elsif @item.reply_to.to_i == 0 -%>
+			<% plain_content = strip_tags(@item.html_content.to_s) %>
+			<br/>(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> words, <span id="item_long_length"><%= plain_content.length %></span> characters)
 			<% end -%>
 			</b></div>
 			<div style="width:75%;float:left">
@@ -132,9 +135,12 @@ $(document).ready(function() {
 });
 var short_updated = false;
 function editor_change() {
+	var htmlval = CKEDITOR.instances['item_html_content'].getData();
+	var plainval = $.trim(strip(htmlval));
 	if (!short_updated) {
-		html_to_short();
+		html_to_short(htmlval,plainval);
 	}
+	mess_characters(htmlval,plainval);
 }
 var cur_media_type = $('#item_media_type').val();
 mediachange(cur_media_type);
