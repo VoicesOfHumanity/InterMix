@@ -74,14 +74,13 @@
 				<%= select_tag :photo_id, options_for_select([['',0]]+Photo.where(:participant_id=>current_participant.id).all.collect{|p| ["#{p.filename} (#{p.width}x#{p.height})",p.id]}) %>
 			</div>						
 		</li>			
-		
 		<li>
-			<div id="mediatitle2" style="width:25%;float:left"><b><%= (@item.reply_to.to_i>0) ? "Reply" : "Message" %>
+			<div style="width:25%;float:left"><b><span id="mediatitle2"><%= (@item.reply_to.to_i>0) ? "Reply" : "Message" %></span>
 			<% if @max_characters.to_i > 0 and @item.reply_to.to_i == 0 -%>
 			<br/>(<span id="item_long_length"><%= @item.html_content ? @item.html_content.length : 0 %></span> of <%= @max_characters.to_i %> char)
-			<% elsif @item.reply_to.to_i == 0 -%>
+			<% elsif not @item.reply_to or @item.reply_to.to_i==0 -%>
 			<% plain_content = strip_tags(@item.html_content.to_s) %>
-			<br/>(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> words, <span id="item_long_length"><%= plain_content.length %></span> characters)
+			<br/>(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> words, <span id="item_long_length"><%= plain_content.length %></span> char)
 			<% end -%>
 			</b></div>
 			<div style="width:75%;float:left">

@@ -144,6 +144,7 @@ function newitem(token) {
     pars += "&authenticity_token="+token;
 	$.ajax({
 		type: "GET",
+		cache: false,
 		url: '/items/new?xtime=' + (new Date()).getTime(),
 		data: pars,
 		complete: function(t){	
