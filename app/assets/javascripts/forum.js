@@ -13,6 +13,7 @@ function toggleoptions() {
 var curid = 0;
 var replyingid = 0;
 var editingid = 0;
+var in_new_item = 0;
 var had_default = false;
 var last_sort = '';
 function list(whatchanged,gotopost) {
@@ -118,8 +119,12 @@ function newitem(token) {
 	} else if (replyingid>0) {
 	    alert("Please save or cancel the reply that is in progress");
 	    return;
+	} else if (in_new_item>0) {
+	    alert("Please save or cancel the new thread that is in progress");
+	    return;
 	}
 	curid = 0;
+	in_new_item = 1;
 	// Grey out all reply links
 	$('.reply_link').each(function(i,obj) {
 	    $(this).css('opacity','0.4');
@@ -153,6 +158,9 @@ function reply(item_id,to_reply) {
 	    return;
 	} else if (replyingid>0) {
 	    alert("Please save or cancel the reply that is in progress");
+	    return;
+	} else if (in_new_item>0) {
+	    alert("Please save or cancel the new thread that is in progress");
 	    return;
 	}
 	curid = 0;
@@ -195,6 +203,9 @@ function edititem(id) {
 	    return;
 	} else if (replyingid>0) {
 	    alert("Please save or cancel the reply that is in progress");
+	    return;
+	} else if (in_new_item>0) {
+	    alert("Please save or cancel the new thread that is in progress");
 	    return;
 	}
 	editingid = id;
@@ -246,6 +257,7 @@ function canceledit(id) {
 	$('#newforumitem').html('');
 	replyingid = 0;
 	editingid = 0;
+	in_new_item = 0;
 	$('.reply_link').each(function(i,obj) {
 	    $(this).css('opacity','1.0');
 	});
@@ -338,6 +350,7 @@ function saveitem() {
 		        }
     		    replyingid = 0;
     		    editingid = 0;
+            	in_new_item = 0;
             	$('.reply_link').each(function(i,obj) {
             	    $(this).css('opacity','1.0');
             	});
