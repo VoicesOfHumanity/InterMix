@@ -131,6 +131,7 @@ toggleoptions();
 </script>
 <% end -%>
 <script>
+var cur_item_id = 0;
 var posted_by_country_code = '<%= @posted_by_country_code %>';
 var posted_by_admin1uniq = '<%= @posted_by_admin1uniq %>';
 var posted_by_admin2uniq = '';
@@ -161,6 +162,6 @@ function chgcountry(what) {
 		list(what+'_country_code');
 	}) 
 }
-last_sort = $('#sortby').val();
+var last_sort = $('#sortby').val();
 </script>
 

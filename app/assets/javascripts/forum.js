@@ -245,8 +245,20 @@ function saveitem() {
 	   url: url,
 	   data: pars,
 	   complete: function(t){
+	       var was_error = true;
+	       if (t.responseText.substring(0,1)) {
+	            // looks like json
+	            var results = eval('(' + t.responseText + ')');
+	            var showmess = results['message'];
+	            if ($('#cur_item_id')) {
+	                $('#cur_item_id').val(results['item_id']);
+                }
+                was_error = results['error'];
+	        } else {
+	            var showmess = t.responseText;
+	        }    
     	   if (replyingid>0) {
-    			$('#reply_'+replyingid).html(t.responseText);	
+    			$('#reply_'+replyingid).html(showmess);	
     		 	$('#reply_'+replyingid).css('opacity','1.0');
         		//window.setTimeout("$('#reply_'+replyingid).remove();list();", 3000);
         		if ($('#sortby').val()=='default') {
@@ -256,11 +268,11 @@ function saveitem() {
         		    $('#threads').val('flat');
     		    }        		
     	  	} else if (id>0) {
-    	    	$('#htmlcontent_'+id).html(t.responseText);
+    	    	$('#htmlcontent_'+id).html(showmess);
     			$('#htmlcontent_'+id).css('opacity','1.0');
         		//window.setTimeout("list();", 3000);
     		} else {
-    	    	$("#newforumitem").html(t.responseText);
+    	    	$("#newforumitem").html(showmess);
     	  		$('#newforumitem').css('opacity','1.0');
     			//$('#newforumitem').html('');
         		//window.setTimeout("list();$('#newforumitem').hide();", 3000);
@@ -275,11 +287,12 @@ function saveitem() {
         		    }
         		}
     		}
-    		if (!$('#saveresult') || $('#saveresult').val() != 'error') {
+    		//if (!$('#saveresult') || $('#saveresult').val() != 'error') {
+        	if (!was_error) {
     		    if ($('#from') && $('#from').val()=='thread') {
     		        window.location.reload();
-    		    } else if (replyingid>0) {
-    		        list(null,replyingid);
+    		    } else if (results['item_id']) {
+    		        list(null,results['item_id']);
     		    } else {
     		        list();
 		        }

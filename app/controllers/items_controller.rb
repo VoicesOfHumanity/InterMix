@@ -437,7 +437,10 @@ class ItemsController < ApplicationController
       #@item.emailit
       
       current_participant.update_attribute(:has_participated,true) if not current_participant.has_participated
-      render :text=>'Item was successfully created.', :layout=>false
+      #render :text=>'Item was successfully created.', :layout=>false
+      results = {'error'=>false,'message'=>"Item was successfully created.",'item_id'=>@item.id}        
+      render :json=>results, :layout=>false
+      
     end  
   end  
   
@@ -452,8 +455,14 @@ class ItemsController < ApplicationController
     if @item.update_attributes(params[:item])
       itemprocess
       @item.save
-      showmess = (@error_message.to_s != '') ? @error_message : "Item was successfully updated."
-      render :text=>showmess, :layout=>false
+      #showmess = (@error_message.to_s != '') ? @error_message : "Item was successfully updated."
+      if @error_message.to_s != ''
+        results = {'error'=>true,'message'=>@error_message,'item_id'=>0}
+      else
+        results = {'error'=>false,'message'=>"Item was successfully updated.",'item_id'=>@item.id}        
+      end  
+      render :json=>results, :layout=>false
+      #render :text=>showmess, :layout=>false
     end   
   end  
   
