@@ -12,8 +12,8 @@
 <tr><td class="label">Address1:</td><td><%= @participant.address1 %></td></tr>	
 <tr><td class="label">Address2:</td><td><%= @participant.address2 %></td></tr>	
 <tr><td class="label">City:</td><td><%= @participant.city %></td></tr>	
-<tr><td class="label">State:</td><td><%= @participant.state_name %></td></tr>	
-<tr><td class="label">Country:</td><td><%= @participant.country_name %></td></tr>	
+<tr><td class="label">State:</td><td><%= @participant.geoadmin1.name if @participant.geoadmin1 %></td></tr>	
+<tr><td class="label">Country:</td><td><%= @participant.geocountry.name if @participant.geocountry %></td></tr>	
 <tr><td class="label">Zip:</td><td><%= @participant.zip %></td></tr>	
 <tr><td class="label">Phone:</td><td><%= @participant.phone %></td></tr>	
 <tr><td class="label">Metropolitan Area:</td><td><%= @participant.metro_area ?  @participant.metro_area.name : @participant.metropolitan_area %></td></tr>	

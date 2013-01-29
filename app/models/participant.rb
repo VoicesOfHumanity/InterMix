@@ -16,6 +16,8 @@ class Participant < ActiveRecord::Base
   has_many :ratings
   has_many :authentications
   has_many :dialog_admins
+  belongs_to :geocountry, :foreign_key => :country_code, :primary_key => :iso
+  belongs_to :geoadmin1, :foreign_key => :admin1uniq, :primary_key => :admin1uniq
   belongs_to :metro_area
   has_many :group_subtags, :through => :group_subtag_participants
   

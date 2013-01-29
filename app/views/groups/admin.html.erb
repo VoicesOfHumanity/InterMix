@@ -65,7 +65,7 @@
 		<p>application pending for<br>
 		<ul>
 		<% for dialog in @group.pending_dialogs -%>
-			<li><a href="/dialog/<%= dialog.id %>/view"><%= dialog.name %></a></li>
+			<li><a href="/dialogs/<%= dialog.id %>/view"><%= dialog.name %></a></li>
 		<% end -%>
 		</ul></p>
 		<% end -%>
