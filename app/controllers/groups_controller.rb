@@ -145,6 +145,15 @@ class GroupsController < ApplicationController
         @group_participant.moderator = true
         @group_participant.active = true
         @group_participant.save
+        for metamap in Metamap.all
+          group_metamap = GroupMetamap.where(:group_id=>@group.id,:metamap_id=>metamap.id).first
+          if params[:metamap] and params[:metamap][metamap.id.to_s] and not group_metamap
+            group_metamap = GroupMetamap.new(:group_id=>@group.id,:metamap_id=>metamap.id)
+            group_metamap.save!
+          elsif (not params[:metamap] or not params[:metamap][metamap.id.to_s]) and group_metamap
+            group_metamap.destroy
+          end  
+        end
         flash[:notice] = 'Group was successfully created.'
         format.html { redirect_to :action=>:view, :id=>@group.id }
       else
@@ -222,7 +231,7 @@ class GroupsController < ApplicationController
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
-          html_content += template.render(cdata)
+          html_content = template.render(cdata)
         else  
           html_content = "<p>You have been invited to join the group: #{@group.name}<br/>"
           html_content += "</p>"

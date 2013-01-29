@@ -37,7 +37,7 @@ class ItemsController < ApplicationController
 
     if @from == 'wall'
       @posted_by = ( params[:id] || current_participant.id ).to_i
-      @participant = Participant.find(@participant_id)
+      @participant = Participant.find(@posted_by)
     else
       @posted_by = 0  
     end   
@@ -284,14 +284,14 @@ class ItemsController < ApplicationController
       if @dialog.active_period and @dialog.active_period.max_messages.to_i > 0
         @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
         if @previous_messages_period >= @dialog.active_period.max_messages.to_i
-          render :text=>"<p>You've already reached the maximum number of threads for this period</p>", :layout=>false
+          render :text=>"<p>You've already reached your maximum number of threads for this period</p>", :layout=>false
           return
         end
       end  
       if @dialog.max_messages.to_i > 0
         @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
         if @previous_messages >= @dialog.max_messages.to_i
-          render :text=>"<p>You've already reached the maximum number of threads for this discussion</p>", :layout=>false
+          render :text=>"<p>You've already reached your maximum number of threads for this discussion</p>", :layout=>false
           return
         end
       end
@@ -384,8 +384,10 @@ class ItemsController < ApplicationController
       logger.info("items#create by #{@item.posted_by}: failing validation: #{@xmessage}")
       flash.now[:alert] = @xmessage
     end
+    logger.info("items#create item is validated")
     
     itemprocess
+    logger.info("items#create item has been processed")
     
     if @item.dialog_id > 0 and @dialog
       #-- Various controls set by either a discussion or by a focus group in a discussion
