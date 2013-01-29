@@ -7,6 +7,7 @@
 	<%= hidden_field :item, :group_id %>
 	<%= hidden_field :item, :dialog_id %>
 	<%= hidden_field :item, :period_id %>
+	<%= hidden_field_tag :js_message_length, 0 %>
 </div>
 
 <% if @item.reply_to.to_i > 0 -%>
@@ -17,7 +18,7 @@
 <p style="color: green"><%=raw flash[:notice] %></p>
 <% end -%>
 <% if flash[:alert].to_s !="" -%>
-<p style="color: red"><%=raw flash[:alert] %></p>
+<p style="color:#f00;text-align:center;font-weight:bold;font-size:16px;border:1px solid #f00;padding:10px;margin: 5px 0 10px 0;"><%=raw flash[:alert] %></p>
 <% end -%>
 
 <fieldset class="inputs"><ol>
@@ -143,4 +144,5 @@ function editor_change() {
 }
 var cur_media_type = $('#item_media_type').val();
 mediachange(cur_media_type);
+editor_change();
 </script>

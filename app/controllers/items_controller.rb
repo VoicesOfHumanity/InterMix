@@ -449,7 +449,15 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
     @item.link = '' if @item.link == 'http://'
     if not itemvalidate
-      render :text=>@xmessage, :layout=>false
+      #render :text=>@xmessage, :layout=>false
+      #results = {'error'=>true,'message'=>@xmessage,'item_id'=>@item.id}
+      #render :json=>results, :layout=>false
+      #return
+      flash.now[:alert] = @xmessage
+    end
+    if flash[:alert] or flash.now[:alert]
+      prepare_edit
+      render :partial=>'edit', :layout=>false
       return
     end
     if @item.update_attributes(params[:item])
@@ -457,7 +465,7 @@ class ItemsController < ApplicationController
       @item.save
       #showmess = (@error_message.to_s != '') ? @error_message : "Item was successfully updated."
       if @error_message.to_s != ''
-        results = {'error'=>true,'message'=>@error_message,'item_id'=>0}
+        results = {'error'=>true,'message'=>@error_message,'item_id'=>@item.id}
       else
         results = {'error'=>false,'message'=>"Item was successfully updated.",'item_id'=>@item.id}        
       end  
@@ -656,11 +664,16 @@ class ItemsController < ApplicationController
     dialog = Dialog.find_by_id(dialog_id) if dialog_id
     html_content = params[:item][:html_content].to_s
     subject = params[:item][:subject].to_s
+    if params[:js_message_length]
+      message_length = params[:js_message_length].to_i
+    else
+      message_length = html_content.length
+    end
     if html_content == '' and @item.media_type =='text' and ((dialog and dialog.settings_with_period["required_message"]) or subject != '')
       @xmessage += "Please include at least a brief message<br>"
     elsif @item.short_content == ''
       @xmessage += "Please include at least a short message<br>"
-    elsif dialog and dialog.settings_with_period["max_characters"].to_i > 0 and html_content.length > dialog.settings_with_period["max_characters"]  
+    elsif dialog and dialog.settings_with_period["max_characters"].to_i > 0 and message_length > dialog.settings_with_period["max_characters"]  
       @xmessage += "The maximum message length is #{dialog.settings_with_period["max_characters"]} characters<br>"
     elsif dialog and dialog.settings_with_period["required_subject"] and subject.to_s == '' and html_content.gsub(/<\/?[^>]*>/, "").strip != ''
       @xmessage += "Please choose a subject line<br>"
@@ -669,7 +682,8 @@ class ItemsController < ApplicationController
     else
       return true
     end  
-    @xmessage = "<p style=\"color:#f00\"><br>#{@xmessage}</p>"
+    #@xmessage = "<p style=\"color:#f00;text-align:center;font-weight:bold;font-size:16px;border:1px solid #f00;padding:10px;\"><br>#{@xmessage}</p>"
+    #@xmessage = "<p style=\"color:#f00;\"><br>#{@xmessage}</p>"
     return false
   end
   

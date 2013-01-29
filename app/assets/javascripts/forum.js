@@ -306,7 +306,7 @@ function saveitem() {
 	   data: pars,
 	   complete: function(t){
 	       var was_error = true;
-	       if (t.responseText.substring(0,1)) {
+	       if (t.responseText.substring(0,1)=='{') {
 	            // looks like json
 	            var results = eval('(' + t.responseText + ')');
 	            var showmess = results['message'];
@@ -348,7 +348,15 @@ function saveitem() {
         		}
     		}
     		//if (!$('#saveresult') || $('#saveresult').val() != 'error') {
-        	if (!was_error) {
+        	if (was_error) {
+        	    if (replyingid>0) {
+        	        window.location.hash = '#reply_' + replyingid;
+        	    } else if (id>0) {
+        	        window.location.hash = '#htmlcontent_' + id;
+        	    } else {
+        	         window.location.hash = '#newforumitem';
+        	    }
+        	} else {    
         	    if ($('#from') && $('#from').val()=='individual') {
         	        window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];
     		    } else if ($('#from') && $('#from').val()=='thread') {
@@ -462,6 +470,9 @@ function mess_characters(htmlval,plainval) {
 	if ($('#item_long_length')) {
 	    $('#item_long_length').html(char_count);
 	}
+    if ($('#js_message_length')) {
+        $('#js_message_length').val(char_count);
+    }
     var word_count = plainval.match(/\S+/g).length;
     $('#item_long_words').html(word_count);
 }
