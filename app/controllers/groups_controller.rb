@@ -555,7 +555,7 @@ class GroupsController < ApplicationController
        @sortby = 'items.id desc'
     end
     
-    @threads = params[:threads] || set['threads'] || ''
+    @threads = params[:threads] || set['threads'] || 'flat'
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
       @rootonly = true
     end

@@ -149,6 +149,13 @@ function newitem(token) {
 		data: pars,
 		complete: function(t){	
 			$('#newforumitem').html(t.responseText);
+			if (t.responseText.substring(0,6) == "<p>You") {
+    			// If what came back wasn't an edit screen (but a message), clear the flag that new item is in progress
+    			in_new_item = 0;
+            	$('.reply_link').each(function(i,obj) {
+            	    $(this).css('opacity','1.0');
+            	});
+    		}
 		}
 	});	
 }
@@ -342,7 +349,9 @@ function saveitem() {
     		}
     		//if (!$('#saveresult') || $('#saveresult').val() != 'error') {
         	if (!was_error) {
-    		    if ($('#from') && $('#from').val()=='thread') {
+        	    if ($('#from') && $('#from').val()=='individual') {
+        	        window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];
+    		    } else if ($('#from') && $('#from').val()=='thread') {
     		        window.location.reload();
     		    } else if (results['item_id']) {
     		        list(null,results['item_id']);

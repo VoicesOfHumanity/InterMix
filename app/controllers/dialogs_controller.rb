@@ -147,10 +147,10 @@ class DialogsController < ApplicationController
       if dvalidate and @dialog.update_attributes(params[:dialog])
         for metamap in Metamap.all
           dialog_metamap = DialogMetamap.where(:dialog_id=>@dialog.id,:metamap_id=>metamap.id).first
-          if params[:metamap][metamap.id.to_s] and not dialog_metamap
+          if params[:metamap] and params[:metamap][metamap.id.to_s] and not dialog_metamap
             dialog_metamap = DialogMetamap.new(:dialog_id=>@dialog.id,:metamap_id=>metamap.id)
             dialog_metamap.save!
-          elsif not params[:metamap][metamap.id.to_s] and dialog_metamap
+          elsif (not params[:metamap] or not params[:metamap][metamap.id.to_s]) and dialog_metamap
             dialog_metamap.destroy
           end  
         end
@@ -197,7 +197,7 @@ class DialogsController < ApplicationController
     @perscr = (params[:perscr] || set['perscr'] || 25).to_i
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
-    @threads = params[:threads] || set['threads'] || ''
+    @threads = params[:threads] || set['threads'] || 'flat'
     #@threads = params[:threads] || set['threads'] || 'flat'
     #@threads = 'flat' if @threads == ''
     #@threads = 'flat'

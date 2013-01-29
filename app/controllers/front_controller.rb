@@ -364,8 +364,8 @@ class FrontController < ApplicationController
         @password += (1+rand(9)).to_s if rand(3) == 2
       end
       @participant = Participant.new
-      @participant.first_name = first_name
-      @participant.last_name = last_name
+      @participant.first_name = first_name.strip
+      @participant.last_name = last_name.strip
       @participant.email = @email
       @participant.password = @password
       #@participant.country_code = 'US' if state.to_s != ''
@@ -615,8 +615,8 @@ class FrontController < ApplicationController
         @password += (1+rand(9)).to_s if rand(3) == 2
       end
       @participant = Participant.new
-      @participant.first_name = first_name
-      @participant.last_name = last_name
+      @participant.first_name = first_name.strip
+      @participant.last_name = last_name.strip
       @participant.email = @email
       @participant.password = @password
       #@participant.country_code = 'US' if state.to_s != ''
@@ -842,8 +842,8 @@ class FrontController < ApplicationController
         @password += (1+rand(9)).to_s if rand(3) == 2
       end
       @participant = Participant.new
-      @participant.first_name = @first_name
-      @participant.last_name = @last_name
+      @participant.first_name = @first_name.strip
+      @participant.last_name = @last_name.strip
       @participant.email = @email
       @participant.password = @password
       #@participant.country_code = 'US' if state.to_s != ''
