@@ -842,7 +842,7 @@ class Item < ActiveRecord::Base
       end
 
       #-- Is he a member of a group that's a member of the discussion?
-      groupsin = GroupParticipant.where("participant_id=#{participant.id}").includes(:group).all       
+      groupsin = GroupParticipant.where("participant_id=#{participant_id}").includes(:group).all       
       dialoggroupsin = []
       for group1 in dialog.groups
         for group2 in groupsin
@@ -856,9 +856,11 @@ class Item < ActiveRecord::Base
     elsif self.group_id.to_i > 0  
       #-- This message belongs to a grop
       group = Group.includes(:owner_participant).find(self.group_id)
-      group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant.id).find(:first)
-      if not group_participant
-        #-- He's not a member
+      group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).find(:first)
+      if group_participant
+        #-- He's a member
+        return true
+      else  
         return false
       end
     end

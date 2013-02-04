@@ -127,6 +127,15 @@ class DialogsController < ApplicationController
           @group = Group.find(@dialog.group_id)
           @dialog.groups << @group
         end
+        for metamap in Metamap.all
+          dialog_metamap = DialogMetamap.where(:dialog_id=>@dialog.id,:metamap_id=>metamap.id).first
+          if params[:metamap] and params[:metamap][metamap.id.to_s] and not dialog_metamap
+            dialog_metamap = DialogMetamap.new(:dialog_id=>@dialog.id,:metamap_id=>metamap.id)
+            dialog_metamap.save!
+          elsif (not params[:metamap] or not params[:metamap][metamap.id.to_s]) and dialog_metamap
+            dialog_metamap.destroy
+          end  
+        end
         logger.info("dialogs_controller#create New dialog created: #{@dialog.id}")
         flash[:notice] = 'Discussion was successfully created.'
         format.html { redirect_to :action=>:view, :id=>@dialog.id }
