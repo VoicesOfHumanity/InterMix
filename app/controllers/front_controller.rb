@@ -266,8 +266,14 @@ class FrontController < ApplicationController
     @message = params[:message].to_s
     @has_subject = params.has_key?('subject')
     @has_message = params.has_key?('message')
-    @name = params[:name].to_s
+    if params.has_key?(:first_name)
+      @first_name = params[:first_name].to_s
+      @last_name = params[:last_name].to_s
+    else
+      @name = params[:name].to_s
+    end
     @email = params[:email].to_s
+    @country_code = params[:country_code].to_s
     tempfilepath = ''
     
     flash[:notice] = ''
@@ -308,7 +314,9 @@ class FrontController < ApplicationController
     elsif @subject != '' and @subject.length > 48
       flash[:alert] += "Maximum 48 characters for the subject line, please<br>"        
     end
-    if @name == ''
+    if params.has_key?(:first_name) and (@first_name == '' or @last_name == '')
+      flash[:alert] += "What's your name? (first & last)<br>"
+    elsif @name == ''
       flash[:alert] += "What's your name?<br>"
     end  
     if @email == ''
@@ -316,6 +324,8 @@ class FrontController < ApplicationController
     elsif not @email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
+    flash.now[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and params[:country_code].to_s == ''
+
     @metamap_vals = {}
     if @dialog and @dialog.required_meta
       #-- Check any metamap categories, if they're required
@@ -336,9 +346,14 @@ class FrontController < ApplicationController
       return
     end  
 
-    narr = @name.split(' ')
-    last_name = narr[narr.length-1]
-    first_name = narr[0,narr.length-1].join(' ')
+    if params.has_key?(:first_name)
+      last_name = params[:last_name].to_s
+      first_name = params[:first_name].to_s
+    else
+      narr = @name.split(' ')
+      last_name = narr[narr.length-1]
+      first_name = narr[0,narr.length-1].join(' ')
+    end
     @password = '???'    
         
     @participant = Participant.find_by_email(@email) 
@@ -368,7 +383,7 @@ class FrontController < ApplicationController
       @participant.last_name = last_name.strip
       @participant.email = @email
       @participant.password = @password
-      #@participant.country_code = 'US' if state.to_s != ''
+      @participant.country_code = @country_code
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
@@ -548,8 +563,14 @@ class FrontController < ApplicationController
     
     @group = Group.find_by_id(@group_id)
 
-    @name = params[:name].to_s
+    if params.has_key?(:first_name)
+      @first_name = params[:first_name].to_s
+      @last_name = params[:last_name].to_s
+    else
+      @name = params[:name].to_s
+    end
     @email = params[:email].to_s
+    @country_code = params[:country_code].to_s
     tempfilepath = ''
     
     flash[:notice] = ''
@@ -570,7 +591,9 @@ class FrontController < ApplicationController
       return
     end  
 
-    if @name == ''
+    if params.has_key?(:first_name) and (@first_name == '' or @last_name == '')
+      flash[:alert] += "What's your name? (first & last)<br>"
+    elsif @name == ''
       flash[:alert] += "What's your name?<br>"
     end  
     if @email == ''
@@ -578,6 +601,7 @@ class FrontController < ApplicationController
     elsif not @email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
+    flash.now[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and params[:country_code].to_s == ''
     @metamap_vals = {}
     if @group.required_meta
       #-- Check any metamap categories, if they're required
@@ -596,9 +620,14 @@ class FrontController < ApplicationController
       return
     end  
 
-    narr = @name.split(' ')
-    last_name = narr[narr.length-1]
-    first_name = narr[0,narr.length-1].join(' ')
+    if params.has_key?(:first_name)
+      last_name = params[:last_name].to_s
+      first_name = params[:first_name].to_s
+    else
+      narr = @name.split(' ')
+      last_name = narr[narr.length-1]
+      first_name = narr[0,narr.length-1].join(' ')
+    end
     @password = '???'    
         
     @participant = Participant.find_by_email(@email) 
@@ -619,7 +648,7 @@ class FrontController < ApplicationController
       @participant.last_name = last_name.strip
       @participant.email = @email
       @participant.password = @password
-      #@participant.country_code = 'US' if state.to_s != ''
+      @participant.country_code = @country_code
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
@@ -782,6 +811,7 @@ class FrontController < ApplicationController
     #@password = params[:password].to_s
     #@password_confirmation = params[:password_confirmation].to_s
     @group_id = params[:group_id].to_i
+    @country_code = params[:country_code].to_s
     
     #-- Do a bit of validation
     flash[:alert] = ''
@@ -797,6 +827,7 @@ class FrontController < ApplicationController
     elsif not @email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
+    flash.now[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and params[:country_code].to_s == ''
     @participant = Participant.find_by_email(@email) 
     if @group_id == 0
       flash[:alert] += "Please choose a group to join<br>"
@@ -846,7 +877,7 @@ class FrontController < ApplicationController
       @participant.last_name = @last_name.strip
       @participant.email = @email
       @participant.password = @password
-      #@participant.country_code = 'US' if state.to_s != ''
+      @participant.country_code = @country_code
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  

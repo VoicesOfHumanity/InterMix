@@ -110,7 +110,8 @@
 	<div class="iteminfo" id="iteminfo_<%= item.id %>">
 		<div class="iteminfotxt">
 			by 
-		<% if @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread -%>	
+		<% "WHAT WAS THE POINT OF THIS?: if @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread" -%>	
+		<% if @from.to_s != 'individual' -%>
 			<% if item.dialog and item.dialog.current_period.to_i > 0 and item.period_id==item.dialog.current_period and not item.dialog.settings_with_period["names_visible_voting"] and item.is_first_in_thread -%>
 			[name withheld during decision period]
 			<% elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"] and item.is_first_in_thread -%>
