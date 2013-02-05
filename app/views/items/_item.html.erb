@@ -9,10 +9,10 @@
 		
 	<div class="itemvoting">
 
-		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if item.voting_ok and (session[:group_id].to_i == 0 or session[:group_is_member]) %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if item.voting_ok(current_participant.id) %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="intshort_<%= item.id %>" class="intshort">
 				<img src="/assets/sface.gif" alt="face"/>
-				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= @itemsproc[item.id]['hasrating'] if @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i>0 %> current_participant:<%= current_participant.id %> interest:<%= item['interest'].to_i %> voting_ok:<%= item.voting_ok %>"><%= @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0 ? @itemsproc[item.id]['rateinterest'].to_i : '-'%></span>
+				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= @itemsproc[item.id]['hasrating'] if @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i>0 %> current_participant:<%= current_participant.id %> interest:<%= item['interest'].to_i %> voting_ok:<%= item.voting_ok(current_participant.id) %>"><%= @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0 ? @itemsproc[item.id]['rateinterest'].to_i : '-'%></span>
 				<img src="/assets/aface.gif" alt="face"/>
 			</div>
 			<div id="intlong_<%= item.id %>" class="intlong" style="display:none">
@@ -30,7 +30,7 @@
 			</div>				
 		</div>
 				
-		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if item.voting_ok and (session[:group_id].to_i == 0 or session[:group_is_member]) %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if item.voting_ok(current_participant.id) %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="appshort_<%= item.id %>" class="appshort">
 				<img src="/assets/fface.gif" alt="face"/>				
 			<span id="vote_app_rate_<%= item.id %>"><%= @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0 ? @itemsproc[item.id]['rateapproval'].to_i : '-'%></span>

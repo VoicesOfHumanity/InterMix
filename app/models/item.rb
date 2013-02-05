@@ -785,10 +785,29 @@ class Item < ActiveRecord::Base
     outitems
   end
    
-  def voting_ok   
+  def voting_ok(participant_id)  
     #-- Decide whether the current user is allowed to rate the current item
+    #-- They need to be a member of the group or discussion
     #-- The main reason should either be that voting manually is turned off, or voting period is over, and they already rated it
     if self.dialog
+      #-- The message is for a discussion
+      #-- Is he a member of a group that's a member of the discussion?
+      is_in_discussion = false;
+      groupsin = GroupParticipant.where("participant_id=#{participant_id}").includes(:group).all       
+      dialoggroupsin = []
+      for group1 in dialog.groups
+        for group2 in groupsin
+          if group2.group.id == group1.id
+            #-- He's a member of one of those groups, so it is ok
+            is_in_discussion = true
+            break
+          end
+        end
+        break if is_in_discussion
+      end
+      return false if not is_in_discussion
+      
+      #-- Even if they're in the discussion, they can't vote if voting manually is turned off, or voting period is over, and they already rated it
       if self.period_id.to_i > 0
         period = Period.find_by_id(self.period_id)
       end
@@ -801,8 +820,20 @@ class Item < ActiveRecord::Base
         return true
       end
       return false
+
+    elsif self.group_id.to_i > 0  
+      #-- This message belongs to a group
+      #-- Is the user a member of it?
+      group = Group.includes(:owner_participant).find(self.group_id)
+      group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).find(:first)
+      if not group_participant
+        #-- He's not a member
+        return false
+      end
+      
     else
       true
+      
     end
   end  
   
