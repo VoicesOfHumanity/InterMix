@@ -1010,6 +1010,7 @@ class FrontController < ApplicationController
   protected
   
   def prepare_join
+    @countries = Geocountry.order(:name).select([:name,:iso]).all
     @meta = []
     @metamaps = Metamap.where(:global_default=>true)
     for metamap in @metamaps
@@ -1031,6 +1032,7 @@ class FrontController < ApplicationController
   end
   
   def prepare_djoin
+    @countries = Geocountry.order(:name).select([:name,:iso]).all
     @content = "<p>No discussion was recognized</p>"
     @meta = []
     if @dialog
@@ -1062,7 +1064,7 @@ class FrontController < ApplicationController
         @dialog_group = nil 
       end
       
-      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
+      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
       if @dialog_group and @dialog_group.signup_template.to_s != ''
         template = Liquid::Template.parse(@dialog_group.signup_template)
         @content = template.render(cdata)
@@ -1076,6 +1078,7 @@ class FrontController < ApplicationController
   end
   
   def prepare_gjoin
+    @countries = Geocountry.order(:name).select([:name,:iso]).all
     @content = "<p>No group was recognized</p>"
     @meta = []
     metamaps = @group.metamaps
@@ -1096,7 +1099,7 @@ class FrontController < ApplicationController
       @meta << m
     end
         
-    cdata = {'group'=>@group, 'name'=>@name, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies}
+    cdata = {'group'=>@group, 'name'=>@name, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies}
     if @group and @group.signup_template.to_s != ''
       template = Liquid::Template.parse(@group.signup_template)
       @content = template.render(cdata)

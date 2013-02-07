@@ -2,6 +2,10 @@ class Geocountry < ActiveRecord::Base
   has_many :geoadmin1s, :foreign_key=>:iso, :primary_key=>:country_code
   has_many :geoadmin2s, :foreign_key=>:iso, :primary_key=>:country_code
   has_many :metro_areas, :foreign_key=>:iso, :primary_key=>:country_code
+
+  def to_liquid
+      {'iso'=>iso,'name'=>name}
+  end
   
   def timezone
     #-- Look up what the timezone based on state and region
