@@ -473,7 +473,12 @@ function mess_characters(htmlval,plainval) {
     if ($('#js_message_length')) {
         $('#js_message_length').val(char_count);
     }
-    var word_count = plainval.match(/\S+/g).length;
+    var words = plainval.match(/\S+/g);
+    if (words) {
+        var word_count = words.length;
+    } else {
+        var word_count = 0;
+    }
     $('#item_long_words').html(word_count);
 }
 function update_characters() {

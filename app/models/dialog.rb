@@ -30,6 +30,7 @@ class Dialog < ActiveRecord::Base
     #-- Get some settings, either from the dialog record, or, if a period is active, from the period
     settings = {
       "max_characters" => self.max_characters.to_i,
+      "max_words" => self.max_words.to_i,
       "metamap_vote_own" => self.metamap_vote_own,
       "default_message" => self.default_message,
       "required_message" => self.required_message,
@@ -49,6 +50,7 @@ class Dialog < ActiveRecord::Base
     if self.current_period.to_i > 0
       xperiod = Period.find_by_id(self.current_period)
       settings["max_characters"] = xperiod.max_characters
+      settings["max_words"] = xperiod.max_words
       settings["metamap_vote_own"] = xperiod.metamap_vote_own
       settings["default_message"] = xperiod.default_message
       settings["required_message"] = xperiod.required_message

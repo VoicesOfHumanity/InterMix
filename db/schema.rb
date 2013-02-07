@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121228211518) do
+ActiveRecord::Schema.define(:version => 20130206234854) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -100,6 +100,7 @@ ActiveRecord::Schema.define(:version => 20121228211518) do
     t.string   "publishing"
     t.integer  "max_voting_distribution"
     t.integer  "max_characters"
+    t.integer  "max_words"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "shortname"
@@ -578,6 +579,7 @@ ActiveRecord::Schema.define(:version => 20121228211518) do
     t.text     "metamaps"
     t.boolean  "metamaps_frozen",       :default => false
     t.integer  "max_characters"
+    t.integer  "max_words"
     t.string   "metamap_vote_own"
     t.text     "default_message"
     t.boolean  "required_message",      :default => true
