@@ -404,14 +404,14 @@ class ItemsController < ApplicationController
           flash.now[:alert] = "Sorry, you can only post #{max_messages} message#{max_messages > 1 ? 's' : ''} here"
          end
       end
-      plain_content = view_context.strip_tags(@item.html_content.to_s)
+      plain_content = view_context.strip_tags(@item.html_content.to_s).strip
       if @item.reply_to.to_i > 0 and not @dialog.settings_with_period["allow_replies"]
         flash.now[:alert] = 'Sorry, replies are not permitted here'
       elsif @dialog.settings_with_period["required_subject"] and @item.subject.to_s.strip == ""
         flash.now[:alert] = "A subject is required"
-      elsif @dialog.settings_with_period["max_characters"].to_i > 0 and @item.html_content.gsub(/<\/?[^>]*>/, "").length > @dialog.settings_with_period["max_characters"]
+      elsif @item.is_first_in_thread and @dialog.settings_with_period["max_characters"].to_i > 0 and plain_content.length > @dialog.settings_with_period["max_characters"]
         flash.now[:alert] = "That's too many characters"
-      elsif @dialog.settings_with_period["max_words"].to_i > 0 and plain_content.scan(/(\w|-)+/).size > @dialog.settings_with_period["max_words"]
+      elsif @item.is_first_in_thread and @dialog.settings_with_period["max_words"].to_i > 0 and plain_content.scan(/(\w|-)+/).size > @dialog.settings_with_period["max_words"]
         flash.now[:alert] = "That's too many words"
       end
     end
@@ -671,19 +671,19 @@ class ItemsController < ApplicationController
     dialog = Dialog.find_by_id(dialog_id) if dialog_id
     html_content = params[:item][:html_content].to_s
     subject = params[:item][:subject].to_s
+    plain_content = view_context.strip_tags(@item.html_content.to_s)
     if params[:js_message_length]
       message_length = params[:js_message_length].to_i
     else
-      message_length = html_content.length
+      message_length = plain_content.length
     end
-    plain_content = view_context.strip_tags(@item.html_content.to_s)
     if html_content == '' and @item.media_type =='text' and ((dialog and dialog.settings_with_period["required_message"]) or subject != '')
       @xmessage += "Please include at least a brief message<br>"
     elsif @item.short_content == ''
       @xmessage += "Please include at least a short message<br>"
-    elsif dialog and dialog.settings_with_period["max_characters"].to_i > 0 and message_length > dialog.settings_with_period["max_characters"]  
+    elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_characters"].to_i > 0 and message_length > dialog.settings_with_period["max_characters"]  
       @xmessage += "The maximum message length is #{dialog.settings_with_period["max_characters"]} characters<br>"
-    elsif dialog and dialog.settings_with_period["max_words"].to_i > 0 and plain_content.scan(/(\w|-)+/).size > dialog.settings_with_period["max_words"]
+    elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_words"].to_i > 0 and plain_content.scan(/(\w|-)+/).size > dialog.settings_with_period["max_words"]
       @xmessage += "That's too many words"
     elsif dialog and dialog.settings_with_period["required_subject"] and subject.to_s == '' and html_content.gsub(/<\/?[^>]*>/, "").strip != ''
       @xmessage += "Please choose a subject line<br>"

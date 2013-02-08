@@ -324,7 +324,7 @@ class FrontController < ApplicationController
     elsif not @email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
-    flash.now[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and params[:country_code].to_s == ''
+    flash[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and (params[:country_code].to_s == '' or params[:country_code].to_s == '* choose *')
 
     @metamap_vals = {}
     if @dialog and @dialog.required_meta
@@ -601,7 +601,7 @@ class FrontController < ApplicationController
     elsif not @email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
-    flash.now[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and params[:country_code].to_s == ''
+    flash[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and (params[:country_code].to_s == '' or params[:country_code].to_s == '* choose *')
     @metamap_vals = {}
     if @group.required_meta
       #-- Check any metamap categories, if they're required
@@ -827,7 +827,7 @@ class FrontController < ApplicationController
     elsif not @email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
-    flash.now[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and params[:country_code].to_s == ''
+    flash[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and (params[:country_code].to_s == '' or params[:country_code].to_s == '* choose *')
     @participant = Participant.find_by_email(@email) 
     if @group_id == 0
       flash[:alert] += "Please choose a group to join<br>"
