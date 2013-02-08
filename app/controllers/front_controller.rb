@@ -1010,6 +1010,7 @@ class FrontController < ApplicationController
   protected
   
   def prepare_join
+    @section = 'join'
     @countries = Geocountry.order(:name).select([:name,:iso]).all
     @meta = []
     @metamaps = Metamap.where(:global_default=>true)

@@ -10,7 +10,7 @@
 <tr><td>E-mail</td><td><input type="text" name="email" value="<%= @email %>" size="30" style="width:200px"></td></tr>	
 <tr><td>Country of Residence*</td><td>
 <%= select_tag :country_code, options_for_select([['* choose *','']]+Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}) %></td></tr>
-<tr><td>Group</td><td>
+<tr><td>Group*</td><td>
 <%= select_tag :group_id,raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(Group.where(:openness=>'open').order(:name),'id','name',@group_id) %>
 </td></tr>
 
@@ -28,7 +28,7 @@
 
 <p>A confirmation email will be sent. Be sure to respond to that email.</p>
 
-<p>If you have questions, please contact the administrator, Roger Eaton, at <a href="mailto:rogerweaton@gmail.com">rogerweaton@gmail.com</a>.</p>
+<p>If you have questions, please contact the administrator at <a href="mailto:questions@intermix.org">questions@intermix.org</a>.</p>
 
 </div>
 

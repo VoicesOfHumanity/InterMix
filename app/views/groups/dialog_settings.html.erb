@@ -1,6 +1,8 @@
 <%= render(:partial => 'groups/menu')%>
 
-<h3 style="clear:both">Discussion</h3>
+<h3 style="clear:both">Settings for the group's membership in the discussion<br>"<%= @dialog.name %>"</h3>
+
+<p>Any templates entered here will be used for join pages instead of the default templates for the discussion</p>
 
 <%= semantic_form_for @dialog_group, :url => "/groups/#{@group.id}/dialog_settings_save", :html=>{:id=>"dialog_group"} do |f| %>
 

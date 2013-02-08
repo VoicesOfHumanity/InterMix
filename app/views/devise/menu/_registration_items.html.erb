@@ -1,6 +1,9 @@
-<% if participant_signed_in? and false %>
+<% if participant_signed_in? %>
+	<% if false %>
   <li class="menu">
   <%= link_to('Edit account', edit_participant_registration_path) %>
   </li>
+	<% end %>
 <% else %>
+<li class="menu"><a class="<%= 'selected' if @section=='join' %>" href="/join">Join</a></li>
 <% end %>
