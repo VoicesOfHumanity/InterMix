@@ -824,17 +824,19 @@ class Item < ActiveRecord::Base
     elsif self.group_id.to_i > 0  
       #-- This message belongs to a group
       #-- Is the user a member of it?
-      group = Group.includes(:owner_participant).find(self.group_id)
+      group = self.group ? self.group : Group.find(self.group_id)
       group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).find(:first)
       if not group_participant
         #-- He's not a member
+        logger.info("item#voting_ok #{participant_id} is not a member of the group #{self.group_id} for item #{self.id}")
         return false
       end
       
     else
-      true
+      return true
       
     end
+    true
   end  
   
   #def hasrating

@@ -131,5 +131,5 @@ form.formtastic fieldset > ol > li.time fieldset ol li label input,
 form.formtastic fieldset > ol > li.datetime fieldset ol li label input { display:inline; margin:0; padding:0;  }
 
 /* custom changes */
-form.formtastic input[type=button] {margin:2px;padding:2px}
+form.formtastic input[type=button], form.formtastic input[type=submit] {margin:2px;padding:2px}
 

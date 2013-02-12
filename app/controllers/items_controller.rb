@@ -455,6 +455,9 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     @item = Item.find(params[:id])
     @item.link = '' if @item.link == 'http://'
+    
+    @item.assign_attributes(params[:item])
+
     if not itemvalidate
       #render :text=>@xmessage, :layout=>false
       #results = {'error'=>true,'message'=>@xmessage,'item_id'=>@item.id}
@@ -467,7 +470,7 @@ class ItemsController < ApplicationController
       render :partial=>'edit', :layout=>false
       return
     end
-    if @item.update_attributes(params[:item])
+    #if @item.update_attributes(params[:item])
       itemprocess
       @item.save
       #showmess = (@error_message.to_s != '') ? @error_message : "Item was successfully updated."
@@ -478,7 +481,7 @@ class ItemsController < ApplicationController
       end  
       render :json=>results, :layout=>false
       #render :text=>showmess, :layout=>false
-    end   
+    #end   
   end  
   
   def view
@@ -669,15 +672,17 @@ class ItemsController < ApplicationController
     @xmessage = '' if not @xmessage
     dialog_id = params[:item][:dialog_id].to_i
     dialog = Dialog.find_by_id(dialog_id) if dialog_id
-    html_content = params[:item][:html_content].to_s
-    subject = params[:item][:subject].to_s
-    plain_content = view_context.strip_tags(@item.html_content.to_s)
+    html_content = params[:item][:html_content].to_s.strip
+    subject = params[:item][:subject].to_s.strip
+    plain_content = view_context.strip_tags(html_content)
+    plain_content.gsub!('&nbsp;','')
+    plain_content.strip!
     if params[:js_message_length]
       message_length = params[:js_message_length].to_i
     else
       message_length = plain_content.length
     end
-    if html_content == '' and @item.media_type =='text' and ((dialog and dialog.settings_with_period["required_message"]) or subject != '')
+    if plain_content == '' and @item.media_type =='text' and ((dialog and dialog.settings_with_period["required_message"]) or subject != '')
       @xmessage += "Please include at least a brief message<br>"
     elsif @item.short_content == ''
       @xmessage += "Please include at least a short message<br>"
