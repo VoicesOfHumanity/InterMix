@@ -117,6 +117,8 @@
 	  <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
 	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
 	</p>
+	
+	<p><a href="http://intermix.org/ccattribution3point0.htm" target="_blank"><%= image_tag("ccattribution3point0.png",:style=>"margin:8px 0 6px 0;") %></a></p>
 
 	<% if flash[:alert].to_s != "" -%>
 	<input type="hidden" id="saveresult" name="saveresult" value="error">
