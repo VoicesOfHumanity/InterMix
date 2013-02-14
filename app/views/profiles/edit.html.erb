@@ -37,7 +37,6 @@
 		<%= f.input :political, :required => false, :label => 'Political Affiliation' %>
 		<%= f.input :faith_tradition, :required => false %>
 		<%= f.input :tag_list, :required => false, :as => :string, :input_html => {:size=>80}  %>
-		<%= f.input :visibility, :as => :select, :collection =>PARTICIPANT_VISIBILITY %>	
 		
 		<% @participant.metamaps_h.each do |metamap_id,metamap_name| -%>
 		<% metamap_nodes = @participant.metamap_nodes_h %>
@@ -50,8 +49,11 @@
 		</li>		
 		<% end -%>
 		
-		<div style="border: 1px solid #000">
-		<h3>Settings</h3>
+	<% end %>
+	<br>
+	<%= f.inputs do %>	
+		
+		<h3 id="settings"><br>Settings</h3>
 		
 		<%= f.input :visibility, :label => 'Profile visibility', :as => :select, :collection =>PARTICIPANT_VISIBILITY_TEXT.invert %>
 		<% if false %>	
@@ -59,21 +61,22 @@
 		<%= f.input :item_to_forum, :label=>'Post wall items to the forum?', :as => :radio %>
 		<% end %>
 		
-		<h3>E-mail preferences</h3>
+		<h3><br>E-mail preferences</h3>
 
 		<%= f.input :private_email, :label => 'Personal messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :system_email, :label => 'System messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<% f.input :group_email, :label => 'Group messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :forum_email, :label => 'Forum postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :no_email, :label => 'Block all emails?', :as => :radio %>	
-		</div>
+		
+		<p> Please set your spam filter to allow messages from questions@intermix.org.</p>
 		
 	<% end %>
 
-	<p>
+	<p><br>
 	  <input type="button" value="Cancel" onclick="viewrec1(<%= @participant.id.to_i %>)" />
 	  <input type="submit" value="Save" />
-	</p>
+	<br><br></p>
 
 <% end %>
 

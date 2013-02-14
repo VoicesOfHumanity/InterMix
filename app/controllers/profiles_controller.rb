@@ -58,37 +58,64 @@ class ProfilesController < ApplicationController
         
     geoupdate
     @participant.has_participated = true
-    if @participant.update_attributes!(params[:participant])
+    
+    flash.now[:alert] = ''
+    flash.now[:notice] = ''
 
-      flash.now[:alert] = ''
-      flash.now[:alert] += 'First name is required<br>' if params[:participant].has_key?(:first_name) and @participant.first_name.to_s == ''
-      flash.now[:alert] += 'Last name is required<br>' if params[:participant].has_key?(:last_name) and @participant.last_name.to_s == ''
-      flash.now[:alert] += 'Country is required<br>' if params[:participant].has_key?(:country_code) and @participant.country_code.to_s == ''
-      flash.now[:alert] += 'Visibility is required<br>' if params[:participant].has_key?(:visibility) and @participant.visibility.to_s == ''
-      
-      # Save any metamap assignments
-      if params[:meta]
-        @participant.metamaps_h.each do |metamap_id,metamap_name|
-          val = params[:meta]["#{metamap_id}"].to_i
-          if val > 0
-            mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>@participant.id).first
-            if mnp
-              mnp.metamap_node_id = val
-              mnp.save
-            else
-              MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
-            end  
-          elsif metamap_id==3 or metamap_id==5   
-             flash.now[:alert] += "#{metamap_name} is required<br>"
-          end
-        end 
-      end 
-
-      if flash.now[:alert] != ""
-        @subsection = 'edit'
-        render :action => "edit"
-        return
+    old_pass = params[:old_pass].to_s
+    new_pass = params[:new_pass].to_s
+    new_pass_confirm = params[:new_pass_confirm].to_s
+    if new_pass != ''
+      if old_pass == ''
+        flash.now[:alert] += "Please enter your old password if you want to change it."
+      elsif not current_participant.valid_password?(old_pass)
+        flash.now[:alert] += "That doesn't seem to be the right password."
+      elsif new_pass_confirm == ''
+        flash.now[:alert] += "Please enter the new password a second time if you want to change it."
+      elsif new_pass_confirm != new_pass
+        flash.now[:alert] += "The two passwords don't match."
+      else  
+        @participant.password = new_pass
+        @participant.save
+        flash.now[:notice] = "Password changed."
       end
+    end
+    
+    @participant.assign_attributes(params[:participant])
+
+    flash.now[:alert] += 'First name is required<br>' if params[:participant].has_key?(:first_name) and @participant.first_name.to_s == ''
+    flash.now[:alert] += 'Last name is required<br>' if params[:participant].has_key?(:last_name) and @participant.last_name.to_s == ''
+    flash.now[:alert] += 'Country is required<br>' if params[:participant].has_key?(:country_code) and @participant.country_code.to_s == ''
+    flash.now[:alert] += 'Visibility is required<br>' if params[:participant].has_key?(:visibility) and @participant.visibility.to_s == ''
+    flash.now[:alert] += 'Personal message e-mail preference is required<br>' if params[:participant].has_key?(:private_email) and @participant.private_email.to_s == ''
+    flash.now[:alert] += 'System message e-mail preference is required<br>' if params[:participant].has_key?(:system_email) and @participant.system_email.to_s == ''
+    flash.now[:alert] += 'Forum posting e-mail preference is required<br>' if params[:participant].has_key?(:forum_email) and @participant.forum_email.to_s == ''
+
+    # Save any metamap assignments
+    if params[:meta]
+      @participant.metamaps_h.each do |metamap_id,metamap_name|
+        val = params[:meta]["#{metamap_id}"].to_i
+        if val > 0
+          mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>@participant.id).first
+          if mnp
+            mnp.metamap_node_id = val
+            mnp.save
+          else
+            MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
+          end  
+        elsif metamap_id==3 or metamap_id==5   
+           flash.now[:alert] += "#{metamap_name} is required<br>"
+        end
+      end 
+    end    
+
+    if flash.now[:alert] != ""
+      @subsection = 'edit'
+      render :action => "edit"
+      return
+    end
+    
+    if @participant.save
       
       if @participant.twitter_username == '' and @participant.twitter_oauth_token != ''
         @participant.twitter_oauth_token = ''
@@ -103,27 +130,8 @@ class ProfilesController < ApplicationController
         @notice = "Profile has been updated."
       end
       
-      old_pass = params[:old_pass].to_s
-      new_pass = params[:new_pass].to_s
-      new_pass_confirm = params[:new_pass_confirm].to_s
-      if new_pass != ''
-        if old_pass == ''
-          @alert = "Please enter your old password if you want to change it."
-        elsif not current_participant.valid_password?(old_pass)
-          @alert = "That doesn't seem to be the right password."
-        elsif new_pass_confirm == ''
-          @alert = "Please enter the new password a second time if you want to change it."
-        elsif new_pass_confirm != new_pass
-          @alert = "The two passwords don't match."
-        else  
-          @participant.password = new_pass
-          @participant.save
-          @notice = "Password changed."
-        end
-      end
-      
       @subsection = 'view'
-      render :action=>'index', :notice => @notice, :alert => @alert
+      render :action=>'index'
     else
       @subsection = 'edit'
       render :action => "edit"
