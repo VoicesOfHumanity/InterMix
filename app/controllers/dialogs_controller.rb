@@ -212,7 +212,11 @@ class DialogsController < ApplicationController
     #@threads = 'flat'
 
     @show_meta = true
-    if @sortby == 'default'
+    if @sortby == 'default' and not @dialog.active_period
+      #-- Default sort set, but there isn't any active period
+      @sortby = 'items.id desc'
+      sortby = @sortby
+    elsif @sortby == 'default'
       sortby = 'items.id desc'
       #@items = @items.where("metamap_nodes.metamap_id=4")
       @threads = 'root'

@@ -602,7 +602,7 @@ class ItemsController < ApplicationController
     dialog_id = item.dialog_id.to_i
     
     #-- Check if they're allowed to rate it
-    if not item.voting_ok
+    if not item.voting_ok(current_participant.id)
       render :text=>'', :layout=>false
       return
     end
