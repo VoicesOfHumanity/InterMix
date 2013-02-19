@@ -27,9 +27,14 @@ class ItemsController < ApplicationController
     @rated_by_metro_area_id = (params[:rated_by_metro_area_id] || 0).to_i
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
-    @perscr = 25 if @perscr < 1
-    
-    @dialog = Dialog.find_by_id(@dialog_id)
+    @perscr = 25 if @perscr < 1    
+    @dialog = Dialog.find_by_id(@dialog_id) if @dialog_id > 0
+    if @period_id > 0
+      @period = Period.find_by_id(@period_id)
+    elsif @dialog and @dialog.active_period
+      @period = @dialog.active_period
+      #@period_id = @dialog.active_period.id
+    end    
     
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
       @rootonly = true

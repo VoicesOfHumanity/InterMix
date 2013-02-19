@@ -323,6 +323,9 @@ function saveitem() {
         		//window.setTimeout("$('#reply_'+replyingid).remove();list();", 3000);
         		if ($('#sortby').val()=='default') {
         		    $('#sortby').val('items.id desc');
+        		    if ($('#active_period_id') && parseInt($('#active_period_id').val())>0) {
+                        $('#period_id').val($('#active_period_id').val());
+            		}
         		}
         		if ($('#threads').val()=='root') {
         		    $('#threads').val('flat');

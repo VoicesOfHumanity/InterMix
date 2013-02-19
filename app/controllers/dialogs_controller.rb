@@ -184,6 +184,12 @@ class DialogsController < ApplicationController
     @group_id = (params[:group_id] || 0).to_i
     @groups = @dialog.groups if @dialog and @dialog.groups
     @periods = @dialog.periods if @dialog and @dialog.periods
+    if @period_id > 0
+      @period = Period.find_by_id(@period_id)
+    elsif @dialog.active_period
+      @period = @dialog.active_period
+      #@period_id = @dialog.active_period.id
+    end    
     
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
     
@@ -1276,7 +1282,7 @@ class DialogsController < ApplicationController
     
     today = Time.now
     
-    @periods = Period.where("dialog_id = ?",dialog_ids)
+    @periods = Period.where("dialog_id in (?)",dialog_ids)
     #if not @is_group_admin
     #  #-- Only (group) admins can see periods that aren't done
     #  @periods = @periods.where("endrating IS NOT NULL").where("endrating<?",today)
@@ -1336,7 +1342,7 @@ class DialogsController < ApplicationController
 		elsif not dialog.names_visible_general
 			"[name withheld for this discussion]"
 		else
-			item.participant ? item.participant.name : item.posted_by
+			"<a href=\"/participant/#{item.id}/profile\">" + ( item.participant ? item.participant.name : item.posted_by ) + "</a>"
 		end
   end
 
