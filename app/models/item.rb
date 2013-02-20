@@ -885,6 +885,7 @@ class Item < ActiveRecord::Base
           end
         end
       end
+      return false
       
     elsif self.group_id.to_i > 0  
       #-- This message belongs to a grop
