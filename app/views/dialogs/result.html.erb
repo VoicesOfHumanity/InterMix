@@ -134,7 +134,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 	<% group_id = group.id %>
 	<div>
 	<h3 title="<%= metamap_node_id %>">Voice of <%= group.name %></h3>
-	<% if @data['groups'][group_id]['itemsproc'].length == 0 -%>
+	<% if @data['groups'][group_id]['itemsproc'].length == 0 or @data['groups'][group_id]['ratings'].length == 0 -%>
 		no messages<br>
 	<% else -%>	
 		<% for item_id,i in @data['groups'][group_id]['itemsproc'] -%>
