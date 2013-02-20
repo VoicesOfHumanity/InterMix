@@ -118,7 +118,9 @@
 	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
 	</p>
 	
-	<p><a href="http://intermix.org/ccattribution3point0.htm" target="_blank"><%= image_tag("ccattribution3point0.png",:style=>"margin:8px 0 6px 0;") %></a></p>
+	<% if @items_length > 0 -%>
+	<p><a href="http://intermix.org/ccattribution3point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("ccattribution3point0.png",:style=>"margin:8px 0 6px 0;") %></a></p>
+	<% end -%>
 
 	<% if flash[:alert].to_s != "" -%>
 	<input type="hidden" id="saveresult" name="saveresult" value="error">

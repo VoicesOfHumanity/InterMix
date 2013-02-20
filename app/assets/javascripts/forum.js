@@ -141,6 +141,9 @@ function newitem(token) {
 	if ($('#from')) {
 	    pars += '&from=' + $('#from').val();
 	}	
+	if ($('#items_length')) {
+	    pars += '&items_length=' + $('#items_length').val();
+	}	
     pars += "&authenticity_token="+token;
 	$.ajax({
 		type: "GET",
@@ -195,6 +198,9 @@ function reply(item_id,to_reply) {
 	if ($('#from')) {
 	    params += '&from=' + $('#from').val();
 	}	
+	if ($('#items_length')) {
+	    params += '&items_length=' + $('#items_length').val();
+	}	
 	$.ajax({
 		type: "GET",
 		url: '/items/new',
@@ -232,7 +238,7 @@ function edititem(id) {
 	$.ajax({
         type: "GET",
         url: '/items/'+id+'/edit?xtime=' + (new Date()).getTime(),
-        data: "authenticity_token="+token,
+        data: "authenticity_token="+token+"&items_length="+$('#items_length').val(),
         complete: function(t){	
           $('#htmlcontent_'+id).html(t.responseText);
         }

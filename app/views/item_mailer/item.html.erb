@@ -20,6 +20,8 @@
 <%=raw @message %>
 </div>
 
+<p><a href="http://intermix.org/ccattribution3point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("ccattribution3point0.png",:style=>"margin:8px 0 6px 0;") %></a></p>
+
 <hr/>
 
 To respond to <a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">this post</a>, log into the <a href="http://<%= BASEDOMAIN %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>">Forum</a>, or simply reply to this message. Please remove quotes and footers from previous messages. To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.

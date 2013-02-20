@@ -188,6 +188,7 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     @reply_to = params[:reply_to].to_i
     @item = Item.new(:media_type=>'text',:link=>'http://',:reply_to=>@reply_to)
+    @items_length = params[:items_length].to_i
     if params[:group_id].to_i > 0
       @item.group_id = params[:group_id] 
     else
@@ -311,6 +312,7 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     @item_id = params[:id]
     @item = Item.find(@item_id)
+    @items_length = params[:items_length].to_i
 
     prepare_edit
 
