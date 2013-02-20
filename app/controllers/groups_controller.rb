@@ -17,7 +17,6 @@ class GroupsController < ApplicationController
     @groupsopen = Group.where("(openness='open' or openness='open_to_apply')").order("id desc").all
     @groupspublic = Group.where("visibility='public'").order("id desc").all
     update_last_url
-    update_prefix
   end  
   
   def view
