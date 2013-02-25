@@ -7,11 +7,16 @@
 <% end -%>
 
 <p>
+	<%= select_tag :period_id, options_for_select([['* all periods *',0]]+@dialog.periods.collect{|p| [p.name,p.id]},@period_id), :onchange=>"reload()" %>
 	<%= select_tag :short_full, options_for_select([['short list','short'],['medium list','medium'],['full list','full']],@short_full), :onchange=>"reload()" %>
 	<%= select_tag :less_more, options_for_select([['less info','less'],['more info','more']],@less_more),:style=>"display:#{@short_full=='short' ? "none" : "inline"}",:onchange=>"reload()" %>
 	<%= select_tag :regress, options_for_select([['regress to mean','regress'],['raw scores','raw']],@regress),:style=>"display:#{@short_full=='short' ? "none" : "inline"}",:onchange=>"reload()" %>
 	<%= select_tag :group_id, options_for_select([['all groups',0]]+@dialog.groups.collect{|c| [c.name,c.id]},@group_id), :style=>"display:#{@short_full=='short' ? "none" : "inline"}", :onchange=>"reload()" %>	
 </p>
+
+<% if @period_id.to_i == 0 -%>
+<p>These are results for all decisions periods together</p>
+<% end -%>
 
 <% if false and @regmean -%>
 <h3>Regression to the Mean</h3>
@@ -157,7 +162,7 @@ function reload() {
 	var short_full = $('#short_full').val();
 	var less_more = $('#less_more').val();
 	var regress = $('#regress').val();
-	var period_id = <%= @period_id > 0 ? @period_id.to_i : 0 %>;
+	var period_id = $('#period_id').val();;
 	var group_id = $('#group_id').val();
 	if (short_full=='short') {
 		$('#less_more').hide();

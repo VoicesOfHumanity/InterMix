@@ -604,12 +604,14 @@ class DialogsController < ApplicationController
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
     @period_id = params[:period_id].to_i
-    @period = Period.find_by_id(@period_id)
     @group_id = (params[:group_id] || 0).to_i
     @group = Group.find_by_id(@group_id) if @group_id > 0
     @short_full = params[:short_full] || 'short'
     @less_more = params[:less_more] || 'less'
     @regress = params[:regress] || 'regress'
+    
+    @period_id = @dialog.current_period if @period_id == 0 
+    @period = Period.find_by_id(@period_id)
     
     #@regmean = ((params[:regmean] || 1).to_i == 1)
     @regmean = (@regress == 'regress')
