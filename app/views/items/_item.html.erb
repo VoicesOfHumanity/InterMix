@@ -77,7 +77,7 @@
 	<% elsif item.media_type == 'link' -%>	
 	
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">−</div>
-		<div id="htmlcontent_<%= item.id %>" class="htmlcontent"><a href="<%=raw item.link %>" target="_blank"><%=raw item.link %></a></div>
+		<div id="htmlcontent_<%= item.id %>" class="htmlcontent"><a href="<%=raw item.link %>"><%=raw item.link %></a></div>
 		<div id="shortcontent_<%= item.id %>" class="htmlcontent""><%=raw item.short_content %></div>
 
 	<% elsif item.media_type == 'video' -%>
@@ -155,7 +155,7 @@
 
 		<% if (@sortby == 'default' and itemproc['replies'].length > 0) or (@threads=='root' and item.num_replies > 0) %>
 		<div class="iteminfotxt">
-		<a href="/items/<%= item.id %>/thread" target="_blank">Show Replies</a>
+		<a href="/items/<%= item.id %>/thread">Show Replies</a>
 		</div>
 		<% end -%>
 				
