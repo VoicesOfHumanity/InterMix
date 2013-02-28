@@ -221,6 +221,12 @@ class Item < ActiveRecord::Base
     self.xml_content = item.to_xml  
   end  
   
+  def root_item
+    #-- Find and return the root item in the thread this item is in. Might be this very item, if it is a root
+    return self if self.is_first_in_thread
+    Item.find_by_id(self.first_in_thread)
+  end
+  
   def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0)
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id

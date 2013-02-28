@@ -10,7 +10,7 @@
 <% if @item.dialog_id.to_i > 0 -%>
 <li><a href="/dialogs/<%= @item.dialog_id %>/forum">Discussion</a></li>
 <% end -%>
-<% if @item.group_id.to_i > 0 -%>
+<% if @item.root_item.group_id.to_i > 0 -%>
 <li><a href="/groups/<%= @item.group_id %>/forum">Group Forum</a></li>
 <% end -%>
 </ul>
