@@ -5,7 +5,7 @@
 
 <ul>
 <% if @item.num_in_thread > 1 -%>
-<li><a href="/items/<%= @item.id %>/thread">Whole thread</a></li>
+<li><a href="/items/<%= @item.id %>/thread">Whole Thread</a></li>
 <% end -%>
 <% if @item.dialog_id.to_i > 0 -%>
 <li><a href="/dialogs/<%= @item.dialog_id %>/forum">Discussion</a></li>
