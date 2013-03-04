@@ -616,7 +616,7 @@ class DialogsController < ApplicationController
     @less_more = params[:less_more] || 'less'
     @regress = params[:regress] || 'regress'
     
-    @period_id = @dialog.current_period.to_i if @period_id == 0 
+    @period_id = @dialog.current_period.to_i if not params.include?(:period_id) 
     @period = Period.find_by_id(@period_id)
     
     #@regmean = ((params[:regmean] || 1).to_i == 1)
