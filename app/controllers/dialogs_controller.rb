@@ -221,7 +221,7 @@ class DialogsController < ApplicationController
     
     #get_params = Rack::Utils.parse_query request.fullpath
     
-    if @dialog.active_period and not (params[:perscr].to_i==100 and params[:threads]=='flat' and not params.include?(:sortby))
+    if @dialog.active_period and not (params[:perscr].to_i==100 and params[:threads]=='flat' and not params.include?(:page))
       @sortby = 'default'
     end
       
