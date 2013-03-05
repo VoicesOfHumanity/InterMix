@@ -219,7 +219,9 @@ class DialogsController < ApplicationController
 
     @show_meta = true
     
-    if @dialog.active_period
+    get_params = Rack::Utils.parse_query request.fullpath
+    
+    if @dialog.active_period and not (get_params[:perscr] and get_params[:threads])
       @sortby = 'default'
     end
       
