@@ -24,8 +24,23 @@
 		<%= f.input :required_meta, :label=>"Meta choices required at signup?", :as=>:boolean %>		
 		<%= f.input :front_template, :label => "Front Page template" %>
 		<%= f.input :member_template, :label => "Home Page template" %>
-		<%= f.input :invite_template, :label => "Invitation e-mail template" %>
-		<%= f.input :import_template, :label => "Import e-mail template" %>
+		
+		<% f.input :invite_template, :label => "Invitation e-mail template" %>
+		<li class="text optional" id="group_invite_template_input">
+			<label for="group_invite_template">Invitation e-mail template<br>
+			<%= button_to_function "get default", "get_default('invite')" %>	
+			</label>
+			<textarea id="group_invite_template" name="group[invite_template]" rows="5"><%= @group.invite_template %></textarea>
+		</li>
+
+		<% f.input :import_template, :label => "Import e-mail template" %>
+		<li class="text optional" id="group_import_template_input">
+			<label for="group_import_template">Import e-mail template<br>
+			<%= button_to_function "get default", "get_default('import')" %>	
+			</label>
+			<textarea id="group_import_template" name="group[import_template]" rows="5"><%= @group.import_template %></textarea>
+		</li>
+		
 		<%= f.input :signup_template, :label => "Signup Page template" %>
 		<%= f.input :confirm_template, :label => "Confirmation Page template" %>
 		<%= f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
@@ -38,5 +53,26 @@
 	</p>
 
 <% end %>
+
+<script>
+function get_default(which) {
+	if (!$('#group_'+which+'_template')) {
+		alert("That doesn't seem to exist");
+		return;
+	} else if ($('#group_'+which+'_template').val()!='') {
+		alert("Please empty the template field first, if you wish to overwrite it with the default");
+		return;
+	}
+	var pars = "which="+which;
+	$.ajax({
+     type: "GET",
+     url: "/groups/<%= @group.id %>/get_default",
+     data: pars,
+     complete: function(t){	
+       $('#group_'+which+'_template').val(t.responseText);
+     }
+   });	
+}
+</script>
 
 

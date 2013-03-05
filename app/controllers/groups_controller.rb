@@ -224,9 +224,10 @@ class GroupsController < ApplicationController
         cdata['item'] = @item
         cdata['recipient'] = @recipient     
         cdata['participant'] = @recipient 
+        cdata['current_user'] = current_user.
         cdata['group'] = @group if @group
         cdata['logo'] = @logo if @logo
-
+        cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
@@ -264,6 +265,7 @@ class GroupsController < ApplicationController
 
         cdata = {}
         cdata['group'] = @group
+        cdata['email'] = 'email'
 
         html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join the group: #{@group.name}<br/>"
         html_content += "Go <a href=\"http://#{@group.shortname}.#{ROOTDOMAIN}/gjoin?group_id=#{@group.id}&email=#{email}\">here</a> to fill in your information and join.<br>"
@@ -465,7 +467,9 @@ class GroupsController < ApplicationController
         cdata['item'] = @item
         cdata['recipient'] = participant     
         cdata['participant'] = participant 
+        cdata['current_user'] = current_user.
         cdata['group'] = @group if @group
+        cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
         if @group.logo.exists? then
          cdata['logo'] = "#{BASEDOMAIN}#{@group.logo.url}"
         else
@@ -781,6 +785,12 @@ class GroupsController < ApplicationController
     @group_participant.save!
     flash[:notice] = "Group member settings updated"
     redirect_to :action=>:admin
+  end
+  
+  def get_default
+    #-- Return a particular default template, e.g. invite, member, import
+    which = params[:which]
+    render :partial=>"#{which}_default", :layout=>false
   end
 
   protected

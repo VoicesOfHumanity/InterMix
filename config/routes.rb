@@ -94,6 +94,7 @@ Intermix::Application.routes.draw do
       post :add_moderator
       get :group_participant_edit
       put :group_participant_save
+      get :get_default
     end
   end 
   
