@@ -204,6 +204,12 @@ class GroupsController < ApplicationController
     @new_text = params[:new_text].to_s
     @messtext = params[:messtext].to_s
 
+    cdata = {}
+    cdata['current_participant'] = current_participant
+    cdata['group'] = @group if @group
+    cdata['logo'] = @logo if @logo
+    cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
+
     @member_id = @follow_id if @follow_id > 0
     if @member_id > 0
       #-- An existing member
@@ -220,14 +226,9 @@ class GroupsController < ApplicationController
         @message.from_participant_id = current_participant.id
         @message.subject = "Group invitation"
         
-        cdata = {}
         cdata['item'] = @item
         cdata['recipient'] = @recipient     
         cdata['participant'] = @recipient 
-        cdata['current_user'] = current_user.
-        cdata['group'] = @group if @group
-        cdata['logo'] = @logo if @logo
-        cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
@@ -263,17 +264,16 @@ class GroupsController < ApplicationController
       for line in lines do
         email = line.strip
 
-        cdata = {}
-        cdata['group'] = @group
-        cdata['email'] = 'email'
+        cdata['email'] = email
 
-        html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join the group: #{@group.name}<br/>"
-        html_content += "Go <a href=\"http://#{@group.shortname}.#{ROOTDOMAIN}/gjoin?group_id=#{@group.id}&email=#{email}\">here</a> to fill in your information and join.<br>"
-        html_content += "</p>"
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
-          html_content += template.render(cdata)
+          html_content = template.render(cdata)
+        else
+          html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join the group: #{@group.name}<br/>"
+          html_content += "Go <a href=\"http://#{@group.shortname}.#{ROOTDOMAIN}/gjoin?group_id=#{@group.id}&email=#{email}\">here</a> to fill in your information and join.<br>"
+          html_content += "</p>"            
         end
 
         emailmess = SystemMailer.generic("do-not-reply@intermix.org", email, "Group invitation", html_content, cdata)
@@ -467,7 +467,7 @@ class GroupsController < ApplicationController
         cdata['item'] = @item
         cdata['recipient'] = participant     
         cdata['participant'] = participant 
-        cdata['current_user'] = current_user.
+        cdata['current_user'] = current_user
         cdata['group'] = @group if @group
         cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
         if @group.logo.exists? then

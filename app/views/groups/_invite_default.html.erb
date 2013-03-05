@@ -1,3 +1,3 @@
-<p>You have been invited to join the group "{{ group.name }}" by {{ current_user.name }}.</p>
+<p>You have been invited to join the group "{{ group.name }}" by {{ current_participant.name }}.</p>
 
-<p>Go <a href="http://{{ group.shortname }}.{{ ROOTDOMAIN }}/gjoin?group_id={{ group.id }}&amp;email={{ email }}">here</a> to fill in your information and join.</p>
+<p>Go <a href="http://{{ domain }}/gjoin?group_id={{ group.id }}&amp;email={{ email }}">here</a> to fill in your information and join.</p>
