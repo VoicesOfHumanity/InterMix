@@ -5,14 +5,16 @@
 
 <ul>
 <% if @item.num_in_thread > 1 -%>
-<li><a href="/items/<%= @item.id %>/thread">Whole thread</a></li>
+<li><a href="/items/<%= @item.id %>/thread#item_<%= @item.id %>">Whole thread</a></li>
 <% end -%>
 <% if @item.dialog_id.to_i > 0 -%>
-<li><a href="/dialogs/<%= @item.dialog_id %>/forum">Discussion</a></li>
+<li><a href="/dialogs/<%= @item.dialog_id %>/forum?perscr=100<%=raw "&amp;threads=flat" if @item.reply_to.to_i>0 %>#item_<%= @item.id %>0">Discussion</a></li>
 <% end -%>
 <% if @item.root_item.group_id.to_i > 0 -%>
-<li><a href="/groups/<%= @item.root_item.group_id %>/forum">Group forum</a></li>
+<li><a href="/groups/<%= @item.root_item.group_id %>/forum?perscr=100<%=raw "&amp;threads=flat" if @item.reply_to.to_i>0 %>#item_<%= @item.id %>">Group forum</a></li>
 <% end -%>
 </ul>
+
+
 
 <p><a href="http://intermix.org/ccattribution3point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("ccattribution3point0.png",:style=>"margin:18px 0 0 0;") %></a></p>
