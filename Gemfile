@@ -41,7 +41,8 @@ gem 'acts-as-taggable-on'
 gem 'ckeditor'
 gem 'paperclip'
 gem 'sanitize'
-gem 'formtastic', '~> 1.2.4'
+#gem 'formtastic', '~> 1.2.4'
+gem 'formtastic'
 gem "will_paginate", "~> 3.0.pre2"
 gem "nifty-generators"
 gem "nokogiri"
@@ -51,7 +52,8 @@ gem 'imagesize', :require => 'image_size'
 gem "json"
 gem 'ruby-oembed', :require => 'oembed'
 #gem 'ruby-oembed'
-gem 'tmail'
+# tmail conflicts with formtastic. Should be required only where used. app/mailers/receive_mailer
+gem 'tmail', :require => false
 gem 'exception_notification', :require => 'exception_notifier'
 
 gem 'postmark'
