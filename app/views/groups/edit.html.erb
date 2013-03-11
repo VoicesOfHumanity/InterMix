@@ -22,8 +22,22 @@
 		</div>
 		</li>
 		<%= f.input :required_meta, :label=>"Meta choices required at signup?", :as=>:boolean %>		
-		<%= f.input :front_template, :label => "Front Page template" %>
-		<%= f.input :member_template, :label => "Home Page template" %>
+
+		<% f.input :front_template, :label => "Front Page template" %>
+		<li class="text optional" id="group_front_template_input">
+			<label for="group_front_template">Front Page template<br>
+			<%= button_to_function "get default", "get_default('front')" %>	
+			</label>
+			<textarea id="group_front_template" name="group[front_template]" rows="5"><%= @group.front_template %></textarea>
+		</li>
+
+		<% f.input :member_template, :label => "Home Page template" %>
+		<li class="text optional" id="group_member_template_input">
+			<label for="group_member_template">Home Page template<br>
+			<%= button_to_function "get default", "get_default('member')" %>	
+			</label>
+			<textarea id="group_member_template" name="group[member_template]" rows="5"><%= @group.member_template %></textarea>
+		</li>
 		
 		<% f.input :invite_template, :label => "Invitation e-mail template" %>
 		<li class="text optional" id="group_invite_template_input">
@@ -41,9 +55,30 @@
 			<textarea id="group_import_template" name="group[import_template]" rows="5"><%= @group.import_template %></textarea>
 		</li>
 		
-		<%= f.input :signup_template, :label => "Signup Page template" %>
-		<%= f.input :confirm_template, :label => "Confirmation Page template" %>
-		<%= f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
+		<% f.input :signup_template, :label => "Signup Page template" %>
+		<li class="text optional" id="group_signup_template_input">
+			<label for="group_signup_template">Signup Page template<br>
+			<%= button_to_function "get default", "get_default('signup')" %>	
+			</label>
+			<textarea id="group_signup_template" name="group[signup_template]" rows="5"><%= @group.signup_template %></textarea>
+		</li>
+		
+		<% f.input :confirm_template, :label => "Confirmation Page template" %>
+		<li class="text optional" id="group_confirm_template_input">
+			<label for="group_confirm_template">Confirmation Page template<br>
+			<%= button_to_function "get default", "get_default('confirm')" %>	
+			</label>
+			<textarea id="group_confirm_template" name="group[confirm_template]" rows="5"><%= @group.confirm_template %></textarea>
+		</li>
+
+		<% f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
+		<li class="text optional" id="group_confirm_email_template_input">
+			<label for="group_confirm_email_template">Confirmation e-mail template<br>
+			<%= button_to_function "get default", "get_default('confirm_email')" %>	
+			</label>
+			<textarea id="group_confirm_email_template" name="group[confirm_email_template]" rows="5"><%= @group.confirm_email_template %></textarea>
+		</li>
+				
 		<%= f.input :alt_logins, :label=>"Allow Facebook/Twitter logins?", :as => :boolean %>
 	<% end %>
 

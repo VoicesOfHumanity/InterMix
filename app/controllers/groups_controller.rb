@@ -467,7 +467,7 @@ class GroupsController < ApplicationController
         cdata['item'] = @item
         cdata['recipient'] = participant     
         cdata['participant'] = participant 
-        cdata['current_user'] = current_user
+        cdata['current_participant'] = current_participant
         cdata['group'] = @group if @group
         cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
         if @group.logo.exists? then
