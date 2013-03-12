@@ -14,5 +14,6 @@
  *= require 'formtastic'
  *= require 'formtastic_changes'
  *= require 'jquery.treeview.css'
+ *= require 'tooltipster.css'
  *= require 'extra'
  */
