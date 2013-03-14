@@ -1,0 +1,27 @@
+<% if !@help_texts or !@help_texts.class==Array or @help_texts.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
+    <th>ID</th>
+    <th>Code</th>
+		<th>Description</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @help_texts.each do |help_text| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= help_text.id %>" /></td>
+		<td><a href="#" onclick="viewrec1(<%= help_text.id %>)"><%= help_text.id %></a></td>
+    <td><a href="#" onclick="viewrec1(<%= help_text.id %>)"><%= help_text.code %></a></td>
+    <td><%= help_text.description %></td>
+  </tr>
+<% end %>
+</table>
+
+<% end -%>

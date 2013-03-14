@@ -20,7 +20,31 @@
   <%= csrf_meta_tag %>
 	<script>
    $(document).ready(function() {
-       $('.tooltip').tooltipster();
+      $('.tooltip').tooltipster({
+				trigger: 'hover',
+				//content: 'Loading...',
+				functionBefore: function(origin,continueTooltip) {
+					//alert(xinspect(origin.context));	//The origin element is in origin.context, like the img or a or div
+					//alert(origin.context.title);
+					continueTooltip();	
+					if (origin.context.id.substring(0,5)=='help_') {			
+						origin.tooltipster('update', 'Loading...');
+						var code = origin.context.id.substring(5,99);
+						if (origin.data('ajax') !== 'cached') {
+			         $.ajax({
+			            type: 'POST',
+			            url: '/helptext/'+code,
+			            success: function(data) {
+			               // update our tooltip content with our returned data and cache it
+			               origin.tooltipster('update', data).data('ajax', 'cached');
+			            }
+			         });
+			      }
+					} else {
+						//alert('not calling ajax');
+					}
+				}
+			});
    });
 	</script>
 </head>

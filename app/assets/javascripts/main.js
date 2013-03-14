@@ -28,3 +28,19 @@ function strip(html) {
    tmp.innerHTML = html;
    return tmp.textContent||tmp.innerText;
 }
+function helptext(code) {
+    
+}
+function xinspect(o,i){
+    // Inspect a javascript object
+    // or: JSON.stringify(o)
+    if(typeof i=='undefined')i='';
+    if(i.length>50)return '[MAX ITERATIONS]';
+    var r=[];
+    for(var p in o){
+        var t=typeof o[p];
+        //r.push(i+'"'+p+'" ('+t+') => '+(t=='object' ? 'object:'+xinspect(o[p],i+'  ') : o[p]+''));
+        r.push(i+'"'+p+'" ('+t+') => '+(t=='object' ? 'object' : o[p]+''));
+    }
+    return r.join(i+'\n');
+}

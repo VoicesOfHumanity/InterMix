@@ -22,6 +22,10 @@ Intermix::Application.routes.draw do
       post :admin_add, :on => :member
       delete :admin_del, :on => :member
     end
+    
+    resources :help_texts do
+      get :search, :on => :collection
+    end
 
     resources :dialogs do
       get :search, :on => :collection
@@ -186,6 +190,7 @@ Intermix::Application.routes.draw do
   match 'front/getmetro' => 'front#getmetro'
   match 'front/setsess' => 'front#setsess'
   match 'front/test' => 'front#test'
+  match 'helptext(/:code)', :controller=>:front, :action=>:helptext
 
   match 'front/instantjointest', :controller=>:front, :action=>:instantjointest
   match 'front/instantjoinform', :controller=>:front, :action=>:instantjoinform

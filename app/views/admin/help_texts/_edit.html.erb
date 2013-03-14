@@ -1,0 +1,14 @@
+<%= semantic_form_for [:admin, @help_text] do |f| %>
+
+	<%= f.inputs do %>
+		<%= f.input :code, :required => true %>
+		<%= f.input :text, :required => true %>
+		<%= f.input :description, :required => false %>
+	<% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec1(<%= @help_text.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec1()" />
+</p>

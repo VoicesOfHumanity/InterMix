@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130206234854) do
+ActiveRecord::Schema.define(:version => 20130314022204) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -286,6 +286,16 @@ ActiveRecord::Schema.define(:version => 20130206234854) do
 
   add_index "groups", ["name"], :name => "index_groups_on_name"
   add_index "groups", ["shortname"], :name => "index_groups_on_shortname", :length => {"shortname"=>20}
+
+  create_table "help_texts", :force => true do |t|
+    t.string   "code"
+    t.string   "description"
+    t.text     "text"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "help_texts", ["code"], :name => "index_help_texts_on_code", :length => {"code"=>30}
 
   create_table "hub_admins", :force => true do |t|
     t.integer  "hub_id"

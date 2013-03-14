@@ -1005,7 +1005,18 @@ class FrontController < ApplicationController
   end
     
   def test
-  end    
+  end  
+  
+  def helptext
+    #-- Return a piece of helptext for a tooltip
+    @code = params[:code]
+    help_text = HelpText.find_by_code(@code)
+    if help_text
+      render :text => help_text.text, :layout=>false
+    else
+      render :text => "not found", :layout=>false
+    end
+  end  
   
   protected
   

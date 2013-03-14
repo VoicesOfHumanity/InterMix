@@ -1,0 +1,2 @@
+module HelpTextsHelper
+end
