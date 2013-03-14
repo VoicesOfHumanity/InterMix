@@ -16,7 +16,7 @@
 		<label>Meta Categories</label>
 		<div style="float:left">
 		<% for metamap in @metamaps %>
-			<% checked = @has_metamaps[metamap.id] ? "checked" : "" %>
+			<% checked = (@has_metamaps and @has_metamaps[metamap.id]) ? "checked" : "" %>
 			<input <%= checked %> id="metamap_<%= metamap.id %>" name="metamap[<%= metamap.id %>]" type="checkbox" value="1"> <%= metamap.name %><br>		
 		<% end %>
 		</div>

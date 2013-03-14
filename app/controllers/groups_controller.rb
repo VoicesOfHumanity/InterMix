@@ -107,6 +107,9 @@ class GroupsController < ApplicationController
         format.xml  { head :ok }
       else
         @has_metamaps = {}
+        for metamap in @group.metamaps
+          @has_metamaps[metamap.id] = true
+        end
         format.html { render :action => "edit" }
         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
       end
@@ -157,6 +160,7 @@ class GroupsController < ApplicationController
         format.html { redirect_to :action=>:view, :id=>@group.id }
       else
         logger.info("groups_controller#create Failed creating new group")
+        @has_metamaps = {}
         format.html { render :action=>:edit }
       end
     end
