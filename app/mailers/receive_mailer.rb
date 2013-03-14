@@ -1,4 +1,4 @@
-require 'tmail'
+#require 'tmail'
 
 class ReceiveMailer < ActionMailer::Base
   #-- For incoming mail
