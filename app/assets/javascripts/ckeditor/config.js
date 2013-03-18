@@ -22,10 +22,8 @@ CKEDITOR.editorConfig = function( config )
   //config.startupFocus = true;
   
   // works only with en, ru, uk languages
-  config.extraPlugins = "embed,attachment";
-  
-  config.toolbar = 'Easy';
-  
+  //config.extraPlugins = "embed,attachment";
+    
   config.toolbar_Easy =
     [
         ['Source','-','Preview','Templates'],
@@ -39,7 +37,40 @@ CKEDITOR.editorConfig = function( config )
         ['Link','Unlink','Anchor'],
         ['Image','Embed','Flash','Attachment','Table','HorizontalRule','Smiley','SpecialChar','PageBreak']
     ];
+    
+    config.toolbar_Basic = [
+         [ 'Source', '-', 'Bold', 'Italic' ]
+    ];
+
+    config.toolbar_Admin =
+    [
+        ['Source','-','Preview','Templates'],
+        ['Cut','Copy','Paste','PasteText','PasteFromWord',],
+        ['-','About'],
+        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+        ['Format'],
+        ['Bold','Italic','Underline','Strike','-','Subscript','Superscript', 'TextColor'],
+        ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
+        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+        ['Link','Unlink','Anchor'],
+        ['Image','Table','HorizontalRule','SpecialChar']
+    ];
+    
+    config.toolbar_Custom =
+      [
+        ['Bold','Italic','-','NumberedList','BulletedList','-','Link','Unlink','-','About']
+      ];
+    
+
+    config.toolbar = 'Custom';    
+       
 };
+
+// https://github.com/galetahub/ckeditor/issues/228
+//CKEDITOR.config.toolbarGroups = [
+//    { name: 'basic', groups: [ 'Source', '-', 'Bold', 'Italic' ] }
+//];
+
 
 CKEDITOR.on( 'dialogDefinition', function( ev ) {
   // Take the dialog name and its definition from the event data.

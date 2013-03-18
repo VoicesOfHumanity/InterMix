@@ -12,7 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require ckeditor/init
 //= require main
 //= require front
 //= require forum
@@ -22,3 +21,6 @@
 //= require jquery.simplemodal.1.4.1.js
 //= require jquery.treeview.js
 //= require jquery.tooltipster.min.js
+//= require ckeditor/init
+
+
