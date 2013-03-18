@@ -55,12 +55,12 @@ Intermix::Application.configure do
   config.serve_static_assets = false
 
   # Compress JavaScripts and CSS
-  #config.assets.compress = true
-  config.assets.compress = false    # https://github.com/galetahub/ckeditor/issues/121
+  config.assets.compress = true
+  #config.assets.compress = false    # https://github.com/galetahub/ckeditor/issues/121
 
   # fallback to assets pipeline if a precompiled asset is missed
+  config.assets.compile = false
   #config.assets.compile = true
-  config.assets.compile = true
 
   # Generate digests for assets URLs
   config.assets.digest = true
@@ -96,7 +96,7 @@ Intermix::Application.configure do
     :sender_address => %{"Exception Notifier" <questions@cr8.com>},
     :exception_recipients => %w{ffunch@gmail.com}
 
-    config.assets.precompile += Ckeditor.assets
+  config.assets.precompile += Ckeditor.assets
   
 end
 
