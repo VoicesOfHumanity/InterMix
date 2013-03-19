@@ -10,11 +10,11 @@ class FrontController < ApplicationController
   
   def index
     @section = 'home'
-    group_id,dialog_id = get_group_dialog_from_subdomain
+    @group_id,@dialog_id = get_group_dialog_from_subdomain
     @content = ""
     cdata = {'cookies'=>cookies}
-    if dialog_id.to_i > 0
-      @dialog = Dialog.find_by_id(dialog_id)
+    if @dialog_id.to_i > 0
+      @dialog = Dialog.find_by_id(@dialog_id)
       cdata['dialog'] = @dialog if @dialog
       if participant_signed_in? and @dialog.member_template.to_s != ''
         desc = Liquid::Template.parse(@dialog.member_template).render(cdata)
@@ -24,8 +24,8 @@ class FrontController < ApplicationController
         desc = "<h2>#{@dialog.name}</h2><div>#{@dialog.description}</div>\n"
       end
       @content += "<div>#{desc}</div>"
-    elsif group_id.to_i > 0
-      @group = Group.find_by_id(group_id)
+    elsif @group_id.to_i > 0
+      @group = Group.find_by_id(@group_id)
       cdata['group'] = @group if @group
       if participant_signed_in? and @group.member_template.to_s != ''
         desc = Liquid::Template.parse(@group.member_template).render(cdata)
@@ -1044,6 +1044,7 @@ class FrontController < ApplicationController
   end
   
   def prepare_djoin
+    @section = 'join'
     @countries = Geocountry.order(:name).select([:name,:iso]).all
     @content = "<p>No discussion was recognized</p>"
     @meta = []
@@ -1090,6 +1091,7 @@ class FrontController < ApplicationController
   end
   
   def prepare_gjoin
+    @section = 'join'
     @countries = Geocountry.order(:name).select([:name,:iso]).all
     @content = "<p>No group was recognized</p>"
     @meta = []
