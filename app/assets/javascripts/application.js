@@ -15,13 +15,13 @@
 //= require main
 //= require front
 //= require forum
+//= require ckeditor_fix
+//= require ckeditor/init
 //= require jquery.ui.core.js
 //= require jquery.ui.widget.js
 //= require jquery.ui.selectmenu.js
 //= require jquery.simplemodal.1.4.1.js
 //= require jquery.treeview.js
 //= require jquery.tooltipster.min.js
-//= require ckeditor_fix
-//= require ckeditor/init
 
 
