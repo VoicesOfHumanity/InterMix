@@ -21,6 +21,7 @@
 //= require jquery.simplemodal.1.4.1.js
 //= require jquery.treeview.js
 //= require jquery.tooltipster.min.js
+//= require ckeditor_fix
 //= require ckeditor/init
 
 
