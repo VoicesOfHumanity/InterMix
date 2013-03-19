@@ -47,7 +47,8 @@ html {
 	position: absolute;
 	z-index: 9999999;
 	pointer-events: none;
-	width: auto;
+	/* width: auto; */
+	max-width: 660px;
 	overflow: visible;
 }
 .tooltipster-base .tooltipster-content {
