@@ -16,8 +16,8 @@
 //= require front
 //= require forum
 //= require ckeditor_fix
-//= require ckeditor/init
 //= require ckeditor/config.js
+//= require ckeditor/init
 //= require jquery.ui.core
 //= require jquery.ui.widget
 //= require jquery.ui.selectmenu.js
