@@ -9,6 +9,7 @@ gem 'rails'
 gem 'mysql2'
 
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 
 # Use unicorn as the web server
 # gem 'unicorn'

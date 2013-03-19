@@ -17,10 +17,10 @@
 //= require forum
 //= require ckeditor_fix
 //= require ckeditor/init
-//= require jquery.ui.core.js
-//= require jquery.ui.widget.js
+//= require jquery.ui.core
+//= require jquery.ui.widget
 //= require jquery.ui.selectmenu.js
-//= require jquery.simplemodal.1.4.1.js
+//= require jquery.simplemodal-1.4.4.js
 //= require jquery.treeview.js
 //= require jquery.tooltipster.min.js
 

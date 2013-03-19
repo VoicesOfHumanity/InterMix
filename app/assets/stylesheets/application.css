@@ -13,6 +13,7 @@
  *= require 'main'
  *= require 'formtastic'
  *= require 'formtastic_changes'
+ *= require jquery.ui.all
  *= require 'jquery.treeview.css'
  *= require 'tooltipster.css'
  *= require 'extra'
