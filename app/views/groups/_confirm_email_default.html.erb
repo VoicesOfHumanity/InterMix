@@ -1,0 +1,18 @@
+<p>Dear {{ participant.name }},</p>
+
+<p>You have successfully signed up with "<b>{{ group.name }}</b>". Welcome!</p>
+
+<p>If you did not sign up for the group, simply ignore this email.</p>
+
+<p>Please confirm your sign-up by clicking the following link: {{ confirmlink }}. If the link doesn't work, copy and paste it into your browser window.</p>
+
+<p>Your user-id and password can be used to sign-in at <a href="http://{{ domain }}">{{ domain }}</a>. You must click the confirm link above before your password will work.</p>
+
+<p>User-ID: {{ participant.email }}<br>
+Password: {{ password }}</p>
+
+<p>Be sure to set your email preferences in the "settings" section in your profile.</p>
+
+<p>If you have questions or comments, contact the system admin at <a href="mailto:questions@intermix.org">questions@intermix.org</a>.</p>
+
+<p>Enjoy!</p>

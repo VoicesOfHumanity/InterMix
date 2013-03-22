@@ -710,9 +710,14 @@ class FrontController < ApplicationController
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
     cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}"
+    cdata['domain'] = dom
     
     if @group.confirm_email_template.to_s != ''
       template = Liquid::Template.parse(@group.confirm_email_template)
+      html_content = template.render(cdata)
+    elsif true
+      confirm_email_template = render_to_string :partial=>"groups/confirm_email_default", :layout=>false
+      template = Liquid::Template.parse(confirm_email_template)
       html_content = template.render(cdata)
     else    
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
@@ -757,7 +762,7 @@ class FrontController < ApplicationController
   end  
     
   def confirm
-    #-- Confirmation link in e-mail, when signing up
+    #-- End point of the confirmation link in e-mail, when signing up
     @participant = Participant.find_by_confirmation_token(params[:code])
     @content = ""
     @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
@@ -770,6 +775,12 @@ class FrontController < ApplicationController
       group_id = params[:group_id].to_i if group_id.to_i == 0
       @dialog = Dialog.find_by_id(dialog_id) if dialog_id > 0
       @group = Group.find_by_id(group_id) if group_id > 0
+      cdata = {}
+      cdata['recipient'] = @participant     
+      cdata['participant'] = @participant 
+      cdata['group'] = @group if @group
+      cdata['dialog'] = @dialog if @dialog
+      cdata['domain'] = BASEDOMAIN
       if @dialog
         @content += "<p>Thank you for confirming!<br><br>You are already logged in.<br><br>Click on <a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/dialogs/#{@dialog.id}/forum\">Discussion</a> on the left to see the messages.<br><br>Bookmark this link so you can come back later:<br><br><a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/\">http://#{@dialog.shortname}.#{ROOTDOMAIN}/</a>.</p>"
         session[:new_signup] = 1
@@ -778,7 +789,19 @@ class FrontController < ApplicationController
       elsif @dialog  
         @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum\">http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum</a> to see the messages. You are already logged in.</p>"
       elsif @group  
-        @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/forum\">http://#{BASEDOMAIN}/groups/#{@group.id}/forum</a> to see the messages. You are already logged in.</p>"
+        cdata['domain'] = "#{@group.shortname}.#{ROOTDOMAIN}" if @group.shortname.to_s != ""
+        cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+        if @group.confirm_template.to_s != ''
+          template = Liquid::Template.parse(@group.confirm_template)
+          @content += template.render(cdata)
+        elsif true
+          confirm_template = render_to_string :partial=>"groups/confirm_default", :layout=>false
+          template = Liquid::Template.parse(confirm_template)
+          @content += template.render(cdata)
+        else    
+          #@content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/forum\">http://#{BASEDOMAIN}/groups/#{@group.id}/forum</a> to see the messages. You are already logged in.</p>"
+          @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/forum\">http://#{BASEDOMAIN}/groups/#{@group.id}/forum</a> to see the messages. You are already logged in.</p>"
+        end
       else
         @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/\">http://#{BASEDOMAIN}/</a>. You are already logged in.</p>"
       end
