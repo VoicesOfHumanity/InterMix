@@ -1016,7 +1016,15 @@ class FrontController < ApplicationController
     else
       render :text => "not found", :layout=>false
     end
-  end  
+  end 
+  
+  def youarehere
+    @group_id = session[:group_id].to_i
+    @group = Group.find_by_id(@group_id) if @group_id > 0
+    @group_is_member = session[:group_is_member]
+    @dialog_id = session[:dialog_id].to_i
+    @dialog = Dialog.find_by_id(@dialog_id) if @dialog_id > 0
+  end 
   
   protected
   

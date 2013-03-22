@@ -45,6 +45,8 @@
 					}
 				}
 			});
+			$('#whereami').tooltipster();
+			$('#whereami').tooltipster('update', $('#youareherediv').html());
    });
 	</script>
 </head>
@@ -120,7 +122,7 @@
 			
 			<div class="sidebarbox">
 		  <% if current_participant %>
-				<img src="/assets/whereami.png">
+				<img src="/assets/whereami.gif" id="whereami" style="margin: 14px 0 10px 21px;">
 		    <p>You're logged in as:<br/><%= current_participant.name %><br><%= current_participant.email %>
 					<% if session[:group_id].to_i > 0 -%>	
 						<% if session[:group_is_member] -%>
@@ -136,7 +138,6 @@
 			</div>
 			
 			<div class="sidebarbox">Send questions and comments to <a href="mailto:questions@intermix.org">questions@intermix.org</a></div>
-			
 
 		</div>
 	</div>
@@ -164,6 +165,9 @@
 	</div>
 </div>
 
+<div id="youareherediv" style="display:none">
+<%= render :partial => "front/youarehere" %>	
+</div>	
 
 </body>
 </html>
@@ -188,6 +192,11 @@ function menumoreless() {
 	  url: '/front/setsess',
 	  data: "fullmenu="+showingfull
 	});	
+}
+function whereami() {
+    $('#whereami').tooptipster();
+		
+    $('#whereami').tooltipster('show');
 }
 </script>
 <% end -%>

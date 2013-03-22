@@ -1,0 +1,26 @@
+<% if @group -%>	
+<p><b>Group:</b> <%= @group.name %><br>
+small logo</p>
+<% end %>
+
+<% if @dialog -%>
+<b>Discussion:</b> <%= @dialog.name %><br>
+<%= @dialog.description %>
+<% end -%>
+
+<% if @dialog and @dialog.active_period -%>
+<b>Decision period:</b> <%= @dialog.active_period.name %>
+<%= @dialog.active_period.description %>
+<% end -%>
+
+<p><b>The basics:</b><br>
+Participation is always as a member of one group or another.
+Groups join together in open ended discussions.
+Discussions have decision periods with rating results by group, gender and age.
+</p>
+
+<p><b>Also useful to know:</b><br>
+You can change group or discussion by using the menu on the left.
+The forum message list depends on which group or discussion is current.
+You are encouraged to rate the forum messages for interest and approval.
+</p>
