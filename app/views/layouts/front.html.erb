@@ -120,6 +120,7 @@
 			
 			<div class="sidebarbox">
 		  <% if current_participant %>
+				<img src="/assets/whereami.png">
 		    <p>You're logged in as:<br/><%= current_participant.name %><br><%= current_participant.email %>
 					<% if session[:group_id].to_i > 0 -%>	
 						<% if session[:group_is_member] -%>
