@@ -1,26 +1,26 @@
 <% if @group -%>	
-<p><b>Group:</b> <%= @group.name %><br>
-small logo</p>
+<p><b>Group: <%= @group.name %></b><br>
+<%= image_tag @group.logo.url %></p>
 <% end %>
 
 <% if @dialog -%>
-<b>Discussion:</b> <%= @dialog.name %><br>
-<%= @dialog.description %>
+<p><b>Discussion: <%= @dialog.name %></b><br>
+<%=raw @dialog.description %></p>
 <% end -%>
 
 <% if @dialog and @dialog.active_period -%>
-<b>Decision period:</b> <%= @dialog.active_period.name %>
-<%= @dialog.active_period.description %>
+<p><b>Decision period: <%= @dialog.active_period.name %></b><br>
+<%=raw @dialog.active_period.description %></p>
 <% end -%>
 
 <p><b>The basics:</b><br>
-Participation is always as a member of one group or another.
-Groups join together in open ended discussions.
-Discussions have decision periods with rating results by group, gender and age.
+Participation is always as a member of one <b><i>group</i></b> or another.
+Groups join together in open ended <b><i>discussions</i></b>.
+Discussions have <b><i>decision periods</i></b> with rating <b><i>results</i></b> by group, gender and age.
 </p>
 
 <p><b>Also useful to know:</b><br>
-You can change group or discussion by using the menu on the left.
-The forum message list depends on which group or discussion is current.
-You are encouraged to rate the forum messages for interest and approval.
+You can change group or discussion by using the <b><i>menu</i></b> on the left.
+The <b><i>forum</i></b> message list depends on which group or discussion is current.
+You are encouraged to <b><i>rate</i></b> the forum messages for interest and approval.
 </p>

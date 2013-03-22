@@ -45,7 +45,10 @@
 					}
 				}
 			});
-			$('#whereami').tooltipster();
+			$('#whereami').tooltipster({
+				delay: 0,
+				position: 'right'
+			});
 			$('#whereami').tooltipster('update', $('#youareherediv').html());
    });
 	</script>
