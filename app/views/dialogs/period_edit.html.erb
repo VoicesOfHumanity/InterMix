@@ -9,6 +9,7 @@
 		<%= hidden_field_tag :period_id, @period_id %>
 
 		<%= f.input :name, :label=>"Title" %>
+		<%= f.input :shortdesc, :as => :text, :label => "Short description, 124chars max, no formatting", :input_html => {:rows => 5} %>
 		<%= f.input :startdate, :label=>"Start date (YYYY-MM-DD)" %>
 		<%= f.input :endposting, :label=>"Posting final date (YYYY-MM-DD)" %>
 		<%= f.input :endrating, :label=>"Rating final date (YYYY-MM-DD)" %>

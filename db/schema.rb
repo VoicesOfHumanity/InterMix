@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130314022204) do
+ActiveRecord::Schema.define(:version => 20130326014921) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(:version => 20130314022204) do
   create_table "dialogs", :force => true do |t|
     t.string   "name"
     t.text     "description"
+    t.text     "shortdesc"
     t.text     "coordinators"
     t.string   "visibility"
     t.string   "publishing"
@@ -255,6 +256,7 @@ ActiveRecord::Schema.define(:version => 20130314022204) do
     t.string   "name"
     t.string   "shortname"
     t.text     "description"
+    t.text     "shortdesc"
     t.string   "visibility",               :default => "public"
     t.string   "openness"
     t.boolean  "moderation",               :default => false
@@ -586,6 +588,7 @@ ActiveRecord::Schema.define(:version => 20130314022204) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
+    t.text     "shortdesc"
     t.text     "metamaps"
     t.boolean  "metamaps_frozen",       :default => false
     t.integer  "max_characters"

@@ -10,6 +10,8 @@
 
 <p><b>Description:</b> <%=raw @group.description %></p>
 
+<p><b>Short Description:</b> <%=raw @group.shortdesc %></p>
+
 <p><b>Created:</b> <%= @group.created_at.strftime("%m/%d/%Y") %></p>
 
 <p><b>Owner:</b> <%= @group.owner_participant ? @group.owner_participant.name : @group.owner.to_i %></p>

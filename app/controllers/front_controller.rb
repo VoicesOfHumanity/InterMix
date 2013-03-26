@@ -519,7 +519,9 @@ class FrontController < ApplicationController
     else
       @content = ""
       @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
-      @content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
+      #@content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
+      @content += "<p align=\"center\"><big><b>#{@group.name}</b> Signup Success!</big></p>"
+      @content += "<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>"
     end
     
     cookies["d_#{@dialog.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
@@ -747,14 +749,16 @@ class FrontController < ApplicationController
       logger.info("front#groupjoin problem delivering email to #{recipient.id}:#{recipient.name}")
     end
 
-    if @group.confirm_template.to_s != ''
-      template = Liquid::Template.parse(@group.confirm_template)
-      @content = template.render(cdata)
-    else
+    #if @group.confirm_template.to_s != ''
+    #  template = Liquid::Template.parse(@group.confirm_template)
+    #  @content = template.render(cdata)
+    #else
       @content = ""
       @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
-      @content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
-    end
+      #@content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
+      @content += "<p align=\"center\"><big><b>#{@group.name}</b> Signup Success!</big></p>"
+      @content += "<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>"
+    #end
     
     cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
     
@@ -1000,7 +1004,9 @@ class FrontController < ApplicationController
     else
       @content = ""
       @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
-      @content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
+      #@content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
+      @content += "<p align=\"center\"><big><b>#{@group.name}</b> Signup Success!</big></p>"
+      @content += "<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>"
     end
     
     cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}

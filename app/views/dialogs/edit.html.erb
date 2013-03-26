@@ -6,6 +6,7 @@
 		<%= f.input :name, :required => true %>		
 		<%= f.input :shortname, :label=>"Prefix", :required => true %>
 		<%= f.input :description %>
+		<%= f.input :shortdesc, :as => :text, :label => "Short description, 124chars max, no formatting", :input_html => {:rows => 5} %>
 		<%= f.input :visibility, :as => :select, :collection =>GROUP_VISIBILITY %>	
 		<%= f.input :openness, :as => :select, :collection =>GROUP_OPENNESS %>	
 		<% f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>

@@ -154,6 +154,8 @@ class DialogsController < ApplicationController
     @is_admin = (dialogadmin.length > 0)
     respond_to do |format|
       if dvalidate and @dialog.update_attributes(params[:dialog])
+        @dialog.shortdesc = view_context.strip_tags(@dialog.shortdesc)[0..123]
+        @dialog.save
         for metamap in Metamap.all
           dialog_metamap = DialogMetamap.where(:dialog_id=>@dialog.id,:metamap_id=>metamap.id).first
           if params[:metamap] and params[:metamap][metamap.id.to_s] and not dialog_metamap
@@ -364,6 +366,7 @@ class DialogsController < ApplicationController
       @period.dialog_id = @dialog_id
       @period.group_dialog = 'dialog'
     end  
+    @period.shortdesc = view_context.strip_tags(@period.shortdesc)[0..123]
     @period.save!    
     @period.update_attributes(params[:period])
     #@period.required_meta = params[:period][:required_meta]

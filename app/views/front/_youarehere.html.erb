@@ -1,17 +1,20 @@
+<% @group = Group.find_by_id(session[:group_id]) if not @group and session[:group_id].to_i > 0 %>
 <% if @group -%>	
 <p><b>Group: <%= @group.name %></b><br>
-<%= image_tag @group.logo.url %></p>
+<%= strip_tags(@group.shortdesc.to_s)[0..123] %></p>
 <% end %>
 
 <% if @dialog -%>
 <p><b>Discussion: <%= @dialog.name %></b><br>
-<%=raw @dialog.description %></p>
+<%=strip_tags( @dialog.shortdesc.to_s)[0..123] %></p>
 <% end -%>
 
 <% if @dialog and @dialog.active_period -%>
 <p><b>Decision period: <%= @dialog.active_period.name %></b><br>
-<%=raw @dialog.active_period.description %></p>
+<%= strip_tags(@dialog.active_period.shortdesc.to_s)[0..123] %></p>
 <% end -%>
+
+<hr style="width:60%;height:2px;border:none">
 
 <p><b>The basics:</b><br>
 Participation is always as a member of one <b><i>group</i></b> or another.

@@ -89,6 +89,8 @@ class GroupsController < ApplicationController
     #logger.info("groups#update metamap parameter: #{params[:metamap]}")
     respond_to do |format|
       if gvalidate and @group.update_attributes(params[:group])
+        @group.shortdesc = view_context.strip_tags(@group.shortdesc)[0..123]
+        @group.save
         for metamap in Metamap.all
           group_metamap = GroupMetamap.where(:group_id=>@group.id,:metamap_id=>metamap.id).first
           #logger.info("groups#update metamap:#{metamap.id} param:#{params[:metamap][metamap.id.to_s]} group_metamap:#{group_metamap}")
