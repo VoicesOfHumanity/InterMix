@@ -213,7 +213,7 @@ class GroupsController < ApplicationController
     cdata = {}
     cdata['current_participant'] = current_participant
     cdata['group'] = @group if @group
-    cdata['logo'] = @logo if @logo
+    cdata['logo'] = @group.logo.url if @group.logo.exists?
     cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
 
     @member_id = @follow_id if @follow_id > 0
@@ -281,8 +281,10 @@ class GroupsController < ApplicationController
           html_content += "Go <a href=\"http://#{@group.shortname}.#{ROOTDOMAIN}/gjoin?group_id=#{@group.id}&email=#{email}\">here</a> to fill in your information and join.<br>"
           html_content += "</p>"            
         end
+        
+        subject = "#{current_participant.name} invites you to the #{@group.name} on InterMix"
 
-        emailmess = SystemMailer.generic("do-not-reply@intermix.org", email, "Group invitation", html_content, cdata)
+        emailmess = SystemMailer.generic("do-not-reply@intermix.org", email, subject, html_content, cdata)
         logger.info("groups#invitedo delivering email to #{email}")
         begin
           emailmess.deliver
