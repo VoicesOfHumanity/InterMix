@@ -1,5 +1,7 @@
 Intermix::Application.routes.draw do
   
+  mount Ckeditor::Engine => '/ckeditor'
+
   get "messages/index"
   get "messages/new"
   get "messages/edit"

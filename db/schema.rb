@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130326014921) do
+ActiveRecord::Schema.define(:version => 20130329222442) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -33,6 +33,8 @@ ActiveRecord::Schema.define(:version => 20130326014921) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "width"
+    t.integer  "height"
   end
 
   add_index "ckeditor_assets", ["assetable_type", "assetable_id"], :name => "fk_assetable"
