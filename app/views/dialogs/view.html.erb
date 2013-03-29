@@ -6,6 +6,16 @@
 <p>[no logo]</p>
 <% end -%>
 
+<p id="participatinggroups"><b>Participating Groups:</b>
+<% if @dialog.active_groups.length == 0 -%>
+	none
+<% else -%>
+	<% for group in @dialog.active_groups -%>
+		<br><a href="/groups/<%= group.id %>/forum"><%= group.name %></a>
+	<% end -%>
+<% end -%>		
+</p>
+
 <% if false -%>
 <p><b>Name:</b> <%= @dialog.name %></p>
 
@@ -44,15 +54,3 @@
 
 <p><b>Current Decision Period:</b> <%= @current_period ? @current_period.name : "none" %></p>
 
-<p><b>Participating Groups:</b>
-<% if @dialog.active_groups.length == 0 -%>
-	none
-<% else -%>
-	<% for group in @dialog.active_groups -%>
-		<br><a href="/groups/<%= group.id %>/forum"><%= group.name %></a>
-	<% end -%>
-<% end -%>	
-<p>	
-
-
-</p>
