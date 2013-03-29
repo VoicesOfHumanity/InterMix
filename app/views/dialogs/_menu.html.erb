@@ -1,11 +1,16 @@
+<% @group ||= Group.find_by_id(@group_id.to_i>0 ? @group_id : session[:group_id]) %>
 <p style="clear:both;padding:0 19px 0 0" class="tooltip" title="<%= @dialog.description.to_s != '' ? @dialog.description : "No description for this discussion" %>">
 <% if @dsection == 'meta' -%>
 <span style="font-size:16px"><%= @period_id.to_i==0 ? "Overall": "Decision" %> Results for Discussion:</span><br/><span style="font-size:20px"><%= @dialog.name %></span><span style="font-size:16px"><%= @period ? ": #{@period.name}" : "" %></span>
 	<% if @group %><br><span style="font-size:16px">Results for group: <span style="color:#900;font-weight:bold;"><%= @group.name %></span></span><% end %>
 <% else -%>
-<span style="font-size:20px"><%= @dialog.name %></span><span id="period_name_heading" style="font-size:16px;display:<%= ((@dialog.active_period and @sortby=='default') or @period_id.to_i > 0) ? "inline" : "none" %>"><%= @period ? ": #{@period.name}" : "" %></span>
+Group: <span style="font-size:20px"><%= @group.name %></span><br>
+This Discussion: <span style="font-size:20px"><%= @dialog.name %>&nbsp;&nbsp;</span><img src="/assets/question-mark.png" width="16" height="16"><br>
+<% if (@dialog.active_period and @sortby=='default') or @period_id.to_i > 0 -%>
+This Decision Period: <span style="font-size:20px"><%= @period ? ": #{@period.name}" : "" %></span>
 <% end -%>
-&nbsp;<img src="/assets/question-mark.png" width="16" height="16">
+<% end -%>
+
 </p>
 
 <% if true or session[:dialog_id].to_i == 0 -%>

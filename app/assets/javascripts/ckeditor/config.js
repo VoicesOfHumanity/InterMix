@@ -58,7 +58,7 @@ CKEDITOR.editorConfig = function( config )
     
     config.toolbar_Custom =
       [
-        ['Bold','Italic','-','NumberedList','BulletedList','-','Link','Unlink','-','About']
+        ['Bold','Italic','-','NumberedList','BulletedList','-','Link','Unlink','-','SpellChecker', 'Scayt','-','About']
       ];
     
 
