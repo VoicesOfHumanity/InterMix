@@ -616,7 +616,7 @@ class DialogsController < ApplicationController
     @is_admin = (dialogadmin.length > 0)
     @period_id = params[:period_id].to_i
     @group_id = (params[:group_id] || 0).to_i
-    @group = Group.find_by_id(@group_id) if @group_id > 0
+    @group = @group_id > 0 ? Group.find_by_id(@group_id) : nil
     @short_full = params[:short_full] || 'short'
     @less_more = params[:less_more] || 'less'
     @regress = params[:regress] || 'regress'
