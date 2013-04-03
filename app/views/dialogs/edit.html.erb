@@ -30,9 +30,30 @@
 			<textarea id="dialog_member_template" name="dialog[member_template]" rows="5"><%= @dialog.member_template %></textarea>
 		</li>		
 		
-		<%= f.input :signup_template, :label => "Signup Page template" %>
-		<%= f.input :confirm_template, :label => "Confirmation Page template" %>
-		<%= f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
+		<% f.input :signup_template, :label => "Signup Page template" %>
+		<li class="text optional" id="dialog_signup_template_input">
+			<label for="dialog_signup_template">Signup Page template<br>
+			<%= button_to_function "get default", "get_default('signup')" %>	
+			</label>
+			<textarea id="dialog_signup_template" name="dialog[signup_template]" rows="5"><%= @dialog.signup_template %></textarea>
+		</li>		
+		
+		<% f.input :confirm_template, :label => "Confirmation Page template" %>
+		<li class="text optional" id="dialog_confirm_template_input">
+			<label for="dialog_confirm_template">Confirmation Page template<br>
+			<%= button_to_function "get default", "get_default('confirm')" %>	
+			</label>
+			<textarea id="dialog_confirm_template" name="dialog[confirm_template]" rows="5"><%= @dialog.confirm_template %></textarea>
+		</li>		
+
+		<% f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
+		<li class="text optional" id="dialog_confirm_email_template_input">
+			<label for="dialog_confirm_email_template">Confirmation e-mail template<br>
+			<%= button_to_function "get default", "get_default('confirm_email')" %>	
+			</label>
+			<textarea id="dialog_confirm_email_template" name="dialog[confirm_email_template]" rows="5"><%= @dialog.confirm_email_template %></textarea>
+		</li>		
+		
 		<%= f.input :logo, :as=>:file %>
 		<li class="select optional" id="group_has_mail_list_input">
 		<label>Meta Categories</label>

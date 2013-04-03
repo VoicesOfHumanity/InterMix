@@ -787,13 +787,24 @@ class FrontController < ApplicationController
       cdata['group'] = @group if @group
       cdata['dialog'] = @dialog if @dialog
       cdata['domain'] = BASEDOMAIN
-      if @dialog
-        @content += "<p>Thank you for confirming!<br><br>You are already logged in.<br><br>Click on <a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/dialogs/#{@dialog.id}/forum\">Discussion</a> on the left to see the messages.<br><br>Bookmark this link so you can come back later:<br><br><a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/\">http://#{@dialog.shortname}.#{ROOTDOMAIN}/</a>.</p>"
-        session[:new_signup] = 1
-        redirect_to "/dialogs/#{@dialog.id}/forum"
-        return
-      elsif @dialog  
-        @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum\">http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum</a> to see the messages. You are already logged in.</p>"
+      #if @dialog
+      #  @content += "<p>Thank you for confirming!<br><br>You are already logged in.<br><br>Click on <a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/dialogs/#{@dialog.id}/forum\">Discussion</a> on the left to see the messages.<br><br>Bookmark this link so you can come back later:<br><br><a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/\">http://#{@dialog.shortname}.#{ROOTDOMAIN}/</a>.</p>"
+      #  session[:new_signup] = 1
+      #  redirect_to "/dialogs/#{@dialog.id}/forum"
+      #  return
+      if @dialog 
+        cdata['domain'] = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}" if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
+        cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+        if @dialog.confirm_template.to_s != ''
+          template = Liquid::Template.parse(@dialog.confirm_template)
+          @content += template.render(cdata)
+        elsif true
+          confirm_template = render_to_string :partial=>"dialogs/confirm_default", :layout=>false
+          template = Liquid::Template.parse(confirm_template)
+          @content += template.render(cdata)
+        else    
+          @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum\">http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum</a> to see the messages. You are already logged in.</p>"
+        end
       elsif @group  
         cdata['domain'] = "#{@group.shortname}.#{ROOTDOMAIN}" if @group.shortname.to_s != ""
         cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
