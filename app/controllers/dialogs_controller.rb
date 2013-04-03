@@ -1306,6 +1306,12 @@ class DialogsController < ApplicationController
     
   end
   
+  def get_default
+    #-- Return a particular default template, e.g. invite, member, import
+    which = params[:which]
+    render :partial=>"#{which}_default", :layout=>false
+  end
+  
   protected 
   
   def dvalidate

@@ -14,8 +14,22 @@
 		<%= f.input :group_id, :as => :select, :collection =>@groupsin.collect{|c| [c.group.name,c.group.id]}, :label=>"Home group" %>			
 		<%= f.input :max_characters, :label => "Maximum number of characters in a root message." %>
 		<%= f.input :max_words, :label => "Maximum number of words in a root message."  %>
-		<%= f.input :front_template, :label => "Front Page template" %>
-		<%= f.input :member_template, :label => "Home Page template" %>
+		<% f.input :front_template, :label => "Front Page template" %>
+		<li class="text optional" id="dialog_front_template_input">
+			<label for="dialog_front_template">Front Page template<br>
+			<%= button_to_function "get default", "get_default('front')" %>	
+			</label>
+			<textarea id="dialog_front_template" name="dialog[front_template]" rows="5"><%= @dialog.front_template %></textarea>
+		</li>
+		
+		<% f.input :member_template, :label => "Home Page template" %>
+		<li class="text optional" id="dialog_member_template_input">
+			<label for="dialog_member_template">Home Page template<br>
+			<%= button_to_function "get default", "get_default('member')" %>	
+			</label>
+			<textarea id="dialog_member_template" name="dialog[member_template]" rows="5"><%= @dialog.member_template %></textarea>
+		</li>		
+		
 		<%= f.input :signup_template, :label => "Signup Page template" %>
 		<%= f.input :confirm_template, :label => "Confirmation Page template" %>
 		<%= f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
@@ -87,4 +101,23 @@
 
 <p>Save any changes for the discussion above before adding or editing periods</p>
 
-
+<script>
+function get_default(which) {
+	if (!$('#dialog_'+which+'_template')) {
+		alert("That doesn't seem to exist");
+		return;
+	} else if ($('#dialog_'+which+'_template').val()!='') {
+		alert("Please empty the template field first, if you wish to overwrite it with the default");
+		return;
+	}
+	var pars = "which="+which;
+	$.ajax({
+     type: "GET",
+     url: "/dialogs/<%= @dialog.id %>/get_default",
+     data: pars,
+     complete: function(t){	
+       $('#dialog_'+which+'_template').val(t.responseText);
+     }
+   });	
+}
+</script>

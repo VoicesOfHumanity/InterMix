@@ -16,6 +16,7 @@ class FrontController < ApplicationController
     if @dialog_id.to_i > 0
       @dialog = Dialog.find_by_id(@dialog_id)
       cdata['dialog'] = @dialog if @dialog
+      cdata['domain'] = (@dialog and @dialog.shortname.to_s!='') ? "#{@dialog.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
       if participant_signed_in? and @dialog.member_template.to_s != ''
         desc = Liquid::Template.parse(@dialog.member_template).render(cdata)
       elsif @dialog.front_template.to_s != ''
@@ -27,6 +28,7 @@ class FrontController < ApplicationController
     elsif @group_id.to_i > 0
       @group = Group.find_by_id(@group_id)
       cdata['group'] = @group if @group
+      cdata['domain'] = (@group and @group.shortname.to_s!='') ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
       if participant_signed_in? and @group.member_template.to_s != ''
         desc = Liquid::Template.parse(@group.member_template).render(cdata)
       elsif @group.front_template.to_s != ''

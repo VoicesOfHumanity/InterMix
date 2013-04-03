@@ -117,6 +117,7 @@ Intermix::Application.routes.draw do
       put :period_save
       get :group_settings
       put :group_settings_save
+      get :get_default
     end
   end 
   match 'voting_results' => 'dialogs#results'
