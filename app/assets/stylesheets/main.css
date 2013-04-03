@@ -305,6 +305,7 @@ div.forumitem div.item_expand {
 	font-size: 15px;
 	font-weight: bold;
 	background-color: #fcf9f7;
+	cursor: pointer;
 }
 div.forumitem div.item_expand:hover {
 	background-color: #ff9;

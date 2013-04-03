@@ -230,7 +230,8 @@ class GroupsController < ApplicationController
         @message = Message.new
         @message.to_participant_id = @recipient.id 
         @message.from_participant_id = current_participant.id
-        @message.subject = "Group invitation"
+        #@message.subject = "Group invitation"
+        @message.subject = "#{current_participant.name} invites you to the #{@group.name} on InterMix"
         
         cdata['item'] = @item
         cdata['recipient'] = @recipient     
