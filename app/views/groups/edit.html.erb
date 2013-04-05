@@ -79,6 +79,14 @@
 			</label>
 			<textarea id="group_confirm_email_template" name="group[confirm_email_template]" rows="5"><%= @group.confirm_email_template %></textarea>
 		</li>
+
+		<% f.input :confirm_welcome_template, :label => "Confirmed Participant Welcome page" %>
+		<li class="text optional" id="group_confirm_welcome_template_input">
+			<label for="group_confirm_welcome_template">Confirmed Participant Welcome page<br>
+			<%= button_to_function "get default", "get_default('confirm_welcome')" %>	
+			</label>
+			<textarea id="group_confirm_welcome_template" name="group[confirm_welcome_template]" rows="5"><%= @group.confirm_welcome_template %></textarea>
+		</li>		
 				
 		<%= f.input :alt_logins, :label=>"Allow Facebook/Twitter logins?", :as => :boolean %>
 	<% end %>

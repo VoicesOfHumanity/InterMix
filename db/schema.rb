@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130329222442) do
+ActiveRecord::Schema.define(:version => 20130405021207) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -54,16 +54,17 @@ ActiveRecord::Schema.define(:version => 20130329222442) do
   create_table "dialog_groups", :force => true do |t|
     t.integer  "dialog_id"
     t.integer  "group_id"
-    t.boolean  "active",                 :default => true
+    t.boolean  "active",                   :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "signup_template"
     t.text     "confirm_template"
     t.text     "confirm_email_template"
+    t.text     "confirm_welcome_template"
     t.datetime "apply_at"
-    t.integer  "apply_by",               :default => 0
-    t.string   "apply_status",           :default => ""
-    t.integer  "processed_by",           :default => 0
+    t.integer  "apply_by",                 :default => 0
+    t.string   "apply_status",             :default => ""
+    t.integer  "processed_by",             :default => 0
   end
 
   add_index "dialog_groups", ["dialog_id", "group_id"], :name => "index_dialog_groups_on_dialog_id_and_group_id"
@@ -108,7 +109,7 @@ ActiveRecord::Schema.define(:version => 20130329222442) do
     t.datetime "updated_at"
     t.string   "shortname"
     t.integer  "created_by"
-    t.boolean  "multigroup",              :default => false
+    t.boolean  "multigroup",               :default => false
     t.integer  "group_id"
     t.string   "openness"
     t.integer  "max_mess_length"
@@ -116,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20130329222442) do
     t.text     "front_template"
     t.text     "confirm_template"
     t.text     "confirm_email_template"
+    t.text     "confirm_welcome_template"
     t.text     "member_template"
     t.text     "list_template"
     t.string   "metamap_vote_own"
@@ -124,20 +126,20 @@ ActiveRecord::Schema.define(:version => 20130329222442) do
     t.integer  "logo_file_size"
     t.datetime "logo_updated_at"
     t.text     "default_message"
-    t.boolean  "required_message",        :default => true
-    t.boolean  "required_subject",        :default => true
-    t.boolean  "alt_logins",              :default => true
-    t.integer  "max_messages",            :default => 0
+    t.boolean  "required_message",         :default => true
+    t.boolean  "required_subject",         :default => true
+    t.boolean  "alt_logins",               :default => true
+    t.integer  "max_messages",             :default => 0
     t.string   "new_message_title"
-    t.boolean  "allow_replies",           :default => true
-    t.boolean  "required_meta",           :default => true
-    t.string   "value_calc",              :default => "total"
-    t.boolean  "profiles_visible",        :default => true
-    t.boolean  "names_visible_voting",    :default => true
-    t.boolean  "names_visible_general",   :default => true
-    t.boolean  "in_voting_round",         :default => false
-    t.boolean  "posting_open",            :default => true
-    t.boolean  "voting_open",             :default => true
+    t.boolean  "allow_replies",            :default => true
+    t.boolean  "required_meta",            :default => true
+    t.string   "value_calc",               :default => "total"
+    t.boolean  "profiles_visible",         :default => true
+    t.boolean  "names_visible_voting",     :default => true
+    t.boolean  "names_visible_general",    :default => true
+    t.boolean  "in_voting_round",          :default => false
+    t.boolean  "posting_open",             :default => true
+    t.boolean  "voting_open",              :default => true
     t.integer  "current_period"
   end
 
@@ -284,6 +286,7 @@ ActiveRecord::Schema.define(:version => 20130329222442) do
     t.text     "signup_template"
     t.text     "confirm_template"
     t.text     "confirm_email_template"
+    t.text     "confirm_welcome_template"
     t.boolean  "alt_logins",               :default => true
     t.boolean  "required_meta",            :default => true
   end

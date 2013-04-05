@@ -53,6 +53,14 @@
 			</label>
 			<textarea id="dialog_confirm_email_template" name="dialog[confirm_email_template]" rows="5"><%= @dialog.confirm_email_template %></textarea>
 		</li>		
+
+		<% f.input :confirm_welcome_template, :label => "Confirmed Participant Welcome page" %>
+		<li class="text optional" id="dialog_confirm_welcome_template_input">
+			<label for="dialog_confirm_welcome_template">Confirmed Participant Welcome page<br>
+			<%= button_to_function "get default", "get_default('confirm_welcome')" %>	
+			</label>
+			<textarea id="dialog_confirm_welcome_template" name="dialog[confirm_welcome_template]" rows="5"><%= @dialog.confirm_welcome_template %></textarea>
+		</li>		
 		
 		<%= f.input :logo, :as=>:file %>
 		<li class="select optional" id="group_has_mail_list_input">

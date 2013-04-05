@@ -56,7 +56,7 @@ class FrontController < ApplicationController
   
   def photolist
     photos
-    render :partial=>'photolist', :layout=>false
+    render :partial=>'photolist', :layout=>falsed
   end  
   
   def pixel
@@ -327,6 +327,28 @@ class FrontController < ApplicationController
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
     flash[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and (params[:country_code].to_s == '' or params[:country_code].to_s == '* choose *')
+    @password = '???'    
+    if params.include?('password')
+      #-- A password has been supplied
+      @password = params[:password].to_s
+      @password_confirmation = params[:password_confirmation].to_s
+      if @password == ''
+        flash[:alert] += "Please choose a password<br>"
+      elsif @password_confirmation == ''
+        flash[:alert] += "Please enter your password a second time, to confirm<br>"
+      elsif @password_confirmation != @password
+        flash[:alert] += "The two passwords don't match<br>"
+      end
+    else
+      #-- Create a password
+      @password = ''
+      3.times do
+        conso = 'bcdfghkmnprstvw'[rand(15)]
+        vowel = 'aeiouy'[rand(6)]
+        @password += conso +  vowel
+        @password += (1+rand(9)).to_s if rand(3) == 2
+      end
+    end
 
     @metamap_vals = {}
     if @dialog and @dialog.required_meta
@@ -356,7 +378,6 @@ class FrontController < ApplicationController
       last_name = narr[narr.length-1]
       first_name = narr[0,narr.length-1].join(' ')
     end
-    @password = '???'    
         
     @participant = Participant.find_by_email(@email) 
     previous_messages = 0
@@ -372,14 +393,6 @@ class FrontController < ApplicationController
     elsif @participant
       flash[:notice] = "You already have an account<br>" 
     else
-      #-- Create a password
-      @password = ''
-      3.times do
-        conso = 'bcdfghkmnprstvw'[rand(15)]
-        vowel = 'aeiouy'[rand(6)]
-        @password += conso +  vowel
-        @password += (1+rand(9)).to_s if rand(3) == 2
-      end
       @participant = Participant.new
       @participant.first_name = first_name.strip
       @participant.last_name = last_name.strip
@@ -518,6 +531,10 @@ class FrontController < ApplicationController
     elsif @dialog.confirm_template.to_s != ''
       template = Liquid::Template.parse(@dialog.confirm_template)
       @content = template.render(cdata)
+    elsif true
+      confirm_template = render_to_string :partial=>"dialogs/confirm_default", :layout=>false
+      template = Liquid::Template.parse(confirm_template)
+      @content = template.render(cdata)
     else
       @content = ""
       @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
@@ -606,6 +623,29 @@ class FrontController < ApplicationController
       flash[:alert] += "That doesn't look like a valid e-mail address<br>"
     end  
     flash[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and (params[:country_code].to_s == '' or params[:country_code].to_s == '* choose *')
+    @password = '???'    
+    if params.include?('password')
+      #-- A password has been supplied
+      @password = params[:password].to_s
+      @password_confirmation = params[:password_confirmation].to_s
+      if @password == ''
+        flash[:alert] += "Please choose a password<br>"
+      elsif @password_confirmation == ''
+        flash[:alert] += "Please enter your password a second time, to confirm<br>"
+      elsif @password_confirmation != @password
+        flash[:alert] += "The two passwords don't match<br>"
+      end
+    else
+      #-- Create a password
+      @password = ''
+      3.times do
+        conso = 'bcdfghkmnprstvw'[rand(15)]
+        vowel = 'aeiouy'[rand(6)]
+        @password += conso +  vowel
+        @password += (1+rand(9)).to_s if rand(3) == 2
+      end
+    end
+
     @metamap_vals = {}
     if @group.required_meta
       #-- Check any metamap categories, if they're required
@@ -632,21 +672,12 @@ class FrontController < ApplicationController
       last_name = narr[narr.length-1]
       first_name = narr[0,narr.length-1].join(' ')
     end
-    @password = '???'    
         
     @participant = Participant.find_by_email(@email) 
     previous_messages = 0
     if @participant 
       flash[:notice] = "You seem to already have an account. Please log into that.<br>"
     else
-      #-- Create a password
-      @password = ''
-      3.times do
-        conso = 'bcdfghkmnprstvw'[rand(15)]
-        vowel = 'aeiouy'[rand(6)]
-        @password += conso +  vowel
-        @password += (1+rand(9)).to_s if rand(3) == 2
-      end
       @participant = Participant.new
       @participant.first_name = first_name.strip
       @participant.last_name = last_name.strip
@@ -751,16 +782,20 @@ class FrontController < ApplicationController
       logger.info("front#groupjoin problem delivering email to #{recipient.id}:#{recipient.name}")
     end
 
-    #if @group.confirm_template.to_s != ''
-    #  template = Liquid::Template.parse(@group.confirm_template)
-    #  @content = template.render(cdata)
-    #else
+    if @group.confirm_template.to_s != ''
+      template = Liquid::Template.parse(@group.confirm_template)
+      @content = template.render(cdata)
+    elsif true
+      confirm_template = render_to_string :partial=>"groups/confirm_default", :layout=>false
+      template = Liquid::Template.parse(confirm_template)
+      @content = template.render(cdata)
+    else
       @content = ""
       @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
       #@content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
       @content += "<p align=\"center\"><big><b>#{@group.name}</b> Signup Success!</big></p>"
       @content += "<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>"
-    #end
+    end
     
     cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
     
@@ -796,6 +831,7 @@ class FrontController < ApplicationController
         cdata['domain'] = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}" if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
         cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
         if @dialog.confirm_template.to_s != ''
+#  NB        
           template = Liquid::Template.parse(@dialog.confirm_template)
           @content += template.render(cdata)
         elsif true
@@ -848,8 +884,6 @@ class FrontController < ApplicationController
     @email = params[:email].to_s
     @first_name = params[:first_name].to_s
     @last_name = params[:last_name].to_s
-    #@password = params[:password].to_s
-    #@password_confirmation = params[:password_confirmation].to_s
     @group_id = params[:group_id].to_i
     @country_code = params[:country_code].to_s
     
@@ -879,13 +913,29 @@ class FrontController < ApplicationController
         flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
       end    
     end 
-    #if @password == ''
-    #  flash[:alert] += "Please choose a password<br>"
-    #elsif @password_confirmation == ''
-    #  flash[:alert] += "Please enter your password a second time, to confirm<br>"
-    #elsif @password_confirmation != @password
-    #  flash[:alert] += "The two passwords don't match<br>"
-    #end
+    @password = '???'    
+    if params.include?('password')
+      #-- A password has been supplied
+      @password = params[:password].to_s
+      @password_confirmation = params[:password_confirmation].to_s
+      if @password == ''
+        flash[:alert] += "Please choose a password<br>"
+      elsif @password_confirmation == ''
+        flash[:alert] += "Please enter your password a second time, to confirm<br>"
+      elsif @password_confirmation != @password
+        flash[:alert] += "The two passwords don't match<br>"
+      end
+    else
+      #-- Create a password
+      @password = ''
+      3.times do
+        conso = 'bcdfghkmnprstvw'[rand(15)]
+        vowel = 'aeiouy'[rand(6)]
+        @password += conso +  vowel
+        @password += (1+rand(9)).to_s if rand(3) == 2
+      end
+    end
+    
     @metamaps = Metamap.where(:global_default=>true)
     for metamap in @metamaps
       if params["meta_#{metamap.id}"].to_i == 0
@@ -897,21 +947,11 @@ class FrontController < ApplicationController
       render :action=>:joinform
       return
     end  
-
-    @password = '???'    
         
     @participant = Participant.find_by_email(@email) 
     if @participant 
       flash[:alert] = "You seem to already have an account for #{@email}. Please log into that.<br>"
     else
-      #-- Create a password
-      @password = ''
-      3.times do
-        conso = 'bcdfghkmnprstvw'[rand(15)]
-        vowel = 'aeiouy'[rand(6)]
-        @password += conso +  vowel
-        @password += (1+rand(9)).to_s if rand(3) == 2
-      end
       @participant = Participant.new
       @participant.first_name = @first_name.strip
       @participant.last_name = @last_name.strip
