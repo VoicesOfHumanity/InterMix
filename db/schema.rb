@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130405021207) do
+ActiveRecord::Schema.define(:version => 20130408190713) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -570,6 +570,7 @@ ActiveRecord::Schema.define(:version => 20130405021207) do
     t.string   "handle"
     t.string   "authentication_token"
     t.boolean  "new_signup",                                                           :default => true
+    t.boolean  "required_entered",                                                     :default => false
   end
 
   add_index "participants", ["confirmation_token"], :name => "index_participants_on_confirmation_token", :unique => true

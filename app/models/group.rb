@@ -50,6 +50,14 @@ class Group < ActiveRecord::Base
     end
     metamaps.uniq
   end
+  
+  def adminname
+    begin
+      owner_participant.name
+    rescue
+      '???'
+    end  
+  end  
 
   def to_liquid
       {'id'=>id,'name'=>name,'shortname'=>shortname,'description'=>description}

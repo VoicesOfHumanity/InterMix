@@ -100,6 +100,51 @@ class Participant < ActiveRecord::Base
     reset_authentication_token! if authentication_token.blank?   
   end
   
+  def has_required
+    #-- Has the required profile fields and meta tags been entered for this participant?
+    ok = true
+    exp = ''
+    if first_name.to_s == '' or last_name == ''
+      ok = false
+      exp = "name"
+    elsif country_code.to_s == ''
+      ok = false
+      exp = "country_code"
+    elsif visibility.to_s == ''
+      ok = false
+      exp = "visibility"
+    elsif private_email.to_s == '' or system_email.to_s == '' or forum_email.to_s == ''
+      ok = false
+      exp = "email settings"
+    else  
+      #-- everything in metamaps_h should be filled in
+      mnodes = metamap_nodes_h
+      metamaps_h.each do |metamap_id,metamap_name|
+        mnode = mnodes[metamap_id] ? mnodes[metamap_id] : nil
+        if mnode 
+          if mnode[1].to_i == 0
+            ok = false
+            exp += "metamap#{metamap_id} "  
+          end  
+        else
+          ok = false
+          exp += "metamap#{metamap_id} "  
+        end
+      end 
+    end
+    if ok and !required_entered
+      self.required_entered = true
+      logger.info("participant#has_required profile requirements are now OK")
+      self.save
+    elsif !ok and required_entered
+      self.required_entered = false
+      logger.info("participant#has_required profile requirements are now NOT ok")
+      self.save
+    end    
+    logger.info("participant#has_required: #{ok ? "OK" : "NO"} #{exp}")
+    return ok  
+  end
+  
   def groups_in
     #-- What groups are they in?
     #-- [[5, "Test group"], [7, "The Real Men"], [8, "Individual Initiatives for Nuclear Disarmament"]]

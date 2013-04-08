@@ -162,6 +162,9 @@ class ApplicationController < ActionController::Base
       session[:new_signup] = 1
     end
     
+    #-- This will check if required fields have been entered, and remember it, so we will show only their profile if we're missing something.
+    session[:has_required] = current_participant.has_required
+    
     group_id,dialog_id = get_group_dialog_from_subdomain
 
     if session[:dialog_prefix] != '' and session[:group_prefix] != ''
@@ -237,5 +240,12 @@ class ApplicationController < ActionController::Base
     end
     return @group_id, @dialog_id
   end  
+  
+  def check_required
+    #-- If required profile fields aren't entered, redirect to the profile
+    if not session[:has_required]
+      redirect_to :controller => :profiles, :action=>:edit
+    end
+  end
   
 end

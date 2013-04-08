@@ -101,6 +101,8 @@ Intermix::Application.routes.draw do
       get :group_participant_edit
       put :group_participant_save
       get :get_default
+      get :get_dg_default
+      get :test_template
     end
   end 
   
@@ -118,6 +120,7 @@ Intermix::Application.routes.draw do
       get :group_settings
       put :group_settings_save
       get :get_default
+      get :test_template
     end
   end 
   match 'voting_results' => 'dialogs#results'

@@ -4,6 +4,7 @@ class GroupsController < ApplicationController
 
 	layout "front"
   before_filter :authenticate_participant!
+  before_filter :check_required
 
   def index
     #-- Show an overview of groups this person has access to
@@ -800,6 +801,75 @@ class GroupsController < ApplicationController
     #-- Return a particular default template, e.g. invite, member, import
     which = params[:which]
     render :partial=>"#{which}_default", :layout=>false
+  end
+
+  def get_dg_default
+    #-- Return a particular default template for a dialog_group
+    #-- That will be either the main one used by the discussion, or if not defined, the default discussion template
+    which = params[:which]
+    @dialog_group_id = params[:dialog_group_id]
+    @dialog_group = DialogGroup.find_by_id(@dialog_group_id)
+    @group = Group.find_by_id(@dialog_group.group_id)
+    @dialog = Dialog.find_by_id(@dialog_group.dialog_id)
+    if @dialog.send("#{which}_template").to_s != ''
+      render :text=>@dialog.send("#{which}_template"), :layout=>false
+    else  
+      render :partial=>"dialogs/#{which}_default", :layout=>false
+    end  
+  end
+  
+  def test_template
+    #-- Show a template with the liquid macros filled in
+    which = params[:which]
+    @group_id = params[:id]
+    @group = Group.find_by_id(@group_id)
+    @domain = (@group and @group.shortname.to_s!='') ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
+    @logo = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    @participant = current_participant
+    @email = @participant.email
+    @name = @participant.name
+    @countries = Geocountry.order(:name).select([:name,:iso]).all
+    @meta = []
+    metamaps = @group.metamaps
+    for metamap in metamaps
+      #m = OpenStruct.new
+      m = {}
+      m['id'] = metamap[0]
+      m['name'] = metamap[1]
+      m['val'] = params["meta_#{metamap[0]}"].to_i
+      m['nodes'] = [{'id'=>0,'name'=>'* choose *'}]
+      MetamapNode.where(:metamap_id=>m['id']).order(:sortorder,:name).each do |node|
+        #n = OpenStruct.new
+        n = {}
+        n['id'] = node.id
+        n['name'] = node.name
+        m['nodes'] << n
+      end
+      @meta << m
+    end
+    
+    cdata = {}
+    cdata['group'] = @group
+    cdata['dialog'] = @dialog if @dialog
+    cdata['dialog_group'] = @dialog_group if @dialog_group
+    cdata['participant'] = @participant
+    cdata['recipient'] = @participant
+    cdata['domain'] = @domain
+    cdata['password'] = '[#@$#$%$^]'
+    cdata['confirmlink'] = "http://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
+    cdata['logo'] = @logo if @logo
+    cdata['countries'] = @countries
+    cdata['meta'] = @meta
+    cdata['message'] = '[Custom message]'    
+    cdata['subject'] = '[Subject line]'
+      
+    if @group.send("#{which}_template").to_s != ""
+      template_content = render_to_string(:text=>"#{which}_template",:layout=>false)
+    else
+      template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
+    end      
+    template = Liquid::Template.parse(template_content)
+    render :text => template.render(cdata), :layout=>false
   end
 
   protected

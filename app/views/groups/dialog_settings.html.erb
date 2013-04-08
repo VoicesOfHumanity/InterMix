@@ -10,13 +10,61 @@
 
 		<%= hidden_field_tag :dialog_group_id, @dialog_group.id %>
 
-		<%= f.input :signup_template, :label => "Signup Page template" %>
-		<%= f.input :confirm_template, :label => "Confirmation Page template" %>
-		<%= f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
-		<%= f.input :confirm_welcome_template, :label => "Confirmed Participant Welcome page" %>
+		<% f.input :signup_template, :label => "Signup Page template" %>
+		<li class="text optional" id="dialog_group_signup_template_input">
+			<label for="dialog_group_signup_template">Signup Page template<br>
+			<%= button_to_function "get default", "get_default('signup')" %>	
+			</label>
+			<textarea id="dialog_group_signup_template" name="dialog_group[signup_template]" rows="5"><%= @dialog_group.signup_template %></textarea>
+		</li>
+
+		<% f.input :confirm_template, :label => "Confirmation Page template" %>
+		<li class="text optional" id="dialog_group_confirm_template_input">
+			<label for="dialog_group_confirm_template">Confirmation Page template<br>
+			<%= button_to_function "get default", "get_default('confirm')" %>	
+			</label>
+			<textarea id="dialog_group_confirm_template" name="dialog_group[confirm_template]" rows="5"><%= @dialog_group.confirm_template %></textarea>
+		</li>
+		
+		<% f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
+		<li class="text optional" id="dialog_group_confirm_email_template_input">
+			<label for="dialog_group_confirm_email_template">Confirmation e-mail template<br>
+			<%= button_to_function "get default", "get_default('confirm_email')" %>	
+			</label>
+			<textarea id="dialog_group_confirm_email_template" name="dialog_group[confirm_email_template]" rows="5"><%= @dialog_group.confirm_email_template %></textarea>
+		</li>
+		
+		<% f.input :confirm_welcome_template, :label => "Confirmed Participant Welcome page" %>
+		<li class="text optional" id="dialog_group_confirm_welcome_template_input">
+			<label for="dialog_group_confirm_welcome_template">Confirmed Participant Welcome page<br>
+			<%= button_to_function "get default", "get_default('confirm_welcome')" %>	
+			</label>
+			<textarea id="dialog_group_confirm_welcome_template" name="dialog_group[confirm_welcome_template]" rows="5"><%= @dialog_group.confirm_welcome_template %></textarea>
+		</li>		
 
 	<% end %>
 
 	<p><input type="submit" value="Save"></p>
 
 <% end %>
+
+<script>
+function get_default(which) {
+	if (!$('#dialog_group_'+which+'_template')) {
+		alert("That doesn't seem to exist");
+		return;
+	} else if ($('#dialog_group_'+which+'_template').val()!='') {
+		alert("Please empty the template field first, if you wish to overwrite it with the default");
+		return;
+	}
+	var pars = "which="+which;
+	$.ajax({
+     type: "GET",
+     url: "/groups/<%= @group.id %>/get_dg_default?dialog_group_id=<%= @dialog_group.id %>",
+     data: pars,
+     complete: function(t){	
+       $('#dialog_group_'+which+'_template').val(t.responseText);
+     }
+   });	
+}
+</script>

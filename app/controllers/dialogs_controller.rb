@@ -4,6 +4,7 @@ class DialogsController < ApplicationController
 
 	layout "front"
   before_filter :authenticate_participant!
+  before_filter :check_required
 
   def index
     #-- Show an overview of dialogs this person has access to

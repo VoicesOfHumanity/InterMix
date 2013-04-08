@@ -24,11 +24,13 @@ class ProfilesController < ApplicationController
     @subsection = 'edit'
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find_by_id(@profile_id)
+    session[:has_required] = @participant.has_required
     if @participant.country_code.to_s != ''
       @metro_areas = MetroArea.where(:country_code=>@participant.country_code).order(:name).all.collect{|r| [r.name,r.id]}
     else  
       @metro_areas = MetroArea.includes(:geocountry).order("geocountries.name,metro_areas.name").all.collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
     end
+    flash.now[:alert] = "Some required fields need to be entered" if not session[:has_required]
   end
 
   def settings
@@ -104,7 +106,9 @@ class ProfilesController < ApplicationController
             MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
           end  
         elsif metamap_id==3 or metamap_id==5   
-           flash.now[:alert] += "#{metamap_name} is required<br>"
+           flash.now[:alert] += "#{metamap_name} is required by InterMix<br>"
+        else
+          flash.now[:alert] += "#{metamap_name} is required by one of the groups or discussions you're in<br>"             
         end
       end 
     end    
@@ -129,6 +133,9 @@ class ProfilesController < ApplicationController
       else
         @notice = "Profile has been updated."
       end
+      
+      #-- Update the setting for whether required fields were entered or not
+      session[:has_required] = @participant.has_required
       
       @subsection = 'view'
       render :action=>'index'

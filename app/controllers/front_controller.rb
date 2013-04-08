@@ -816,6 +816,10 @@ class FrontController < ApplicationController
       group_id = params[:group_id].to_i if group_id.to_i == 0
       @dialog = Dialog.find_by_id(dialog_id) if dialog_id > 0
       @group = Group.find_by_id(group_id) if group_id > 0
+      if @group and @dialog
+        #-- Look up the dialog/group setting, which might contain a template
+        @dialog_group = DialogGroup.where("group_id=#{@group.id} and dialog_id=#{@dialog.id}").first
+      end
       cdata = {}
       cdata['recipient'] = @participant     
       cdata['participant'] = @participant 
@@ -830,13 +834,15 @@ class FrontController < ApplicationController
       if @dialog 
         cdata['domain'] = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}" if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
         cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
-        if @dialog.confirm_template.to_s != ''
-#  NB        
-          template = Liquid::Template.parse(@dialog.confirm_template)
+        if @dialog_group and @dialog_group.confirm_welcome_template.to_s != ''
+          template = Liquid::Template.parse(@dialog_group.confirm_email_template)
+          html_content = template.render(cdata)
+        elsif @dialog.confirm_welcome_template.to_s != ''
+          template = Liquid::Template.parse(@dialog.confirm_welcome_template)
           @content += template.render(cdata)
         elsif true
-          confirm_template = render_to_string :partial=>"dialogs/confirm_default", :layout=>false
-          template = Liquid::Template.parse(confirm_template)
+          confirm_welcome_template = render_to_string :partial=>"dialogs/confirm_welcome_default", :layout=>false
+          template = Liquid::Template.parse(confirm_welcome_template)
           @content += template.render(cdata)
         else    
           @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum\">http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum</a> to see the messages. You are already logged in.</p>"
@@ -844,12 +850,12 @@ class FrontController < ApplicationController
       elsif @group  
         cdata['domain'] = "#{@group.shortname}.#{ROOTDOMAIN}" if @group.shortname.to_s != ""
         cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
-        if @group.confirm_template.to_s != ''
-          template = Liquid::Template.parse(@group.confirm_template)
+        if @group.confirm_welcome_template.to_s != ''
+          template = Liquid::Template.parse(@group.confirm_welcome_template)
           @content += template.render(cdata)
         elsif true
-          confirm_template = render_to_string :partial=>"groups/confirm_default", :layout=>false
-          template = Liquid::Template.parse(confirm_template)
+          confirm_welcome_template = render_to_string :partial=>"groups/confirm_welcome_default", :layout=>false
+          template = Liquid::Template.parse(confirm_welcome_template)
           @content += template.render(cdata)
         else    
           #@content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/forum\">http://#{BASEDOMAIN}/groups/#{@group.id}/forum</a> to see the messages. You are already logged in.</p>"
