@@ -191,6 +191,8 @@ class ApplicationController < ActionController::Base
   
     if params[:fb_sig_in_iframe].to_i == 1
       session[:cur_baseurl] + '/fbapp'
+    elsif not session[:has_required]
+      '/me/profile/edit'
     elsif dialog_id.to_i > 0
       session[:cur_baseurl] + "/dialogs/#{dialog_id}/forum"
     elsif group_id.to_i > 0
