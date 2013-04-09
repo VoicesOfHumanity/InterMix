@@ -17,7 +17,8 @@
 		<% f.input :front_template, :label => "Front Page template" %>
 		<li class="text optional" id="dialog_front_template_input">
 			<label for="dialog_front_template">Front Page template<br>
-			<%= button_to_function "get default", "get_default('front')" %>	
+			<%= button_to_function "get default", "get_default('front')" %><br>
+			<%= button_to_function "test", "test_template('front')" %>	
 			</label>
 			<textarea id="dialog_front_template" name="dialog[front_template]" rows="5"><%= @dialog.front_template %></textarea>
 		</li>
@@ -25,7 +26,8 @@
 		<% f.input :member_template, :label => "Home Page template" %>
 		<li class="text optional" id="dialog_member_template_input">
 			<label for="dialog_member_template">Home Page template<br>
-			<%= button_to_function "get default", "get_default('member')" %>	
+			<%= button_to_function "get default", "get_default('member')" %><br>
+				<%= button_to_function "test", "test_template('member')" %>	
 			</label>
 			<textarea id="dialog_member_template" name="dialog[member_template]" rows="5"><%= @dialog.member_template %></textarea>
 		</li>		
@@ -33,7 +35,8 @@
 		<% f.input :signup_template, :label => "Signup Page template" %>
 		<li class="text optional" id="dialog_signup_template_input">
 			<label for="dialog_signup_template">Signup Page template<br>
-			<%= button_to_function "get default", "get_default('signup')" %>	
+			<%= button_to_function "get default", "get_default('signup')" %><br>
+				<%= button_to_function "test", "test_template('signup')" %>
 			</label>
 			<textarea id="dialog_signup_template" name="dialog[signup_template]" rows="5"><%= @dialog.signup_template %></textarea>
 		</li>		
@@ -41,7 +44,8 @@
 		<% f.input :confirm_template, :label => "Confirmation Page template" %>
 		<li class="text optional" id="dialog_confirm_template_input">
 			<label for="dialog_confirm_template">Confirmation Page template<br>
-			<%= button_to_function "get default", "get_default('confirm')" %>	
+			<%= button_to_function "get default", "get_default('confirm')" %><br>
+				<%= button_to_function "test", "test_template('confirm')" %>
 			</label>
 			<textarea id="dialog_confirm_template" name="dialog[confirm_template]" rows="5"><%= @dialog.confirm_template %></textarea>
 		</li>		
@@ -49,7 +53,8 @@
 		<% f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
 		<li class="text optional" id="dialog_confirm_email_template_input">
 			<label for="dialog_confirm_email_template">Confirmation e-mail template<br>
-			<%= button_to_function "get default", "get_default('confirm_email')" %>	
+			<%= button_to_function "get default", "get_default('confirm_email')" %><br>
+				<%= button_to_function "test", "test_template('confirm_email')" %>
 			</label>
 			<textarea id="dialog_confirm_email_template" name="dialog[confirm_email_template]" rows="5"><%= @dialog.confirm_email_template %></textarea>
 		</li>		
@@ -57,7 +62,8 @@
 		<% f.input :confirm_welcome_template, :label => "Confirmed Participant Welcome page" %>
 		<li class="text optional" id="dialog_confirm_welcome_template_input">
 			<label for="dialog_confirm_welcome_template">Confirmed Participant Welcome page<br>
-			<%= button_to_function "get default", "get_default('confirm_welcome')" %>	
+			<%= button_to_function "get default", "get_default('confirm_welcome')" %>	<br>
+				<%= button_to_function "test", "test_template('confirm_welcome')" %>
 			</label>
 			<textarea id="dialog_confirm_welcome_template" name="dialog[confirm_welcome_template]" rows="5"><%= @dialog.confirm_welcome_template %></textarea>
 		</li>		
@@ -148,5 +154,8 @@ function get_default(which) {
        $('#dialog_'+which+'_template').val(t.responseText);
      }
    });	
+}
+function test_template(which) {
+	window.open("/dialogs/<%= @dialog.id %>/test_template?which="+which, '_blank');
 }
 </script>

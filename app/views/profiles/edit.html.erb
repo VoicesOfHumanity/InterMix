@@ -4,6 +4,9 @@
 
 <%= semantic_form_for :participant, :url => '/me/profile/update', :html=>{:id=>"profile_edit"} do |f| %>
 
+	<input type="hidden" id="forum_link" name="forum_link" value="<%= @forum_link %>">
+	<input type="hidden" id="goto" name="goto" value="">
+
 	<%= f.inputs do %>
 
 	<li class="select required">
@@ -76,6 +79,9 @@
 	<p><br>
 	  <input type="button" value="Cancel" onclick="document.location.href='/me/profile'" />
 	  <input type="submit" value="Save" />
+		<% if @forum_link.to_s != '' -%>
+	  <input type="button" value="Save and go to Forum" onclick="$('#goto').val($('#forum_link').val());$('#profile_edit').submit();" />
+		<% end -%>
 	<br><br></p>
 
 <% end %>
@@ -105,6 +111,5 @@ function chgcountry() {
 			
 		$('#profile_edit').css('opacity','1.0');
 	})
-  
 }
 </script>

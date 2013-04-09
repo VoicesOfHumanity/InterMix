@@ -36,7 +36,8 @@
 		<% f.input :member_template, :label => "Home Page template" %>
 		<li class="text optional" id="group_member_template_input">
 			<label for="group_member_template">Home Page template<br>
-			<%= button_to_function "get default", "get_default('member')" %>	
+			<%= button_to_function "get default", "get_default('member')" %><br>
+				<%= button_to_function "test", "test_template('member')" %>
 			</label>
 			<textarea id="group_member_template" name="group[member_template]" rows="5"><%= @group.member_template %></textarea>
 		</li>
@@ -44,7 +45,8 @@
 		<% f.input :invite_template, :label => "Invitation e-mail template" %>
 		<li class="text optional" id="group_invite_template_input">
 			<label for="group_invite_template">Invitation e-mail template<br>
-			<%= button_to_function "get default", "get_default('invite')" %>	
+			<%= button_to_function "get default", "get_default('invite')" %><br>
+					<%= button_to_function "test", "test_template('invite')" %>
 			</label>
 			<textarea id="group_invite_template" name="group[invite_template]" rows="5"><%= @group.invite_template %></textarea>
 		</li>
@@ -52,7 +54,8 @@
 		<% f.input :import_template, :label => "Import e-mail template" %>
 		<li class="text optional" id="group_import_template_input">
 			<label for="group_import_template">Import e-mail template<br>
-			<%= button_to_function "get default", "get_default('import')" %>	
+			<%= button_to_function "get default", "get_default('import')" %><br>
+				<%= button_to_function "test", "test_template('import')" %>
 			</label>
 			<textarea id="group_import_template" name="group[import_template]" rows="5"><%= @group.import_template %></textarea>
 		</li>
@@ -60,7 +63,8 @@
 		<% f.input :signup_template, :label => "Signup Page template" %>
 		<li class="text optional" id="group_signup_template_input">
 			<label for="group_signup_template">Signup Page template<br>
-			<%= button_to_function "get default", "get_default('signup')" %>	
+			<%= button_to_function "get default", "get_default('signup')" %><br>
+					<%= button_to_function "test", "test_template('signup')" %>
 			</label>
 			<textarea id="group_signup_template" name="group[signup_template]" rows="5"><%= @group.signup_template %></textarea>
 		</li>
@@ -68,7 +72,8 @@
 		<% f.input :confirm_template, :label => "Confirmation Page template" %>
 		<li class="text optional" id="group_confirm_template_input">
 			<label for="group_confirm_template">Confirmation Page template<br>
-			<%= button_to_function "get default", "get_default('confirm')" %>	
+			<%= button_to_function "get default", "get_default('confirm')" %><br>
+					<%= button_to_function "test", "test_template('confirm')" %>	
 			</label>
 			<textarea id="group_confirm_template" name="group[confirm_template]" rows="5"><%= @group.confirm_template %></textarea>
 		</li>
@@ -76,7 +81,8 @@
 		<% f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
 		<li class="text optional" id="group_confirm_email_template_input">
 			<label for="group_confirm_email_template">Confirmation e-mail template<br>
-			<%= button_to_function "get default", "get_default('confirm_email')" %>	
+			<%= button_to_function "get default", "get_default('confirm_email')" %><br>
+					<%= button_to_function "test", "test_template('confirm_email')" %>	
 			</label>
 			<textarea id="group_confirm_email_template" name="group[confirm_email_template]" rows="5"><%= @group.confirm_email_template %></textarea>
 		</li>
@@ -84,7 +90,8 @@
 		<% f.input :confirm_welcome_template, :label => "Confirmed Participant Welcome page" %>
 		<li class="text optional" id="group_confirm_welcome_template_input">
 			<label for="group_confirm_welcome_template">Confirmed Participant Welcome page<br>
-			<%= button_to_function "get default", "get_default('confirm_welcome')" %>	
+			<%= button_to_function "get default", "get_default('confirm_welcome')" %>	<br>
+					<%= button_to_function "test", "test_template('confirm_welcome')" %>
 			</label>
 			<textarea id="group_confirm_welcome_template" name="group[confirm_welcome_template]" rows="5"><%= @group.confirm_welcome_template %></textarea>
 		</li>		
@@ -123,17 +130,7 @@ function test_template(which) {
 	//	alert("There's no template to test");
 	//	return;
 	//}	
-	var pars = "which="+which;
-	$.ajax({
-     type: "GET",
-     url: "/groups/<%= @group.id %>/test_template",
-     data: pars,
-     complete: function(t){	
-				var mywin = window.open('','','width=800,height=600');
-			  mywin.document.write(t.responseText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
-				mywin.focus();
-     }
-  });	
+	window.open("/groups/<%= @group.id %>/test_template?which="+which, '_blank');
 }
 </script>
 

@@ -864,7 +864,7 @@ class GroupsController < ApplicationController
     cdata['subject'] = '[Subject line]'
       
     if @group.send("#{which}_template").to_s != ""
-      template_content = render_to_string(:text=>"#{which}_template",:layout=>false)
+      template_content = render_to_string(:text=>@group.send("#{which}_template"),:layout=>false)
     else
       template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
     end      

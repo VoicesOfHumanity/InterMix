@@ -31,6 +31,14 @@ class ProfilesController < ApplicationController
       @metro_areas = MetroArea.includes(:geocountry).order("geocountries.name,metro_areas.name").all.collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
     end
     flash.now[:alert] = "Some required fields need to be entered" if not session[:has_required]
+    @group = Group.find_by_id(session[:group_id]) if not @group and session[:group_id].to_i > 0
+    if @dialog
+      @forum_link = "/dialogs/#{@dialog.id}/forum"
+    elsif @group
+      @forum_link = "/groups/#{@groups.id}/forum"
+    else
+      @forum_link = ''
+    end  
   end
 
   def settings
@@ -57,6 +65,7 @@ class ProfilesController < ApplicationController
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@profile_id)
     logger.info("profiles#update #{@participant.id}")
+    @goto = params[:goto]  # Maybe a (forum) link to continue to after saving
         
     geoupdate
     @participant.has_participated = true
@@ -137,8 +146,12 @@ class ProfilesController < ApplicationController
       #-- Update the setting for whether required fields were entered or not
       session[:has_required] = @participant.has_required
       
-      @subsection = 'view'
-      render :action=>'index'
+      if @goto != ''
+        redirect_to @goto
+      else        
+        @subsection = 'view'
+        render :action=>'index'
+      end
     else
       @subsection = 'edit'
       render :action => "edit"

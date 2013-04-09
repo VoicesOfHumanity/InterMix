@@ -1313,6 +1313,69 @@ class DialogsController < ApplicationController
     render :partial=>"#{which}_default", :layout=>false
   end
   
+  def test_template
+    #-- Show a template with the liquid macros filled in
+    which = params[:which]
+    @dialog_id = params[:id]
+    @dialog = Dialog.find_by_id(@dialog_id)
+    @group_id = session[:group_id].to_i
+    @group = Group.find_by_id(@group_id) if @group_id > 0
+    @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first
+    if @dialog.shortname.to_s != "" and @group and @group.shortname.to_s != ""
+  		@domain =  "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}"
+  	elsif @dialog.shortname.to_s != ""
+  		@domain =  "#{@dialog.shortname}.#{ROOTDOMAIN}"
+  	else
+  		@domain = "#{BASEDOMAIN}"
+  	end
+    @logo = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
+    @participant = current_participant
+    @email = @participant.email
+    @name = @participant.name
+    @countries = Geocountry.order(:name).select([:name,:iso]).all
+    @meta = []
+    metamaps = @group.metamaps
+    for metamap in metamaps
+      #m = OpenStruct.new
+      m = {}
+      m['id'] = metamap[0]
+      m['name'] = metamap[1]
+      m['val'] = params["meta_#{metamap[0]}"].to_i
+      m['nodes'] = [{'id'=>0,'name'=>'* choose *'}]
+      MetamapNode.where(:metamap_id=>m['id']).order(:sortorder,:name).each do |node|
+        #n = OpenStruct.new
+        n = {}
+        n['id'] = node.id
+        n['name'] = node.name
+        m['nodes'] << n
+      end
+      @meta << m
+    end
+    
+    cdata = {}
+    cdata['group'] = @group if @group
+    cdata['dialog'] = @dialog if @dialog
+    cdata['dialog_group'] = @dialog_group if @dialog_group
+    cdata['participant'] = @participant
+    cdata['recipient'] = @participant
+    cdata['domain'] = @domain
+    cdata['password'] = '[#@$#$%$^]'
+    cdata['confirmlink'] = "http://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
+    cdata['logo'] = @logo if @logo
+    cdata['countries'] = @countries
+    cdata['meta'] = @meta
+    cdata['message'] = '[Custom message]'    
+    cdata['subject'] = '[Subject line]'
+      
+    if @dialog.send("#{which}_template").to_s != ""
+      template_content = render_to_string(:text=>@dialog.send("#{which}_template"),:layout=>false)
+    else
+      template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
+    end      
+    template = Liquid::Template.parse(template_content)
+    render :text => template.render(cdata), :layout=>false
+  end
+  
   protected 
   
   def dvalidate
