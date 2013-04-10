@@ -51,8 +51,9 @@ class MessagesController < ApplicationController
         @message.subject = "Re: " + @oldmessage.subject if @oldmessage.subject[0,3] != 'Re:'
       end
     end
-    @participant = Participant.includes(:idols).find(current_participant.id)  
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all      
+    @participant = Participant.includes(:idols).find(current_participant.id)      
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all   
+    @groupsadminin = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").includes(:group).all          
     render :partial=>'edit', :layout=>false
   end  
 
