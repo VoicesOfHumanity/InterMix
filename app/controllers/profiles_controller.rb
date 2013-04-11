@@ -35,7 +35,7 @@ class ProfilesController < ApplicationController
     if @dialog
       @forum_link = "/dialogs/#{@dialog.id}/forum"
     elsif @group
-      @forum_link = "/groups/#{@groups.id}/forum"
+      @forum_link = "/groups/#{@group.id}/forum"
     else
       @forum_link = ''
     end  

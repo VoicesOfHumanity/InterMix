@@ -1118,7 +1118,7 @@ class FrontController < ApplicationController
   
   def prepare_join
     @section = 'join'
-    @countries = Geocountry.order(:name).select([:name,:iso]).all
+    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso]).all
     @meta = []
     @metamaps = Metamap.where(:global_default=>true)
     for metamap in @metamaps
@@ -1141,7 +1141,7 @@ class FrontController < ApplicationController
   
   def prepare_djoin
     @section = 'join'
-    @countries = Geocountry.order(:name).select([:name,:iso]).all
+    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso]).all
     @content = "<p>No discussion was recognized</p>"
     @meta = []
     if @dialog
@@ -1188,7 +1188,7 @@ class FrontController < ApplicationController
   
   def prepare_gjoin
     @section = 'join'
-    @countries = Geocountry.order(:name).select([:name,:iso]).all
+    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso]).all
     @content = "<p>No group was recognized</p>"
     @meta = []
     metamaps = @group.metamaps

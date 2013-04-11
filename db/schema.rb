@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130408190713) do
+ActiveRecord::Schema.define(:version => 20130411212908) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -206,8 +206,10 @@ ActiveRecord::Schema.define(:version => 20130408190713) do
     t.string   "fips_equiv"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "extrasort",     :limit => 3
   end
 
+  add_index "geocountries", ["extrasort", "name"], :name => "sortname"
   add_index "geocountries", ["iso"], :name => "iso"
   add_index "geocountries", ["name"], :name => "name"
 
