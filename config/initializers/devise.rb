@@ -194,9 +194,8 @@ Devise.setup do |config|
       auth.logout
       throw(:warden, :message => "The account has no status. Something is wrong.")
     elsif user.status == 'unconfirmed'
-      user.status = 'active'
-      user.save
-      #session[:new_signup] = 1
+      #user.status = 'active'
+      #user.save
       #auth.logout
       #throw(:warden, :message => "Please confirm your account by click on the link in the e-mail we sent you")
     elsif user.status != 'active'

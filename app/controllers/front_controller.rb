@@ -7,6 +7,9 @@ class FrontController < ApplicationController
 	layout "front"
 	
 	include Magick
+	
+	before_filter :check_status
+  
   
   def index
     @section = 'home'
@@ -176,7 +179,7 @@ class FrontController < ApplicationController
       @participant.forum_email = 'never'
       @participant.group_email = 'never'
       @participant.private_email = 'instant'  
-      @participant.status = 'active'
+      @participant.status = 'unconfirmed'
       if not @participant.save!  
         flash[:alert] = "Sorry, there's some kind of database problem<br>"
         render :action=>:instantjoinform, :layout=>'blank'
@@ -1078,8 +1081,8 @@ class FrontController < ApplicationController
     @participant = Participant.find_by_confirmation_token(params[:code])
     group_id,dialog_id = get_group_dialog_from_subdomain
     if @participant and @participant.status == 'active'
-      @participant.status = 'active'
-      @participant.save
+      #@participant.status = 'active'
+      #@participant.save
       sign_in(:participant, @participant)
       @dialog = Dialog.find_by_id(dialog_id) if dialog_id > 0
       if @dialog

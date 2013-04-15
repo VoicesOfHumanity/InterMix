@@ -155,12 +155,20 @@ class ApplicationController < ActionController::Base
     session[:dialog_name] = ''
     session[:dialog_prefix] = ''
     
-    if current_participant.status == 'unconfirmed'
-      #-- If they logged in, but are unconfirmed, it is probably the first time
-      current_participant.status = 'active'
-      current_participant.save
-      session[:new_signup] = 1
-    end
+    #if current_participant.status != 'active'
+    #  flash[:alert] = "Your account is not active"
+    #  flash.now[:alert] = "Your account is not active"
+      #auth.logout
+    #  sign_out :participant 
+    #  '/'
+    #  return
+    #end  
+    #if current_participant.status == 'unconfirmed'
+      #  #-- If they logged in, but are unconfirmed, it is probably the first time
+      #  current_participant.status = 'active'
+      #  current_participant.save
+      #  session[:new_signup] = 1
+    #end
     
     #-- This will check if required fields have been entered, and remember it, so we will show only their profile if we're missing something.
     session[:has_required] = current_participant.has_required
@@ -248,6 +256,21 @@ class ApplicationController < ActionController::Base
     if not session[:has_required]
       redirect_to :controller => :profiles, :action=>:edit
     end
+  end
+  
+  def check_status
+    #-- Check the status of the logged-in user
+    if not participant_signed_in?
+      return
+    elsif current_participant.status == 'unconfirmed'
+      sign_out :participant 
+      flash[:alert] = "Your account is not yet active.<br>Please confirm your account by clicking on the link in the e-mail we sent you."
+      redirect_to '/'
+    elsif current_participant.status != 'active'
+      sign_out :participant 
+      flash[:alert] = "Your account is not active"
+      redirect_to '/'
+    end     
   end
   
 end
