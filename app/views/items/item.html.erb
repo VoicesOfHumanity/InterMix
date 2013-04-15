@@ -1,8 +1,9 @@
 <%= hidden_field_tag "from", "individual" %>
-<div class="forumitem forummain" id="item_<%= @item.id %>">
+<div class="forumitem forumitemplain forummain" id="item_<%= @item.id %>">
 <%= render :partial => "item", :locals => { :item => @item, :is_reply => false, :odd_or_even=>0, :from=>'individual', :top=>@item.id, :showlong=>true } %>
 </div>
 
+<% if participant_signed_in? -%>
 <ul>
 <% if @item.num_in_thread > 1 -%>
 <li><a href="/items/<%= @item.id %>/thread#item_<%= @item.id %>">Whole thread</a></li>
@@ -14,7 +15,7 @@
 <li><a href="/groups/<%= @item.root_item.group_id %>/forum?perscr=100<%=raw "&amp;threads=flat" if @item.reply_to.to_i>0 %>#item_<%= @item.id %>">Group forum</a></li>
 <% end -%>
 </ul>
-
+<% end -%>
 
 
 <p><a href="http://intermix.org/ccattribution3point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("ccattribution3point0.png",:style=>"margin:18px 0 0 0;") %></a></p>

@@ -3,7 +3,7 @@ require 'will_paginate/array'
 class ItemsController < ApplicationController
 
   layout "front"
-  before_filter :authenticate_participant!, :except=>:pubgallery
+  before_filter :authenticate_participant!, :except=>[:pubgallery,:view]
 
   def index
     list  
@@ -500,9 +500,14 @@ class ItemsController < ApplicationController
     @group_id = @item.group_id
     if @group_id.to_i > 0
       @group = Group.includes(:owner_participant).find(@group_id)
-      @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-      @is_member = @group_participant ? true : false
-      @is_moderator = @group_participant and @group_participant.moderator
+      if participant_signed_in?
+        @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+        @is_member = @group_participant ? true : false
+        @is_moderator = @group_participant and @group_participant.moderator
+      else
+        @is_member = false
+        @is_moderator = false
+      end
       #@from = "group"
     end
 
@@ -511,10 +516,15 @@ class ItemsController < ApplicationController
       @dialog = Dialog.includes(:groups).find_by_id(@dialog_id)   
       @groups = @dialog.groups if @dialog and @dialog.groups
       @periods = @dialog.periods if @dialog and @dialog.periods
-      @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
-      dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
-      @is_admin = (dialogadmin.length > 0)
-      @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
+      if participant_signed_in?
+        @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
+        dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
+        @is_admin = (dialogadmin.length > 0)
+        @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
+      else
+        @is_admin = false
+        @previous_messages = []
+      end
       #@from = "dialog"
     end
     
@@ -532,7 +542,11 @@ class ItemsController < ApplicationController
     @rated_by_metro_area_id = 0
     
     #-- Even though we're only showing one item, we still need to get the context, with the ratings, etc.
-    @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id)
+    if participant_signed_in?
+      @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id)
+    else
+      @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,0,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id)
+    end
 
     update_last_url
     #update_prefix

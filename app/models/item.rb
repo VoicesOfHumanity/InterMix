@@ -795,7 +795,9 @@ class Item < ActiveRecord::Base
     #-- Decide whether the current user is allowed to rate the current item
     #-- They need to be a member of the group or discussion
     #-- The main reason should either be that voting manually is turned off, or voting period is over, and they already rated it
-    if self.dialog
+    if participant_id.to_i == 0
+      return false
+    elsif self.dialog
       #-- The message is for a discussion
       #-- Is he a member of a group that's a member of the discussion?
       is_in_discussion = false;
@@ -871,7 +873,9 @@ class Item < ActiveRecord::Base
     #-- Decide whether the current user is allowed to reply on this item
     #(@from == 'dialog' and item.dialog and item.dialog.settings_with_period["allow_replies"] and session[:group_is_member]) or (@from == 'group' and item.group and @is_member)
 
-    if self.dialog_id.to_i > 0
+    if participant_id.to_i == 0
+      return false
+    elsif self.dialog_id.to_i > 0
       #-- This item belongs to a discussion
       
       dialog = Dialog.includes(:groups).find(self.dialog_id)
