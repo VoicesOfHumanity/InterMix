@@ -247,7 +247,7 @@ class FrontController < ApplicationController
     
     prepare_djoin
     
-    render :action=>:dialogjoinform, :layout=>'blank'
+    render :action=>:dialogjoinform
   end
   
   def dialogjoin
@@ -584,7 +584,7 @@ class FrontController < ApplicationController
     
     prepare_gjoin
     
-    render :action=>:groupjoinform, :layout=>'blank'
+    render :action=>:groupjoinform
   end  
     
   def groupjoin
