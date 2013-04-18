@@ -389,12 +389,13 @@ class FrontController < ApplicationController
       if @dialog.max_messages > 0 and @message.length > 0 and previous_messages >= @dialog.max_messages
         flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: http://#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
       elsif @message.length == 0
-        flash[:notice] = "You already have an account<br>"
+        flash[:alert] = "You already have an account<br>"
       else
-        flash[:notice] = "You seem to already have an account, so we posted it to that<br>"
+        #flash[:notice] = "You seem to already have an account, so we posted it to that<br>"
+        flash[:alert] = "You seem to already have an account. Please log into that<br>"
       end
     elsif @participant
-      flash[:notice] = "You already have an account<br>" 
+      flash[:alert] = "You already have an account<br>" 
     else
       @participant = Participant.new
       @participant.first_name = first_name.strip
@@ -408,6 +409,12 @@ class FrontController < ApplicationController
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
+
+    if flash[:alert] != ''
+      prepare_djoin
+      render :action=>:dialogjoinform, :layout=>'blank'
+      return
+    end  
     
     @participant.groups << @group if not @participant.groups.include?(@group)
     
@@ -679,7 +686,7 @@ class FrontController < ApplicationController
     @participant = Participant.find_by_email(@email) 
     previous_messages = 0
     if @participant 
-      flash[:notice] = "You seem to already have an account. Please log into that.<br>"
+      flash[:alert] = "You seem to already have an account. Please log into that.<br>"
     else
       @participant = Participant.new
       @participant.first_name = first_name.strip
@@ -693,6 +700,12 @@ class FrontController < ApplicationController
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
+
+    if flash[:alert] != ''
+      prepare_gjoin
+      render :action=>:groupjoinform, :layout=>'blank'
+      return
+    end  
     
     @participant.groups << @group if not @participant.groups.include?(@group)
     
@@ -973,6 +986,12 @@ class FrontController < ApplicationController
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
+ 
+    if flash[:alert] != ''
+      prepare_join
+      render :action=>:joinform
+      return
+    end  
     
     @participant.groups << @group if not @participant.groups.include?(@group)
     

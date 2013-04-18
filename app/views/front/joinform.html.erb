@@ -8,8 +8,9 @@
 <tr><td>First Name*</td><td><input type="text" name="first_name" value="<%= @first_name %>" size="30" style="width:200px"></td></tr>	
 <tr><td>Last Name*</td><td><input type="text" name="last_name" value="<%= @last_name %>" size="30" style="width:200px"></td></tr>	
 <tr><td>E-mail</td><td><input type="text" name="email" value="<%= @email %>" size="30" style="width:200px"></td></tr>	
+<tr><td>Password*</td><td><input type="password" name="password" value="<%= @password %>" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="<%= @password_confirmation %>" size="30" style="width:200px"></td></tr>
 <tr><td>Country of Residence*</td><td>
-<%= select_tag :country_code, options_for_select([['* choose *','']]+Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}) %></td></tr>
+<%= select_tag :country_code, options_for_select([['* choose *','']]+Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]},@country_code) %></td></tr>
 <tr><td>Group*</td><td>
 <%= select_tag :group_id,raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(Group.where(:openness=>'open').order(:name),'id','name',@group_id) %>
 </td></tr>
