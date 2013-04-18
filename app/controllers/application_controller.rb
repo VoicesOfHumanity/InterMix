@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
 	layout "front"
 
-  helper_method :sanitizethis
+  helper_method :sanitizethis, :get_group_dialog_from_subdomain
 
   def getadmin1s
     #-- Get the state/region entries for a certain country, for a select box
