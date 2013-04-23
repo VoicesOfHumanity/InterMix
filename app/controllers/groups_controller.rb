@@ -188,7 +188,11 @@ class GroupsController < ApplicationController
     @gsection = 'invite'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
-    @messtext = @group.invite_template
+    if @group.invite_template.to_s != ''
+      @messtext = @group.invite_template
+    else       
+      @messtext = render_to_string :partial=>"invite_default", :layout=>false
+    end  
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @members = Participant.order("first_name,last_name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
@@ -875,6 +879,7 @@ class GroupsController < ApplicationController
     cdata['dialog'] = @dialog if @dialog
     cdata['dialog_group'] = @dialog_group if @dialog_group
     cdata['participant'] = @participant
+    cdata['current_participant'] = @current_participant
     cdata['recipient'] = @participant
     cdata['domain'] = @domain
     cdata['password'] = '[#@$#$%$^]'
