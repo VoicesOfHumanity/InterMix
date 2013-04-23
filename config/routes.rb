@@ -256,6 +256,8 @@ Intermix::Application.routes.draw do
   
   match 'fbapp(/:action)', :controller=>:fbapp
   
+  match 'helppage/:code', :controller=>:front, :action=>:helppage
+  
   match 'pixel/:id.gif', :to => 'front#pixel'
     
 end

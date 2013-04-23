@@ -29,7 +29,7 @@ function strip(html) {
    return tmp.textContent||tmp.innerText;
 }
 function helptext(code) {
-    
+   alert('helptext');
 }
 function xinspect(o,i){
     // Inspect a javascript object

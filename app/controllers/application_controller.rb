@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
     end
     render :layout=>false, :text => "ok"
   end
-  
+    
   protected
 
 	def set_headers

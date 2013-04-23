@@ -1128,6 +1128,18 @@ class FrontController < ApplicationController
     end
   end 
   
+  def helppage
+    #-- Show a help text as a separate page
+    @code = params[:code]
+    @help_text = HelpText.find_by_code(@code)
+    if @help_text and @help_text.text
+      showtext = @help_text.text
+    else
+      showtext = "Help page not found"
+    end
+    render :text => showtext, :layout => 'front'
+  end  
+  
   def youarehere
     @group_id = session[:group_id].to_i
     @group = Group.find_by_id(@group_id) if @group_id > 0
@@ -1135,7 +1147,7 @@ class FrontController < ApplicationController
     @dialog_id = session[:dialog_id].to_i
     @dialog = Dialog.find_by_id(@dialog_id) if @dialog_id > 0
   end 
-  
+    
   protected
   
   def prepare_join

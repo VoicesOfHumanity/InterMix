@@ -246,7 +246,7 @@ class Item < ActiveRecord::Base
     
     items = items.where("items.group_id = #{group_id} or items.first_in_thread_group_id = #{group_id}") if group_id.to_i > 0
     items = items.where("items.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
-    items = items.where("items.dialog_id = 0 or items.dialog_id is null") if dialog_id < 0
+    items = items.where("items.dialog_id = 0 or items.dialog_id is null") if dialog_id.to_i < 0
 
 
     items = items.where("items.period_id = ?", period_id) if period_id.to_i > 0  
