@@ -5,7 +5,15 @@
 </head>
 <body>
 	
-<% dom = ((@cdata['group'].shortname.to_s != "") ? "#{@cdata['group'].shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") -%>
+<%	
+if @cdata['dialog'].shortname.to_s != "" and @cdata['group'].shortname.to_s != ""
+	dom =  "#{@cdata['dialog'].shortname}.#{@cdata['group'].shortname}.#{ROOTDOMAIN}"
+elsif @cdata['group'].shortname.to_s != ""
+	dom =  "#{@cdata['group'].shortname}.#{ROOTDOMAIN}"
+else
+	dom = "#{BASEDOMAIN}"
+end
+%>	
 	
 <p>The following message was posted on <a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['group'].name %>' forum, where you are a member:</p>
 

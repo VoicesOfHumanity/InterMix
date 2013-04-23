@@ -497,6 +497,8 @@ class ItemsController < ApplicationController
     @item_id = params[:id]
     @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary]).find_by_id(@item_id)
 
+    @group_id,@dialog_id = get_group_dialog_from_subdomain
+
     @group_id = @item.group_id
     if @group_id.to_i > 0
       @group = Group.includes(:owner_participant).find(@group_id)

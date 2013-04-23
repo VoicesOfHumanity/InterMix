@@ -113,6 +113,10 @@ class Item < ActiveRecord::Base
       #participants = Participant.where("(status='active' or status is null) and forum_email='instant'").all
     end    
     logger.info("Item#emailit #{participants.length} people to distribute to")
+    
+    if self.dialog_id.to_i > 0
+      dialog = Dialog.find_by_id(self.dialog_id)
+    end
 
     #-- Distribute to members of the target group
     for recipient in participants
@@ -145,6 +149,7 @@ class Item < ActiveRecord::Base
       cdata['item'] = self
       cdata['recipient'] = recipient      
       cdata['group'] = group if group
+      cdata['dialog'] = dialog if dialog
       #@cdata['attachments'] = @attachments
       
       if group and group.logo.exists? then

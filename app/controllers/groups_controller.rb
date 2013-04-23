@@ -202,6 +202,9 @@ class GroupsController < ApplicationController
     @gsection = 'invite'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+    @is_member = @group_participant ? true : false
+    @is_moderator = (@group_participant and @group_participant.moderator)
     logger.info("groups#invitedo")  
     flash[:notice] = ''
     flash[:alert] = ''
@@ -210,6 +213,7 @@ class GroupsController < ApplicationController
     @member_id = params[:member_id].to_i
     @new_text = params[:new_text].to_s
     @messtext = params[:messtext].to_s
+    @messtext = @group.invite_template if @messtext == ''
 
     cdata = {}
     cdata['current_participant'] = current_participant
@@ -218,7 +222,10 @@ class GroupsController < ApplicationController
     cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
 
     @member_id = @follow_id if @follow_id > 0
-    if @member_id > 0
+
+    if not ( @is_member and (@group.openness=='open' or @is_moderator) )
+      flash[:alert] += "You're not allowed to invite new members<br>"
+    elsif @member_id > 0
       #-- An existing member
       @recipient = Participant.find_by_id(@member_id)
       @messtext += "<hr><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@recipient.authentication_token}\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view?auth_token=#{@recipient.authentication_token}\">#{@group.name}</a>"
@@ -237,6 +244,7 @@ class GroupsController < ApplicationController
         cdata['item'] = @item
         cdata['recipient'] = @recipient     
         cdata['participant'] = @recipient 
+        cdata['joinlink'] = "http://#{cdata['domain']}/groups/#{@group.id}/invitejoin?auth_token=#{@recipient.authentication_token}"
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
@@ -273,7 +281,7 @@ class GroupsController < ApplicationController
         email = line.strip
 
         cdata['email'] = email
-
+        cdata['joinlink'] = "http://#{cdata['domain']}/gjoin?group_id=#{@group.id}&amp;email=#{email}"
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
@@ -300,6 +308,20 @@ class GroupsController < ApplicationController
       
     end
     redirect_to :action => :invite
+  end
+  
+  def invitejoin
+    #-- Link members go to to accept an invitation sent to them
+    #-- They should already be logged in (with an authentication token), so we basically just join them, if they aren't already a member
+    @group_id = params[:id]
+    @group = Group.find_by_id(@group_id)
+    if not @participant.groups.include?(@group)
+      current_participant.groups << @group
+      flash[:notice] += "You are now a member of this group"
+    else
+      flash[:notice] += "You were already a member of this group"
+    end  
+    redirect_to :action => :forum
   end
 
   def import
