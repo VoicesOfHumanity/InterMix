@@ -1,27 +1,36 @@
-<p>Welcome to {{ dialog.name }}</p>
+{{ dialog.logo }}
 
-<p>This is the form to fill in to join:</p>
+<p><big>Welcome to <b>{{ dialog.name }}</b> discussion where you will be participating as a member of <b>{{ group.name }}!</b></big></p>
+
+<p><big>Please provide the information requested and then click "Register".</big></p>
 
 <form action="/front/dialogjoin" method="post">
 <input type="hidden" name="group_id" value="{{ group.id }}">      
-<input type="hidden" name="dialog_id" value="{{ @dialog.id }}">	
+<input type="hidden" name="dialog_id" value="{{ dialog.id }}">	
 <table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">    
+
+{% if false %} 
 <tr><td>Subject</td><td><input type="text" name="subject" value="{{ subject }}" size="48" style="width:600px"></td></tr>
 <tr><td>Message</td><td><textarea name="message" class="editor" cols="80" rows="6" style="width:600px;height:200px">{% if message == empty %}Dear Friends,{% else %}{{ message }}{% endif %}
 </textarea></td></tr>  
+{% endif %} 
+
+<tr><td>*Your Name</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>    
+<tr><td>*E-mail</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>    
+<tr><td>*Password</td><td><input type="password" name="password" value="" size="30" style="width:200px"> Confirm password: <input type="password" name="password_confirmation" value="" size="30" style="width:200px"></td></tr>
+
+<tr><td>*Country of Residence</td><td><select name="country_code"><option value="">* choose *</option>{% for country in countries %}<option value="{{ country.iso }}"{% if country.iso == country_code %} selected="selected"{% endif %}>{{ country.name }}</option>{% endfor %}</select></td></tr>
+
 {% for m in meta %}
 <tr><td>{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
 {% endfor %}
-<tr><td>*Country of Residence</td><td><select name="country_code"><option value="">* choose *</option>{% for country in countries %}<option value="{{ country.iso }}"{% if country.iso == country_code %} selected="selected"{% endif %}>{{ country.name }}</option>{% endfor %}</select></td></tr>
-<tr><td>*Your Name</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>    
-<tr><td>*E-mail</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>    
-<tr><td>Password*</td><td><input type="password" name="password" value="{{ @password }}" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="{{ @password_confirmation }}" size="30" style="width:200px"></td></tr>
+
 </table>
 <input type="submit" value="Register!">    
 </form>
 
-<p>A confirmation email will be sent. Be sure to respond to that email. Your message cannot be posted in the discussion until you have confirmed your registration.</p>
+<p><b><br><span style="color: DarkRed;">A confirmation email will be sent. Be sure to respond to that email.</span></b> The confirmation link will take you online to the {{ dialog.name }} discussion where you can participate as a member of <i>{{ group.name }}</i>.</p>
 
-<p>When you have confirmed, you will be automatically taken to the message list to vote on your own message and those written by others. It is OK to vote on your own message. Once your message receives its first rating, you will no longer be able to make changes in it. </p>
+<p><b>Important: </b>If the confirmation email does not arrive within a few minutes, please check your spam folder.</p>
 
 <p>If you have questions, please contact the discussion coordinator, Roger Eaton, at <a href="mailto:rogerweaton@gmail.com">rogerweaton@gmail.com</a>.</p>

@@ -97,6 +97,9 @@ class ItemsController < ApplicationController
       end
       if @dialog_id > 0
         @items = @items.where("items.dialog_id = ?", @dialog_id)    
+      elsif @dialog_id < 0
+        #-- This is when we particularly don't want any discussion messages
+        @items = @items.where("items.dialog_id=0 or items.dialog_id is null")  
       end
       if @period_id > 0
         @items = @items.where("items.period_id = ?", @period_id)    

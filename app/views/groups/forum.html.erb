@@ -28,7 +28,7 @@
 
 	<div class="lefttitle">Discussion:</div>
 	<div class="leftfield">
-	<%= select_tag "dialog_id", options_for_select([['All messages',0]]+@dialogsin.collect{|c| [c.dialog.name,c.dialog.id]},@dialog_id), :onchange=>"list()" %>
+	<%= select_tag "dialog_id", options_for_select([['*All messages*',0],['*No discussion messages*',-1]]+@dialogsin.collect{|c| [c.dialog.name,c.dialog.id]},@dialog_id), :onchange=>"list()" %>
 	</div>
 	
 	<%= hidden_field_tag :group_id, @group_id %>
