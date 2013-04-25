@@ -19,6 +19,7 @@ This Decision Period: <span style="font-size:20px"><%= @period ? ": #{@period.na
 <li><a class="menu<%= ' selected' if @dsection=='info' %>" href="/dialogs/<%= @dialog.id %>/view">Info</a></li>
 <li><a class="menu<%= ' selected' if @dsection=='forum' %>" href="/dialogs/<%= @dialog.id %>/forum">Forum</a></li>
 <li><a class="menu<%= ' selected' if @dsection=='meta' %>" href="/dialogs/<%= @dialog.id %>/result">Results</a></li>
+<li><a class="menu" href="/dialogs/<%= @dialog.id %>/view#participatinggroups">Participating groups</a></li>
 <% if @is_admin -%>
 <li><a class="menu<%= ' selected' if @dsection=='edit' %>" href="/dialogs/<%= @dialog.id %>/edit">Admin</a></li>
 <% end -%>

@@ -176,8 +176,8 @@ class FrontController < ApplicationController
       @participant.email = @email
       @participant.password = password
       #@participant.country_code = 'US' if state.to_s != ''
-      @participant.forum_email = 'never'
-      @participant.group_email = 'never'
+      @participant.forum_email = 'daily'
+      @participant.group_email = 'daily'
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       if not @participant.save!  
@@ -403,8 +403,8 @@ class FrontController < ApplicationController
       @participant.email = @email
       @participant.password = @password
       @participant.country_code = @country_code
-      @participant.forum_email = 'never'
-      @participant.group_email = 'never'
+      @participant.forum_email = 'daily'
+      @participant.group_email = 'daily'
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
@@ -694,8 +694,8 @@ class FrontController < ApplicationController
       @participant.email = @email
       @participant.password = @password
       @participant.country_code = @country_code
-      @participant.forum_email = 'never'
-      @participant.group_email = 'never'
+      @participant.forum_email = 'daily'
+      @participant.group_email = 'daily'
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
@@ -980,8 +980,8 @@ class FrontController < ApplicationController
       @participant.email = @email
       @participant.password = @password
       @participant.country_code = @country_code
-      @participant.forum_email = 'never'
-      @participant.group_email = 'never'
+      @participant.forum_email = 'daily'
+      @participant.group_email = 'daily'
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
