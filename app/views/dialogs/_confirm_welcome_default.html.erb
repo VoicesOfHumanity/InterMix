@@ -1,7 +1,7 @@
 <p>Dear {{ participant.name }},</p>
-<p>Welcome!  You are now a confirmed <i>{{ group.name }}</i> participant in the exciting and innovative InterMix Voices of Humanity (VoH) social media.  The next step is to go to your profile settings page to set your email preferences.  From there you can use the “Save and go to Forum” button to begin participating.</p>
+<p>Welcome!  You are now a confirmed <i>{{ group.name }}</i> participant in the exciting and innovative InterMix Voices of Humanity (VoH) social media.  The next step is to go to your <a href="http://{{ domain }}/me/profile/edit#settings">profile settings page</a> to set your email preferences.  From there you can use the “Save and go to Forum” button to begin participating.</p>
 
 <p>Please do make yourself at home,</p>
 
 {{ group.adminname }}
-{{ group.logo }}
+<img src="{{ logo }}">

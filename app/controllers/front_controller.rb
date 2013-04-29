@@ -169,6 +169,8 @@ class FrontController < ApplicationController
     @participant = Participant.find_by_email(@email) 
     if @participant 
       flash[:notice] = "You seem to already have an account, so we posted it to that<br>"
+      redirect_to '/participants/sign_in'
+      return
     else
       @participant = Participant.new
       @participant.first_name = first_name
@@ -390,9 +392,13 @@ class FrontController < ApplicationController
         flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: http://#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
       elsif @message.length == 0
         flash[:alert] = "You already have an account<br>"
+        redirect_to '/participants/sign_in'
+        return
       else
         #flash[:notice] = "You seem to already have an account, so we posted it to that<br>"
         flash[:alert] = "You seem to already have an account. Please log into that<br>"
+        redirect_to '/participants/sign_in'
+        return
       end
     elsif @participant
       flash[:alert] = "You already have an account<br>" 
@@ -973,6 +979,8 @@ class FrontController < ApplicationController
     @participant = Participant.find_by_email(@email) 
     if @participant 
       flash[:alert] = "You seem to already have an account for #{@email}. Please log into that.<br>"
+      redirect_to '/participants/sign_in'
+      return
     else
       @participant = Participant.new
       @participant.first_name = @first_name.strip
