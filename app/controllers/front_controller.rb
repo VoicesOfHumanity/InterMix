@@ -307,7 +307,7 @@ class FrontController < ApplicationController
     end 
     if flash[:alert] != ''
       prepare_djoin
-      render :action=>:dialogjoinform, :layout=>'blank'
+      render :action=>:dialogjoinform
       return
     end  
 
@@ -371,7 +371,7 @@ class FrontController < ApplicationController
     end
     if flash[:alert] != ''
       prepare_djoin
-      render :action=>:dialogjoinform, :layout=>'blank'
+      render :action=>:dialogjoinform
       return
     end  
 
@@ -418,7 +418,7 @@ class FrontController < ApplicationController
 
     if flash[:alert] != ''
       prepare_djoin
-      render :action=>:dialogjoinform, :layout=>'blank'
+      render :action=>:dialogjoinform
       return
     end  
     
@@ -426,7 +426,7 @@ class FrontController < ApplicationController
     
     if not @participant.save!  
       flash[:alert] = "Sorry, there's some kind of database problem<br>"
-      render :action=>:dialogjoinform, :layout=>'blank'
+      render :action=>:dialogjoinform
       return
     end  
 
@@ -449,7 +449,7 @@ class FrontController < ApplicationController
     end
 
     if flash[:alert] != ''
-      render :action=>:dialogjoinform, :layout=>'blank'
+      render :action=>:dialogjoinform
       return        
     end
     
@@ -624,7 +624,7 @@ class FrontController < ApplicationController
     end 
     if flash[:alert] != ''
       prepare_gjoin
-      render :action=>:groupjoinform, :layout=>'blank'
+      render :action=>:groupjoinform
       return
     end  
 
@@ -676,7 +676,7 @@ class FrontController < ApplicationController
     end
     if flash[:alert] != ''
       prepare_gjoin
-      render :action=>:groupjoinform, :layout=>'blank'
+      render :action=>:groupjoinform
       return
     end  
 
@@ -709,7 +709,7 @@ class FrontController < ApplicationController
 
     if flash[:alert] != ''
       prepare_gjoin
-      render :action=>:groupjoinform, :layout=>'blank'
+      render :action=>:groupjoinform
       return
     end  
     
@@ -717,7 +717,7 @@ class FrontController < ApplicationController
     
     if not @participant.save!  
       flash[:alert] = "Sorry, there's some kind of database problem<br>"
-      render :action=>:groupjoinform, :layout=>'blank'
+      render :action=>:groupjoinform
       return
     end  
     
@@ -739,7 +739,7 @@ class FrontController < ApplicationController
     end
 
     if flash[:alert] != ''
-      render :action=>:groupjoinform, :layout=>'blank'
+      render :action=>:groupjoinform
       return        
     end
     
@@ -1215,7 +1215,7 @@ class FrontController < ApplicationController
         @dialog_group = nil 
       end
       
-      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
+      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
       if @dialog_group and @dialog_group.signup_template.to_s != ''
         template = Liquid::Template.parse(@dialog_group.signup_template)
         @content = template.render(cdata)
@@ -1251,7 +1251,7 @@ class FrontController < ApplicationController
       @meta << m
     end
         
-    cdata = {'group'=>@group, 'name'=>@name, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies}
+    cdata = {'group'=>@group, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies}
     if @group and @group.signup_template.to_s != ''
       template = Liquid::Template.parse(@group.signup_template)
       @content = template.render(cdata)
