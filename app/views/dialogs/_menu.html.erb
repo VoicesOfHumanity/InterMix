@@ -9,6 +9,9 @@ Group: <span style="font-size:20px"><%= @group ? @group.name : '[unknown]' %></s
 This Discussion: <span style="font-size:20px"><%= @dialog.name %>&nbsp;&nbsp;</span><img src="/assets/question-mark.png" class="tooltip" width="16" height="16" title="<%= @dialog.description.to_s != '' ? @dialog.description : "No description for this discussion" %>"><br>
 <% if (@dialog.active_period and @sortby=='default') or @period_id.to_i > 0 -%>
 This Decision Period: <span style="font-size:20px"><%= @period ? ": #{@period.name}" : "" %></span>
+	<% if @dsection == 'forum' and @period.shortdesc.to_s != '' -%>
+	<br><%= @period.shortdesc[0..124] %>
+	<% end -%>
 <% end -%>
 <% end -%>
 

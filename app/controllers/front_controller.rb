@@ -1239,7 +1239,7 @@ class FrontController < ApplicationController
       m = {}
       m['id'] = metamap.id
       m['name'] = metamap.name
-      m['val'] = params["meta_#{metamap[0]}"].to_i
+      m['val'] = params["meta_#{metamap.id}"].to_i
       m['nodes'] = [{'id'=>0,'name'=>'* choose *'}]
       MetamapNode.where(:metamap_id=>m['id']).order(:sortorder,:name).each do |node|
         #n = OpenStruct.new
