@@ -75,18 +75,18 @@ class PeopleController < ApplicationController
       follow = Follow.create(:followed_id => @participant_id, :following_id => current_participant.id)
 
       @participant = Participant.includes(:followers,:idols).find(@participant_id)
-      follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").find(:first)
+      follow = Follow.where("followed_id=#{current_participant.id} and following_id=#{@participant_id}").find(:first)
       @is_following = (follow ? true : false)    
       
       if @participant and @participant.system_email == 'instant'
         #-- Send as an e-mail. emailit is found in the application controller 
         @message = Message.new
         @message.subject = "#{current_participant.name} is now following you"
-        @message.message = "<p><a href=\"http://#{BASEDOMAIN}/participant/#{@participant.id}/profile\">#{current_participant.name}</a> is now following you</p>"
+        @message.message = "<p><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{current_participant.authentication_token}\">#{current_participant.name}</a> is now following you</p>"
         if @is_following
-          @message.message += "<p>You are already following them.</p>"
+          @message.message += "<p>You are already following #{@participant.them}.</p>"
         else  
-          @message.message += "<p>You can <a href=\"http://#{BASEDOMAIN}/people/follow?id=#{@participant.id}&onoff=on\">follow them back</a>, if you want.</p>"
+          @message.message += "<p>You can <a href=\"http://#{BASEDOMAIN}/people/follow?id=#{@participant.id}&onoff=on\">follow #{@participant.them} back</a>, if you want.</p>"
         end
         @message.to_participant_id = @participant.id
         @message.from_participant_id = 0

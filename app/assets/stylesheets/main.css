@@ -385,6 +385,7 @@ div.votesection .intshort, div.votesection .appshort {
 	float: left;
 	width: 57px;
 	x-index: 299;
+	overflow: hidden;
 }
 div.votesection div.title {
 	font-weight: bold;

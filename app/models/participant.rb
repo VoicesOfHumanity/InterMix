@@ -33,6 +33,11 @@ class Participant < ActiveRecord::Base
   has_many :metamap_node_participants
   has_many :metamaps, :through=>:metamap_node_participants
   has_many :metamap_nodes, :through=>:metamap_node_participants
+
+  #has_many :gender_metamap_node_participants, :class_name => "MetamapNodeParticipant", :conditions => "metamap_id=3"
+  #has_many :gender_metamap_nodes, :source => :metamap_node_participants
+  #has_many :gender_metamap_nodes, :class_name => "MetamapNode", :through=>:metamap_node_participants  
+  #has_many :gender_metamap_node, :through=>:metamap_node_participants, :source=>'metamap_node', :conditions => "metamap_id=3"
   
   serialize :forum_settings
   
@@ -222,5 +227,25 @@ class Participant < ActiveRecord::Base
     end
     metamap_nodes
   end
+  
+  def gender
+    self.metamap_nodes.each do mn
+      if mn.metamap_id == 3
+        return mn.name
+      end
+    end  
+    return '???'
+  end
+  
+  def them
+    #-- Return him, her, them, depending on what we know about their gender
+    if self.gender == 'male'
+      'him'
+    elsif self.gender == 'female'
+      'her'
+    else
+      'them'    
+    end
+  end      
       
 end
