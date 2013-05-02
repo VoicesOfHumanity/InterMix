@@ -734,6 +734,7 @@ class GroupsController < ApplicationController
     @dialog_group.signup_template = params[:dialog_group][:signup_template]
     @dialog_group.confirm_template = params[:dialog_group][:confirm_template]
     @dialog_group.confirm_email_template = params[:dialog_group][:confirm_email_template]
+    @dialog_group.confirm_welcome_template = params[:dialog_group][:confirm_welcome_template]
     @dialog_group.save!
     redirect_to :action=>:admin
   end

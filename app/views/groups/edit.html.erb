@@ -69,18 +69,18 @@
 			<textarea id="group_signup_template" name="group[signup_template]" rows="5"><%= @group.signup_template %></textarea>
 		</li>
 		
-		<% f.input :confirm_template, :label => "Confirmation Page template" %>
+		<% f.input :confirm_template, :label => "New Sign-up Welcome Page template" %>
 		<li class="text optional" id="group_confirm_template_input">
-			<label for="group_confirm_template">Confirmation Page template<br>
+			<label for="group_confirm_template">New Sign-up Welcome Page template<br>
 			<%= button_to_function "get default", "get_default('confirm')" %><br>
 					<%= button_to_function "test", "test_template('confirm')" %>	
 			</label>
 			<textarea id="group_confirm_template" name="group[confirm_template]" rows="5"><%= @group.confirm_template %></textarea>
 		</li>
 
-		<% f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
+		<% f.input :confirm_email_template, :label => "New Sign-up Welcome e-mail template" %>
 		<li class="text optional" id="group_confirm_email_template_input">
-			<label for="group_confirm_email_template">Confirmation e-mail template<br>
+			<label for="group_confirm_email_template">New Sign-up Welcome e-mail template<br>
 			<%= button_to_function "get default", "get_default('confirm_email')" %><br>
 					<%= button_to_function "test", "test_template('confirm_email')" %>	
 			</label>

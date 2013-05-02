@@ -18,17 +18,17 @@
 			<textarea id="dialog_group_signup_template" name="dialog_group[signup_template]" rows="5"><%= @dialog_group.signup_template %></textarea>
 		</li>
 
-		<% f.input :confirm_template, :label => "Confirmation Page template" %>
+		<% f.input :confirm_template, :label => "New Sign-up Welcome Page template" %>
 		<li class="text optional" id="dialog_group_confirm_template_input">
-			<label for="dialog_group_confirm_template">Confirmation Page template<br>
+			<label for="dialog_group_confirm_template">New Sign-up Welcome Page template<br>
 			<%= button_to_function "get default", "get_default('confirm')" %>	
 			</label>
 			<textarea id="dialog_group_confirm_template" name="dialog_group[confirm_template]" rows="5"><%= @dialog_group.confirm_template %></textarea>
 		</li>
 		
-		<% f.input :confirm_email_template, :label => "Confirmation e-mail template" %>
+		<% f.input :confirm_email_template, :label => "New Sign-up Welcome e-mail template" %>
 		<li class="text optional" id="dialog_group_confirm_email_template_input">
-			<label for="dialog_group_confirm_email_template">Confirmation e-mail template<br>
+			<label for="dialog_group_confirm_email_template">New Sign-up Welcome e-mail template<br>
 			<%= button_to_function "get default", "get_default('confirm_email')" %>	
 			</label>
 			<textarea id="dialog_group_confirm_email_template" name="dialog_group[confirm_email_template]" rows="5"><%= @dialog_group.confirm_email_template %></textarea>
