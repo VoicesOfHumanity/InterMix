@@ -229,7 +229,7 @@ class Participant < ActiveRecord::Base
   end
   
   def gender
-    self.metamap_nodes.each do mn
+    self.metamap_nodes.each do |mn|
       if mn.metamap_id == 3
         return mn.name
       end
