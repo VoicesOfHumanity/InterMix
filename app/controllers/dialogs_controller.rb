@@ -1399,6 +1399,8 @@ class DialogsController < ApplicationController
   def update_prefix
     #-- Update the current dialog, and the prefix and base url
     return if not @dialog
+    before_group_id = session[:group_id] if session[:group_id]
+    before_dialog_id = session[:dialog_id] if session[:dialog_id]
     session[:dialog_id] = @dialog.id
     session[:dialog_name] = @dialog.name
     session[:dialog_prefix] = @dialog.shortname
@@ -1413,6 +1415,11 @@ class DialogsController < ApplicationController
       session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
     else
       session[:cur_baseurl] = "http://" + BASEDOMAIN    
+    end
+    if participant_signed_in? and ( session[:group_id] != before_group_id or session[:dialog_id] != before_dialog_id )
+       current_participant.last_group_id = session[:group_id] if session[:group_id]
+       current_participant.last_dialog_id = session[:dialog_id] if session[:dialog_id]
+       current_participant.save
     end
   end
   

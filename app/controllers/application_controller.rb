@@ -215,15 +215,15 @@ class ApplicationController < ActionController::Base
 
   def get_group_dialog_from_subdomain
     #-- If we've gotten a group and/or dialog shortname in the subdomain
-    logger.info("application#get_group_dialog_from_subdomain")
-    @group_id = nil
-    @dialog_id = nil
+    logger.info("application#get_group_dialog_from_subdomain")    
+    xgroup_id = nil
+    xdialog_id = nil
     for subdomain in request.subdomains
       @dialog = Dialog.find_by_shortname(subdomain)
       if @dialog
-        @dialog_id = @dialog.id
+        xdialog_id = @dialog.id
         if participant_signed_in?
-          session[:dialog_id] = @dialog_id
+          session[:dialog_id] = xdialog_id
           session[:dialog_name] = @dialog.name
           session[:dialog_prefix] = @dialog.shortname
           #env['warden'].session[:dialog_id] = @dialog_id
@@ -233,9 +233,9 @@ class ApplicationController < ActionController::Base
         if subdomain != 'intermix'
           @group = Group.find_by_shortname(subdomain)
           if @group
-            @group_id = @group.id
+            xgroup_id = @group.id
             if participant_signed_in? and env['warden']
-              session[:group_id] = @group_id
+              session[:group_id] = xgroup_id
               session[:group_name] = @group.name
               session[:group_prefix] = @group.shortname
               @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
@@ -247,7 +247,14 @@ class ApplicationController < ActionController::Base
           end
         end
       end
+    end    
+    if participant_signed_in? and ( xgroup_id != @group_id or xdialog_id != @dialog_id )
+       current_participant.last_group_id = xgroup_id
+       current_participant.last_dialog_id = xdialog_id
+       current_participant.save
     end
+    @group_id = xgroup_id
+    @dialog_id = xdialog_id
     return @group_id, @dialog_id
   end  
   

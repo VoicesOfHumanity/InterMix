@@ -1,7 +1,7 @@
 class PeopleController < ApplicationController
 
   layout "front"
-  before_filter :authenticate_participant!
+  before_filter :authenticate_participant!, :check_group_and_dialog
 
   def index
     #-- Show people who're visible to whoever's logged in
@@ -67,11 +67,12 @@ class PeopleController < ApplicationController
   end    
   
   def follow
-    #-- Follow or unfollow somebody
-    onoff = (params[:onoff].to_i == 1)
+    #-- Follow or unfollow somebody. current_participant wants to follow/unfollow @participant
+    onoff = (params[:onoff].to_i == 1)  # Want to follow
     @participant_id = params[:id]
     follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").find(:first)
     if onoff and not follow
+      #-- Want to follow, and there isn't already a record of having done that
       follow = Follow.create(:followed_id => @participant_id, :following_id => current_participant.id)
 
       @participant = Participant.includes(:followers,:idols).find(@participant_id)
@@ -98,15 +99,28 @@ class PeopleController < ApplicationController
         end
       end
       current_participant.update_attribute(:has_participated,true) if not current_participant.has_participated
-      
     elsif not onoff and follow
+      #-- Want to unfollow, and there's a record
       follow.destroy  
       @participant = Participant.includes(:followers,:idols).find(@participant_id)
       follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").find(:first)
       @is_following = (follow ? true : false)    
+    elsif follow
+      @is_following = true
+    elsif not follow
+      @is_following = false    
     end  
     
     render :partial => "follow", :layout => false
   end  
+
+  protected
+  
+  def check_group_and_dialog  
+    if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+      session[:group_id] = current_participant.last_group_id
+      session[:dialog_id] = current_participant.last_dialog_id
+    end  
+  end
 
 end

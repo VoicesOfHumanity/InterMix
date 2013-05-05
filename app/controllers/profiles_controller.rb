@@ -399,7 +399,11 @@ class ProfilesController < ApplicationController
     end      
   end
   
-  def check_group_and_dialog    
+  def check_group_and_dialog  
+    if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+      session[:group_id] = current_participant.last_group_id
+      session[:dialog_id] = current_participant.last_dialog_id
+    end  
     if session[:dialog_id].to_i > 0
       @dialog = Dialog.find_by_id(session[:dialog_id])
     end

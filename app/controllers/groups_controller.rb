@@ -905,6 +905,8 @@ class GroupsController < ApplicationController
   def update_prefix
     #-- Update the current group, and the prefix and base url
     return if not @group
+    before_group_id = session[:group_id] if session[:group_id]
+    before_dialog_id = session[:dialog_id] if session[:dialog_id]
     #if @is_member
       session[:group_id] = @group.id
       session[:group_name] = @group.name
@@ -924,6 +926,12 @@ class GroupsController < ApplicationController
     else
       session[:cur_baseurl] = "http://" + BASEDOMAIN    
     end
+    if participant_signed_in? and ( session[:group_id] != before_group_id or session[:dialog_id] != before_dialog_id )
+       current_participant.last_group_id = session[:group_id] if session[:group_id]
+       current_participant.last_dialog_id = session[:dialog_id] if session[:dialog_id]
+       current_participant.save
+    end
+    
   end
 
 end
