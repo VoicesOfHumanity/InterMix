@@ -70,24 +70,26 @@ class PeopleController < ApplicationController
     #-- Follow or unfollow somebody. current_participant wants to follow/unfollow @participant
     onoff = (params[:onoff].to_i == 1)  # Want to follow
     @participant_id = params[:id]
+    @participant = Participant.includes(:followers,:idols).find(@participant_id)
+    
     follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").find(:first)
     if onoff and not follow
       #-- Want to follow, and there isn't already a record of having done that
       follow = Follow.create(:followed_id => @participant_id, :following_id => current_participant.id)
 
-      @participant = Participant.includes(:followers,:idols).find(@participant_id)
-      follow = Follow.where("followed_id=#{current_participant.id} and following_id=#{@participant_id}").find(:first)
-      @is_following = (follow ? true : false)    
+      
+      they_follow = Follow.where("followed_id=#{current_participant.id} and following_id=#{@participant_id}").find(:first)
+      @they_following = (they_follow ? true : false)    
       
       if @participant and @participant.system_email == 'instant'
         #-- Send as an e-mail. emailit is found in the application controller 
         @message = Message.new
         @message.subject = "#{current_participant.name} is now following you"
-        @message.message = "<p><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{current_participant.authentication_token}\">#{current_participant.name}</a> is now following you</p>"
-        if @is_following
-          @message.message += "<p>You are already following #{@participant.them}.</p>"
+        @message.message = "<p><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@participant.authentication_token}\">#{current_participant.name}</a> is now following you</p>"
+        if @they_following
+          @message.message += "<p>You are already following #{current_participant.them}.</p>"
         else  
-          @message.message += "<p>You can <a href=\"http://#{BASEDOMAIN}/people/follow?id=#{@participant.id}&onoff=on\">follow #{@participant.them} back</a>, if you want.</p>"
+          @message.message += "<p>You can <a href=\"http://#{BASEDOMAIN}/people/follow?id=#{current_participant.id}&onoff=on&auth_token=#{@participant.authentication_token}\">follow #{current_participant.them} back</a>, if you want.</p>"
         end
         @message.to_participant_id = @participant.id
         @message.from_participant_id = 0
@@ -97,14 +99,13 @@ class PeopleController < ApplicationController
           @message.sendmethod = 'email'
           @message.emailit
         end
+        @is_following = true
       end
       current_participant.update_attribute(:has_participated,true) if not current_participant.has_participated
     elsif not onoff and follow
       #-- Want to unfollow, and there's a record
       follow.destroy  
-      @participant = Participant.includes(:followers,:idols).find(@participant_id)
-      follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").find(:first)
-      @is_following = (follow ? true : false)    
+      @is_following = false    
     elsif follow
       @is_following = true
     elsif not follow

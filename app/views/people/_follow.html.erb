@@ -2,6 +2,6 @@
 
 <% if @is_following -%>
 <p>You're following <%= @participant.first_name %> <button type="button" onclick="follow(0)">Stop following</button></p>
-<% else -%>
+<% elsif @participant.id != current_participant.id -%>
 <p><button type="button" onclick="follow(1)">Follow <%= @participant.first_name %></button></p>
 <% end -%>
