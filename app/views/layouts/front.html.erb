@@ -140,10 +140,10 @@
 					<% if @group -%>	
 						<% if session[:group_is_member] -%>
 							<%=raw "participating as a member of the group: <b>#{@group.name}</b>" %>
-							<%=raw "in the discussion: <b>#{@dialog.name}</b>" if @dialog_id.to_i > 0 %>
+							<%=raw "in the discussion: <b>#{@dialog.name}</b>" if @dialog %>
 						<% else -%>
 							<%=raw "visiting the group: <b>#{@group.name}</b>" %>
-							<%=raw "and the discussion: <b>#{@dialog.name}</b>" if @dialog_id.to_i > 0 %>						
+							<%=raw "and the discussion: <b>#{@dialog.name}</b>" if @dialog %>						
 						<% end -%>
 					<% end -%>
 				</p>
