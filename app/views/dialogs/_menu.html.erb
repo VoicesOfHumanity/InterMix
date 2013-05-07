@@ -1,8 +1,8 @@
 <p style="clear:both;padding:0 19px 0 0">
 <% if @dsection == 'meta' -%>
-<% @group = Group.find_by_id(@group_id.to_i > 0 ? @group_id : session[:group_id]) if not @group %>
+<% @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id.to_i > 0 %>
 <span style="font-size:16px"><%= @period_id.to_i==0 ? "Overall": "Decision" %> Results for Discussion:</span><br/><span style="font-size:20px"><%= @dialog.name %></span><span style="font-size:16px"><%= @period ? ": #{@period.name}" : "" %></span>
-	<% if @group %><br><span style="font-size:16px">Results for group: <span style="color:#900;font-weight:bold;"><%= @group.name %></span></span><% end %>
+	<% if @limit_group %><br><span style="font-size:16px">Results for group: <span style="color:#900;font-weight:bold;"><%= @limit_group.name %></span></span><% end %>
 <% else -%>
 <% @group = Group.find_by_id(@group_id.to_i > 0 ? @group_id : session[:group_id]) if not @group %>
 Group: <span style="font-size:20px"><%= @group ? @group.name : '[unknown]' %></span><br>

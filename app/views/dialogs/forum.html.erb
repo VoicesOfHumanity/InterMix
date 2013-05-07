@@ -47,10 +47,10 @@ else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="dis
 	<% if @groups.length > 1 -%>
 	<div class="lefttitle">Group:</div>
 	<div class="leftfield">
-	<%= select_tag "group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.name,c.id]},@group_id), :onchange=>"list('group_id')" %>
+	<%= select_tag "limit_group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.name,c.id]},@limit_group_id), :onchange=>"list('limit_group_id')" %>
 	</div>
 	<% else -%>
-	<%= hidden_field_tag :group_id, @groups.length>0 ? @groups[0].id : @group_id %>	
+	<%= hidden_field_tag :limit_group_id, @groups.length>0 ? @groups[0].id : @limit_group_id %>	
 	<% end -%>
 	
 	<% if @periods.length > 0 -%>

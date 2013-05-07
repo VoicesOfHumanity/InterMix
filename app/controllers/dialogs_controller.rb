@@ -184,8 +184,8 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id].to_i if not @dialog_id
     @period_id = (params[:period_id] || 0).to_i
     @dialog = Dialog.includes(:groups).find_by_id(@dialog_id)
-    @group_id = (params[:group_id] || 0).to_i
-    @group = Group.find_by_id(@group_id > 0 ? @group_id : session[:group_id]) if not @group
+    @limit_group_id = (params[:limit_group_id] || 0).to_i
+    @group = Group.find_by_id(@limit_group_id > 0 ? @limit_group_id : session[:group_id]) if not @group
     @groups = @dialog.groups if @dialog and @dialog.groups
     @periods = @dialog.periods if @dialog and @dialog.periods
     if @period_id > 0
@@ -270,7 +270,7 @@ class DialogsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
 
-      @items, @itemsproc = Item.list_and_results(@group_id,@dialog_id,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id)
+      @items, @itemsproc = Item.list_and_results(@limit_group_id,@dialog_id,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id)
 
     else
       #-- The old way
@@ -617,8 +617,8 @@ class DialogsController < ApplicationController
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
     @period_id = params[:period_id].to_i
-    @group_id = (params[:group_id] || 0).to_i
-    @group = @group_id > 0 ? Group.find_by_id(@group_id) : nil
+    @limit_group_id = (params[:limit_group_id] || 0).to_i
+    @limit_group = @limit_group_id > 0 ? Group.find_by_id(@limit_group_id) : nil
     @short_full = params[:short_full] || 'short'
     @less_more = params[:less_more] || 'less'
     @regress = params[:regress] || 'regress'
@@ -635,7 +635,7 @@ class DialogsController < ApplicationController
     pwhere = (@period_id > 0) ? "items.period_id=#{@period_id}" : ""
 
     #-- or by group
-    gwhere = (@group_id > 0) ? "items.group_id=#{@group_id}" : ""
+    gwhere = (@limit_group_id > 0) ? "items.group_id=#{@limit_group_id}" : ""
 
     @data = {}       # The stats, by meta category, and overall
     
@@ -779,7 +779,7 @@ class DialogsController < ApplicationController
       logger.info("dialogs#result No Overall winner") 
     end
 
-    if @group_id == 0
+    if @limit_group_id == 0
       #-- Stats by group
       @data['groups'] = {}
       for group in @dialog.groups
