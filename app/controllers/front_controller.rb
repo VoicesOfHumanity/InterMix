@@ -834,6 +834,7 @@ class FrontController < ApplicationController
       @participant.status = 'active'
       @participant.save
       sign_in(:participant, @participant)
+      session[:has_required] = @participant.has_required
       group_id,dialog_id = get_group_dialog_from_subdomain
       dialog_id = params[:dialog_id].to_i if dialog_id.to_i == 0
       group_id = params[:group_id].to_i if group_id.to_i == 0
