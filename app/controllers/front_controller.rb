@@ -507,6 +507,7 @@ class FrontController < ApplicationController
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
     cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}"
+    cdata['domain'] = dom
     
     if @dialog_group and @dialog_group.confirm_email_template.to_s != ''
       template = Liquid::Template.parse(@dialog_group.confirm_email_template)
