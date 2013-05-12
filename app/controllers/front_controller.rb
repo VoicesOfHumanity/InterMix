@@ -590,7 +590,7 @@ class FrontController < ApplicationController
     
     prepare_gjoin
     
-    render :action=>:groupjoinform
+    render :action=>:groupjoinform, :layout => :front
   end  
     
   def groupjoin
