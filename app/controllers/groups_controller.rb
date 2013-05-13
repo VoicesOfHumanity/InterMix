@@ -861,9 +861,9 @@ class GroupsController < ApplicationController
     for metamap in metamaps
       #m = OpenStruct.new
       m = {}
-      m['id'] = metamap[0]
-      m['name'] = metamap[1]
-      m['val'] = params["meta_#{metamap[0]}"].to_i
+      m['id'] = metamap.id
+      m['name'] = metamap.name
+      m['val'] = params["meta_#{metamap.id}"].to_i
       m['nodes'] = [{'id'=>0,'name'=>'* choose *'}]
       MetamapNode.where(:metamap_id=>m['id']).order(:sortorder,:name).each do |node|
         #n = OpenStruct.new

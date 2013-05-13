@@ -591,7 +591,7 @@ class FrontController < ApplicationController
     
     prepare_gjoin
     
-    render :action=>:groupjoinform, :layout => 'Front'
+    render :action=>:groupjoinform, :layout => 'front'
   end  
     
   def groupjoin
