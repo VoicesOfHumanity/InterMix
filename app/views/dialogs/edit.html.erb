@@ -94,7 +94,7 @@
 	<% end %>
 
 	<p>
-	  <input type="button" value="Cancel" onclick="viewrec1(<%= @dialog.id.to_i %>)" />
+	  <input type="button" value="Cancel" onclick="window.location='/dialogs/<%= @group.id %>/admin'" />
 	  <input type="submit" value="Save" />
 	</p>
 	

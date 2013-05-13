@@ -100,7 +100,7 @@
 	<% end %>
 
 	<p>
-	  <input type="button" value="Cancel" onclick="viewrec1(<%= @group.id.to_i %>)" />
+	  <input type="button" value="Cancel" onclick="window.location='/groups/<%= @group.id %>/admin'" />
 	  <input type="submit" value="Save" />
 	</p>
 

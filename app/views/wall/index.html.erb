@@ -12,7 +12,7 @@
 <div id="forumcontrol">
 
 <% if @participant_id == current_participant.id -%>
-<input type="button" value="Post something" id="newthreadbutton" onclick="newitem()">
+<input type="button" value="Post something to your Wall" id="newthreadbutton" onclick="newitem()">
 <% end -%>
 
 <%= hidden_field_tag "from", "wall" %>

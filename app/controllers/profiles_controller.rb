@@ -399,33 +399,33 @@ class ProfilesController < ApplicationController
     end      
   end
   
-  def check_group_and_dialog  
-    if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
-      session[:group_id] = current_participant.last_group_id
-      session[:dialog_id] = current_participant.last_dialog_id
-      if session[:group_id].to_i > 0
-        @group_id = session[:group_id]
-        @group = Group.find_by_id(@group_id)
-        if @group
-          session[:group_name] = @group.name
-          session[:group_prefix] = @group.shortname
-          @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-          @is_member = @group_participant ? true : false
-          session[:group_is_member] = @is_member
-        end
-      end
-      if session[:dialog_id].to_i > 0
-        @dialog_id = session[:dialog_id]
-        @dialog = Dialog.find_by_id(@dialog_id)
-        if @dialog
-          session[:dialog_name] = @dialog.name
-          session[:dialog_prefix] = @dialog.shortname
-        end
-      end
-    end  
-    #if session[:dialog_id].to_i > 0
-    #  @dialog = Dialog.find_by_id(session[:dialog_id])
-    #end
-  end
+#  def check_group_and_dialog  
+#    if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+#      session[:group_id] = current_participant.last_group_id
+#      session[:dialog_id] = current_participant.last_dialog_id
+#      if session[:group_id].to_i > 0
+#        @group_id = session[:group_id]
+#        @group = Group.find_by_id(@group_id)
+#        if @group
+#          session[:group_name] = @group.name
+#          session[:group_prefix] = @group.shortname
+#          @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+#          @is_member = @group_participant ? true : false
+#          session[:group_is_member] = @is_member
+#        end
+#      end
+#      if session[:dialog_id].to_i > 0
+#        @dialog_id = session[:dialog_id]
+#        @dialog = Dialog.find_by_id(@dialog_id)
+#        if @dialog
+#          session[:dialog_name] = @dialog.name
+#          session[:dialog_prefix] = @dialog.shortname
+#        end
+#      end
+#    end  
+#    #if session[:dialog_id].to_i > 0
+#    #  @dialog = Dialog.find_by_id(session[:dialog_id])
+#    #end
+#  end
   
 end

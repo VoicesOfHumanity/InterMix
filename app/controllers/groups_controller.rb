@@ -407,8 +407,8 @@ class GroupsController < ApplicationController
           password += (1+rand(9)).to_s if rand(3) == 2
         end
         participant.password = password
-        participant.forum_email = 'never'
-        participant.group_email = 'never'
+        participant.forum_email = 'daily'
+        participant.group_email = 'daily'
         participant.private_email = 'instant'  
         participant.status = 'active'
         participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + email)

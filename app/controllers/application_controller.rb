@@ -174,6 +174,7 @@ class ApplicationController < ActionController::Base
     session[:has_required] = current_participant.has_required
     
     group_id,dialog_id = get_group_dialog_from_subdomain
+    group_id,dialog_id = check_group_and_dialog if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
 
     if session[:dialog_prefix] != '' and session[:group_prefix] != ''
       session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
@@ -200,7 +201,7 @@ class ApplicationController < ActionController::Base
     if params[:fb_sig_in_iframe].to_i == 1
       session[:cur_baseurl] + '/fbapp'
     elsif not session[:has_required]
-      '/me/profile/edit'
+      session[:cur_baseurl] + '/me/profile/edit'
     elsif dialog_id.to_i > 0
       session[:cur_baseurl] + "/dialogs/#{dialog_id}/forum"
     elsif group_id.to_i > 0
@@ -257,6 +258,33 @@ class ApplicationController < ActionController::Base
     @dialog_id = xdialog_id
     return @group_id, @dialog_id
   end  
+  
+  def check_group_and_dialog  
+    if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+      session[:group_id] = current_participant.last_group_id
+      session[:dialog_id] = current_participant.last_dialog_id
+      if session[:group_id].to_i > 0
+        @group_id = session[:group_id]
+        @group = Group.find_by_id(@group_id)
+        if @group
+          session[:group_name] = @group.name
+          session[:group_prefix] = @group.shortname
+          @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+          @is_member = @group_participant ? true : false
+          session[:group_is_member] = @is_member
+        end
+      end
+      if session[:dialog_id].to_i > 0
+        @dialog_id = session[:dialog_id]
+        @dialog = Dialog.find_by_id(@dialog_id)
+        if @dialog
+          session[:dialog_name] = @dialog.name
+          session[:dialog_prefix] = @dialog.shortname
+        end
+      end
+    end  
+  end
+  
   
   def check_required
     #-- If required profile fields aren't entered, redirect to the profile

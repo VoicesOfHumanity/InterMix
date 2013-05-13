@@ -127,12 +127,12 @@ class MessagesController < ApplicationController
     render :partial=>'show', :layout=>false
   end  
   
-  def check_group_and_dialog  
-    if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
-      session[:group_id] = current_participant.last_group_id
-      session[:dialog_id] = current_participant.last_dialog_id
-    end  
-  end
+#  def check_group_and_dialog  
+#    if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+#      session[:group_id] = current_participant.last_group_id
+#      session[:dialog_id] = current_participant.last_dialog_id
+#    end  
+#  end
   
   
 end
