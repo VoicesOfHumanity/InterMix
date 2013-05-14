@@ -92,7 +92,7 @@ GEM
     mime-types (1.23)
     multi_json (1.7.3)
     multipart-post (1.2.0)
-    mysql2 (0.3.11)
+    mysql2 (0.3.10)
     net-scp (1.1.1)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -219,7 +219,7 @@ DEPENDENCIES
   jquery-ui-rails
   json
   liquid
-  mysql2
+  mysql2 (= 0.3.10)
   nifty-generators
   nokogiri
   omniauth
