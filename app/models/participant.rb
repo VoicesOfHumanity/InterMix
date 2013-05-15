@@ -154,7 +154,7 @@ class Participant < ActiveRecord::Base
     #-- What groups are they in?
     #-- [[5, "Test group"], [7, "The Real Men"], [8, "Individual Initiatives for Nuclear Disarmament"]]
     gpin = GroupParticipant.where("participant_id=#{id}").includes(:group).all
-    groupsin = gpin.collect{|g| [g.group.id,g.group.name] }
+    groupsin = gpin.collect{|g| [g.group_id,(g.group ? g.group.name : "Unknown Group")] }
     groupsin.uniq
   end  
   
