@@ -376,14 +376,15 @@ class GroupsController < ApplicationController
       xarr = line.split(';')
 
       email = xarr[0]
-      if xarr.length < 3
-        flash[:notice] += "#{email} incorrect number of fields (#{xarr.length}). Need 3+<br>"
+      if xarr.length < 4
+        flash[:notice] += "#{email} incorrect number of fields (#{xarr.length}). Need 4+<br>"
         next
       end
       first_name = xarr[1]
       last_name = xarr[2]
+      xcountry = xarr[3]
 
-      flash[:notice] += "#{email}, #{first_name}, #{last_name}<br>"
+      flash[:notice] += "#{email}, #{first_name}, #{last_name}, #{xcountry}<br>"
       
       if email.to_s == ''
         next
@@ -399,6 +400,15 @@ class GroupsController < ApplicationController
         participant.first_name = first_name
         participant.last_name = last_name
         participant.email = email
+        if xcountry != ''
+          #-- Check the country
+          country = Geocountry.find_by_name(xcountry)
+          country = Geocountry.find_by_iso(xcountry) if not country
+          if country
+            participant.country_code = country.iso
+            participant.country_name = country.name
+          end
+        end
         password = ''
         3.times do
           conso = 'bcdfghkmnprstvw'[rand(15)]
@@ -432,7 +442,7 @@ class GroupsController < ApplicationController
       end
       
       #-- Handle metatag fields      
-      for pos in [3,4,5,6,7,8,9,10,11,12,13,14,15]
+      for pos in [4,5,6,7,8,9,10,11,12,13,14,15]
         if not xarr[pos] or xarr[pos].to_s == ''
           next
         end

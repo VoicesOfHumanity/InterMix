@@ -10,13 +10,13 @@
 <p>Enter names and addresses, in this format: Email;First;Last,Gender(M/F),Country of origin. Last two optional. One person per line:</p>
 <% end -%>
 
-<p>Enter names and addresses, in this format: Email;First;Last;... One person per line:</p>
+<p>Enter names and addresses, in this format: Email;First;Last;CountryOfResidence;... One person per line:</p>
 
-<p>Optional metatag fields after the three fixed fields:<br>
+<p>Optional metatag fields after the four fixed fields:<br>
 	<%= select_tag "meta_1", options_for_select([['',0]]+@metamaps.collect{|m| ["#{m.id}: #{m.name}",m.id]}) %>
 	<%= select_tag "meta_2", options_for_select([['',0]]+@metamaps.collect{|m| ["#{m.id}: #{m.name}",m.id]}) %>
 	<%= select_tag "meta_3", options_for_select([['',0]]+@metamaps.collect{|m| ["#{m.id}: #{m.name}",m.id]}) %><br>
-	Alternatively, add arbitary metatag fields after the first 3, of the format tagname:tagvalue.<br>E.g. ;Gender:Male;Nationality:Albanian
+	Alternatively, add arbitary metatag fields after the first 4, of the format tagname:tagvalue.<br>E.g. ;Gender affiliation:Male;Nationality:Albanian.<br>They must be spelled exactly like in the list.
 </p>
 
 <p><%= text_area_tag 'new_text', nil, :rows => 5, :cols => 30 %></p>
