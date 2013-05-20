@@ -334,7 +334,13 @@ class GroupsController < ApplicationController
     @gsection = 'import'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
-    @messtext = flash[:messtext] ? flash[:messtext] : @group.import_template
+    if flash[:messtext]
+      @messtext = flash[:messtext]
+    elsif @group.import_template.to_s != ''
+      @messtext = @group.import_template
+    else       
+      @messtext += render_to_string :partial=>"import_default", :layout=>false
+    end  
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @metamaps = Metamap.order("name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
@@ -463,11 +469,11 @@ class GroupsController < ApplicationController
           value = varval
         end
         if metamap_id > 0
-        elsif pos == 3
-          metamap_id = params[:meta_1].to_i
         elsif pos == 4
-          metamap_id = params[:meta_2].to_i
+          metamap_id = params[:meta_1].to_i
         elsif pos == 5
+          metamap_id = params[:meta_2].to_i
+        elsif pos == 6
           metamap_id = params[:meta_3].to_i
         end
         if metamap_name == "" and metamapids[metamap_id]
