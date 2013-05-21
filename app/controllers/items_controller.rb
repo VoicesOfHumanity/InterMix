@@ -218,7 +218,8 @@ class ItemsController < ApplicationController
       if @olditem
         @item.first_in_thread = @olditem.first_in_thread
         if @olditem.subject.to_s != '' and @olditem.subject[0,3] != 'Re:' and @olditem.subject[0,3] != 're:'
-          @item.subject = "Re: #{@olditem.subject}"[0,48]  
+          #@item.subject = "Re: #{@olditem.subject}"[0,48]  
+          @item.subject = "Re: #{@olditem.subject}"  
         elsif @olditem.subject != ''
           @item.subject = @olditem.subject 
         end
