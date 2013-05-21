@@ -339,7 +339,7 @@ class GroupsController < ApplicationController
     elsif @group.import_template.to_s != ''
       @messtext = @group.import_template
     else       
-      @messtext += render_to_string :partial=>"import_default", :layout=>false
+      @messtext = render_to_string :partial=>"import_default", :layout=>false
     end  
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @metamaps = Metamap.order("name").all  
