@@ -230,6 +230,7 @@ DEPENDENCIES
   postmark
   postmark-rails
   rails
+  rake
   responds_to_parent
   rest-graph
   rmagick
