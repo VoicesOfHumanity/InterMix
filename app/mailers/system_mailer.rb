@@ -6,7 +6,18 @@ class SystemMailer < ActionMailer::Base
   default :from => SYSTEM_SENDER
   
   def generic(from=nil,to,subject,message,cdata)
-    #-- For messages about follows, friends, etc
+    #-- For text messages about follows, friends, etc. Logo at top
+    @message = message
+    @cdata = cdata if cdata   
+    mail(
+      :reply_to => from,
+      :to => to,
+      :subject => (subject ? subject : "InterMix Contacts")
+    )
+  end  
+
+  def template(from=nil,to,subject,message,cdata)
+    #-- For formatted message from a template. No added logo
     @message = message
     @cdata = cdata if cdata   
     mail(

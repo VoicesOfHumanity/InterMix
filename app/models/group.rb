@@ -2,6 +2,7 @@ class Group < ActiveRecord::Base
   has_many :group_participants
   has_many :participants, :through => :group_participants
   has_many :moderators, :source => :participant, :through => :group_participants, :conditions => "moderator=1 and active=1"
+  has_many :active_members, :source => :participant, :through => :group_participants, :conditions => "active=1"
   has_many :dialog_groups
   has_many :dialogs, :through => :dialog_groups
   has_many :active_dialogs, :source => :dialog, :through => :dialog_groups, :conditions => "active=1"

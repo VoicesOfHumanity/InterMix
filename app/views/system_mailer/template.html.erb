@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body>
+	
+<div>
+<%=raw @message %>
+</div>
+
+<hr/>
+
+<p>This message sent through <a href="http://<%= BASEDOMAIN %>/">InterMix</a>. <% if @cdata['recipient'] and @cdata['recipient'].authentication_token.to_s != '' %>To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.<% end %></p>
+
+</body>
+</html>

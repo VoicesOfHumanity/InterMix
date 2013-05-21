@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body>
+	
+<div>
+<%=raw @message %>
+</div>
+
+<hr/>
+
+<p>To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
+<img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['message'].id.to_i if @cdata['message'] %>.gif" width="0" height="0" border="0" style="display:none">
+
+</body>
+</html>

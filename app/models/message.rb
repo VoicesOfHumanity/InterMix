@@ -43,6 +43,8 @@ class Message < ActiveRecord::Base
       
     if self.mail_template.to_s == 'message_system'  
       email = MessageMailer.system(msubject, self.message, recipient.email_address_with_name, cdata)
+    elsif self.mail_template.to_s == 'message_import'  
+      email = MessageMailer.import(msubject, self.message, recipient.email_address_with_name, cdata)
     elsif self.mail_template.to_s == 'message_contacts'  
       email = MessageMailer.contacts(msubject, self.message, recipient.email_address_with_name, cdata)
     elsif self.mail_template.to_s == 'message_group'  

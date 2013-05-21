@@ -52,10 +52,10 @@
 	<div class="span-19 last">
 		<div id="maincontent">
 			<% if flash[:notice].to_s !="" -%>
-			<p style="color: green"><%= flash[:notice] %></p>
+			<p style="color: green"><%=raw flash[:notice] %></p>
 			<% end -%>
 			<% if flash[:alert].to_s !="" -%>
-			<p style="color: red"><%= flash[:alert] %></p>
+			<p style="color: red"><%=raw flash[:alert] %></p>
 			<% end -%>
 			<%= yield %>
 		</div>
