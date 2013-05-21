@@ -246,6 +246,10 @@ class Participant < ActiveRecord::Base
     else
       'them'    
     end
-  end      
+  end  
+  
+  def contacts
+    ( self.followers + self.idols ).uniq
+  end    
       
 end

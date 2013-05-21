@@ -11,7 +11,7 @@
 		</li>
 		<%= f.input :to_participant_id, :as => :hidden %>	
 		<% else -%>
-		<%= f.input :to_participant_id, :label => 'to Contact', :as => :select, :collection => @participant.idols.collect{|c| [c.name,c.id]}+[['*yourself*',current_participant.id]] %>	
+		<%= f.input :to_participant_id, :label => 'to Contact', :as => :select, :collection => @participant.contacts.collect{|c| [c.name,c.id]}+[['*yourself*',current_participant.id]] %>	
 		<% end -%>
 		<%= f.input :to_group_id, :label => 'or Group', :as => :select, :collection => @groupsadminin.collect{|c| [c.group.name,c.group.id]} %>	
 		<%= f.input :subject %>

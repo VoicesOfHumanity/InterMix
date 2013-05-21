@@ -160,7 +160,7 @@ $(document).ready(function() {
 		});
 	}
 });
-var short_updated = <%= @item.id.to_i > 0 ? "true" : "false" %>;
+var short_updated = <%= (@item.id.to_i > 0 or @item.media_type != 'text') ? "true" : "false" %>;
 function editor_change() {
 	var htmlval = CKEDITOR.instances['item_html_content'].getData();
 	var plainval = $.trim(strip(htmlval));
