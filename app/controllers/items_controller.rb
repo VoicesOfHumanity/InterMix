@@ -718,8 +718,8 @@ class ItemsController < ApplicationController
       @xmessage += "That's too many words"
     elsif dialog and dialog.settings_with_period["required_subject"] and subject.to_s == '' and html_content.gsub(/<\/?[^>]*>/, "").strip != ''
       @xmessage += "Please choose a subject line<br>"
-    elsif subject != '' and ((subject[0,3] != 'Re:' and subject.length > 48) or subject.length > 52)
-      @xmessage += "Maximum 48 characters for the subject line, please<br>"        
+    #elsif subject != '' and ((subject[0,3] != 'Re:' and subject.length > 48) or subject.length > 52)
+    #  @xmessage += "Maximum 48 characters for the subject line, please<br>"        
     else
       return true
     end  

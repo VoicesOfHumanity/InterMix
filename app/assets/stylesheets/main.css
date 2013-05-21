@@ -287,13 +287,27 @@ div.forum1 {
     /* border-color: #096; */
     border-color: #A02424;
 }
-div.forumitem .subject {
+div.forumitem .subjectold {
 	position: absolute;
 	top: -10px;
 	left: 15px;
 	padding: 0 5px 0 5px;
 	font-weight: bold;
 	background-color: #fcf9f7;
+}
+div.forumitem .subject {
+	position: relative;
+	top: -21px;
+	left: 15px;
+	padding: 0 5px 0 0px;
+	font-weight: bold;
+	background-color: transparent;
+	width: 420px;
+	margin-bottom: -15px;
+}
+div.forumitem .subject span {
+	background-color: #fcf9f7;
+	padding: 0 5px 0 5px;
 }
 div.forumitem .subject0 {
     /* background-color: #ff9; */
