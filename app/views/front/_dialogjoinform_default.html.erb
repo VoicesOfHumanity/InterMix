@@ -1,4 +1,6 @@
-<div style="width:700px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
+<p style="margin:10px 0 0 16px"><img src="<%= @group.logo.url %>" width="150"></p>
+
+<div style="width:680px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
 <h3 style="text-align:center"><%= @dialog.name %></h3>
 
 <p>Please enter your message to join this discussion</p>
@@ -6,7 +8,7 @@
 <form action="/front/dialogjoin" method="post">
 <input type="hidden" name="group_id" value="<%= @group.id %>">	
 <input type="hidden" name="dialog_id" value="<%= @dialog.id %>">	
-<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">		
+<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px">		
 <tr><td>Message</td><td><textarea name="message" class="editor" cols="80" rows="6" style="width:600px;height:200px">
 </textarea></td></tr>	
 <% for m in @meta %>

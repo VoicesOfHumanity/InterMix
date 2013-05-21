@@ -122,7 +122,7 @@ class ApplicationController < ActionController::Base
   
   def sanitizethis(sometext)
     Sanitize.clean(sometext.force_encoding("UTF-8"), 
-      :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td'],
+      :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img'],
       :attributes => {'a' => ['href', 'title', 'target'], 'img' => ['src', 'alt', 'width', 'height']},
       :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http']} },
       :allow_comments => false,

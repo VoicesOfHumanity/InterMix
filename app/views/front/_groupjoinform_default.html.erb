@@ -1,9 +1,11 @@
-<div style="width:700px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
+<p style="margin:10px 0 0 16px"><img src="<%= @group.logo.url %>" width="150"></p>
+
+<div style="width:680px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
 <h3 style="text-align:center"><%= @group.name %></h3>
 
 <form action="/front/groupjoin" method="post">
 <input type="hidden" name="group_id" value="<%= @group.id %>">	
-<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">		
+<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px">		
 <% for m in @meta %>
 	<tr><td><%= m['name'] %>*</td><td><select name="meta_<%= m['id'] %>">
 	<% for node in m['nodes'] -%>
