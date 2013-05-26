@@ -344,7 +344,14 @@ class GroupsController < ApplicationController
       current_participant.groups << @group
       flash[:notice] = "You are now a member of this group"
     else
-      flash[:notice] = "You were already a member of this group"
+      group_participant = GroupParticipant.where(:group_id=>@group_id,:participant_id=>current_participant)
+      if group_participant.active
+        flash[:notice] = "You were already a member of this group"
+      else
+        group_participant.active = true
+        group_participant.save
+        flash[:notice] = "You are now a member of this group"
+      end  
     end  
     redirect_to :action => :forum
   end
@@ -634,6 +641,14 @@ class GroupsController < ApplicationController
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
     @is_moderator = (@group_participant and @group_participant.moderator)
+
+    if not session[:has_required]
+      session[:has_required] = current_participant.has_required
+      if not session[:has_required]
+        redirect_to :controller => :profiles, :action=>:edit
+        return
+      end
+    end
     
     if participant_signed_in? and current_participant.forum_settings
       set = current_participant.forum_settings

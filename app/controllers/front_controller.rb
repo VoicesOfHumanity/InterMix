@@ -1219,14 +1219,15 @@ class FrontController < ApplicationController
       
       cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
       if @dialog_group and @dialog_group.signup_template.to_s != ''
-        template = Liquid::Template.parse(@dialog_group.signup_template)
-        @content = template.render(cdata)
+        template_content = @dialog_group.signup_template
       elsif @dialog.signup_template.to_s != ''
-        template = Liquid::Template.parse(@dialog.signup_template)
-        @content = template.render(cdata)
+        template_content = @dialog.signup_template
       else
-        @content = render_to_string(:partial=>'dialogjoinform_default',:layout=>false)
+        #@content = render_to_string(:partial=>'dialogjoinform_default',:layout=>false)
+        template_content = render_to_string(:partial=>'dialogs/signup_default',:layout=>false)
       end
+      template = Liquid::Template.parse(template_content)
+      @content = template.render(cdata)
     end
   end
   
@@ -1255,11 +1256,13 @@ class FrontController < ApplicationController
         
     cdata = {'group'=>@group, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies}
     if @group and @group.signup_template.to_s != ''
-      template = Liquid::Template.parse(@group.signup_template)
-      @content = template.render(cdata)
+      template_content = @group.signup_template
     else
-      @content = render_to_string(:partial=>'groupjoinform_default',:layout=>false)
+      #@content = render_to_string(:partial=>'groupjoinform_default',:layout=>false)
+      template_content = render_to_string(:partial=>'groups/signup_default',:layout=>false)
     end
+    template = Liquid::Template.parse(template_content)
+    @content = template.render(cdata)
   end
     
 end

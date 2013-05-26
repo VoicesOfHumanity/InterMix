@@ -195,6 +195,14 @@ class DialogsController < ApplicationController
       #@period_id = @dialog.active_period.id
     end    
     
+    if not session[:has_required]
+      session[:has_required] = current_participant.has_required
+      if not session[:has_required]
+        redirect_to :controller => :profiles, :action=>:edit
+        return
+      end
+    end
+    
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
     
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
