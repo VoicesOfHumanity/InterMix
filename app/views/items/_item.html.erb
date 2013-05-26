@@ -53,7 +53,7 @@
 			</div>	
 		</div>				
 						
-		<div id="iteminfotxt_<%= item.id %>" class="votesection summary" <% if request.user_agent =~ /Mobile|webOS/ %>summaryswitch(<%= item.id %>,<%= top %>)<% else %>onmouseover="summary(<%= item.id %>,<%= top %>)" onmouseout="nosummary(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="iteminfotxt_<%= item.id %>" class="votesection summary" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="summaryswitch(<%= item.id %>,<%= top %>)"<% else %>onmouseover="summary(<%= item.id %>,<%= top %>)" onmouseout="nosummary(<%= item.id %>,<%= top %>)"<% end %>>
 			sum
 		</div>
 		<div id="sum_<%= item.id %>" class="iteminfo_summary" style="display:none">
