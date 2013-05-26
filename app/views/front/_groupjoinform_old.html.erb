@@ -1,29 +1,23 @@
-<p style="margin:10px 0 0 16px"><img src="<%= @group.logo.url %>" width="150"></p>
-
 <div style="width:680px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
-<h3 style="text-align:center"><%= @group.name %></h3>
+
+<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px"><tr><td>
+<img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;"></td><td>
+<p style="text-align:center;"><big>Welcome to <b>{{ group.name }}!</b></big></p>
+
+<p><big>Please provide the information requested and then click "Register" to join {{ group.name }}.</big></p></td></tr></table>
 
 <form action="/front/groupjoin" method="post">
-<input type="hidden" name="group_id" value="<%= @group.id %>">	
-<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px">		
-<% for m in @meta %>
-	<tr><td><%= m['name'] %>*</td><td><select name="meta_<%= m['id'] %>">
-	<% for node in m['nodes'] -%>
-	<option value="<%= node['id'] %>" <%= "selected" if node['id']==params["meta_#{m['id']}"].to_i %>><%= node['name'] %></option>
-	<% end -%>
-	</select></td></tr>
-<% end %>
-<tr><td>Your Name*</td><td><input type="text" name="first_name" value="<%= @first_name %>" size="30" style="width:200px" title="First name"> <input type="text" name="last_name" value="<%= @last_name %>" size="30" style="width:200px" title="Last name"></td></tr>	
-<tr><td>E-mail*</td><td><input type="text" name="email" value="<%= @email %>" size="30" style="width:200px"></td></tr>	
-<tr><td>Password*</td><td><input type="password" name="password" value="<%= @password %>" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="<%= @password_confirmation %>" size="30" style="width:200px"></td></tr>
-<tr><td>Country of Residence*</td><td>
-<%= select_tag :country_code, options_for_select([['* choose *','']]+Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]},@country_code) %></td></tr>
+<input type="hidden" name="group_id" value="{{ group.id }}"> 	 
+<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px">    
+{% for m in meta %}
+<tr><td>*{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
+{% endfor %}
+<tr><td>*Country of Residence</td><td><select name="country_code"><option value="">* choose *</option>{% for country in countries %}<option value="{{ country.iso }}"{% if country.iso == country_code %} selected="selected"{% endif %}>{{ country.name }}</option>{% endfor %}</select></td></tr>
+<tr><td>*Name</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>    
+<tr><td>*E-mail</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>    
+<tr><td>*Password</td><td><input type="password" name="password" value="{{ @password }}" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="{{ @password_confirmation }}" size="30" style="width:200px"></td></tr>
 </table>
-<input type="submit" value="Send!">	
+<input type="submit" value="Register!">    
 </form>
-
-<p>A confirmation email will be sent. Be sure to respond to that email.</p>
-
-<p>If you have questions, please contact the administrator, Roger Eaton, at <a href="mailto:rogerweaton@gmail.com">rogerweaton@gmail.com</a>.</p>
 
 </div>

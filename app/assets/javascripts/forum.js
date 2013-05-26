@@ -407,6 +407,13 @@ function inthide(id,top) {
 		intshowing = false;	
 	}
 }
+function intswitch(id,top) {
+	if (intshowing) {
+        inthide(id,top);
+    } else {
+        intshow(id,top);
+    }
+}
 function appshow(id,top) {
 	if (!appshowing) {
 		$('#item_'+id).css("z-index",10);
@@ -426,6 +433,13 @@ function apphide(id,top) {
 		}
 		appshowing = false;	
 	}
+}
+function appswitch(id,top) {
+	if (appshowing) {
+        apphide(id,top);
+    } else {
+        appshow(id,top);
+    }
 }
 function rate(intapp,id,vote) {
     $.ajax({
