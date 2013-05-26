@@ -30,7 +30,7 @@
 			</div>				
 		</div>
 				
-		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if item.voting_ok(participant_signed_in? ? current_participant.id : 0) %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if item.voting_ok(participant_signed_in? ? current_participant.id : 0) %><% if request.user_agent =~ /Mobile|webOS/ %>onclick="appswitch(<%= item.id %>,<%= top %>)"<% else %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %><% end %>>
 			<div id="appshort_<%= item.id %>" class="appshort">
 				<img src="/assets/fface.gif" alt="face"/>				
 			<span id="vote_app_rate_<%= item.id %>"><%= @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0 ? @itemsproc[item.id]['rateapproval'].to_i : '-'%></span>
@@ -53,7 +53,7 @@
 			</div>	
 		</div>				
 						
-		<div id="iteminfotxt_<%= item.id %>" class="votesection summary" onmouseover="summary(<%= item.id %>,<%= top %>)" onmouseout="nosummary(<%= item.id %>,<%= top %>)">
+		<div id="iteminfotxt_<%= item.id %>" class="votesection summary" <% if request.user_agent =~ /Mobile|webOS/ %>summaryswitch(<%= item.id %>,<%= top %>)<% else %>onmouseover="summary(<%= item.id %>,<%= top %>)" onmouseout="nosummary(<%= item.id %>,<%= top %>)"<% end %>>
 			sum
 		</div>
 		<div id="sum_<%= item.id %>" class="iteminfo_summary" style="display:none">

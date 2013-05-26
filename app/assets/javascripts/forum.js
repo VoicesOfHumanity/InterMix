@@ -462,12 +462,14 @@ function get_summary(id) {
          }
     });	
 }
+var sumshowing = false;
 function summary(id,top) {
 	$('#item_'+id).css("z-index",10);
 	if (top) {
 		$('#item_'+top).css("z-index",10);
 	}
-	$('#sum_'+id).show();	
+	$('#sum_'+id).show();
+	sumshowing = true;	
 }
 function nosummary(id,top) {
 	$('#sum_'+id).hide();	
@@ -475,7 +477,26 @@ function nosummary(id,top) {
 	if (top) {
 		$('#item_'+top).css("z-index",0);
 	}
+	sumshowing = false;
 }
+function summaryswitch(id,top) {
+    if (sumshowing) {
+    	$('#sum_'+id).hide();	
+    	$('#item_'+id).css("z-index",0);
+    	if (top) {
+    		$('#item_'+top).css("z-index",0);
+    	}
+    	sumshowing = false;
+	} else {
+    	$('#item_'+id).css("z-index",10);
+    	if (top) {
+    		$('#item_'+top).css("z-index",10);
+    	}
+    	$('#sum_'+id).show();
+    	sumshowing = true;	
+	}
+}
+
 function html_to_short(htmlval,plainval) {
     if (typeof htmlval === "undefined") {
         htmlval = CKEDITOR.instances['item_html_content'].getData();
