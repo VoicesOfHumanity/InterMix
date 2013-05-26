@@ -480,6 +480,10 @@ class GroupsController < ApplicationController
           metamap_name = zarr[0].strip.downcase
           if metamapnames[metamap_name]
             metamap_id = metamapnames[metamap_name]
+          elsif metamap_name == 'Age' or metamap_name == 'age'
+            metamap_id = 5
+          elsif metamap_name == 'Gender' or metamap_name == 'gender'
+            metamap_id = 3  
           else
             flash[:notice] += "- UNKNOWN META NAME: #{metamap_name}<br>"
             next
@@ -505,7 +509,11 @@ class GroupsController < ApplicationController
           if not metamap
              flash[:notice] += "- UNKNOWN META ID: #{metamap_id}<br>"
           else
-            metamap_nodes = MetamapNode.where(:metamap_id=>metamap_id,:name=>value)
+            if value.to_i > 0
+              metamap_nodes = MetamapNode.where(:metamap_id=>metamap_id,:id=>value)              
+            else
+              metamap_nodes = MetamapNode.where(:metamap_id=>metamap_id,:name=>value)
+            end
             if metamap_nodes.length > 0
               metamap_node_id = metamap_nodes[0].id
               #flash[:notice] += "- #{metamap_nodes.length} nodes matching metamap_id:#{metamap_id} name:#{value} Choosing:#{metamap_node_id}<br>"
