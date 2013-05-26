@@ -1187,6 +1187,7 @@ class FrontController < ApplicationController
     @section = 'join'
     @countries = Geocountry.order(:extrasort,:name).select([:name,:iso]).all
     @content = "<p>No discussion was recognized</p>"
+    @logo = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
     @meta = []
     if @dialog
       metamaps = @dialog.metamaps
@@ -1217,7 +1218,7 @@ class FrontController < ApplicationController
         @dialog_group = nil 
       end
       
-      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies}
+      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo}
       if @dialog_group and @dialog_group.signup_template.to_s != ''
         template_content = @dialog_group.signup_template
       elsif @dialog.signup_template.to_s != ''
@@ -1235,6 +1236,7 @@ class FrontController < ApplicationController
     @section = 'join'
     @countries = Geocountry.order(:extrasort,:name).select([:name,:iso]).all
     @content = "<p>No group was recognized</p>"
+    @logo = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @meta = []
     metamaps = @group.metamaps
     for metamap in metamaps
@@ -1254,7 +1256,7 @@ class FrontController < ApplicationController
       @meta << m
     end
         
-    cdata = {'group'=>@group, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies}
+    cdata = {'group'=>@group, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies, 'logo'=>@logo}
     if @group and @group.signup_template.to_s != ''
       template_content = @group.signup_template
     else

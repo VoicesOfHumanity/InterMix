@@ -1,4 +1,4 @@
-<img src="{{ logo }}" width="150" style="float:left;width:150px;max-height:150px;margin:0 10px 10px 0;">
+<img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;">
 
 <p><big>Welcome to <b>{{ dialog.name }}</b> discussion where you will be participating as a member of <b>{{ group.name }}!</b></big></p>
 
@@ -7,7 +7,7 @@
 <form action="/front/dialogjoin" method="post">
 <input type="hidden" name="group_id" value="{{ group.id }}">      
 <input type="hidden" name="dialog_id" value="{{ dialog.id }}">	
-<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">    
+<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px">    
 
 {% if false %} 
 <tr><td>Subject</td><td><input type="text" name="subject" value="{{ subject }}" size="48" style="width:600px"></td></tr>
