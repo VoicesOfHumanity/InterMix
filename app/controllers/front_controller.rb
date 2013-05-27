@@ -860,7 +860,7 @@ class FrontController < ApplicationController
         cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
         if @dialog_group and @dialog_group.confirm_welcome_template.to_s != ''
           template = Liquid::Template.parse(@dialog_group.confirm_email_template)
-          html_content = template.render(cdata)
+          @content = template.render(cdata)
         elsif @dialog.confirm_welcome_template.to_s != ''
           template = Liquid::Template.parse(@dialog.confirm_welcome_template)
           @content += template.render(cdata)

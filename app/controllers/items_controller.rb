@@ -776,7 +776,7 @@ class ItemsController < ApplicationController
       logger.info("items#itemprocess before clean:#{@item.html_content.inspect}") 
       @item.html_content = Sanitize.clean(@item.html_content, 
         :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img'],
-        :attributes => {'a' => ['href'], 'img' => ['src', 'alt', 'width', 'height']},
+        :attributes => {'a' => ['href'], 'img' => ['src', 'alt', 'width', 'height', 'align']},
         :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http']} },
         :allow_comments => false,
         :output => :html,
