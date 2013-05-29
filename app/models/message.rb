@@ -40,27 +40,37 @@ class Message < ActiveRecord::Base
     else
       msubject = self.subject
     end  
+
+    domain = (@group and @group.shortname.to_s!='') ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
+
+    cdata['participant'] = recipient
+    cdata['domain'] = domain
+    cdata['groupforumlink'] = "http://#{domain}/groups/#{@group.id}/forum?auth_token=#{recipient.authentication_token}" if @group
+    cdata['editsettingslink'] = "http://#{domain}/me/profile/edit?auth_token=#{recipient.authentication_token}#settings"
+    
+    #-- Expand any macros    
+    sendmessage = Liquid::Template.parse(self.message).render(cdata)
       
     if self.mail_template.to_s == 'message_system'  
-      email = MessageMailer.system(msubject, self.message, recipient.email_address_with_name, cdata)
+      email = MessageMailer.system(msubject, sendmessage, recipient.email_address_with_name, cdata)
     elsif self.mail_template.to_s == 'message_import'  
-      email = MessageMailer.import(msubject, self.message, recipient.email_address_with_name, cdata)
+      email = MessageMailer.import(msubject, sendmessage, recipient.email_address_with_name, cdata)
     elsif self.mail_template.to_s == 'message_contacts'  
-      email = MessageMailer.contacts(msubject, self.message, recipient.email_address_with_name, cdata)
+      email = MessageMailer.contacts(msubject, sendmessage, recipient.email_address_with_name, cdata)
     elsif self.mail_template.to_s == 'message_group'  
-      email = MessageMailer.group(msubject, self.message, recipient.email_address_with_name, cdata)
+      email = MessageMailer.group(msubject, sendmessage, recipient.email_address_with_name, cdata)
     elsif self.mail_template.to_s == 'message_individual'  
-      email = MessageMailer.individual(msubject, self.message, recipient.email_address_with_name, cdata)
+      email = MessageMailer.individual(msubject, sendmessage, recipient.email_address_with_name, cdata)
     elsif from_participant_id.to_i == 0
       #-- Must be a system message
-      email = MessageMailer.contacts(msubject, self.message, recipient.email_address_with_name, cdata)
+      email = MessageMailer.contacts(msubject, sendmessage, recipient.email_address_with_name, cdata)
       self.mail_template = 'message_contacts'
     elsif to_group_id.to_i > 0
-      #-- A group messages  
-      email = MessageMailer.group(msubject, self.message, recipient.email_address_with_name, cdata)
+      #-- A group message 
+      email = MessageMailer.group(msubject, sendmessage, recipient.email_address_with_name, cdata)
       self.mail_template = 'message_group'
     else    
-      email = MessageMailer.individual(msubject, self.message, recipient.email_address_with_name, cdata)
+      email = MessageMailer.individual(msubject, sendmessage, recipient.email_address_with_name, cdata)
       self.mail_template = 'message_individual'
     end
     
