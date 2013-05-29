@@ -10,7 +10,7 @@ This Discussion: <span style="font-size:20px"><%= @dialog.name %>&nbsp;&nbsp;</s
 <% if (@dialog.active_period and @sortby=='default') or @period_id.to_i > 0 -%>
 This Decision Period: <span style="font-size:20px"><%= @period ? ": #{@period.name}" : "" %></span>
 	<% if @dsection == 'forum' and @period.shortdesc.to_s != '' -%>
-	<br><div style="border:1px solid #000;width:90%;padding:8px 8px 0px 10px;"><%=raw @period.shortdesc %></div>
+	<br><div style="border:1px solid #000;width:90%;padding:8px 8px 0px 10px;"><%=raw @period.description %></div>
 	<% end -%>
 <% end -%>
 <% end -%>

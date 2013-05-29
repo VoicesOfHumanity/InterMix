@@ -18,7 +18,7 @@
 	<%= select_tag "meta_3", options_for_select([['',0]]+@metamaps.collect{|m| ["#{m.id}: #{m.name}",m.id]}) %><br>
 	Alternatively, add arbitary metatag fields after the first 4, of the format tagname:tagvalue.<br>E.g. ;Gender affiliation:Male;Nationality:Albanian.<br>They must be spelled exactly like in the list. Or you can use their ID numbers:<br>
 	E.g. ;gender:207;age:406.<br>
-	Gender codes: male=203, female=208. Age codes: young=405, middle-aged=406, senior=407
+	Gender codes: male=207, female=208. Age codes: young=405, middle-aged=406, senior=407
 </p>
 
 <p><%= text_area_tag 'new_text', nil, :rows => 5, :cols => 30 %></p>

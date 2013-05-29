@@ -9,12 +9,12 @@
 		<%= hidden_field_tag :period_id, @period_id %>
 
 		<%= f.input :name, :label=>"Title", :input_html => {:size => 80} %>
-		<% f.input :shortdesc, :as => :text, :label => "Short description", :input_html => {:rows => 5} %>
+		<%= f.input :shortdesc, :as => :text, :label => "Short description", :input_html => {:rows => 3} %>
 		
 		<li>
-			<div style="width:25%;float:left"><b>Short description</b></div>
+			<div style="width:25%;float:left"><b>Long description</b></div>
 			<div style="width:75%;float:left">
-				<%= cktext_area(:period, :shortdesc, :ckeditor => {:ajax => true, :width=>530, :height=>200, :toolbar=>'Custom'}) %>
+				<%= cktext_area(:period, :description, :ckeditor => {:ajax => true, :width=>530, :height=>200, :toolbar=>'Custom'}) %>
 			</div>
 		</li>
 		
