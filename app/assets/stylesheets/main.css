@@ -341,6 +341,7 @@ div.forumitem div.iteminfo {
 	min-height: 18px;
 	position: relative;
 	overflow: hidden;
+	clear: both;
 }
 div.forumitem div.iteminfotxt {
 	float: left;
