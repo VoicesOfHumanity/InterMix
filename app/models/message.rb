@@ -12,9 +12,9 @@ class Message < ActiveRecord::Base
     if recipient.no_email
       logger.info("Message#emailit #{recipient.id}:#{recipient.name} is blocking all email, so skipping")
       return        
-    elsif @group and not recipient.group_email=='instant'
-      logger.info("Message#emailit #{recipient.id}:#{recipient.name} is not set for instant group mail, so skipping")
-      return
+    #elsif @group and not recipient.group_email=='instant'
+    #  logger.info("Message#emailit #{recipient.id}:#{recipient.name} is not set for instant group mail, so skipping")
+    #  return
     elsif recipient.email.to_s == ''
       logger.info("Message#emailit #{recipient.id}:#{recipient.name} has no e-mail, so skipping")
       return
