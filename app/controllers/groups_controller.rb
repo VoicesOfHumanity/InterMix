@@ -338,14 +338,29 @@ class GroupsController < ApplicationController
   def invitejoin
     #-- Link members go to to accept an invitation sent to them
     #-- They should already be logged in (with an authentication token), so we basically just join them, if they aren't already a member
+    if not participant_signed_in?
+      flash[:alert] = "You are not logged in"
+      redirect_to '/'
+      return
+    end
+    if params[:auth_token].to_s != '' and params[:auth_token] != current_participant.authentication_token
+      flash[:alert] = "Seems like you were logged in as the wrong person. Try the link again."
+      sign_out :participant
+      redirect_to '/'
+      return
+    end
     @group_id = params[:id]
     @group = Group.find_by_id(@group_id)
     if not current_participant.groups.include?(@group)
       current_participant.groups << @group
       flash[:notice] = "You are now a member of this group"
     else
-      group_participant = GroupParticipant.where(:group_id=>@group_id,:participant_id=>current_participant)
-      if group_participant.active
+      group_participant = GroupParticipant.where(:group_id=>@group_id,:participant_id=>current_participant.id).first
+      if not group_participant
+        flash[:alert] = "Group membership not found"
+        redirect_to '/'
+        return
+      elsif group_participant.active
         flash[:notice] = "You were already a member of this group"
       else
         group_participant.active = true

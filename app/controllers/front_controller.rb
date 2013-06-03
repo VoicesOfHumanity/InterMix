@@ -20,6 +20,7 @@ class FrontController < ApplicationController
       @dialog = Dialog.find_by_id(@dialog_id)
       cdata['dialog'] = @dialog if @dialog
       cdata['domain'] = (@dialog and @dialog.shortname.to_s!='') ? "#{@dialog.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
+      cdata['logo'] = "http://#{cdata['domain']}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
       if participant_signed_in? and @dialog.member_template.to_s != ''
         desc = Liquid::Template.parse(@dialog.member_template).render(cdata)
       elsif @dialog.front_template.to_s != ''
@@ -32,6 +33,7 @@ class FrontController < ApplicationController
       @group = Group.find_by_id(@group_id)
       cdata['group'] = @group if @group
       cdata['domain'] = (@group and @group.shortname.to_s!='') ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
+      cdata['logo'] = "http://#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
       if participant_signed_in? and @group.member_template.to_s != ''
         desc = Liquid::Template.parse(@group.member_template).render(cdata)
       elsif @group.front_template.to_s != ''
@@ -509,10 +511,10 @@ class FrontController < ApplicationController
     cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}"
     cdata['domain'] = dom
     
-    if @dialog_group and @dialog_group.confirm_email_template.to_s != ''
+    if @dialog_group and @dialog_group.confirm_email_template.to_s.strip != ''
       template = Liquid::Template.parse(@dialog_group.confirm_email_template)
       html_content = template.render(cdata)
-    elsif @dialog.confirm_email_template.to_s != ''
+    elsif @dialog.confirm_email_template.to_s.strip != ''
       template = Liquid::Template.parse(@dialog.confirm_email_template)
       html_content = template.render(cdata)
     else    
@@ -770,7 +772,7 @@ class FrontController < ApplicationController
     cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}"
     cdata['domain'] = dom
     
-    if @group.confirm_email_template.to_s != ''
+    if @group.confirm_email_template.to_s.strip != ''
       template = Liquid::Template.parse(@group.confirm_email_template)
       html_content = template.render(cdata)
     elsif true
