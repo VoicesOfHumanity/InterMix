@@ -1,9 +1,14 @@
+<div style="width:680px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
+<table><tr><td>
 <img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;">
-
-<p><big>Welcome to <b>{{ dialog.name }}</b> discussion where you will be participating as a member of <b>{{ group.name }}!</b></big></p>
+<p>&nbsp;</p>
+<p style="align:center;"><big>Welcome to <b>{{ dialog.name }}</b> discussion where you will be participating as a member of <b>{{ group.name }}!</b></big></p>
 
 <p><big>Please provide the information requested and then click "Register".</big></p>
 
+</td></tr>
+<tr><td>
+	
 <form action="/front/dialogjoin" method="post">
 <input type="hidden" name="group_id" value="{{ group.id }}">      
 <input type="hidden" name="dialog_id" value="{{ dialog.id }}">	
@@ -33,4 +38,4 @@
 
 <p><b>Important: </b>If the confirmation email does not arrive within a few minutes, please check your spam folder.</p>
 
-<p>If you have questions, please contact the discussion coordinator, Roger Eaton, at <a href="mailto:rogerweaton@gmail.com">rogerweaton@gmail.com</a>.</p>
+</td></tr></table></div>

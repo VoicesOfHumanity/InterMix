@@ -1,27 +1,24 @@
 <div style="width:680px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
-	
+<table><tr><td>
 <img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;">
-		
-<p>Welcome to {{ group.name }}</p>
-
-<p>This is the form to fill in to join:</p>
-
+<p>&nbsp;</p>
+<p style="align:center;"><big>Welcome to <b>{{ group.name }}</b></big></p>
+<p><big>To participate, please provide the requested information and then press the "Register" button at the bottom:</big></p>
+</td></tr>
+<tr><td>
 <form action="/front/groupjoin" method="post">
-<input type="hidden" name="group_id" value="{{ group.id }}">      
-<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">    
+<input type="hidden" name="group_id" value="{{ group.id }}"> 	 
+<table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px">    
 {% for m in meta %}
-<tr><td>{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
+<tr><td>*{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
 {% endfor %}
 <tr><td>*Country of Residence</td><td><select name="country_code"><option value="">* choose *</option>{% for country in countries %}<option value="{{ country.iso }}"{% if country.iso == country_code %} selected="selected"{% endif %}>{{ country.name }}</option>{% endfor %}</select></td></tr>
-<tr><td>*Your Name</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>    
+<tr><td>*Name</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>    
 <tr><td>*E-mail</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>    
-<tr><td>Password*</td><td><input type="password" name="password" value="{{ @password }}" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="{{ @password_confirmation }}" size="30" style="width:200px"></td></tr>
+<tr><td>*Password</td><td><input type="password" name="password" value="{{ @password }}" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="{{ @password_confirmation }}" size="30" style="width:200px"></td></tr>
 </table>
 <input type="submit" value="Register!">    
 </form>
-
-<p>A confirmation email will be sent. Be sure to respond to that email.</p>
-
-<p>If you have questions, please contact the administrator, Roger Eaton, at <a href="mailto:rogerweaton@gmail.com">rogerweaton@gmail.com</a>.</p>
-
-</div>
+<p><br /><b><span style="color: DarkRed;">A confirmation email will be sent. Be sure to respond to that email.</span></b> The confirmation link will take you online to the {{ group.name }} forum where you can participate and learn more.</p>
+<p><b>Important: </b>If the confirmation email does not arrive within a few minutes, please check your spam folder.</p>
+</td></tr></table></div>
