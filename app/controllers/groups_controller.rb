@@ -663,6 +663,9 @@ class GroupsController < ApplicationController
         redirect_to :controller => :profiles, :action=>:edit
         return
       end
+    elsif current_participant.new_signup
+      redirect_to :controller => :profiles, :action=>:edit
+      return
     end
     
     if participant_signed_in? and current_participant.forum_settings

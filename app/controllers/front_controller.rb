@@ -834,6 +834,7 @@ class FrontController < ApplicationController
     @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
     if @participant
       @participant.status = 'active'
+      @participant.new_signup = true
       @participant.save
       sign_in(:participant, @participant)
       session[:has_required] = @participant.has_required

@@ -24,6 +24,8 @@ class ProfilesController < ApplicationController
     @subsection = 'edit'
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find_by_id(@profile_id)
+    @participant.new_signup = false
+    @participant.save
     session[:has_required] = @participant.has_required
     if @participant.country_code.to_s != ''
       @metro_areas = MetroArea.where(:country_code=>@participant.country_code).order(:name).all.collect{|r| [r.name,r.id]}
@@ -32,8 +34,8 @@ class ProfilesController < ApplicationController
     end
     flash.now[:alert] = "Some required fields need to be entered" if not session[:has_required]
     @group = Group.find_by_id(session[:group_id]) if not @group and session[:group_id].to_i > 0
-    if @dialog
-      @forum_link = "/dialogs/#{@dialog.id}/forum"
+    if session[:dialog_id].to_i > 0
+      @forum_link = "/dialogs/#{session[:dialog_id]}/forum"
     elsif @group
       @forum_link = "/groups/#{@group.id}/forum"
     else

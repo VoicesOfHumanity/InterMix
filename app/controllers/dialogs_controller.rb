@@ -201,6 +201,9 @@ class DialogsController < ApplicationController
         redirect_to :controller => :profiles, :action=>:edit
         return
       end
+    elsif current_participant.new_signup
+      redirect_to :controller => :profiles, :action=>:edit
+      return
     end
     
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
