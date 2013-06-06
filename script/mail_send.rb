@@ -5,12 +5,22 @@
 #-- We'll send everything for the last day/week, up until last midnight. So, this should run a bit after midnight.
 
 require File.dirname(__FILE__)+'/cron_helper'
+require 'optparse'
+
+participant_id = 0
+do_weekly = false
+
+# testing: ruby mail_send.rb -p 6 -w 1
+opts = OptionParser.new
+opts.on("-pARG","--participant=ARG",Integer) {|val| participant_id = val}
+opts.on("-wARG","--weekly=ARG",Integer) {|val| do_weekly = true}
+opts.parse(ARGV)
 
 wstart = Time.now.midnight - 1.week
 dstart = Time.now.midnight - 1.day
 pend = Time.now.midnight - 1.second
 
-if Time.now.wday == 4
+if Time.now.wday == 4 or do_weekly
 #if Time.now.wday == 6
   #-- If it is Saturday
   is_weekly = true
@@ -18,29 +28,81 @@ else
   is_weekly = false 
 end  
 
-participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or forum_email='daily' or forum_email='weekly')").order(:id)
+if do_weekly
+  puts "Forcing weekly mailing, regardless of settings"
+end  
+
+if participant_id.to_i > 0
+  participants = Participant.where(:id=>participant_id)
+else
+  participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or forum_email='daily' or forum_email='weekly')").order(:id)
+end
 puts "#{participants.length} participants"
 
 for p in participants
   puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} forum:#{p.forum_email}"
 
-  pstart = (p.forum_email == 'weekly' and is_weekly) ? wstart : dstart
+  pstart = ((p.forum_email == 'weekly' or do_weekly) and is_weekly) ? wstart : dstart
   
   tdaily = ''
   tweekly = ''
   
-  if p.private_email == 'daily' or (p.private_email == 'weekly' and is_weekly)
-    #-- Private Messages
-  end
+  messages = []
   
-  if p.system_email == 'daily' or (p.system_email == 'weekly' and is_weekly)
+  if p.system_email == 'daily' or ((p.system_email == 'weekly' or do_weekly) and is_weekly)
     #-- System Messages
+    messages += Message.where(:to_participant_id => p.id, :from_participant_id => 0).where(do_weekly ? "email_sent=0" : "").where("created_at>='#{pstart.strftime("%Y-%m-%d %H:%M:%S")}'").order(:id)
+    puts "  " + messages.length.to_s + ' ' + (((p.system_email == 'weekly' or do_weekly) and is_weekly) ? "weekly" : "daily") + " system messages"
   end
   
-  if p.forum_email == 'daily' or (p.forum_email == 'weekly' and is_weekly)
+  if p.private_email == 'daily' or ((p.private_email == 'weekly' or do_weekly) and is_weekly)
+    #-- Private Messages
+    messages += Message.where(:to_participant_id => p.id).where(do_weekly ? "email_sent=0" : "").where("from_participant_id>0").where("created_at>='#{pstart.strftime("%Y-%m-%d %H:%M:%S")}'").order(:id)
+    puts "  " + messages.length.to_s + ' ' + (((p.private_email == 'weekly' or do_weekly) and is_weekly) ? "weekly" : "daily") + " personal messages"
+  end
+  
+  for message in messages
+    itext = ""
+    
+    puts "    #{message.created_at.strftime("%Y-%m-%d %H:%M")}: #{message.subject}"
+    itext = ""
+    itext += "<h3><a href=\"http://#{BASEDOMAIN}/messages?auth_token=#{p.authentication_token}\">#{message.subject}</a></h3>"
+    itext += "<div>"
+    itext += message.message
+    itext += "</div>"
+    
+    itext += "<p>"
+    if message.from_participant_id.to_i > 0
+		  itext += "from <a href=\"http://#{BASEDOMAIN}/participant/#{message.from_participant_id}/wall?auth_token=#{p.authentication_token}\">#{message.sender ? message.sender.name : message.from_participant_id}</a>"
+	  else
+	    itext += "System Message"
+	  end  
+		
+		itext += " " + message.created_at.strftime("%Y-%m-%d %H:%M")
+    itext += "</p>"
+    itext += "<hr>"
+    
+    if (p.forum_email == 'weekly' or do_weekly) and is_weekly
+      tweekly += itext
+    else
+      tdaily += itext
+    end  
+    message.email_sent 
+    if not message.email_sent
+      message.email_sent 
+      message.email_sent_at = Time.now
+    end
+    if not message.sent
+      message.sent 
+      message.sent_at = Time.now
+    end
+    message.save
+  end
+    
+  if p.forum_email == 'daily' or ((p.forum_email == 'weekly' or do_weekly) and is_weekly)
     #-- Forum Items
     
-    ptext = (p.forum_email == 'weekly' and is_weekly) ? "weekly" : "daily"
+    ptext = ((p.forum_email == 'weekly' or do_weekly) and is_weekly) ? "weekly" : "daily"
     
     #-- We want sort by descending regressed value, using total interest
     items, itemsproc = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p.id,true,p.id,pstart,pend)
@@ -98,9 +160,9 @@ for p in participants
       Rails.logger.info("mail_send delivering daily email to #{p.id}:#{p.name}")
       email.deliver
       message_id = email.message_id
-      puts "    e-mail sent: #{email.message_id}"
+      puts "  daily e-mail sent: #{email.message_id}"
     rescue
-      puts "    e-mail delivery problem"
+      puts "  daily e-mail delivery problem"
       Rails.logger.info("mail_send problem delivering daily email to #{p.id}:#{p.name}")
     end
   
@@ -116,9 +178,9 @@ for p in participants
       Rails.logger.info("mail_send delivering weekly email to #{p.id}:#{p.name}")
       email.deliver
       message_id = email.message_id
-      puts "    e-mail sent: #{email.message_id}"
+      puts "  weekly e-mail sent: #{email.message_id}"
     rescue
-      puts "    e-mail delivery problem"
+      puts "  weekly e-mail delivery problem"
       Rails.logger.info("mail_send problem delivering weekly email to #{p.id}:#{p.name}")
     end
   

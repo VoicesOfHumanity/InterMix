@@ -15,7 +15,7 @@
 <%=raw @message %>
 </div>
 
-<hr/>
+<hr style="clear:both">
 
 <p><a href="http://<%= BASEDOMAIN %>/groups?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a> to respond to or rate any of these posts, to access more features, or if you're having trouble seeing this. To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
 

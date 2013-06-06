@@ -80,6 +80,8 @@ class Message < ActiveRecord::Base
       self.message_id = email.message_id
       self.sent = true
       self.sent_at = Time.now 
+      self.email_sent = true
+      self.email_sent_at = Time.now
     rescue
       self.sent = false
       logger.info("Message#emailit FAILED delivering email to #{recipient.id}:#{recipient.name}")

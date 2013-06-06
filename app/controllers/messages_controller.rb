@@ -88,6 +88,8 @@ class MessagesController < ApplicationController
             @message.sendmethod = 'email'
             @message.emailit
             emailsent += 1
+          else
+            #-- If we're not sending it instantly, they'll probably get it in a daily or weekly digest  
           end  
         else
           logger.info("messages#create Couldn't save message")  
