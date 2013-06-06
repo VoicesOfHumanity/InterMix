@@ -2,7 +2,7 @@
 
 <h3 style="clear:both">Settings for the group's membership in the discussion<br>"<%= @dialog.name %>"</h3>
 
-<p>Any templates entered here will be used for join pages instead of the default templates for the discussion</p>
+<p>Any templates entered here will be used for join pages instead of the default templates for the discussion. Be careful not to copy group level templates into these discussion level templates.</p>
 
 <%= semantic_form_for @dialog_group, :url => "/groups/#{@group.id}/dialog_settings_save", :html=>{:id=>"dialog_group"} do |f| %>
 

@@ -7,7 +7,7 @@
 <th>Read?</th>	
 </tr>		
 <% for message in @messages -%>
-	<tr>
+	<tr id="tr_<%= message.id %>">
 		<td><%= link_to_function message.created_at.strftime("%m/%d/%Y %H:%M"), "showmess(#{message.id})" %></td>
 		<% if @inout == 'out' -%>
 			<td><a href="participant/<%= message.to_participant_id %>/profile"><%= message.recipient ? message.recipient.name : message.to_participant_id %></a></td>
@@ -22,4 +22,7 @@
 		<td><%= (message.read_web or message.read_email) ? 'yes' : 'no' %></td>
 	</tr>	
 <% end -%>
+<tr id="messageview_tr" style="display:none"><td id="messageview_td" colspan="4" style="border:1px dotted #666;padding:10px"></td></tr>
+<tr id="reply_tr" style="display:none"><td id="reply_td" colspan="4" style="border:1px dotted #666;padding:10px"></td></tr>
+
 </table>

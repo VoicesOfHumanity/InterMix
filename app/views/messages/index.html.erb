@@ -1,7 +1,6 @@
 <%= render(:partial => 'menu')%>
 
 <div id="messagelist"><%= render(:partial => 'list') %></div>
-<div id="messageview" style="display:none;border:1px dotted #666;padding:10px"></div>
 <div id="messageedit" style="display:none;border:1px dotted #666;padding:10px"></div>
 
 <script>
@@ -32,16 +31,18 @@ var showingedit = false;
 var showingview = false;
 var replying_to = 0;
 function showmess(id) {
-	$("#messageview").html("Just a moment...");
-  $('#messageview').show();	
+	$('#messageview_tr').insertAfter('#tr_'+id);
+	$("#messageview_td").html("Just a moment...");
+  $('#messageview_tr').show();	
   $.ajax({
     type: 'GET',
     url: '/messages/'+id,
 	  data: 'inout='+curinout,
     complete: function(t){	
-      $("#messageview").html(t.responseText);
-		  $('#messageview').show();
+      $("#messageview_td").html(t.responseText);
+		  $('#messageview_tr').show();
 			showingview = true;
+			window.location.hash = '#messageview_tr';
 			if (showingedit) {
 				$('#messageedit').hide();
 				showingedit = false;
@@ -67,14 +68,18 @@ function newmess() {
       $("#messageedit").html(t.responseText);
 		  $('#messageedit').show();
 			showingedit = true;
+			window.location.hash = '#messageedit';
      }
    });	
 }
 function replymess(id) {
-	if (showingview) {
-		$('#messageview').hide();
-		showingview = false;
-	}
+	//if (showingview) {
+	//	$('#messageview').hide();
+	//	showingview = false;
+	//}
+	$('#reply_tr').insertAfter('#messageview_tr');
+	$("#reply_td").html("Just a moment...");
+  $('#reply_tr').show();	
 	replying_to = id;
 	var pars = {
 		response_to_id: id
@@ -84,9 +89,10 @@ function replymess(id) {
     url: '/messages/new',
 		data: pars,
     complete: function(t){	
-      $("#messageedit").html(t.responseText);
-		  $('#messageedit').show();
+      $("#reply_td").html(t.responseText);
+		  $('#reply_tr').show();
 			showingedit = true;
+			window.location.hash = '#reply_tr';
      }
    });	
 }
