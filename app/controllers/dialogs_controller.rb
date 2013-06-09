@@ -1387,6 +1387,55 @@ class DialogsController < ApplicationController
     template = Liquid::Template.parse(template_content)
     render :text => template.render(cdata), :layout=>'front'
   end
+
+  def get_period_default
+    #-- Return a particular default template, e.g. instructions
+    which = params[:which]
+    render :partial=>"period_#{which}_default", :layout=>false
+  end
+  
+  def test_period_template
+    #-- Show a template with the liquid macros filled in
+    which = params[:which]
+    @dialog_id = params[:id]
+    @dialog = Dialog.find_by_id(@dialog_id)
+    @period_id = params[:period_id]
+    @period = Period.find_by_id(@period_id)
+    @group_id = session[:group_id].to_i
+    @group = Group.find_by_id(@group_id) if @group_id > 0
+    @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first
+    if @dialog.shortname.to_s != "" and @group and @group.shortname.to_s != ""
+  		@domain =  "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}"
+  	elsif @dialog.shortname.to_s != ""
+  		@domain =  "#{@dialog.shortname}.#{ROOTDOMAIN}"
+  	else
+  		@domain = "#{BASEDOMAIN}"
+  	end
+    @logo = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
+    @participant = current_participant
+    @email = @participant.email
+    @name = @participant.name
+    
+    cdata = {}
+    cdata['group'] = @group if @group
+    cdata['period'] = @period if @period
+    cdata['dialog'] = @dialog if @dialog
+    cdata['dialog_group'] = @dialog_group if @dialog_group
+    cdata['participant'] = @participant
+    cdata['recipient'] = @participant
+    cdata['domain'] = @domain
+    cdata['password'] = '[#@$#$%$^]'
+    cdata['confirmlink'] = "http://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
+    cdata['logo'] = @logo if @logo
+      
+    if @period.send("#{which}").to_s != ""
+      template_content = render_to_string(:text=>@period.send("#{which}"),:layout=>false)
+    else
+      template_content = render_to_string(:partial=>"period_#{which}_default",:layout=>false)
+    end      
+    template = Liquid::Template.parse(template_content)
+    render :text => template.render(cdata), :layout=>'front'
+  end
   
   protected 
   

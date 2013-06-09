@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130605143639) do
+ActiveRecord::Schema.define(:version => 20130608231529) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -601,6 +601,7 @@ ActiveRecord::Schema.define(:version => 20130605143639) do
     t.datetime "updated_at"
     t.text     "description"
     t.text     "shortdesc"
+    t.text     "instructions"
     t.text     "metamaps"
     t.boolean  "metamaps_frozen",       :default => false
     t.integer  "max_characters"

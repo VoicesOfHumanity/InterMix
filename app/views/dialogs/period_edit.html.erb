@@ -17,7 +17,14 @@
 				<%= cktext_area(:period, :description, :ckeditor => {:ajax => true, :width=>530, :height=>200, :toolbar=>'Custom'}) %>
 			</div>
 		</li>
-		
+
+		<li class="text optional" id="period_instructions_input">
+			<label for="period_instructions">Instructions<br>
+			<%= button_to_function "get default", "get_default('instructions')" %><br>
+			<%= button_to_function "test", "test_template('instructions')" %>	
+			</label>
+			<textarea id="period_instructions" name="period[instructions]" rows="5"><%= @period.instructions %></textarea>
+		</li>		
 		
 		<%= f.input :startdate, :label=>"Start date (YYYY-MM-DD)" %>
 		<%= f.input :endposting, :label=>"Posting final date (YYYY-MM-DD)" %>
@@ -42,3 +49,27 @@
 	<p><input type="submit" value="Save"></p>
 
 <% end %>
+
+<script>
+function get_default(which) {
+	if (!$('#period_'+which)) {
+		alert("That doesn't seem to exist");
+		return;
+	} else if ($('#period_'+which).val()!='') {
+		alert("Please empty the template field first, if you wish to overwrite it with the default");
+		return;
+	}
+	var pars = "which="+which;
+	$.ajax({
+     type: "GET",
+     url: "/dialogs/<%= @dialog.id %>/get_period_default",
+     data: pars,
+     complete: function(t){	
+       $('#period_'+which).val(t.responseText);
+     }
+   });	
+}
+function test_template(which) {
+	window.open("/dialogs/<%= @dialog.id %>/test_period_template?period_id=<%= @period.id %>&which="+which, '_blank');
+}
+</script>
