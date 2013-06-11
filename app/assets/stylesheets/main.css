@@ -512,7 +512,7 @@ div.forumbranchitem .htmlcontent {
 
 div#forumcontrol {
 	width: 100%;
-	height: 29px;
+	/* height: 29px; */
 	overflow: hidden;
 }
 div#forumcontrol div.lefttitle {

@@ -192,7 +192,7 @@ class DialogsController < ApplicationController
       @period = Period.find_by_id(@period_id)
     elsif @dialog.active_period
       @period = @dialog.active_period
-      #@period_id = @dialog.active_period.id
+      @period_id = @dialog.active_period.id
     end    
     
     if not session[:has_required]

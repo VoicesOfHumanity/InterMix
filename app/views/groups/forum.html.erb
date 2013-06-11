@@ -3,9 +3,9 @@
 <form id="searchform" style="clear:both">
 <input type="hidden" id="authenticity_token" name="authenticity_token" value="<%= form_authenticity_token %>">
 <input type="hidden" id="in_group_id" name="in_group_id" value="<%= session[:group_id].to_i %>">	
-<input type="hidden" id="in_dialog_id" name="in_dialog_id" value="<%= session[:dialog_id].to_i %>">	
+<input type="hidden" id="from" name="from" value="<%= @from %>">	
 	
-<div id="forumcontrol">
+<div id="forumcontrol" style="height:29px;">
 	
 	<div class="right">
 	<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">

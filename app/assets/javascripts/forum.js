@@ -1,6 +1,10 @@
 var optionsshowing = false;
 function toggleoptions() {
-	if (optionsshowing) {		
+	if (optionsshowing && $('#from').val()=='dialog' && $('#active_period_id').val()>0) {		
+		$('#forumcontrol').css("height","85px");
+		$('#optionbutton').attr("value","More Options");
+		optionsshowing = false;
+	} else if (optionsshowing) {
 		$('#forumcontrol').css("height","29px");
 		$('#optionbutton').attr("value","More Options");
 		optionsshowing = false;
@@ -38,30 +42,21 @@ function list(whatchanged,gotopost) {
 	    // No period heading
 	    $('#period_name_heading').hide();
 	}
-    var firstsort = $("#sortby > option:first").attr("value");
-	if ($('#period_id')) {
-	    if ($('#period_id').val()>0) {
-	        if (firstsort=='default') {
-	            // If a historical period is selected, remove the Decision Special sort
-	            $("#sortby > option:first").remove();
-	            had_default = true;
-	        }	        
-	    } else {
-	        if (firstsort!='default' && had_default) {
-	            // If no historical period is selected, put the Decision Special sort option back, if it is missing
-	            $('#sortby').prepend('<option value="default">Decision Special</option>');
-	        }	        
-	    }
-	}
+	
 	if ((whatchanged=='sortby' || whatchanged=='') && $('#sortby').val()=='default') {	
-	    // If the Decision Special sort is selected, make sure we're showing root only
+	    // If the Decision Special sort is selected, make sure we're showing root only and that the active period is selected
 	    $('#threads').val('root');
+	    $('#period_id').val($('#active_period_id').val());
     } else if (whatchanged=='sortby' && last_sort && last_sort == 'default' && $('#sortby').val()!='default') {
         // Moving away from Decision Special. Change threads to Roots+Replies
         $('#threads').val('flat');
     } else if (whatchanged=='period_id' && $('#period_id').val()>0) {
         // If we selected a period the sort would no longer be default. Change threads to Roots+Replies
         $('#threads').val('flat');
+    }
+    if (whatchanged=='period_id' && $('#sortby').val()=='default' && $('#period_id').val()!=$('#active_period_id').val()) {
+        // If we move away from the current period, we can't have the decision special sort
+        $('#sortby').val('items.id desc');
     }
     if (whatchanged=='threads' && $('#threads').val()!='root' && $('#sortby').val()=='default') {
         // If we change threads to anything other than roots only, make sure we're not in focus special
@@ -77,6 +72,20 @@ function list(whatchanged,gotopost) {
     } else if (whatchanged=='rated_by_admin1uniq' && $('#rated_by_admin1uniq').val()!='0') {
         $('#rated_by_metro_area_id').val('0');
     }	
+    
+    // Decide whether we show the decision special sort option or not
+    var firstsort = $("#sortby > option:first").attr("value");
+	if ($('#period_id')) {
+	    if ($('#period_id').val()>0 && $('#period_id').val()!=$('#active_period_id').val() && firstsort=='default') {
+            // If a another period than the current is selected, remove the Decision Special sort
+            $("#sortby > option:first").remove();
+            had_default = true;
+	    } else if (firstsort!='default' && had_default && ($('#period_id').val()==0 || $('#period_id').val()==$('#active_period_id').val())) {
+            // If no historical period is selected, put the Decision Special sort option back, if it is missing
+            $('#sortby').prepend('<option value="default">Decision Special</option>');
+	    }
+	}
+    
 	$('#page').val(1);
 	var pars = $("#searchform").serialize();
 	$.ajax({
@@ -85,10 +94,10 @@ function list(whatchanged,gotopost) {
      data: pars,
      complete: function(t){	
        $("#itemlist").html(t.responseText);
-		 listdone();
-         if (gotopost != '') {
+	   listdone();
+       if (gotopost != '') {
              window.location.hash = '#item_'+gotopost;
-         }
+        }
      }
    });	
 }
