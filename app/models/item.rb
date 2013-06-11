@@ -12,6 +12,10 @@ class Item < ActiveRecord::Base
   
   after_create :process_new_item
   
+  validates :item_type, :presence => true, :inclusion => { :in => ITEM_TYPES }
+  validates :media_type, :presence => true, :inclusion => { :in => MEDIA_TYPES }
+  #validates :posted_by, :presence => true, :message => "Poster missing"
+  
   def self.tags
     tag_counts.collect {|t| t.name}.join(', ')  
   end
