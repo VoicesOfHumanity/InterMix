@@ -132,11 +132,11 @@ function newitem(token) {
 	$('#newforumitem').html("working...");
 	$('#newforumitem').show();
 	pars = 'a=1';
-	if ($('#group_id').val()>0) {
-		pars += "&group_id="+$('#group_id').val();
+	if ($('#in_group_id').val()>0) {
+		pars += "&group_id="+$('#in_group_id').val();
 	}
-	if ($('#dialog_id').val()>0) {
-		pars += "&dialog_id="+$('#dialog_id').val();
+	if ($('#in_dialog_id').val()>0) {
+		pars += "&dialog_id="+$('#in_dialog_id').val();
 	}
 	if ($('#from')) {
 	    pars += '&from=' + $('#from').val();

@@ -7,6 +7,9 @@
 <input type="hidden" id="showratings" name="showratings" value="<%= params[:showratings].to_i %>">	
 <input type="hidden" id="active_period_id" value="<%= @dialog.active_period ? @dialog.active_period.id : "0" %>">
 <input type="hidden" id="active_period_name" value="<%= @dialog.active_period ? @dialog.active_period.name : "" %>">
+<input type="hidden" id="in_group_id" name="in_group_id" value="<%= session[:group_id].to_i %>">	
+<input type="hidden" id="in_dialog_id" name="in_dialog_id" value="<%= session[:dialog_id].to_i %>">	
+
 <div id="forumcontrol">
 	
 	<div class="right">
@@ -137,6 +140,7 @@ var posted_by_country_code = '<%= @posted_by_country_code %>';
 var posted_by_admin1uniq = '<%= @posted_by_admin1uniq %>';
 var posted_by_admin2uniq = '';
 var posted_by_metro_area_id = '<%= @posted_by_metro_area_id %>'
+var active_period = <%= @dialog.active_period ? @dialog.active_period.id : 0 %>;
 function chgcountry(what) {
 	$.getJSON("/front/getadmin1s",{country_code: $("#"+what+"_by_country_code").val()}, function(j){
 	  var options = '';

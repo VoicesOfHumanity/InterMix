@@ -93,7 +93,7 @@ Intermix::Application.configure do
   
   config.middleware.use ExceptionNotifier,
     :email_prefix => "[InterMix Bug] ",
-    :sender_address => %{"Exception Notifier" <questions@cr8.com>},
+    :sender_address => %{"Exception Notifier" <questions@intermix.org>},
     :exception_recipients => %w{ffunch@gmail.com}
 
   config.assets.precompile += Ckeditor.assets
