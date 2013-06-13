@@ -5,39 +5,47 @@
 <input type="hidden" id="in_group_id" name="in_group_id" value="<%= session[:group_id].to_i %>">	
 <input type="hidden" id="from" name="from" value="<%= @from %>">	
 	
-<div id="forumcontrol" style="height:29px;">
+<div id="forumcontrol">
 	
-	<div class="right">
-	<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
-	<% if @is_member -%>
-	<input type="button" value="Start New Thread" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
-	<% end -%>
-	</div>
-
-	<div class="lefttitle">Sort by:</div>
-	<div class="leftfield">
-		<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
-		<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list()" %>
-	</div>
-
-	<div class="lefttitle">Threads:</div>
-	<div class="leftfield">
-	<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list()" %>
-	</div>
-
-	<div class="lefttitle">Show:</div>
-	<div class="leftfield">
-	<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list()" %>
-	</div>
-
-	<div class="lefttitle">Discussion:</div>
-	<div class="leftfield">
-	<%= select_tag "dialog_id", options_for_select([['*All messages*',0],['*No discussion messages*',-1]]+@dialogsin.collect{|c| [c.dialog.name,c.dialog.id]},@dialog_id), :onchange=>"list()" %>
-	</div>
+	<div id="forumcontrol1">
 	
-	<%= hidden_field_tag :limit_group_id, @group_id %>
-	<%= hidden_field_tag "from", "group" %>
-	<%= hidden_field_tag :page, 1 %>
+		<div class="right">
+		<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
+		<% if @is_member -%>
+		<input type="button" value="Start New Thread" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
+		<% end -%>
+		</div>
+
+		<div class="lefttitle">Sort by:</div>
+		<div class="leftfield">
+			<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
+			<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list()" %>
+		</div>
+	
+	</div><!--forumcontrol1-->
+	
+	<div id="forumcontrol3">
+
+		<div class="lefttitle">Threads:</div>
+		<div class="leftfield">
+		<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list()" %>
+		</div>
+
+		<div class="lefttitle">Show:</div>
+		<div class="leftfield">
+		<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list()" %>
+		</div>
+
+		<div class="lefttitle">Discussion:</div>
+		<div class="leftfield">
+		<%= select_tag "dialog_id", options_for_select([['*All messages*',0],['*No discussion messages*',-1]]+@dialogsin.collect{|c| [c.dialog.name,c.dialog.id]},@dialog_id), :onchange=>"list()" %>
+		</div>
+	
+		<%= hidden_field_tag :limit_group_id, @group_id %>
+		<%= hidden_field_tag "from", "group" %>
+		<%= hidden_field_tag :page, 1 %>
+	
+	</div><!--forumcontrol3-->
 	
 </div>
 </form>

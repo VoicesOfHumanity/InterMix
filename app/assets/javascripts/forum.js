@@ -1,15 +1,22 @@
 var optionsshowing = false;
 function toggleoptions() {
 	if (optionsshowing && $('#from').val()=='dialog' && $('#active_period_id').val()>0) {		
-		$('#forumcontrol').css("height","85px");
+		$('#forumcontrol2').show();
+		$('#forumcontrol3').hide();
 		$('#optionbutton').attr("value","More Options");
 		optionsshowing = false;
 	} else if (optionsshowing) {
-		$('#forumcontrol').css("height","29px");
+	    if ($('#forumcontrol2')) {
+		    $('#forumcontrol2').hide();
+	    }
+		$('#forumcontrol3').hide();
 		$('#optionbutton').attr("value","More Options");
 		optionsshowing = false;
 	} else {
-		$('#forumcontrol').css("height","auto");
+	    if ($('#forumcontrol2')) {
+		    $('#forumcontrol2').show();
+		}    
+		$('#forumcontrol3').show();
 		$('#optionbutton').attr("value","Fewer Options");
 		optionsshowing = true;
 	}

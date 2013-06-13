@@ -515,7 +515,9 @@ class ItemsController < ApplicationController
         @is_moderator = false
       end
       #@from = "group"
+      session[:group_is_member] = @is_member
     end
+    session[:group_id] = @group_id
 
     @dialog_id = @item.dialog_id
     if @dialog_id.to_i > 0
@@ -533,6 +535,7 @@ class ItemsController < ApplicationController
       end
       #@from = "dialog"
     end
+    session[:dialog_id] = @dialog_id
     
     @period_id = 0
     @posted_by = 0

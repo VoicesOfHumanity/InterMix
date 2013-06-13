@@ -11,108 +11,118 @@
 <input type="hidden" id="in_dialog_id" name="in_dialog_id" value="<%= session[:dialog_id].to_i %>">	
 <input type="hidden" id="from" name="from" value="<%= @from %>">	
 
+<div id="forumcontrol">
 
-<div id="forumcontrol" style="height:<%= @dialog.active_period ? 85 : 29 %>px;">
+	<div id="forumcontrol1">
 	
-	<div class="right">
-	<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
-	<% if session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
-	<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
-	<% else -%>
-		<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" title="<%= 
-		if not session[:group_is_member] then "Not group member" elsif not @dialog.settings_with_period["posting_open"] then "Posting is not open"
-elsif not ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) then "Maximum messages have been reached"
-else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
-	<% end -%>
-	</div>
-
-	<div class="lefttitle">Sort by:</div>
-	<div class="leftfield">
-		<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
-		<% sortarr = [['Decision Special','default']] + sortarr if @dialog.current_period.to_i > 0 and Item.where(:period_id=>@dialog.current_period).count > 0 %>
-
-		<% if false -%>
-			<% for m in @dialog.metamaps -%>
-				<% sortarr << [m[1],"meta:#{m[0]}"] %>
-			<% end -%>	
+		<div class="right">
+		<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
+		<% if session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
+		<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
+		<% else -%>
+			<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" title="<%= 
+			if not session[:group_is_member] then "Not group member" elsif not @dialog.settings_with_period["posting_open"] then "Posting is not open"
+	elsif not ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) then "Maximum messages have been reached"
+	else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
 		<% end -%>
-		<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list('sortby')" %>
-	</div>
-	
-	<% if @periods.length > 0 -%>
-	<div class="lefttitle">Decision Period:</div>
-	<div class="leftfield">
-	<%= select_tag "period_id", options_for_select([['All messages',0]]+@periods.collect{|c| [c.name,c.id]},@period_id), :onchange=>"list('period_id')" %>
-	</div>
-	<% else -%>
-	<%= hidden_field_tag :period_id, 0 %>	
-	<% end -%>
+		</div>
 
-	<div class="lefttitle">Threads:</div>
-	<div class="leftfield">
-	<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list('threads')" %>
-	</div>
+		<div class="lefttitle">Sort by:</div>
+		<div class="leftfield">
+			<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
+			<% sortarr = [['Decision Special','default']] + sortarr if @dialog.current_period.to_i > 0 and Item.where(:period_id=>@dialog.current_period).count > 0 %>
+			<% if false -%>
+				<% for m in @dialog.metamaps -%>
+					<% sortarr << [m[1],"meta:#{m[0]}"] %>
+				<% end -%>	
+			<% end -%>
+			<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"list('sortby')" %>
+		</div>
+		
+	</div><!--forumcontrol1-->		
 
-	<% if @groups.length > 1 -%>
-	<div class="lefttitle">Group:</div>
-	<div class="leftfield">
-	<%= select_tag "limit_group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.name,c.id]},@limit_group_id), :onchange=>"list('limit_group_id')" %>
-	</div>
-	<% else -%>
-	<%= hidden_field_tag :limit_group_id, @groups.length>0 ? @groups[0].id : @limit_group_id %>	
-	<% end -%>
+	<div id="forumcontrol2" style="<%= "display:block;" if @dialog.active_period %>">
 	
-	<div class="lefttitle">Posted from Country:</div>
-	<div class="leftfield">
-		<%= select_tag "posted_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name',@posted_by_country_code), :onchange=>"chgcountry('posted');" %>
-	</div>
-	<div class="lefttitle">Posted from State/Region:</div>
-	<div class="leftfield">&nbsp;&nbsp;&nbsp;
-		<%= select_tag "posted_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list('posted_by_admin1uniq')" %>
-	</div>
-	<div class="lefttitle">or Metro Area:</div>	
-	<div class="leftfield">&nbsp;&nbsp;&nbsp;
-		<%= select_tag "posted_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list('posted_by_metro_area_id')" %>
-	</div>
+		<% if @periods.length > 0 -%>
+		<div class="lefttitle">Decision Period:</div>
+		<div class="leftfield">
+		<%= select_tag "period_id", options_for_select([['All messages',0]]+@periods.collect{|c| [c.name,c.id]},@period_id), :onchange=>"list('period_id')" %>
+		</div>
+		<% else -%>
+		<%= hidden_field_tag :period_id, 0 %>	
+		<% end -%>
+
+		<div class="lefttitle">Threads:</div>
+		<div class="leftfield">
+		<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list('threads')" %>
+		</div>
+		
+	</div><!--forumcontrol2-->		
+		
+	<div id="forumcontrol3">
+
+		<% if @groups.length > 1 -%>
+		<div class="lefttitle">Group:</div>
+		<div class="leftfield">
+		<%= select_tag "limit_group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.name,c.id]},@limit_group_id), :onchange=>"list('limit_group_id')" %>
+		</div>
+		<% else -%>
+		<%= hidden_field_tag :limit_group_id, @groups.length>0 ? @groups[0].id : @limit_group_id %>	
+		<% end -%>
 	
-	<% for metamap in @metamaps -%>
-	<div class="lefttitle">Posted by <%= metamap.name %>:</div>
-	<div class="leftfield">
-	<%= select_tag "posted_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["posted_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('posted_by_metamap_#{metamap.id}')" %>
-	</div>  	
-	<% end -%>
+		<div class="lefttitle">Posted from Country:</div>
+		<div class="leftfield">
+			<%= select_tag "posted_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name',@posted_by_country_code), :onchange=>"chgcountry('posted');" %>
+		</div>
+		<div class="lefttitle">Posted from State/Region:</div>
+		<div class="leftfield">&nbsp;&nbsp;&nbsp;
+			<%= select_tag "posted_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list('posted_by_admin1uniq')" %>
+		</div>
+		<div class="lefttitle">or Metro Area:</div>	
+		<div class="leftfield">&nbsp;&nbsp;&nbsp;
+			<%= select_tag "posted_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list('posted_by_metro_area_id')" %>
+		</div>
 	
-	<div class="lefttitle">Rated from Country:</div>
-	<div class="leftfield">
-		<%= select_tag "rated_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name',@rated_by_country_code), :onchange=>"chgcountry('rated');" %>
-	</div>
-	<div class="lefttitle">Rated from State/Region:</div>
-	<div class="leftfield">&nbsp;&nbsp;&nbsp;
-		<%= select_tag "rated_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list('rated_by_admin1uniq')" %>
-	</div>
-	<div class="lefttitle">or Metro Area:</div>
-	<div class="leftfield">&nbsp;&nbsp;&nbsp;
-		<%= select_tag "rated_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list('rated_by_metro_area_id')" %>
-	</div>
+		<% for metamap in @metamaps -%>
+		<div class="lefttitle">Posted by <%= metamap.name %>:</div>
+		<div class="leftfield">
+		<%= select_tag "posted_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["posted_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('posted_by_metamap_#{metamap.id}')" %>
+		</div>  	
+		<% end -%>
 	
-	<% for metamap in @metamaps -%>
-	<div class="lefttitle">Rated by <%= metamap.name %>:</div>
-	<div class="leftfield">
-	<%= select_tag "rated_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["rated_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('rated_by_metamap_#{metamap.id}')" %>
-	</div>  	
-	<% end -%>
+		<div class="lefttitle">Rated from Country:</div>
+		<div class="leftfield">
+			<%= select_tag "rated_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name',@rated_by_country_code), :onchange=>"chgcountry('rated');" %>
+		</div>
+		<div class="lefttitle">Rated from State/Region:</div>
+		<div class="leftfield">&nbsp;&nbsp;&nbsp;
+			<%= select_tag "rated_by_admin1uniq", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geoadmin1.where(:country_code=>@posted_by_country_code).order(:name),'admin1uniq','name'), :onchange=>"list('rated_by_admin1uniq')" %>
+		</div>
+		<div class="lefttitle">or Metro Area:</div>
+		<div class="leftfield">&nbsp;&nbsp;&nbsp;
+			<%= select_tag "rated_by_metro_area_id", raw('<option value="0">*any*</option>'), :onchange=>"list('rated_by_metro_area_id')" %>
+		</div>
 	
-	<div class="lefttitle">Show:</div>
-	<div class="leftfield">
-	<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list('perscr')" %>
-	</div>
+		<% for metamap in @metamaps -%>
+		<div class="lefttitle">Rated by <%= metamap.name %>:</div>
+		<div class="leftfield">
+		<%= select_tag "rated_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["rated_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('rated_by_metamap_#{metamap.id}')" %>
+		</div>  	
+		<% end -%>
 	
-	<%= hidden_field_tag :dialog_id, @dialog_id %>
-	<%= hidden_field_tag :from, "dialog" %>
-	<%= hidden_field_tag :page, 1 %>
-	<%= hidden_field_tag :test, params[:test] %>
+		<div class="lefttitle">Show:</div>
+		<div class="leftfield">
+		<%= select_tag "perscr", options_for_select([['25 messages',25],['50 messages',50],['100 messages',100]],@perscr), :onchange=>"list('perscr')" %>
+		</div>
 	
-</div>
+		<%= hidden_field_tag :dialog_id, @dialog_id %>
+		<%= hidden_field_tag :from, "dialog" %>
+		<%= hidden_field_tag :page, 1 %>
+		<%= hidden_field_tag :test, params[:test] %>
+	
+	</div><!--forumcontrol3-->
+	
+</div><!--forumcontrol-->
 </form>
 
 <div id="newforumitem" class="newforumitem" style="display:none"></div>

@@ -530,6 +530,13 @@ div#forumcontrol div.leftfield {
 div#forumcontrol div.right {
 	float:right;
 }
+div#forumcontrol2 {
+    display: none;
+}
+div#forumcontrol3 {
+    display: none;
+}
+
 
 img.playicon {
 	position:absolute;
