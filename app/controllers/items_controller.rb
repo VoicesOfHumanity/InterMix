@@ -537,6 +537,21 @@ class ItemsController < ApplicationController
     end
     session[:dialog_id] = @dialog_id
     
+    if @dialog_id.to_i > 0 and @group_id.to_i > 0 and not @is_member
+      #-- If the reader isn't a member of the group the message is posted under, see if he's a member of another group in the discussion
+      for group in @dialog.groups
+        group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",group.id,current_participant.id).find(:first)
+        if group_participant
+          @group_id = group.id
+          @group = group
+          @is_member = true
+          session[:group_id] = @group_id
+          session[:group_is_member] = @is_member
+          break
+        end
+      end
+    end
+    
     @period_id = 0
     @posted_by = 0
     @posted_meta={}
