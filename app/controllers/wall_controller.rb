@@ -21,7 +21,7 @@ class WallController < ApplicationController
     #@items = @items.paginate :page=>@page, :per_page => @per_page    
     
     
-    @items, @itemsproc = Item.list_and_results(nil,nil,nil,@participant_id,{},{},false,nil,current_participant.id)
+    @items, @itemsproc = Item.list_and_results(nil,nil,nil,@participant_id,{},{},false,'items.id desc',current_participant.id)
     
     update_last_url
   end  

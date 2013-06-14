@@ -48,6 +48,28 @@ class Message < ActiveRecord::Base
     cdata['groupforumlink'] = "http://#{domain}/groups/#{@group.id}/forum?auth_token=#{recipient.authentication_token}" if @group
     cdata['editsettingslink'] = "http://#{domain}/me/profile/edit?auth_token=#{recipient.authentication_token}#settings"
     
+    #dialogs = OpenStruct.new
+    dialogs = {}
+    if @group.dialogs
+      for dialog in @group.dialogs
+        if dialog.shortname.to_s != ''
+          d = {}
+          d['shortname'] = dialog.shortname
+          d['name'] = dialog.name
+          d['description'] = dialog.description
+          d['shortdesc'] = dialog.shortdesc
+          d['forumlink'] = "http://#{dialog.shortname}.#{domain}/dialogs/#{dialog.id}/forum?auth_token=#{recipient.authentication_token}"
+          d['logo'] = "#{BASEDOMAIN}#{dialog.logo.url}" if dialog.logo.exists?        
+          dialogs[dialog.shortname] = d
+          #dialogs.send("#{dialog.shortname}=", d)
+          cdata[dialog.shortname] = d
+        end
+      end
+    end
+    cdata['discussion'] = dialogs
+    
+    #cdata['exp'] = cdata['newdis'].inspect
+    
     #-- Expand any macros    
     sendmessage = Liquid::Template.parse(self.message).render(cdata)
       

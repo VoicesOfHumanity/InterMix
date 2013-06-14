@@ -55,8 +55,9 @@ function newmess() {
 		$('#messageview').hide();
 		showingview = false;
 	}
-	if (showingedit && replying_to==0) {
+	if (showingedit) {
 		$('#messageedit').hide();
+		$('#reply_tr').hide();
 		showingedit = false;
 		replying_to = 0;
 		return;
