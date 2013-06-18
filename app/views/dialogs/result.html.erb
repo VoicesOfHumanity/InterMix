@@ -45,6 +45,8 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 <br>
 </div>
 
+<p>Explanation:<br><%=raw @data[0]['explanation'] %></p>
+
 <pre>
 <%= @data[0].inspect %>	
 </pre>	

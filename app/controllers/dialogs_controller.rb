@@ -669,6 +669,7 @@ class DialogsController < ApplicationController
     @data[0]['avg_votes_app'] = 0   # Average number of approval votes
     @data[0]['avg_interest'] = 0   # Average interest rating
     @data[0]['avg_approval'] = 0   # Average approval rating
+    @data[0]['explanation'] = ''
         
     items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").includes(:participant).includes(:item_rating_summary)
         
@@ -686,17 +687,21 @@ class DialogsController < ApplicationController
       rating_id = rating.id
       item_id = rating.item_id
       rater_id = rating.participant_id
-      @data[0]['ratings'][rating.id] = rating
-      @data[0]['num_interest'] += 1 if rating.interest
-      @data[0]['num_approval'] += 1 if rating.approval
-      @data[0]['tot_interest'] += rating.interest.to_i if rating.interest
-      @data[0]['tot_approval'] += rating.approval.to_i if rating.approval
-      item_int_uniq[item_id] = true if rating.interest
-      item_app_uniq[item_id] = true if rating.approval
+      if @data[0]['items'][item_id]
+        #-- Only count if the item actually exists
+        @data[0]['ratings'][rating.id] = rating
+        @data[0]['num_interest'] += 1 if rating.interest
+        @data[0]['num_approval'] += 1 if rating.approval
+        @data[0]['tot_interest'] += rating.interest.to_i if rating.interest
+        @data[0]['tot_approval'] += rating.approval.to_i if rating.approval
+        item_int_uniq[item_id] = true if rating.interest
+        item_app_uniq[item_id] = true if rating.approval
+      end
     end
     @data[0]['num_int_items'] = item_int_uniq.length
     @data[0]['num_app_items'] = item_app_uniq.length
     
+    @data[0]['explanation'] += "avg_votes_int =#{ @data[0]['num_interest']} / #{@data[0]['num_int_items']} = #{@data[0]['avg_votes_int']}<br>"
     
     @data[0]['avg_votes_int'] = ( @data[0]['num_interest'] / @data[0]['num_int_items'] ).to_i if@data[0]['num_int_items'] > 0
     @data[0]['avg_votes_app'] = ( @data[0]['num_approval'] / @data[0]['num_app_items'] ).to_i if @data[0]['num_app_items'] > 0
@@ -704,6 +709,11 @@ class DialogsController < ApplicationController
     @data[0]['avg_votes_app'] = 20 if @data[0]['avg_votes_app'] > 20
     @data[0]['avg_interest'] = 1.0 * @data[0]['tot_interest'] / @data[0]['num_interest'] if @data[0]['num_interest'] > 0
     @data[0]['avg_approval'] = 1.0 * @data[0]['tot_approval'] / @data[0]['num_approval'] if @data[0]['num_approval'] > 0
+
+    @data[0]['explanation'] += "avg_votes_int = #{@data[0]['num_interest']} / #{@data[0]['num_int_items']} = #{@data[0]['avg_votes_int']}<br>"
+    @data[0]['explanation'] += "avg_votes_app = #{@data[0]['num_approval']} / #{@data[0]['num_app_items']} = #{@data[0]['avg_votes_app']}<br>"
+    @data[0]['explanation'] += "avg_interest = #{@data[0]['tot_interest']} / #{@data[0]['num_interest']} = #{@data[0]['avg_interest']}<br>"
+    @data[0]['explanation'] += "avg_approval = #{@data[0]['tot_approval']} / #{@data[0]['num_approval']} = #{@data[0]['avg_approval']}<br>"
     
     @avg_votes_int = @data[0]['avg_votes_int']
     @avg_votes_app = @data[0]['avg_votes_app']
@@ -765,14 +775,18 @@ class DialogsController < ApplicationController
       @data[0]['items'].each do |item_id,item|
         iproc = @data[0]['itemsproc'][item_id]
         if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
+          old_num_interest = iproc['num_interest']
           iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
           iproc['num_interest'] = @avg_votes_int
           iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+          @data[0]['explanation'] += "regmean: ##{item_id} int votes adjusted #{old_num_interest} -> #{iproc['num_interest']}<br>"
         end  
         if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
+          old_num_approval = iproc['num_approval']
           iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
           iproc['num_approval'] = @avg_votes_app
           iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+          @data[0]['explanation'] += "regmean: ##{item_id} app votes adjusted #{old_num_approval} -> #{iproc['num_approval']}<br>"
         end  
         iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
         @data[0]['itemsproc'][item_id] = iproc
