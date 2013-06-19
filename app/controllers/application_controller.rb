@@ -203,12 +203,15 @@ class ApplicationController < ActionController::Base
     elsif not session[:has_required]
       session[:cur_baseurl] + '/me/profile/edit'
     elsif dialog_id.to_i > 0
+      logger.info("application#after_sign_in_path_for setting path to dialog forum")
       session[:cur_baseurl] + "/dialogs/#{dialog_id}/forum"
     elsif group_id.to_i > 0
+      logger.info("application#after_sign_in_path_for setting path to group forum")
       session[:cur_baseurl] + "/groups/#{group_id}/forum"      
     elsif current_participant.last_url.to_s != ''
       current_participant.last_url
     else  
+      logger.info("application#after_sign_in_path_for using default path")
       super
     end  
   end
@@ -256,15 +259,18 @@ class ApplicationController < ActionController::Base
     end
     @group_id = xgroup_id
     @dialog_id = xdialog_id
+    logger.info("application#get_group_dialog_from_subdomain group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
     return @group_id, @dialog_id
   end  
   
   def check_group_and_dialog  
     #-- This is probably rather inconsistent. When do we call which method to look for group or dialog ids?
+    logger.info("application#check_group_and_dialog")    
     if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
       get_group_dialog_from_subdomain
     end  
     if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+      #-- Get our last group/dialog if we don't already have one
       session[:group_id] = current_participant.last_group_id
       session[:dialog_id] = current_participant.last_dialog_id
       if session[:group_id].to_i > 0
@@ -286,6 +292,7 @@ class ApplicationController < ActionController::Base
           session[:dialog_prefix] = @dialog.shortname
         end
       end
+      logger.info("application#check_group_and_dialog setting last group/dialog group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
     end  
   end
   
