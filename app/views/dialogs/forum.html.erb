@@ -132,7 +132,7 @@
 </div>
 
 
-<% if @new_signup -%>
+<% if not current_participant.dialog_pop_shown -%>
 <div id="welcomepopup" class="modaldiv">
 <%= render(:partial => 'dialogs/welcome')%>
 </div>

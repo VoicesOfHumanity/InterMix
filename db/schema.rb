@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130608231529) do
+ActiveRecord::Schema.define(:version => 20130619011810) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -574,6 +574,7 @@ ActiveRecord::Schema.define(:version => 20130608231529) do
     t.string   "handle"
     t.string   "authentication_token"
     t.boolean  "new_signup",                                                           :default => true
+    t.boolean  "dialog_pop_shown",                                                     :default => false
     t.boolean  "required_entered",                                                     :default => false
     t.integer  "last_group_id"
     t.integer  "last_dialog_id"
