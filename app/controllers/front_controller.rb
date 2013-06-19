@@ -403,7 +403,9 @@ class FrontController < ApplicationController
         return
       end
     elsif @participant
-      flash[:alert] = "You already have an account<br>" 
+      flash[:alert] = "You already have an account<br>"
+      redirect_to '/participants/sign_in'
+      return
     else
       @participant = Participant.new
       @participant.first_name = first_name.strip
@@ -696,6 +698,8 @@ class FrontController < ApplicationController
     previous_messages = 0
     if @participant 
       flash[:alert] = "You seem to already have an account. Please log into that.<br>"
+      redirect_to '/participants/sign_in'
+      return
     else
       @participant = Participant.new
       @participant.first_name = first_name.strip

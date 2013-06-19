@@ -214,6 +214,7 @@ class GroupsController < ApplicationController
     @new_text = params[:new_text].to_s
     @messtext = params[:messtext].to_s
     if @group.invite_template.to_s != ''
+      @messtext += "<br><hr style=\"clear:both;\">\n" if @messtext != ''
       @messtext += @group.invite_template
     else       
       @messtext += render_to_string :partial=>"invite_default", :layout=>false
