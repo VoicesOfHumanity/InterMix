@@ -701,8 +701,6 @@ class DialogsController < ApplicationController
     @data[0]['num_int_items'] = item_int_uniq.length
     @data[0]['num_app_items'] = item_app_uniq.length
     
-    @data[0]['explanation'] += "avg_votes_int =#{ @data[0]['num_interest']} / #{@data[0]['num_int_items']} = #{@data[0]['avg_votes_int']}<br>"
-    
     @data[0]['avg_votes_int'] = ( @data[0]['num_interest'] / @data[0]['num_int_items'] ).to_i if@data[0]['num_int_items'] > 0
     @data[0]['avg_votes_app'] = ( @data[0]['num_approval'] / @data[0]['num_app_items'] ).to_i if @data[0]['num_app_items'] > 0
     @data[0]['avg_votes_int'] = 20 if @data[0]['avg_votes_int'] > 20
