@@ -189,6 +189,7 @@ class ApplicationController < ActionController::Base
     else
       session[:cur_baseurl] = "http://" + BASEDOMAIN    
     end
+    logger.info("application#after_sign_in_path_for cur_baseurl:#{session[:cur_baseurl]}")
 
     #-- See if they're a moderator of a group, or a hub admin. Only those can add new discussions.
     groupsmodof = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").all
@@ -294,6 +295,7 @@ class ApplicationController < ActionController::Base
       end
       logger.info("application#check_group_and_dialog setting last group/dialog group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
     end  
+    return session[:group_id], session[:dialog_id]
   end
   
   
