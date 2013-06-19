@@ -50,22 +50,24 @@ class Message < ActiveRecord::Base
     
     #dialogs = OpenStruct.new
     dialogs = {}
-    if @group.dialogs
-      for dialog in @group.dialogs
-        if dialog.shortname.to_s != ''
-          d = {}
-          d['shortname'] = dialog.shortname
-          d['name'] = dialog.name
-          d['description'] = dialog.description
-          d['shortdesc'] = dialog.shortdesc
-          d['forumlink'] = "http://#{dialog.shortname}.#{domain}/dialogs/#{dialog.id}/forum?auth_token=#{recipient.authentication_token}"
-          d['logo'] = "#{BASEDOMAIN}#{dialog.logo.url}" if dialog.logo.exists?        
-          dialogs[dialog.shortname] = d
-          #dialogs.send("#{dialog.shortname}=", d)
-          cdata[dialog.shortname] = d
+    if @group
+      if @group.dialogs
+        for dialog in @group.dialogs
+          if dialog.shortname.to_s != ''
+            d = {}
+            d['shortname'] = dialog.shortname
+            d['name'] = dialog.name
+            d['description'] = dialog.description
+            d['shortdesc'] = dialog.shortdesc
+            d['forumlink'] = "http://#{dialog.shortname}.#{domain}/dialogs/#{dialog.id}/forum?auth_token=#{recipient.authentication_token}"
+            d['logo'] = "#{BASEDOMAIN}#{dialog.logo.url}" if dialog.logo.exists?        
+            dialogs[dialog.shortname] = d
+            #dialogs.send("#{dialog.shortname}=", d)
+            cdata[dialog.shortname] = d
+          end
         end
       end
-    end
+    end  
     cdata['discussion'] = dialogs
     
     #cdata['exp'] = cdata['newdis'].inspect

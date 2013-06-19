@@ -37,7 +37,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 	no overall winner<br>
 <% else -%>	
 	<% for item_id,i in @data[0]['itemsproc'] -%>
-		<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%= i['votes'] %><br>
+		<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  (i['num_interest'] or i['num_approval']) ? [i['num_interest'],i['num_approval']].max : 0  %><br>
 		<% break if not @all %>
 	<% end -%>
 	[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result">see all in the forum</a>]<br>
