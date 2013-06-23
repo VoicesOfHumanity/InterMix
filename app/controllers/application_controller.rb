@@ -216,7 +216,48 @@ class ApplicationController < ActionController::Base
       super
     end  
   end
+  
+  def after_token_authentication
+    #-- This is called by automatic login, rather than after_sign_in_path_for
+    logger.info("application#after_token_authentication")
+    
+    session[:cur_prefix] = ''
+    session[:cur_baseurl] = ''
+    session[:group_id] = 0
+    session[:group_name] = ''
+    session[:group_prefix] = ''
+    session[:dialog_id] = 0
+    session[:dialog_name] = ''
+    session[:dialog_prefix] = ''
+    
+    #-- This will check if required fields have been entered, and remember it, so we will show only their profile if we're missing something.
+    session[:has_required] = current_participant.has_required
+    
+    group_id,dialog_id = get_group_dialog_from_subdomain
+    group_id,dialog_id = check_group_and_dialog if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
 
+    if session[:dialog_prefix] != '' and session[:group_prefix] != ''
+      session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
+    elsif session[:group_prefix] != ''
+      session[:cur_prefix] = session[:group_prefix]
+    elsif session[:dialog_prefix] != ''
+      session[:cur_prefix] = session[:dialog_prefix]
+    end
+    
+    if session[:cur_prefix] != ''
+      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+    else
+      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+    end
+    logger.info("application#after_token_authentication cur_baseurl:#{session[:cur_baseurl]}")
+    
+    if session[:cur_prefix] != '' and request.host != session[:cur_prefix] + "." + ROOTDOMAIN and BASEDOMAIN != 'intermix.dev'
+      #-- If this is not the dev system, and if the subdomain isn't already right, redirect
+      new_url = session[:cur_baseurl] . request.fullpath
+      redirect_to new_url
+    end  
+    
+  end
 
   def get_group_dialog_from_subdomain
     #-- If we've gotten a group and/or dialog shortname in the subdomain

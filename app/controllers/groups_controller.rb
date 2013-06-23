@@ -380,7 +380,7 @@ class GroupsController < ApplicationController
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
     if flash[:messtext]
       @messtext = flash[:messtext]
-    elsif @group.import_template.to_s != ''
+    elsif @group.import_template.to_s.strip != ''
       @messtext = @group.import_template
     else       
       @messtext = render_to_string :partial=>"import_default", :layout=>false
@@ -444,7 +444,8 @@ class GroupsController < ApplicationController
 
       if participant
         flash[:notice] += "- already a member<br>"
-        password = "[as entered]"
+        #password = "[as entered]"
+        password = "<a href=\"http://#{@group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN}/participants/password/new\">Forgot your password?</a>"
       else
         participant = Participant.new
         participant.first_name = first_name
