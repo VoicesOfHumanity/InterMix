@@ -31,7 +31,11 @@ class MessagesController < ApplicationController
   
   def list
     index
-    render :partial=>'list', :layout=>false  
+    if not params.include?(:inout)
+      redirect_to "/messages"
+    else  
+      render :partial=>'list', :layout=>false  
+    end
   end  
 
   def new

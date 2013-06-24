@@ -3,17 +3,19 @@
 	<%= f.inputs do %>
 		<%= f.input :response_to_id, :as => :hidden %>
 		<% if @message.to_participant_id.to_i > 0 -%>
-		<li class="select optional" id="to_participant_id_input">
-		<label>to Contact</label>
-		<div style="float:left">
-		<%= @to_participant_name %>
-		</div>
-		</li>
-		<%= f.input :to_participant_id, :as => :hidden %>	
+			<li class="select optional" id="to_participant_id_input">
+			<label>to Contact</label>
+			<div style="float:left">
+			<%= @to_participant_name %>
+			</div>
+			</li>
+			<%= f.input :to_participant_id, :as => :hidden %>	
 		<% else -%>
-		<%= f.input :to_participant_id, :label => 'to Contact', :as => :select, :collection => @participant.contacts.collect{|c| [c.name,c.id]}+[['*yourself*',current_participant.id]] %>	
+			<%= f.input :to_participant_id, :label => 'to Contact', :as => :select, :collection => @participant.contacts.collect{|c| [c.name,c.id]}+[['*yourself*',current_participant.id]] %>	
 		<% end -%>
-		<%= f.input :to_group_id, :label => 'or Group', :as => :select, :collection => @groupsadminin.collect{|c| [c.group.name,c.group.id]} %>	
+		<% if @groupsadminin.length > 0 -%>
+			<%= f.input :to_group_id, :label => 'or Group', :as => :select, :collection => @groupsadminin.collect{|c| [c.group.name,c.group.id]} %>	
+		<% end -%>
 		<%= f.input :subject, :input_html=>{:size=>68} %>
 		<% f.input :message, :as => :text, :required => true %>
 		<li>
