@@ -771,6 +771,7 @@ class FrontController < ApplicationController
     cdata['recipient'] = @participant     
     cdata['participant'] = @participant 
     cdata['group'] = @group if @group
+    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
     cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}"
@@ -856,6 +857,8 @@ class FrontController < ApplicationController
       cdata['participant'] = @participant 
       cdata['group'] = @group if @group
       cdata['dialog'] = @dialog if @dialog
+      cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+      cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
       cdata['domain'] = BASEDOMAIN
       #if @dialog
       #  @content += "<p>Thank you for confirming!<br><br>You are already logged in.<br><br>Click on <a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/dialogs/#{@dialog.id}/forum\">Discussion</a> on the left to see the messages.<br><br>Bookmark this link so you can come back later:<br><br><a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/\">http://#{@dialog.shortname}.#{ROOTDOMAIN}/</a>.</p>"
@@ -1061,6 +1064,7 @@ class FrontController < ApplicationController
     cdata['recipient'] = @participant     
     cdata['participant'] = @participant 
     cdata['group'] = @group if @group
+    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
     cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}"
@@ -1226,6 +1230,8 @@ class FrontController < ApplicationController
       end
       
       cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo}
+      cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+      cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
       if @dialog_group and @dialog_group.signup_template.to_s != ''
         template_content = @dialog_group.signup_template
       elsif @dialog.signup_template.to_s != ''
@@ -1264,6 +1270,7 @@ class FrontController < ApplicationController
     end
         
     cdata = {'group'=>@group, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies, 'logo'=>@logo}
+    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     if @group and @group.signup_template.to_s != ''
       template_content = @group.signup_template
     else

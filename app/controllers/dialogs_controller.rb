@@ -1379,6 +1379,8 @@ class DialogsController < ApplicationController
     cdata = {}
     cdata['group'] = @group if @group
     cdata['dialog'] = @dialog if @dialog
+    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
     cdata['dialog_group'] = @dialog_group if @dialog_group
     cdata['participant'] = @participant
     cdata['recipient'] = @participant
@@ -1432,6 +1434,8 @@ class DialogsController < ApplicationController
     cdata['group'] = @group if @group
     cdata['period'] = @period if @period
     cdata['dialog'] = @dialog if @dialog
+    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
     cdata['dialog_group'] = @dialog_group if @dialog_group
     cdata['participant'] = @participant
     cdata['recipient'] = @participant

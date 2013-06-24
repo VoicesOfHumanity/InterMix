@@ -223,6 +223,7 @@ class GroupsController < ApplicationController
     @cdata = {}
     @cdata['current_participant'] = current_participant
     @cdata['group'] = @group if @group
+    @cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
 
@@ -574,6 +575,7 @@ class GroupsController < ApplicationController
         cdata['participant'] = participant 
         cdata['current_participant'] = current_participant
         cdata['group'] = @group if @group
+        cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
         cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
         if @group.logo.exists? then
          cdata['logo'] = "#{BASEDOMAIN}#{@group.logo.url}"
@@ -959,6 +961,8 @@ class GroupsController < ApplicationController
     cdata = {}
     cdata['group'] = @group
     cdata['dialog'] = @dialog if @dialog
+    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group and @group.logo.exists?
+    cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
     cdata['dialog_group'] = @dialog_group if @dialog_group
     cdata['participant'] = @participant
     cdata['current_participant'] = @current_participant
