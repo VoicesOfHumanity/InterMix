@@ -8,6 +8,9 @@ class Item < ActiveRecord::Base
   has_one :item_rating_summary
   serialize :oembed_response
   
+  #-- We store the result of the voting_ok check in attributes. Is it ok? Explanation? For what user?
+  attr_accessor :v_ok, :v_ok_exp, :v_p_id
+  
   acts_as_taggable
   
   after_create :process_new_item
@@ -807,8 +810,15 @@ class Item < ActiveRecord::Base
     #-- Decide whether the current user is allowed to rate the current item
     #-- They need to be a member of the group or discussion
     #-- The main reason should either be that voting manually is turned off, or voting period is over, and they already rated it
+    if self.v_p_id and v_p_id == participant_id
+      #-- If we're called again for the same user, just return the stored result
+      return self.v_ok
+    end
+    ok = true
+    exp = ''
     if participant_id.to_i == 0
-      return false
+      ok = false  
+      exp = "Your account isn't recognized"    
     elsif self.dialog
       #-- The message is for a discussion
       #-- Is he a member of a group that's a member of the discussion?
@@ -825,21 +835,29 @@ class Item < ActiveRecord::Base
         end
         break if is_in_discussion
       end
-      return false if not is_in_discussion
-      
-      #-- Even if they're in the discussion, they can't vote if voting manually is turned off, or voting period is over, and they already rated it
+
       if self.period_id.to_i > 0
         period = Period.find_by_id(self.period_id)
       end
-      if not self.dialog.voting_open
+      
+      #-- Even if they're in the discussion, they can't vote if voting manually is turned off, or voting period is over, and they already rated it      
+      if not is_in_discussion
+        ok = false
+        exp = "You're not in a group that participates in the #{dialog.name} discussion that this message was posted in"
+      elsif not self.dialog.voting_open
+        ok = false
+        exp = "Ratings are not open for the #{dialog.name} discussion that this message was posted in"
       elsif self.period_id.to_i > 0 and not period
+        ok = false
+        exp = "The decision period (#{self.period_id}) this message was posted in doesn't seem to exist"
       elsif period and period.endrating.to_s != '' and Time.now.strftime("%Y-%m-%d") > period.endrating.strftime("%Y-%m-%d") and self['hasrating'].to_i > 0
         #-- The rating in the period is over, and this person rated the item
         logger.info("item#voting_ok #{self.id} already rated and period #{self.period_id} is over (#{Time.now.strftime("%Y-%m-%d")} > #{period.endrating})")
+        ok = false
+        exp = "Your vote from the #{period.name} decision period is frozen"
       else
-        return true
+        ok = true
       end
-      return false
 
     elsif self.group_id.to_i > 0  
       #-- This message belongs to a group
@@ -849,14 +867,30 @@ class Item < ActiveRecord::Base
       if not group_participant
         #-- He's not a member
         logger.info("item#voting_ok #{participant_id} is not a member of the group #{self.group_id} for item #{self.id}")
-        return false
+        ok = false
+        exp = "You are not a member of the #{group.name} group that this message was posted in"
       end
-      
+
     else
-      return true
+      ok = true
       
     end
-    true
+    
+    self.v_ok = ok
+    self.v_ok_exp = exp
+    self.v_p_id = participant_id
+    
+    ok
+  end  
+  
+  def voting_ok_exp(participant_id=nil)
+    if self.v_p_id and (not participant_id or v_p_id == participant_id)
+      #-- If we're called again for the same user, just return the stored result
+    else
+      #-- If this is the first time, figure it out first
+      voting_ok(participant_id)  
+    end
+    return self.v_ok_exp    
   end  
   
   #def hasrating
