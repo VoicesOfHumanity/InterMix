@@ -78,6 +78,16 @@ class Dialog < ActiveRecord::Base
     end
   end
   
+  def recent_period
+    #-- Find the most recent period
+    p = self.active_period
+    if p
+      p
+    else
+      p = Period.where("dialog_id=#{self.id}").order("id").last
+    end    
+  end  
+  
   def to_liquid
       {'id'=>id,'name'=>name,'shortname'=>shortname,'description'=>description}
   end

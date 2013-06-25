@@ -634,8 +634,16 @@ class DialogsController < ApplicationController
     @less_more = params[:less_more] || 'less'
     @regress = params[:regress] || 'regress'
     
-    @period_id = @dialog.current_period.to_i if not params.include?(:period_id) 
-    @period = Period.find_by_id(@period_id)
+    if not params.include?(:period_id) 
+      if @dialog.current_period.to_i > 0
+        #-- Use the current period, if we aren't being told anything else
+        @period_id = @dialog.current_period.to_i
+      else
+        #-- If there's no current period, use the most recent one, if there is one
+        @period = @dialog.recent_period
+      end
+    end
+    @period = Period.find_by_id(@period_id) if not @period
     
     #@regmean = ((params[:regmean] || 1).to_i == 1)
     @regmean = (@regress == 'regress')
