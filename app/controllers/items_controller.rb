@@ -499,7 +499,12 @@ class ItemsController < ApplicationController
     #-- Show an individual post
     @from = params[:from] || 'individual'
     @item_id = params[:id]
-    @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary]).find_by_id(@item_id)
+    @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
+    
+    @item = @item.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})") if participant_signed_in?
+    @item = @item.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation") if participant_signed_in?    
+    @item = @item.find_by_id(@item_id)
+    
     @item.voting_ok(participant_signed_in? ? current_participant.id : 0)
 
     @group_id,@dialog_id = get_group_dialog_from_subdomain

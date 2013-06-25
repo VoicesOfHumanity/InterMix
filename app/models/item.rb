@@ -843,18 +843,18 @@ class Item < ActiveRecord::Base
       #-- Even if they're in the discussion, they can't vote if voting manually is turned off, or voting period is over, and they already rated it      
       if not is_in_discussion
         ok = false
-        exp = "You're not in a group that participates in the #{dialog.name} discussion that this message was posted in"
+        exp = "You're not in a group that participates in this discussion"
       elsif not self.dialog.voting_open
         ok = false
-        exp = "Ratings are not open for the #{dialog.name} discussion that this message was posted in"
+        exp = "Ratings are not open for this discussion"
       elsif self.period_id.to_i > 0 and not period
         ok = false
-        exp = "The decision period (#{self.period_id}) this message was posted in doesn't seem to exist"
+        exp = "The decision period doesn't seem to exist"
       elsif period and period.endrating.to_s != '' and Time.now.strftime("%Y-%m-%d") > period.endrating.strftime("%Y-%m-%d") and self['hasrating'].to_i > 0
         #-- The rating in the period is over, and this person rated the item
         #logger.info("item#voting_ok #{self.id} already rated and period #{self.period_id} is over (#{Time.now.strftime("%Y-%m-%d")} > #{period.endrating})")
         ok = false
-        exp = "Your vote from the #{period.name} decision period is frozen"
+        exp = "Your vote from this decision period is frozen"
       else
         ok = true
         exp = "Has discussion, but no reason to now allow vote"
@@ -869,7 +869,7 @@ class Item < ActiveRecord::Base
         #-- He's not a member
         #logger.info("item#voting_ok #{participant_id} is not a member of the group #{self.group_id} for item #{self.id}")
         ok = false
-        exp = "You are not a member of the #{group.name} group that this message was posted in"
+        exp = "You are not a member of this group"
       else
         exp = "Is a group member. All ok."  
       end

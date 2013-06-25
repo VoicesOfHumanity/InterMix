@@ -12,7 +12,7 @@
 		<div id="vote_int_<%= item.id %>" class="votesection interest" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="intswitch(<%= item.id %>,<%= top %>)"<% else %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="intshort_<%= item.id %>" class="intshort">
 				<img src="/assets/sface.gif" alt="face"/>
-				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= @itemsproc[item.id]['hasrating'] if @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i>0 %> current_participant:<%= participant_signed_in? ? current_participant.id : 0 %> interest:<%= item['interest'].to_i %> voting_ok:<%= item.voting_ok(participant_signed_in? ? current_participant.id : 0) %>"><%= @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0 ? @itemsproc[item.id]['rateinterest'].to_i : '-'%></span>
+				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= @itemsproc[item.id]['hasrating'] if @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i>0 %> current_participant:<%= participant_signed_in? ? current_participant.id : 0 %> interest:<%= item['interest'].to_i %> voting_ok:<%= item.voting_ok(participant_signed_in? ? current_participant.id : 0) %>"><%= (@itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0) ? @itemsproc[item.id]['rateinterest'].to_i : '-'%></span>
 				<img src="/assets/aface.gif" alt="face"/>
 			</div>
 			<div id="intlong_<%= item.id %>" class="intlong" style="display:none">
@@ -37,7 +37,7 @@
 		<div id="vote_app_<%= item.id %>" class="votesection approval" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="appswitch(<%= item.id %>,<%= top %>)"<% else %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
 			<div id="appshort_<%= item.id %>" class="appshort">
 				<img src="/assets/fface.gif" alt="face"/>				
-			<span id="vote_app_rate_<%= item.id %>"><%= @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0 ? @itemsproc[item.id]['rateapproval'].to_i : '-'%></span>
+			<span id="vote_app_rate_<%= item.id %>"><%= (@itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0) ? @itemsproc[item.id]['rateapproval'].to_i : '-'%></span>
 			<img src="/assets/hface.gif" alt="face"/>
 			</div>
 			<div id="applong_<%= item.id %>" class="applong" style="display:none">
