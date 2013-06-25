@@ -857,6 +857,7 @@ class Item < ActiveRecord::Base
         exp = "Your vote from the #{period.name} decision period is frozen"
       else
         ok = true
+        exp = "Has discussion, but no reason to now allow vote"
       end
 
     elsif self.group_id.to_i > 0  
@@ -869,10 +870,13 @@ class Item < ActiveRecord::Base
         #logger.info("item#voting_ok #{participant_id} is not a member of the group #{self.group_id} for item #{self.id}")
         ok = false
         exp = "You are not a member of the #{group.name} group that this message was posted in"
+      else
+        exp = "Is a group member. All ok."  
       end
 
     else
       ok = true
+      exp = "Didn't match any of the criteria"
       
     end
     
