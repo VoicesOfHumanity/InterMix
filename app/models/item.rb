@@ -852,7 +852,7 @@ class Item < ActiveRecord::Base
         exp = "The decision period (#{self.period_id}) this message was posted in doesn't seem to exist"
       elsif period and period.endrating.to_s != '' and Time.now.strftime("%Y-%m-%d") > period.endrating.strftime("%Y-%m-%d") and self['hasrating'].to_i > 0
         #-- The rating in the period is over, and this person rated the item
-        logger.info("item#voting_ok #{self.id} already rated and period #{self.period_id} is over (#{Time.now.strftime("%Y-%m-%d")} > #{period.endrating})")
+        #logger.info("item#voting_ok #{self.id} already rated and period #{self.period_id} is over (#{Time.now.strftime("%Y-%m-%d")} > #{period.endrating})")
         ok = false
         exp = "Your vote from the #{period.name} decision period is frozen"
       else
@@ -866,7 +866,7 @@ class Item < ActiveRecord::Base
       group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).find(:first)
       if not group_participant
         #-- He's not a member
-        logger.info("item#voting_ok #{participant_id} is not a member of the group #{self.group_id} for item #{self.id}")
+        #logger.info("item#voting_ok #{participant_id} is not a member of the group #{self.group_id} for item #{self.id}")
         ok = false
         exp = "You are not a member of the #{group.name} group that this message was posted in"
       end
@@ -879,6 +879,8 @@ class Item < ActiveRecord::Base
     self.v_ok = ok
     self.v_ok_exp = exp
     self.v_p_id = participant_id
+    
+    logger.info("item#voting_ok ##{self.id} ok:#{ok} exp:#{exp}")
     
     ok
   end  
