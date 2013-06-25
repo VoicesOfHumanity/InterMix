@@ -641,6 +641,7 @@ class DialogsController < ApplicationController
       else
         #-- If there's no current period, use the most recent one, if there is one
         @period = @dialog.recent_period
+        @period_id = @period.id
       end
     end
     @period = Period.find_by_id(@period_id) if not @period
