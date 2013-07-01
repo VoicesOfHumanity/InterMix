@@ -711,3 +711,70 @@ tr.line0 td {
 tr.line1 td {
    background: #e0d0e0;
 }
+
+td.dotted {
+  border: 1px dotted #333333;
+}
+
+.listtable td { 
+  vertical-align: top;
+  font-size: 0.9em;
+}
+.listtable th {
+  background: #dddddd;
+}
+.listtable td.right {
+  text-align: right;
+  vertical-align: top;
+}
+.listtable td.center {
+  text-align: center;
+  vertical-align: top;
+}
+.listtable tr.line0 td {
+   background: #e0f8f8;	
+}
+.listtable tr.line1 td {
+   background: #f8d0f8;
+}
+.listtable td.on {
+  background: #ccffcc;
+  text-align: center;
+  border: 1px solid #ffffff;
+}
+.listtable tr.on td {
+    background: #ccffcc;    
+}
+.listtable td.hover:hover {
+  border: 1px dotted #333333;
+}
+.listtable td.off {
+  background: #ffcccc;
+  border: 1px solid #ffffff;
+}
+.listtable tr.off td {
+    background: #ffcccc;
+}
+.listtable tr.hover td {
+  border: 1px dotted #333333;
+}
+
+.edittable td { 
+  background: #eeeeee;
+  vertical-align: top;
+}
+.edittable td.left {
+  background: #dddddd;
+  text-align: right;
+  vertical-align: top;
+}
+.edittable td.leftflag {
+  background: #dddddd;
+  text-align: right;
+  color: #ff0000;
+}
+.edittable td.right {
+  background: #dddddd;
+  text-align: right;
+}
+

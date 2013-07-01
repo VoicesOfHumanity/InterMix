@@ -7,6 +7,26 @@
 	<%= f.inputs do %>
 
 		<%= hidden_field_tag :group_participant_id, @group_participant.id %>
+		<%= hidden_field_tag :members_active, @active.to_i %>
+
+		<li class="text optional" id="group_front_template_input">
+			<label>Profile</label>
+			<a href="/participant/<%= @participant.id %>/profile">#<%= @participant.id %></a>
+		</li>
+
+		<li class="text optional" id="group_front_template_input">
+			<label>Name</label>
+			<a href="/participant/<%= @participant.id %>/profile"><%= @participant.name %></a>
+		</li>
+
+		<li class="text optional" id="group_front_template_input">
+			<label>Intermix Status</label>
+			<%= @participant.status ? @participant.status : '???' %>
+		</li>
+		
+		<hr>
+
+		<li><b>Group Membership Settings:</b></li>
 
 		<%= f.input :moderator, :as=>:boolean %>
 		<%= f.input :active, :as=>:boolean %>

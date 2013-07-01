@@ -1,22 +1,28 @@
 <%= render(:partial => 'groups/menu')%>
 
-<h3>Members of: <%= @group.name %></h3>
+<h3><%= @title %></h3>
 
 <table class="listtable">
-<tr><th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th><th>Name</th><th>Active</th><th>Sub-groups / tags</th></tr>	
-<% for member in @group.active_members -%>
-<tr>
+<tr><th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th><th>Name</th><th>Profile</th><th>Intermix<br>Status</th><th>Group<br>Membership</th><th>Sub-groups / tags</th></tr>	
+<% for member in @members -%>
+<tr class="<%= (member.status=='active' and member.group_participants[0].active) ? "on" : "off" %>">
 	<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= member.id %>" /></td>
-	<td><a href="/participant/<%= member.id %>/profile"><%= member.name %></a></td>
-	<td><%= member.group_participants[0].active ? "yes" : "no" %></td>
+	<td><a href="/groups/<%= @group.id %>/group_participant_edit?participant_id=<%= member.id %>"><%= member.name %></a></td>
+	<td style="text-align:right"><a href="/participant/<%= member.id %>/profile"><%= member.id %></a></td>
+	<td><%= member.status ? member.status : "???" %></td>
+	<td><%= member.group_participants[0].active ? "ok" : "inactive" %></td>
 	<td><%= member.group_participants[0].subtags %></td>
 </tr>
 <% end -%>
 </table>
 
+<p><%= @members.length %> records</p>
+
 <p>Tag selected as sub-group
 	<%= select_tag :group_subtag_id, [['',0]]+GroupSubtag.where(:group_id=>@group.id).collect {|p| [ raw("#{p.tag}"), p.id ] } %>
 </p>
+
+<p>[<a href="/groups/<%= @group.id %>/members?active=1">Active</a>] [<a href="/groups/<%= @group.id %>/members?active=0">Inactive</a>] [<a href="/groups/<%= @group.id %>/members">All</a>]</p>
 
 <script>
 var allmarked = false;

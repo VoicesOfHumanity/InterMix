@@ -16,7 +16,11 @@
 
 <p><b>Owner:</b> <%= @group.owner_participant ? @group.owner_participant.name : @group.owner.to_i %></p>
 
-<p><b>Members:</b> <a href="/groups/<%= @group.id %>/members"><%= @group.group_participants_count.to_i %></a></p>
+<% if (@is_member and @is_moderator) or session[:is_hub_admin] or session[:is_sysadmin] -%>
+<p><b>Members:</b> <a href="/groups/<%= @group.id %>/members?active=1"><%= @group.active_members.count %></a></p>
+<% else -%>
+<p><b>Members:</b> <%= @group.active_members.count %></p>
+<% end -%>
 
 <p><b>Items Posted:</b> <%= @group.items_count.to_i %></p>
 

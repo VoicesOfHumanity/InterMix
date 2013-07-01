@@ -2,7 +2,8 @@ class Group < ActiveRecord::Base
   has_many :group_participants
   has_many :participants, :through => :group_participants
   has_many :moderators, :source => :participant, :through => :group_participants, :conditions => "moderator=1 and active=1"
-  has_many :active_members, :source => :participant, :through => :group_participants, :conditions => "active=1"
+  #has_many :active_members, :source => :participant, :through => :group_participants, :conditions => "participants.status='active' and group_participants.active=1"
+  #has_many :non_active_members, :source => :participant, :through => :group_participants, :conditions => "participants.status!='active' or group_participants.active!=1"
   has_many :dialog_groups
   has_many :dialogs, :through => :dialog_groups
   has_many :active_dialogs, :source => :dialog, :through => :dialog_groups, :conditions => "active=1"
@@ -21,6 +22,19 @@ class Group < ActiveRecord::Base
   has_attached_file :logo, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :path => "#{DATADIR}/:class/:attachment/:id/:style_:basename.:extension", :url => "/images/data/:class/:attachment/:id/:style_:basename.:extension"
   
   #validates_presence_of     :name, :shortname, :visibility, :openness, :owner
+
+  def active_members
+    members = Participant.includes(:group_participants).where("group_participants.group_id=#{self.id} and group_participants.participant_id=participants.id").where("participants.status='active' and group_participants.active=1").all
+  end
+  
+  def non_active_members
+    members = Participant.includes(:group_participants).where("group_participants.group_id=#{self.id} and group_participants.participant_id=participants.id").where("participants.status!='active' or participants.status is null or group_participants.active!=1").all
+  end
+  
+  def members_with_group_participants
+    #-- To make sure that we don't get some group_participants records that don't belong
+    members = Participant.includes(:group_participants).where("group_participants.group_id=#{self.id} and group_participants.participant_id=participants.id").all    
+  end  
 
   def dialogs_in
     #-- What dialogs does this group participate in?

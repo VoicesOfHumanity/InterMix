@@ -174,10 +174,34 @@ class GroupsController < ApplicationController
     #-- List of members, for either a moderator or other members
     @section = 'groups'
     @group_id = params[:id]
-    @group = Group.includes(:group_participants=>:participant).find(params[:id])
+    @group = Group.includes(:group_participants=>:participant).where("group_participants.group_id=#{@group_id}").find(params[:id])
+
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
     @is_moderator = (@group_participant and @group_participant.moderator)
+
+    if not ( (@is_member and @is_moderator) or session[:is_hub_admin] or session[:is_sysadmin] )
+      redirect_to "/groups/#{@group_id}"
+      return
+    end
+
+    if params.include? :active
+      if params[:active].to_i == 1
+        @active = 1
+        @members = @group.active_members
+        @title = "Active members"
+      else
+        @active = 0
+        @members = @group.non_active_members
+        @title = "Non-active members"
+      end
+    else
+      @active = -1
+      #@members = @group.participants     # problem with having several group_participants records
+      @members = @group.members_with_group_participants
+      @title = "All members (active and in-active)"
+    end    
+
     update_last_url
     update_prefix
   end  
@@ -887,24 +911,31 @@ class GroupsController < ApplicationController
   
   def group_participant_edit
     #-- Edit a membership in a group, for example to change active or moderator status
+    @section = 'groups'
     @is_member = true
     @is_moderator = true
     @group_id = params[:id].to_i
     @group = Group.find(@group_id)
     @participant_id = params[:participant_id]
     @group_participant = GroupParticipant.includes(:participant).where(:group_id=>@group_id,:participant_id=>@participant_id).first
+    @participant = @group_participant.participant    
   end
   
   def group_participant_save
     #-- Save changes to a group membership
     @group_id = params[:id].to_i
+    members_active = params[:members_active].to_i
     @group_participant_id = params[:group_participant_id]
     @group_participant = GroupParticipant.find_by_id(@group_participant_id)
     @group_participant.active = params[:group_participant][:active]
     @group_participant.moderator = params[:group_participant][:moderator]
     @group_participant.save!
     flash[:notice] = "Group member settings updated"
-    redirect_to :action=>:admin
+    url = "/groups/#{@group_id}/members"
+    if members_active >= 0
+      url += "?active=#{@members_active}"
+    end
+    redirect_to url
   end
   
   def get_default

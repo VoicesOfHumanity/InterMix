@@ -2,7 +2,10 @@
 
 <p><b>Group:</b> <%= @group.name %></p>
 
-<p><b>Members:</b> <a href="/groups/<%= @group.id %>/members"><%= @group.group_participants_count.to_i %></a></p>
+<p><b>Active Members:</b> <a href="/groups/<%= @group.id %>/members?active=1"><%= @group.active_members.count %></a></p>
+
+<p><b>Inactive Members:</b> <a href="/groups/<%= @group.id %>/members?active=0"><%= @group.non_active_members.count %></a></p>
+
 
 <p><b>Items Posted:</b> <%= @group.items_count.to_i %></p>
 
