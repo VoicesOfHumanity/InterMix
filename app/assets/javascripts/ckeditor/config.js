@@ -55,6 +55,20 @@ CKEDITOR.editorConfig = function( config )
         ['Link','Unlink','Anchor'],
         ['Image','Table','HorizontalRule','SpecialChar']
     ];
+
+    config.toolbar_Expanded =
+    [
+        ['Cut','Copy','Paste','PasteText','PasteFromWord',],
+        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+        ['Styles','Format','Font','FontSize','TextColor','BGColor'],
+        ['Bold','Italic','Underline','Strike','Subscript','Superscript', 'TextColor'],
+        ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
+        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+        ['Link','Unlink'],
+        ['Image','Smiley','Table','HorizontalRule','SpecialChar'],
+        ['SpellChecker', 'Scayt','-','About']
+    ];
+
     
     config.toolbar_Custom =
       [
