@@ -128,7 +128,9 @@ Intermix::Application.routes.draw do
   end 
   match 'voting_results' => 'dialogs#results'
   
-  resources :group_participants
+  resources :group_participants do
+    get :remove, :on => :member
+  end
   
   resources :items do
     get :rate, :on => :member

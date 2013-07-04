@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130619011810) do
+ActiveRecord::Schema.define(:version => 20130703215817) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -229,6 +229,7 @@ ActiveRecord::Schema.define(:version => 20130619011810) do
     t.integer  "participant_id"
     t.boolean  "moderator",         :default => false
     t.boolean  "active",            :default => true
+    t.string   "status",            :default => "active"
     t.string   "direct_email_code"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -265,6 +266,7 @@ ActiveRecord::Schema.define(:version => 20130619011810) do
     t.text     "shortdesc"
     t.string   "visibility",               :default => "public"
     t.string   "openness"
+    t.string   "message_visibility",       :default => "public"
     t.boolean  "moderation",               :default => false
     t.boolean  "is_network",               :default => false
     t.integer  "owner"

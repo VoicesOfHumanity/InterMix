@@ -147,6 +147,7 @@ class GroupsController < ApplicationController
       if gvalidate and @group.save
         logger.info("groups_controller#create New group created: #{@group.id}")
         @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+        @group_participant.status = 'active'
         @group_participant.moderator = true
         @group_participant.active = true
         @group_participant.save
@@ -317,7 +318,7 @@ class GroupsController < ApplicationController
     group_participant = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{@recipient.id}").first
     if not group_participant
       #-- Add them to the group as inactive if they aren't already there
-      group_participant = GroupParticipant.create(:group_id=>@group.id, :participant_id=>@recipient.id,:active=>false)
+      group_participant = GroupParticipant.create(:group_id=>@group.id, :participant_id=>@recipient.id,:active=>false,:status=>'invited')
     end
     if group_participant.active
       #-- If they're already there, and already active, no point in sending them an invite
@@ -390,6 +391,7 @@ class GroupsController < ApplicationController
         flash[:notice] = "You were already a member of this group"
       else
         group_participant.active = true
+        group_participant.status = 'active'
         group_participant.save
         flash[:notice] = "You are now a member of this group"
       end  
@@ -510,7 +512,7 @@ class GroupsController < ApplicationController
       added_to_group = false
       group_participants = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{participant.id}").all
       if group_participants.length == 0
-        GroupParticipant.create(:group_id=>@group.id, :participant_id=>participant.id,:active=>true)
+        GroupParticipant.create(:group_id=>@group.id, :participant_id=>participant.id,:active=>true,:status=>'active')
         flash[:notice] += "- added to the group<br>"
         added_to_group = true
       else
@@ -646,7 +648,7 @@ class GroupsController < ApplicationController
       if @group_participant
         flash[:notice] = 'You are already a member of this group'
       else  
-        @group_participant = GroupParticipant.new(:moderator => false, :active => true)
+        @group_participant = GroupParticipant.new(:moderator => false, :active => true, :status => 'active')
         @group_participant.active = true
         @group_participant.group_id = @group.id
         @group_participant.participant_id = current_participant.id
@@ -917,6 +919,7 @@ class GroupsController < ApplicationController
     @group_id = params[:id].to_i
     @group = Group.find(@group_id)
     @participant_id = params[:participant_id]
+    @members_active = params[:active].to_i
     @group_participant = GroupParticipant.includes(:participant).where(:group_id=>@group_id,:participant_id=>@participant_id).first
     @participant = @group_participant.participant    
   end
@@ -937,7 +940,7 @@ class GroupsController < ApplicationController
     end
     redirect_to url
   end
-  
+    
   def get_default
     #-- Return a particular default template, e.g. invite, member, import
     which = params[:which]

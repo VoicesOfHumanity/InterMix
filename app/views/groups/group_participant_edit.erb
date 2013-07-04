@@ -7,7 +7,7 @@
 	<%= f.inputs do %>
 
 		<%= hidden_field_tag :group_participant_id, @group_participant.id %>
-		<%= hidden_field_tag :members_active, @active.to_i %>
+		<%= hidden_field_tag :members_active, @members_active.to_i %>
 
 		<li class="text optional" id="group_front_template_input">
 			<label>Profile</label>
@@ -33,6 +33,10 @@
 
 	<% end %>
 
-	<p><input type="submit" value="Save"></p>
+	<div style="float:left"><input type="button" value="Cancel" onclick="window.location='/groups/<%= @group_id %>/members<%= @members_active.to_i>=0 ? "?active=#{@members_active}" : "" %>'"> <input type="submit" value="Save"></div>
+	
+	<div style="float:right"><input type="button" value="Remove from group" onclick="if(confirm('Are you sure you want to remove this group member?')) {window.location='/group_participants/<%= @group_participant.id %>/remove<%= @members_active.to_i>=0 ? "?active=#{@members_active}" : "" %>';}"></div>
+
+	<div style="clear:both;height:0">
 
 <% end %>
