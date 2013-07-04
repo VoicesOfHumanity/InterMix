@@ -52,7 +52,7 @@ gem "nokogiri"
 gem "liquid"
 gem 'imagesize', :require => 'image_size'
 #gem 'twitter'
-gem "json"
+gem "json", "1.7.7"
 gem 'ruby-oembed', :require => 'oembed'
 #gem 'ruby-oembed'
 # tmail conflicts with formtastic. Should be required only where used. app/mailers/receive_mailer
