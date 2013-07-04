@@ -1,6 +1,6 @@
 class GroupParticipantStatus < ActiveRecord::Migration
   def change
-    #add_column :group_participants, :status, :string, :after => :active, :default => 'active'
+    add_column :group_participants, :status, :string, :after => :active, :default => 'active'
     group_participants = GroupParticipant.includes(:participant).all
     for group_participant in group_participants
       if group_participant.active and group_participant.participant and group_participant.participant.status=='active'
