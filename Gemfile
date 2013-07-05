@@ -46,13 +46,14 @@ gem 'paperclip'
 gem 'sanitize'
 #gem 'formtastic', '~> 1.2.4'
 gem 'formtastic'
-gem "will_paginate", "~> 3.0.pre2"
+#gem "will_paginate", "~> 3.0.pre2"
+gem "will_paginate"
 gem "nifty-generators"
 gem "nokogiri"
 gem "liquid"
 gem 'imagesize', :require => 'image_size'
 #gem 'twitter'
-gem "json", "1.7.7"
+gem "json"
 gem 'ruby-oembed', :require => 'oembed'
 #gem 'ruby-oembed'
 # tmail conflicts with formtastic. Should be required only where used. app/mailers/receive_mailer
