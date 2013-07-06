@@ -365,4 +365,14 @@ class ApplicationController < ActionController::Base
     end     
   end
   
+  def is_sysadmin
+    if not participant_signed_in?
+      return false
+    elsif current_participant.sysadmin
+      return true
+    else
+      return false
+    end      
+  end  
+  
 end

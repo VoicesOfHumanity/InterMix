@@ -47,7 +47,7 @@ class ItemsController < ApplicationController
       @posted_by = 0  
     end   
 
-    @show_meta = true
+    @show_meta = false
     if @sortby == 'default'
       sortby = 'items.id desc'
     elsif @sortby[0,5] == 'meta:' and @from == 'dialog'

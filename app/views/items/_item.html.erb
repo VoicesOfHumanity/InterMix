@@ -138,11 +138,11 @@
 		<% end -%>
   	</div>
 		
-		<div class="iteminfotxt">
 		<% if @show_meta and item.participant and item.participant.metamap_node_participants and ((item.dialog and (@from.to_s == 'dialog' or @from.to_s == 'result') and item.period and item.period_id != item.dialog.current_period) or not item.period or not item.is_first_in_thread) or (@from.to_s != 'dialog' and @from.to_s != 'result') -%>
+		<div class="iteminfotxt">
 		  (<%= item.participant.metamap_node_participants.collect{|mnp| mnp.metamap_node.name}.join('|') %>)
-		<% end -%>
 		</div>
+		<% end -%>
 		<div class="iteminfotxt">
 		<%= link_to_function 'edit', "edititem(#{item.id})", {:class=>'reply_link'} if participant_signed_in? and item.posted_by == current_participant.id and not item.edit_locked %>
 		</div>

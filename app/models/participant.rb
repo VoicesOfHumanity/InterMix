@@ -207,7 +207,7 @@ class Participant < ActiveRecord::Base
   
   def metamap_nodes_h
     #-- Get the current value/name for each, for this user
-    #-- {2=>["Nationality", 59, "Danish"], 3=>["Gender", 207, "Male"]}
+    #-- {2=>["Nationality", 59, "Danish",""], 3=>["Gender affinity", 207, "male", "Men"]}
     #-- NB: This was colliding with the metamap_nodes association
     metamap_nodes = {}
     for m in metamaps
@@ -220,9 +220,10 @@ class Participant < ActiveRecord::Base
         mnp = mnps[0]
         metamap_node_id = mnp.metamap_node_id
         name = mnp.metamap_node.name
-        metamap_nodes[metamap_id] = [metamap_name,metamap_node_id,name]
+        name_as_group = mnp.metamap_node.name_as_group
+        metamap_nodes[metamap_id] = [metamap_name,metamap_node_id,name,name_as_group]
       else
-        metamap_nodes[metamap_id] = [metamap_name,0,'']
+        metamap_nodes[metamap_id] = [metamap_name,0,'','']
       end
     end
     metamap_nodes

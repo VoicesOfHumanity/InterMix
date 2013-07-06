@@ -46,6 +46,7 @@ class Message < ActiveRecord::Base
     cdata['participant'] = recipient
     cdata['domain'] = domain
     cdata['groupforumlink'] = "http://#{domain}/groups/#{@group.id}/forum?auth_token=#{recipient.authentication_token}" if @group
+    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group and @group.logo.exists?
     cdata['editsettingslink'] = "http://#{domain}/me/profile/edit?auth_token=#{recipient.authentication_token}#settings"
     
     #dialogs = OpenStruct.new
@@ -61,6 +62,7 @@ class Message < ActiveRecord::Base
             d['shortdesc'] = dialog.shortdesc
             d['forumlink'] = "http://#{dialog.shortname}.#{domain}/dialogs/#{dialog.id}/forum?auth_token=#{recipient.authentication_token}"
             d['logo'] = "#{BASEDOMAIN}#{dialog.logo.url}" if dialog.logo.exists?        
+            d['dialog_logo'] = "#{BASEDOMAIN}#{dialog.logo.url}" if dialog.logo.exists?        
             dialogs[dialog.shortname] = d
             #dialogs.send("#{dialog.shortname}=", d)
             cdata[dialog.shortname] = d

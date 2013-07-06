@@ -232,7 +232,7 @@ class DialogsController < ApplicationController
     #@threads = 'flat' if @threads == ''
     #@threads = 'flat'
 
-    @show_meta = true
+    @show_meta = false
     
     #get_params = Rack::Utils.parse_query request.fullpath
     
@@ -253,7 +253,7 @@ class DialogsController < ApplicationController
       metamap_id = @sortby[5,10].to_i
       sortby = "metamap_nodes.name"
       @items = @items.where("metamap_nodes.metamap_id=#{metamap_id}")
-      @show_meta = true
+      @show_meta = false
     else
       sortby = @sortby
     end

@@ -27,7 +27,7 @@
 					<%= cktext_area(:message, :message, :ckeditor => {:ajax => true, :width=>500, :height=>200, :toolbar=>'Custom'}) %>
 				<% end -%>
 				<% if @groupsadminin.length > 0 -%>
-				<br>Available macros for group messages:<br>{{ groupforumlink }} {{ editsettingslink }} {{ recipient.first_name }} {{ discussionprefix.forumlink }}
+				<br>Available macros for group messages:<br>{{ groupforumlink }} {{ group_logo }} {{ editsettingslink }} {{ recipient.first_name }} {{ discussionprefix.forumlink }} {{ discussionprefix.logo }}
 				<% end -%>
 			</div>
 		</li>
