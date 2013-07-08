@@ -588,8 +588,20 @@ class FrontController < ApplicationController
     elsif @dialog and current_participant and participant_signed_in?
       redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
       return
-    elsif @group and current_participant and participant_signed_in?
+    elsif @group.shortname.to_s != '' and current_participant and participant_signed_in?
       redirect_to "http://#{@group.shortname}.#{ROOTDOMAIN}/"
+      return
+    elsif @group.openness == 'private'
+      render :text=>"This is a private group", :layout => 'front'
+      return
+    elsif @group.openness == 'by_invitation_only'
+      render :text=>"You have to be invited to join this group", :layout => 'front'
+      return
+    elsif @group.openness == 'open_to_apply'
+      #render :text=>"You can apply to join this group", :layout => 'front'
+      #return
+    elsif @group.openness != 'open'
+      render :text=>"This group is not open to join directly", :layout => 'front'
       return
     end
     
@@ -623,7 +635,11 @@ class FrontController < ApplicationController
       @group = Group.find_by_id(@group_id)
       if not @group
         flash[:alert] += "Sorry, this group seems to no longer exist<br>"
-      elsif @group.openness != 'open'
+      elsif @group.openness == 'private'
+        flash[:alert] += "Sorry, this is a private group, which you can't join this way.<br>"
+      elsif @group.openness == 'by_invitation_only'
+        flash[:alert] += "Sorry, you have to be invited to join this group<br>"
+      elsif @group.openness != 'open' and @group.openness != 'open_to_apply'
         flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
       end    
     end 
@@ -714,21 +730,25 @@ class FrontController < ApplicationController
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
     end
 
-    if flash[:alert] != ''
-      prepare_gjoin
-      render :action=>:groupjoinform
-      return
-    end  
-    
-    @participant.groups << @group if not @participant.groups.include?(@group)
-    
     if not @participant.save!  
       flash[:alert] = "Sorry, there's some kind of database problem<br>"
       render :action=>:groupjoinform
       return
     end  
     
-   @participant.ensure_authentication_token!
+    #@participant.groups << @group if not @participant.groups.include?(@group)
+    @group_participant = GroupParticipant.new(:group_id=>@group.id,:participant_id=>@participant.id)
+    if @group.openness == 'open'
+      @group_participant.active = true
+      @group_participant.status = 'pending'
+    else
+      #-- open_to_apply probably
+      @group_participant.active = false
+      @group_participant.status = 'applied'      
+    end
+    @group_participant.save
+        
+    @participant.ensure_authentication_token!
 
     #-- Store their metamap category
     metamaps = @group.metamaps_own
@@ -811,7 +831,7 @@ class FrontController < ApplicationController
     rescue
       logger.info("front#groupjoin problem delivering email to #{recipient.id}:#{recipient.name}")
     end
-
+    
     if @group.confirm_template.to_s != ''
       template = Liquid::Template.parse(@group.confirm_template)
       @content = template.render(cdata)
@@ -841,9 +861,25 @@ class FrontController < ApplicationController
       @participant.status = 'active'
       @participant.new_signup = true
       @participant.save
+      group_participants = GroupParticipant.where(:participant_id=>@participant.id).includes(:group=>:moderators)
+      for group_participant in group_participants
+        #-- Activate any group memberships that were waiting for the person to confirm
+        if group_participant.status == 'pending'
+          group_participant.status = 'active'
+          group_participant.active = true
+          group_participant.save
+        elsif group_participant.status == 'applied' and group_participant.group.openness == 'open_to_apply'
+          #-- Send a message to the group administrator, if it is an application to approve
+          subject = "Application to join #{group_participant.group.name}"
+          content = "<p>#{@participant.name} would like to join #{group_participant.group.name}. A group moderator needs to approve or disapprove.</p>"
+          for mod in group_participant.group.moderators
+            email = SystemMailer.generic(SYSTEM_SENDER, mod.email_address_with_name, subject, content, {})    
+          end          
+        end
+      end
       sign_in(:participant, @participant)
       session[:has_required] = @participant.has_required
-      group_id,dialog_id = get_group_dialog_from_subdomain
+      group_id,dialog_id = check_group_and_dialog
       dialog_id = params[:dialog_id].to_i if dialog_id.to_i == 0
       group_id = params[:group_id].to_i if group_id.to_i == 0
       @dialog = Dialog.find_by_id(dialog_id) if dialog_id > 0
@@ -857,8 +893,8 @@ class FrontController < ApplicationController
       cdata['participant'] = @participant 
       cdata['group'] = @group if @group
       cdata['dialog'] = @dialog if @dialog
-      cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
-      cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
+      cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group and @group.logo.exists?
+      cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
       cdata['domain'] = BASEDOMAIN
       #if @dialog
       #  @content += "<p>Thank you for confirming!<br><br>You are already logged in.<br><br>Click on <a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/dialogs/#{@dialog.id}/forum\">Discussion</a> on the left to see the messages.<br><br>Bookmark this link so you can come back later:<br><br><a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/\">http://#{@dialog.shortname}.#{ROOTDOMAIN}/</a>.</p>"

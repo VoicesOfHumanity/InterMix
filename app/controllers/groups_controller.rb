@@ -933,6 +933,11 @@ class GroupsController < ApplicationController
     @group_participant.active = params[:group_participant][:active]
     @group_participant.moderator = params[:group_participant][:moderator]
     @group_participant.save!
+    
+    
+    
+    
+    
     flash[:notice] = "Group member settings updated"
     url = "/groups/#{@group_id}/members"
     if members_active >= 0

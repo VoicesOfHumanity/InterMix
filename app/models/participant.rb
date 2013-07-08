@@ -8,21 +8,21 @@ class Participant < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :title, :address1, :address2, :city, :admin1uniq, :county_code, :county_name, :state_code, :state_name, :country_code, :country_name, :phone, :zip, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :status, :self_description, :tag_list, :visibility, :twitter_post, :twitter_username, :forum_email, :group_email, :private_email, :system_email, :no_email, :authentication_token
   acts_as_taggable
 
-  has_many :group_participants
+  has_many :group_participants, :dependent => :destroy
   #has_and_belongs_to_many :groups, :join_table => :group_participants
   has_many :groups, :through => :group_participants
   has_many :dialogs, :through => :dialog_admins
   has_many :items, :foreign_key => :posted_by
   has_many :ratings
-  has_many :authentications
-  has_many :dialog_admins
+  has_many :authentications, :dependent => :destroy
+  has_many :dialog_admins, :dependent => :destroy
   belongs_to :geocountry, :foreign_key => :country_code, :primary_key => :iso
   belongs_to :geoadmin1, :foreign_key => :admin1uniq, :primary_key => :admin1uniq
   belongs_to :metro_area
   has_many :group_subtags, :through => :group_subtag_participants
   
-  has_many :followeds, :class_name => 'Follow', :foreign_key => :followed_id
-  has_many :followings, :class_name => 'Follow', :foreign_key => :following_id
+  has_many :followeds, :class_name => 'Follow', :foreign_key => :followed_id, :dependent => :destroy
+  has_many :followings, :class_name => 'Follow', :foreign_key => :following_id, :dependent => :destroy
   
   has_many :followers, :class_name => 'Participant', :through => :followeds
   has_many :idols, :class_name => 'Participant', :through => :followings
@@ -30,7 +30,7 @@ class Participant < ActiveRecord::Base
   has_many :sent_messages, :class_name => 'Message', :primary_key => :from_participant_id
   has_many :received_messages, :class_name => 'Message', :primary_key => :to_participant_id
   
-  has_many :metamap_node_participants
+  has_many :metamap_node_participants, :dependent => :destroy
   has_many :metamaps, :through=>:metamap_node_participants
   has_many :metamap_nodes, :through=>:metamap_node_participants
 

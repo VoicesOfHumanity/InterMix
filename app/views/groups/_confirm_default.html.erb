@@ -1,5 +1,18 @@
 <img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;">
 
+
+{% if group.openness == 'open' %}
+
 <p align="center"><big><b>{{ group.name }}</b> Signup Success!</big></p>
 
 <p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>
+
+{% else %}
+
+<p align="center"><big><b>{{ group.name }}</b> application submitted</big></p>
+
+<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>
+
+<p>After you have clicked on the confirmation link, and your membership of InterMix thus been validated, the administrators of {{ group.name }} will be notified. They will approve or disapprove your application to join the group, and you'll be notified of the result.</p>
+
+{% endif %}

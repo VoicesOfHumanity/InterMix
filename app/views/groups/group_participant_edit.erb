@@ -30,6 +30,7 @@
 
 		<%= f.input :moderator, :as=>:boolean %>
 		<%= f.input :active, :as=>:boolean %>
+		<%= f.input :status, :as=>:select, :collection =>GROUP_PARTICIPANT_STATUSES_TEXT.collect{|c,t| ["#{c}: #{t}",c]} %>
 
 	<% end %>
 
