@@ -930,13 +930,20 @@ class GroupsController < ApplicationController
     members_active = params[:members_active].to_i
     @group_participant_id = params[:group_participant_id]
     @group_participant = GroupParticipant.find_by_id(@group_participant_id)
+    active_before = @group_participant.active
+    status_before = @group_participant.status    
     @group_participant.active = params[:group_participant][:active]
+    @group_participant.status = params[:group_participant][:status]
     @group_participant.moderator = params[:group_participant][:moderator]
     @group_participant.save!
     
-    
-    
-    
+    if status_before == 'applied' and @group_participant.status == 'active'
+      #-- They've been accepted to the group. Let them know.
+      
+    elsif status_before == 'applied' and @group_participant.status == 'denied'
+      #-- They were denied membership in the group
+      
+    end
     
     flash[:notice] = "Group member settings updated"
     url = "/groups/#{@group_id}/members"

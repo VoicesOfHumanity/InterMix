@@ -92,8 +92,8 @@ GROUP_OPENNESS_TEXT = {'open'=>'Open to join','open_to_apply'=>'Open to applicat
 GROUP_MESSAGE_VISIBILITY = ['private','public']
 GROUP_MESSAGE_VISIBILITY_TEXT = {'private'=>"",'public'=>"Non-members can visit the group and see messages"}
 
-GROUP_PARTICIPANT_STATUSES = ['active', 'pending', 'invited', 'applied', 'blocked']
-GROUP_PARTICIPANT_STATUSES_TEXT = {'active'=>"Active group membership", 'pending'=>"Joined, but not yet active. Probably didn't yet confirm email.", 'invited'=>"Has been invited as a member, but has not yet accepted.", 'applied'=>"Has applied to become a member. Not yet approved.", 'blocked'=>"Not allowed in this group"}
+GROUP_PARTICIPANT_STATUSES = ['active', 'pending', 'invited', 'applied', 'denied', 'blocked']
+GROUP_PARTICIPANT_STATUSES_TEXT = {'active'=>"Active group membership", 'pending'=>"Joined, but not yet active. Probably didn't yet confirm email.", 'invited'=>"Has been invited as a member, but has not yet accepted.", 'applied'=>"Has applied to become a member. Not yet approved.", 'denied'=>"Membership not accepted", 'blocked'=>"Not allowed in this group"}
 
 EMAIL_PREFS = ['instant','daily','weekly','never']
 EMAIL_PREFS_TEXT = {'instant'=>'E-mail each one right away','daily'=>'E-mail in a daily batch','weekly'=>'E-mail in a weekly batch','never'=>'Never e-mail'}
