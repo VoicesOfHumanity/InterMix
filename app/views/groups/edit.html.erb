@@ -8,6 +8,7 @@
 		<%= f.input :owner, :as => :select, :collection=>@group.participants.collect{|p| [p.name,p.id]} %>
 		<%= f.input :description %>
 		<%= f.input :shortdesc, :as => :text, :label => "Short description, 124chars max, no formatting", :input_html => {:rows => 5} %>
+		<%= f.input :instructions, :as => :text, :label => "Instructions", :input_html => {:rows => 5} %>
 		<%= f.input :moderation %>
 		<%= f.input :openness, :label => "Membership", :as => :select, :collection =>GROUP_OPENNESS %>
 		<%= f.input :visibility, :as=>:select, :collection =>GROUP_VISIBILITY %>
@@ -25,7 +26,8 @@
 		</li>
 		<%= f.input :required_meta, :label=>"Meta choices required at signup?", :as=>:boolean %>		
 
-		<li><label>&nbsp;</label>Be careful not to copy a discussion level template into a group level template.</li>
+		<li><label style="height:100px;">&nbsp;</label>Be careful not to copy a discussion level template into a group level template.<br><br>
+		Some of the macros available in templates:<br>{{ group_logo }} {{ group.name }} {{ group.description }} {{ group.shortname }} {{ group.adminname }} {{ participant.name }} {{ participant.email }} {{ domain }}</li>
 
 		<% f.input :front_template, :label => "Front Page template" %>
 		<li class="text optional" id="group_front_template_input">

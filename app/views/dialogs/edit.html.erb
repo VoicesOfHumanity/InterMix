@@ -7,6 +7,7 @@
 		<%= f.input :shortname, :label=>"Prefix", :required => true %>
 		<%= f.input :description %>
 		<%= f.input :shortdesc, :as => :text, :label => "Short description, 124chars max, no formatting", :input_html => {:rows => 5} %>
+		<%= f.input :instructions, :as => :text, :label => "Instructions", :input_html => {:rows => 5} %>
 		<%= f.input :visibility, :as => :select, :collection =>GROUP_VISIBILITY %>	
 		<%= f.input :openness, :as => :select, :collection =>GROUP_OPENNESS %>	
 		<% f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
@@ -15,7 +16,9 @@
 		<%= f.input :max_characters, :label => "Maximum number of characters in a root message." %>
 		<%= f.input :max_words, :label => "Maximum number of words in a root message."  %>
 		
-		<li><label>&nbsp;</label>Be careful not to copy a group level template into a discussion level template.</li>
+		<li><label style="height:100px;">&nbsp;</label><div>Be careful not to copy a group level template into a discussion level template.<br><br>
+		Some of the macros available in templates:<br>{{ dialog_logo }} {{ dialog.name }} {{ dialog.description }} {{ dialog.shortname }}	{{ group.name }} {{ group.adminname }} {{ participant.name }} {{ participant.email }} {{ domain }}</div>
+			</li>
 		
 		<% f.input :front_template, :label => "Front Page template" %>
 		<li class="text optional" id="dialog_front_template_input">

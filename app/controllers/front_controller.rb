@@ -825,7 +825,7 @@ class FrontController < ApplicationController
     email = SystemMailer.generic(SYSTEM_SENDER, @participant.email_address_with_name, msubject, html_content, cdata)
 
     begin
-      logger.info("gront#groupjoin delivering email to #{recipient.id}:#{recipient.name}")
+      logger.info("front#groupjoin delivering email to #{recipient.id}:#{recipient.name}")
       email.deliver
       message_id = email.message_id
     rescue

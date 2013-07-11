@@ -936,13 +936,35 @@ class GroupsController < ApplicationController
     @group_participant.status = params[:group_participant][:status]
     @group_participant.moderator = params[:group_participant][:moderator]
     @group_participant.save!
+    @participant = @group_participant.participant
+    domain = @group.shortname.to_s != "" ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
     
     if status_before == 'applied' and @group_participant.status == 'active'
       #-- They've been accepted to the group. Let them know.
-      
+      html_content = "<p>Your membership of #{@group.name} has been accepted! You can now go to: <a href=\"http://#{domain}/groups/#{@group.id}/forum?auth_token=#{@participant.authentication_token}\">http://#{domain}/groups/#{@group.id}/forum</a> to see the messages.</p>"
+      email = @participant.email
+      msubject = "[#{@group.shortname}] You're now a member of #{@group.name}"
+      email = SystemMailer.generic(SYSTEM_SENDER, @participant.email_address_with_name, msubject, html_content, {})
+      begin
+        logger.info("groups#group_participant_save delivering email to #{recipient.id}:#{recipient.name}")
+        email.deliver
+        message_id = email.message_id
+      rescue
+        logger.info("groups#group_participant_save problem delivering email to #{recipient.id}:#{recipient.name}")
+      end
     elsif status_before == 'applied' and @group_participant.status == 'denied'
       #-- They were denied membership in the group
-      
+      html_content = "<p>Sorry, your membership of #{@group.name} has not been accepted.</p>"
+      email = @participant.email
+      msubject = "[#{@group.shortname}] #{@group.name} membership application"
+      email = SystemMailer.generic(SYSTEM_SENDER, @participant.email_address_with_name, msubject, html_content, {})
+      begin
+        logger.info("groups#group_participant_save delivering email to #{recipient.id}:#{recipient.name}")
+        email.deliver
+        message_id = email.message_id
+      rescue
+        logger.info("groups#group_participant_save problem delivering email to #{recipient.id}:#{recipient.name}")
+      end
     end
     
     flash[:notice] = "Group member settings updated"
