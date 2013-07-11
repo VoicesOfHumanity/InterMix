@@ -84,7 +84,7 @@ class Admin::MetamapsController < ApplicationController
 
     respond_to do |format|
       if @metamap.update_attributes(params[:metamap])
-        format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
+        format.html { render :partial=>'show', :layout=>false, :notice => 'Metamap was successfully updated.' }
         format.xml  { head :ok }
       else
         format.html { render :partial => "edit", :layout=>false }
@@ -136,6 +136,33 @@ class Admin::MetamapsController < ApplicationController
       end
     end
     admins
+  end
+  
+  def node_edit
+    #-- Edit a node
+    @metamap_node_id = params[:node_id].to_i
+    @metamap_node = MetamapNode.find_by_id(@metamap_node_id)  
+    @metamap_id = @metamap_node.metamap_id  
+    render :partial=>'node_edit', :layout=>false
+  end
+  
+  def node_save
+    @metamap_node_id = params[:node_id].to_i
+    @metamap_node = MetamapNode.find_by_id(@metamap_node_id)
+    @metamap_id = @metamap_node.metamap_id 
+    if @metamap_node.update_attributes(params[:metamap_node])
+      render :partial=>'node_show', :layout=>false, :notice => 'Node was successfully updated.'
+    else
+      render :partial => "node_edit", :layout=>false
+    end  
+  end  
+
+  def node_show
+    #-- show a node
+    @metamap_node_id = params[:node_id].to_i
+    @metamap_node = MetamapNode.find_by_id(@metamap_node_id)  
+    @metamap_id = @metamap_node.metamap_id  
+    render :partial=>'node_show', :layout=>false
   end
   
 end

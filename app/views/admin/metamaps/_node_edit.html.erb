@@ -1,0 +1,15 @@
+<%= semantic_form_for [:admin, @metamap_node], :url => "/admin/metamaps/#{@metamap_id}/node_save?node_id=#{@metamap_node_id}" do |f| %>
+
+	<%= f.inputs do %>
+		<%= f.input :name, :label=>"Name", :required => true %>
+		<%= f.input :name_as_group, :label=>"Name as a group", :required => false %>
+		<%= f.input :description, :label=>"Description", :required => false %>
+		<%= f.input :sortorder, :label=>"Sort order", :required => false %>
+	<% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec2(<%= @metamap_node.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec2()" />
+</p>

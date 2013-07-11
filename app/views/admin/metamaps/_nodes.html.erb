@@ -18,7 +18,7 @@
 	<% odd_or_even = 1-odd_or_even%>
 	<tr class="line<%= odd_or_even %>">
 		<td><input type="checkbox" name="mark[]" class="admmark" title="mark" value="<%= metamap_node.id %>" /></td>
-		<td><%= metamap_node.id %></td>
+		<td><%= link_to_function metamap_node.id, "editrec2(#{metamap_node.id})" %></td>
 		<td><%= metamap_node.name %></td>
 		<td><%= metamap_node.name_as_group %></td>
 		<td><%= metamap_node.sortorder %></td>

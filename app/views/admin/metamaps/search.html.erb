@@ -55,6 +55,15 @@ Per Page <%= select_tag(:per_page, options_for_select([10,20,30,50,100,200,500,1
 <div id="list2boxcontent"></div>
 </div>
 
+<div id="rec2box" class="mainbox">
+<div class="nav_icon"><img src="/assets/sanscons/close.gif" class="icon" onclick="boxclose('rec2')" title="Close" /></div>
+<div class="nav_icon" id="maxrec2im" style="display:none"><img src="/assets/sanscons/add.gif" class="icon" onclick="boxmax('rec2')" title="Maximize" /></div>
+<div class="nav_icon" id="minrec2im" style="display:"><img src="/assets/sanscons/subtract.gif" class="icon" onclick="boxmin('rec2')" title="Minimize" /></div>
+<a name="cam"></a>
+<h3 id="rec2title">Node Record</h3>
+<div id="rec2boxcontent"></div>
+</div>
+
 <script type="text/javascript">
 var curid1 = 0;
 var curid2 = 0;
@@ -168,6 +177,47 @@ function list2() {
 		   hideworking();
 		   $('#list2box').css('opacity','1.0');
 		   boxmax('list2');
+     }
+   });	
+}
+function viewrec2(id) {
+  curid2 = id;
+  $("#rec2boxcontent").html("<br/><br/>working...<br/>");
+	$.ajax({
+    type: "GET",
+    url: "/admin/metamaps/"+curid1+'/node_show?node_id='+id,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+    }
+  });	
+}
+function editrec2(id) {
+  curid2 = id;
+  $('#rec2box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/metamaps/"+curid1+'/node_edit?node_id='+id,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+     }
+   });	
+}
+function saverec2() {
+  id = curid2;
+	var pars = $("#edit_metamap_node_"+id).serialize();
+  var url = "/admin/metamaps/"+curid1+"/node_save?node_id="+id;
+	var xtype = 'PUT';
+  $('#rec2box').css('opacity','0.5');
+	$.ajax({
+    type: xtype,
+    url: url,
+    data: pars,
+    complete: function(t){	
+      $("#rec2boxcontent").html(t.responseText);
+		  $('#rec2box').css('opacity','1.0');
+			list2();
      }
    });	
 }

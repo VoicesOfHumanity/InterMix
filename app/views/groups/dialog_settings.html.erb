@@ -10,6 +10,10 @@
 
 		<%= hidden_field_tag :dialog_group_id, @dialog_group.id %>
 
+		<li><label style="height:100px;">&nbsp;</label><div>Be careful not to copy a group level template into a discussion level template, as these are.<br><br>
+		Some of the macros available in templates:<br>{{ dialog_logo }} {{ dialog.name }} {{ dialog.description }} {{ dialog.shortname }}	{{ group.name }} {{ group.adminname }} {{ participant.name }} {{ participant.email }} {{ domain }}</div>
+			</li>
+
 		<% f.input :signup_template, :label => "Signup Page template" %>
 		<li class="text optional" id="dialog_group_signup_template_input">
 			<label for="dialog_group_signup_template">Signup Page template<br>

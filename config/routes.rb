@@ -50,6 +50,9 @@ Intermix::Application.routes.draw do
       get :nodes, :on => :member
       post :node_add, :on => :member
       delete :node_del, :on => :member
+      get :node_edit, :on => :member
+      get :node_show, :on => :member
+      put :node_save, :on => :member
     end
 
     resources :templates do

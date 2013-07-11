@@ -1,0 +1,15 @@
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @metamap_node.id %></td></tr>	
+<tr><td class="left">Name:</td><td><%= @metamap_node.name %></td></tr>	
+<tr><td class="left">Name as group:</td><td><%= @metamap_node.name_as_group %></td></tr>	
+<tr><td class="left">Description:</td><td><%= @metamap_node.description %></td></tr>	
+<tr><td class="left">Sort order:</td><td><%= @metamap_node.sortorder %></td></tr>	
+</table>
+
+<p>
+<a href="javascript:editrec2(<%= @metamap_node.id %>)">Edit</a> | 
+</p>
+
+<script>
+curid2 = <%= @metamap_node.id %>;
+</script>
