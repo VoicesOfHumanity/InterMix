@@ -1,5 +1,6 @@
 <% showlong = (item.media_type!='text' or from=='individual' or (item.short_content.to_s != '' and (item.html_content.length < 140 or item.html_content == "<p>#{item.short_content}</p>"))) -%>
 <% showlong = false unless showlong -%>
+<% @show_meta = false -%>
 
 	<% if @error_message.to_s != '' -%>
 	<p><%= @error_message %></p>
@@ -138,7 +139,7 @@
 		<% end -%>
   	</div>
 		
-		<% if @show_meta and item.participant and item.participant.metamap_node_participants and ((item.dialog and (@from.to_s == 'dialog' or @from.to_s == 'result') and item.period and item.period_id != item.dialog.current_period) or not item.period or not item.is_first_in_thread) or (@from.to_s != 'dialog' and @from.to_s != 'result') -%>
+		<% if @show_meta and item.participant and item.participant.metamap_node_participants and (((item.dialog and (@from.to_s == 'dialog' or @from.to_s == 'result') and item.period and item.period_id != item.dialog.current_period) or not item.period or not item.is_first_in_thread) or (@from.to_s != 'dialog' and @from.to_s != 'result')) -%>
 		<div class="iteminfotxt">
 		  (<%= item.participant.metamap_node_participants.collect{|mnp| mnp.metamap_node.name}.join('|') %>)
 		</div>

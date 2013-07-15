@@ -711,6 +711,8 @@ class GroupsController < ApplicationController
     if @sortby[0,5] == 'meta:'
        @sortby = 'items.id desc'
     end
+
+    @show_meta = false
     
     @threads = params[:threads] || set['threads'] || 'flat'
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'

@@ -20,7 +20,7 @@
 		<% if session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
 		<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
 		<% else -%>
-			<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Start New Thread" %>" title="<%= 
+			<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" title="<%= 
 			if not session[:group_is_member] then "Not group member" elsif not @dialog.settings_with_period["posting_open"] then "Posting is not open"
 	elsif not ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) then "Maximum messages have been reached"
 	else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
