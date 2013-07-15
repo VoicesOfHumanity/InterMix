@@ -105,7 +105,7 @@ class DialogsController < ApplicationController
     @dsection = 'edit'
     @dialog_id = params[:id]
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
-    if dialogadmin.length == 0
+    if dialogadmin.length == 0 and not current_participant.sysadmin
       redirect_to :action=>:view
     end 
     @is_admin = true
@@ -153,6 +153,9 @@ class DialogsController < ApplicationController
     @dialog = Dialog.find(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
+    if not @is_admin and not current_participant.sysadmin
+      redirect_to :action=>:view
+    end 
     respond_to do |format|
       if dvalidate and @dialog.update_attributes(params[:dialog])
         @dialog.shortdesc = view_context.strip_tags(@dialog.shortdesc)[0..123]
