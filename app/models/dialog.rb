@@ -2,8 +2,8 @@ class Dialog < ActiveRecord::Base
   has_many :dialog_admins
   has_many :dialog_groups
   has_many :groups, :through => :dialog_groups
-  has_many :active_groups, :source => :group, :through => :dialog_groups, :conditions => "dialog_groups.active=1"
-  has_many :pending_groups, :source => :group, :through => :dialog_groups, :conditions => "!(active=1)"
+  #has_many :active_groups, :source => :group, :through => :dialog_groups, :conditions => "dialog_groups.active=1"
+  #has_many :pending_groups, :source => :group, :through => :dialog_groups, :conditions => "!(dialog_groups.active=1)"
   has_many :dialog_metamaps
   has_many :metamaps, :through => :dialog_metamaps
   has_many :items
@@ -24,6 +24,14 @@ class Dialog < ActiveRecord::Base
       metamaps << val if not metamaps.include?(val)
     end
     metamaps.uniq
+  end  
+  
+  def active_groups
+    groups = Group.includes(:dialog_groups).where("dialog_groups.dialog_id=#{self.id}").where("dialog_groups.active=1").all
+  end
+  
+  def pending_groups
+    groups = Group.includes(:dialog_groups).where("dialog_groups.dialog_id=#{self.id}").where("!(dialog_groups.active=1)").all
   end  
   
   def settings_with_period

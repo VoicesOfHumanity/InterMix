@@ -67,7 +67,7 @@
 		<p>application pending for<br>
 		<ul>
 		<% for dialog in @group.pending_dialogs -%>
-			<li><a href="/dialogs/<%= dialog.id %>/view"><%= dialog.name %></a></li>
+			<li><a href="/dialogs/<%= dialog.id %>/view"><%= dialog.name %></a> status: <%= dialog.dialog_groups[0].apply_status %></li>
 		<% end -%>
 		</ul></p>
 		<% end -%>

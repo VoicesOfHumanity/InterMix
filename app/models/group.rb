@@ -6,8 +6,8 @@ class Group < ActiveRecord::Base
   #has_many :non_active_members, :source => :participant, :through => :group_participants, :conditions => "participants.status!='active' or group_participants.active!=1"
   has_many :dialog_groups
   has_many :dialogs, :through => :dialog_groups
-  has_many :active_dialogs, :source => :dialog, :through => :dialog_groups, :conditions => "active=1"
-  has_many :pending_dialogs, :source => :dialog, :through => :dialog_groups, :conditions => "apply_status='apply'"
+  #has_many :active_dialogs, :source => :dialog, :through => :dialog_groups, :conditions => "active=1"
+  #has_many :pending_dialogs, :source => :dialog, :through => :dialog_groups, :conditions => "!(active=1)"
   has_many :group_metamaps
   has_many :metamaps, :through => :group_metamaps
   #has_and_belongs_to_many :participants, :join_table => :group_participants
@@ -47,6 +47,14 @@ class Group < ActiveRecord::Base
     end
     dialogsin.uniq 
   end
+  
+  def active_dialogs
+    dialogs = Dialog.includes(:dialog_groups).where("dialog_groups.group_id=#{self.id}").where("dialog_groups.active=1").all
+  end
+  
+  def pending_dialogs
+    dialogs = Dialog.includes(:dialog_groups).where("dialog_groups.group_id=#{self.id}").where("!(dialog_groups.active=1)").all
+  end    
 
   def metamaps_own
     metamaps

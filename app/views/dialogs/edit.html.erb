@@ -124,7 +124,7 @@
 <% else -%>
 	<ul>
 	<% for group in @dialog.pending_groups -%>
-		<li><a href="/dialogs/<%= @dialog.id %>/group_settings?group_id=<%= group.id %>"><%= group.name %></a></li>
+		<li><a href="/dialogs/<%= @dialog.id %>/group_settings?group_id=<%= group.id %>"><%= group.name %></a> status: <%= group.dialog_groups[0].apply_status %></li>
 	<% end -%>
 	</ul>
 <% end -%>

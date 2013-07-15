@@ -18,7 +18,7 @@ class FrontController < ApplicationController
     cdata = {'cookies'=>cookies}
     if @dialog_id.to_i > 0
       @dialog = Dialog.find_by_id(@dialog_id)
-      @group = Group.find_by_id(@group_id) if @group_id > 0
+      @group = Group.find_by_id(@group_id) if @group_id.to_i > 0
       cdata['dialog'] = @dialog if @dialog
       cdata['domain'] = (@dialog and @dialog.shortname.to_s!='') ? "#{@dialog.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
       cdata['logo'] = "http://#{cdata['domain']}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
