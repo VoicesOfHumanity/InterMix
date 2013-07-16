@@ -13,7 +13,7 @@ class FrontController < ApplicationController
   
   def index
     @section = 'home'
-    @group_id,@dialog_id = check_group_and_dialog
+    @group_id,@dialog_id = get_group_dialog_from_subdomain
     @content = ""
     cdata = {'cookies'=>cookies}
     if @dialog_id.to_i > 0
