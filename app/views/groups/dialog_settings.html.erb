@@ -11,7 +11,7 @@
 		<%= hidden_field_tag :dialog_group_id, @dialog_group.id %>
 
 		<li><label style="height:100px;">&nbsp;</label><div>Be careful not to copy a group level template into a discussion level template, as these are.<br><br>
-		Some of the macros available in templates:<br>{{ dialog_logo }} {{ dialog.name }} {{ dialog.description }} {{ dialog.shortname }}	{{ group.name }} {{ group.adminname }} {{ participant.name }} {{ participant.email }} {{ domain }}</div>
+		Some of the macros available in templates:<br>{{ dialog_logo }} {{ dialog.name }} {{ dialog.description }} {{ dialog.shortname }}	{{ group.name }} {{ group.adminname }} {{ group_logo }} {{ participant.name }} {{ participant.email }} {{ domain }}</div>
 			</li>
 
 		<% f.input :signup_template, :label => "Signup Page template" %>
@@ -48,7 +48,9 @@
 
 	<% end %>
 
-	<p><input type="submit" value="Save"></p>
+	<div style="float:left"><input type="button" value="Cancel" onclick="window.location='/groups/<%= @group_id %>/admin'"> <input type="submit" value="Save"></div>
+	
+	<div style="float:right"><input type="button" value="Leave this Discussion!" onclick="if(confirm('Are you sure you want to remove this group from the discussion?')) {window.location='/groups/<%= @group.id %>/remove_dialog?dialog_group_id=<%= @dialog_group.id %>';}"></div>
 
 <% end %>
 

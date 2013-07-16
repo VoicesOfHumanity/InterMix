@@ -698,6 +698,13 @@ class GroupsController < ApplicationController
       return
     end
     
+    
+    if @group and @group.message_visibility == 'private' and not @is_member
+      #-- Messages are private, and they aren't a member
+      redirect_to "/groups/#{@group_id}/view"
+      return
+    end  
+    
     if participant_signed_in? and current_participant.forum_settings
       set = current_participant.forum_settings
     else
@@ -849,6 +856,17 @@ class GroupsController < ApplicationController
     @dialog_group.save!
     redirect_to :action=>:admin
   end
+  
+  def remove_dialog
+    #-- Leave a discussion
+    @group_id = params[:id].to_i
+    @group = Group.find(@group_id)
+    @dialog_group_id = params[:dialog_group_id]
+    @dialog_group = DialogGroup.find_by_id(@dialog_group_id)
+    @dialog_group.destroy
+    flash[:notice] = 'Group has been removed from the discussion'
+    redirect_to :action=>:admin
+  end  
   
   def apply_dialog
     #-- Apply to be a member of a discussion

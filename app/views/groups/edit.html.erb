@@ -11,7 +11,7 @@
 		<%= f.input :instructions, :as => :text, :label => "Instructions", :input_html => {:rows => 5} %>
 		<%= f.input :moderation %>
 		<%= f.input :openness, :label => "Membership", :as => :select, :collection =>GROUP_OPENNESS %>
-		<%= f.input :visibility, :as=>:select, :collection =>GROUP_VISIBILITY_TEXT.collect {|x| [x[1],x[0]]} %>
+		<%= f.input :visibility, :label => "Group Visibility", :as=>:select, :collection =>GROUP_VISIBILITY_TEXT.collect {|x| [x[1],x[0]]} %>
 		<%= f.input :message_visibility, :as=>:select, :collection =>GROUP_MESSAGE_VISIBILITY_TEXT.collect {|x| [x[1],x[0]]} %>
 		<%= f.input :has_mail_list, :label => "Has mailing list" %>
 		<%= f.input :logo, :as=>:file %>			

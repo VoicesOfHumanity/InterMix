@@ -34,7 +34,9 @@ Apply
 <% end -%>	
 </p>
 
-<p><b>Visibility:</b> <%= GROUP_VISIBILITY_TEXT[@group.visibility] %></p>
+<p><b>Group Visibility:</b> <%= GROUP_VISIBILITY_TEXT[@group.visibility] %></p>
+
+<p><b>Message Visibility:</b> <%= GROUP_MESSAGE_VISIBILITY_TEXT[@group.message_visibility] %></p>
 
 <p><b>Has mailing list:</b> <%= @group.has_mail_list ? 'yes' : 'no' %></p>
 

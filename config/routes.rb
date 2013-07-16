@@ -100,6 +100,7 @@ Intermix::Application.routes.draw do
       post :subtag_save
       get :dialog_settings
       put :dialog_settings_save
+      get :remove_dialog
       post :apply_dialog
       post :add_moderator
       get :group_participant_edit

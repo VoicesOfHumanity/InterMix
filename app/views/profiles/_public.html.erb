@@ -24,7 +24,7 @@
 <% @participant.metamaps.each do |metamap| -%>
 <% metamap_nodes = @participant.metamap_nodes_h %>
 <% info = metamap_nodes[metamap.id] if metamap_nodes[metamap.id] %>
-<tr><td class="label"><%= metamap.name %></td><td>Voice of <%= info ? (info[3].to_s!='' ? info[3] : info[2]) : '???' %></td></tr>
+<tr><td class="label"><%= metamap.name %></td><td><%= info ? (info[3].to_s!='' ? info[3] : info[2]) : '???' %></td></tr>
 <% end -%>
 
 <tr><td class="label">Groups:</td><td>
