@@ -25,9 +25,9 @@ class FrontController < ApplicationController
       cdata['dialog_logo'] = "http://#{cdata['domain']}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
       cdata['group_logo'] = "http://#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
       cdata['group'] = @group if @group
-      if participant_signed_in? and @dialog.member_template.to_s != ''
+      if participant_signed_in? and @dialog.member_template.to_s.strip != ''
         desc = Liquid::Template.parse(@dialog.member_template).render(cdata)
-      elsif @dialog.front_template.to_s != ''
+      elsif @dialog.front_template.to_s.strip != ''
         desc = Liquid::Template.parse(@dialog.front_template).render(cdata)
       else
         desc = "<h2>#{@dialog.name}</h2><div>#{@dialog.description}</div>\n"
@@ -39,9 +39,9 @@ class FrontController < ApplicationController
       cdata['domain'] = (@group and @group.shortname.to_s!='') ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
       cdata['logo'] = "http://#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
       cdata['group_logo'] = "http://#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
-      if participant_signed_in? and @group.member_template.to_s != ''
+      if participant_signed_in? and @group.member_template.to_s.strip != ''
         desc = Liquid::Template.parse(@group.member_template).render(cdata)
-      elsif @group.front_template.to_s != ''
+      elsif @group.front_template.to_s.strip != ''
         desc = Liquid::Template.parse(@group.front_template).render(cdata)
       else
         desc = "<h2>#{@group.name}</h2><div>#{@group.description}</div>\n"

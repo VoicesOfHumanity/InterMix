@@ -90,7 +90,7 @@ GROUP_VISIBILITY_TEXT = {'private'=>'Private, unlisted', 'public'=>'Public, visi
 GROUP_OPENNESS = ['open','open_to_apply','by_invitation_only','private']
 GROUP_OPENNESS_TEXT = {'open'=>'Open to join','open_to_apply'=>'Open to applications','by_invitation_only'=>'By invitation only','private'=>'Closed/Private'}
 GROUP_MESSAGE_VISIBILITY = ['private','public']
-GROUP_MESSAGE_VISIBILITY_TEXT = {'private'=>"",'public'=>"Non-members can visit the group and see messages"}
+GROUP_MESSAGE_VISIBILITY_TEXT = {'private'=>"private: non-members can't visit and see messages",'public'=>"public: non-members can visit the group and see messages"}
 
 GROUP_PARTICIPANT_STATUSES = ['active', 'pending', 'invited', 'applied', 'denied', 'blocked']
 GROUP_PARTICIPANT_STATUSES_TEXT = {'active'=>"Active group membership", 'pending'=>"Joined, but not yet active. Probably didn't yet confirm email.", 'invited'=>"Has been invited as a member, but has not yet accepted.", 'applied'=>"Has applied to become a member. Not yet approved.", 'denied'=>"Membership not accepted", 'blocked'=>"Not allowed in this group"}
