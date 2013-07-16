@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130710233017) do
+ActiveRecord::Schema.define(:version => 20130716011537) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -99,7 +99,7 @@ ActiveRecord::Schema.define(:version => 20130710233017) do
     t.string   "name"
     t.text     "description"
     t.text     "shortdesc"
-    t.string   "instructions"
+    t.text     "instructions"
     t.text     "coordinators"
     t.string   "visibility"
     t.string   "publishing"

@@ -12,7 +12,8 @@
 		<%= f.input :openness, :as => :select, :collection =>GROUP_OPENNESS %>	
 		<% f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
 		<%= f.input :multigroup, :as => :boolean %>
-		<%= f.input :group_id, :as => :select, :collection =>@groupsin.collect{|c| [c.group.name,c.group.id] if c.group}, :label=>"Home group" %>			
+		<%= f.input :new_message_title, :label => "Alternative text on 'Add Message' button" %>
+		<%= f.input :group_id, :as => :select, :collection =>@groupsin.collect{|c| [c.group.name,c.group.id] if c.group}, :label=>"Home group" %>					
 		<%= f.input :max_characters, :label => "Maximum number of characters in a root message." %>
 		<%= f.input :max_words, :label => "Maximum number of words in a root message."  %>
 		

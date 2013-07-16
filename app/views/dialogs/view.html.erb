@@ -24,9 +24,15 @@
 <p><b>Description:</b> 
 <% end -%>
 
-<div>
+<div style="margin-bottom: 10px;">
 <%=raw @dialog.description %>
 </div>
+
+<% if @dialog.instructions.to_s != '' -%>
+<div style="border: 2px solid #4B92DB;width:90%;text-align:center;margin: 20px auto 20px auto;padding:15px;">
+<%=raw @dialog.instructions %>
+</div>
+<% end -%>
 
 <p><b>Short Description:</b> <%=raw @dialog.shortdesc %></p>
 
