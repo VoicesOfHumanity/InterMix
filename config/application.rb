@@ -88,7 +88,7 @@ PARTICIPANT_WALL_VISIBILITY_TEXT = {'all'=>'Visible to all','groups&friends'=>'V
 GROUP_VISIBILITY = ['private','public']
 GROUP_VISIBILITY_TEXT = {'private'=>'Private, unlisted', 'public'=>'Public, visible to all'}
 GROUP_OPENNESS = ['open','open_to_apply','by_invitation_only','private']
-GROUP_OPENNESS_TEXT = {'open'=>'Open to join','open_to_apply'=>'Open to applications','by_invitation_only'=>'By invitation only','private'=>'Closed/Private'}
+GROUP_OPENNESS_TEXT = {'open'=>'open to join','open_to_apply'=>'apply to join','by_invitation_only'=>'by invitation','private'=>'closed/private'}
 GROUP_MESSAGE_VISIBILITY = ['private','public']
 GROUP_MESSAGE_VISIBILITY_TEXT = {'private'=>"private: non-members can't visit and see messages",'public'=>"public: non-members can visit the group and see messages"}
 

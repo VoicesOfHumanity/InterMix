@@ -30,7 +30,9 @@
 	<% for group in @groupspublic -%>
 		<% if not @groupsina.include?(group.id) -%>
 			<% dom = ((group.shortname.to_s != "") ? "#{group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
-			<li><a href="http://<%= dom %>/groups/<%= group.id %>/view"><%= group.name %></a> (<%= group.group_participants_count.to_i %>)</li>
+			<li><a href="http://<%= dom %>/groups/<%= group.id %>/view"><%= group.name %></a> (<%= group.group_participants_count.to_i %>)
+			<%= GROUP_OPENNESS_TEXT[group.openness] %>	
+			</li>
 			<% if false %> - Description: <%=raw group.description %> Members: <%= group.group_participants_count.to_i %> <a href="http://<%= dom %>/groups/<%= group.id %>/join"><%= group.openness=='open' ? "Join" : '' %></a><% end %>
 		<% end -%>
 	<% end -%>
