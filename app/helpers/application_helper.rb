@@ -20,4 +20,28 @@ module ApplicationHelper
     end    
   end
   
+  def domname(group,dialog)
+    #-- Return an appropriate domain name with subdomains, depending on the group and discussion
+    if group and group.shortname.to_s != ''
+      group_prefix = group.shortname
+    else
+      group_prefix = ''
+    end
+    if dialog and dialog.shortname.to_s != ''
+      dialog_prefix = dialog.shortname
+    else
+      dialog_prefix = ''
+    end    
+    if dialog_prefix != '' and group_prefix != ''
+      dom = "#{dialog_prefix}.#{group_prefix}.#{ROOTDOMAIN}"
+    elsif group_prefix != ''
+      dom = "#{group_prefix}.#{ROOTDOMAIN}"
+    elsif dialog_prefix != ''
+      dom = "#{dialog_prefix}.#{ROOTDOMAIN}"
+    else
+      dom = BASEDOMAIN
+    end      
+    return dom
+  end  
+  
 end

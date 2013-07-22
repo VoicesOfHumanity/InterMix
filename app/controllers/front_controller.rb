@@ -243,15 +243,26 @@ class FrontController < ApplicationController
     end 
     @group = Group.find_by_id(@group_id)
 
-    if not @dialog
+    if not @group
+      flash[:alert] = "No group was identified"
+      redirect_to "http://#{BASEDOMAIN}/join" 
+      return
+    elsif not @dialog
+      flash[:alert] = "No discussion was identified"
       redirect_to "http://#{BASEDOMAIN}/join" 
       return
     elsif @dialog and current_participant and participant_signed_in?
+      flash[:alert] = "You were already logged in. No need to join again."
       redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group and current_participant and participant_signed_in?
+      flash[:alert] = "You were already logged in. No need to join again."
       redirect_to "http://#{@group.shortname}.#{ROOTDOMAIN}/"
       return
+    elsif @group and not ( @group.openness == 'open' or @group.openness == 'open_to_apply' )
+      flash[:alert] = "Sorry, you can not join that group by yourself"
+      redirect_to "http://#{BASEDOMAIN}/join" 
+      return      
     end
     
     prepare_djoin
@@ -270,6 +281,20 @@ class FrontController < ApplicationController
       @group_id = @dialog.group_id.to_i
     end 
     @group = Group.find_by_id(@group_id)
+
+    if not @group
+      flash[:alert] = "No group was identified"
+      redirect_to "http://#{BASEDOMAIN}/join" 
+      return
+    elsif not @dialog
+      flash[:alert] = "No discussion was identified"
+      redirect_to "http://#{BASEDOMAIN}/join" 
+      return
+    elsif @group and not ( @group.openness == 'open' or @group.openness == 'open_to_apply' )
+      flash[:alert] = "Sorry, you can not join that group by yourself"
+      redirect_to "http://#{BASEDOMAIN}/join" 
+      return   
+    end     
     
     if @group and @dialog
       #-- Look up the dialog/group setting, which might contain a template
@@ -292,6 +317,7 @@ class FrontController < ApplicationController
     
     flash[:notice] = ''
     flash[:alert] = ''
+
     if @dialog_id == 0
       flash[:alert] += "Sorry, there's no indication of what discussion this would be added to<br>"
     elsif @dialog_id > 0
@@ -588,12 +614,15 @@ class FrontController < ApplicationController
     @email = params[:email].to_s
     
     if not @group
+      flash[:alert] = "Group not found"
       redirect_to "http://#{BASEDOMAIN}/join"
       return  
     elsif @dialog and current_participant and participant_signed_in?
+      flash[:alert] = "You were already logged in. No need to join again."
       redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group.shortname.to_s != '' and current_participant and participant_signed_in?
+      flash[:alert] = "You were already logged in. No need to join again."
       redirect_to "http://#{@group.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group.openness == 'private'
