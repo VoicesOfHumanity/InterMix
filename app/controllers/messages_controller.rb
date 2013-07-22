@@ -43,7 +43,7 @@ class MessagesController < ApplicationController
     @from = params[:from] || ''
     @response_to_id = params[:response_to_id].to_i
     @message = Message.new
-    @to_participant_id = 0
+    @message.to_participant_id = 0
     @to_participant_name = '???'
     if @response_to_id > 0
       @message.response_to_id = @response_to_id

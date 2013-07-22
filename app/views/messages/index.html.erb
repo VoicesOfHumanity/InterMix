@@ -132,4 +132,15 @@ function messlist() {
      }
    });	
 }
+function grouporcontact(which) {
+	if (which=='contact') {
+		if ($('#message_to_participant_id').val()>0) {
+			$('#message_to_group_id').val('');
+		}
+	} else {
+		if ($('#message_to_group_id').val()>0) {
+			$('#message_to_participant_id').val('');
+		}
+	}
+}
 </script>
