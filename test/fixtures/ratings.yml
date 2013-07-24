@@ -1,9 +1,12 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
+  item_id: 1
   participant_id: 1
-  rating_type: MyString
+  rating_type: AllRatings
+  approval: -2
+  interest: 3
 
-two:
-  participant_id: 1
-  rating_type: MyString
+#two:
+#  participant_id: 1
+#  rating_type: MyString

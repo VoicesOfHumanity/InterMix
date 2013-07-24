@@ -544,11 +544,11 @@ function mess_characters(htmlval,plainval) {
 function update_characters() {
     // Count and display characters in the short summary
 	var count = $('#item_short_content').val().length;
-	if (count>124) {
+	if (count>106) {
 		var oldval = $('#item_short_content').val();
-		var newval = oldval.substring(0,124);
+		var newval = oldval.substring(0,106);
 		$('#item_short_content').val(newval);
-		count = 124;
+		count = 106;
 	}
 	$('#charsused').html(count);
 	short_updated = true;
