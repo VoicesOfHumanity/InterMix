@@ -470,7 +470,16 @@ class GroupsController < ApplicationController
       participant = Participant.find_by_email(email)
 
       if participant
-        flash[:notice] += "- already a member<br>"
+        # 'unconfirmed','active','inactive','never-contact','disallowed'
+        if participant.status == 'active'
+          flash[:notice] += "- already a member<br>"
+        elsif participant.status == 'disallowed' or participant.status == 'never-contact' or participant.status == 'blocked'
+          flash[:notice] += "- already a member, but blocked<br>"
+        else    
+          participant.status = 'active'
+          participant.save
+          flash[:notice] += "- unconfirmed member. Now set to confirmed<br>"
+        end
         #password = "[as entered]"
         password = "<a href=\"http://#{@group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN}/participants/password/new\">Forgot your password?</a>"
       else
