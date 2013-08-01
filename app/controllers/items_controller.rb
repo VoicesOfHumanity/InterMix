@@ -411,9 +411,9 @@ class ItemsController < ApplicationController
       if @item.reply_to.to_i == 0 and @dialog.settings_with_period["max_messages"].to_i > 0
         max_messages = @dialog.settings_with_period["max_messages"].to_i
         previous_messages = Item.where("posted_by=? and dialog_id=? and reply_to is null",current_participant.id,@dialog.id).count
-        if previous_messages >= max_messages
-          flash.now[:alert] = "Sorry, you can only post #{max_messages} message#{max_messages > 1 ? 's' : ''} here"
-         end
+        #if previous_messages >= max_messages
+        #  flash.now[:alert] = "Sorry, you can only post #{max_messages} message#{max_messages > 1 ? 's' : ''} here"
+        #end
       end
       plain_content = view_context.strip_tags(@item.html_content.to_s).strip
       if @item.reply_to.to_i > 0 and not @dialog.settings_with_period["allow_replies"]
