@@ -520,7 +520,7 @@ function html_to_short(htmlval,plainval) {
     if (typeof plainval === "undefined") {
 	    plainval = $.trim(strip(htmlval));
     }
-	xtext = plainval.substring(0,124);
+	xtext = plainval.substring(0,106);
 	$('#item_short_content').val(xtext);
 	$('#charsused').html(xtext.length);
 }
