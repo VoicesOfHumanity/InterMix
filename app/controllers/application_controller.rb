@@ -268,23 +268,22 @@ class ApplicationController < ActionController::Base
       @dialog = Dialog.find_by_shortname(subdomain)
       if @dialog
         xdialog_id = @dialog.id
-        if participant_signed_in?
+        #if participant_signed_in?
           session[:dialog_id] = xdialog_id
           session[:dialog_name] = @dialog.name
           session[:dialog_prefix] = @dialog.shortname
           #env['warden'].session[:dialog_id] = @dialog_id
           #env['warden'].session[:dialog_name] = @dialog.name
-        end
+        #end
       else
         if subdomain != 'intermix'
           @group = Group.find_by_shortname(subdomain)
           if @group
             xgroup_id = @group.id
-            #if participant_signed_in? and env['warden']
+            session[:group_id] = xgroup_id
+            session[:group_name] = @group.name
+            session[:group_prefix] = @group.shortname
             if participant_signed_in?
-              session[:group_id] = xgroup_id
-              session[:group_name] = @group.name
-              session[:group_prefix] = @group.shortname
               @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
               @is_member = @group_participant ? true : false
               session[:group_is_member] = @is_member
