@@ -312,10 +312,11 @@ class ApplicationController < ActionController::Base
     if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
       get_group_dialog_from_subdomain
     end  
-    if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+    #if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+    if participant_signed_in? and session[:group_id].to_i == 0
       #-- Get our last group/dialog if we don't already have one
       session[:group_id] = current_participant.last_group_id
-      session[:dialog_id] = current_participant.last_dialog_id
+      session[:dialog_id] = current_participant.last_dialog_id if session[:dialog_id].to_i == 0
       if session[:group_id].to_i > 0
         @group_id = session[:group_id]
         @group = Group.find_by_id(@group_id)
