@@ -309,7 +309,8 @@ class ApplicationController < ActionController::Base
   def check_group_and_dialog  
     #-- This is probably rather inconsistent. When do we call which method to look for group or dialog ids?
     logger.info("application#check_group_and_dialog")    
-    if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+    #if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+    if session[:group_id].to_i == 0
       get_group_dialog_from_subdomain
     end  
     #if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
