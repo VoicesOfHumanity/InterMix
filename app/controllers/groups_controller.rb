@@ -449,8 +449,8 @@ class GroupsController < ApplicationController
     for line in lines do
       x += 1
       #next if x == 1
-      line = line.force_encoding("ISO-8859-1").encode("UTF-8").strip
-      xarr = line.split(';')
+      #line = line.force_encoding("ISO-8859-1").encode("UTF-8").strip
+      xarr = line.strip.split(';')
 
       email = xarr[0]
       if xarr.length < 4

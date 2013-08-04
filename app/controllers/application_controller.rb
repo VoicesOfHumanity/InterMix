@@ -280,7 +280,8 @@ class ApplicationController < ActionController::Base
           @group = Group.find_by_shortname(subdomain)
           if @group
             xgroup_id = @group.id
-            if participant_signed_in? and env['warden']
+            #if participant_signed_in? and env['warden']
+            if participant_signed_in?
               session[:group_id] = xgroup_id
               session[:group_name] = @group.name
               session[:group_prefix] = @group.shortname
