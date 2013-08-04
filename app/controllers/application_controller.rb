@@ -261,7 +261,7 @@ class ApplicationController < ActionController::Base
 
   def get_group_dialog_from_subdomain
     #-- If we've gotten a group and/or dialog shortname in the subdomain
-    logger.info("application#get_group_dialog_from_subdomain: #{request.subdomains.join(' ')} signed_in: #{participant_signed_in? 'yes' : 'no'}")    
+    logger.info("application#get_group_dialog_from_subdomain: #{request.subdomains.join(' ')} signed_in: #{participant_signed_in? ? 'yes' : 'no'}")    
     xgroup_id = nil
     xdialog_id = nil
     for subdomain in request.subdomains
