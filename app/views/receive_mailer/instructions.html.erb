@@ -9,7 +9,7 @@
 	<% elsif @group.openness == 'by_invitation_only' -%>
 		<p>Membership in this group is by invitation only. You can not interact with it unless you have previously been added to it.</p>
 	<% elsif @group.openness == 'open_to_apply' -%>
-		<p>To become a member of this group, you need to apply for membership and be accepted. Please write to <%= "#{@group.shortname}-owner@intermix.cr8.com" %> to apply.</p>
+		<p>To become a member of this group, you need to apply for membership and be accepted. Please write to <%= "#{@group.shortname}-owner@<%= BASEDOMAIN %>" %> to apply.</p>
 	<% elsif @group.openness == 'open' -%>
 		<p>This is an open group. You can join by sending a subscribe request.</p>
 	<% else -%>
