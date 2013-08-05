@@ -541,7 +541,7 @@ class FrontController < ApplicationController
     cdata['dialog'] = @dialog if @dialog
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
-    cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}"
+    cdata['confirmlink'] = "<a href=\"http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}\">http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}</a>"
     cdata['domain'] = dom
     
     if @dialog_group and @dialog_group.confirm_email_template.to_s.strip != ''
@@ -828,7 +828,7 @@ class FrontController < ApplicationController
     cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
-    cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}"
+    cdata['confirmlink'] = "<a href=\"http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}</a>"
     cdata['domain'] = dom
     
     if @group.confirm_email_template.to_s.strip != ''
@@ -1137,7 +1137,7 @@ class FrontController < ApplicationController
     cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
-    cdata['confirmlink'] = "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}"
+    cdata['confirmlink'] = "<a href=\"http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}</a>"
     
     if @group.confirm_email_template.to_s != ''
       template = Liquid::Template.parse(@group.confirm_email_template)
