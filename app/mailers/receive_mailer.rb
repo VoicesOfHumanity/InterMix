@@ -161,9 +161,9 @@ end
     
     #-- Try to remove old quotes, footers, personal login info, etc.
     html_content.gsub!(%r{[0-9]+/[0-9]+/[0-9]+ InterMix <questions@intermix.org>.*$}m,"")
-    html_content.gsub!(/(<p id="following">.*)$/m,"")
+    html_content.gsub!(/<p id="following">.*$/m,"")
     html_content.gsub!(/<p id="footer">.*$/m,"")
-    html_content.gsub!(/auth_token=[^"]/,"")
+    html_content.gsub!(/auth_token=[^"]+/,"")
     
     short_content = ( html_content.gsub(/(<[^>]*>)|\n|\t/s) {" "} )[0,140] if short_content.to_s == ""
     short_content = short_content[0,140] if short_content.length > 140
