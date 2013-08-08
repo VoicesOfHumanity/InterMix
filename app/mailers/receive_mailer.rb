@@ -158,6 +158,11 @@ end
       puts "  didn't get html_content. getting dirty version from body"
       html_content = email.body.to_s
     end 
+    
+    #-- Try to remove old footers, personal login info, etc.
+    html_content.gsub!(/<p id="footer">.*$/,"")
+    html_content.gsub!(/auth_token=.*"/,"")
+    
     short_content = ( html_content.gsub(/(<[^>]*>)|\n|\t/s) {" "} )[0,140] if short_content.to_s == ""
     short_content = short_content[0,140] if short_content.length > 140
     puts "  got it"                
