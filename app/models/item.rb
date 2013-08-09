@@ -309,7 +309,7 @@ class Item < ActiveRecord::Base
     if visible_by.to_i > 0
       #-- Only items that a certain user has a right to see. I.e. mainly groups he's in
       gpin = GroupParticipant.where("participant_id=#{visible_by}").all
-      xgpin = ''
+      xgpin = '999999'
       for gp in gpin
         xgpin += "," if xgpin != ''
         xgpin += "#{gp.group_id}"
