@@ -5,13 +5,6 @@
 </head>
 <body>
 	
-	
-<% if @cdata['group'] and @cdata['group'].logo.exists? then -%>
-<img src="http://<%= BASEDOMAIN %>/<%= @cdata['group'].logo.url %>"><br/><br/>
-<% else -%>	
-<img src="http://<%= BASEDOMAIN %>/assets/logo.gif"/><br/><br/>
-<% end -%>
-
 <div>
 <%=raw @message %>
 </div>
@@ -30,6 +23,14 @@ You can also see it in your <a href="http://<%= BASEDOMAIN %>/messages?auth_toke
 To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
 
 <img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['message'].id.to_i if @cdata['message'] %>.gif" width="0" height="0" border="0" style="display:none">
+
+<p style="text-align:right"><a href="http://<%= BASEDOMAIN %>/groups/<%= @cdata['group'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">
+<% if @cdata['group'] and @cdata['group'].logo.exists? then -%>
+<img src="http://<%= BASEDOMAIN %>/<%= @cdata['group'].logo.url %>">
+<% else -%>	
+<img src="http://<%= BASEDOMAIN %>/assets/logo.gif"/>
+<% end -%>
+</a></p>
 
 </body>
 </html>

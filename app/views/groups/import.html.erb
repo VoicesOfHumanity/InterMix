@@ -25,6 +25,8 @@
 
 <p><input type="submit" value="Submit"></p>
 
-<p>Optional e-mail message to send to new members:<br><%= text_area_tag 'messtext', @messtext, :rows => 3, :cols => 30 %></p>
+<p>Optional e-mail message to send to new members:<br>
+<%= text_field_tag 'subject', @subject, :style => 'width: 350px' %><br>
+<%= text_area_tag 'messtext', @messtext, :rows => 3, :cols => 30 %></p>
 
 </form>

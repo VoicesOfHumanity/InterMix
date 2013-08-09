@@ -412,6 +412,7 @@ class GroupsController < ApplicationController
     else       
       @messtext = render_to_string :partial=>"import_default", :layout=>false
     end  
+    @subject = "You were added to a group"
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @metamaps = Metamap.order("name").all  
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
@@ -433,6 +434,8 @@ class GroupsController < ApplicationController
     flash[:alert] = ''
 
     @new_text = params[:new_text].to_s
+    @subject = params[:subject].to_s
+    @subject = "You were added to a group" if @subject == ''
     @messtext = params[:messtext].to_s
 
     metamapnames = {}
@@ -602,7 +605,7 @@ class GroupsController < ApplicationController
         @message = Message.new
         @message.to_participant_id = participant.id 
         @message.from_participant_id = current_participant.id
-        @message.subject = "You were added to a group"
+        @message.subject = @subject
         
         cdata = {}
         cdata['item'] = @item
