@@ -12,7 +12,7 @@
 		<div class="right">
 		<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
 		<% if @is_member -%>
-		<input type="button" value="Add Message" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
+		<input type="button" value="Start New Thread" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
 		<% end -%>
 		</div>
 

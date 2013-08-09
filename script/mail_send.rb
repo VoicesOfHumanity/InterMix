@@ -9,11 +9,13 @@ require 'optparse'
 
 participant_id = 0
 do_weekly = false
+testonly = false
 
 # testing: ruby mail_send.rb -p 6 -w 1
 opts = OptionParser.new
 opts.on("-pARG","--participant=ARG",Integer) {|val| participant_id = val}
 opts.on("-wARG","--weekly=ARG",Integer) {|val| do_weekly = true}
+opts.on("-tARG","--test=ARG",Integer) {|val| testonly = true}
 opts.parse(ARGV)
 
 wstart = Time.now.midnight - 1.week
@@ -38,6 +40,11 @@ else
   participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or forum_email='daily' or forum_email='weekly')").order(:id)
 end
 puts "#{participants.length} participants"
+
+numdailysent = 0
+numdailyerror = 0
+numweeklysent = 0
+numweeklyerror = 0
 
 for p in participants
   puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} forum:#{p.forum_email}"
@@ -156,14 +163,20 @@ for p in participants
   
     email = ItemMailer.digest(subject, tdaily, p.email_address_with_name, cdata)
   
-    begin
-      Rails.logger.info("mail_send delivering daily email to #{p.id}:#{p.name}")
-      email.deliver
-      message_id = email.message_id
-      puts "  daily e-mail sent: #{email.message_id}"
-    rescue
-      puts "  daily e-mail delivery problem"
-      Rails.logger.info("mail_send problem delivering daily email to #{p.id}:#{p.name}")
+    if testonly
+      puts "  here we would have sent the email, if it weren't a test"
+    else  
+      begin
+        Rails.logger.info("mail_send delivering daily email to #{p.id}:#{p.name}")
+        email.deliver
+        message_id = email.message_id
+        puts "  daily e-mail sent: #{email.message_id}"
+        numdailysent += 1
+      rescue
+        puts "  daily e-mail delivery problem"
+        Rails.logger.info("mail_send problem delivering daily email to #{p.id}:#{p.name}")
+        numdailyerror += 1
+      end
     end
   
   end
@@ -174,18 +187,25 @@ for p in participants
   
     email = ItemMailer.digest(subject, tweekly, p.email_address_with_name, cdata)
   
-    begin
-      Rails.logger.info("mail_send delivering weekly email to #{p.id}:#{p.name}")
-      email.deliver
-      message_id = email.message_id
-      puts "  weekly e-mail sent: #{email.message_id}"
-    rescue
-      puts "  weekly e-mail delivery problem"
-      Rails.logger.info("mail_send problem delivering weekly email to #{p.id}:#{p.name}")
-    end
+    if testonly
+      puts "  here we would have sent the email, if it weren't a test"
+    else  
+      begin
+        Rails.logger.info("mail_send delivering weekly email to #{p.id}:#{p.name}")
+        email.deliver
+        message_id = email.message_id
+        puts "  weekly e-mail sent: #{email.message_id}"
+        numweeklysent += 1
+      rescue
+        puts "  weekly e-mail delivery problem"
+        Rails.logger.info("mail_send problem delivering weekly email to #{p.id}:#{p.name}")
+        numweeklyerror += 1
+      end
+    end  
   
   end
   
-  
-  
 end
+
+puts "#{numdailysent} daily messages sent. #{numdailyerror} errors"
+puts "#{numweeklysent} weekly messages sent. #{numweeklyerror} errors"
