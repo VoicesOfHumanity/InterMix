@@ -165,6 +165,7 @@ end
     html_content.gsub!(/<p id="footer">.*$/m,"")
     html_content.gsub!(/auth_token=[^"]+/,"")
     
+    short_content.gsub!(%r{[0-9]+/[0-9]+/[0-9]+ InterMix .*$}m,"")
     short_content = ( html_content.gsub(/(<[^>]*>)|\n|\t/s) {" "} )[0,140] if short_content.to_s == ""
     short_content = short_content[0,140] if short_content.length > 140
     puts "  got it"                
