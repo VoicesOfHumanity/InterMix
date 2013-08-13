@@ -123,6 +123,7 @@ for p in participants
       #-- Figure out the best domain to use, with discussion and group
       if item.dialog
         #-- If it is in a discussion, this person possibly represents another group
+        group_prefix = ''
         if user_dialogs[item.dialog_id]
           group_prefix = user_dialogs[items.dialog_id]['group_prefix']
         else
@@ -130,7 +131,8 @@ for p in participants
           group_participant = GroupParticipant.where(:participant_id => p.id, :group_id => item.group_id).first
           if group_participant
             #-- They're a member of the group, so that's the one to use
-            user_dialogs[item.dialog_id]['group_prefix'] = item.group.shortname if item.group
+            group_prefix = item.group.shortname if item.group
+            user_dialogs[item.dialog_id]['group_prefix'] = group_prefix
           else
             for g in item.dialog.active_groups
               group_participant = GroupParticipant.where(:participant_id => p.id,:group_id => g.id).first
