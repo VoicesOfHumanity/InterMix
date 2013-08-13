@@ -127,14 +127,14 @@ for p in participants
           group_prefix = user_dialogs[items.dialog_id]['group_prefix']
         else
           user_dialogs[item.dialog_id] = {'group_prefix'=>''}
-          group_participant = GroupParticipant.where(:participant_id=p.id,:group_id=>item.group_id).first
-          if group_particpant
+          group_participant = GroupParticipant.where(:participant_id => p.id, :group_id => item.group_id).first
+          if group_participant
             #-- They're a member of the group, so that's the one to use
             user_dialogs[item.dialog_id]['group_prefix'] = item.group.shortname if item.group
           else
             for g in item.dialog.active_groups
-              group_participant = GroupParticipant.where(:participant_id=p.id,:group_id=>g.id).first
-              if group_particpant and g.shortname.to_s != ''
+              group_participant = GroupParticipant.where(:participant_id => p.id,:group_id => g.id).first
+              if group_participant and g.shortname.to_s != ''
                 group_prefix = g.shortname
                 user_dialogs[item.dialog_id]['group_prefix'] = group_prefix
                 break
@@ -156,12 +156,14 @@ for p in participants
         domain = "#{group.shortname}.#{ROOTDOMAIN}"
       else
         domain = BASEDOMAIN
-      end      
+      end 
+      
+      group_domain = (item.group and item.group.shortname.to_s != '') ? "#{item.group.shortname}.#{ROOTDOMAIN}" : ROOTDOMAIN
 
       puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject} | domain: #{domain}"
       
       itext = ""
-      itext += "<h3><a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
+      itext += "<h3><a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
       itext += "<div>"
       itext += item.html_content
       itext += "</div>"
@@ -175,14 +177,14 @@ for p in participants
   		elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"]
   		  itext += item.participant ? item.participant.name : item.posted_by
   		else
-  		  itext += "<a href=\"http://#{BASEDOMAIN}/participant/#{item.posted_by}/wall?auth_token=#{p.authentication_token}\">#{item.participant ? item.participant.name : item.posted_by}</a>"
+  		  itext += "<a href=\"http://#{domain}/participant/#{item.posted_by}/wall?auth_token=#{p.authentication_token}\">#{item.participant ? item.participant.name : item.posted_by}</a>"
   		end
   		itext += " " + item.created_at.strftime("%Y-%m-%d %H:%M")
-  		itext += " <a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
+  		itext += " <a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		
-  		itext += " Discussion: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{item.dialog.name}</a>" if item.dialog
-  		itext += " Focus Period: <a href=\"http://#{BASEDOMAIN}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}&auth_token=#{p.authentication_token}\">#{item.period.name}</a>" if item.period  		
-  		itext += " Group: <a href=\"http://#{BASEDOMAIN}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if item.group
+  		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{item.dialog.name}</a>" if item.dialog
+  		itext += " Focus Period: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}&auth_token=#{p.authentication_token}\">#{item.period.name}</a>" if item.period  		
+  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if item.group
       itext += "</p>"
       itext += "<hr>"
       

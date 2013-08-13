@@ -1,10 +1,11 @@
 <div style="text-align:center;font-weight:bold;padding:30px">
 	
-<p>Click the Confirm button to stop receiving emails. To restart your participation, log back in and uncheck the “Never Send me Emails” box.</p>
+<p>Click the Confirm button to stop receiving emails. To restart your participation, log back in and uncheck the “Never Send me Emails” box. You may prefer to change your email settings to once a week instead of completely blocking all emails.</p>
 
 <p>
 	<%= button_to_function "Cancel", "window.close()" %>
 	<%= button_to_function "Confirm", "window.location = '/optout_confirm'" %>
+	<%= button_to_function "Change email settings", "window.location = '/me/profile/edit#settings'" %>
 </p>
 
 </div>
