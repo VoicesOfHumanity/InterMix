@@ -528,6 +528,8 @@ class ItemsController < ApplicationController
       end
       #@from = "group"
       session[:group_is_member] = @is_member
+      session[:group_name] = @group.name
+      session[:group_prefix] = @group.shortname
     end
     session[:group_id] = @group_id
 

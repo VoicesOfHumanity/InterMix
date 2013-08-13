@@ -12,7 +12,7 @@
 	<% for dialog in @group.dialogs -%>
 
 	<% 
-	if dialog.shortname.to_s != "" and session[:group_prefix] != ""
+	if dialog.shortname.to_s != "" and session[:group_prefix].to_s != ""
 		dom =  "#{dialog.shortname}.#{session[:group_prefix]}.#{ROOTDOMAIN}"
 	elsif dialog.shortname.to_s != ""
 		dom =  "#{dialog.shortname}.#{ROOTDOMAIN}"

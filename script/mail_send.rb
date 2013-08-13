@@ -116,8 +116,50 @@ for p in participants
     
     puts "  #{ptext}: #{items.length} items"
     
+    user_dialogs = {}
+    
     for item in items
-      puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject}"
+      
+      #-- Figure out the best domain to use, with discussion and group
+      if item.dialog
+        #-- If it is in a discussion, this person possibly represents another group
+        if user_dialogs[item.dialog_id]
+          group_prefix = user_dialogs[items.dialog_id]['group_prefix']
+        else
+          user_dialogs[item.dialog_id] = {'group_prefix'=>''}
+          group_participant = GroupParticipant.where(:participant_id=p.id,:group_id=>item.group_id).first
+          if group_particpant
+            #-- They're a member of the group, so that's the one to use
+            user_dialogs[item.dialog_id]['group_prefix'] = item.group.shortname if item.group
+          else
+            for g in item.dialog.active_groups
+              group_participant = GroupParticipant.where(:participant_id=p.id,:group_id=>g.id).first
+              if group_particpant and g.shortname.to_s != ''
+                group_prefix = g.shortname
+                user_dialogs[item.dialog_id]['group_prefix'] = group_prefix
+                break
+              end
+            end
+          end    
+        end
+        if item.dialog.shortname.to_s != '' and group_prefix != ''
+          domain = "#{item.dialog.shortname}.#{group_prefix}.#{ROOTDOMAIN}"
+        elsif group_prefix != ''
+          domain = "#{group_prefix}.#{ROOTDOMAIN}"
+        elsif item.dialog.shortname.to_s != ''
+          domain = "#{item.dialog.shortname}.#{ROOTDOMAIN}"
+        else
+          domain = BASEDOMAIN
+        end      
+      elsif item.group and item.group.shortname.to_s != ''
+        #-- If it is posted in a group, that's where we'll go, whether they're a member of it or not
+        domain = "#{group.shortname}.#{ROOTDOMAIN}"
+      else
+        domain = BASEDOMAIN
+      end      
+
+      puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject} | domain: #{domain}"
+      
       itext = ""
       itext += "<h3><a href=\"http://#{BASEDOMAIN}/items/#{item.id}/view?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
       itext += "<div>"
