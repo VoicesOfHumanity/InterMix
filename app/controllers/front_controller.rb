@@ -170,7 +170,8 @@ class FrontController < ApplicationController
 
     narr = @name.split(' ')
     last_name = narr[narr.length-1]
-    first_name = narr[0,narr.length-1].join(' ')
+    first_name = ''
+    first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
     password = 'test'
     
     @participant = Participant.find_by_email(@email) 
@@ -354,8 +355,8 @@ class FrontController < ApplicationController
     elsif @subject != '' and @subject.length > 48
       flash[:alert] += "Maximum 48 characters for the subject line, please<br>"        
     end
-    if params.has_key?(:first_name) and (@first_name == '' or @last_name == '')
-      flash[:alert] += "What's your name? (first & last)<br>"
+    if params.has_key?(:first_name) and (@first_name == '' and @last_name == '')
+      flash[:alert] += "What's your name?<br>"
     elsif @name == ''
       flash[:alert] += "What's your name?<br>"
     end  
@@ -414,7 +415,8 @@ class FrontController < ApplicationController
     else
       narr = @name.split(' ')
       last_name = narr[narr.length-1]
-      first_name = narr[0,narr.length-1].join(' ')
+      first_name = ''
+      first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
     end
         
     @participant = Participant.find_by_email(@email) 
@@ -683,8 +685,8 @@ class FrontController < ApplicationController
       return
     end  
 
-    if params.has_key?(:first_name) and (@first_name == '' or @last_name == '')
-      flash[:alert] += "What's your name? (first & last)<br>"
+    if params.has_key?(:first_name) and (@first_name == '' and @last_name == '')
+      flash[:alert] += "What's your name?<br>"
     elsif @name == ''
       flash[:alert] += "What's your name?<br>"
     end  
@@ -741,7 +743,8 @@ class FrontController < ApplicationController
     else
       narr = @name.split(' ')
       last_name = narr[narr.length-1]
-      first_name = narr[0,narr.length-1].join(' ')
+      first_name = ''
+      first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
     end
         
     @participant = Participant.find_by_email(@email) 
@@ -1001,10 +1004,6 @@ class FrontController < ApplicationController
     flash[:alert] = ''
     if @first_name == '' and @last_name == ''
       flash[:alert] += "Please enter your name<br>"
-    elsif @first_name == ''
-      flash[:alert] += "Please enter your first name<br>"
-    elsif @last_name == ''
-      flash[:alert] += "Please enter your last name<br>"
     end
     if @email == ''
       flash[:alert] += "Please type in your e-mail address as well<br>"

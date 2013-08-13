@@ -959,6 +959,7 @@ class GroupsController < ApplicationController
   def group_participant_save
     #-- Save changes to a group membership
     @group_id = params[:id].to_i
+    @group = Group.find_by_id(@group_id)
     members_active = params[:members_active].to_i
     @group_participant_id = params[:group_participant_id]
     @group_participant = GroupParticipant.find_by_id(@group_participant_id)

@@ -16,7 +16,7 @@ This is a message sent to a group you're a member of.
 <% if false -%>
 <a href="<%= "http://unday.#{ROOTDOMAIN}/autologin?code=#{@cdata['recipient'].confirmation_token}" %>">Log in</a>
 <% end -%>
-<a href="http://<%= BASEDOMAIN %>/groups/<%= @cdata['group'].id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a>
+<a href="http://<%= BASEDOMAIN %>/groups/<%= @cdata['group'].id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in to the group.</a>
 <% if false -%>
 You can also see it in your <a href="http://<%= BASEDOMAIN %>/messages?auth_token=<%= @cdata['recipient'].authentication_token %>">Message Area</a>
 <% end -%>

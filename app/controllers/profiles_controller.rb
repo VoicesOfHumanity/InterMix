@@ -96,8 +96,7 @@ class ProfilesController < ApplicationController
     
     @participant.assign_attributes(params[:participant])
 
-    flash.now[:alert] += 'First name is required<br>' if params[:participant].has_key?(:first_name) and @participant.first_name.to_s == ''
-    flash.now[:alert] += 'Last name is required<br>' if params[:participant].has_key?(:last_name) and @participant.last_name.to_s == ''
+    flash.now[:alert] += 'A name is required<br>' if (params[:participant].has_key?(:first_name) and @participant.first_name.to_s == '' and @participant.last_name.to_s == ''
     flash.now[:alert] += 'Country is required<br>' if params[:participant].has_key?(:country_code) and @participant.country_code.to_s == ''
     flash.now[:alert] += 'Visibility is required<br>' if params[:participant].has_key?(:visibility) and @participant.visibility.to_s == ''
     flash.now[:alert] += 'Personal message e-mail preference is required<br>' if params[:participant].has_key?(:private_email) and @participant.private_email.to_s == ''

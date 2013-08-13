@@ -153,7 +153,7 @@ for p in participants
         end      
       elsif item.group and item.group.shortname.to_s != ''
         #-- If it is posted in a group, that's where we'll go, whether they're a member of it or not
-        domain = "#{group.shortname}.#{ROOTDOMAIN}"
+        domain = "#{item.group.shortname}.#{ROOTDOMAIN}"
       else
         domain = BASEDOMAIN
       end 
@@ -170,9 +170,9 @@ for p in participants
       
       itext += "<p>by "
 
-  		if item.dialog and item.dialog.current_period.to_i > 0 and not item.dialog.settings_with_period["names_visible_voting"]
+  		if item.dialog and item.dialog.current_period.to_i > 0 and not item.dialog.settings_with_period["names_visible_voting"]  and item.is_first_in_thread
   		  itext += "[name withheld during focus period]"
-  		elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"]
+  		elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"] and item.is_first_in_thread
   		  itext += "[name withheld for this discussion]"  		
   		elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"]
   		  itext += item.participant ? item.participant.name : item.posted_by
