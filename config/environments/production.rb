@@ -92,12 +92,16 @@ Intermix::Application.configure do
   config.active_support.deprecation = :notify
   
   # changes in syntax: https://github.com/smartinez87/exception_notification
-  config.middleware.use ExceptionNotifier::Rack,
+  config.middleware.use ExceptionNotification::Rack,
     :email => {
       :email_prefix => "[InterMix Bug] ",
       :sender_address => %{"Exception Notifier" <questions@intermix.org>},
       :exception_recipients => %w{ffunch@gmail.com}
     }     
+  #config.middleware.use ExceptionNotifier,
+  #    :email_prefix => "[InterMix Bug] ",
+  #    :sender_address => %{"Exception Notifier" <questions@intermix.org>},
+  #    :exception_recipients => %w{ffunch@gmail.com}
     
 
   config.assets.precompile += Ckeditor.assets
