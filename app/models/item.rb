@@ -238,6 +238,19 @@ class Item < ActiveRecord::Base
     self.xml_content = item.to_xml  
   end  
   
+  def html_with_auth(participant)
+    #-- For the purpose of emailing, return html_content with added authentication token for a particular user, so they'll be logged in
+    html = self.html_content
+    
+    xauth = "?auth_token=#{participant.authentication_token}"
+    html.gsub!(%r{},)
+    
+    
+    http://xxx/items/xxx/view?auth_token=<%= @cdata['recipient'].authentication_token %>"
+    
+    return html
+  end  
+  
   def root_item
     #-- Find and return the root item in the thread this item is in. Might be this very item, if it is a root
     return self if self.is_first_in_thread
@@ -970,5 +983,5 @@ class Item < ActiveRecord::Base
     return true
 
   end
-      
+    
 end
