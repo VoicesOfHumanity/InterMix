@@ -243,10 +243,10 @@ class Item < ActiveRecord::Base
     html = self.html_content
     
     xauth = "?auth_token=#{participant.authentication_token}"
-    html.gsub!(%r{},)
+    #html.gsub!(%r{},)
     
     
-    http://xxx/items/xxx/view?auth_token=<%= @cdata['recipient'].authentication_token %>"
+    #http://xxx/items/xxx/view?auth_token=<%= @cdata['recipient'].authentication_token %>"
     
     return html
   end  
