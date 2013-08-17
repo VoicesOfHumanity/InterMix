@@ -178,7 +178,7 @@ class Item < ActiveRecord::Base
         msubject = subject
       end  
       
-      content = self.html_content != '' ? self.html_content : self.short_content
+      content = self.html_content != '' ? self.html_with_auth(recipient) : self.short_content
       
       if group
         #-- A group message  
@@ -240,15 +240,14 @@ class Item < ActiveRecord::Base
   
   def html_with_auth(participant)
     #-- For the purpose of emailing, return html_content with added authentication token for a particular user, so they'll be logged in
-    html = self.html_content
-    
-    xauth = "?auth_token=#{participant.authentication_token}"
-    #html.gsub!(%r{},)
-    
-    
-    #http://xxx/items/xxx/view?auth_token=<%= @cdata['recipient'].authentication_token %>"
-    
-    return html
+    self.html_content.gsub(%r{http://.*?#{BASEDOMAIN}/[^"]+}) { |s|
+      if s =~ /auth_token=/
+        s
+      else  
+        s += (s =~ /\?/) ? "&" : "?"
+        s += "auth_token=#{participant.authentication_token}"
+      end  
+    }
   end  
   
   def root_item
