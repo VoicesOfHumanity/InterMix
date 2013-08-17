@@ -68,8 +68,8 @@
 
 		<%= f.input :private_email, :label => 'Personal messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :system_email, :label => 'System messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
-		<% f.input :group_email, :label => 'Group messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
-		<%= f.input :forum_email, :label => 'Forum postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :group_email, :label => 'Group postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<%= f.input :forum_email, :label => 'Discussion postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :no_email, :label => 'Block all emails?', :as => :radio %>	
 		
 		<p> Please set your spam filter to allow messages from questions@intermix.org.</p>

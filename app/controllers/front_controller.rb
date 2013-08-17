@@ -447,7 +447,7 @@ class FrontController < ApplicationController
       @participant.password = @password
       @participant.country_code = @country_code
       @participant.forum_email = 'daily'
-      @participant.group_email = 'daily'
+      @participant.group_email = 'instant'
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)

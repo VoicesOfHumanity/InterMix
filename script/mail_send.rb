@@ -37,7 +37,7 @@ end
 if participant_id.to_i > 0
   participants = Participant.where(:id=>participant_id)
 else
-  participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or forum_email='daily' or forum_email='weekly')").order(:id)
+  participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or group_email='daily' or group_email='weekly' or forum_email='daily' or forum_email='weekly')").order(:id)
 end
 puts "#{participants.length} participants"
 
@@ -106,7 +106,7 @@ for p in participants
     message.save
   end
     
-  if p.forum_email == 'daily' or ((p.forum_email == 'weekly' or do_weekly) and is_weekly)
+  if p.group_email == 'daily' or p.forum_email == 'daily' or ((p.group_email == 'weekly' or p.forum_email == 'weekly' or do_weekly) and is_weekly)
     #-- Forum Items
     
     ptext = ((p.forum_email == 'weekly' or do_weekly) and is_weekly) ? "weekly" : "daily"

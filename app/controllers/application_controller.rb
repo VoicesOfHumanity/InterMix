@@ -218,6 +218,7 @@ class ApplicationController < ActionController::Base
   end
   
   def after_token_authentication
+    #-- NB: This is unfortunately never run, as this is a model method and doesn't belong here.
     #-- This is called by automatic login, rather than after_sign_in_path_for
     logger.info("application#after_token_authentication")
     
@@ -307,16 +308,23 @@ class ApplicationController < ActionController::Base
   
   def check_group_and_dialog  
     #-- This is probably rather inconsistent. When do we call which method to look for group or dialog ids?
+    #-- This is called from after_sign_in_path_for as a supplement to get_group_dialog_from_subdomain
+    #-- It is meant for people who're logged in, to make sure the group and discussion are set
+    #-- We will set a cookie, to ensure that this gets run, but not more than once
+    return if participant_signed_in? and session[:group_checked]
     logger.info("application#check_group_and_dialog")    
-    #if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
+    was_missing = false
     if session[:group_id].to_i == 0
+      was_missing = true
       get_group_dialog_from_subdomain
     end  
-    #if participant_signed_in? and session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
     if participant_signed_in? and session[:group_id].to_i == 0
       #-- Get our last group/dialog if we don't already have one
       session[:group_id] = current_participant.last_group_id
       session[:dialog_id] = current_participant.last_dialog_id if session[:dialog_id].to_i == 0
+    end      
+    if participant_signed_in? and (not session.has_key?(:group_is_member) or not session.has_key?(:group_prefix))
+      #-- If  we don't know if the user is a member or the group prefix, look it up
       if session[:group_id].to_i > 0
         @group_id = session[:group_id]
         @group = Group.find_by_id(@group_id)
@@ -326,7 +334,13 @@ class ApplicationController < ActionController::Base
           @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
           @is_member = @group_participant ? true : false
           session[:group_is_member] = @is_member
+        else  
+          session[:group_is_member] = false
+          session[:group_prefix] = ''
         end
+      else
+        session[:group_is_member] = false          
+        session[:group_prefix] = ''
       end
       if session[:dialog_id].to_i > 0
         @dialog_id = session[:dialog_id]
@@ -335,9 +349,13 @@ class ApplicationController < ActionController::Base
           session[:dialog_name] = @dialog.name
           session[:dialog_prefix] = @dialog.shortname
         end
-      end
+      end      
+    end
+    if was_missing and session[:group_id].to_i > 0
+      #-- We set something
       logger.info("application#check_group_and_dialog setting last group/dialog group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
-    end  
+    end
+    session[:group_checked] = true if participant_signed_in?
     return session[:group_id], session[:dialog_id]
   end
   

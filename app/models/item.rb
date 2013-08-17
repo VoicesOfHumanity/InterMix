@@ -138,8 +138,13 @@ class Item < ActiveRecord::Base
       #  next
       elsif not group
         next
-      elsif not recipient.forum_email=='instant'
-        logger.info("#{recipient.id}:#{recipient.name} is not set for instant forum mail, so skipping")
+      elsif self.dialog_id.to_i > 0 and not recipient.forum_email=='instant'
+        #-- A discussion message
+        logger.info("#{recipient.id}:#{recipient.name} is not set for instant discussion mail, so skipping")
+        next
+      elsif self.dialog_id.to_i == 0 and not recipient.group_email=='instant'
+        #-- A pure group message
+        logger.info("#{recipient.id}:#{recipient.name} is not set for instant group mail, so skipping")
         next
       end  
       if recipient.email.to_s == ''
