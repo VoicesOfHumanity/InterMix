@@ -70,7 +70,7 @@ Intermix::Application.configure do
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   #if `hostname` =~ /ovh.net/
-    config.action_controller.asset_host = BASEDOMAIN   
+  config.action_controller.asset_host = BASEDOMAIN   
   #else
   #  config.action_controller.asset_host = "http://go.intermix.org"
   #end
