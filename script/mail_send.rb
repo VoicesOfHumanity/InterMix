@@ -46,11 +46,10 @@ numdailyerror = 0
 numweeklysent = 0
 numweeklyerror = 0
 
+#-- Go through all users that have any setting of daily or weekly mail, and who hasn't blocked mail altogether
 for p in participants
   puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} forum:#{p.forum_email}"
 
-  pstart = ((p.forum_email == 'weekly' or do_weekly) and is_weekly) ? wstart : dstart
-  
   tdaily = ''
   tweekly = ''
   
@@ -58,16 +57,19 @@ for p in participants
   
   if p.system_email == 'daily' or ((p.system_email == 'weekly' or do_weekly) and is_weekly)
     #-- System Messages
+    pstart = ((p.system_email == 'weekly' or do_weekly) and is_weekly) ? wstart : dstart
     messages += Message.where(:to_participant_id => p.id, :from_participant_id => 0).where(do_weekly ? "email_sent=0" : "").where("created_at>='#{pstart.strftime("%Y-%m-%d %H:%M:%S")}'").order(:id)
     puts "  " + messages.length.to_s + ' ' + (((p.system_email == 'weekly' or do_weekly) and is_weekly) ? "weekly" : "daily") + " system messages"
   end
   
   if p.private_email == 'daily' or ((p.private_email == 'weekly' or do_weekly) and is_weekly)
     #-- Private Messages
+    pstart = ((p.private_email == 'weekly' or do_weekly) and is_weekly) ? wstart : dstart
     messages += Message.where(:to_participant_id => p.id).where(do_weekly ? "email_sent=0" : "").where("from_participant_id>0").where("created_at>='#{pstart.strftime("%Y-%m-%d %H:%M:%S")}'").order(:id)
     puts "  " + messages.length.to_s + ' ' + (((p.private_email == 'weekly' or do_weekly) and is_weekly) ? "weekly" : "daily") + " personal messages"
   end
   
+  #-- First do their messages
   for message in messages
     itext = ""
     
@@ -89,7 +91,11 @@ for p in participants
     itext += "</p>"
     itext += "<hr>"
     
-    if (p.forum_email == 'weekly' or do_weekly) and is_weekly
+    if (p.system_email == 'weekly' or do_weekly) and is_weekly and message.from_participant_id == 0
+      #-- A system message for a weekly batch
+      tweekly += itext    
+    elsif (p.private_email == 'weekly' or do_weekly) and is_weekly and message.from_participant_id > 0
+      #-- A private message for a weekly batch
       tweekly += itext
     else
       tdaily += itext
@@ -105,20 +111,58 @@ for p in participants
     end
     message.save
   end
+  
+  #-- Group items have a different setting from Discussion items
+  #-- Discussion items are the forum_email setting. Group items are the group_email setting.
+  
+  need_daily = ( p.group_email == 'daily' or p.forum_email == 'daily' )
+  need_weekly = ((p.group_email == 'weekly' or p.forum_email == 'weekly' or do_weekly) and is_weekly)
     
-  if p.group_email == 'daily' or p.forum_email == 'daily' or ((p.group_email == 'weekly' or p.forum_email == 'weekly' or do_weekly) and is_weekly)
-    #-- Forum Items
+  if need_daily or need_weekly
+    #-- Get the forum Items
     
-    ptext = ((p.forum_email == 'weekly' or do_weekly) and is_weekly) ? "weekly" : "daily"
+    #-- Do we start a week ago, or a day ago?
+    pstart = need_weekly ? wstart : dstart
     
     #-- We want sort by descending regressed value, using total interest
     items, itemsproc = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p.id,true,p.id,pstart,pend)
     
-    puts "  #{ptext}: #{items.length} items"
+    #-- Note that we might have gotten more items than we actually need
+    
+    if need_daily and need_weekly
+      ptext = "daily/weekly"
+    elsif need_weekly
+      ptext = "weekly"
+    else
+      ptext = "daily"
+    end      
+    puts "  #{items.length} #{ptext} items"
     
     user_dialogs = {}
     
     for item in items
+      
+      #-- Is it an item we need, or do we skip it?
+      in_week = true
+      in_day = (item.created_at > dstart)
+      in_group = (item.group_id.to_i > 0)
+      in_dialog = (item.dialog_id.to_i > 0)
+      
+      if in_dialog
+        if p.forum_email == 'daily' and in_day
+        elsif p.forum_email == 'weekly' and in_week
+        else
+          next
+        end     
+      elsif in_group
+        if p.group_email == 'daily' and in_day
+        elsif p.group_email == 'weekly' and in_week
+        else
+          next
+        end     
+      else
+        next
+      end    
       
       #-- Figure out the best domain to use, with discussion and group
       if item.dialog
@@ -190,7 +234,9 @@ for p in participants
       itext += "</p>"
       itext += "<hr>"
       
-      if p.forum_email == 'weekly' and is_weekly
+      if in_dialog and p.forum_email == 'weekly' and is_weekly
+        tweekly += itext
+      elsif in_group and p.group_email == 'weekly' and is_weekly
         tweekly += itext
       else
         tdaily += itext
@@ -203,6 +249,7 @@ for p in participants
   cdata = {}
   cdata['recipient'] = p      
   
+  #-- Send any daily digest for this person. We do that every day, if there's something to send.
   if tdaily != ''
   
     subject = "InterMix Daily Digest, #{pstart.strftime("%Y-%m-%d")}"
@@ -227,6 +274,7 @@ for p in participants
   
   end
 
+  #-- Send any weekly digest for this person, if it is the day we run weeklies, and there's something to send
   if is_weekly and tweekly != ''
   
     subject = "InterMix Weekly Digest, #{pstart.strftime("%Y-%m-%d")} - #{pend.strftime("%Y-%m-%d")}"

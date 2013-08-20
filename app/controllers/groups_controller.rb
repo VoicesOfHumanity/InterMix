@@ -698,6 +698,7 @@ class GroupsController < ApplicationController
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
     @is_moderator = (@group_participant and @group_participant.moderator)
+    @dialog_id = 0
 
     if not session[:has_required]
       session[:has_required] = current_participant.has_required

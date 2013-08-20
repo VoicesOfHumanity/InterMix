@@ -240,7 +240,7 @@ class Item < ActiveRecord::Base
   
   def html_with_auth(participant)
     #-- For the purpose of emailing, return html_content with added authentication token for a particular user, so they'll be logged in
-    self.html_content.gsub(%r{http://.*?#{BASEDOMAIN}/[^"]+}) { |s|
+    self.html_content.gsub(%r{http://.*?#{ROOTDOMAIN}/[^"]+}) { |s|
       if s =~ /auth_token=/
         s
       else  
