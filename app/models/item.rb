@@ -224,7 +224,7 @@ class Item < ActiveRecord::Base
       itext = ""
       itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\">#{self.subject}</a></h3>"
       itext += "<div>"
-      itext += item.html_with_auth(p)
+      itext += content
       itext += "</div>"
       
       itext += "<p>by "
