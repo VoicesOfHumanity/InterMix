@@ -243,7 +243,7 @@ class Item < ActiveRecord::Base
   		
   		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{dialog.name}</a>" if dialog
   		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?period_id=#{self.period_id}&auth_token=#{p.authentication_token}\">#{period.name}</a>" if period  		
-  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if group
+  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}\">#{group.name}</a>" if group
       itext += "</p>"
       
       if group
