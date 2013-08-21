@@ -124,9 +124,13 @@ class Item < ActiveRecord::Base
     if self.dialog_id.to_i > 0
       dialog = Dialog.find_by_id(self.dialog_id)
     end
+    if self.period_id.to_i > 0
+      period = Period.find_by_id(self.period_id)
+    end
 
     #-- Distribute to members of the target group
     for recipient in participants
+      p = recipient
       if recipient.no_email
         logger.info("#{recipient.id}:#{recipient.name} is blocking all email, so skipping")
         next        
@@ -157,11 +161,48 @@ class Item < ActiveRecord::Base
       # http://yekmer.posterous.com/single-access-token-using-devise
       recipient.ensure_authentication_token!
       
+      #-- Figure out the best domain to use, with discussion and group
+      if dialog
+        #-- If it is in a discussion, this person possibly represents another group
+        group_prefix = ''
+        group_participant = GroupParticipant.where(:participant_id => recipient.id, :group_id => self.group_id).first
+        if group_participant
+          #-- They're a member of the group, so that's the one to use
+          group_prefix = group.shortname if group
+        else
+          for g in dialog.active_groups
+            group_participant = GroupParticipant.where(:participant_id => recipient.id,:group_id => g.id).first
+            if group_participant and g.shortname.to_s != ''
+              group_prefix = g.shortname
+              break
+            end
+          end
+        end
+        if dialog.shortname.to_s != '' and group_prefix != ''
+          domain = "#{dialog.shortname}.#{group_prefix}.#{ROOTDOMAIN}"
+        elsif group_prefix != ''
+          domain = "#{group_prefix}.#{ROOTDOMAIN}"
+        elsif dialog.shortname.to_s != ''
+          domain = "#{dialog.shortname}.#{ROOTDOMAIN}"
+        else
+          domain = BASEDOMAIN
+        end      
+      elsif group and group.shortname.to_s != ''
+        #-- If it is posted in a group, that's where we'll go, whether they're a member of it or not
+        domain = "#{group.shortname}.#{ROOTDOMAIN}"
+      else
+        domain = BASEDOMAIN
+      end 
+      
+      group_domain = (group and group.shortname.to_s != '') ? "#{group.shortname}.#{ROOTDOMAIN}" : ROOTDOMAIN
+      
       cdata = {}
       cdata['item'] = self
       cdata['recipient'] = recipient      
       cdata['group'] = group if group
       cdata['dialog'] = dialog if dialog
+      cdata['domain'] = domain
+      cdata['group_domain'] = group_domain
       #@cdata['attachments'] = @attachments
       
       if group and group.logo.exists? then
@@ -180,11 +221,36 @@ class Item < ActiveRecord::Base
       
       content = self.html_content != '' ? self.html_with_auth(recipient) : self.short_content
       
+      itext = ""
+      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\">#{self.subject}</a></h3>"
+      itext += "<div>"
+      itext += item.html_with_auth(p)
+      itext += "</div>"
+      
+      itext += "<p>by "
+
+  		if dialog and dialog.current_period.to_i > 0 and not dialog.settings_with_period["names_visible_voting"]  and self.is_first_in_thread
+  		  itext += "[name withheld during decision period]"
+  		elsif dialog and dialog.current_period.to_i == 0 and not dialog.settings_with_period["names_visible_general"] and self.is_first_in_thread
+  		  itext += "[name withheld for this discussion]"  		
+  		elsif dialog and not dialog.settings_with_period["profiles_visible"]
+  		  itext += self.participant ? self.participant.name : self.posted_by
+  		else
+  		  itext += "<a href=\"http://#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
+  		end
+  		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
+  		itext += " <a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
+  		
+  		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{dialog.name}</a>" if dialog
+  		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?period_id=#{self.period_id}&auth_token=#{p.authentication_token}\">#{period.name}</a>" if period  		
+  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if group
+      itext += "</p>"
+      
       if group
         #-- A group message  
-        email = ItemMailer.group_item(msubject, content, recipient.email_address_with_name, cdata)
+        email = ItemMailer.group_item(msubject, itext, recipient.email_address_with_name, cdata)
       else    
-        email = ItemMailer.item(msubject, content, recipient.email_address_with_name, cdata)
+        email = ItemMailer.item(msubject, itext, recipient.email_address_with_name, cdata)
       end
 
       begin

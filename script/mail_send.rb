@@ -169,7 +169,7 @@ for p in participants
         #-- If it is in a discussion, this person possibly represents another group
         group_prefix = ''
         if user_dialogs[item.dialog_id]
-          group_prefix = user_dialogs[items.dialog_id]['group_prefix']
+          group_prefix = user_dialogs[item.dialog_id]['group_prefix']
         else
           user_dialogs[item.dialog_id] = {'group_prefix'=>''}
           group_participant = GroupParticipant.where(:participant_id => p.id, :group_id => item.group_id).first
