@@ -127,6 +127,8 @@ class Item < ActiveRecord::Base
     if self.period_id.to_i > 0
       period = Period.find_by_id(self.period_id)
     end
+    
+    group_mismatch = (self.group_id != self.root_item.group_id)		
 
     #-- Distribute to members of the target group
     for recipient in participants
@@ -243,7 +245,7 @@ class Item < ActiveRecord::Base
   		
   		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{dialog.name}</a>" if dialog
   		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?period_id=#{self.period_id}&auth_token=#{p.authentication_token}\">#{period.name}</a>" if period  		
-  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}\">#{group.name}</a>" if group
+  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}\"#{" style=\"color:#f00\"" if group_mismatch}>#{group.name}</a>" if group
       itext += "</p>"
       
       if group
