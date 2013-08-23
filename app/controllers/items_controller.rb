@@ -542,7 +542,7 @@ class ItemsController < ApplicationController
         @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
         dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
         @is_admin = (dialogadmin.length > 0)
-        @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
+        @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog_id).count
       else
         @is_admin = false
         @previous_messages = []
@@ -551,11 +551,11 @@ class ItemsController < ApplicationController
     end
     session[:dialog_id] = @dialog_id
     
-    if @dialog_id.to_i > 0 and @group_id.to_i > 0 and not @is_member
+    if @dialog_id.to_i > 0 and @group_id.to_i > 0 and participant_signed_in? and not @is_member
       #-- If the reader isn't a member of the group the message is posted under, see if he's a member of another group in the discussion
       for group in @dialog.groups
-        group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",group.id,current_participant.id).find(:first)
-        if group_participant
+        group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group_id,current_participant.id).find(:first)
+        if group_participant and group_participant.group
           @group_id = group.id
           @group = group
           @is_member = true

@@ -109,7 +109,7 @@ class DialogsController < ApplicationController
       redirect_to :action=>:view
     end 
     @is_admin = true
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all   
+    #@groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all   
     @dialog = Dialog.find_by_id(@dialog_id)
     @metamaps = Metamap.all
     @has_metamaps = {}
@@ -172,6 +172,11 @@ class DialogsController < ApplicationController
         format.html { redirect_to :action=>:view, :notice => 'Discussion was successfully updated.' }
         format.xml  { head :ok }
       else
+        @metamaps = Metamap.all
+        @has_metamaps = {}
+        @dialog.metamaps.each do |metamap_id,name|
+          @has_metamaps[metamap_id] = true
+        end
         format.html { render :action => "edit" }
         format.xml  { render :xml => @dialog.errors, :status => :unprocessable_entity }
       end
@@ -1473,6 +1478,18 @@ class DialogsController < ApplicationController
       flash[:alert] += "The discussion needs a name<br/>"
     elsif params[:dialog][:shortname].to_s == ''
       flash[:alert] += "The discussion needs a short code, used for example in e-mail [subject] lines<br/>"
+    else
+      #-- Check if the shortname is unique
+      xshortname = params[:dialog][:shortname]
+      xdialog = Dialog.where("shortname='#{xshortname}' and id!=#{@dialog.id}").first
+      if xdialog
+        flash[:alert] += "There is already another discussion with the prefix \"#{xshortname}\"<br/>"
+      else  
+        xgroup = Group.where("shortname='#{xshortname}'").first
+        if xgroup
+          flash[:alert] += "There is already a group with the prefix \"#{xshortname}\"<br/>"
+        end  
+      end  
     end
     if params[:dialog][:openness].to_s == ''
       flash[:alert] += "Please choose a membership setting<br/>"

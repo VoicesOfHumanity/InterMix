@@ -125,6 +125,18 @@ class GroupsController < ApplicationController
       flash[:alert] += "The group needs a name<br/>"
     elsif params[:group][:shortname].to_s == ''
       flash[:alert] += "The group needs a short name, used for example in e-mail [subject] lines<br/>"
+    else
+      #-- Check if the shortname is unique
+      xshortname = params[:group][:shortname]
+      xgroup = Group.where("shortname='#{xshortname}' and id!=#{@group.id}").first
+      if xgroup
+        flash[:alert] += "There is already another group with the prefix \"#{xshortname}\"<br/>"
+      else  
+        xdialog = Dialog.where("shortname='#{xshortname}'").first
+        if xdialog
+          flash[:alert] += "There is already a discussion with the prefix \"#{xshortname}\"<br/>"
+        end  
+      end  
     end
     if params[:group][:owner].to_i == 0
       flash[:alert] += "Who is the owner of the group? Most likely you.<br/>"
