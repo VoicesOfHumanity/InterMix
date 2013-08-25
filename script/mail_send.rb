@@ -18,14 +18,11 @@ opts.on("-wARG","--weekly=ARG",Integer) {|val| do_weekly = true}
 opts.on("-tARG","--test=ARG",Integer) {|val| testonly = true}
 opts.parse(ARGV)
 
-wstart = Time.now.midnight - 1.week
-dstart = Time.now.midnight - 1.day
-pend = Time.now.midnight - 1.second
-
 if Time.now.wday == 4 or do_weekly
 #if Time.now.wday == 6
   #-- If it is Saturday
   is_weekly = true
+  puts "Today is the day to run weeklies"
 else
   is_weekly = false 
 end  
@@ -33,6 +30,15 @@ end
 if do_weekly
   puts "Forcing weekly mailing, regardless of settings"
 end  
+
+wstart = Time.now.midnight - 1.week
+dstart = Time.now.midnight - 1.day
+pend = Time.now.midnight - 1.second
+
+if is_weekly or do_weekly
+  puts "Week: #{wstart} - #{pend}"
+end  
+puts "Day: #{dstart} - #{pend}"
 
 if participant_id.to_i > 0
   participants = Participant.where(:id=>participant_id)
@@ -252,7 +258,7 @@ for p in participants
   #-- Send any daily digest for this person. We do that every day, if there's something to send.
   if tdaily != ''
   
-    subject = "InterMix Daily Digest, #{pstart.strftime("%Y-%m-%d")}"
+    subject = "InterMix Daily Digest, #{dstart.strftime("%Y-%m-%d")}"
   
     email = ItemMailer.digest(subject, tdaily, p.email_address_with_name, cdata)
   
@@ -277,7 +283,7 @@ for p in participants
   #-- Send any weekly digest for this person, if it is the day we run weeklies, and there's something to send
   if is_weekly and tweekly != ''
   
-    subject = "InterMix Weekly Digest, #{pstart.strftime("%Y-%m-%d")} - #{pend.strftime("%Y-%m-%d")}"
+    subject = "InterMix Weekly Digest, #{wstart.strftime("%Y-%m-%d")} - #{pend.strftime("%Y-%m-%d")}"
   
     email = ItemMailer.digest(subject, tweekly, p.email_address_with_name, cdata)
   
