@@ -6,7 +6,7 @@
 	<p><%= @error_message %></p>
 	<% end -%>
 	
-	<div class="subject subject<%= odd_or_even %>" title="<%= item.subject %>"><span><%= item.subject %></span></div>
+	<div class="subject subject<%= odd_or_even %>" title="<%= item.subject %>" onclick="expand(<%= item.id %>)"><span><%= item.subject %></span></div>
 		
 	<div class="itemvoting">
 
