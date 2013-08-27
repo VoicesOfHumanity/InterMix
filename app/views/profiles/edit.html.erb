@@ -9,12 +9,7 @@
 
 	<%= f.inputs do %>
 
-	<li class="select required">
-		<div style="width:25%;float:left;font-weight:bold">E-mail/Username</div>
-		<div style="width:75%;float:left">
-			<%= @participant.email %>
-		</div>
-	</li>		
+	<%= f.input :email, :label => "E-mail/Username", :required => true %>	
 
 	<li class="select required" id="passwordli">
 		<div style="width:25%;float:left;font-weight:bold">Password Change</div>

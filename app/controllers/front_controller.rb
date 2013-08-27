@@ -373,6 +373,8 @@ class FrontController < ApplicationController
       @password_confirmation = params[:password_confirmation].to_s
       if @password == ''
         flash[:alert] += "Please choose a password<br>"
+      elsif @password.length < 4
+        flash[:alert] += "Please choose a longer password<br>"
       elsif @password_confirmation == ''
         flash[:alert] += "Please enter your password a second time, to confirm<br>"
       elsif @password_confirmation != @password

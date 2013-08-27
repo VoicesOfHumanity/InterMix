@@ -304,6 +304,7 @@ div.forumitem .subject {
 	background-color: transparent;
 	width: 420px;
 	margin-bottom: -15px;
+	cursor: pointer;	
 }
 div.forumitem .subject span {
 	background-color: #fcf9f7;

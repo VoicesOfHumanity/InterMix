@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130716011537) do
+ActiveRecord::Schema.define(:version => 20130827011340) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -538,6 +538,7 @@ ActiveRecord::Schema.define(:version => 20130716011537) do
     t.integer  "political_id"
     t.string   "status"
     t.string   "email",                                                                :default => "",               :null => false
+    t.string   "old_email"
     t.string   "encrypted_password",     :limit => 128,                                :default => "",               :null => false
     t.string   "password_salt",                                                        :default => "",               :null => false
     t.string   "reset_password_token"

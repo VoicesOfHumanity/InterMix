@@ -75,6 +75,26 @@ class ProfilesController < ApplicationController
     flash.now[:alert] = ''
     flash.now[:notice] = ''
 
+    emailchanged = false
+    if params[:participant][:email] == ''
+      flash.now[:alert] += "You can't remove the email address."
+      params[:participant][:email] = @participant.email      
+    elsif params[:participant][:email] != @participant.email
+      if not params[:participant][:email] =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
+        flash.now[:alert] += "#{params[:participant][:email]} doesn't look like a valid e-mail address<br>"
+        params[:participant][:email] = @participant.email      
+      else
+        dup = Participant.where("email='#{params[:participant][:email]}' and id!=#{@participant.id}").first
+        if dup
+          flash.now[:alert] += "There is already another account with the email address #{params[:participant][:email]}, so you can't use that<br>"
+          params[:participant][:email] = @participant.email      
+        else
+          emailchanged = true
+          old_email = @participant.email
+        end  
+      end  
+    end  
+
     old_pass = params[:old_pass].to_s
     new_pass = params[:new_pass].to_s
     new_pass_confirm = params[:new_pass_confirm].to_s
@@ -95,6 +115,8 @@ class ProfilesController < ApplicationController
     end
     
     @participant.assign_attributes(params[:participant])
+    
+    @participant.old_email = old_email if emailchanged
 
     flash.now[:alert] += 'A name is required<br>' if params[:participant].has_key?(:first_name) and @participant.first_name.to_s == '' and @participant.last_name.to_s == ''
     flash.now[:alert] += 'Country is required<br>' if params[:participant].has_key?(:country_code) and @participant.country_code.to_s == ''
@@ -139,9 +161,24 @@ class ProfilesController < ApplicationController
       
       @alert = ""
       if @subsection == 'settings'
-        @notice = "OK New Settings have been saved."
+       flash.now[:notice] += "OK New Settings have been saved.<br>"
       else
-        @notice = "Profile has been updated."
+        flash.now[:notice] += "Profile has been updated.<br>"
+      end
+      
+      if emailchanged
+        @cdata = {}
+        @cdata['email'] = @participant.email
+        subject = "Your InterMix email address has been changed"
+        html_content = "<p>This is a test of your new InterMix email address. If you received this, all is good.</p>"
+        emailmess = SystemMailer.template(SYSTEM_SENDER, @participant.email, subject, html_content, @cdata)
+        begin
+          emailmess.deliver
+          flash.now[:notice] += "A test message has been sent to your new email address, #{@participant.email}. If it does not arrive in the next two or three minutes, please first check your spam folder, and if it is not there, then double check to make sure there were no typos in the new email you just provided.<br>"        
+        rescue
+          logger.info("profiles#{update} FAILED delivering email to #{@participant.email}")
+          flash[:notice] += "Failed to send you a test message to #{@participant.email}<br>"
+        end
       end
       
       #-- Update the setting for whether required fields were entered or not
