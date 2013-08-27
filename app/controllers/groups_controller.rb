@@ -4,7 +4,8 @@ class GroupsController < ApplicationController
  
 	layout "front"
   before_filter :authenticate_participant!
-  before_filter :check_group_and_dialog, :redirect_subdom, :check_required, :check_status
+  before_filter :check_group_and_dialog, :check_required, :check_status
+  before_filter :redirect_subdom, :except => :index
 
   def index
     #-- Show an overview of groups this person has access to
