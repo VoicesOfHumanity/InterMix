@@ -1136,7 +1136,7 @@ class GroupsController < ApplicationController
     #-- If we're not using the right subdomain, redirect
     if request.get? and session[:cur_prefix] != '' and Rails.env == 'production'
       host_should_be = "#{session[:cur_prefix]}.#{ROOTDOMAIN}"
-      if request.host == host_should_be
+      if request.host != host_should_be
         redirect_to "http://#{host_should_be}#{request.fullpath}"
       end
     end
