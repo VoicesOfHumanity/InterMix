@@ -1137,7 +1137,7 @@ class GroupsController < ApplicationController
     if request.get? and session[:cur_prefix] != '' and Rails.env == 'production'
       host_should_be = "#{session[:cur_prefix]}.#{ROOTDOMAIN}"
       if request.host == host_should_be
-        redirect_to "http://#{host_should_be}#{request.request_uri}"
+        redirect_to "http://#{host_should_be}#{request.fullpath}"
       end
     end
   end

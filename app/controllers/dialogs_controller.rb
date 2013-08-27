@@ -4,7 +4,7 @@ class DialogsController < ApplicationController
 
 	layout "front"
   before_filter :authenticate_participant!
-  before_filter :check_group_and_dialog, :check_required, :check_status
+  before_filter :check_group_and_dialog, :redirect_subdom, :check_required, :check_status
 
   def index
     #-- Show an overview of dialogs this person has access to
@@ -1532,6 +1532,16 @@ class DialogsController < ApplicationController
        current_participant.last_group_id = session[:group_id] if session[:group_id]
        current_participant.last_dialog_id = session[:dialog_id] if session[:dialog_id]
        current_participant.save
+    end
+  end
+  
+  def redirect_subdom
+    #-- If we're not using the right subdomain, redirect
+    if request.get? and session[:cur_prefix] != '' and Rails.env == 'production'
+      host_should_be = "#{session[:cur_prefix]}.#{ROOTDOMAIN}"
+      if request.host == host_should_be
+        redirect_to "http://#{host_should_be}#{request.fullpath}"
+      end
     end
   end
   
