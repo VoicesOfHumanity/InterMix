@@ -355,7 +355,7 @@ class ApplicationController < ActionController::Base
       #-- We set something
       logger.info("application#check_group_and_dialog setting last group/dialog group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
     end
-    session[:group_checked] = true if participant_signed_in?
+    session[:group_checked] = true if participant_signed_in?    
     return session[:group_id], session[:dialog_id]
   end
   
