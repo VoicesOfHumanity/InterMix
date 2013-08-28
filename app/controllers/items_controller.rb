@@ -405,7 +405,7 @@ class ItemsController < ApplicationController
     if @item.dialog_id > 0 and @dialog
       #-- Various controls set by either a discussion or by a focus group in a discussion
       # open for posting?
-      if not @dialog.settings_with_period["posting_open"]
+      if not @dialog.settings_with_period["posting_open"] and @item.reply_to.to_i == 0
         flash.now[:alert] = "Sorry, this discussion is not open for new messages"
       end      
       #if @item.reply_to.to_i == 0 and @dialog.settings_with_period["max_messages"].to_i > 0
