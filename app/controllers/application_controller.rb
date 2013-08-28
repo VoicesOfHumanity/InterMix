@@ -351,6 +351,18 @@ class ApplicationController < ActionController::Base
         end
       end      
     end
+    if session[:dialog_prefix].to_s != '' and session[:group_prefix].to_s != ''
+      session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
+    elsif session[:group_prefix].to_s != ''
+      session[:cur_prefix] = session[:group_prefix]
+    elsif session[:dialog_prefix].to_s != ''
+      session[:cur_prefix] = session[:dialog_prefix]
+    end
+    if session[:cur_prefix] != ''
+      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+    else
+      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+    end
     if was_missing and session[:group_id].to_i > 0
       #-- We set something
       logger.info("application#check_group_and_dialog setting last group/dialog group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
