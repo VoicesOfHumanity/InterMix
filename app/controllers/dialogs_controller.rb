@@ -695,6 +695,12 @@ class DialogsController < ApplicationController
     @data[0]['avg_interest'] = 0   # Average interest rating
     @data[0]['avg_approval'] = 0   # Average approval rating
     @data[0]['explanation'] = ''
+    
+    if @regmean
+      @data[0]['explanation'] += "regression to the mean used.<br>"
+    else
+      @data[0]['explanation'] += "No regression to the mean used"  
+    end    
         
     items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").includes(:participant).includes(:item_rating_summary)
         
@@ -725,18 +731,40 @@ class DialogsController < ApplicationController
     end
     @data[0]['num_int_items'] = item_int_uniq.length
     @data[0]['num_app_items'] = item_app_uniq.length
+    if @data[0]['num_int_items'] > 0
+      @data[0]['avg_votes_int'] = ( @data[0]['num_interest'] / @data[0]['num_int_items'] ).to_i
+    end
+    @data[0]['explanation'] += "#{@data[0]['num_int_items']} items have interest ratings by #{@data[0]['num_interest']} people, totalling #{@data[0]['tot_interest']}. Average # of votes per item: #{@data[0]['avg_votes_int']}<br>"
+    if @data[0]['avg_votes_int'] > 20
+      @data[0]['avg_votes_int'] = 20 
+      @data[0]['explanation'] += "Average # of interest votes adjusted down to 20<br>" 
+    end  
+    if @data[0]['num_interest'] > 0
+      @data[0]['avg_interest'] = 1.0 * @data[0]['tot_interest'] / @data[0]['num_interest']
+      @data[0]['explanation'] += "Average interest: #{@data[0]['tot_interest']} / #{@data[0]['num_interest']} = #{@data[0]['avg_interest']}<br>"      
+    else
+      @data[0]['explanation'] += "Average interest: 0<br>"  
+    end
     
-    @data[0]['avg_votes_int'] = ( @data[0]['num_interest'] / @data[0]['num_int_items'] ).to_i if@data[0]['num_int_items'] > 0
-    @data[0]['avg_votes_app'] = ( @data[0]['num_approval'] / @data[0]['num_app_items'] ).to_i if @data[0]['num_app_items'] > 0
-    @data[0]['avg_votes_int'] = 20 if @data[0]['avg_votes_int'] > 20
-    @data[0]['avg_votes_app'] = 20 if @data[0]['avg_votes_app'] > 20
-    @data[0]['avg_interest'] = 1.0 * @data[0]['tot_interest'] / @data[0]['num_interest'] if @data[0]['num_interest'] > 0
-    @data[0]['avg_approval'] = 1.0 * @data[0]['tot_approval'] / @data[0]['num_approval'] if @data[0]['num_approval'] > 0
+    if @data[0]['num_app_items'] > 0
+      @data[0]['avg_votes_app'] = ( @data[0]['num_approval'] / @data[0]['num_app_items'] ).to_i 
+    end
+    @data[0]['explanation'] += "#{@data[0]['num_app_items']} items have approval ratings by #{@data[0]['num_approval']} people, totalling #{@data[0]['tot_approval']}. Average # of votes per item: #{@data[0]['avg_votes_app']}<br>"
+    if @data[0]['avg_votes_app'] > 20
+      @data[0]['avg_votes_app'] = 20 
+      @data[0]['explanation'] += "Average # of appoval votes adjusted down to 20<br>" 
+    end  
+    if @data[0]['num_approval'] > 0
+      @data[0]['avg_approval'] = 1.0 * @data[0]['tot_approval'] / @data[0]['num_approval']
+      @data[0]['explanation'] += "Average approval: #{@data[0]['tot_appoval']} / #{@data[0]['num_approval']} = #{@data[0]['avg_approval']}<br>"      
+    else
+      @data[0]['explanation'] += "Average appoval: 0<br>"  
+    end  
 
-    @data[0]['explanation'] += "avg_votes_int = #{@data[0]['num_interest']} / #{@data[0]['num_int_items']} = #{@data[0]['avg_votes_int']}<br>"
-    @data[0]['explanation'] += "avg_votes_app = #{@data[0]['num_approval']} / #{@data[0]['num_app_items']} = #{@data[0]['avg_votes_app']}<br>"
-    @data[0]['explanation'] += "avg_interest = #{@data[0]['tot_interest']} / #{@data[0]['num_interest']} = #{@data[0]['avg_interest']}<br>"
-    @data[0]['explanation'] += "avg_approval = #{@data[0]['tot_approval']} / #{@data[0]['num_approval']} = #{@data[0]['avg_approval']}<br>"
+    #@data[0]['explanation'] += "avg_votes_int = #{@data[0]['num_interest']} / #{@data[0]['num_int_items']} = #{@data[0]['avg_votes_int']}<br>"
+    #@data[0]['explanation'] += "avg_votes_app = #{@data[0]['num_approval']} / #{@data[0]['num_app_items']} = #{@data[0]['avg_votes_app']}<br>"
+    #@data[0]['explanation'] += "avg_interest = #{@data[0]['tot_interest']} / #{@data[0]['num_interest']} = #{@data[0]['avg_interest']}<br>"
+    #@data[0]['explanation'] += "avg_approval = #{@data[0]['tot_approval']} / #{@data[0]['num_approval']} = #{@data[0]['avg_approval']}<br>"
     
     @avg_votes_int = @data[0]['avg_votes_int']
     @avg_votes_app = @data[0]['avg_votes_app']

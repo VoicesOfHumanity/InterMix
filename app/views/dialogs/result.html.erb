@@ -18,12 +18,6 @@
 <p>These are the overall results regardless of decision period</p>
 <% end -%>
 
-<% if params[:ratings] and @regmean -%>
-<h3>Regression to the Mean</h3>
-<p>Interest: avg: <%= @data[0]['avg_votes_int'] %> votes of <%= @data[0]['avg_interest'] %><br>
-Approval: avg: <%= @data[0]['avg_votes_app'] %> votes of <%= @data[0]['avg_approval'] %></p>
-<% end -%>
-
 <% if @short_full=='full' -%>
 <h2>Overall<%= " winner" if not @all %></h2>
 <% else -%>
@@ -31,6 +25,16 @@ Approval: avg: <%= @data[0]['avg_votes_app'] %> votes of <%= @data[0]['avg_appro
 <% end -%>
 
 <% if false %>chosen by all voters (<%= @data[0]['items'].length %> items, <%= @data[0]['ratings'].length %> votes)<% end %>
+
+<% if false and @regmean -%>
+<h3>Regression to the Mean</h3>
+<p>Interest: avg: <%= @data[0]['avg_votes_int'] %> votes of <%= @data[0]['avg_interest'] %><br>
+Approval: avg: <%= @data[0]['avg_votes_app'] %> votes of <%= @data[0]['avg_approval'] %></p>
+<% end -%>
+
+<% if params[:ratings] -%>
+<p><b>Regression to the Mean:</b> <%=raw @data[0]['explanation'] %></p>
+<% end -%>
 
 <div>
 <% if @data[0]['itemsproc'].length == 0 -%>
@@ -58,13 +62,6 @@ Approval: avg: <%= @data[0]['avg_votes_app'] %> votes of <%= @data[0]['avg_appro
 <% end -%>
 <br>
 </div>
-
-<% if params[:ratings] -%>
-<p>Explanation:<br><%=raw @data[0]['explanation'] %></p>
-<pre>
-<%= @data[0].inspect %>	
-</pre>	
-<% end -%>
 
 <% for metamap in @metamaps -%>
 
