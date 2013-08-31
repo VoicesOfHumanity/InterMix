@@ -747,8 +747,8 @@ class ItemsController < ApplicationController
       @xmessage += "Please include at least a short message<br>"
     elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_characters"].to_i > 0 and message_length > dialog.settings_with_period["max_characters"]  
       @xmessage += "The maximum message length is #{dialog.settings_with_period["max_characters"]} characters<br>"
-    elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_words"].to_i > 0 and plain_content.scan(/(\w|-)+/).size > dialog.settings_with_period["max_words"]
-      @xmessage += "That's too many words"
+    #elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_words"].to_i > 0 and plain_content.scan(/(\w|-)+/).size > dialog.settings_with_period["max_words"]
+    #  @xmessage += "That's too many words"
     elsif dialog and dialog.settings_with_period["required_subject"] and subject.to_s == '' and html_content.gsub(/<\/?[^>]*>/, "").strip != ''
       @xmessage += "Please choose a subject line<br>"
     #elsif subject != '' and ((subject[0,3] != 'Re:' and subject.length > 48) or subject.length > 52)
