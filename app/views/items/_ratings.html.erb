@@ -1,0 +1,72 @@
+<%= @show_extra if @show_extra != '' %>
+<% if @error_message.to_s != '' -%>
+<p><%= @error_message %></p>
+<% end -%>
+
+<input type="hidden" id="items_length" value="<%= @items.length %>">
+
+<% if !@items or !@items.class==Array or @items.length==0 -%>
+
+		<p>There are no messages.</p>
+
+<% else -%>
+
+	<%= "#{(@items.current_page-1)*@items.per_page+1}-#{[@items.total_entries,@items.current_page*@items.per_page].min} of #{@items.total_entries} items" if @items.respond_to?('total_entries') and @items.total_entries.to_i>1 %>
+	&nbsp;&nbsp;&nbsp;
+	<%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.respond_to?('current_page') and @items.current_page>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.previous_page})">&lt;</a>) if @items.respond_to?('previous_page') and @items.previous_page %>
+	<%= raw "page #{@items.current_page} of #{@items.total_pages}" if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.next_page})">&gt;</a>) if @items.respond_to?('next_page') and @items.next_page %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.total_pages})">&gt;&gt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.current_page<@items.total_pages %>
+
+  <p><b>SQL for selecting items:</b> <%= @itemsproc['sql'] %></p>
+  
+  <p><b>Regression to the Mean</b>: <%=raw @itemsproc['regression'] %></p>
+
+	<% odd_or_even = 0 %>
+
+	<% for item in @items -%>
+		<% odd_or_even = 1-odd_or_even%>
+		<div class="forumitem forumitemplain forummain forum<%= odd_or_even %>" id="item_<%= item.id %>">
+			<%= render :partial => "items/item", :locals => { :item => item, :itemproc=>@itemsproc[item.id], :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0 } %>
+			
+			<% if @itemsproc[item.id]['ratings'].length > 0 %>
+			
+  			<p><br><b>Ratings summary, no regression to the mean:</b><br>
+  			  <%=raw @itemsproc[item.id]['ratingnoregmean'] %>
+  			<p>  
+  			<% if @itemsproc[item.id]['ratingwithregmean'] -%>  
+    			<p><b>Ratings summary, after regression to the mean:</b><br>
+    			  <%=raw @itemsproc[item.id]['ratingwithregmean'] %>
+    			<p>  
+        <% end %>
+        
+        <p><b>Ratings:</b><br>
+        <% @itemsproc[item.id]['ratings'].each do |r| %>  
+          <%= "#{r.created_at} by user:#{r.participant_id} in group:#{r.group_id} discussion:#{r.dialog_id} period:#{r.period_id} interest:#{r.interest.to_i} approval:#{r.approval.to_i}" %><br>
+        <% end -%>  
+        </p>        
+        
+      <% else -%>
+      
+        <p><br><b>No ratings</b></p>
+			  
+			<% end -%>  
+			
+		</div><!--forumitem-->
+	<% end -%>
+	
+	
+	<%= "#{(@items.current_page-1)*@items.per_page+1}-#{[@items.total_entries,@items.current_page*@items.per_page].min} of #{@items.total_entries} items" if @items.respond_to?('total_entries') and @items.total_entries.to_i>1 %>
+	&nbsp;&nbsp;&nbsp;
+	<%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.respond_to?('current_page') and @items.current_page>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.previous_page})">&lt;</a>) if @items.respond_to?('previous_page') and @items.previous_page %>
+	<%= raw "page #{@items.current_page} of #{@items.total_pages}" if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.next_page})">&gt;</a>) if @items.respond_to?('next_page') and @items.next_page %>
+	<%= raw %(<a href="javascript:gotopage(#{@items.total_pages})">&gt;&gt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.current_page<@items.total_pages %>
+	
+<% end -%>
+
+
+
+

@@ -128,7 +128,11 @@
 <div id="newforumitem" class="newforumitem" style="display:none"></div>
 
 <div id="itemlist">
+<% if params[:ratings] -%>
+<%= render(:partial => 'items/ratings')%>
+<% else -%>  
 <%= render(:partial => 'items/list')%>
+<% end -%>
 </div>
 
 

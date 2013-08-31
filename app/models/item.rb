@@ -334,6 +334,8 @@ class Item < ActiveRecord::Base
     
     dialog = Dialog.includes(:periods).find_by_id(dialog_id) if dialog_id.to_i > 0
     period = Period.find_by_id(period_id) if period_id.to_i > 0
+
+    itemsproc = {}  # Stats for each item + some explanations
     
     items = Item.scoped
     
@@ -405,6 +407,7 @@ class Item < ActiveRecord::Base
     
     items = items.order("items.id")
 
+    itemsproc['sql'] = items.to_sql
     logger.info("item#list_and_results SQL: #{items.to_sql}")    
     #logger.info("item#list_and_results first attributes: #{items[0].attributes} if items[0] ")
     
@@ -427,13 +430,27 @@ class Item < ActiveRecord::Base
     
     if regmean
       #-- Prepare regression to the mean
+      exp = "regression to the mean used.<br>"
       xrates = Rating.where("not interest is null").select("count(distinct(item_id)) as num_int_items,count(interest) as num_interest,sum(interest) as tot_interest")
       xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
       xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
       xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
       num_int_items = xrates.first.num_int_items
       num_interest = xrates.first.num_interest
-      tot_interest = xrates.first.tot_interest      
+      tot_interest = xrates.first.tot_interest 
+      avg_votes_int = num_int_items > 0 ? ( num_interest / num_int_items ).to_i : 0 
+      exp += "#{num_int_items} items have interest ratings by #{num_interest} people, totalling #{tot_interest}. Average # of votes per item: #{avg_votes_int}<br>"
+      if avg_votes_int > 20
+        avg_votes_int = 20 
+        exp += "Average # of interest votes adjusted down to 20<br>"    
+      end
+      if num_interest > 0
+        avg_interest = 1.0 * tot_interest / num_interest 
+        exp += "Average interest: #{tot_interest} / #{num_interest} = #{avg_interest}<br>"
+      else
+        avg_interest = 0
+        exp += "Average interest: 0<br>"  
+      end  
       xrates = Rating.where("not approval is null").select("count(distinct(item_id)) as num_app_items,count(approval) as num_approval,sum(approval) as tot_approval")
       xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
       xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
@@ -441,23 +458,31 @@ class Item < ActiveRecord::Base
       num_app_items = xrates.first.num_app_items
       num_approval = xrates.first.num_approval
       tot_approval = xrates.first.tot_approval
-      avg_votes_int = num_int_items > 0 ? ( num_interest / num_int_items ).to_i : 0 
       avg_votes_app = num_app_items > 0 ? ( num_approval / num_app_items ).to_i : 0
-      avg_votes_int = 20 if avg_votes_int > 20
-      avg_votes_app = 20 if avg_votes_app > 20
-      avg_interest = 1.0 * tot_interest / num_interest if num_interest > 0
-      avg_approval = 1.0 * tot_approval / num_approval if num_approval > 0 
+      exp += "#{num_app_items} items have approval ratings by #{num_approval} people, totalling #{tot_approval}. Average # of votes per item: #{avg_votes_app}<br>"
+      if avg_votes_app > 20
+        avg_votes_app = 20
+        exp += "Average # of approval votes adjusted down to 20<br>"            
+      end  
+      if num_approval > 0
+        avg_approval = 1.0 * tot_approval / num_approval 
+        exp += "Average approval: #{tot_approval} / #{num_approval} = #{avg_approval}<br>"
+      else
+        avg_approval = 0
+        exp += "Average approval: 0<br>"  
+      end    
       logger.info("item#list_and_results regression to mean. avg_votes_int:#{avg_votes_int} avg_interest:#{avg_interest} avg_votes_app:#{avg_votes_app} avg_approval:#{avg_approval}")
+      itemsproc['regression'] = exp
     else
-       logger.info("item#list_and_results no regression to mean")   
+       logger.info("item#list_and_results no regression to mean")
+       itemsproc['regression'] = "No regression to the mean used"
     end
 
-    itemsproc = {}  # Stats for each item
     items2 = []     # The items for the next step
     
     for item in items
       #-- Add up stats, and filter out non-roots, if necessary, into items2
-      iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[],'hasrating'=>0,'rateapproval'=>0,'rateinterest'=>0}
+      iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[],'hasrating'=>0,'rateapproval'=>0,'rateinterest'=>0,'ratings'=>[]}
       if participant_id.to_i > 0 
         if item.respond_to?(:hasrating)
           #-- item.attributes would show all attributes, not just item.inspect
@@ -516,6 +541,12 @@ class Item < ActiveRecord::Base
             end  
           end
           iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+          
+          iproc['ratingnoregmean'] = "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
+          
+          #iproc['ratings'] << {'participant_id'=>rating.participant_id, 'group_id'=>rating.group_id, 'dialog_id'=>rating.dialog_id, 'period_id'=>rating.period_id, 'approval'=>rating.approval, 'interest'=>rating.interest, 'created_at'=>rating.created_at}
+          iproc['ratings'] << rating
+          
         end
       end
       iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
@@ -554,6 +585,7 @@ class Item < ActiveRecord::Base
           iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
         end  
         iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+        iproc['ratingwithregmean'] = "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
         itemsproc[item.id] = iproc
       end
     end
