@@ -215,7 +215,8 @@ for p in participants
       puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject} | domain: #{domain}"
       
       itext = ""
-      itext += "<h3><a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
+      #itext += "<h3><a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
+      itext += "<h3><a href=\"http://#{domain}/items/#{item.id}/thread#item_#{item.id}?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
       itext += "<div>"
       itext += item.html_with_auth(p)
       itext += "</div>"
