@@ -18,10 +18,10 @@
 <p>These are the overall results regardless of decision period</p>
 <% end -%>
 
-<% if false and @regmean -%>
+<% if params[:ratings] and @regmean -%>
 <h3>Regression to the Mean</h3>
-<p>Interest: avg: <%= @avg_votes_int %> votes of <%= @avg_interest %><br>
-Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
+<p>Interest: avg: <%= @data[0]['avg_votes_int'] %> votes of <%= @data[0]['avg_interest'] %><br>
+Approval: avg: <%= @data[0]['avg_votes_app'] %> votes of <%= @data[0]['avg_approval'] %></p>
 <% end -%>
 
 <% if @short_full=='full' -%>
@@ -38,6 +38,12 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 <% else -%>	
 	<% for item_id,i in @data[0]['itemsproc'] -%>
 		<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  (i['num_interest'] or i['num_approval']) ? [i['num_interest'],i['num_approval']].max : 0  %><br>
+		<% if params[:ratings] and i['ratings'].length > 0 -%>
+      <b>Ratings:</b><br>
+      <% i['ratings'].each do |r| %>  
+        <%= "#{r.created_at} by user:#{r.participant_id} in group:#{r.group_id} discussion:#{r.dialog_id} period:#{r.period_id} interest:#{r.interest.to_i} approval:#{r.approval.to_i}" %><br>
+      <% end -%>  
+		<% end -%>
 		<% break if not @all %>
 	<% end -%>
 	[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result">see all in the forum</a>]<br>
@@ -45,7 +51,7 @@ Approval: avg: <%= @avg_votes_app %> votes of <%= @avg_approval %></p>
 <br>
 </div>
 
-<% if false -%>
+<% if params[:ratings] -%>
 <p>Explanation:<br><%=raw @data[0]['explanation'] %></p>
 <pre>
 <%= @data[0].inspect %>	
