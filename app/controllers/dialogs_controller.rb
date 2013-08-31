@@ -789,6 +789,7 @@ class DialogsController < ApplicationController
           iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
           iproc['ratings'] << rating
         end
+        iproc['ratingnoregmean'] = "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}<br>"
       end
       iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
       @data[0]['itemsproc'][item_id] = iproc
@@ -813,6 +814,7 @@ class DialogsController < ApplicationController
           @data[0]['explanation'] += "regmean: ##{item_id} app votes adjusted #{old_num_approval} -> #{iproc['num_approval']}<br>"
         end  
         iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+        iproc['ratingwithregmean'] = "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}<br>"
         @data[0]['itemsproc'][item_id] = iproc
       end
     end
