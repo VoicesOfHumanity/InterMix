@@ -26,13 +26,11 @@
 
 <% if false %>chosen by all voters (<%= @data[0]['items'].length %> items, <%= @data[0]['ratings'].length %> votes)<% end %>
 
-<% if false and @regmean -%>
-<h3>Regression to the Mean</h3>
-<p>Interest: avg: <%= @data[0]['avg_votes_int'] %> votes of <%= @data[0]['avg_interest'] %><br>
-Approval: avg: <%= @data[0]['avg_votes_app'] %> votes of <%= @data[0]['avg_approval'] %></p>
-<% end -%>
 
 <% if params[:ratings] -%>
+<% if true -%>
+<p><b>SQL for selecting items:</b> <%= @data[0]['sql'] %></p>
+<% end -%>
 <p><b>Regression to the Mean:</b> <%=raw @data[0]['explanation'] %></p>
 <% end -%>
 

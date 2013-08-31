@@ -694,6 +694,7 @@ class DialogsController < ApplicationController
     @data[0]['avg_votes_app'] = 0   # Average number of approval votes
     @data[0]['avg_interest'] = 0   # Average interest rating
     @data[0]['avg_approval'] = 0   # Average approval rating
+    @data[0]['sql'] = ''
     @data[0]['explanation'] = ''
     
     if @regmean
@@ -703,6 +704,8 @@ class DialogsController < ApplicationController
     end    
         
     items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").includes(:participant).includes(:item_rating_summary)
+    
+    @data[0]['sql'] = items.to_sql
         
     for item in items
       item_id = item.id

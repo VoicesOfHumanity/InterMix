@@ -19,7 +19,7 @@
 	<%= raw %(<a href="javascript:gotopage(#{@items.next_page})">&gt;</a>) if @items.respond_to?('next_page') and @items.next_page %>
 	<%= raw %(<a href="javascript:gotopage(#{@items.total_pages})">&gt;&gt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.current_page<@items.total_pages %>
 
-  <% if false -%>
+  <% if true -%>
   <p><b>SQL for selecting items:</b> <%= @itemsproc['sql'] %></p>
   <% end -%>
   
