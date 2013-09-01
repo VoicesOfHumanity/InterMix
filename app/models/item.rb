@@ -225,7 +225,7 @@ class Item < ActiveRecord::Base
       
       itext = ""
       #itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\">#{self.subject}</a></h3>"
-      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/thread#item_#{self.id}?auth_token=#{p.authentication_token}\">#{self.subject}</a></h3>"
+      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}#item_#{self.id}\">#{self.subject}</a></h3>"
       itext += "<div>"
       itext += content
       itext += "</div>"

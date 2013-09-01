@@ -412,18 +412,18 @@ class FrontController < ApplicationController
     end  
 
     if params.has_key?(:first_name)
-      last_name = params[:last_name].to_s
-      first_name = params[:first_name].to_s
+      @last_name = params[:last_name].to_s
+      @first_name = params[:first_name].to_s
     else
       narr = @name.split(' ')
-      last_name = narr[narr.length-1]
-      first_name = ''
-      first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
+      @last_name = narr[narr.length-1]
+      @first_name = ''
+      @first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
     end
         
     @participant = Participant.find_by_email(@email) 
     previous_messages = 0
-    if @participant and @has_message
+    if @participant and @participant.status=='active' and @has_message
       previous_messages = Item.where("posted_by=? and dialog_id=?",@participant.id,@dialog.id).count
       if @dialog.max_messages > 0 and @message.length > 0 and previous_messages >= @dialog.max_messages
         flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: http://#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
@@ -438,13 +438,39 @@ class FrontController < ApplicationController
         return
       end
     elsif @participant
-      flash[:alert] = "You already have an account<br>"
-      redirect_to '/participants/sign_in'
-      return
+      # PARTICIPANT_STATUSES = ['unconfirmed','active','inactive','never-contact','disallowed']
+      if @participant.status == 'active'
+        flash[:alert] = "You already have an active account<br>"
+        redirect_to '/participants/sign_in'
+        return
+      elsif @participant.status == 'inactive'
+        flash[:alert] = "Your account is currently not active<br>"
+        redirect_to '/participants/sign_in'
+        return
+      elsif @participant.status == 'never-contact' or @participant.status == 'disallowed'    
+        flash[:alert] = "Your account has been closed<br>"
+        redirect_to '/participants/sign_in'
+        return
+      elsif @participant.status == 'unconfirmed'  
+        #-- We will update their existing unconfirmed account with what they just entered
+        @participant.first_name = @first_name.strip
+        @participant.last_name = @last_name.strip
+        @participant.password = @password
+        @participant.country_code = @country_code
+        @participant.forum_email = 'daily'
+        @participant.group_email = 'instant'
+        @participant.private_email = 'instant'  
+        @participant.status = 'unconfirmed'
+        @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+      else
+        flash[:alert] = "You already have an account<br>"
+        redirect_to '/participants/sign_in'
+        return
+      end    
     else
       @participant = Participant.new
-      @participant.first_name = first_name.strip
-      @participant.last_name = last_name.strip
+      @participant.first_name = @first_name.strip
+      @participant.last_name = @last_name.strip
       @participant.email = @email
       @participant.password = @password
       @participant.country_code = @country_code
@@ -740,25 +766,51 @@ class FrontController < ApplicationController
     end  
 
     if params.has_key?(:first_name)
-      last_name = params[:last_name].to_s
-      first_name = params[:first_name].to_s
+      @last_name = params[:last_name].to_s
+      @first_name = params[:first_name].to_s
     else
       narr = @name.split(' ')
-      last_name = narr[narr.length-1]
-      first_name = ''
-      first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
+      @last_name = narr[narr.length-1]
+      @first_name = ''
+      @first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
     end
         
     @participant = Participant.find_by_email(@email) 
     previous_messages = 0
-    if @participant 
-      flash[:alert] = "You seem to already have an account. Please log into that.<br>"
-      redirect_to '/participants/sign_in'
-      return
+    if @participant
+      # PARTICIPANT_STATUSES = ['unconfirmed','active','inactive','never-contact','disallowed']
+      if @participant.status == 'active'
+        flash[:alert] = "You already have an active account. Please log into that<br>"
+        redirect_to '/participants/sign_in'
+        return
+      elsif @participant.status == 'inactive'
+        flash[:alert] = "Your account is currently not active<br>"
+        redirect_to '/participants/sign_in'
+        return
+      elsif @participant.status == 'never-contact' or @participant.status == 'disallowed'    
+        flash[:alert] = "Your account has been closed<br>"
+        redirect_to '/participants/sign_in'
+        return
+      elsif @participant.status == 'unconfirmed'  
+        #-- We will update their existing unconfirmed account with what they just entered
+        @participant.first_name = @first_name.strip
+        @participant.last_name = @last_name.strip
+        @participant.password = @password
+        @participant.country_code = @country_code
+        @participant.forum_email = 'daily'
+        @participant.group_email = 'instant'
+        @participant.private_email = 'instant'  
+        @participant.status = 'unconfirmed'
+        @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+      else
+        flash[:alert] = "You already have an account<br>"
+        redirect_to '/participants/sign_in'
+        return
+      end    
     else
       @participant = Participant.new
-      @participant.first_name = first_name.strip
-      @participant.last_name = last_name.strip
+      @participant.first_name = @first_name.strip
+      @participant.last_name = @last_name.strip
       @participant.email = @email
       @participant.password = @password
       @participant.country_code = @country_code
@@ -1060,10 +1112,36 @@ class FrontController < ApplicationController
     end  
         
     @participant = Participant.find_by_email(@email) 
-    if @participant 
-      flash[:alert] = "You seem to already have an account for #{@email}. Please log into that.<br>"
-      redirect_to '/participants/sign_in'
-      return
+    if @participant
+      # PARTICIPANT_STATUSES = ['unconfirmed','active','inactive','never-contact','disallowed']
+      if @participant.status == 'active'
+        flash[:alert] = "You already have an active account for #{@email}. Please log into that<br>"
+        redirect_to '/participants/sign_in'
+        return
+      elsif @participant.status == 'inactive'
+        flash[:alert] = "Your account is currently not active<br>"
+        redirect_to '/participants/sign_in'
+        return
+      elsif @participant.status == 'never-contact' or @participant.status == 'disallowed'    
+        flash[:alert] = "Your account has been closed<br>"
+        redirect_to '/participants/sign_in'
+        return
+      elsif @participant.status == 'unconfirmed'  
+        #-- We will update their existing unconfirmed account with what they just entered
+        @participant.first_name = @first_name.strip
+        @participant.last_name = @last_name.strip
+        @participant.password = @password
+        @participant.country_code = @country_code
+        @participant.forum_email = 'daily'
+        @participant.group_email = 'instant'
+        @participant.private_email = 'instant'  
+        @participant.status = 'unconfirmed'
+        @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+      else
+        flash[:alert] = "You already have an account<br>"
+        redirect_to '/participants/sign_in'
+        return
+      end    
     else
       @participant = Participant.new
       @participant.first_name = @first_name.strip
