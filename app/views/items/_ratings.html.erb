@@ -20,10 +20,10 @@
 	<%= raw %(<a href="javascript:gotopage(#{@items.total_pages})">&gt;&gt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.current_page<@items.total_pages %>
 
   <% if true -%>
-  <p><b>SQL for selecting items:</b> <%= @itemsproc['sql'] %></p>
+  <p><b>SQL for selecting items:</b> <%= @extras['sql'] %></p>
   <% end -%>
   
-  <p><b>Regression to the Mean</b>: <%=raw @itemsproc['regression'] %></p>
+  <p><b>Regression to the Mean</b>: <%=raw @extras['regression'] %></p>
 
 	<% odd_or_even = 0 %>
 

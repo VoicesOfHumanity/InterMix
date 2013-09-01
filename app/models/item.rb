@@ -335,7 +335,8 @@ class Item < ActiveRecord::Base
     dialog = Dialog.includes(:periods).find_by_id(dialog_id) if dialog_id.to_i > 0
     period = Period.find_by_id(period_id) if period_id.to_i > 0
 
-    itemsproc = {}  # Stats for each item + some explanations
+    itemsproc = {}  # Stats for each item
+    extras = {}     # Some addtional explanations
     
     items = Item.scoped
     
@@ -407,7 +408,7 @@ class Item < ActiveRecord::Base
     
     items = items.order("items.id")
 
-    itemsproc['sql'] = items.to_sql
+    extras['sql'] = items.to_sql
     logger.info("item#list_and_results SQL: #{items.to_sql}")    
     #logger.info("item#list_and_results first attributes: #{items[0].attributes} if items[0] ")
     
@@ -472,10 +473,10 @@ class Item < ActiveRecord::Base
         exp += "Average approval: 0<br>"  
       end    
       logger.info("item#list_and_results regression to mean. avg_votes_int:#{avg_votes_int} avg_interest:#{avg_interest} avg_votes_app:#{avg_votes_app} avg_approval:#{avg_approval}")
-      itemsproc['regression'] = exp
+      extras['regression'] = exp
     else
        logger.info("item#list_and_results no regression to mean")
-       itemsproc['regression'] = "No regression to the mean used"
+       extras['regression'] = "No regression to the mean used"
     end
 
     items2 = []     # The items for the next step
@@ -650,7 +651,7 @@ class Item < ActiveRecord::Base
       items = items2
     end
     
-    return [items, itemsproc]
+    return [items, itemsproc, extras]
     
   end
 
