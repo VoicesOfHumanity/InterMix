@@ -225,7 +225,7 @@ class Item < ActiveRecord::Base
       
       itext = ""
       #itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\">#{self.subject}</a></h3>"
-      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}#item_#{self.id}\">#{self.subject}</a></h3>"
+      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&#item_#{self.id}\">#{self.subject}</a></h3>"
       itext += "<div>"
       itext += content
       itext += "</div>"
@@ -499,7 +499,7 @@ class Item < ActiveRecord::Base
     
     for item in items
       #-- Add up stats, and filter out non-roots, if necessary, into items2
-      iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[],'hasrating'=>0,'rateapproval'=>0,'rateinterest'=>0,'ratings'=>[]}
+      iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[],'hasrating'=>0,'rateapproval'=>0,'rateinterest'=>0,'num_raters'=>0,'ratings'=>[]}
       if participant_id.to_i > 0 
         if item.respond_to?(:hasrating)
           #-- item.attributes would show all attributes, not just item.inspect
@@ -558,6 +558,8 @@ class Item < ActiveRecord::Base
             end  
           end
           iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+          
+          iproc['num_raters'] = [iproc['num_interest'],iproc['num_approval']].max
           
           iproc['ratingnoregmean'] = "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
           
