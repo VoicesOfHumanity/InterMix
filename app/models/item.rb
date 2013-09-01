@@ -432,15 +432,35 @@ class Item < ActiveRecord::Base
     if regmean
       #-- Prepare regression to the mean
       exp = "regression to the mean used.<br>"
-      xrates = Rating.where("not ratings.interest is null").select("count(distinct(item_id)) as num_int_items,count(ratings.interest) as num_interest,sum(ratings.interest) as tot_interest")
+      xitems = {}
+      for item in items
+        if item.is_first_in_thread
+          xitems[item.id] = true
+        end
+      end
+      #xrates = Rating.where("not ratings.interest is null").select("count(distinct(item_id)) as num_int_items,count(ratings.interest) as num_interest,sum(ratings.interest) as tot_interest")
+      xrates = Rating.scoped
       xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
       xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
       xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
-      xrates = xrates.joins("join items on (ratings.item_id=items.id)")
-      xrates = xrates.where("items.is_first_in_thread=1")
-      num_int_items = xrates.first.num_int_items
-      num_interest = xrates.first.num_interest
-      tot_interest = xrates.first.tot_interest 
+      num_interest = 0
+      num_approval = 0
+      tot_interest = 0 
+      tot_approval = 0
+      item_int_uniq = {}
+      item_app_uniq = {}
+      for xrate in xrates
+        if xitems[xrate.item_id]
+          num_interest += 1 if xrate.interest
+          num_approval += 1 if xrate.approval
+          tot_interest += xrate.interest.to_i if xrate.interest
+          tot_approval += xrate.approval.to_i if xrate.approval
+          item_int_uniq[xrate.item_id] = true if xrate.interest
+          item_app_uniq[xrate.item_id] = true if xrate.approval
+        end  
+      end 
+      num_int_items = item_int_uniq.length
+      num_app_items = item_app_uniq.length
       avg_votes_int = num_int_items > 0 ? ( num_interest / num_int_items ).to_i : 0 
       exp += "#{num_int_items} items have interest ratings by #{num_interest} people, totalling #{tot_interest}. Average # of votes per item: #{avg_votes_int}<br>"
       if avg_votes_int > 20
@@ -454,15 +474,7 @@ class Item < ActiveRecord::Base
         avg_interest = 0
         exp += "Average interest: 0<br>"  
       end  
-      xrates = Rating.where("not ratings.approval is null").select("count(distinct(item_id)) as num_app_items,count(ratings.approval) as num_approval,sum(ratings.approval) as tot_approval")
-      xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
-      xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
-      xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
-      xrates = xrates.joins("join items on (ratings.item_id=items.id)")
-      xrates = xrates.where("items.is_first_in_thread=1")
-      num_app_items = xrates.first.num_app_items
-      num_approval = xrates.first.num_approval
-      tot_approval = xrates.first.tot_approval
+      
       avg_votes_app = num_app_items > 0 ? ( num_approval / num_app_items ).to_i : 0
       exp += "#{num_app_items} items have approval ratings by #{num_approval} people, totalling #{tot_approval}. Average # of votes per item: #{avg_votes_app}<br>"
       if avg_votes_app > 20
