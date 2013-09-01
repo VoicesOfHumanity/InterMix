@@ -432,10 +432,12 @@ class Item < ActiveRecord::Base
     if regmean
       #-- Prepare regression to the mean
       exp = "regression to the mean used.<br>"
-      xrates = Rating.where("not interest is null").select("count(distinct(item_id)) as num_int_items,count(interest) as num_interest,sum(interest) as tot_interest")
+      xrates = Rating.where("not ratings.interest is null").select("count(distinct(item_id)) as num_int_items,count(ratings.interest) as num_interest,sum(ratings.interest) as tot_interest")
       xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
       xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
       xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
+      xrates = xrates.joins("join items on (ratings.item_id=items.id)")
+      xrates = xrates.where("items.is_first_in_thread=1")
       num_int_items = xrates.first.num_int_items
       num_interest = xrates.first.num_interest
       tot_interest = xrates.first.tot_interest 
@@ -452,10 +454,12 @@ class Item < ActiveRecord::Base
         avg_interest = 0
         exp += "Average interest: 0<br>"  
       end  
-      xrates = Rating.where("not approval is null").select("count(distinct(item_id)) as num_app_items,count(approval) as num_approval,sum(approval) as tot_approval")
+      xrates = Rating.where("not ratings.approval is null").select("count(distinct(item_id)) as num_app_items,count(ratings.approval) as num_approval,sum(ratings.approval) as tot_approval")
       xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
       xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
       xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
+      xrates = xrates.joins("join items on (ratings.item_id=items.id)")
+      xrates = xrates.where("items.is_first_in_thread=1")
       num_app_items = xrates.first.num_app_items
       num_approval = xrates.first.num_approval
       tot_approval = xrates.first.tot_approval
