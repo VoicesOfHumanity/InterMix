@@ -51,7 +51,7 @@
       <% i['ratings'].each do |r| %>  
         <%= "#{r.created_at} by user:#{r.participant_id} in group:#{r.group_id} discussion:#{r.dialog_id} period:#{r.period_id} interest:#{r.interest.to_i} approval:#{r.approval.to_i}" %><br>
       <% end -%>
-    <% else -%>
+    <% elsif params[:ratings] -%>
       <b>No ratings</b><br>    
 		<% end -%>
 		<% break if not @all %>
