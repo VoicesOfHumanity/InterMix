@@ -48,7 +48,7 @@ class Participant < ActiveRecord::Base
   end  
   
   def email_address_with_name
-    return "\"#{first_name.to_s}\" #{last_name.to_s} <#{email}>"
+    return "\"#{first_name.to_s} #{last_name.to_s}\" <#{email}>"
   end
   
   def self.tags
