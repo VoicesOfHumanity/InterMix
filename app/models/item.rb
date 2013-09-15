@@ -559,7 +559,8 @@ class Item < ActiveRecord::Base
           end
           iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
           
-          iproc['num_raters'] = [iproc['num_interest'],iproc['num_approval']].max
+          #iproc['num_raters'] = [iproc['num_interest'],iproc['num_approval']].max
+          iproc['num_raters'] += 1
           
           iproc['ratingnoregmean'] = "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
           

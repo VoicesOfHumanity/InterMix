@@ -685,6 +685,7 @@ class DialogsController < ApplicationController
     @data[0]['items'] = {}     # All items in the dialog/period
     @data[0]['itemsproc'] = {}     # All items in the dialog/period
     @data[0]['ratings'] = {}     # All the ratings of those items
+    @data[0]['num_raters'] = 0   # Number of raters
     @data[0]['num_int_items'] = 0   # Number of unique items with interest ratings
     @data[0]['num_app_items'] = 0   # Number of unique items with approval ratings
     @data[0]['num_interest'] = 0   # Number of interest votes
@@ -725,6 +726,7 @@ class DialogsController < ApplicationController
       if @data[0]['items'][item_id]
         #-- Only count if the item actually exists
         @data[0]['ratings'][rating.id] = rating
+        @data[0]['num_raters'] += 1 if rating.approval or rating.interest
         @data[0]['num_interest'] += 1 if rating.interest
         @data[0]['num_approval'] += 1 if rating.approval
         @data[0]['tot_interest'] += rating.interest.to_i if rating.interest
@@ -776,10 +778,11 @@ class DialogsController < ApplicationController
     @avg_approval = @data[0]['avg_approval']
     
     @data[0]['items'].each do |item_id,item|
-      iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'ratings'=>[]}
+      iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'ratings'=>[]}
       @data[0]['ratings'].each do |rating_id,rating|
         if rating.item_id == item.id
           iproc['votes'] += 1
+          iproc['num_raters'] += 1 if rating.approval or rating.interest
           if rating.interest
             iproc['num_interest'] += 1
             iproc['tot_interest'] += rating.interest.to_i
@@ -875,6 +878,7 @@ class DialogsController < ApplicationController
         @data['groups'][group_id]['items'] = {}     # All items posted by that group
         @data['groups'][group_id]['itemsproc'] = {}     # All items posted by that group
         @data['groups'][group_id]['ratings'] = {}     # All the ratings by that group
+        @data['groups'][group_id]['num_raters'] = 0   # Number of raters
         @data['groups'][group_id]['num_int_items'] = 0   # Number of unique items with interest ratings
         @data['groups'][group_id]['num_app_items'] = 0   # Number of unique items with approval ratings
         @data['groups'][group_id]['num_interest'] = 0   # Number of interest votes
@@ -903,6 +907,7 @@ class DialogsController < ApplicationController
           item_id = rating.item_id
           rater_id = rating.participant_id
           @data['groups'][group_id]['ratings'][rating.id] = rating
+          @data['groups'][group_id]['num_raters'] += 1 if rating.interest or rating.approval
           @data['groups'][group_id]['num_interest'] += 1 if rating.interest
           @data['groups'][group_id]['num_approval'] += 1 if rating.approval
           @data['groups'][group_id]['tot_interest'] += rating.interest.to_i if rating.interest
@@ -926,10 +931,11 @@ class DialogsController < ApplicationController
         @avg_approval = @data['groups'][group_id]['avg_approval']
 
         @data['groups'][group_id]['items'].each do |item_id,item|
-          iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0}
+          iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0}
           @data['groups'][group_id]['ratings'].each do |rating_id,rating|
             if rating.item_id == item.id
               iproc['votes'] += 1
+              iproc['num_raters'] += 1 if rating.interest or rating.approval
               if rating.interest
                 iproc['num_interest'] += 1
                 iproc['tot_interest'] += rating.interest.to_i
@@ -1131,10 +1137,11 @@ class DialogsController < ApplicationController
       @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
         # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
         mdata['items'].each do |item_id,item|
-          iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0}
+          iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0}
           mdata['ratings'].each do |rating_id,rating|
             if rating.item_id == item.id
               iproc['votes'] += 1
+              iproc['num_raters'] += 1 if rating.interest or rating.approval
               if rating.interest
                 iproc['num_interest'] += 1
                 iproc['tot_interest'] += rating.interest
@@ -1206,10 +1213,11 @@ class DialogsController < ApplicationController
       @data[metamap.id]['ratedby']['nodes'].each do |metamap_node_id,mdata|
         # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
         mdata['items'].each do |item_id,item|
-          iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0}
+          iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0}
           mdata['ratings'].each do |rating_id,rating|
             if rating.item_id == item.id
               iproc['votes'] += 1
+              iproc['num_raters'] +=1 if rating.interest or rating.approval
               if rating.interest
                 iproc['num_interest'] += 1
                 iproc['tot_interest'] += rating.interest.to_i
@@ -1282,10 +1290,11 @@ class DialogsController < ApplicationController
           #-- Going through all the metas that have rated items in that meta (all within a particular metamap, like gender)
           mdata['items'].each do |item_id,item|
             #-- Going through the items of the second meta that have rated the first meta
-            iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0}
+            iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0}
             mdata['ratings'].each do |rating_id,rating|
               if rating.item_id == item.id
                 iproc['votes'] += 1
+                iproc['num_raters'] +=1 if rating.interest or rating.approval
                 if rating.interest
                   iproc['num_interest'] += 1
                   iproc['tot_interest'] += rating.interest.to_i

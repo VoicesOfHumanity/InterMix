@@ -39,7 +39,7 @@
 	no overall winner<br>
 <% else -%>	
 	<% for item_id,i in @data[0]['itemsproc'] -%>
-		<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  (i['num_interest'] or i['num_approval']) ? [i['num_interest'],i['num_approval']].max : 0  %><br>
+		<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  i['num_raters']  %><br>
 		<% if params[:ratings] and i['ratings'].length > 0 -%>
   		<b>Ratings summary, no regression to the mean:</b><br>
   		<%=raw i['ratingnoregmean'] %> 
@@ -79,7 +79,7 @@
 						no positive results<br>
 						<% break %>
 					<% else -%>
-						<a href="/items/<%= item_id %>/view" style="font-size:14px;font-weight:bold"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  (i['num_interest'] or i['num_approval']) ? [i['num_interest'],i['num_approval']].max : 0  %><br>
+						<a href="/items/<%= item_id %>/view" style="font-size:14px;font-weight:bold"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  i['num_raters']  %><br>
 					<% end -%>
 					<% break if not @all %>
 					<% xcount += 1 %>
@@ -102,7 +102,7 @@
 				<b><span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> winner chosen by all voters (<%= @data[metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length %> items, <%= @data[metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %> votes):</b><br>
 				<% end -%>
 				<% for item_id,i in @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] -%>
-				<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  (i['num_interest'] or i['num_approval']) ? [i['num_interest'],i['num_approval']].max : 0  %><br>
+				<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  i['num_raters']  %><br>
 				<% break if not @all %>
 				<% end -%>
 				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>">see all in the forum</a>]<br>
@@ -118,7 +118,7 @@
 				<b>overall winner chosen by <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> voters (<%=  @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['items'].length %> items, <%=  @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['ratings'].length %> votes):</b><br>			
 				<% end -%>
 				<% for item_id,i in @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] -%>
-					<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  (i['num_interest'] or i['num_approval']) ? [i['num_interest'],i['num_approval']].max : 0  %><br>
+					<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  i['num_raters']  %><br>
 					<% break if not @all %>
 				<% end -%>
 				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;rated_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>">see all in the forum</a>]<br>
@@ -135,7 +135,7 @@
 					<b><span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> winner chosen by <span title="<%= rate_metamap_node_id %>"><%= @data[metamap.id]['nodes'][rate_metamap_node_id][0] %></span> raters (<%= @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['items'].length %> items, <%= @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['ratings'].length %> votes):</b><br>			
 					<% end -%>
 					<% for item_id,i in @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] -%>
-						<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  (i['num_interest'] or i['num_approval']) ? [i['num_interest'],i['num_approval']].max : 0  %><br>
+						<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  i['num_raters']  %><br>
 						<% break if not @all %>
 					<% end -%>
 					[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>">see all in the forum</a>]<br><br>
@@ -164,7 +164,7 @@
 				no positive results<br>
 				<% break %>
 			<% else -%>
-				<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  (i['num_interest'] or i['num_approval']) ? [i['num_interest'],i['num_approval']].max : 0  %><br>
+				<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%= i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  i['num_raters']  %><br>
 				<% break if not @all %>
 			<% end -%>
 			<% xcount += 1 %>
