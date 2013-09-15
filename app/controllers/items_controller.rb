@@ -12,7 +12,7 @@ class ItemsController < ApplicationController
   def list
     #-- Return the items to show on the page
     @from = params[:from] || ''
- 
+    @ratings = params[:ratings]
     @sortby = params[:sortby] || "items.id desc"
     @perscr = params[:perscr].to_i || 25
     @threads = params[:threads] || 'flat'
@@ -183,7 +183,11 @@ class ItemsController < ApplicationController
       end
     end
     
-    render :partial=>'list', :layout=>false  
+    if @ratings
+      render :partial=>'ratings', :layout=>false       
+    else  
+      render :partial=>'list', :layout=>false 
+    end   
   end  
   
   def new
