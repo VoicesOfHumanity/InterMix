@@ -260,8 +260,8 @@ class Item < ActiveRecord::Base
         logger.info("Item#emailit delivering email to #{recipient.id}:#{recipient.name}")
         email.deliver
         message_id = email.message_id
-      rescue
-        logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}")
+      rescue Exception => e
+        logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
       end
       
     end

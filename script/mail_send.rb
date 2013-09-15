@@ -272,9 +272,9 @@ for p in participants
         message_id = email.message_id
         puts "  daily e-mail sent: #{email.message_id}"
         numdailysent += 1
-      rescue
+      rescue Exception => e
         puts "  daily e-mail delivery problem"
-        Rails.logger.info("mail_send problem delivering daily email to #{p.id}:#{p.name}")
+        Rails.logger.info("mail_send problem delivering daily email to #{p.id}:#{p.name}: #{e}")
         numdailyerror += 1
       end
     end
@@ -297,9 +297,9 @@ for p in participants
         message_id = email.message_id
         puts "  weekly e-mail sent: #{email.message_id}"
         numweeklysent += 1
-      rescue
+      rescue Exception => e
         puts "  weekly e-mail delivery problem"
-        Rails.logger.info("mail_send problem delivering weekly email to #{p.id}:#{p.name}")
+        Rails.logger.info("mail_send problem delivering weekly email to #{p.id}:#{p.name}: #{e}")
         numweeklyerror += 1
       end
     end  

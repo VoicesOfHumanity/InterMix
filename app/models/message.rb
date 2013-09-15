@@ -108,9 +108,9 @@ class Message < ActiveRecord::Base
       self.sent_at = Time.now 
       self.email_sent = true
       self.email_sent_at = Time.now
-    rescue
+    rescue Exception => e
       self.sent = false
-      logger.info("Message#emailit FAILED delivering email to #{recipient.id}:#{recipient.name}")
+      logger.info("Message#emailit FAILED delivering email to #{recipient.id}:#{recipient.name}: #{e}")
     end
 
     save!

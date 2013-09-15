@@ -603,8 +603,8 @@ class FrontController < ApplicationController
       logger.info("Item#emailit delivering email to #{recipient.id}:#{recipient.name}")
       email.deliver
       message_id = email.message_id
-    rescue
-      logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}")
+    rescue Exception => e
+      logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
     end
 
     if @dialog_group and @dialog_group.confirm_template.to_s != ''
@@ -919,8 +919,8 @@ class FrontController < ApplicationController
       logger.info("front#groupjoin delivering email to #{recipient.id}:#{recipient.name}")
       email.deliver
       message_id = email.message_id
-    rescue
-      logger.info("front#groupjoin problem delivering email to #{recipient.id}:#{recipient.name}")
+    rescue Exception => e
+      logger.info("front#groupjoin problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
     end
     
     if @group.confirm_template.to_s != ''
@@ -1245,8 +1245,8 @@ class FrontController < ApplicationController
       logger.info("front#join delivering email to #{recipient.id}:#{recipient.name}")
       email.deliver
       message_id = email.message_id
-    rescue
-      logger.info("front#join problem delivering email to #{recipient.id}:#{recipient.name}")
+    rescue Exception => e
+      logger.info("front#join problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
     end
 
     if @group.confirm_template.to_s != ''
