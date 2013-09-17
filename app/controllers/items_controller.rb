@@ -12,7 +12,7 @@ class ItemsController < ApplicationController
   def list
     #-- Return the items to show on the page
     @from = params[:from] || ''
-    @ratings = params[:ratings]
+    @ratings = (params[:ratings].to_i == 1)
     @sortby = params[:sortby] || "items.id desc"
     @perscr = params[:perscr].to_i || 25
     @threads = params[:threads] || 'flat'
