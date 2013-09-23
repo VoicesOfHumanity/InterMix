@@ -13,6 +13,14 @@
 		<%= f.input :openness, :label => "Membership", :as => :select, :collection =>GROUP_OPENNESS %>
 		<%= f.input :visibility, :label => "Group Visibility", :as=>:select, :collection =>GROUP_VISIBILITY_TEXT.collect {|x| [x[1],x[0]]} %>
 		<%= f.input :message_visibility, :as=>:select, :collection =>GROUP_MESSAGE_VISIBILITY_TEXT.collect {|x| [x[1],x[0]]} %>
+		
+		<%= f.input :twitter_post, :label => "Post items to twitter?" %>
+		<%= f.input :tweet_what, :label => "Items to tweet", :as => :select, :collection =>[['* all *'],['root messages','roots']] %>
+		<%= f.input :tweet_approval_min, :label => "Min. pos. approvals before tweeting" %>		
+		<%= f.input :twitter_username, :label => "Twitter username" %>		
+		
+		<li id="authtext" style="display:none">We haven't yet been authorized to send group posts to this Twitter account. After you have saved any new information, come back here and simply click on <a href="/groups/<%= @group.id %>/twitauth">this link</a>, which sends you to Twitter's website, where you can log in, if you aren't already logged in. You can then accept that Intermix is allowed to post to the account. We will not get access to the password, and we will not post anything other than the group posts that fit the criteria defined here. You can turn off that feature at any time.</li>
+		
 		<%= f.input :has_mail_list, :label => "Has mailing list" %>
 		<%= f.input :logo, :as=>:file %>			
 		<li class="select optional" id="group_has_mail_list_input">
@@ -137,6 +145,11 @@ function test_template(which) {
 	//}	
 	window.open("/groups/<%= @group.id %>/test_template?which="+which, '_blank');
 }
+function showauthtext() {
+	$('#authtext').show();
+}
+<% if @group.twitter_post and @group.twitter_username.to_s != '' and @group.twitter_oauth_token.to_s == '' -%>
+showauthtext();
+<% end -%>
 </script>
-
 

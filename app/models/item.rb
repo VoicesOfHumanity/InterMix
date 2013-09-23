@@ -96,6 +96,7 @@ class Item < ActiveRecord::Base
     #-- Do stuff that needs to be done to process and distrubte a new item
     #-- E-mail it to everybody who needs to get it in e-mail
     #-- Post it to twitter
+    logger.info("Item#process_new_item")
     create_xml
     if old_message_id.to_i == 0
       #-- Only twitter and e-mail if it really is a new message just being posted
@@ -272,12 +273,14 @@ class Item < ActiveRecord::Base
     #-- Post to the participant's own twitter account
     
     # temporarily: problem with library
-    return
+    #return
     
     return if self.short_content.to_s == ''
     return if self.posted_by.to_i == 0
     @participant ||= Participant.find_by_id(self.posted_by)
-    return if not ( @particpant and @participant.twitter_post and @participant.twitter_username.to_s !='' and @participant.twitter_oauth_token.to_s != '' )
+    return if not ( @participant and @participant.twitter_post and @participant.twitter_username.to_s !='' and @participant.twitter_oauth_token.to_s != '' )
+    
+    logger.info("Item#personal_twitter needs to post for #{self.posted_by}")
     
     begin
       Twitter.configure do |config|
@@ -288,7 +291,7 @@ class Item < ActiveRecord::Base
       end
       Twitter.update(self.short_content)
     rescue
-      logger.info("Item#twitterit problem posting to twitter")
+      logger.info("Item#personal_twitter problem posting to twitter")
     end  
   end  
   

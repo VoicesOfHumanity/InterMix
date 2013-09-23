@@ -20,7 +20,6 @@
 		<%= f.input :no_email, :label => 'Block all emails?', :as => :radio %>	
 		
 
-		<% if false %>	
 		<li><label>E-mail Posting:</label>w+<%= @participant.direct_email_code %>@intermix.org<br></li>
 		
 		<li><h3>Twitter</h3></li>
@@ -29,8 +28,6 @@
 		<%= f.input :twitter_username %>
 		
 		<li><label>Twitter access</label><%= @participant.twitter_post and @participant.twitter_username.to_s != '' ? ( @participant.twitter_oauth_token.to_s != '' ? 'authorized' : 'not yet authorized'  ) : 'none' %></li>
-		
-		<% end %>
 		
 		<input type="hidden" name="subsection" value="<%= @subsection %>">
 		

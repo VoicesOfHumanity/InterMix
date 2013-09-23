@@ -108,5 +108,11 @@ Intermix::Application.configure do
   
 end
 
-
 Paperclip.options[:command_path] = "/usr/bin"
+
+TWITTER_CONSUMER_KEY = 'Ew8NROMK7YbDa3XIph6gA'   # = API key. And this is for the Posting app, not the Login app
+TWITTER_CONSUMER_SECRET = 'ghQ41Vu377BAh3oVRACpKdYzeUo5SJardQunvALkj8'
+
+FACEBOOK_APP_ID          = '151526481561013'
+FACEBOOK_API_SECRET      = '3653366f2b6d4778e09db3d666d1fedf'
+

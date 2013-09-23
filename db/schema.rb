@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130827011340) do
+ActiveRecord::Schema.define(:version => 20130922235716) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -295,6 +295,8 @@ ActiveRecord::Schema.define(:version => 20130827011340) do
     t.text     "confirm_welcome_template"
     t.boolean  "alt_logins",               :default => true
     t.boolean  "required_meta",            :default => true
+    t.integer  "tweet_approval_min",       :default => 1
+    t.string   "tweet_what",               :default => "roots"
   end
 
   add_index "groups", ["name"], :name => "index_groups_on_name"
@@ -417,6 +419,10 @@ ActiveRecord::Schema.define(:version => 20130827011340) do
     t.boolean  "edit_locked",                                            :default => false
     t.integer  "period_id"
     t.integer  "first_in_thread_group_id"
+    t.boolean  "tweeted_user",                                           :default => false
+    t.datetime "tweeted_user_at"
+    t.boolean  "tweeted_group",                                          :default => false
+    t.datetime "tweeted_group_at"
   end
 
   add_index "items", ["created_at"], :name => "index_items_on_created_at"

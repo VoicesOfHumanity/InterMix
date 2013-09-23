@@ -108,6 +108,8 @@ Intermix::Application.routes.draw do
       get :get_default
       get :get_dg_default
       get :test_template
+      get :twitauth
+      get :twitcallback
     end
   end 
   
