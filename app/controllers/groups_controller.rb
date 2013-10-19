@@ -1105,6 +1105,7 @@ class GroupsController < ApplicationController
     #-- I could also use omniauth or devise. That is, if I knew how.
     #-- http://oauth.rubyforge.org/
     #-- http://cbpowell.wordpress.com/2010/10/12/twitter-oauth-and-ruby-on-rails-integrated-cookbook-style-in-the-console/
+    #-- http://cbpowell.wordpress.com/2011/03/17/twitter-oauth-and-ruby-on-rails-integrated-cookbook-style-in-the-console-updated-for-twitter-1-0/
     #-- http://groups.google.com/group/ruby-twitter-gem/browse_thread/thread/29d587637afe28eb#
     #-- http://stakeventures.com/articles/2008/02/23/developing-oauth-clients-in-ruby
     #-- http://philsturgeon.co.uk/news/2010/11/using-omniauth-to-make-twitteroauth-api-requests
@@ -1132,7 +1133,7 @@ class GroupsController < ApplicationController
   def twitcallback
     #-- Callback from Twitter, after somebody authorizes themselves
     #-- This is where we get the access keys
-    #-- http://cbpowell.wordpress.com/2010/10/12/twitter-oauth-and-ruby-on-rails-integrated-cookbook-style-in-the-console/
+    #-- http://cbpowell.wordpress.com/2011/03/17/twitter-oauth-and-ruby-on-rails-integrated-cookbook-style-in-the-console-updated-for-twitter-1-0/
     #-- http://dev.twitter.com/pages/auth
 
     # params: {"oauth_token"=>"cT4jP3LWUd7RFAoVADtR9Oec4GSA2TppjVxufC6BMM", "oauth_verifier"=>"wqxxDrsBaILlGTc8CSnyvAkAdZYqt6wuik5EUdfLzSI", "controller"=>"profiles", "action"=>"twitcallback"}
@@ -1150,31 +1151,36 @@ class GroupsController < ApplicationController
     
     # Exchange the request token for an access token.
     @access_token = @request_token.get_access_token(:oauth_verifier => oauth_verifier)
-    @response = GroupsController.twitconsumer.request(:get, '/account/verify_credentials.json',@access_token, { :scheme => :query_string })
-    case @response
-    when Net::HTTPSuccess
-      user_info = JSON.parse(@response.body)
-      unless user_info['screen_name']
-        flash[:notice] = "Authentication failed"
-        redirect_to :action =>:index
-        return
-      end
-      
+    
+    if @access_token.token.to_s != ''
       #-- We have an authorized user, save the information to the database.
       @group = Group.find_by_id(@group_id)
       @group.twitter_oauth_token = @access_token.token
       @group.twitter_oauth_secret = @access_token.secret
-      @group.save!
-      
-      # Redirect to the edit page
-      redirect_to "/groups/#{@group_id}/admin"
+      @group.save!    
+      flash[:notice] = "Authentication succeeded"
     else
-      
-      logger.info("groups#twitcallback Failed to get user info via OAuth")
-      # The user might have rejected this application. Or there was some other error during the request.
       flash[:notice] = "Authentication failed"
-      redirect_to "/groups/#{@group_id}/admin"
-    end  
+    end
+    redirect_to "/groups/#{@group_id}/admin"
+    
+    #@response = GroupsController.twitconsumer.request(:get, '/account/verify_credentials.json',@access_token, { :scheme => :query_string })
+    #case @response
+    #when Net::HTTPSuccess
+    #  user_info = JSON.parse(@response.body)
+    #  unless user_info['screen_name']
+    #    flash[:notice] = "Authentication failed"
+    #    redirect_to :action =>:index
+    #    return
+    #  end
+    #  # Redirect to the edit page
+    #  redirect_to "/groups/#{@group_id}/admin"
+    #else      
+    #  logger.info("groups#twitcallback Failed to get user info via OAuth")
+    #  # The user might have rejected this application. Or there was some other error during the request.
+    #  flash[:notice] = "Authentication failed"
+    #  redirect_to "/groups/#{@group_id}/admin"
+    #end  
   end  
   
 

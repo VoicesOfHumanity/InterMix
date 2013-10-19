@@ -1011,7 +1011,7 @@ class Item < ActiveRecord::Base
     elsif self.group_id.to_i > 0  
       #-- This message belongs to a group
       #-- Is the user a member of it?
-      group = self.group ? self.group : Group.find(self.group_id)
+      group = self.group ? self.group : Group.find_by_id(self.group_id)
       group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).find(:first)
       if not group_participant
         #-- He's not a member
@@ -1078,7 +1078,7 @@ class Item < ActiveRecord::Base
     elsif self.dialog_id.to_i > 0
       #-- This item belongs to a discussion
       
-      dialog = Dialog.includes(:groups).find(self.dialog_id)
+      dialog = Dialog.includes(:groups).find_by_id(self.dialog_id)
       if not dialog.settings_with_period["allow_replies"]
         #-- Nobody's allowed to reply in that discussion
         return false
@@ -1099,7 +1099,7 @@ class Item < ActiveRecord::Base
       
     elsif self.group_id.to_i > 0  
       #-- This message belongs to a grop
-      group = Group.includes(:owner_participant).find(self.group_id)
+      group = Group.includes(:owner_participant).find_by_id(self.group_id)
       group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).find(:first)
       if group_participant
         #-- He's a member

@@ -117,5 +117,6 @@ MAIL_SYSTEM = 'postmark'   # postmark or system
 #FACEBOOK_APP_ID          = 'xxxxxx'
 #FACEBOOK_API_SECRET      = 'xxxxxx'
 
-
+BITLY_USERNAME = 'intermix2'
+BITLY_TOKEN = 'R_73e3ecf8f80f17123a488637d59532ab'
 

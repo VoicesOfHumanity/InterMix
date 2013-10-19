@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130922235716) do
+ActiveRecord::Schema.define(:version => 20131008003721) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -142,6 +142,7 @@ ActiveRecord::Schema.define(:version => 20130922235716) do
     t.boolean  "posting_open",             :default => true
     t.boolean  "voting_open",              :default => true
     t.integer  "current_period"
+    t.string   "twitter_hash_tag"
   end
 
   add_index "dialogs", ["name"], :name => "index_dialogs_on_name", :length => {"name"=>30}
@@ -280,6 +281,7 @@ ActiveRecord::Schema.define(:version => 20130922235716) do
     t.string   "twitter_username"
     t.string   "twitter_oauth_token"
     t.string   "twitter_oauth_secret"
+    t.string   "twitter_hash_tag"
     t.boolean  "has_mail_list",            :default => true
     t.string   "logo_file_name"
     t.string   "logo_content_type"

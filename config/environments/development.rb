@@ -23,10 +23,10 @@ Intermix::Application.configure do
     config.action_mailer.smtp_settings = {
       :address => "mail.worldtrans.org",
       :port => 25,
-      :domain => "mail.worldtrans.org",
+      :domain => "xxx.intermix.org",
       :authentication => :login,
-      :user_name => "ffunch",
-      :password => "ping12z",
+      :user_name => "xxxxx",
+      :password => "xxxx",
       :enable_starttls_auto => false
     }
   end
