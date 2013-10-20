@@ -35,7 +35,7 @@ return
 end
   
     if to[0,2] == "w+"
-      #-- Unique code for the user to post to his wall
+      #-- Unique code for the user to post to his wall. w+778685c5b3@go.intermix.org
       code = to[2,100].to_s
       code = to.match('w\+(.*)@')[1]
 

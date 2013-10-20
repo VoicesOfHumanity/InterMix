@@ -19,7 +19,7 @@ puts "Starting Mail Fetcher to #{MAILDOMAIN}/intermix"
   #pop = Net::POP3.new("mail.intermix.org")
   pop = Net::POP3.new(MAILDOMAIN)
   pop.enable_ssl(OpenSSL::SSL::VERIFY_NONE)
-  pop.start("intermix", "im45tyu")
+  pop.start("intermix", "win583ter13")
   if pop.mails.empty?
     puts "- no mail"
   else
