@@ -27,8 +27,12 @@ puts "Starting Mail Fetcher to #{MAILDOMAIN}/intermix"
     x = 1
     pop.each_mail do |m|
       puts "- #{x}"
-      ReceiveMailer.receive(m.pop)
-      puts "- processed. now deleting"
+      begin
+        ReceiveMailer.receive(m.pop)
+        puts "- processed. now deleting"
+      rescue
+        puts "- error in processing. deleting"
+      end    
       m.delete
       x += 1
     end
