@@ -26,6 +26,16 @@ class ProfilesController < ApplicationController
     @participant = Participant.find_by_id(@profile_id)
     @participant.new_signup = false
     @participant.save
+    if @participant.direct_email_code.to_s == ''
+      trycode = Digest::MD5.hexdigest(Time.now.to_f.to_s)[6,10]
+      matches = Participant.where("direct_email_code='#{trycode}'").all
+      if matches and matches.length > 0
+        logger.info("profiles#settings duplicate direct_email_code:#{trycode}")
+      else
+        @participant.direct_email_code = trycode
+        @participant.save
+      end
+    end
     session[:has_required] = @participant.has_required
     if @participant.country_code.to_s != ''
       @metro_areas = MetroArea.where(:country_code=>@participant.country_code).order(:name).all.collect{|r| [r.name,r.id]}

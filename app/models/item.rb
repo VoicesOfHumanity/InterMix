@@ -282,6 +282,38 @@ class Item < ActiveRecord::Base
     
     logger.info("Item#personal_twitter needs to post for #{self.posted_by}")
     
+    txt = ''
+    
+    permalink = "http://#{BASEDOMAIN}/items/#{self.id}/view"
+    
+    #-- Get the shortened url from bitly
+    bitlyurl = "https://api-ssl.bitly.com/v3/shorten?access_token=#{BITLY_TOKEN}&longUrl=" + Rack::Utils.escape(permalink)
+    begin
+      bitly_response = open(bitlyurl).read
+      # { "data": [ ], "status_code": 500, "status_txt": "INVALID_ARG_ACCESS_TOKEN" }
+      # { "status_code": 200, "status_txt": "OK", "data": { "long_url": "http:\/\/test2g.intermix.dev\/items\/1805\/view", "url": "http:\/\/j.mp\/1imMKf8", "hash": "1imMKf8", "global_hash": "1imMKf9", "new_hash": 0 } }
+      if bitly_response != ''
+        bitdata = JSON.parse(bitly_response)
+        if bitdata and bitdata.has_key?("status_code") and bitdata['status_code'] == 200
+           shorturl = bitdata['data']['url']
+        else
+          #puts "  ERROR shortening: " + bitly_response
+        end 
+      else
+        #puts "  ERROR shortening: empty response"      
+      end    
+    rescue Exception => e
+      #puts "  ERROR shortening: " + e.message
+      logger.info("Item#personal_twitter problem shortening #{permalink}")
+      shorturl = ''
+    end    
+    if shorturl != ''
+      txt += " #{shorturl}"
+    end  
+
+    wantlength = 140 - txt.length
+    txt = self.short_content[0,wantlength] + txt
+    
     begin
       Twitter.configure do |config|
         config.consumer_key = TWITTER_CONSUMER_KEY
@@ -289,10 +321,11 @@ class Item < ActiveRecord::Base
         config.oauth_token = @participant.twitter_oauth_token
         config.oauth_token_secret = @participant.twitter_oauth_secret
       end
-      Twitter.update(self.short_content)
-    rescue
-      logger.info("Item#personal_twitter problem posting to twitter")
-    end  
+      Twitter.update(txt)
+    rescue Exception => e
+      logger.info("Item#personal_twitter problem posting to twitter" + e.message)
+    end     
+    
   end  
   
   def create_xml

@@ -66,11 +66,20 @@
 		<%= f.input :group_email, :label => 'Group postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :forum_email, :label => 'Discussion postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		
-		<p>To reply by email without going online, specify "E-mail each one right away".</p>
+		<li>To reply by email without going online, specify "E-mail each one right away".</li>
 		
 		<%= f.input :no_email, :label => 'Block all emails?', :as => :radio %>	
 		
-		<p> Please set your spam filter to allow messages from questions@intermix.org.</p>
+		<li> Please set your spam filter to allow messages from questions@intermix.org.</li>
+
+		<li><label>E-mail Posting to wall:</label>w+<%= @participant.direct_email_code %>@intermix.org<br></li>
+
+		<li><h3>Twitter</h3></li>
+		
+		<%= f.input :twitter_post, :as => :radio %>
+		<%= f.input :twitter_username %>
+		
+		<li><label>Twitter access</label><%= @participant.twitter_post and @participant.twitter_username.to_s != '' ? ( @participant.twitter_oauth_token.to_s != '' ? 'authorized' : 'not yet authorized'  ) : 'none' %></li>
 		
 	<% end %>
 

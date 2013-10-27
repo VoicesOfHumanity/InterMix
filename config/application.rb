@@ -118,5 +118,5 @@ MAIL_SYSTEM = 'postmark'   # postmark or system
 #FACEBOOK_API_SECRET      = 'xxxxxx'
 
 BITLY_USERNAME = 'intermix2'
-BITLY_TOKEN = 'R_73e3ecf8f80f17123a488637d59532ab'
+BITLY_TOKEN = 'c9d06623cb928bca6977ae80bbdb1a4cc676309c'
 

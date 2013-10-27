@@ -16,6 +16,7 @@
 		<%= f.input :group_id, :as => :select, :collection =>current_participant.groups.collect{|g| [g.name,g.id]}, :label=>"Home group" %>					
 		<%= f.input :max_characters, :label => "Maximum number of characters in a root message." %>
 		<%= f.input :max_words, :label => "Maximum number of words in a root message."  %>
+		<%= f.input :twitter_hash_tag, :label => "Twitter #hashtag" %>		
 		
 		<li><label style="height:100px;">&nbsp;</label><div>Be careful not to copy a group level template into a discussion level template.<br><br>
 		Some of the macros available in templates:<br>{{ dialog_logo }} {{ dialog.name }} {{ dialog.description }} {{ dialog.shortname }}	{{ group.name }} {{ group.adminname }} {{ group_logo }} {{ participant.name }} {{ participant.email }} {{ domain }}</div>
