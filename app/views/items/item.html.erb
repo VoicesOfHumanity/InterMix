@@ -6,7 +6,7 @@
 <% if @item.is_first_in_thread -%>
 <p>
 <!-- AddThis Button BEGIN -->
-<a class="addthis_button" href="http://www.addthis.com/bookmark.php?v=300&amp;pubid=ra-5265a1b73e8922ff"><img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a>
+<a class="addthis_button" href="http://www.addthis.com/bookmark.php?v=300&amp;pubid=ra-5265a1b73e8922ff" addthis:title="<%= @item.subject %>" addthis:description="<%= @item.short_content %>"><img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a>
 <script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
 <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5265a1b73e8922ff"></script>
 <!-- AddThis Button END -->

@@ -12,7 +12,7 @@ puts "#{items.length} items to consider"
 tweeted = 0
 
 items.each do |item|
-  next if not item.group or not item.group.twitter_post or item.group.twitter_oauth_token == ''
+  next if not item.group or not item.group.twitter_post or item.group.twitter_oauth_token.to_s == ''
   next if item.short_content.to_s == ''
   next if item.posted_by.to_i == 0
 

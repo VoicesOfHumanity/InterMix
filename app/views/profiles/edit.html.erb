@@ -79,7 +79,7 @@
 		<%= f.input :twitter_post, :as => :radio %>
 		<%= f.input :twitter_username %>
 		
-		<li><label>Twitter access</label><%= @participant.twitter_post and @participant.twitter_username.to_s != '' ? ( @participant.twitter_oauth_token.to_s != '' ? 'authorized' : 'not yet authorized'  ) : 'none' %></li>
+		<li><label>Twitter access</label><%= @participant.twitter_post and @participant.twitter_username.to_s != '' ? ( @participant.twitter_oauth_token.to_s != '' ? 'authorized' : raw("not yet authorized. click <a href=\"/me/twitauth\">this link</a> to authorize posting.")  ) : 'none' %></li>
 		
 	<% end %>
 
