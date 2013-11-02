@@ -277,7 +277,7 @@ class Item < ActiveRecord::Base
     
     return if self.short_content.to_s == ''
     return if self.posted_by.to_i == 0
-    return if not item.is_first_in_thread
+    return if not self.is_first_in_thread
     @participant ||= Participant.find_by_id(self.posted_by)
     return if not ( @participant and @participant.twitter_post and @participant.twitter_username.to_s !='' and @participant.twitter_oauth_token.to_s != '' )
     
