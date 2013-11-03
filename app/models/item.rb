@@ -362,7 +362,7 @@ class Item < ActiveRecord::Base
     Item.find_by_id(self.first_in_thread)
   end
   
-  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0)
+  def self.list_and_results(group_id=0,dialog_id=0,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant_id=0,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='')
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
@@ -381,10 +381,11 @@ class Item < ActiveRecord::Base
     items = items.where("items.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
     items = items.where("items.dialog_id = 0 or items.dialog_id is null") if dialog_id.to_i < 0
 
-
     items = items.where("items.period_id = ?", period_id) if period_id.to_i > 0  
     
     num_items_total = items.length if regmean
+    
+    items = items.tagged_with(tag) if tag != ''
     
     #items = items.where("is_first_in_thread=1") if rootonly
     items = items.where(:posted_by => posted_by) if posted_by.to_i > 0

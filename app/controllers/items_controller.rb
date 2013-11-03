@@ -19,6 +19,7 @@ class ItemsController < ApplicationController
     @limit_group_id = (params[:limit_group_id] || 0).to_i
     @dialog_id = (params[:dialog_id] || 0).to_i
     @period_id = (params[:period_id] || 0).to_i
+    @tag = params[:tag].to_s
     @posted_by_country_code = (params[:posted_by_country_code] || '').to_s
     @posted_by_admin1uniq = (params[:posted_by_admin1uniq] || '').to_s
     @posted_by_metro_area_id = (params[:posted_by_metro_area_id] || 0).to_i
@@ -81,7 +82,7 @@ class ItemsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
 
-      @items, @itemsproc, @extras = Item.list_and_results(@limit_group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id)
+      @items, @itemsproc, @extras = Item.list_and_results(@limit_group_id,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag)
       
       #logger.info("items_controller#list @items: #{@items.inspect}")
       

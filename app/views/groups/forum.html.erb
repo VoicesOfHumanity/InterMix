@@ -25,12 +25,16 @@
 		<div class="lefttitle">Threads:</div>
 		<div class="leftfield">
 		<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list()" %>
-		</div>
+		</div>	
 	
 	</div><!--forumcontrol1-->
 	
 	<div id="forumcontrol3">
 
+		<div class="lefttitle">Sub-group Tags:</div>
+		<div class="leftfield">
+		<%= select_tag "tag", options_for_select([['* All *','']] + Item.where(:group_id=>@group_id).tags.split(/[, ]+/),@tag), :onchange=>"list()" %>
+		</div>
 
 		<div class="lefttitle">Show:</div>
 		<div class="leftfield">
