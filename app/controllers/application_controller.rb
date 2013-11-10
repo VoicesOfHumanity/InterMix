@@ -300,8 +300,10 @@ class ApplicationController < ActionController::Base
        current_participant.last_dialog_id = xdialog_id
        current_participant.save
     end
-    @group_id = xgroup_id
-    @dialog_id = xdialog_id
+    #@group_id = xgroup_id
+    #@dialog_id = xdialog_id
+    @group_id = "#{session[:group_id]}".to_i
+    @dialog_id = "#{session[:dialog_id]}".to_i
     logger.info("application#get_group_dialog_from_subdomain group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
     return @group_id, @dialog_id
   end  
