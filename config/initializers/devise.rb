@@ -5,7 +5,8 @@
 
 Devise.setup do |config|
 
-  config.secret_key = 'c1a45168a4e56497e08fb6e3f57cfa8a2376a0a98dcd1a4a44b1917ed878996a96a5df5218daa3dc3d8b6f97a109a73085e4a8e80edebc97319ee701d9e5bcf6'
+  # >3.2
+  #config.secret_key = 'c1a45168a4e56497e08fb6e3f57cfa8a2376a0a98dcd1a4a44b1917ed878996a96a5df5218daa3dc3d8b6f97a109a73085e4a8e80edebc97319ee701d9e5bcf6'
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in DeviseMailer.
