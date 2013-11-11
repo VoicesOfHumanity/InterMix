@@ -22,9 +22,9 @@ opts.parse(ARGV)
 
 if whichday != ''
   #-- If a day is given, it should be the day on which (a little after midnight) the report is run for the day before
-  now = Time.parse(whichday)
+  now = Time.parse(whichday).gmtime
 else
-  now = Time.now
+  now = Time.now.gmtime
 end    
 
 if now.wday == 4 or do_weekly
@@ -160,7 +160,7 @@ for p in participants
     
     for item in items
       
-      puts "    ##{item.id}: #{item.subject}" if testonly
+      puts "    ##{item.id}: #{item.created_at}: #{item.subject}" if testonly
       
       #-- Is it an item we need, or do we skip it?
       in_week = true
