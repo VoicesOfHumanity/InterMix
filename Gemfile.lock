@@ -220,7 +220,7 @@ DEPENDENCIES
   ckeditor
   coffee-rails (~> 3.2.1)
   devise
-  exception_notification
+  exception_notification (~> 4.0.0)
   formtastic
   imagesize
   jquery-rails

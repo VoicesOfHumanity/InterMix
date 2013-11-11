@@ -60,7 +60,7 @@ gem 'ruby-oembed', :require => 'oembed'
 # tmail conflicts with formtastic. Should be required only where used. app/mailers/receive_mailer
 #gem 'tmail', :require => false
 #gem 'exception_notification', :require => 'exception_notifier'
-gem 'exception_notification'
+gem 'exception_notification', '~> 4.0.0'
 
 gem 'postmark'
 gem 'postmark-rails'
