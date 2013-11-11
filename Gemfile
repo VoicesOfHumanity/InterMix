@@ -8,7 +8,7 @@ gem 'rake'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'mysql2', '0.3.10'
+gem 'mysql2'
 
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
@@ -18,6 +18,7 @@ gem 'jquery-ui-rails'
 
 # Deploy with Capistrano
 gem 'capistrano'
+gem 'capistrano-rails'
 
 # To use debugger
 # gem 'ruby-debug'
