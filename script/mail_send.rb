@@ -10,16 +10,25 @@ require 'optparse'
 participant_id = 0
 do_weekly = false
 testonly = false
+whichday = ''
 
-# testing: ruby mail_send.rb -p 6 -w 1
+# testing: ruby mail_send.rb -p 6 -d 2013-11-10 -w 1 
 opts = OptionParser.new
 opts.on("-pARG","--participant=ARG",Integer) {|val| participant_id = val}
 opts.on("-wARG","--weekly=ARG",Integer) {|val| do_weekly = true}
+opts.on("-dARG","--day=ARG",String) {|val| whichday = val}
 opts.on("-tARG","--test=ARG",Integer) {|val| testonly = true}
 opts.parse(ARGV)
 
-if Time.now.wday == 4 or do_weekly
-#if Time.now.wday == 6
+if whichday != ''
+  #-- If a day is given, it should be the day on which (a little after midnight) the report is run for the day before
+  now = Time.parse(whichday)
+else
+  now = Time.now
+end    
+
+if now.wday == 4 or do_weekly
+#if now.wday == 6
   #-- If it is Saturday
   is_weekly = true
   puts "Today is the day to run weeklies"
@@ -31,9 +40,9 @@ if do_weekly
   puts "Forcing weekly mailing, regardless of settings"
 end  
 
-wstart = Time.now.midnight - 1.week
-dstart = Time.now.midnight - 1.day
-pend = Time.now.midnight - 1.second
+wstart = now.midnight - 1.week
+dstart = now.midnight - 1.day
+pend = now.midnight - 1.second
 
 if is_weekly or do_weekly
   puts "Week: #{wstart} - #{pend}"
@@ -131,7 +140,7 @@ for p in participants
     pstart = need_weekly ? wstart : dstart
     
     #-- We want sort by descending regressed value, using total interest
-    items, itemsproc = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p.id,true,p.id,pstart,pend)
+    items, itemsproc, extras = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p.id,true,p.id,pstart,pend)
     
     #-- Note that we might have gotten more items than we actually need
     
@@ -141,8 +150,10 @@ for p in participants
       ptext = "weekly"
     else
       ptext = "daily"
-    end      
-    puts "  #{items.length} #{ptext} items"
+    end  
+    will_items = items.length    
+    puts "  #{will_items} #{ptext} items"
+    did_items = 0
     
     user_dialogs = {}
     
@@ -169,6 +180,8 @@ for p in participants
       else
         next
       end    
+      
+      did_items += 1
       
       #-- Figure out the best domain to use, with discussion and group
       if item.dialog
@@ -249,7 +262,11 @@ for p in participants
         tdaily += itext
       end  
       
-    end  
+    end
+    
+    if will_items > 0 and did_items == 0
+      puts "  #{did_items} #{ptext} items were processed. #{will_items} were expected"
+    end   
     
   end
   

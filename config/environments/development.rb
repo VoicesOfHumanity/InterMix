@@ -68,7 +68,7 @@ else
 end
 MAILDOMAIN = 'trantor.cr8.com'
 
-Paperclip.options[:command_path] = "/opt/local/bin"
+#Paperclip.options[:command_path] = "/opt/local/bin"
 
 TWITTER_CONSUMER_KEY = 'Ew8NROMK7YbDa3XIph6gA'   # = API key. And this is for the Posting app, not the Login app
 TWITTER_CONSUMER_SECRET = 'ghQ41Vu377BAh3oVRACpKdYzeUo5SJardQunvALkj8'
