@@ -27,7 +27,7 @@ gem 'capistrano', '~> 2.15'
 gem 'ruby-prof'
 
 #gem 'devise', :git => "http://github.com/plataformatec/devise.git"
-gem 'devise'
+gem 'devise', '~> 3.0'
 #gem "oauth2"
 gem "omniauth"
 #gem "oa-oauth", :require => "omniauth/oauth"

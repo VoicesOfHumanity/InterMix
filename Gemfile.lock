@@ -219,7 +219,7 @@ DEPENDENCIES
   capistrano (~> 2.15)
   ckeditor
   coffee-rails (~> 3.2.1)
-  devise
+  devise (~> 3.0)
   exception_notification (= 4.0.0)
   formtastic
   imagesize
