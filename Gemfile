@@ -17,8 +17,8 @@ gem 'jquery-ui-rails'
 # gem 'unicorn'
 
 # Deploy with Capistrano
-gem 'capistrano'
-gem 'capistrano-rails'
+gem 'capistrano', '~> 2.15'
+#gem 'capistrano-rails'
 
 # To use debugger
 # gem 'ruby-debug'
