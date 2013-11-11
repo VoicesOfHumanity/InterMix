@@ -153,31 +153,39 @@ for p in participants
     end  
     will_items = items.length    
     puts "  #{will_items} #{ptext} items"
+    puts "  group_email:#{p.group_email} forum_email:#{p.forum_email}" if testonly
     did_items = 0
     
     user_dialogs = {}
     
     for item in items
       
+      puts "    ##{item.id}: #{item.subject}" if testonly
+      
       #-- Is it an item we need, or do we skip it?
       in_week = true
       in_day = (item.created_at > dstart)
       in_group = (item.group_id.to_i > 0)
       in_dialog = (item.dialog_id.to_i > 0)
+
+      puts "    in_week:#{in_week} in_day:#{in_day} in_group:#{in_group} in_dialog:#{in_dialog}" if testonly
       
       if in_dialog
         if p.forum_email == 'daily' and in_day
         elsif p.forum_email == 'weekly' and in_week
         else
+          puts "    in a dialog, but no setting to send it" if testonly
           next
         end     
       elsif in_group
         if p.group_email == 'daily' and in_day
         elsif p.group_email == 'weekly' and in_week
         else
+          puts "    in a group, but not setting to send it" if testonly
           next
         end     
       else
+        puts "    not in a group or dialog" if testonly
         next
       end    
       
