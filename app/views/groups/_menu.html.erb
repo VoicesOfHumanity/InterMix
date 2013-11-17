@@ -13,15 +13,28 @@ apply to join this group
 <ul class="horizmenu">
 <li><a class="menu<%= ' selected' if @gsection=='info' %>" href="/groups/<%= @group.id %>/view">Info</a></li>
 <% if @is_member or (@group.message_visibility != 'private') -%>
-<li><a class="menu<%= ' selected' if @gsection=='forum' %>" href="/groups/<%= @group.id %>/forum">Forum</a></li>
+<li><a class="menu<%= ' selected' if @gsection=='forum' %>" href="/groups/<%= @group.id %>/forum">List</a></li>
 <% end -%>
 <% if @is_member and (@group.openness=='open' or @is_moderator) -%>
 <li><a class="menu<%= ' selected' if @gsection=='invite' %>" href="/groups/<%= @group.id %>/invite">Invite</a></li>
 <% end -%>
+<% if @has_dialog or @is_moderator -%>
+<% if session[:dialog_id].to_i > 0 -%>
+<li class="menu"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>
+<% elsif session[:group_id].to_i > 0 -%>
+<li class="menu<%= ' full' if session[:dialog_id].to_i==0 and session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs">Discussions</a></li>				
+<% else -%>
+<% end -%>
+<% end -%>
 <% if (@is_member and @is_moderator) or session[:is_hub_admin] or session[:is_sysadmin] -%>
 <li><a class="menu<%= ' selected' if @gsection=='admin' %>" href="/groups/<%= @group.id %>/admin">Admin</a></li>
 <% end -%>
-<li><a  class="menu<%= ' selected' if @gsection=='' %>" href="/groups">All Groups</a></li>
 </ul>
 
 <div style="clear:both;height:1px"></div>
+
+
+
+<% if false %>
+<li><a  class="menu<%= ' selected' if @gsection=='' %>" href="/groups">All Groups</a></li>
+<% end %>

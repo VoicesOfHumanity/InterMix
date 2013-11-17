@@ -26,9 +26,7 @@ class GroupsController < ApplicationController
     @section = 'groups'
     @gsection = 'info'
     @group = Group.includes(:owner_participant).find(params[:id])
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
     update_last_url
     update_prefix
   end  
@@ -38,9 +36,7 @@ class GroupsController < ApplicationController
     @section = 'groups'
     @gsection = 'admin'
     @group = Group.find(params[:id])
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
     update_last_url
     update_prefix
   end
@@ -50,9 +46,7 @@ class GroupsController < ApplicationController
     @section = 'groups'
     @gsection = 'moderate'
     @group = Group.find(params[:id])
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
     update_last_url
     update_prefix
   end  
@@ -73,9 +67,7 @@ class GroupsController < ApplicationController
     @section = 'groups'
     #@group = Group.includes(:group_participants=>:participant).find(params[:id])
     @group = Group.includes(:owner_participant).find(params[:id])
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
     @metamaps = Metamap.all
     @has_metamaps = {}
     for metamap in @group.metamaps
@@ -114,6 +106,7 @@ class GroupsController < ApplicationController
         for metamap in @group.metamaps
           @has_metamaps[metamap.id] = true
         end
+        get_group_info
         format.html { render :action => "edit" }
         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
       end
@@ -178,6 +171,7 @@ class GroupsController < ApplicationController
       else
         logger.info("groups_controller#create Failed creating new group")
         @has_metamaps = {}
+        get_group_info
         format.html { render :action=>:edit }
       end
     end
@@ -190,9 +184,7 @@ class GroupsController < ApplicationController
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).where("group_participants.group_id=#{@group_id}").find(params[:id])
 
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
 
     if not ( (@is_member and @is_moderator) or session[:is_hub_admin] or session[:is_sysadmin] )
       redirect_to "/groups/#{@group_id}"
@@ -229,9 +221,7 @@ class GroupsController < ApplicationController
     @messtext = ''
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @members = Participant.order("first_name,last_name").all  
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
   end  
   
   def invitedo
@@ -240,9 +230,7 @@ class GroupsController < ApplicationController
     @gsection = 'invite'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
     logger.info("groups#invitedo")  
     flash[:notice] = ''
     flash[:alert] = ''
@@ -428,9 +416,7 @@ class GroupsController < ApplicationController
     @subject = "You were added to a group"
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @metamaps = Metamap.order("name").all  
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
   end  
   
   def importdo
@@ -708,9 +694,7 @@ class GroupsController < ApplicationController
     @from = 'group'
     @group_id = params[:id].to_i
     @group = Group.includes(:owner_participant).find(@group_id)
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
     @dialog_id = 0
 
     if not session[:has_required]
@@ -800,9 +784,7 @@ class GroupsController < ApplicationController
   def period_edit
     @group_id = params[:id].to_i
     @group = Group.find(@group_id)
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
     @period_id = params[:period_id].to_i
     if @period_id == 0
       @period = Period.new(:group_id=>@group_id,:group_dialog=>'group')
@@ -832,9 +814,7 @@ class GroupsController < ApplicationController
   def subtag_edit
     @group_id = params[:id].to_i
     @group = Group.find(@group_id)
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
     @group_subtag_id = params[:group_subtag_id].to_i
     if @group_subtag_id == 0
       @group_subtag = GroupSubtag.new(:group_id=>@group_id)
@@ -862,9 +842,7 @@ class GroupsController < ApplicationController
     #-- Show/edit the specifics for the group dialog membership
     @group_id = params[:id].to_i
     @group = Group.find(@group_id)
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
-    @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    get_group_info
     @dialog_id = params[:dialog_id].to_i
     @dialog = Dialog.find_by_id(@dialog_id)
     @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first   
@@ -1230,6 +1208,14 @@ class GroupsController < ApplicationController
         redirect_to "http://#{host_should_be}#{request.fullpath}"
       end
     end
+  end
+  
+  def get_group_info
+    #-- Look up a few pieces of information about the group and group member, for menus, etc.
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+    @is_member = @group_participant ? true : false
+    @is_moderator = (@group_participant and @group_participant.moderator) or current_participant.sysadmin
+    @has_dialog = (@group.active_dialogs.length > 0)
   end
 
 end

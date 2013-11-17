@@ -84,18 +84,22 @@
 				<li class="menu full"><a  class="<%= 'selected' if @section=='photos' %>" href="/photos">Photos</a></li>
 				<% end -%>
 				
-				<% if session[:dialog_id].to_i > 0 -%>
-				<li class="menu"><a href="/dialogs/<%= session[:dialog_id] %>/forum">Forum</a></li>
-				<% elsif session[:group_id].to_i > 0 -%>
-				<li class="menu"><a href="/groups/<%= session[:group_id] %>/forum">Forum</a></li>
+				<% if not (@section=='groups' or @section=='dialogs') -%>
+  				<% if session[:dialog_id].to_i > 0 -%>
+  				<li class="menu"><a href="/dialogs/<%= session[:dialog_id] %>/forum">List</a></li>
+  				<% elsif session[:group_id].to_i > 0 -%>
+  				<li class="menu"><a href="/groups/<%= session[:group_id] %>/forum">List</a></li>
+  				<% end -%>
 				<% end -%>
 				
 				<li class="menu"><a class="<%= 'selected' if @section=='groups' %>" href="/groups">Groups</a></li>
-				<% if not showingfull and session[:dialog_id].to_i > 0 -%>
-				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>
-				<% elsif session[:group_id].to_i > 0 -%>
-				<li class="menu<%= ' full' if session[:dialog_id].to_i==0 and session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs">Discussions</a></li>				
-				<% else -%>
+				<% if false -%>
+  				<% if not showingfull and session[:dialog_id].to_i > 0 -%>
+  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>
+  				<% elsif session[:group_id].to_i > 0 -%>
+  				<li class="menu<%= ' full' if session[:dialog_id].to_i==0 and session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs">Discussions</a></li>				
+  				<% else -%>
+  				<% end -%>
 				<% end -%>
 				
 				<% if false and session[:dialog_id].to_i > 0 -%>
