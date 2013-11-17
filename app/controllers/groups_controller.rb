@@ -178,6 +178,18 @@ class GroupsController < ApplicationController
     update_prefix
   end  
   
+  def dialogs
+    #-- List of discussions that apply to this group
+    @section = 'groups'
+    @gsection = 'dialogs'
+    @group_id = params[:id]
+    @group = Group.includes(:group_participants=>:participant).includes(:dialogs).where("group_participants.group_id=#{@group_id}").find(params[:id])
+    get_group_info
+    update_last_url
+    update_prefix  
+    @admin4 = DialogAdmin.where("participant_id=?",current_participant.id).collect{|r| r.dialog_id}  
+  end  
+  
   def members
     #-- List of members, for either a moderator or other members
     @section = 'groups'

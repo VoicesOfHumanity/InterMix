@@ -629,7 +629,8 @@ class DialogsController < ApplicationController
 
   def result
     #-- Results for a particular dialog/period
-    @section = 'results'    
+    #@section = 'results'    
+    @section = 'dialogs'
     @dsection = 'meta'
     
     @from = 'dialog'

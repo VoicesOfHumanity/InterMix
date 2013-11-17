@@ -1,0 +1,40 @@
+<%= render(:partial => 'groups/menu')%>
+
+<h3>Discussions</h3>
+
+<% if @group -%>
+
+	<% if @group.dialogs.length > 0 -%>
+		<p>You can participate in these discussions:</p>
+	<% else -%>
+		<p>None</p>
+	<% end -%>
+
+	<ul>
+	<% for dialog in @group.dialogs -%>
+
+	<% 
+	if dialog.shortname.to_s != "" and session[:group_prefix].to_s != ""
+		dom =  "#{dialog.shortname}.#{session[:group_prefix]}.#{ROOTDOMAIN}"
+	elsif dialog.shortname.to_s != ""
+		dom =  "#{dialog.shortname}.#{ROOTDOMAIN}"
+	else
+		dom = "#{BASEDOMAIN}"
+	end
+	%>
+
+	<li><a href="http://<%= dom %>/dialogs/<%= dialog.id %>/forum"><%= dialog.name %></a>&nbsp;&nbsp;&nbsp;
+		<a href="http://<%= dom %>/dialogs/<%= dialog.id %>/view#participatinggroups">participating groups</a>&nbsp;&nbsp;&nbsp;
+		<a href="http://<%= dom %>/dialogs/<%= dialog.id %>/view">info</a>
+		<% if @admin4.include?(dialog.id) then %><a href="http://<%= dom %>/dialogs/<%= dialog.id %>/edit">edit</a><% end -%>
+	</li>
+	<% end -%>
+	</ul>
+
+	<% if session[:is_anyadmin] -%>
+	<p><a href="/dialogs/new">Create a new discussion</a> <a href="#" onclick="helptext('creatediscussion');return false;" title="what's going on here?"><img src="/assets/question-mark.png" width="16" height="16" id="help_creatediscussion" title="#creatediscussion" class="tooltip"></a></p>
+	<% end -%>
+
+<% else -%>
+	<p>You need to be signed into a group before you can access its discussions</p>
+<% end -%>

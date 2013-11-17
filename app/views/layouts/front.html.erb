@@ -92,7 +92,7 @@
   				<% end -%>
 				<% end -%>
 				
-				<li class="menu"><a class="<%= 'selected' if @section=='groups' %>" href="/groups">Groups</a></li>
+				<li class="menu"><a class="<%= 'selected' if @section=='groups' or @section=='dialogs' %>" href="/groups">Groups</a></li>
 				<% if false -%>
   				<% if not showingfull and session[:dialog_id].to_i > 0 -%>
   				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>

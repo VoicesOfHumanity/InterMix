@@ -5,7 +5,7 @@
 	<% if @limit_group %><br><span style="font-size:16px">Results for group: <span style="color:#900;font-weight:bold;"><%= @limit_group.name %></span></span><% end %>
 <% else -%>
 <% @group = Group.find_by_id(@group_id.to_i > 0 ? @group_id : session[:group_id]) if not @group %>
-Group: <span style="font-size:20px"><%= @group ? @group.name : '[unknown]' %></span><br>
+Group: <a href="/groups/<%= @group.id %>/forum" style="text-decoration:none;"><span style="font-size:20px;color:#000;"><%= @group ? @group.name : '[unknown]' %></span></a><br>
 This Discussion: <span style="font-size:20px"><%= @dialog.name %>&nbsp;&nbsp;</span><img src="/assets/question-mark.png" class="tooltip" width="16" height="16" title="<%= @dialog.description.to_s != '' ? @dialog.description : "No description for this discussion" %>"><br>
 <% if (@dialog.active_period and @sortby=='default') or @period_id.to_i > 0 -%>
 This Decision Period: <span style="font-size:20px"><%= @period ? ": #{@period.name}" : "" %>&nbsp;&nbsp;</span><img src="/assets/question-mark.png" class="tooltip" width="16" height="16" title="<%= show_period_instructions(@dialog,@period) %>">
@@ -22,7 +22,7 @@ This Decision Period: <span style="font-size:20px"><%= @period ? ": #{@period.na
 <li><a class="menu<%= ' selected' if @dsection=='info' %>" href="/dialogs/<%= @dialog.id %>/view">Info</a></li>
 <li><a class="menu<%= ' selected' if @dsection=='forum' %>" href="/dialogs/<%= @dialog.id %>/forum">List</a></li>
 <li><a class="menu<%= ' selected' if @dsection=='meta' %>" href="/dialogs/<%= @dialog.id %>/result">Results</a></li>
-<li><a class="menu" href="/dialogs/<%= @dialog.id %>/view#participatinggroups">Group list</a></li>
+<li><a class="menu" href="/dialogs/<%= @dialog.id %>/view#participatinggroups">Groups</a></li>
 <% if @is_admin or current_participant.sysadmin -%>
 <li><a class="menu<%= ' selected' if @dsection=='edit' %>" href="/dialogs/<%= @dialog.id %>/edit">Admin</a></li>
 <% end -%>
