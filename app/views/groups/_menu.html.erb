@@ -16,7 +16,9 @@ apply to join this group
 <li><a class="menu<%= ' selected' if @gsection=='forum' %>" href="/groups/<%= @group.id %>/forum">List</a></li>
 <% end -%>
 <% if @has_dialog or @is_moderator -%>
-  <% if session[:dialog_id].to_i > 0 -%>
+  <% if @is_moderator -%>
+  <li class="menu<%= ' full' if session[:dialog_id].to_i==0 and session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @gsection=='dialogs' %>" href="/groups/<%= @group.id %>/dialogs">Discussions</a></li>				
+  <% elsif session[:dialog_id].to_i > 0 -%>
   <li class="menu"><a class="<%= 'selected' if @gsection=='dialogs' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>
   <% elsif session[:group_id].to_i > 0 -%>
   <li class="menu<%= ' full' if session[:dialog_id].to_i==0 and session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @gsection=='dialogs' %>" href="/groups/<%= @group.id %>/dialogs">Discussions</a></li>				
