@@ -88,6 +88,8 @@ Intermix::Application.routes.draw do
       get :moderate
       get :members
       get :dialogs
+      get :subgroups
+      get :subgroup_members
       get :invite
       post :invitedo
       get :invitejoin

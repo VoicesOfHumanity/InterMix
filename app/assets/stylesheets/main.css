@@ -163,7 +163,8 @@ ul.horizmenu {
 }
 ul.horizmenu li {
     margin: 0 0 16px 6px;
-	width: 125px;
+	width: 110px;
+	overflow: none;
 	float: left;
 }
 ul.horizmenu li a {

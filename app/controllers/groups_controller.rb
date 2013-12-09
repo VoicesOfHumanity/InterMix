@@ -224,6 +224,28 @@ class GroupsController < ApplicationController
     update_prefix
   end  
   
+  def subgroups
+    #-- Show the subgroups that exist and number of members
+    @section = 'groups'
+    @gsection = 'subgroups'
+    @group_id = params[:id]
+    @group = Group.includes(:group_participants=>:participant).find(@group_id)
+    get_group_info    
+  end  
+  
+  def subgroup_members
+    #-- List members/followers of a particular subgroup
+    #-- Show the subgroups that exist and number of members
+    @section = 'groups'
+    @gsection = 'subgroups'
+    @group_id = params[:id]
+    @group = Group.includes(:group_participants=>:participant).find(@group_id)
+    @subgroup_id = params[:subgroup_id]
+    @subgroup = GroupSubtag.find_by_id(@subgroup_id)
+    @members = GroupSubtagParticipant.where(:group_id=>@group.id).where(:group_subtag_id=>@subgroup.id)
+    get_group_info    
+  end  
+  
   def invite
     #-- Invite screen
     @section = 'groups'
@@ -706,6 +728,8 @@ class GroupsController < ApplicationController
     @from = 'group'
     @group_id = params[:id].to_i
     @group = Group.includes(:owner_participant).find(@group_id)
+    @tag = params[:tag].to_s
+    @subgroup = params[:subgroup].to_s
     get_group_info
     @dialog_id = 0
 
@@ -751,7 +775,7 @@ class GroupsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
 
-      @items, @itemsproc, @extras = Item.list_and_results(@group_id,@dialog_id,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id)
+      @items, @itemsproc, @extras = Item.list_and_results(@group_id,@dialog_id,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id,true,0,'','','','',0,'','',0,@tag,@subgroup)
 
     else
       #-- The old way

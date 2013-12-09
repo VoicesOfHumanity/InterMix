@@ -1,0 +1,16 @@
+<%= render(:partial => 'groups/menu')%>
+
+<h3 style="clear:both">Subgroups</h3>
+
+<ul>
+<% for group_subtag in @group.group_subtags -%>
+  <% numposts = Item.where(:group_id=>@group.id).tagged_with(group_subtag.tag, :on => :subgroups).count %>
+  <% nummembers = GroupSubtagParticipant.where(:group_id=>@group.id).where(:group_subtag_id=>group_subtag.id).count %>
+
+	<h3><%= group_subtag.tag %></h3>
+	<ul>
+	<li><a href="/groups/<%= @group.id %>/subgroup_members?subgroup_id=<%= group_subtag.id%>">members</a> (<%= nummembers %>)</li>
+	<li><a href="/groups/<%= @group.id %>/forum?subgroup=<%= group_subtag.tag %>">posts</a> (<%= numposts %>)</li>
+	</ul>
+<% end -%>	
+</ul>

@@ -31,9 +31,15 @@
 	
 	<div id="forumcontrol3">
 
-		<div class="lefttitle">Sub-group Tags:</div>
+    <% if true -%>
+		<div class="lefttitle">Tags:</div>
 		<div class="leftfield">
 		<%= select_tag "tag", options_for_select([['* All *','']] + Item.where(:group_id=>@group_id).tags.split(/[, ]+/),@tag), :onchange=>"list()" %>
+		</div>
+		<% end -%>
+		<div class="lefttitle">Sub-group:</div>
+		<div class="leftfield">
+		<%= select_tag "subgroup", options_for_select([['* All *','']] + @group.group_subtags.collect{|s| [s.tag,s.tag]}), :onchange=>"list()" %>
 		</div>
 
 		<div class="lefttitle">Show:</div>

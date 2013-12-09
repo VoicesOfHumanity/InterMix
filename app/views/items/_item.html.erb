@@ -176,6 +176,9 @@
 		</div>
 			
 		<div class="iteminfotxt">	
+			<%= "Subgroup: #{item.subgroup_list}" if item.subgroup_list.to_s!='' %>			
+		</div>
+		<div class="iteminfotxt">	
 			<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
 		</div>
 
