@@ -238,6 +238,7 @@ class ItemsController < ApplicationController
           @dialog_name = (@dialog ? @dialog.name : '???')
           @item.period_id = @dialog.current_period if @dialog
         end  
+        @item.subgroup_list = @olditem.subgroup_list if @olditem.subgroup_list.to_s != ''
       end
     else
       if @dialog and @dialog.settings_with_period["default_message"].to_s != ''
@@ -390,6 +391,7 @@ class ItemsController < ApplicationController
         else  
           @item.first_in_thread_group_id = @olditem.group_id
         end  
+        @item.subgroup_list = @olditem.subgroup_list if @olditem.subgroup_list.to_s != ''
         if current_participant.id != @olditem.posted_by
           @olditem.edit_locked = true
           @olditem.save

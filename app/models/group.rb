@@ -103,9 +103,12 @@ class Group < ActiveRecord::Base
   def mysubtags(participant)
     #-- Return only those group_subtags that the person follows, or all if they're an admin
     subtags = []
-    for group_subtag in self.group_subtags
-      
+    for subtag in self.group_subtags
+      if participant.group_subtags.includes?(subtag)
+        subtags << subtag
+      end  
     end
+    subtags
   end  
   
 end
