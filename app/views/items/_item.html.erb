@@ -175,9 +175,14 @@
 			<%= "Decision Period: " + (item.period ? item.period.name : item.period_id.to_s) if item.period_id.to_i > 0 %>
 		</div>
 			
+		<% if item.reply_to.to_i == 0 and @from == 'group' and @has_subgroups -%>	
 		<div class="iteminfotxt">	
-			<%= "Subgroup: #{item.subgroup_list}" if item.subgroup_list.to_s!='' %>			
+			Subgroup: <%= item.subgroup_list.to_s %>	
+			<% if @group.group_subtags.length > item.subgroup_list.length -%>
+			+
+			<% end -%>		
 		</div>
+		<% end -%>
 		<div class="iteminfotxt">	
 			<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
 		</div>

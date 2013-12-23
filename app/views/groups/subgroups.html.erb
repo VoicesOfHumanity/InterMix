@@ -6,10 +6,17 @@
 <% for group_subtag in @group.group_subtags -%>
   <% numposts = Item.where(:group_id=>@group.id).tagged_with(group_subtag.tag, :on => :subgroups).count %>
   <% nummembers = GroupSubtagParticipant.where(:group_id=>@group.id).where(:group_subtag_id=>group_subtag.id).count %>
+  <% ismember = (GroupSubtagParticipant.where(:group_id=>@group.id).where(:group_subtag_id=>group_subtag.id).where(:participant_id=>current_participant.id).count > 0) %>
 
 	<h3><%= group_subtag.tag %></h3>
 	<ul>
-	<li><a href="/groups/<%= @group.id %>/subgroup_members?subgroup_id=<%= group_subtag.id%>">members</a> (<%= nummembers %>)</li>
+	<li><a href="/groups/<%= @group.id %>/subgroup_members?subgroup_id=<%= group_subtag.id%>">members</a> (<%= nummembers %>)
+	  <% if ismember %>
+		<a href="/groups/<%= @group.id %>/subgroup_unjoin?subgroup_id=<%= group_subtag.id%>" onclick="return confirm('Are you sure you want to leave this subgroup?')">leave</a>
+	  <% else %>
+	  <a href="/groups/<%= @group.id %>/subgroup_join?subgroup_id=<%= group_subtag.id%>">join</a>
+	  <% end %>
+	</li>
 	<li><a href="/groups/<%= @group.id %>/forum?subgroup=<%= group_subtag.tag %>">posts</a> (<%= numposts %>)</li>
 	</ul>
 <% end -%>	

@@ -37,6 +37,8 @@ class ItemsController < ApplicationController
       @period = @dialog.active_period
       #@period_id = @dialog.active_period.id
     end    
+    @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id > 0
+    @has_subgroups = (@limit_group and @limit_group.group_subtags.length > 0)
     
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
       @rootonly = true
@@ -791,6 +793,11 @@ class ItemsController < ApplicationController
       @dialog = Dialog.find_by_id(@item.dialog_id)
       @item.group_id = @dialog.group_id.to_i if @dialog and @item.group_id.to_i == 0
     end
+    
+    if params[:subgroup_add].to_s != ''
+      subgroup_add = params[:subgroup_add]
+      @item.subgroup_list.add(subgroup_add)
+    end  
     
     if @send_to == 'wall'
       @item.posted_to_forum = false

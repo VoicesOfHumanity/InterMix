@@ -246,6 +246,39 @@ class GroupsController < ApplicationController
     get_group_info    
   end  
   
+  def subgroup_join
+    #-- Current user joining a subgroup
+    @section = 'groups'
+    @gsection = 'subgroups'
+    @group_id = params[:id]
+    @subgroup_id = params[:subgroup_id]
+    @subgroup = GroupSubtag.find(@subgroup_id)
+    member = GroupSubtagParticipant.new
+    member.group_id = @group_id
+    member.group_subtag_id = @subgroup_id
+    member.participant_id = current_participant.id
+    member.save!
+    flash[:notice] = "You have joined #{@subgroup.tag}"
+    redirect_to :action => :subgroups
+  end
+  
+  def subgroup_unjoin
+    #-- Current user leaving a subgroup
+    @section = 'groups'
+    @gsection = 'subgroups'
+    @group_id = params[:id]
+    @subgroup_id = params[:subgroup_id]
+    @subgroup = GroupSubtag.find(@subgroup_id)
+    member = GroupSubtagParticipant.where(:group_subtag_id=>@subgroup_id,:participant_id=>current_participant.id).first
+    if member
+      member.destroy
+      flash[:notice] = "You have left #{@subgroup.tag}"      
+    else
+      flash[:alert] = "Couldn't join #{@subgroup.tag}"      
+    end  
+    redirect_to :action => :subgroups
+  end    
+  
   def invite
     #-- Invite screen
     @section = 'groups'
@@ -728,11 +761,13 @@ class GroupsController < ApplicationController
     @from = 'group'
     @group_id = params[:id].to_i
     @group = Group.includes(:owner_participant).find(@group_id)
+    @has_subgroups = (@group.group_subtags.length > 0)
     @tag = params[:tag].to_s
     @subgroup = params[:subgroup].to_s
     get_group_info
     @dialog_id = 0
-
+    @limit_group = @group
+    
     if not session[:has_required]
       session[:has_required] = current_participant.has_required
       if not session[:has_required]

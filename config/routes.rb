@@ -90,6 +90,8 @@ Intermix::Application.routes.draw do
       get :dialogs
       get :subgroups
       get :subgroup_members
+      get :subgroup_join
+      get :subgroup_unjoin
       get :invite
       post :invitedo
       get :invitejoin

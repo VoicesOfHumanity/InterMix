@@ -125,11 +125,14 @@
 		<% if true -%>
     <li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Tags</label><input id="item_tag_list" name="item[tag_list]" size="80" type="text" value="" /></li>
 		<% end -%>
-		<% if @group.group_subtags.length > 0 -%>
-		<li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Subgroup</label>
-		  <select id="item_subgroup_list" name="item[subgroup_list]" onchange=>"list()">
-		  <%= options_for_select([['','']] + @group.group_subtags.collect{|s| [s.tag,s.tag]},@item.subgroup_list.first) %>  
-		  </select>  
+		<% if @item.reply_to.to_i == 0 and @group and @group.group_subtags.length > 0 -%>
+		<li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Subgroup(s)</label>
+		  <%= @item.subgroup_list.to_s %>
+		  <% if @group.group_subtags.length > @item.subgroup_list.length -%>
+		  + <select id="subgroup_add" name="subgroup_add">
+		  <%= options_for_select([['','']] + @group.group_subtags.collect{|s| @item.subgroup_list.include?(s.tag) ? nil : [s.tag,s.tag]}.compact,'') %>  
+		  </select>
+		  <% end -%>
 		</li>  
 		<% end -%>
 
