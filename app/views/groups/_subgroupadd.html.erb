@@ -1,0 +1,3 @@
+<select id="subgroup_add_<%= @item.id %>" name="subgroup_add" onchange="savesubgroup(<%= @item.id %>, <%= @group.id %>)">
+<%= options_for_select([['','']] + @group.group_subtags.collect{|s| @item.subgroup_list.include?(s.tag) ? nil : [s.tag,s.tag]}.compact,'') %>  
+</select>

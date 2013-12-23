@@ -625,3 +625,33 @@ function playvideo(item_id) {
 String.prototype.capitalize = function(){
    return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
 };
+function showsubgroupadd(item_id) {
+	curid = item_id;
+	var group_id = $('#in_group_id').val();
+	$.ajax({
+		type: "GET",
+		cache: false,
+		url: '/groups/'+group_id+'/subgroupadd',
+		data: 'item_id='+item_id,
+		complete: function(t){	
+		    $('#item_subgroup_add_'+item_id).html(t.responseText);
+		}
+	});
+}
+function savesubgroup(item_id, group_id) {
+    var tag = $('#subgroup_add_' + item_id).val();
+    if (tag == '') {
+        return;
+    }
+ 	$('#item_'+item_id).css('opacity','0.5');
+	$.ajax({
+	   type: 'POST',
+	   url: '/groups/'+group_id+'/subgroupsave',
+	   data: 'item_id='+item_id+'&tag='+tag,
+	   complete: function(t){ 
+	     $('#item_subgroup_add_'+item_id).html(tag);
+         $('#item_'+item_id).css('opacity','1.0');
+         list('',item_id);
+	   }
+	 });	
+}

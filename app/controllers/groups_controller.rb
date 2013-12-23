@@ -277,7 +277,30 @@ class GroupsController < ApplicationController
       flash[:alert] = "Couldn't join #{@subgroup.tag}"      
     end  
     redirect_to :action => :subgroups
-  end    
+  end   
+  
+  def subgroupadd
+    #-- Show a pulldown for adding a subgroup to an item
+    @group_id = params[:id]
+    @group = Group.find_by_id(@group_id)
+    @item_id = params[:item_id].to_i
+    @item = Item.find_by_id(@item_id)
+    render :partial=>'subgroupadd', :layout=>false
+  end
+  
+  def subgroupsave
+    #-- Saving a new subgroup for an item
+    @group_id = params[:id]
+    @group = Group.find_by_id(@group_id)
+    @item_id = params[:item_id].to_i
+    @item = Item.find_by_id(@item_id)
+    @tag = params[:tag].to_s
+    if @tag != ''
+      @item.subgroup_list.add(@tag)
+    end
+    @item.save!
+    render :text=>'ok', :layout=>false
+  end     
   
   def invite
     #-- Invite screen

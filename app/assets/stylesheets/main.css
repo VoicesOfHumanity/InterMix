@@ -564,6 +564,13 @@ img.item_img_lr {
 	max-width: 600px;
 }
 
+.item_subgroup_add {}
+.item_subgroup_add:hover {
+    font-weight: bold;
+    color: #000;
+}
+
+
 /*-- authentications --*/
 
 .authentications {
