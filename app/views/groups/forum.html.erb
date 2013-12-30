@@ -39,7 +39,7 @@
 		<% end -%>
 		<div class="lefttitle">Sub-group:</div>
 		<div class="leftfield">
-		<%= select_tag "subgroup", options_for_select([['* All *','']] + @group.group_subtags.collect{|s| [s.tag,s.tag]}), :onchange=>"list()" %>
+		<%= select_tag "subgroup", options_for_select([['* Include my subgroups *','my'],['* Include all subgroups *','*'],['* No subgroups *','no']] + @all_subgroups), :onchange=>"list()" %>
 		</div>
 
 		<div class="lefttitle">Show:</div>

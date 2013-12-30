@@ -786,7 +786,7 @@ class GroupsController < ApplicationController
     @group = Group.includes(:owner_participant).find(@group_id)
     @has_subgroups = (@group.group_subtags.length > 0)
     @tag = params[:tag].to_s
-    @subgroup = params[:subgroup].to_s
+    @subgroup = params.include?(:subgroup) ? params[:subgroup].to_s : 'my'
     get_group_info
     @dialog_id = 0
     @limit_group = @group
@@ -833,7 +833,7 @@ class GroupsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
 
-      @items, @itemsproc, @extras = Item.list_and_results(@group_id,@dialog_id,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant.id,true,0,'','','','',0,'','',0,@tag,@subgroup)
+      @items, @itemsproc, @extras = Item.list_and_results(@group,nil,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','','','',0,'','',0,@tag,@subgroup)
 
     else
       #-- The old way
@@ -859,6 +859,12 @@ class GroupsController < ApplicationController
 
     @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all      
     @dialogsin = DialogGroup.where("group_id=#{@group_id}").includes(:dialog).all      
+
+    #-- Make a list of the groups subgroups with the current users subgroups first.
+    all_subgroups = @group.group_subtags.collect{|s| s.tag}
+    users_subgroups = @group.mysubtags(current_participant).sort
+    other_subgroups = (all_subgroups - users_subgroups).sort
+    @all_subgroups = users_subgroups + other_subgroups
 
     if current_participant.new_signup
       @new_signup = true
