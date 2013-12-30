@@ -130,7 +130,7 @@
 		  <%= @item.subgroup_list.to_s %>
 		  <% if @group.group_subtags.length > @item.subgroup_list.length -%>
 		  + <select id="subgroup_add" name="subgroup_add">
-		  <%= options_for_select([['','']] + @group.group_subtags.collect{|s| @item.subgroup_list.include?(s.tag) ? nil : [s.tag,s.tag]}.compact,'') %>  
+		  <%= options_for_select([['','']] + @group.group_subtags.collect{|s| @item.subgroup_list.include?(s.tag) ? nil : [s.tag,s.tag]}.compact,@subgroup_add.to_s) %>  
 		  </select>
 		  <% end -%>
 		</li>  

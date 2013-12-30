@@ -245,7 +245,8 @@ class ItemsController < ApplicationController
       if @dialog and @dialog.settings_with_period["default_message"].to_s != ''
         @item.html_content = @dialog.settings_with_period["default_message"]
       end 
-      @item.subgroup_list = @subgroup if @subgroup.to_s != ''   
+      #@item.subgroup_list = @subgroup if @subgroup.to_s != ''   
+      @subgroup_add = @subgroup
     end   
 
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all       
