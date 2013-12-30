@@ -3,13 +3,11 @@
 <h3 style="clear:both">Subgroup <%= @subgroup.tag %> Members</h3>
 
 <table class="listtable">
-<tr><th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th><th>Name</th><th>Profile</th></tr>	
+<tr><th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th><th>Name</th></tr>	
 <% for member in @members -%>
-<tr class="<%= (member.status=='active' and member.group_participants[0].active) ? "on" : "off" %>">
+<tr>
 	<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= member.id %>" /></td>
-	<td><a href="/groups/<%= @group.id %>/group_participant_edit?participant_id=<%= member.id %>&amp;active=<%= @active %>"><%= member.name %></a></td>
-	<td style="text-align:right"><a href="/participant/<%= member.id %>/profile"><%= member.id %></a></td>
-
+	<td><a href="/participant/<%= member.participant_id %>/profile"><%= member.participant.name %></a></td>
 </tr>
 <% end -%>
 </table>

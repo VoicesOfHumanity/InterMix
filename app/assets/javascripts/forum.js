@@ -160,6 +160,9 @@ function newitem(token) {
 	if ($('#items_length')) {
 	    pars += '&items_length=' + $('#items_length').val();
 	}	
+	if ($('#subgroup') && $('#subgroup').prop("selectedIndex") > 2) {
+	    pars += '&subgroup=' + $('#subgroup').val();
+	}
     pars += "&authenticity_token="+token;
 	$.ajax({
 		type: "GET",

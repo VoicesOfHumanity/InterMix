@@ -200,6 +200,7 @@ class ItemsController < ApplicationController
     @reply_to = params[:reply_to].to_i
     @item = Item.new(:media_type=>'text',:link=>'http://',:reply_to=>@reply_to)
     @items_length = params[:items_length].to_i
+    @subgroup = params[:subgroup].to_s
     if params[:group_id].to_i > 0
       @item.group_id = params[:group_id] 
     else
@@ -243,7 +244,8 @@ class ItemsController < ApplicationController
     else
       if @dialog and @dialog.settings_with_period["default_message"].to_s != ''
         @item.html_content = @dialog.settings_with_period["default_message"]
-      end    
+      end 
+      @item.subgroup_list = @subgroup if @subgroup.to_s != ''   
     end   
 
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all       

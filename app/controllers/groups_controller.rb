@@ -302,6 +302,33 @@ class GroupsController < ApplicationController
     render :text=>'ok', :layout=>false
   end     
   
+  def subgroup_add_to
+    #-- The admin adding a user to a subgroup tag from the subgroups page
+    @group_id = params[:id]
+    participant_id = params[:participant_id].to_i
+    add_subgroup_id = params[:add_subgroup_id].to_i
+    if participant_id > 0 and add_subgroup_id > 0
+      member = GroupSubtagParticipant.where(:group_id=>@group_id).where(:group_subtag_id=>add_subgroup_id).where(:participant_id=>participant_id).first
+      participant = Participant.find_by_id(participant_id)
+      subgroup = GroupSubtag.find_by_id(add_subgroup_id)
+      if member
+        flash[:alert] = "User #{participant.name} was already in #{subgroup.tag}" 
+      else        
+        if participant and subgroup
+          member = GroupSubtagParticipant.new
+          member.group_id = @group_id
+          member.group_subtag_id = add_subgroup_id
+          member.participant_id = participant_id
+          member.save!
+          flash[:notice] = "User #{participant.name} has been added to #{subgroup.tag}" 
+        else
+          flash[:alert] = "Couldn't do that" 
+        end    
+      end     
+    end
+    redirect_to :action => :subgroups
+  end  
+  
   def invite
     #-- Invite screen
     @section = 'groups'

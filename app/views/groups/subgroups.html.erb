@@ -23,3 +23,13 @@
 	</ul>
 <% end -%>	
 </ul>
+
+<% if @is_moderator %>
+  <%= form_tag("/groups/#{@group.id}/subgroup_add_to", method: "post") do %>
+  Admin: add user
+  <%= select_tag :participant_id, raw('<option value="0"></option>') + options_from_collection_for_select(@group.participants, 'id', 'name') %>
+  to subgroup: 
+  <%= select_tag :add_subgroup_id, options_for_select(@group.group_subtags.collect{|s| [s.tag,s.id]}) %>
+  <%= submit_tag("go!") %>
+  <% end %>
+<% end %>
