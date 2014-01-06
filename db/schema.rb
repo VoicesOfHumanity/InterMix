@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131008003721) do
+ActiveRecord::Schema.define(:version => 20140106221701) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -299,6 +299,7 @@ ActiveRecord::Schema.define(:version => 20131008003721) do
     t.boolean  "required_meta",            :default => true
     t.integer  "tweet_approval_min",       :default => 1
     t.string   "tweet_what",               :default => "roots"
+    t.boolean  "tweet_subgroups",          :default => false
   end
 
   add_index "groups", ["name"], :name => "index_groups_on_name"
@@ -576,6 +577,7 @@ ActiveRecord::Schema.define(:version => 20131008003721) do
     t.string   "twitter_oauth_secret"
     t.string   "forum_email",                                                          :default => "never"
     t.string   "group_email",                                                          :default => "instant"
+    t.string   "subgroup_email",                                                       :default => "instant"
     t.string   "private_email",                                                        :default => "instant"
     t.string   "system_email",                                                         :default => "instant"
     t.boolean  "no_email",                                                             :default => false
