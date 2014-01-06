@@ -122,7 +122,7 @@ class GroupsController < ApplicationController
     else
       #-- Check if the shortname is unique
       xshortname = params[:group][:shortname]
-      xgroup = Group.where("shortname='#{xshortname}' and id!=#{@group.id}").first
+      xgroup = Group.where("shortname='#{xshortname}' and id!=#{@group.id.to_i}").first
       if xgroup
         flash[:alert] += "There is already another group with the prefix \"#{xshortname}\"<br/>"
       else  
@@ -171,7 +171,7 @@ class GroupsController < ApplicationController
       else
         logger.info("groups_controller#create Failed creating new group")
         @has_metamaps = {}
-        get_group_info
+        #get_group_info
         format.html { render :action=>:edit }
       end
     end
