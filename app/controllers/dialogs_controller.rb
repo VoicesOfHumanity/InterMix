@@ -1537,7 +1537,7 @@ class DialogsController < ApplicationController
     else
       #-- Check if the shortname is unique
       xshortname = params[:dialog][:shortname]
-      xdialog = Dialog.where("shortname='#{xshortname}' and id!=#{@dialog.id}").first
+      xdialog = Dialog.where("shortname='#{xshortname}' and id!=#{@dialog.id.to_i}").first
       if xdialog
         flash[:alert] += "There is already another discussion with the prefix \"#{xshortname}\"<br/>"
       else  
