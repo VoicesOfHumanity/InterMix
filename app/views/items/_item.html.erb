@@ -177,7 +177,7 @@
 			
 		<% if item.reply_to.to_i == 0 and @from == 'group' and @has_subgroups -%>	
 		<div class="iteminfotxt">	
-			Subgroup: <%= item.subgroup_list.to_s %>	
+			Subgroup: <%= item.show_subgroup %>	
 			<% if @limit_group.group_subtags.length > item.subgroup_list.length -%>
 			<span class="item_subgroup_add" id="item_subgroup_add_<%= item.id %>" onclick="showsubgroupadd(<%= item.id %>)" title="Add to subgroup">+</span>
 			<% end -%>		

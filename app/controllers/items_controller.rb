@@ -38,7 +38,7 @@ class ItemsController < ApplicationController
       #@period_id = @dialog.active_period.id
     end    
     @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id > 0
-    @has_subgroups = (@limit_group and @limit_group.group_subtags.length > 0)
+    @has_subgroups = (@limit_group and @limit_group.group_subtags.length > 1)
     
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
       @rootonly = true
@@ -803,6 +803,28 @@ class ItemsController < ApplicationController
       subgroup_add = params[:subgroup_add]
       @item.subgroup_list.add(subgroup_add)
     end  
+    
+    if @item.group_id > 0 and @item.is_first_in_thread
+      #-- If this is a root message in a group, we might need to add a dummy 'none' subgroup
+      xgroup = Group.find_by_id(@item.group_id)
+      if xgroup
+        if @item.subgroup_list == ''
+          #-- If there's no subgroup set, use none
+          @item.subgroup_list = 'none'          
+        else  
+          users_subgroups = xgroup.mysubtags(current_participant)
+          insub = false
+          for xsub in @item.subgroup_list
+            if users_subgroups.include?(xsub)
+              insub = true
+            end  
+          end  
+          if not insub
+            @item.subgroup_list.add('none')        
+          end
+        end 
+      end
+    end 
     
     if @send_to == 'wall'
       @item.posted_to_forum = false

@@ -394,15 +394,12 @@ class Item < ActiveRecord::Base
     if subgroup == '*' or subgroup == ''
       #-- All messages, do nothing
     elsif subgroup == 'my'
-      #-- The users subgroups only, and messages without subgroup. 
-      #-- We'll basically exclude the other subgroups
-      all_subgroups = group.group_subtags.collect{|s| s.tag}
-      users_subgroups = group.mysubtags(participant)
-      other_subgroups = all_subgroups - users_subgroups
-      items = items.tagged_with(other_subgroups, :on => :subgroups, :exclude => true)
+      #-- The users subgroups only, and messages initially without subgroup. 
+      user_and_none_subgroups = group.mysubtags(participant) + ['none']
+      items = items.tagged_with(user_and_none_subgroups, :on => :subgroups, :any => true)
     elsif subgroup == 'no'  
       #-- No subgroup messages at all
-      all_subgroups = group.group_subtags.collect{|s| s.tag}
+      all_subgroups = group.group_subtags.collect{|s| s.tag} - ['none']
       items = items.tagged_with(all_subgroups, :on => :subgroups, :exclude => true)      
     elsif subgroup != ''
       #-- Only messages for a particular subgroup
@@ -1170,5 +1167,9 @@ class Item < ActiveRecord::Base
     return true
 
   end
+    
+  def show_subgroup
+    ( self.subgroup_list - ['none'] ).join(', ')
+  end    
     
 end

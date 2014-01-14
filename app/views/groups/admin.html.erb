@@ -24,7 +24,7 @@
 	</p>
 	<% end -%>
 
-	<p><b>Sub-groups (tags):</b><ul>
+	<p><b>Sub-groups:</b><ul>
 	<% for group_subtag in @group.group_subtags -%>
 		<li><a href="/groups/<%= @group.id %>/subtag_edit?group_subtag_id=<%= group_subtag.id %>"><%= group_subtag.tag %></a></li>
 	<% end -%>	
