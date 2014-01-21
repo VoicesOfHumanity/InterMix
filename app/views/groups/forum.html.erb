@@ -26,6 +26,12 @@
 		<div class="leftfield">
 		<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list()" %>
 		</div>	
+
+    <% if @group.group_subtags.length > 1 -%>
+		<div class="leftfield">&nbsp;&nbsp;Subgroup:
+		<%= select_tag "subgroup", options_for_select([['* Include my subgroups *','my'],['* Include all subgroups *','*'],['* No subgroups *','no']] + @all_subgroups,@subgroup), :onchange=>"list()" %>
+		</div>
+		<% end -%>
 	
 	</div><!--forumcontrol1-->
 	
@@ -37,10 +43,6 @@
 		<%= select_tag "tag", options_for_select([['* All *','']] + Item.where(:group_id=>@group_id).tags.split(/[, ]+/),@tag), :onchange=>"list()" %>
 		</div>
 		<% end -%>
-		<div class="lefttitle">Subgroup:</div>
-		<div class="leftfield">
-		<%= select_tag "subgroup", options_for_select([['* Include my subgroups *','my'],['* Include all subgroups *','*'],['* No subgroups *','no']] + @all_subgroups), :onchange=>"list()" %>
-		</div>
 
 		<div class="lefttitle">Show:</div>
 		<div class="leftfield">
