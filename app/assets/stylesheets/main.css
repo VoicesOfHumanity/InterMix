@@ -568,6 +568,8 @@ img.item_img_lr {
 .item_subgroup_add:hover {
     font-weight: bold;
     color: #000;
+    background-color: yellow;
+    cursor:pointer;
 }
 
 

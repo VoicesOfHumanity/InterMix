@@ -150,7 +150,7 @@
 
 <% end -%>
 
-<% if @limit_group_id == 0 -%>
+<% if @limit_group_id == 0 and @dialog.active_groups.length > 1 -%>
 <% for group in @dialog.groups.sort {|a,b| a.name <=> b.name} -%>
 	<% group_id = group.id %>
 	<div>

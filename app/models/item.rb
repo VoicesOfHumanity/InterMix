@@ -368,9 +368,29 @@ class Item < ActiveRecord::Base
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
     
-    group_id = group ? group.id : 0
-    dialog_id = dialog ? dialog.id : 0
-    participant_id = participant ? participant.id : 0
+    if group and group.class == Integer
+      group_id = group
+      group = Group.find_by_id(group_id)
+    elsif group.class == Group
+      group_id = group.id  
+    else
+      group_id = 0
+    end    
+    if dialog and dialog.class == Integer
+      dialog_id = dialog
+      dialog = Dialog.find_by_id(dialog_id)
+    elsif dialog.class == Dialog
+      dialog_id = dialog.id  
+    else
+      dialog_id = 0
+    end    
+    if participant and participant.class == Integer
+      participant_id = participant
+    elsif participant.class == Participant
+      participant_id = participant.id
+    else
+      participant_id = 0
+    end      
     
     logger.info("item#list_and_results group:#{group_id},dialog:#{dialog_id},period:#{period_id},posted_by:#{posted_by},posted_meta:#{posted_meta.to_s},rated_meta:#{rated_meta.to_s},rootonly:#{rootonly},sortby:#{sortby},participant:#{participant_id}")
     

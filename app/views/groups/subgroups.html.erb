@@ -2,6 +2,8 @@
 
 <h3 style="clear:both">Subgroups</h3>
 
+<div style="background-color:#ece9e7;padding:5px;text-align:center;margin-bottom:15px;">Join a subgroup to receive subgroup messages via email.<br>Leave a subgroup to stop receiving emails from that subgroup.</div>
+
 <ul>
 <% for group_subtag in @group.group_subtags -%>
   <% numposts = Item.where(:group_id=>@group.id).tagged_with(group_subtag.tag, :on => :subgroups).count %>
