@@ -25,7 +25,7 @@ apply to join this group
   <% else -%>
   <% end -%>
 <% end -%>
-<% if @is_member and @group.group_subtags.length > 1 -%>
+<% if @is_member and @group.group_subtags.length > 0 -%>
   <li><a class="menu<%= ' selected' if @gsection=='subgroups' %>" href="/groups/<%= @group.id %>/subgroups">Subgroups</a></li>
 <% end -%>
 <% if @is_member and (@group.openness=='open' or @is_moderator) -%>

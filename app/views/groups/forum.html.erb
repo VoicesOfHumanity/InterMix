@@ -27,7 +27,7 @@
 		<%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"list()" %>
 		</div>	
 
-    <% if @group.group_subtags.length > 1 -%>
+    <% if @group.group_subtags.length > 0 -%>
 		<div class="leftfield">&nbsp;&nbsp;Subgroup:
 		<%= select_tag "subgroup", options_for_select([['* Include my subgroups *','my'],['* Include all subgroups *','*'],['* No subgroups *','no']] + @all_subgroups,@subgroup), :onchange=>"list()" %>
 		</div>

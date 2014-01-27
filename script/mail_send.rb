@@ -130,8 +130,8 @@ for p in participants
   #-- Group items have a different setting from Discussion items
   #-- Discussion items are the forum_email setting. Group items are the group_email setting.
   
-  need_daily = ( p.group_email == 'daily' or p.forum_email == 'daily' )
-  need_weekly = ((p.group_email == 'weekly' or p.forum_email == 'weekly' or do_weekly) and is_weekly)
+  need_daily = ( p.group_email == 'daily' or p.forum_email == 'daily' or p.subgroup_email == 'daily' )
+  need_weekly = ((p.group_email == 'weekly' or p.forum_email == 'weekly' or p.subgroup_email == 'weekly' or do_weekly) and is_weekly)
     
   if need_daily or need_weekly
     #-- Get the forum Items
@@ -140,7 +140,7 @@ for p in participants
     pstart = need_weekly ? wstart : dstart
     
     #-- We want sort by descending regressed value, using total interest
-    items, itemsproc, extras = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p.id,true,p.id,pstart,pend)
+    items, itemsproc, extras = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p,true,p.id,pstart,pend)
     
     #-- Note that we might have gotten more items than we actually need
     
@@ -158,6 +158,8 @@ for p in participants
     
     user_dialogs = {}
     
+    # The users subgroups are identified in p.group_subtags. It is an array of GroupSubtag objects
+    
     for item in items
       
       puts "    ##{item.id}: #{item.created_at}: #{item.subject}" if testonly
@@ -167,6 +169,19 @@ for p in participants
       in_day = (item.created_at > dstart)
       in_group = (item.group_id.to_i > 0)
       in_dialog = (item.dialog_id.to_i > 0)
+      
+      # This item might be in several subgroups. Is the user in any of them? If so, use the subgroup setting rather than the general forum setting
+      in_subgroup = false
+      for group_subtag in p.group_subtags
+        for subgroup_tag in item.subgroup_list
+          if subgroup_tag == group_subtag.tag
+            in_subgroup = true
+            break
+          end  
+        end
+      end
+      
+      
 
       puts "    in_week:#{in_week} in_day:#{in_day} in_group:#{in_group} in_dialog:#{in_dialog}" if testonly
       
