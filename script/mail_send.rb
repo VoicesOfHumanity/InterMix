@@ -52,7 +52,7 @@ puts "Day: #{dstart} - #{pend}"
 if participant_id.to_i > 0
   participants = Participant.where(:id=>participant_id)
 else
-  participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or group_email='daily' or group_email='weekly' or forum_email='daily' or forum_email='weekly')").order(:id)
+  participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or subgroup_email='daily' or subgroup_email='weekly' or group_email='daily' or group_email='weekly' or forum_email='daily' or forum_email='weekly')").order(:id)
 end
 puts "#{participants.length} participants"
 
@@ -63,7 +63,7 @@ numweeklyerror = 0
 
 #-- Go through all users that have any setting of daily or weekly mail, and who hasn't blocked mail altogether
 for p in participants
-  puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} forum:#{p.forum_email}"
+  puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} group:#{p.group_email} subgroup:#{p.subgroup_email} discussion:#{p.forum_email}"
 
   tdaily = ''
   tweekly = ''
@@ -153,7 +153,7 @@ for p in participants
     end  
     will_items = items.length    
     puts "  #{will_items} #{ptext} items"
-    puts "  group_email:#{p.group_email} forum_email:#{p.forum_email}" if testonly
+    puts "  group:#{p.group_email} subgroup:#{p.subgroup_email} discussion:#{p.forum_email}" if testonly
     did_items = 0
     
     user_dialogs = {}
@@ -180,16 +180,21 @@ for p in participants
           end  
         end
       end
-      
-      
 
-      puts "    in_week:#{in_week} in_day:#{in_day} in_group:#{in_group} in_dialog:#{in_dialog}" if testonly
+      puts "    in_week:#{in_week} in_day:#{in_day} in_group:#{in_group} in_subgroup:#{in_subgroup} in_dialog:#{in_dialog}" if testonly
       
       if in_dialog
         if p.forum_email == 'daily' and in_day
         elsif p.forum_email == 'weekly' and in_week
         else
           puts "    in a dialog, but no setting to send it" if testonly
+          next
+        end   
+      elsif in_subgroup
+        if p.subgroup_email == 'daily' and in_day
+        elsif p.subgroup_email == 'weekly' and in_week
+        else
+          puts "    in a subgroup, but not setting to send it" if testonly
           next
         end     
       elsif in_group
@@ -200,7 +205,7 @@ for p in participants
           next
         end     
       else
-        puts "    not in a group or dialog" if testonly
+        puts "    not in a subgroup, group or dialog" if testonly
         next
       end    
       
@@ -274,6 +279,7 @@ for p in participants
   		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{item.dialog.name}</a>" if item.dialog
   		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}&auth_token=#{p.authentication_token}\">#{item.period.name}</a>" if item.period  		
   		itext += " Group: <a href=\"http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if item.group
+  		itext += " Subgroup: #{item.show_subgroup}" if item.subgroup_list.length > 0
       itext += "</p>"
       itext += "<hr>"
       
