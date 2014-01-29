@@ -1163,7 +1163,7 @@ class Item < ActiveRecord::Base
       dialoggroupsin = []
       for group1 in dialog.groups
         for group2 in groupsin
-          if group2.group.id == group1.id
+          if group2.group and group1 and group2.group.id == group1.id
             #-- He's a member of one of those groups, so it is ok
             return true
           end
