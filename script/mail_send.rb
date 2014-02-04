@@ -26,6 +26,7 @@ if whichday != ''
 else
   now = Time.now.gmtime
 end    
+puts "Now: #{now.strftime("%Y-%m-%d %H:%M:%S")}"
 
 if now.wday == 4 or do_weekly
 #if now.wday == 6
@@ -172,42 +173,60 @@ for p in participants
       
       # This item might be in several subgroups. Is the user in any of them? If so, use the subgroup setting rather than the general forum setting
       in_subgroup = false
-      for group_subtag in p.group_subtags
-        for subgroup_tag in item.subgroup_list
-          if subgroup_tag == group_subtag.tag
-            in_subgroup = true
-            break
-          end  
-        end
+      subgroup_none = false
+      for subgroup_tag in item.subgroup_list
+        if subgroup_tag == 'none'
+          subgroup_none = true
+        else
+          for group_subtag in p.group_subtags
+            if group_subtag.tag.to_s != '' and subgroup_tag == group_subtag.tag
+              in_subgroup = true
+              break
+            end  
+          end
+        end  
       end
 
       puts "    in_week:#{in_week} in_day:#{in_day} in_group:#{in_group} in_subgroup:#{in_subgroup} in_dialog:#{in_dialog}" if testonly
       
+      send_it = false
       if in_dialog
+        #-- Item is in a discussion, and the user has access to it (is in one of the groups). Send it to the user if they have the discussion (forum) setting on
         if p.forum_email == 'daily' and in_day
+          puts "    item in discussion. user set for daily discussion mail" if testonly
+          send_it = true
         elsif p.forum_email == 'weekly' and in_week
-        else
-          puts "    in a dialog, but no setting to send it" if testonly
-          next
+          puts "    item in discussion. user set for weekly discussion mail" if testonly
+          send_it = true
         end   
-      elsif in_subgroup
+      end  
+        
+      if in_subgroup
+        #-- Item is in one or more subgroups, which isn't 'none', and this user is in one of those subgroups
         if p.subgroup_email == 'daily' and in_day
+          puts "    item in subgroup (#{item.show_subgroup}). user set for daily subgroup mail" if testonly
+          send_it = true
         elsif p.subgroup_email == 'weekly' and in_week
-        else
-          puts "    in a subgroup, but not setting to send it" if testonly
-          next
+          puts "    item in subgroup (#{item.show_subgroup}). user set for weekly subgroup mail" if testonly
+          send_it = true
         end     
-      elsif in_group
+      end
+        
+      if in_group and (subgroup_none or item.show_subgroup.to_s == '')
+        #-- Item is in a group, and the user is allowed to see it, so they're probably in it. Include messages that started without subgroup and got one later.
         if p.group_email == 'daily' and in_day
+          puts "    item in group. user set for daily group mail" if testonly
+          send_it = true
         elsif p.group_email == 'weekly' and in_week
-        else
-          puts "    in a group, but not setting to send it" if testonly
-          next
-        end     
-      else
-        puts "    not in a subgroup, group or dialog" if testonly
+          puts "    item in group. user set for weekly group mail" if testonly
+          send_it = true
+        end    
+      end  
+   
+      if not send_it
+        puts "    no setting to send this" if testonly
         next
-      end    
+      end
       
       did_items += 1
       
