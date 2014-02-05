@@ -978,6 +978,7 @@ class FrontController < ApplicationController
       group_id,dialog_id = check_group_and_dialog
       dialog_id = params[:dialog_id].to_i if dialog_id.to_i == 0
       group_id = params[:group_id].to_i if group_id.to_i == 0
+      logger.info("front#confirm group:#{group_id} dialog:#{dialog_id}")
       @dialog = Dialog.find_by_id(dialog_id) if dialog_id > 0
       @group = Group.find_by_id(group_id) if group_id > 0
       if @group and @dialog
@@ -997,7 +998,7 @@ class FrontController < ApplicationController
       #  session[:new_signup] = 1
       #  redirect_to "/dialogs/#{@dialog.id}/forum"
       #  return
-      if @dialog 
+      if @dialog and @group
         cdata['domain'] = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}" if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
         cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
         if @dialog_group and @dialog_group.confirm_welcome_template.to_s != ''

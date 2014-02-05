@@ -146,14 +146,40 @@ class Item < ActiveRecord::Base
       #  next
       elsif not group
         next
-      elsif self.dialog_id.to_i > 0 and not recipient.forum_email=='instant'
+      end  
+      
+      # This item might be in several subgroups. Is the user in any of them? If so, use the subgroup setting rather than the general forum setting
+      in_subgroup = false
+      subgroup_none = false
+      for subgroup_tag in self.subgroup_list
+        if subgroup_tag == 'none'
+          subgroup_none = true
+        else
+          for group_subtag in p.group_subtags
+            if group_subtag.tag.to_s != '' and subgroup_tag == group_subtag.tag
+              in_subgroup = true
+              break
+            end  
+          end
+        end  
+      end
+        
+      if self.dialog_id.to_i > 0 and not recipient.forum_email=='instant'
         #-- A discussion message
         logger.info("#{recipient.id}:#{recipient.name} is not set for instant discussion mail, so skipping")
+        next
+      elsif self.dialog_id.to_i == 0 and in_subgroup and not recipient.subgroup_email=='instant'
+        #-- A subgroup message
+        logger.info("#{recipient.id}:#{recipient.name} is not set for instant subgroup mail, so skipping")
         next
       elsif self.dialog_id.to_i == 0 and not recipient.group_email=='instant'
         #-- A pure group message
         logger.info("#{recipient.id}:#{recipient.name} is not set for instant group mail, so skipping")
         next
+      elsif not ( self.dialog_id.to_i == 0 and (subgroup_none or self.show_subgroup.to_s == '') )
+        #-- A group message, make sure there is no original subgroup
+        logger.info("#{recipient.id}:#{recipient.name} is actually a subgroup item, so skipping")
+        next        
       end  
       if recipient.email.to_s == ''
         logger.info("#{recipient.id}:#{recipient.name} has no e-mail, so skipping")
