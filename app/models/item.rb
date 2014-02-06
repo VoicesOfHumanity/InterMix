@@ -136,10 +136,10 @@ class Item < ActiveRecord::Base
     for recipient in participants
       p = recipient
       if recipient.no_email
-        logger.info("#{recipient.id}:#{recipient.name} is blocking all email, so skipping")
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} is blocking all email, so skipping")
         next        
       elsif recipient.status != 'active'
-        logger.info("#{recipient.id}:#{recipient.name} is not active, so skipping")
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} is not active, so skipping")
         next
       #elsif group and not (recipient.group_email=='instant' or recipient.forum_email=='instant')
       #  logger.info("#{recipient.id}:#{recipient.name} is not set for instant group mail, so skipping")
@@ -158,34 +158,38 @@ class Item < ActiveRecord::Base
           for group_subtag in p.group_subtags
             if group_subtag.tag.to_s != '' and subgroup_tag == group_subtag.tag
               in_subgroup = true
+              logger.info("Item#emailit #{recipient.id}:#{recipient.name} is in one of the item's subgroups")
               break
             end  
           end
         end  
       end
+
+      send_it = false
         
-      if self.dialog_id.to_i > 0 and not recipient.forum_email=='instant'
-        #-- A discussion message
-        logger.info("#{recipient.id}:#{recipient.name} is not set for instant discussion mail, so skipping")
-        next
-      elsif self.dialog_id.to_i == 0 and in_subgroup and not recipient.subgroup_email=='instant'
-        #-- A subgroup message
-        logger.info("#{recipient.id}:#{recipient.name} is not set for instant subgroup mail, so skipping")
-        next
-      elsif self.dialog_id.to_i == 0 and not recipient.group_email=='instant'
-        #-- A pure group message
-        logger.info("#{recipient.id}:#{recipient.name} is not set for instant group mail, so skipping")
-        next
-      elsif not ( self.dialog_id.to_i == 0 and (subgroup_none or self.show_subgroup.to_s == '') )
-        #-- A group message, make sure there is no original subgroup
-        logger.info("#{recipient.id}:#{recipient.name} is actually a subgroup item, so skipping")
-        next        
-      end  
       if recipient.email.to_s == ''
-        logger.info("#{recipient.id}:#{recipient.name} has no e-mail, so skipping")
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} has no e-mail, so skipping")
         next
-      end      
-      logger.info("sending e-mail to #{recipient.id}:#{recipient.name}")
+      elsif self.dialog_id.to_i > 0 and recipient.forum_email=='instant'
+        #-- A discussion message
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} discussion item for discussion #{self.dialog_id}")
+        send_it = true
+      elsif self.dialog_id.to_i == 0 and in_subgroup and recipient.subgroup_email=='instant'
+        #-- A subgroup message
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} subgroup item (#{self.show_subgroup})")
+        send_it = true
+      elsif self.dialog_id.to_i == 0 and (subgroup_none or self.show_subgroup.to_s == '') and recipient.group_email=='instant'
+        #-- A pure group message
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} group item (#{self.group_id})")
+        send_it = true
+      end  
+
+      if send_it
+        logger.info("Item#emailit sending e-mail to #{recipient.id}:#{recipient.name}")        
+      else  
+        logger.info("Item#emailit not e-mail to #{recipient.id}:#{recipient.name}")
+        next
+      end
       
       # Make sure we have an authentication token for them to log in with
       # http://yekmer.posterous.com/single-access-token-using-devise
