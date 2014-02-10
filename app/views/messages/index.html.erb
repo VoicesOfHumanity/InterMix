@@ -29,6 +29,7 @@ function showinout(inout) {
 }
 var showingedit = false;
 var showingview = false;
+var showingsent = false;
 var replying_to = 0;
 function showmess(id) {
 	$('#messageview_tr').insertAfter('#tr_'+id);
@@ -55,13 +56,14 @@ function newmess() {
 		$('#messageview').hide();
 		showingview = false;
 	}
-	if (showingedit) {
+	if (showingedit && !showingsent) {
 		$('#messageedit').hide();
 		$('#reply_tr').hide();
 		showingedit = false;
 		replying_to = 0;
 		return;
 	}
+	showingsent = false;
 	$.ajax({
     type: 'GET',
     url: '/messages/new',
@@ -69,7 +71,8 @@ function newmess() {
       $("#messageedit").html(t.responseText);
 		  $('#messageedit').show();
 			showingedit = true;
-			window.location.hash = '#messageedit';
+			window.location.hash = '';
+			window.location.hash = 'messageedit';
      }
    });	
 }
@@ -85,6 +88,7 @@ function replymess(id) {
 	var pars = {
 		response_to_id: id
 	}
+	showingsent = false;
 	$.ajax({
     type: 'GET',
     url: '/messages/new',
@@ -117,6 +121,7 @@ function savemess() {
 			$('#messageedit').html(t.responseText);
 			$('#messageedit').css('opacity','1.0');
 			/* $('#messageview').hide(); */
+			showingsent = true;
 			messlist();
 		}
 	 });	
