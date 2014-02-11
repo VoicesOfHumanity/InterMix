@@ -81,7 +81,7 @@ class PeopleController < ApplicationController
       they_follow = Follow.where("followed_id=#{current_participant.id} and following_id=#{@participant_id}").find(:first)
       @they_following = (they_follow ? true : false)    
       
-      if @participant and @participant.system_email == 'instant'
+      if @participant
         #-- Send as an e-mail. emailit is found in the application controller 
         @message = Message.new
         @message.subject = "#{current_participant.name} is now following you"
@@ -95,9 +95,14 @@ class PeopleController < ApplicationController
         @message.from_participant_id = 0
         @message.sendmethod = 'web'
         @message.sent_at = Time.now
-        if @message.save        
-          @message.sendmethod = 'email'
-          @message.emailit
+        if @message.save      
+          if @participant.system_email == 'instant'  
+            @message.sendmethod = 'email'
+            @message.emailit
+          else
+            @message.email_sent = false
+          end  
+          @message.save
         end
         @is_following = true
       end
