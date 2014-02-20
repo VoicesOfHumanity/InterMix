@@ -33,7 +33,7 @@ puts "Starting Mail Fetcher to #{MAILDOMAIN}/intermix"
       rescue
         puts "- error in processing. deleting"
       end    
-      #m.delete
+      m.delete
       x += 1
     end
   end
