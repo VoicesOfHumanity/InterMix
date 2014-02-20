@@ -9,7 +9,9 @@ class ReceiveMailer < ActionMailer::Base
   
     #<Mail::Message:2158014300, Multipart: true, Headers: <Return-Path: <ffunch@cr8.com>>, <Received: by draco.cr8.com (Postfix, from userid 10008) id BAA7484D2FDC; Thu, 3 Feb 2011 23:28:39 +0000 (UTC)>, <Received: from mail-qw0-f41.google.com (mail-qw0-f41.google.com [209.85.216.41]) (using TLSv1 with cipher RC4-MD5 (128/128 bits)) (No client certificate requested) by draco.cr8.com (Postfix) with ESMTP id 68DF484CE8FD for <a+b+c@intermix.cr8.com>; Thu, 3 Feb 2011 23:28:37 +0000 (UTC)>, <Received: by qwa26 with SMTP id 26so1323352qwa.28 for <a+b+c@intermix.cr8.com>; Thu, 03 Feb 2011 15:28:36 -0800 (PST)>, <Received: by 10.229.220.144 with SMTP id hy16mr8313346qcb.80.1296775716663; Thu, 03 Feb 2011 15:28:36 -0800 (PST)>, <Received: by 10.229.229.65 with HTTP; Thu, 3 Feb 2011 15:28:36 -0800 (PST)>, <Date: Fri, 04 Feb 2011 00:28:36 +0100>, <From: Flemming Funch <ffunch@cr8.com>>, <To: a+b+c@intermix.cr8.com>, <Message-ID: <AANLkTi=+gHKiLy7-BTtHe-D0zuYpyz2SRKsMwOudcPAf@mail.gmail.com>>, <Subject: test to a+b+c@intermix.cr8.com>, <Mime-Version: 1.0>, <Content-Type: multipart/alternative; boundary=0016362839faf1f380049b691fb9>, <Content-Transfer-Encoding: 7bit>, <X-Original-To: intermix@draco.cr8.com>, <Delivered-To: intermix@draco.cr8.com>, <X-Spam-Checker-Version: SpamAssassin 3.0.6 (2005-12-07) on u15186594.onlinehome-server.com>, <X-Spam-Level: ***>, <X-Spam-Status: No, score=3.3 required=7.0 tests=ADDRESS_IN_SUBJECT,BAYES_50, HTML_00_10,HTML_MESSAGE,HTML_SHORT_LENGTH,RCVD_BY_IP autolearn=no version=3.0.6  
   
-    f = File.new("/tmp/mail-#{Time.now.strftime("%Y-%m-%d %H:%M")}.txt", "wb")
+    savefile = "/tmp/mail-#{Time.now.strftime("%Y-%m-%d %H:%M")}.txt"
+    puts "  saving to: #{savefile}"
+    f = File.new(savefile, "wb")
     f.write email.inspect
     f.close          
 
@@ -134,7 +136,10 @@ end
     short_content = '' 
     if email.multipart? then
       puts '  multipart1'
+      p1 = 0
       email.parts.each do |m|
+        p1 += 1
+        puts "    part #{p1}"
         puts '    main_type:' + m.main_type
         puts '    content_type:' + m.content_type if m.has_content_type?
         puts '    charset:' + m.charset if  m.has_charset?
@@ -144,14 +149,38 @@ end
         puts '    body: ' + m.body.to_s if false
         #puts '    inspect:'+m.inspect
         #puts '  methods:'+m.methods.join(" ")
-        if m.content_type[0,9] == 'text/html' or m.main_type == 'html'
-          html_content = m.body.to_s
-        elsif m.content_type[0,10] == 'text/plain' or m.main_type == 'text'
-          short_content = m.body.to_s
-        end    
+        if m.content_type[0,22] == "multipart/alternative;" and m.multipart?
+          puts '    multipart2'
+          p2 = 0
+          m.parts.each do |mm|
+            p2 += 1
+            puts "      subpart #{p2}"
+            puts '      main_type:' + mm.main_type
+            puts '      content_type:' + mm.content_type if mm.has_content_type?
+            puts '      charset:' + mm.charset if  mm.has_charset?
+            puts '      content_disposition: ' + mm.content_disposition if mm.content_disposition
+            puts '      content_transfer_encoding: ' + mm.content_transfer_encoding if mm.has_content_transfer_encoding?
+            puts '      mime_version: ' + mm.mime_version if mm.has_mime_version?
+            if mm.content_type[0,9] == 'text/html' or mm.main_type == 'html'
+              puts '      getting html content from this'
+              html_content = mm.body.to_s
+            elsif mm.content_type[0,10] == 'text/plain' or mm.main_type == 'text'
+              puts '      getting short content from this'
+              short_content = mm.body.to_s
+            end   
+          end
+        else
+          if m.content_type[0,9] == 'text/html' or m.main_type == 'html'
+            puts '   getting html content from this'
+            html_content = m.body.to_s
+          elsif m.content_type[0,10] == 'text/plain' or m.main_type == 'text'
+            puts '  getting short content from this'
+            short_content = m.body.to_s
+          end   
+        end 
       end
     else
-       puts '    not multipart. Getting from email.body'
+       puts '    not multipart. Getting html content from email.body'
        html_content = email.body.to_s
     end 
     if html_content.to_s == ""
@@ -247,14 +276,17 @@ end
     @item.posted_via = 'email'
     @item.subject = subject
     @item.group_id = group_id if group_id > 0
+    @item.first_in_thread_group_id = group_id if group_id > 0
     @item.html_content = html_content
     @item.short_content = short_content
+    @item.subgroup_list.add('none')
     if reply_to
       @item.reply_to = reply_to 
       @item.is_first_in_thread = false
       @olditem = Item.find_by_id(@item.reply_to)
       if @olditem
         @item.first_in_thread = @olditem.first_in_thread
+        @item.first_in_thread_group_id = @olditem.first_in_thread_group_id
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
         if @item.dialog_id
           @dialog = Dialog.find_by_id(@item.dialog_id)
