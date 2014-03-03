@@ -799,7 +799,8 @@ class ItemsController < ApplicationController
       @item.group_id = @dialog.group_id.to_i if @dialog and @item.group_id.to_i == 0
     end
     
-    if params[:subgroup_add].to_s != ''
+    if @item.is_first_in_thread and params[:subgroup_add].to_s != ''
+      #-- A subgroup is added to this message
       subgroup_add = params[:subgroup_add]
       @item.subgroup_list.add(subgroup_add)
     end  
@@ -825,6 +826,15 @@ class ItemsController < ApplicationController
         end 
       end
     end 
+    
+    if @item.is_first_in_thread and @item.subgroup_list.to_s != '' and not @item.new_record? and @item.id.to_i > 0
+      #-- Add it to any other messages in that thread, if it isn't already there. This is really if it was changed after the fact.
+      subitems = Item.where(:first_in_thread=>@item.id).where(:is_first_in_thread=>false)
+      for subitem in subitems
+        subitem.subgroup_list = @item.subgroup_list
+        subitem.save
+      end
+    end  
     
     if @send_to == 'wall'
       @item.posted_to_forum = false

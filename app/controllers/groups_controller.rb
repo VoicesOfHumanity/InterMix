@@ -279,6 +279,26 @@ class GroupsController < ApplicationController
     redirect_to :action => :subgroups
   end   
   
+  def subgroup_member_addremove
+    @add_remove = params[:add_remove]
+    @group_subtag_id = params[:group_subtag_id].to_i
+    if params.include? :active
+      if params[:active].to_i == 1
+        @active = 1
+        @members = @group.active_members
+      else
+        @active = 0
+        @members = @group.non_active_members
+      end
+    else
+      @active = -1
+      @members = @group.members_with_group_participants
+    end    
+    for member in @members
+
+    end
+  end  
+  
   def subgroupadd
     #-- Show a pulldown for adding a subgroup to an item
     @group_id = params[:id]
@@ -299,6 +319,14 @@ class GroupsController < ApplicationController
       @item.subgroup_list.add(@tag)
     end
     @item.save!
+    if @item.is_first_in_thread and @item.subgroup_list.to_s != ''
+      #-- Add it to any other messages in that thread, if it isn't already there. This is really if it was changed after the fact.
+      subitems = Item.where(:first_in_thread=>@item.id).where(:is_first_in_thread=>false)
+      for subitem in subitems
+        subitem.subgroup_list = @item.subgroup_list
+        subitem.save
+      end
+    end  
     render :text=>'ok', :layout=>false
   end     
   

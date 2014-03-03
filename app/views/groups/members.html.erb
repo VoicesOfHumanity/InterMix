@@ -20,8 +20,14 @@
 
 <p><%= @members.length %> records</p>
 
-<p>Tag selected as sub-group
-	<%= select_tag :group_subtag_id, [['',0]]+GroupSubtag.where(:group_id=>@group.id).collect {|p| [ raw("#{p.tag}"), p.id ] } %>
+<p>
+  <%= form_tag "/groups/#{@group.id}/subgroup_member_addremove" do %>
+  <%= hidden_field_tag :active, params[:active] %>
+  <%= select_tag :add_remove, options_for_select(['add','remove']) %>
+  selected to/from sub-group
+	<%= select_tag :group_subtag_id, options_for_select([['',0]]+@group.group_subtags.collect {|p| [ "#{p.tag}", p.id ] }) %>
+	<%= submit_tag "Go!" %>
+	<% end %>
 </p>
 
 <p>[<a href="/groups/<%= @group.id %>/members?active=1">Active</a>] [<a href="/groups/<%= @group.id %>/members?active=0">Inactive</a>] [<a href="/groups/<%= @group.id %>/members">All</a>]</p>
