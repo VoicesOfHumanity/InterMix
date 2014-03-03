@@ -32,6 +32,12 @@
 		<%= f.input :active, :as=>:boolean %>
 		<%= f.input :status, :as=>:select, :collection =>GROUP_PARTICIPANT_STATUSES_TEXT.collect{|c,t| ["#{c}: #{t}",c]} %>
 
+		<li class="text optional" id="group_front_template_input">
+			<label>Subgroups</label>
+			<%= @group_participant.subtags %>
+		</li>
+
+
 	<% end %>
 
 	<div style="float:left"><input type="button" value="Cancel" onclick="window.location='/groups/<%= @group_id %>/members<%= @members_active.to_i>=0 ? "?active=#{@members_active}" : "" %>'"> <input type="submit" value="Save"></div>

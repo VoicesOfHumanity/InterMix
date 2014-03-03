@@ -15,6 +15,11 @@ class GroupParticipantsController < ApplicationController
     
     participant = Participant.find_by_id(participant_id)
 
+    group_subtag_participants = GroupSubtagParticipant.where(:group_id=>group_id,:participant_id=>participant_id)
+    for gsp in group_subtag_participants
+      gsp.destroy
+    end  
+
     group_participant.destroy
 
     flash[:notice] = "Group member #{participant ? participant.name : participant_id} removed"

@@ -34,7 +34,9 @@
 		<%= f.input :bioregion, :required => false %>
 		<%= f.input :political, :required => false, :label => 'Political Affiliation' %>
 		<%= f.input :faith_tradition, :required => false %>
+		<% if false -%>
 		<%= f.input :tag_list, :required => false, :as => :string, :input_html => {:size=>80}  %>
+		<% end -%>
 		
 		<% @participant.metamaps_h.each do |metamap_id,metamap_name| -%>
 		<% metamap_nodes = @participant.metamap_nodes_h %>

@@ -125,7 +125,7 @@
 		<% if true -%>
     <li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Tags</label><input id="item_tag_list" name="item[tag_list]" size="80" type="text" value="" /></li>
 		<% end -%>
-		<% if @item.reply_to.to_i == 0 and @group and @group.group_subtags.length > 0 -%>
+		<% if @item.dialog_id.to_i == 0 and @item.reply_to.to_i == 0 and @group and @group.group_subtags.length > 0 -%>
 		<li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Subgroup(s)</label>
 		  <%= @item.subgroup_list.to_s %>
 		  <% if @group.group_subtags.length > @item.subgroup_list.length -%>
