@@ -280,23 +280,26 @@ class GroupsController < ApplicationController
   end   
   
   def subgroup_member_addremove
+    @group_id = params[:id]
     @add_remove = params[:add_remove]
     @group_subtag_id = params[:group_subtag_id].to_i
-    if params.include? :active
-      if params[:active].to_i == 1
-        @active = 1
-        @members = @group.active_members
-      else
-        @active = 0
-        @members = @group.non_active_members
+    @marks = params[:mark]
+    @active = params[:active]
+    if @group_subtag_id > 0 and @marks.class == Array
+      for participant_id in @marks
+        submember = GroupSubtagParticipant.where(:group_subtag_id=>@group_subtag_id,:participant_id=>participant_id).first
+        if submember and @add_remove == 'remove'
+          submember.destroy
+        elsif not submember and @add_remove == 'add'
+          submember = GroupSubtagParticipant.new
+          submember.group_id = @group_id
+          submember.group_subtag_id = @group_subtag_id
+          submember.participant_id = participant_id
+          submember.save!
+        end  
       end
-    else
-      @active = -1
-      @members = @group.members_with_group_participants
-    end    
-    for member in @members
-
     end
+    redirect_to "/groups/#{@group_id}/members?active=#{@active}"
   end  
   
   def subgroupadd

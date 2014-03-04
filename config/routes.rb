@@ -93,6 +93,7 @@ Intermix::Application.routes.draw do
       get :subgroup_join
       get :subgroup_unjoin
       post :subgroup_add_to
+      post :subgroup_member_addremove
       get :subgroupadd
       post :subgroupsave
       get :invite
