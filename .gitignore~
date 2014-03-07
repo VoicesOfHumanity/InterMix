@@ -1,9 +1,0 @@
-.bundle
-.DS_Store
-log/*.log
-tmp/**/*
-public/images/data
-#config/database.yml
-config/deploy.rb
-config/localsettings.rb
-intermix.tmproj

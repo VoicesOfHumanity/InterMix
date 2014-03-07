@@ -17,7 +17,7 @@ gem 'jquery-ui-rails'
 # gem 'unicorn'
 
 # Deploy with Capistrano
-gem 'capistrano', '~> 2.15'
+#gem 'capistrano', '~> 2.15'
 #gem 'capistrano-rails'
 
 # To use debugger
@@ -66,6 +66,11 @@ gem 'postmark'
 gem 'postmark-rails'
 
 gem 'responds_to_parent'
+
+group :development do
+  gem 'capistrano-rails'
+end
+
 
 # Gems used only for assets and not required
 # in production environments by default.
