@@ -2,7 +2,7 @@
 
 		<% odd_or_even = 1 %>
 		<div class="forumitem forumitemplain forummain forum<%= odd_or_even %>" id="item_<%= @first_item.id %>">
-			<%= render :partial => "items/item", :locals => { :item => @first_item, :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0 } %>
+			<%= render :partial => "items/item", :locals => { :item => @first_item, :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0, :showlong=>true } %>
 		
 			<% @replies = Item.where("is_first_in_thread=0 and first_in_thread=#{@first_item.id}").order("id").all -%>
 			<% for reply in @replies -%>

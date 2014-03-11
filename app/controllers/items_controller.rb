@@ -219,7 +219,13 @@ class ItemsController < ApplicationController
     end  
     @item.dialog_id = @dialog_id
     @max_characters = @dialog ? @dialog.max_characters : 0    
-    @max_words = @dialog ? @dialog.max_words : 0    
+    @max_words = @dialog ? @dialog.max_words : 0
+    
+    if current_participant.status != 'active'
+      #-- Make sure this is an active member
+      render :text=>"<p>Your membership is not active</p>", :layout=>false
+      return
+    end    
     
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
@@ -267,7 +273,7 @@ class ItemsController < ApplicationController
     if @item.group_id > 0
       ingroup = false
       for gp in @groupsin
-        ingroup = true if gp.group and gp.group_id == @item.group_id
+        ingroup = true if gp.group and gp.group_id == @item.group_id and gp.active and gp.status == 'active'
       end 
       if not ingroup
         @item.group_id = 0 

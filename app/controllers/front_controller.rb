@@ -490,14 +490,24 @@ class FrontController < ApplicationController
       render :action=>:dialogjoinform
       return
     end  
-    
-    @participant.groups << @group if not @participant.groups.include?(@group)
-    
+        
     if not @participant.save!  
       flash[:alert] = "Sorry, there's some kind of database problem<br>"
       render :action=>:dialogjoinform
       return
     end  
+
+    #@participant.groups << @group if not @participant.groups.include?(@group)
+    @group_participant = GroupParticipant.new(:group_id=>@group.id,:participant_id=>@participant.id)
+    if @group.openness == 'open'
+      @group_participant.active = true
+      @group_participant.status = 'pending'
+    else
+      #-- open_to_apply probably
+      @group_participant.active = false
+      @group_participant.status = 'applied'      
+    end
+    @group_participant.save
 
     @participant.ensure_authentication_token!
 

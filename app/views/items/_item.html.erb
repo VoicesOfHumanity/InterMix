@@ -1,5 +1,4 @@
-<% showlong = (item.media_type!='text' or from=='individual' or (item.short_content.to_s != '' and (item.html_content.length < 140 or item.html_content == "<p>#{item.short_content}</p>"))) -%>
-<% showlong = false unless showlong -%>
+<% showlong = (item.media_type!='text' or from=='individual' or (item.short_content.to_s != '' and (item.html_content.length < 140 or item.html_content == "<p>#{item.short_content}</p>"))) unless showlong -%>
 <% @show_meta = false -%>
 
 	<% if @error_message.to_s != '' -%>
