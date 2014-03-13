@@ -6,7 +6,9 @@
 <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 <%= hidden_field_tag :group_subtag_id, @group_subtag_id %>
 
-<p>Name: <%= text_field :group_subtag, :tag, :size => 30 %></p>
+<p>Name:<br><%= text_field :group_subtag, :tag, :size => 30 %></p>
+<p>Description:<br><%= text_area :group_subtag, :description, :size => "100x5" %></p>
+<p>Can people add &amp; remove themselves: <%= check_box :group_subtag, :selfadd %></p>
 
 <p><input type="submit" value="Save"></p>
 

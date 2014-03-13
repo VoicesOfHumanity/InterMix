@@ -20,6 +20,12 @@
 <% if @item.dialog_id.to_i > 0 -%>
 <li><a href="/dialogs/<%= @item.dialog_id %>/forum?perscr=100&amp;sortby=items.id+desc<%=raw "&amp;threads=flat" if @item.reply_to.to_i>0 %>#item_<%= @item.id %>">Discussion List</a></li>
 <% end -%>
+
+<% if @item.subgroup_list.length > 0 -%>
+  <li>Subgroup List: <%=raw @item.show_subgroup_with_link("/groups/#{@item.group_id}/forum?subgroup=") %></li>
+<% end -%>
+
+
 <% if @item.root_item.group_id.to_i > 0 -%>
 <li><a href="/groups/<%= @item.root_item.group_id %>/forum?perscr=100<%=raw "&amp;threads=flat" if @item.reply_to.to_i>0 %>#item_<%= @item.id %>">Group List</a></li>
 <% end -%>

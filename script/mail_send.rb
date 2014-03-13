@@ -298,7 +298,8 @@ for p in participants
   		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{item.dialog.name}</a>" if item.dialog
   		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}&auth_token=#{p.authentication_token}\">#{item.period.name}</a>" if item.period  		
   		itext += " Group: <a href=\"http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if item.group
-  		itext += " Subgroup: #{item.show_subgroup}" if item.subgroup_list.length > 0
+  		subgrouplink = "http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}&amp;subgroup="
+  		itext += " Subgroup: #{item.show_subgroup_with_link(subgrouplink)}" if item.subgroup_list.length > 0
       itext += "</p>"
       itext += "<hr>"
       

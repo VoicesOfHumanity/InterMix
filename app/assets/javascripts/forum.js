@@ -638,6 +638,7 @@ function showsubgroupadd(item_id) {
 		data: 'item_id='+item_id,
 		complete: function(t){	
 		    $('#item_subgroup_add_'+item_id).html(t.responseText);
+		    $('#item_subgroup_add_'+item_id).parent().height(28);
 		}
 	});
 }

@@ -61,7 +61,7 @@ Apply
 		<p>You are a member of this group. <a href="/groups/<%= @group.id %>/unjoin" onclick="return confirm('Are you sure you want to leave this group?')">Leave</a></p>
 	<% end -%>	
 	<% if @group.shortname -%>
-	<p>You can post to this group via e-mail by writing to <%= @group.shortname %>-list@<%= BASEDOMAIN %> from your <%= current_participant.email %> account.</p>
+	<p>You can post to this group via e-mail by writing to <%= @group.shortname %>-list@<%= MAILDOMAIN %> from your <%= current_participant.email %> account.</p>
 	<% end -%>
 	<% if (@is_moderator or session[:is_hub_admin] or session[:is_sysadmin]) -%>
 	<p>You are a group moderator. You can <a href="/groups/<%= @group.id %>/admin">administer</a> the group</p>

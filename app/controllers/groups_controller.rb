@@ -992,6 +992,8 @@ class GroupsController < ApplicationController
       @group_subtag.group_id = @group_id
     end  
     @group_subtag.tag = params[:group_subtag][:tag].gsub(',',' ')[0,50]
+    @group_subtag.description = params[:group_subtag][:description]
+    @group_subtag.selfadd = params[:group_subtag][:selfadd]
     @group_subtag.save!
     redirect_to :action=>:admin
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140106221701) do
+ActiveRecord::Schema.define(:version => 20140313120319) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -254,9 +254,11 @@ ActiveRecord::Schema.define(:version => 20140106221701) do
 
   create_table "group_subtags", :force => true do |t|
     t.integer  "group_id"
-    t.string   "tag",        :limit => 30
+    t.string   "tag",         :limit => 30
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "selfadd",                   :default => true
+    t.text     "description"
   end
 
   add_index "group_subtags", ["group_id", "tag"], :name => "index_group_subtags_on_group_id_and_tag"
