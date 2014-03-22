@@ -287,6 +287,7 @@ end
       if @olditem
         @item.first_in_thread = @olditem.first_in_thread
         @item.first_in_thread_group_id = @olditem.first_in_thread_group_id
+        @item.subgroup_list = @olditem.subgroup_list if @olditem.subgroup_list.to_s != ''
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
         if @item.dialog_id
           @dialog = Dialog.find_by_id(@item.dialog_id)
