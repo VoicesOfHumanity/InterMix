@@ -187,6 +187,8 @@ end
       puts "  didn't get html_content. getting dirty version from body"
       html_content = email.body.to_s
     end 
+
+    puts "  html_content before cleaning up: #{html_content}"
     
     #-- Try to remove old quotes, footers, personal login info, etc.
     html_content.gsub!(%r{[0-9]+/[0-9]+/[0-9]+ InterMix .*$}m,"")    
@@ -196,6 +198,8 @@ end
     html_content.gsub!(/<p id="following">.*$/m,"")
     html_content.gsub!(/<p id="footer">.*$/m,"")
     html_content.gsub!(/auth_token=[^"]+/,"")
+    
+    puts "  html_content after cleaning up: #{html_content}"
     
     short_content.gsub!(%r{[0-9]+/[0-9]+/[0-9]+ InterMix .*$}m,"")
     short_content = ( html_content.gsub(/(<[^>]*>)|\n|\t/s) {" "} )[0,140] if short_content.to_s == ""
@@ -315,6 +319,8 @@ end
       @item.first_in_thread = @item.reply_to    
       @item.save   
     end  
+    puts "  html_content after saving: #{@item.html_content}"
+    
       
   end
 
