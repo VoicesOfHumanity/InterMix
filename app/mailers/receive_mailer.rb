@@ -164,6 +164,8 @@ end
             if mm.content_type[0,9] == 'text/html' or mm.main_type == 'html'
               puts '      getting html content from this'
               html_content = mm.body.to_s
+              html_content.force_encoding(mm.charset) if mm.has_charset?
+              html_content = html_content.encode(Encoding::UTF_8)
             elsif mm.content_type[0,10] == 'text/plain' or mm.main_type == 'text'
               puts '      getting short content from this'
               short_content = mm.body.to_s
@@ -173,6 +175,8 @@ end
           if m.content_type[0,9] == 'text/html' or m.main_type == 'html'
             puts '   getting html content from this'
             html_content = m.body.to_s
+            html_content.force_encoding(m.charset) if m.has_charset?
+            html_content = html_content.encode(Encoding::UTF_8)
           elsif m.content_type[0,10] == 'text/plain' or m.main_type == 'text'
             puts '  getting short content from this'
             short_content = m.body.to_s
@@ -182,10 +186,14 @@ end
     else
        puts '    not multipart. Getting html content from email.body'
        html_content = email.body.to_s
+       html_content.force_encoding(email.charset) if email.has_charset?
+       html_content = html_content.encode(Encoding::UTF_8)
     end 
     if html_content.to_s == ""
       puts "  didn't get html_content. getting dirty version from body"
       html_content = email.body.to_s
+      html_content.force_encoding(email.charset) if email.has_charset?
+      html_content = html_content.encode(Encoding::UTF_8)
     end 
 
     puts "  html_content before cleaning up: #{html_content}"
@@ -204,8 +212,8 @@ end
     f = File.new("/tmp/html_content.txt", "wb")
     f.write html_content
     f.close    
-    html_content = html_content.encode("UTF-8")
-    puts "  html_content now: #{html_content.encoding}"
+    #html_content = html_content.encode("UTF-8")
+    #puts "  html_content now: #{html_content.encoding}"
     
     short_content.gsub!(%r{[0-9]+/[0-9]+/[0-9]+ InterMix .*$}m,"")
     short_content = ( html_content.gsub(/(<[^>]*>)|\n|\t/s) {" "} )[0,140] if short_content.to_s == ""
