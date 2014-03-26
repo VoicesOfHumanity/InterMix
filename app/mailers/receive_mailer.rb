@@ -200,9 +200,12 @@ end
     html_content.gsub!(/auth_token=[^"]+/,"")
     
     puts "  html_content after cleaning up: #{html_content}"
+    puts "  html_content encoding: #{html_content.encoding}"
     f = File.new("/tmp/html_content.txt", "wb")
     f.write html_content
     f.close    
+    html_content = html_content.encode("UTF-8")
+    puts "  html_content now: #{html_content.encoding}"
     
     short_content.gsub!(%r{[0-9]+/[0-9]+/[0-9]+ InterMix .*$}m,"")
     short_content = ( html_content.gsub(/(<[^>]*>)|\n|\t/s) {" "} )[0,140] if short_content.to_s == ""
