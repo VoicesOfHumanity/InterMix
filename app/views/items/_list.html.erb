@@ -38,13 +38,13 @@
 		<% for item in @items -%>
 			<% odd_or_even = 1-odd_or_even%>
 			<div class="forumitem forumitemplain forummain forum<%= odd_or_even %>" id="item_<%= item.id %>">
-				<%= render :partial => "items/item", :locals => { :item => item, :itemproc=>@itemsproc[item.id], :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0 } %>
+				<%= render :partial => "items/item", :locals => { :item => item, :itemproc=>@itemsproc[item.id], :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0, :exp_item_id=>@exp_item_id.to_i } %>
 				<% if @threads == 'flat' and @sortby != 'default' -%>
 					<% @replies = Item.where("is_first_in_thread=0 and first_in_thread=#{item.id}").order("id").all -%>
 					<% for reply in @itemsproc[item.id]['replies'] -%>
 						<% odd_or_even = 1-odd_or_even%>
 						<div class="forumitem forumitemplain forumreply forum<%= odd_or_even %>" id="item_<%= reply.id %>">
-							<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id } %>
+							<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id, :exp_item_id=>@exp_item_id.to_i } %>
 						</div>
 					<% end -%>
 		    <% end -%>	

@@ -827,6 +827,12 @@ class GroupsController < ApplicationController
     @group = Group.find(@group_id)
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group_id,current_participant.id).find(:first)
     if @group_participant
+      #-- Remove subgroup membership too
+      group_subtag_participants = GroupSubtagParticipant.where(:group_id=>@group_id,:participant_id=>current_participant.id)
+      for gsp in group_subtag_participants
+        gsp.destroy
+      end
+      #-- And the group membership itself
       @group_participant.destroy
       flash[:notice] = "You have now left this group"     
     else
@@ -842,6 +848,7 @@ class GroupsController < ApplicationController
     @from = 'group'
     @group_id = params[:id].to_i
     @group = Group.includes(:owner_participant).find(@group_id)
+    @exp_item_id = (params[:exp_item_id] || 0).to_i
     @has_subgroups = (@group.group_subtags.length > 0)
     @tag = params[:tag].to_s
     @subgroup = params.include?(:subgroup) ? params[:subgroup].to_s : 'my'

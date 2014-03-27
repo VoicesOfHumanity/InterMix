@@ -257,7 +257,7 @@ class Item < ActiveRecord::Base
       
       itext = ""
       #itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\">#{self.subject}</a></h3>"
-      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&#item_#{self.id}\">#{self.subject}</a></h3>"
+      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}#item_#{self.id}\">#{self.subject}</a></h3>"
       itext += "<div>"
       itext += content
       itext += "</div>"
@@ -276,10 +276,10 @@ class Item < ActiveRecord::Base
   		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
   		itext += " <a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		
-  		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{dialog.name}</a>" if dialog
-  		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?period_id=#{self.period_id}&auth_token=#{p.authentication_token}\">#{period.name}</a>" if period  		
-  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}\"#{" style=\"color:#f00\"" if group_mismatch}>#{group.name}</a>" if group
-  		subgrouplink = "http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}&amp;subgroup="
+  		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\">#{dialog.name}</a>" if dialog
+  		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/forum?period_id=#{self.period_id}&auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\">#{period.name}</a>" if period  		
+  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\"#{" style=\"color:#f00\"" if group_mismatch}>#{group.name}</a>" if group
+  		subgrouplink = "http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}&amp;subgroup="
   		itext += " Subgroup: #{self.show_subgroup_with_link(subgrouplink)}" if self.subgroup_list.length > 0
       itext += "</p>"
       

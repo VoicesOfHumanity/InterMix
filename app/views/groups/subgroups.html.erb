@@ -23,12 +23,12 @@
     </span>
   <% else %>
     <span style="font-size:13px;">  	
-    Write to the moderator to join or leave this group
+    This is a moderator controlled subgroup
     </span>
   <% end %>
   </h3>
   <% if group_subtag.description -%>
-  <p><%= group_subtag.description %></p>
+  <p style="margin-left:20px"><%= group_subtag.description %></p>
   <% end -%>
 	<ul>
 	<li><a href="/groups/<%= @group.id %>/subgroup_members?subgroup_id=<%= group_subtag.id%>">members</a> (<%= nummembers %>)</li>

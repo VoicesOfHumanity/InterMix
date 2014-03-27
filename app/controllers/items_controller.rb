@@ -19,6 +19,7 @@ class ItemsController < ApplicationController
     @limit_group_id = (params[:limit_group_id] || 0).to_i
     @dialog_id = (params[:dialog_id] || 0).to_i
     @period_id = (params[:period_id] || 0).to_i
+    @exp_item_id = (params[:exp_item_id] || 0).to_i
     @tag = params[:tag].to_s
     @subgroup = params[:subgroup].to_s
     @posted_by_country_code = (params[:posted_by_country_code] || '').to_s
@@ -615,6 +616,7 @@ class ItemsController < ApplicationController
     #-- Show the whole thread, based on an item
     @from = params[:from] || 'thread'
     @item_id = params[:id]
+    @exp_item_id = (params[:exp_item_id] || 0).to_i
     @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary]).find(@item_id)
     
     @dialog_id = @item.dialog_id
