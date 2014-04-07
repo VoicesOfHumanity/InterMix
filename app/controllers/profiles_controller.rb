@@ -71,6 +71,18 @@ class ProfilesController < ApplicationController
     update_last_url
   end
   
+  def missingmeta
+    #-- A screen for filling in any missing (mainly) meta information we need. That's normally used right after a Facebook signup
+    @section = 'profile'
+    @subsection = 'meta'
+    @profile_id = ( params[:id] || current_participant.id ).to_i
+    @participant = Participant.find_by_id(@profile_id)
+    @participant.new_signup = false
+    @participant.save
+    
+  end  
+  
+  
   def update
     @section = 'profile'
     @subsection = params[:subsection].to_s

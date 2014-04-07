@@ -1,8 +1,9 @@
 class Participant < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable, :timeoutable 
-  devise :database_authenticatable, :token_authenticatable, :omniauthable, :registerable,
+  devise :database_authenticatable, :token_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+  devise :omniauthable, :omniauth_providers => [:facebook]
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :title, :address1, :address2, :city, :admin1uniq, :county_code, :county_name, :state_code, :state_name, :country_code, :country_name, :phone, :zip, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :status, :self_description, :tag_list, :visibility, :twitter_post, :twitter_username, :forum_email, :group_email, :subgroup_email, :private_email, :system_email, :no_email, :authentication_token
@@ -61,7 +62,7 @@ class Participant < ActiveRecord::Base
   end
   
   def apply_omniauth(omniauth)
-    xemail = (omniauth['extra'] and omniauth['extra']['user_hash']) ? omniauth['extra']['user_hash']['email'] : '???'
+    xemail = (['info']) ? omniauth['info']['email'] : '???'
     xprov = omniauth['provider'] ? omniauth['provider'] : '???'
     xuid = omniauth['uid'] ? omniauth['uid'] : '???'
     logger.info("apply_omniauth email:#{xemail} provider:#{xprov} uid:#{xuid}")
@@ -73,25 +74,25 @@ class Participant < ActiveRecord::Base
     logger.info("participant#get_fields_from_omniauth #{omniauth['provider']}")
     case omniauth['provider']
     when 'facebook'
-      if omniauth['extra']
-        self.email = omniauth['extra']['user_hash']['email'] if email.blank?
-        self.first_name = omniauth['extra']['user_hash']['first_name'] if first_name.blank?
-        self.last_name = omniauth['extra']['user_hash']['last_name'] if last_name.blank?
+      if ['info']
+        self.email = omniauth['info']['email'] if email.blank?
+        self.first_name = omniauth['info']['first_name'] if first_name.blank?
+        self.last_name = omniauth['info']['last_name'] if last_name.blank?
+        self.fb_link = omniauth['info']['urls']['Facebook'] if omniauth['info']['urls'] and omniauth['info']['urls']['Facebook']
         self.fb_uid = omniauth['uid']
-        self.fb_link = omniauth['user_info']['urls']['Facebook']
       else
-        logger.info("participant#get_fields_from_omniauth Didn't get any omniauth['extra']")  
+        logger.info("participant#get_fields_from_omniauth Didn't get any omniauth['info']")  
       end
     when 'twitter'
       if omniauth['user_info']
         #self.email = omniauth['user_info']['email'] if email.blank?
-        name_arr = omniauth['user_info']['name'].split(' ')
+        name_arr = omniauth['info']['name'].split(' ')
         self.first_name = name_arr[0] if first_name.blank?
         self.last_name = name_arr[1] if last_name.blank? and name_arr.length > 1
       end
     else
-      if omniauth['user_info']
-        self.email = omniauth['user_info']['email'] if email.blank?   
+      if omniauth['info']
+        self.email = omniauth['info']['email'] if email.blank?   
       end     
     end    
     logger.info("participant#get_fields_from_omniauth e-mail is now #{self.email}")  

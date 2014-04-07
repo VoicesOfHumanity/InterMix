@@ -1,18 +1,35 @@
 <img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;">
 
+{% if participant.fb_uid %}
 
-{% if group.openness == 'open' %}
+  <p align="center"><big><b>{{ group.name }}</b> Signup Success!</big></p>
 
-<p align="center"><big><b>{{ group.name }}</b> Signup Success!</big></p>
+  <p>You have successfully signed up with "<b>{{ group.name }}</b>". Welcome!</p>
+  
+  <p>If at any point you should choose to not use your Facebook login, you can also log in with your email address and a password which we generated for you. You should receive an email from us momentarily.</p>
 
-<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>
+  <p>We need a couple of minor pieces of information from you for your profile, and then you can continue to the listing of group messages.</p>
+  
+  <p><a href="/me/profile/meta">Click here to continue</a></p>
 
 {% else %}
 
-<p align="center"><big><b>{{ group.name }}</b> application submitted</big></p>
 
-<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>
+  {% if group.openness == 'open' %}
 
-<p>After you have clicked on the confirmation link, and your membership of InterMix thus been validated, the administrators of {{ group.name }} will be notified. They will approve or disapprove your application to join the group, and you'll be notified of the result.</p>
+  <p align="center"><big><b>{{ group.name }}</b> Signup Success!</big></p>
+
+  <p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>
+
+  {% else %}
+
+  <p align="center"><big><b>{{ group.name }}</b> application submitted</big></p>
+
+  <p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>
+
+  <p>After you have clicked on the confirmation link, and your membership of InterMix thus been validated, the administrators of {{ group.name }} will be notified. They will approve or disapprove your application to join the group, and you'll be notified of the result.</p>
+
+  {% endif %}
+
 
 {% endif %}

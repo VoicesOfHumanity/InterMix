@@ -232,6 +232,9 @@ Intermix::Application.routes.draw do
   match 'gjoin', :controller=>:front, :action=>:groupjoinform
   match 'join', :controller=>:front, :action=>:joinform
   match 'front/join', :controller=>:front, :action=>:join
+  match 'fbjoin', :controller=>:front, :action=>:fbjoinform
+  match 'front/fbjoinfinal', :controller=>:front, :action=>:fbjoinfinal
+  match 'front/fbjoin', :controller=>:front, :action=>:fbjoin
   match 'youarehere', :controller=>:front, :action=>:youarehere
   
   match 'front/confirm', :controller=>:front, :action=>:confirm
@@ -262,6 +265,7 @@ Intermix::Application.routes.draw do
   
   match 'me/profile' => 'profiles#index'
   match 'me/profile/edit' => 'profiles#edit'
+  match 'me/profile/meta' => 'profiles#missingmeta'
   match 'me/profile/settings' => 'profiles#settings'
   match 'me/profile/update' => 'profiles#update'
   match 'me/wall' => 'wall#index'

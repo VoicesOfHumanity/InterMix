@@ -267,6 +267,9 @@ class FrontController < ApplicationController
       return      
     end
     
+    session[:join_group_id] = @group_id
+    session[:join_dialog_id] = @dialog_id
+    
     prepare_djoin
     
     render :action=>:dialogjoinform
@@ -277,6 +280,9 @@ class FrontController < ApplicationController
     @dialog_id = params[:dialog_id].to_i
     @group_id = params[:group_id].to_i
     logger.info("Front#dialogjoin dialog:#{@dialog_id} group:#{@group_id}")
+    
+    session[:join_group_id] = nil if session[:join_group_id]
+    session[:join_dialog_id] = nil if session[:join_dialog_id]
     
     @dialog = Dialog.find_by_id(@dialog_id)
     if @dialog and @group_id == 0
@@ -683,6 +689,9 @@ class FrontController < ApplicationController
       return
     end
     
+    session[:join_group_id] = @group_id
+    session[:join_dialog_id] = @dialog_id
+    
     prepare_gjoin
     
     render :action=>:groupjoinform, :layout => 'front'
@@ -692,6 +701,9 @@ class FrontController < ApplicationController
     #-- What the group join form posts to
     @group_id = params[:group_id].to_i
     logger.info("Front#groupjoin group:#{@group_id}")
+
+    session[:join_group_id] = nil if session[:join_group_id]
+    session[:join_dialog_id] = nil if session[:join_dialog_id]
     
     @group = Group.find_by_id(@group_id)
 
@@ -1049,6 +1061,226 @@ class FrontController < ApplicationController
     render :action=>:confirm, :layout=>'front'
   end  
   
+  def fbjoinform
+    #-- Show a signup form allowing people to join with facebook, not asking them anything other than the group they want
+    
+  end 
+  
+  def fbjoin
+    #-- The user has selected a group. We'll remember that, and move on to facebook authentication
+    @group_id = params[:group_id].to_i
+    
+    flash[:alert] = ''
+    
+    if @group_id == 0
+      flash[:alert] += "You'll need to choose what group to join<br>"
+    elsif @group_id > 0
+      @group = Group.find_by_id(@group_id)
+      if not @group
+        flash[:alert] += "Sorry, this group seems to no longer exist<br>"
+      elsif @group.openness == 'private'
+        flash[:alert] += "Sorry, this is a private group, which you can't join this way.<br>"
+      elsif @group.openness == 'by_invitation_only'
+        flash[:alert] += "Sorry, you have to be invited to join this group<br>"
+      elsif @group.openness != 'open' and @group.openness != 'open_to_apply'
+        flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
+      end    
+    end 
+    if flash[:alert] != ''
+      redirect_to '/fbjoin' 
+      return   
+    end
+    
+    session[:join_group_id] = @group_id
+    redirect_to '/participants/auth/facebook'
+  end  
+  
+  def fbjoinfinal
+    #-- Joining after authenticating with facebook.
+    #-- That happens in the authentications controller, which already should have checked that they don't already have an account
+    #-- The Facebook information is found in session[:omniauth]
+    #-- The selected group and maybe discussion should be in session[:join_group_id] and session[:join_dialog_id]
+    #-- No user account has been created yet, and the signup might still fail, if something is wrong.
+    
+    flash[:notice] = ''
+    flash[:alert] = '' 
+    
+    flash[:notice] += "You have successfully authenticated with Facebook"
+    
+    @group_id = session[:join_group_id].to_i
+    @dialog_id = session[:join_dialog_id].to_i
+    
+    session[:join_group_id] = nil if session[:join_group_id]
+    session[:join_dialog_id] = nil if session[:join_dialog_id]
+    
+    if @group_id == 0
+      flash[:alert] += "But, sorry, there's no indication of what group this would be added to<br>"
+    elsif @group_id > 0
+      @group = Group.find_by_id(@group_id)
+      if not @group
+        flash[:alert] += "But, sorry, this group seems to no longer exist<br>"
+      elsif @group.openness == 'private'
+        flash[:alert] += "But, sorry, this is a private group, which you can't join this way.<br>"
+      elsif @group.openness == 'by_invitation_only'
+        flash[:alert] += "But, sorry, you have to be invited to join this group<br>"
+      elsif @group.openness != 'open' and @group.openness != 'open_to_apply'
+        flash[:alert] += "But, sorry, this group seems to no longer be open to submissions<br>"
+      end    
+    end 
+    if flash[:alert] != ''
+      redirect_to '/fbjoin' 
+      return   
+    end
+    
+    omniauth = session[:omniauth]
+    
+    @participant = Participant.new
+    #-- This should set email, first/last name, fb uid/link
+    @participant.apply_omniauth(omniauth)
+
+    #-- See if we have a city and country
+    if omniauth['info']['location'].to_s != ''
+      loc = omniauth['info']['location']
+      xarr = loc.split(/[, ]+/)
+      xcountry = ''
+      if xarr.length > 1
+        @participant.city = xarr[0]
+        xcountry = xarr[1]
+      elsif xarr.length == 1
+        xcountry = xarr[0]
+      end    
+      if xcountry != ''
+        country = Geocountry.find_by_name(xcountry)
+        if country
+          @participant.country_code = country.iso
+          @participant.country_name = country.name
+        end
+      end
+    end  
+
+    #-- Create a password automatically
+    @password = ''
+    3.times do
+      conso = 'bcdfghkmnprstvw'[rand(15)]
+      vowel = 'aeiouy'[rand(6)]
+      @password += conso +  vowel
+      @password += (1+rand(9)).to_s if rand(3) == 2
+    end
+
+    @participant.password = @password
+    @participant.forum_email = 'daily'
+    @participant.group_email = 'instant'
+    @participant.subgroup_email = 'instant'
+    @participant.private_email = 'instant'  
+    @participant.status = 'unconfirmed'   # we will change that a little later
+    @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+
+    if not @participant.save!  
+      flash[:alert] = "Sorry, there's some kind of database problem<br>"
+      redirect_to '/fbjoin' 
+      return   
+    end  
+    
+    @group_participant = GroupParticipant.new(:group_id=>@group.id,:participant_id=>@participant.id)
+    if @group.openness == 'open'
+      @group_participant.active = true
+      @group_participant.status = 'pending'
+    else
+      #-- open_to_apply probably
+      @group_participant.active = false
+      @group_participant.status = 'applied'      
+    end
+    @group_participant.save
+        
+    @participant.ensure_authentication_token!
+    
+    # Pick an appropriate logo
+    if @group.logo.exists?
+      @logo = "http://#{BASEDOMAIN}#{@group.logo.url}"
+    else
+      @logo = nil
+    end
+
+    if @group.shortname.to_s != ""
+      dom = "#{@group.shortname}.#{ROOTDOMAIN}"
+    else
+      dom = BASEDOMAIN
+    end
+    
+    #-- Send an e-mail to the member
+    recipient = @participant
+    cdata = {}
+    cdata['item'] = @item
+    cdata['recipient'] = @participant     
+    cdata['participant'] = @participant 
+    cdata['group'] = @group if @group
+    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    cdata['logo'] = @logo if @logo
+    cdata['password'] = @password
+    cdata['domain'] = dom
+    
+    #if @group.confirm_email_template.to_s.strip != ''
+    #  template = Liquid::Template.parse(@group.confirm_email_template)
+    #  html_content = template.render(cdata)
+    if true
+      confirm_email_template = render_to_string :partial=>"groups/confirm_email_default", :layout=>false
+      template = Liquid::Template.parse(confirm_email_template)
+      html_content = template.render(cdata)
+    else    
+      html_content = "<p>Welcome! You have signed up through Facebook. In case you should need it, you can also use this login info:</p>"
+      
+      html_content = "<p>username: #{@participant.email}<br/>"
+      html_content += "password: #{@password}<br/>" if @password != '???'
+      
+      html_content += "<br/>Click here to log in the first time:<br/><br/>"
+      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      
+      html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
+      html_content += "</p>"
+    end
+  
+    email = @participant.email
+    msubject = "[#{@group.shortname}] Signup"
+    email = SystemMailer.generic(SYSTEM_SENDER, @participant.email_address_with_name, msubject, html_content, cdata)
+
+    begin
+      logger.info("front#fbjoinfinal delivering email to #{recipient.id}:#{recipient.name}")
+      email.deliver
+      message_id = email.message_id
+    rescue Exception => e
+      logger.info("front#fbjoinfinal problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
+    end
+    
+    #if @group.confirm_template.to_s != ''
+    #  template = Liquid::Template.parse(@group.confirm_template)
+    #  @content = template.render(cdata)
+    #elsif true
+      confirm_template = render_to_string :partial=>"groups/confirm_default", :layout=>false
+      template = Liquid::Template.parse(confirm_template)
+      @content = template.render(cdata)
+    #else
+    #  @content = ""
+    #  @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
+    #  #@content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
+    #  @content += "<p align=\"center\"><big><b>#{@group.name}</b> Signup Success!</big></p>"
+    #  @content += "<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>"
+    #end
+    
+    cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
+    
+    flash[:notice] = "Your account has been created and you're now signed in."
+    @participant.status = 'active'
+    @participant.new_signup = true
+    @participant.save
+    
+    #sign_in_and_redirect(:participant, @participant)
+    sign_in(:participant, @participant)
+    
+    render :action=>:confirm, :layout=>'front'
+    
+  end   
+
+  
   def notconfirmed
   end
   
@@ -1064,6 +1296,9 @@ class FrontController < ApplicationController
     #-- General join
     
     logger.info("Front#join")
+
+    session[:join_group_id] = nil if session[:join_group_id]
+    session[:join_dialog_id] = nil if session[:join_dialog_id]
 
     @email = params[:email].to_s
     @first_name = params[:first_name].to_s

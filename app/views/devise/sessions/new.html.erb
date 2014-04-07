@@ -16,4 +16,14 @@
   <p><%= f.submit "Sign in" %></p>
 <% end %>
 
+<p><a href="/participants/auth/facebook" class="auth_provider">
+  <%= image_tag "/assets/login/facebook_64.png", :size => "64x64", :alt => "Facebook" %>
+  Click to sign in with your Facebook login, and you won't need a password.
+</a>
+</p>
+
+<div class="clear"><br><br></div>
+
+<p>
 <%= render :partial => "devise/shared/links" %>
+</p>
