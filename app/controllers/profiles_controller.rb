@@ -79,6 +79,18 @@ class ProfilesController < ApplicationController
     @participant = Participant.find_by_id(@profile_id)
     @participant.new_signup = false
     @participant.save
+
+    @group_id,@dialog_id = get_group_dialog_from_subdomain
+    @group_id = session[:group_id].to_i if @group_id.to_i == 0
+    @group = Group.find_by_id(@group_id) if not @group and @group_id > 0
+
+    if session[:dialog_id].to_i > 0
+      @forum_link = "/dialogs/#{session[:dialog_id]}/forum"
+    elsif @group
+      @forum_link = "/groups/#{@group.id}/forum"
+    else
+      @forum_link = ''
+    end  
     
   end  
   

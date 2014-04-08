@@ -2,6 +2,17 @@
 
 <h2>Sign in</h2>
 
+<p><a href="/participants/auth/facebook" class="auth_provider">
+  <%= image_tag "/assets/login/facebook_64.png", :size => "64x64", :alt => "Facebook" %>
+  Click to sign in with your Facebook login.
+</a>
+</p>
+
+<div class="clear"><br><br></div>
+
+<p>or, if you prefer, you can sign in with your email address and password:</p>
+
+
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
   <p><%= f.label :email %><br />
   <%= f.text_field :email %></p>
@@ -16,13 +27,6 @@
   <p><%= f.submit "Sign in" %></p>
 <% end %>
 
-<p><a href="/participants/auth/facebook" class="auth_provider">
-  <%= image_tag "/assets/login/facebook_64.png", :size => "64x64", :alt => "Facebook" %>
-  Click to sign in with your Facebook login, and you won't need a password.
-</a>
-</p>
-
-<div class="clear"><br><br></div>
 
 <p>
 <%= render :partial => "devise/shared/links" %>

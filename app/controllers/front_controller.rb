@@ -29,8 +29,14 @@ class FrontController < ApplicationController
         desc = Liquid::Template.parse(@dialog.member_template).render(cdata)
       elsif @dialog.front_template.to_s.strip != ''
         desc = Liquid::Template.parse(@dialog.front_template).render(cdata)
-      else
-        desc = "<h2>#{@dialog.name}</h2><div>#{@dialog.description}</div>\n"
+      elsif participant_signed_in?
+        tcontent = render_to_string :partial=>"dialogs/member_default", :layout=>false
+        desc = Liquid::Template.parse(tcontent).render(cdata)        
+      else   
+        tcontent = render_to_string :partial=>"dialogs/front_default", :layout=>false
+        desc = Liquid::Template.parse(tcontent).render(cdata)  
+      #else
+      #  desc = "<h2>#{@dialog.name}</h2><div>#{@dialog.description}</div>\n"
       end
       @content += "<div>#{desc}</div>"
     elsif @group_id.to_i > 0
@@ -43,8 +49,14 @@ class FrontController < ApplicationController
         desc = Liquid::Template.parse(@group.member_template).render(cdata)
       elsif @group.front_template.to_s.strip != ''
         desc = Liquid::Template.parse(@group.front_template).render(cdata)
-      else
-        desc = "<h2>#{@group.name}</h2><div>#{@group.description}</div>\n"
+      elsif participant_signed_in?
+        tcontent = render_to_string :partial=>"groups/member_default", :layout=>false
+        desc = Liquid::Template.parse(tcontent).render(cdata)        
+      else   
+        tcontent = render_to_string :partial=>"groups/front_default", :layout=>false
+        desc = Liquid::Template.parse(tcontent).render(cdata)
+      #else
+      #  desc = "<h2>#{@group.name}</h2><div>#{@group.description}</div>\n"
       end
       @content += "<div>#{desc}</div>"
     else
@@ -1255,9 +1267,9 @@ class FrontController < ApplicationController
     #  template = Liquid::Template.parse(@group.confirm_template)
     #  @content = template.render(cdata)
     #elsif true
-      confirm_template = render_to_string :partial=>"groups/confirm_default", :layout=>false
-      template = Liquid::Template.parse(confirm_template)
-      @content = template.render(cdata)
+#      confirm_template = render_to_string :partial=>"groups/confirm_default", :layout=>false
+#      template = Liquid::Template.parse(confirm_template)
+#      @content = template.render(cdata)
     #else
     #  @content = ""
     #  @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
@@ -1276,7 +1288,9 @@ class FrontController < ApplicationController
     #sign_in_and_redirect(:participant, @participant)
     sign_in(:participant, @participant)
     
-    render :action=>:confirm, :layout=>'front'
+    redirect_to '/me/profile/meta'
+    
+    #render :action=>:confirm, :layout=>'front'
     
   end   
 

@@ -1,7 +1,13 @@
 <img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;">
 
-<p>Sample public front page for the group "{{ group.name }}"</p>
+<p>Public front page for the group "{{ group.name }}"</p>
 
 <p>Description: {{ group.description }}</p>
 
 <p>Group code: {{ group.shortname }}</p>
+
+<p>
+<a href="/participants/auth/facebook">
+  <%= image_tag "/assets/login/facebook_64.png", :size => "64x64", :alt => "Facebook", :style => "vertical-align:middle" %>
+</a> Facebook Sign-in
+</p>
