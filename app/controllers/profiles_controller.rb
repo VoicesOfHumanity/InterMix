@@ -89,7 +89,7 @@ class ProfilesController < ApplicationController
     elsif @group
       @forum_link = "/groups/#{@group.id}/forum"
     else
-      @forum_link = ''
+      @forum_link = '/groups/'
     end  
     
   end  
@@ -110,10 +110,10 @@ class ProfilesController < ApplicationController
     flash.now[:notice] = ''
 
     emailchanged = false
-    if params[:participant] and params[:participant][:email] == ''
+    if params[:participant] and params[:participant][:email] and params[:participant][:email] == ''
       flash.now[:alert] += "You can't remove the email address."
       params[:participant][:email] = @participant.email      
-    elsif params[:participant] and params[:participant][:email] != @participant.email
+    elsif params[:participant] and params[:participant][:email] and params[:participant][:email] != @participant.email
       if not params[:participant][:email] =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
         flash.now[:alert] += "#{params[:participant][:email]} doesn't look like a valid e-mail address<br>"
         params[:participant][:email] = @participant.email      

@@ -55,7 +55,15 @@ class AuthenticationsController < ApplicationController
           sign_in(:participant, @participant)
           flash[:notice] = "Authentication successful. Facebook login added to your existing account."
           logger.info("authentications#create #{current_participant.id} authenticated")
-          redirect_to authentications_url
+          if session[:dialog_id].to_i > 0
+            @forum_link = "/dialogs/#{session[:dialog_id]}/forum"
+          elsif session[:group_id].to_i > 0
+            @forum_link = "/groups/#{session[:group_id]}/forum"
+          else
+            @forum_link = '/groups/'
+          end  
+          #redirect_to authentications_url
+          redirect_to @forum_link
         else  
           #-- Unless if they're not active, then show them a screen saying they'll have to log in by themselves
           render :action=>:hasaccount

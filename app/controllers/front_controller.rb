@@ -1168,7 +1168,7 @@ class FrontController < ApplicationController
     #-- See if we have a city and country
     if omniauth['info']['location'].to_s != ''
       loc = omniauth['info']['location']
-      xarr = loc.split(/[, ]+/)
+      xarr = loc.split(/, /)
       xcountry = ''
       if xarr.length > 1
         @participant.city = xarr[0]
@@ -1181,8 +1181,15 @@ class FrontController < ApplicationController
         if country
           @participant.country_code = country.iso
           @participant.country_name = country.name
+        else
+          #-- Isn't a country. Probably a US state
+          @participant.country_code = 'US'
+          @participant.country_name = 'United States'
         end
       end
+    else
+      @participant.country_code = 'US'
+      @participant.country_name = 'United States'  
     end  
 
     #-- Create a password automatically
