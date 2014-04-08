@@ -3,10 +3,14 @@ if (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ 
   BASEDOMAIN = 'intermix.cr8.com'
   ROOTDOMAIN = 'intermix.cr8.com'
   MAILDOMAIN = 'trantor.cr8.com'
+  FACEBOOK_APP_ID          = '604196779657027'
+  FACEBOOK_API_SECRET      = '03a98fc919e2ea25970367510d0c9b01'
 else
   BASEDOMAIN = 'go.intermix.org'
   ROOTDOMAIN = 'intermix.org'
   MAILDOMAIN = 'intermix.org'
+  FACEBOOK_APP_ID          = '151526481561013'
+  FACEBOOK_API_SECRET      = '3653366f2b6d4778e09db3d666d1fedf'
 end
 
 DATADIR = '/home/apps/intermix/shared/data'
@@ -112,7 +116,4 @@ Paperclip.options[:command_path] = "/usr/bin"
 
 TWITTER_CONSUMER_KEY = 'Ew8NROMK7YbDa3XIph6gA'   # = API key. And this is for the Posting app, not the Login app
 TWITTER_CONSUMER_SECRET = 'ghQ41Vu377BAh3oVRACpKdYzeUo5SJardQunvALkj8'
-
-FACEBOOK_APP_ID          = '151526481561013'
-FACEBOOK_API_SECRET      = '3653366f2b6d4778e09db3d666d1fedf'
 

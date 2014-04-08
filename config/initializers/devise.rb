@@ -173,6 +173,8 @@ Devise.setup do |config|
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', :scope => 'user,public_repo'
   if Rails.env.development?
     config.omniauth :facebook, "1406266652976637","ec6fc05777932b40f23434bdbdadabec", { provider_ignores_state: true, }
+  elsif (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ /ovh.net/) or (File.dirname(__FILE__) =~ /cr8/) or (ENV['HTTP_HOST'] =~ /cr8/ ) or (`hostname` =~ /sirius/ )
+    config.omniauth :facebook, "604196779657027", "03a98fc919e2ea25970367510d0c9b01"
   else
     config.omniauth :facebook, "151526481561013", "3653366f2b6d4778e09db3d666d1fedf"
   end
