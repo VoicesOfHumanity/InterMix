@@ -360,7 +360,7 @@ class ApplicationController < ActionController::Base
     elsif session[:dialog_prefix].to_s != ''
       session[:cur_prefix] = session[:dialog_prefix]
     end
-    if session[:cur_prefix] != ''
+    if session[:cur_prefix].to_s != ''
       session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
     else
       session[:cur_baseurl] = "http://" + BASEDOMAIN    
