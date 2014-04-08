@@ -62,7 +62,7 @@ class Participant < ActiveRecord::Base
   end
   
   def apply_omniauth(omniauth)
-    xemail = (['info']) ? omniauth['info']['email'] : '???'
+    xemail = (omniauth['info']) ? omniauth['info']['email'] : '???'
     xprov = omniauth['provider'] ? omniauth['provider'] : '???'
     xuid = omniauth['uid'] ? omniauth['uid'] : '???'
     logger.info("apply_omniauth email:#{xemail} provider:#{xprov} uid:#{xuid}")

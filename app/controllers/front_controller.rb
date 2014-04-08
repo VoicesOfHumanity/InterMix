@@ -1123,6 +1123,12 @@ class FrontController < ApplicationController
     #-- The selected group and maybe discussion should be in session[:join_group_id] and session[:join_dialog_id]
     #-- No user account has been created yet, and the signup might still fail, if something is wrong.
     
+    if not session[:omniauth]
+      #-- If somehow they aren't authorized, do that first
+      redirect_to '/participants/auth/facebook'
+      return
+    end  
+    
     flash[:notice] = ''
     flash[:alert] = '' 
     
