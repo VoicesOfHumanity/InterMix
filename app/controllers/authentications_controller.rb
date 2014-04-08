@@ -9,13 +9,13 @@ class AuthenticationsController < ApplicationController
     if dialog_id.to_i > 0 and not @dialog
       @dialog = Dialog.find_by_id(dialog_id)
     end
-    if @dialog and not @dialog.alt_logins
-      redirect_to "/participants/sign_in"
-      return
-    elsif @group and not @group.alt_logins
-      redirect_to "/participants/sign_in"
-      return
-    end
+    #if @dialog and not @dialog.alt_logins
+    #  redirect_to "/participants/sign_in"
+    #  return
+    #elsif @group and not @group.alt_logins
+    #  redirect_to "/participants/sign_in"
+    #  return
+    #end
     @authentications = current_participant.authentications if current_participant
   end
 

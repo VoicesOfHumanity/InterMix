@@ -185,9 +185,9 @@ class ProfilesController < ApplicationController
     end    
 
     if flash.now[:alert] != ""
+      @participant = Participant.find_by_id(@participant.id)
       if @subsection == 'meta'
         @forum_link = params[:forum_link]
-        @participant = Participant.find_by_id(@participant.id)
         render :action => "missingmeta"        
       else  
         @subsection = 'edit'

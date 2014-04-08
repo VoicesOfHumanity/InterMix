@@ -1205,7 +1205,7 @@ class FrontController < ApplicationController
     @group_participant = GroupParticipant.new(:group_id=>@group.id,:participant_id=>@participant.id)
     if @group.openness == 'open'
       @group_participant.active = true
-      @group_participant.status = 'pending'
+      @group_participant.status = 'active'
     else
       #-- open_to_apply probably
       @group_participant.active = false

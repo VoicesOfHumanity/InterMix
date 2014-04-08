@@ -111,7 +111,9 @@
 			<textarea id="group_confirm_welcome_template" name="group[confirm_welcome_template]" rows="5"><%= @group.confirm_welcome_template %></textarea>
 		</li>		
 				
+		<% if false -%>		
 		<%= f.input :alt_logins, :label=>"Allow Facebook/Twitter logins?", :as => :boolean %>
+		<% end -%>
 	<% end %>
 
 	<p>

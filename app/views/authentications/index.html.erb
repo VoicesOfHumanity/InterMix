@@ -1,7 +1,5 @@
 <h1>Sign In</h1>
 
-<% if not ((@dialog and not @dialog.alt_logins) or (@group and not @group.alt_logins)) -%>
-
 <% if @authentications %>
   <% unless @authentications.empty? %>
     <p><strong>You can sign in to this account using:</strong></p>
@@ -41,8 +39,6 @@
 </a>
 <% end -%>
 <div class="clear"></div>
-
-<% end -%>
 
 <p>If you prefer, you can instead <%= link_to('sign up', new_participant_registration_path) %> for an Intermix account with a password.</p>
 
