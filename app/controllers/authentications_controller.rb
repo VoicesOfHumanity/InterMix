@@ -37,7 +37,7 @@ class AuthenticationsController < ApplicationController
       logger.info("authentications#create #{current_participant.id} authenticated")
       redirect_to authentications_url
     else
-      # They authorized with an external service, but we didn't recognize them. Which means it is a signup
+      # They authorized with an external service, but they hadn't used it before. Which means it is a signup or they already have a regular login
       logger.info("authentications#create Trying to create new participant")
       @participant = Participant.new
       @participant.apply_omniauth(omniauth)
@@ -45,10 +45,25 @@ class AuthenticationsController < ApplicationController
       # First check for duplicate account
       participants = Participant.where(:email=>@participant.email)
       if participants.length > 0
-        render :action=>:hasaccount
+        #-- We already know them by their email. Just add Facebook to their account
+        @participant = participants[0]
+        if @participant.status == 'active' or @participants.status == 'unconfirmed'
+          @participant.status = 'active'
+          @participant.authentications.create!(:provider => omniauth['provider'], :uid => omniauth['uid'])
+          @participant.get_fields_from_omniauth(omniauth)
+          @participant.save
+          sign_in(:participant, @participant)
+          flash[:notice] = "Authentication successful. Facebook login added to your existing account."
+          logger.info("authentications#create #{current_participant.id} authenticated")
+          redirect_to authentications_url
+        else  
+          #-- Unless if they're not active, then show them a screen saying they'll have to log in by themselves
+          render :action=>:hasaccount
+        end
       else
+        #-- We really don't know them. It is a signup
         session[:omniauth] = omniauth.except('extra')
-        redirect_to '/front/fbjoinfinal'
+        redirect_to '/front/fbjoin'
       #elsif @participant.save
       #  logger.info("authentications#create #{@participant.id} created and signed in")
       #  #-- A rudimentary account has already been created at this point. Do all the rest

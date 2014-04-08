@@ -2,7 +2,7 @@
 
 <h3>Signup Success!</h3>
 
-<p>We just need a little bit of extra information needed for your profile</p>
+<p>We just need a little bit of extra information for your profile</p>
 
 <% ok = true %>
 
@@ -10,6 +10,7 @@
 
 <input type="hidden" id="forum_link" name="forum_link" value="<%= @forum_link %>">
 <input type="hidden" id="goto" name="goto" value="">
+<input type="hidden" id="subsection" name="subsection" value="<%= @subsection %>">
 
 <%= f.inputs do %>
 
@@ -25,8 +26,8 @@
 <% ok = false %>
 <% end -%>
 
+<% metamap_nodes = @participant.metamap_nodes_h %>
 <% @participant.metamaps_h.each do |metamap_id,metamap_name| -%>
-  <% metamap_nodes = @participant.metamap_nodes_h %>
   <% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
   <% if not info or info[1].to_i ==0 -%>  
     <li class="select required" id="meta_#{metamap_id}_input">

@@ -83,7 +83,7 @@ class Group < ActiveRecord::Base
   end  
 
   def to_liquid
-      {'id'=>id,'name'=>name,'shortname'=>shortname,'description'=>description}
+      {'id'=>id,'name'=>name,'shortname'=>shortname,'description'=>description,'openness'=>openness}
   end
   
   def self.findornot(id)

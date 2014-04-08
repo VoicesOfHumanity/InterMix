@@ -1075,36 +1075,45 @@ class FrontController < ApplicationController
   
   def fbjoinform
     #-- Show a signup form allowing people to join with facebook, not asking them anything other than the group they want
+    #-- We'll assume they already have been authenticated by facebook
     
   end 
   
   def fbjoin
     #-- The user has selected a group. We'll remember that, and move on to facebook authentication
+    #-- If a group hasn't been selected, show the screen to do so
+    #-- We'll assume they already have been authenticated by facebook
+    
     @group_id = params[:group_id].to_i
+    @group_id,@dialog_id = get_group_dialog_from_subdomain if @group_id == 0
+    @group_id = session[:join_group_id].to_i if @group_id == 0
     
     flash[:alert] = ''
     
     if @group_id == 0
-      flash[:alert] += "You'll need to choose what group to join<br>"
+      #flash[:alert] += "You'll need to choose what group to join<br>"
+      redirect_to '/fbjoin'     # fbjoinform
+      return   
     elsif @group_id > 0
       @group = Group.find_by_id(@group_id)
       if not @group
-        flash[:alert] += "Sorry, this group seems to no longer exist<br>"
+        flash[:alert] += "Sorry, that group seems to no longer exist<br>"
       elsif @group.openness == 'private'
-        flash[:alert] += "Sorry, this is a private group, which you can't join this way.<br>"
+        flash[:alert] += "Sorry, that is a private group, which you can't join this way.<br>"
       elsif @group.openness == 'by_invitation_only'
-        flash[:alert] += "Sorry, you have to be invited to join this group<br>"
+        flash[:alert] += "Sorry, you have to be invited to join that group<br>"
       elsif @group.openness != 'open' and @group.openness != 'open_to_apply'
-        flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
+        flash[:alert] += "Sorry, that group seems to no longer be open to submissions<br>"
       end    
+      if flash[:alert] != ''
+        redirect_to '/fbjoin'    # fbjoinform
+        return   
+      end
     end 
-    if flash[:alert] != ''
-      redirect_to '/fbjoin' 
-      return   
-    end
     
     session[:join_group_id] = @group_id
-    redirect_to '/participants/auth/facebook'
+    #redirect_to '/participants/auth/facebook'
+    redirect_to '/front/fbjoinfinal'
   end  
   
   def fbjoinfinal
@@ -1185,7 +1194,7 @@ class FrontController < ApplicationController
     @participant.subgroup_email = 'instant'
     @participant.private_email = 'instant'  
     @participant.status = 'unconfirmed'   # we will change that a little later
-    @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+    @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @participant.email)
 
     if not @participant.save!  
       flash[:alert] = "Sorry, there's some kind of database problem<br>"

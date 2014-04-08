@@ -110,10 +110,10 @@ class ProfilesController < ApplicationController
     flash.now[:notice] = ''
 
     emailchanged = false
-    if params[:participant][:email] == ''
+    if params[:participant] and params[:participant][:email] == ''
       flash.now[:alert] += "You can't remove the email address."
       params[:participant][:email] = @participant.email      
-    elsif params[:participant][:email] != @participant.email
+    elsif params[:participant] and params[:participant][:email] != @participant.email
       if not params[:participant][:email] =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
         flash.now[:alert] += "#{params[:participant][:email]} doesn't look like a valid e-mail address<br>"
         params[:participant][:email] = @participant.email      
@@ -148,21 +148,24 @@ class ProfilesController < ApplicationController
       end
     end
     
-    @participant.assign_attributes(params[:participant])
+    @participant.assign_attributes(params[:participant]) if params[:participant]
     
     @participant.old_email = old_email if emailchanged
 
-    flash.now[:alert] += 'A name is required<br>' if params[:participant].has_key?(:first_name) and @participant.first_name.to_s == '' and @participant.last_name.to_s == ''
-    flash.now[:alert] += 'Country is required<br>' if params[:participant].has_key?(:country_code) and @participant.country_code.to_s == ''
-    flash.now[:alert] += 'Visibility is required<br>' if params[:participant].has_key?(:visibility) and @participant.visibility.to_s == ''
-    flash.now[:alert] += 'Personal message e-mail preference is required<br>' if params[:participant].has_key?(:private_email) and @participant.private_email.to_s == ''
-    flash.now[:alert] += 'System message e-mail preference is required<br>' if params[:participant].has_key?(:system_email) and @participant.system_email.to_s == ''
-    flash.now[:alert] += 'Forum posting e-mail preference is required<br>' if params[:participant].has_key?(:forum_email) and @participant.forum_email.to_s == ''
+    if params[:participant]
+      flash.now[:alert] += 'A name is required<br>' if params[:participant].has_key?(:first_name) and @participant.first_name.to_s == '' and @participant.last_name.to_s == ''
+      flash.now[:alert] += 'Country is required<br>' if params[:participant].has_key?(:country_code) and @participant.country_code.to_s == ''
+      flash.now[:alert] += 'Visibility is required<br>' if params[:participant].has_key?(:visibility) and @participant.visibility.to_s == ''
+      flash.now[:alert] += 'Personal message e-mail preference is required<br>' if params[:participant].has_key?(:private_email) and @participant.private_email.to_s == ''
+      flash.now[:alert] += 'System message e-mail preference is required<br>' if params[:participant].has_key?(:system_email) and @participant.system_email.to_s == ''
+      flash.now[:alert] += 'Forum posting e-mail preference is required<br>' if params[:participant].has_key?(:forum_email) and @participant.forum_email.to_s == ''
+    end
 
     # Save any metamap assignments
     if params[:meta]
+      metamap_nodes = @participant.metamap_nodes_h  # Any previous settings
       @participant.metamaps_h.each do |metamap_id,metamap_name|
-        val = params[:meta]["#{metamap_id}"].to_i
+        val = params[:meta]["#{metamap_id}"].to_i   # New value we're getting
         if val > 0
           mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>@participant.id).first
           if mnp
@@ -171,6 +174,8 @@ class ProfilesController < ApplicationController
           else
             MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
           end  
+        elsif metamap_nodes[metamap_id] and metamap_nodes[metamap_id][1].to_i > 0
+          # We didn't get it, but it is already filled in, so no problem
         elsif metamap_id==3 or metamap_id==5   
            flash.now[:alert] += "#{metamap_name} is required by InterMix<br>"
         else
@@ -180,8 +185,14 @@ class ProfilesController < ApplicationController
     end    
 
     if flash.now[:alert] != ""
-      @subsection = 'edit'
-      render :action => "edit"
+      if @subsection == 'meta'
+        @forum_link = params[:forum_link]
+        @participant = Participant.find_by_id(@participant.id)
+        render :action => "missingmeta"        
+      else  
+        @subsection = 'edit'
+        render :action => "edit"
+      end  
       return
     end
     

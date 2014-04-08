@@ -58,7 +58,7 @@ class Participant < ActiveRecord::Base
   end
   
   def to_liquid
-      {'id'=>id,'name'=>name,'first_name'=>first_name,'last_name'=>last_name,'email'=>email,'title'=>title,'self_description'=>self_description,'city'=>city,'country_name'=>country_name,'authentication_token'=>authentication_token}
+      {'id'=>id,'name'=>name,'first_name'=>first_name,'last_name'=>last_name,'email'=>email,'title'=>title,'self_description'=>self_description,'city'=>city,'country_name'=>country_name,'authentication_token'=>authentication_token,'fb_uid'=>fb_uid}
   end
   
   def apply_omniauth(omniauth)
@@ -186,6 +186,7 @@ class Participant < ActiveRecord::Base
     #-- NB: This was colliding with the metamaps association, so it had to be renamed
     metamaps = []
     dialogsin = dialogs_in
+    logger.info("participant#metamaps_h is in #{dialogs_in.length} discussions")
     for d in dialogsin
       Metamap.joins(:dialogs).where("dialogs.id=?",d[0]).order("sortorder,metamaps.name").each do |m|
         val = [m.id,m.name]
@@ -193,6 +194,7 @@ class Participant < ActiveRecord::Base
       end
     end   
     groupsin = groups_in
+    logger.info("participant#metamaps_h is in #{groups_in.length} groups")
     for g in groupsin
       Metamap.joins(:groups).where("groups.id=?",g[0]).order("sortorder,metamaps.name").each do |m|
         val = [m.id,m.name]
@@ -200,6 +202,7 @@ class Participant < ActiveRecord::Base
       end
     end
     rmetamaps = Metamap.where(:global_default).all
+    logger.info("participant#metamaps_h There are #{rmetamaps.length} global defaults")
     for m in rmetamaps
       val = [m.id,m.name]
       metamaps << val if not metamaps.include?(val)
