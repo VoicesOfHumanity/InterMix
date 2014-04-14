@@ -1,8 +1,16 @@
 <%= render(:partial => 'menu')%>
 
-<h3>Signup Success!</h3>
+<% if @participant.new_signup %>
 
+<h3>Signup Success!</h3>
 <p>We just need a little bit of extra information for your profile</p>
+
+<% else -%>
+
+<h3>Profile Update</h3>
+<p>We need a little bit of extra information for your profile</p>
+
+<% end -%>
 
 <% ok = true %>
 
@@ -41,7 +49,7 @@
 <% end -%>
 
 <% if ok -%>
-<p>Actually, never mind, everything is in order, so just <a href="<%= @forum_link %>">click here to go to the Forum</a>.</p>
+<p>Actually, never mind, everything is in order, so just <a href="<%= @forum_link %>">click here to go to the list</a>.</p>
 <% end -%>
 
 <% end %>

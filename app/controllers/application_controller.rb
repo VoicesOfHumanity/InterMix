@@ -202,7 +202,8 @@ class ApplicationController < ActionController::Base
     if params[:fb_sig_in_iframe].to_i == 1
       session[:cur_baseurl] + '/fbapp'
     elsif not session[:has_required]
-      session[:cur_baseurl] + '/me/profile/edit'
+      #session[:cur_baseurl] + '/me/profile/edit#settings'
+      session[:cur_baseurl] + '/me/profile/meta'
     elsif dialog_id.to_i > 0
       logger.info("application#after_sign_in_path_for setting path to dialog forum")
       session[:cur_baseurl] + "/dialogs/#{dialog_id}/forum"

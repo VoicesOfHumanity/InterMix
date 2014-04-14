@@ -45,6 +45,9 @@
 					}
 				}
 			});
+			$('#overview').click(function() {
+			  $('#welcomepopup').modal();
+			});
 			$('#whereami').tooltipster({
 				delay: 0,
 				position: 'right'
@@ -154,7 +157,10 @@
 		  <% end %>
 			</div>
 			
-			<div class="sidebarbox">Send questions and comments to <a href="mailto:questions@intermix.org">questions@intermix.org</a></div>
+			<div class="sidebarbox">
+				<img src="/assets/overview.gif" id="overview" style="margin: 14px 0 10px 21px;">
+			  Send questions and comments to <a href="mailto:questions@intermix.org">questions@intermix.org</a>  
+			</div>
 
 		</div>
 	</div>
@@ -186,6 +192,9 @@
 <div id="youareherediv" style="display:none">
 <%= render :partial => "front/youarehere" %>	
 </div>	
+<div id="welcomepopup" class="modaldiv">
+<%= render(:partial => 'dialogs/welcome')%>
+</div>
 
 </body>
 </html>

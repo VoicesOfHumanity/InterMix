@@ -137,7 +137,7 @@
 </div>
 
 
-<% if not current_participant.dialog_pop_shown -%>
+<% if false and not current_participant.dialog_pop_shown -%>
 <div id="welcomepopup" class="modaldiv">
 <%= render(:partial => 'dialogs/welcome')%>
 </div>
@@ -145,6 +145,7 @@
 $('#welcomepopup').modal();
 </script>
 <% end -%>
+
 <% if @from == 'result' -%> 
 <script>
 toggleoptions();

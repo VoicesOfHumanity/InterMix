@@ -69,19 +69,20 @@
 <%= render(:partial => 'items/list')%>
 </div>
 
-<script>
-var cur_item_id = 0;
-</script>
-<% if @new_signup -%>
+<% if false and @new_signup -%>
 <div id="welcomepopup" class="modaldiv">
 <%= render(:partial => 'dialogs/welcome')%>
 </div>
 <script>
 $('#welcomepopup').modal();
+</script>
+<% end -%>
+
+<script>
+var cur_item_id = 0;
 $(document).ready(function() {
 	if (!CKEDITOR) {
 		alert('CKEDITOR not defined');
 	}
 });
 </script>
-<% end -%>

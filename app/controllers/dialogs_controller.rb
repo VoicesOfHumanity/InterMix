@@ -209,12 +209,13 @@ class DialogsController < ApplicationController
     if not session[:has_required]
       session[:has_required] = current_participant.has_required
       if not session[:has_required]
-        redirect_to :controller => :profiles, :action=>:edit
+        #redirect_to :controller => :profiles, :action=>:edit
+        redirect_to '/me/profile/meta'
         return
       end
-    elsif current_participant.new_signup
-      redirect_to :controller => :profiles, :action=>:edit
-      return
+    #elsif current_participant.new_signup
+    #  redirect_to :controller => :profiles, :action=>:edit
+    #  return
     end
     
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
