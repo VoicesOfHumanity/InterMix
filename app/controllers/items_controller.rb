@@ -41,6 +41,10 @@ class ItemsController < ApplicationController
     @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id > 0
     @has_subgroups = (@limit_group and @limit_group.group_subtags.length > 1)
     
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@limit_group.id,current_participant.id).find(:first) if @limit_group
+    @is_member = @group_participant ? true : false
+    @is_moderator = (@group_participant and @group_participant.moderator) or current_participant.sysadmin
+    
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
       @rootonly = true
     end
@@ -358,6 +362,9 @@ class ItemsController < ApplicationController
   def prepare_edit
     #-- Get a few things ready for editing or adding an item
     @group = Group.find_by_id(@item.group_id) if @item.group_id > 0
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first) if @group
+    @is_member = @group_participant ? true : false
+    @is_moderator = (@group_participant and @group_participant.moderator) or current_participant.sysadmin
     if @item.dialog_id.to_i > 0
       @dialog_id = @item.dialog_id
       @dialog = Dialog.find_by_id(@item.dialog_id)
@@ -494,6 +501,8 @@ class ItemsController < ApplicationController
     @item.link = '' if @item.link == 'http://'
     
     @item.assign_attributes(params[:item])
+    
+    @item.censored = false if not params[:item][:censored] or params[:item][:censored].to_i == 0
 
     if not itemvalidate
       #render :text=>@xmessage, :layout=>false
@@ -519,6 +528,18 @@ class ItemsController < ApplicationController
       render :json=>results, :layout=>false
       #render :text=>showmess, :layout=>false
     #end   
+  end  
+  
+  def destroy
+    @from = params[:from] || ''
+    @item = Item.find(params[:id])
+    if Item.where("is_first_in_thread=0 and first_in_thread=#{@item.id}").count > 0
+      #-- It has replies, we can't delete
+      render :text => "Can't delete this item. It has replies", :layout => false
+      return
+    end  
+    @item.destroy
+    render :text => "The item has been deleted", :layout => false    
   end  
   
   def view

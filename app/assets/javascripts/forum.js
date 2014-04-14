@@ -295,6 +295,20 @@ function canceledit(id) {
 	    $(this).css('opacity','1.0');
 	});
 }
+function deleteitem() {
+    if (!confirm("Do you really want to delete this item?")) {
+        return;
+    }
+    id = curid;
+	$.ajax({
+	   type: 'DELETE',
+	   url: "/items/"+id,
+	   complete: function(t){
+	       $('#htmlcontent_'+id).html(t.responseText);
+		   $('#htmlcontent_'+id).css('opacity','1.0');
+	   }
+    });
+}
 function saveitem() {
 	id = curid;
 	var media_type = $('#item_media_type').val();

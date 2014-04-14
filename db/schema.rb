@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140403002640) do
+ActiveRecord::Schema.define(:version => 20140414010100) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -428,6 +428,7 @@ ActiveRecord::Schema.define(:version => 20140403002640) do
     t.datetime "tweeted_user_at"
     t.boolean  "tweeted_group",                                          :default => false
     t.datetime "tweeted_group_at"
+    t.boolean  "censored",                                               :default => false
   end
 
   add_index "items", ["created_at"], :name => "index_items_on_created_at"

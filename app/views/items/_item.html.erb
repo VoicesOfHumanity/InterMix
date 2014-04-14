@@ -77,7 +77,11 @@
 	</div>
 	<% end -%>
 		
-	<% if item.media_type == 'picture' -%>
+	<% if item.censored -%>	
+		
+		<div style="font-size:20pt;text-align:center;">Message Censored by Group Moderator</div>
+		
+	<% elsif item.media_type == 'picture' -%>
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
 		<div id="shortcontent_<%= item.id %>" class="htmlcontent"><img src="/images/data/items/<%= item.id %>/thumb.jpg" class="item_img_sm" alt="thumbnail"><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
 		<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none"><img src="/images/data/items/<%= item.id %>/big.jpg" class="item_img_lr" alt="picture"><br><%=raw item.short_content %></div>
@@ -144,7 +148,7 @@
 		</div>
 		<% end -%>
 		<div class="iteminfotxt">
-		<%= link_to_function 'edit', "edititem(#{item.id})", {:class=>'reply_link'} if participant_signed_in? and item.posted_by == current_participant.id and not item.edit_locked %>
+		<%= link_to_function 'edit', "edititem(#{item.id})", {:class=>'reply_link'} if participant_signed_in? and ((item.posted_by == current_participant.id and not item.edit_locked) or @is_moderator) %>
 		</div>
 	  <div class="iteminfotxt">
 		<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
