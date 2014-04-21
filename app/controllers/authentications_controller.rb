@@ -57,10 +57,10 @@ class AuthenticationsController < ApplicationController
           logger.info("authentications#create #{current_participant.id} authenticated")
           if session[:group_id].to_i > 0
             @group_id = session[:group_id]
-            @group_participant = GroupParticipant.where(:group_id=>@group.id,:participant_id=>@participant.id).first
+            @group_participant = GroupParticipant.where(:group_id=>@group_id,:participant_id=>@participant.id).first
             if not @group_participant
               #-- Add them as a group member, if they aren't already a member
-              @group_participant = GroupParticipant.new(:group_id=>@group.id,:participant_id=>@participant.id)
+              @group_participant = GroupParticipant.new(:group_id=>@group_id,:participant_id=>@participant.id)
               if @group.openness == 'open'
                 @group_participant.active = true
                 @group_participant.status = 'active'
