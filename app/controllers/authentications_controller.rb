@@ -60,16 +60,19 @@ class AuthenticationsController < ApplicationController
             @group_participant = GroupParticipant.where(:group_id=>@group_id,:participant_id=>@participant.id).first
             if not @group_participant
               #-- Add them as a group member, if they aren't already a member
-              @group_participant = GroupParticipant.new(:group_id=>@group_id,:participant_id=>@participant.id)
-              if @group.openness == 'open'
-                @group_participant.active = true
-                @group_participant.status = 'active'
-              else
-                #-- open_to_apply probably
-                @group_participant.active = false
-                @group_participant.status = 'applied'      
-              end
-              @group_participant.save
+              @group = Group.find_by_id(@group_id)
+              if @group
+                @group_participant = GroupParticipant.new(:group_id=>@group_id,:participant_id=>@participant.id)
+                if @group.openness == 'open'
+                  @group_participant.active = true
+                  @group_participant.status = 'active'
+                else
+                  #-- open_to_apply probably
+                  @group_participant.active = false
+                  @group_participant.status = 'applied'      
+                end
+                @group_participant.save
+              end  
             end  
           end  
           if session[:dialog_id].to_i > 0
