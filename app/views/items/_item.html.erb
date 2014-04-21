@@ -79,7 +79,7 @@
 		
 	<% if item.censored -%>	
 		
-		<div style="font-size:20pt;text-align:center;">Message Censored by Group Moderator</div>
+		<div id="htmlcontent_<%= item.id %>" class="htmlcontent"><p style="font-size:18px;text-align:center;">Message Censored by Group Moderator</p></div>
 		
 	<% elsif item.media_type == 'picture' -%>
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>

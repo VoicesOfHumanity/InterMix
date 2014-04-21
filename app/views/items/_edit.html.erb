@@ -145,7 +145,7 @@
 	<div style="width:50%;float:left;text-align:right">
 	  <% if @is_moderator -%>
      <input type="checkbox" id="item_censored" name="item[censored]" value="1"<%= " checked" if @item.censored %>> censored&nbsp;&nbsp;
-	    <% if Item.where("is_first_in_thread=0 and first_in_thread=#{@item.id}").count == 0 -%>
+	    <% if Item.where("reply_to=#{@item.id}").count == 0 -%>
 	      <input type="button" value="Delete" onclick="deleteitem()" />
 	    <% end -%>  
 	  <% end -%>

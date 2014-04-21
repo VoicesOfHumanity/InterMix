@@ -230,7 +230,7 @@ class ProfilesController < ApplicationController
       session[:has_required] = @participant.has_required
       
       if @goto != ''
-        redirect_to @goto
+        redirect_to @goto and return
       else        
         @subsection = 'view'
         render :action=>'index'
