@@ -1252,6 +1252,7 @@ class FrontController < ApplicationController
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
     cdata['domain'] = dom
+    cdata['forumurl'] = "http://#{dom}/groups/#{@group.id}/forum"
     
     #if @group.confirm_email_template.to_s.strip != ''
     #  template = Liquid::Template.parse(@group.confirm_email_template)
