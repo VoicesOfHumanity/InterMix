@@ -16,7 +16,14 @@
 		  <% if gp.moderator or session[:is_hub_admin] or session[:is_sysadmin] -%>
 		  <a href="http://<%= dom %>/groups/<%= gp.group.id %>/admin">administrate</a> 
 		  <% end -%>
-		<a href="http://<%= dom %>/groups/<%= gp.group.id %>/unjoin" onclick="return confirm('Are you sure you want to leave this group?')">leave</a></li>
+		  <a href="http://<%= dom %>/groups/<%= gp.group.id %>/unjoin" onclick="return confirm('Are you sure you want to leave this group?')">leave</a>
+		  <% if gp.group.dialogs.length > 0 -%>
+    	  <% for dialog in gp.group.dialogs -%>
+    	    <% ddom = dialog.shortname + '.' + dom %>
+    		  <br>&nbsp;&nbsp;&nbsp;&nbsp;Group Discussion: <a href="http://<%= ddom %>/dialogs/<%= dialog.id %>/forum?group_id=<%= gp.group.id %>"><%= dialog.name %></a>
+    	  <% end -%>
+    	<% end -%>
+		</li>
 	<% end -%>
 <% end -%>
 </ul>
