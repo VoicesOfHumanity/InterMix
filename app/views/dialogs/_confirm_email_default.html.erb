@@ -4,11 +4,21 @@
 
 <p>You have successfully signed up with "<b>{{ group.name }}</b>". Welcome!</p>
 
-<p>If you did not sign up for the group, simply ignore this email.</p>
+{% if participant.fb_uid %}
+  
+  <p>You will be able to <a href="{{ forumurl }}">log in</a> simply using your Facebook login. If you're already logged into Facebook, you get logged in automatically when you go to the <a href="{{ forumurl }}">message list</a>.</p>
 
-<p>Please confirm your sign-up by clicking the following link: {{ confirmlink }}. If the link doesn't work, copy and paste it into your browser window.</p>
+  <p>If at any point you should choose to not use your Facebook login, you can also log in with this information:</p>
 
-<p>Your user-id and password can be used to sign-in at <a href="http://{{ domain }}">{{ domain }}</a>. You must click the confirm link above before your password will work.</p>
+{% else %}
+
+  <p>If you did not sign up for the group, simply ignore this email.</p>
+
+  <p>Please confirm your sign-up by clicking the following link: {{ confirmlink }}. If the link doesn't work, copy and paste it into your browser window.</p>
+
+  <p>Your user-id and password can be used to sign-in at <a href="http://{{ domain }}">{{ domain }}</a>. You must click the confirm link above before your password will work.</p>
+
+{% endif %}
 
 <p>User-ID: {{ participant.email }}<br>
 Password: {{ password }}</p>

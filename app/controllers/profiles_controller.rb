@@ -174,7 +174,7 @@ class ProfilesController < ApplicationController
           else
             MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
           end  
-        elsif metamap_nodes[metamap_id] and metamap_nodes[metamap_id][1].to_i > 0
+        elsif not params[:meta].has_key?("#{metamap_id}") and metamap_nodes[metamap_id] and metamap_nodes[metamap_id][1].to_i > 0
           # We didn't get it, but it is already filled in, so no problem
         elsif metamap_id==3 or metamap_id==5   
            flash.now[:alert] += "#{metamap_name} is required by InterMix<br>"
