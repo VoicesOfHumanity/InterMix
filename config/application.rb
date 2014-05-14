@@ -96,6 +96,9 @@ GROUP_MESSAGE_VISIBILITY_TEXT = {'private'=>"private: non-members can't visit an
 GROUP_PARTICIPANT_STATUSES = ['active', 'pending', 'invited', 'applied', 'denied', 'blocked']
 GROUP_PARTICIPANT_STATUSES_TEXT = {'active'=>"Active group membership", 'pending'=>"Joined, but not yet active. Probably didn't yet confirm email.", 'invited'=>"Has been invited as a member, but has not yet accepted.", 'applied'=>"Has applied to become a member. Not yet approved.", 'denied'=>"Membership not accepted", 'blocked'=>"Not allowed in this group"}
 
+CROSSTALK_OPTIONS = ['','gender','gender1','age','age1'] 
+CROSSTALK_OPTIONS_TEXT = {''=>'No Crosstalk','gender'=>'Gender Crosstalk','gender1'=>'Gender Crosstalk 1st round','age'=>'Age Crosstalk','age1'=>'Age Crosstalk 1st round'}
+
 EMAIL_PREFS = ['instant','daily','weekly','never']
 EMAIL_PREFS_TEXT = {'instant'=>'E-mail each one right away','daily'=>'E-mail in a daily batch','weekly'=>'E-mail in a weekly batch','never'=>'Never e-mail'}
 ITEM_TYPES = ['message']

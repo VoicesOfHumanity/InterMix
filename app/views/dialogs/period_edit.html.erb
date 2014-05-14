@@ -29,6 +29,7 @@
 		<%= f.input :startdate, :label=>"Start date (YYYY-MM-DD)" %>
 		<%= f.input :endposting, :label=>"Posting final date (YYYY-MM-DD)" %>
 		<%= f.input :endrating, :label=>"Rating final date (YYYY-MM-DD)" %>
+		<%= f.input :crosstalk, :label=>"crosstalk", :as => :select, :collection => CROSSTALK_OPTIONS_TEXT.collect{|code,txt| [txt,code]} %>
 		<% f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>
 		<%= f.input :max_characters %>
 		<%= f.input :max_words %>

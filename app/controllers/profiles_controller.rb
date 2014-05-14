@@ -233,11 +233,11 @@ class ProfilesController < ApplicationController
         redirect_to @goto and return
       else        
         @subsection = 'view'
-        render :action=>'index'
+        render :action=>'index' and return
       end
     else
       @subsection = 'edit'
-      render :action => "edit"
+      render :action => "edit" and return
     end
   end
     

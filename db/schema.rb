@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140414010100) do
+ActiveRecord::Schema.define(:version => 20140514203237) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -644,6 +644,7 @@ ActiveRecord::Schema.define(:version => 20140414010100) do
     t.boolean  "voting_open",           :default => true
     t.integer  "sort_metamap_id"
     t.string   "sort_order",            :default => "date"
+    t.string   "crosstalk",             :default => "none"
   end
 
   add_index "periods", ["dialog_id", "startdate"], :name => "index_periods_on_dialog_id_and_startdate"
