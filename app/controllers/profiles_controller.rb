@@ -223,6 +223,7 @@ class ProfilesController < ApplicationController
         rescue Exception => e
           logger.info("profiles#{update} FAILED delivering email to #{@participant.email}: #{e}")
           flash[:notice] += "Failed to send you a test message to #{@participant.email}<br>"
+          return if performed?     # strange bug, where postmark error triggers a double-render error
         end
       end
       

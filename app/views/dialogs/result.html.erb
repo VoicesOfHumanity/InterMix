@@ -189,7 +189,7 @@
 
 <% end -%>
 
-<% if @limit_group_id == 0 and @dialog.active_groups.length > 1 -%>
+<% if @limit_group_id == 0 and @dialog.active_groups.length > 1 and not (@short_full == 'gender' or @short_full == 'age') -%>
 <% for group in @dialog.groups.sort {|a,b| a.name <=> b.name} -%>
 	<% group_id = group.id %>
 	<div>
