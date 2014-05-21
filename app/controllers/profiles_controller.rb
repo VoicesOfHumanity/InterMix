@@ -217,9 +217,9 @@ class ProfilesController < ApplicationController
         subject = "Your InterMix email address has been changed"
         html_content = "<p>This is a test of your new InterMix email address. If you received this, all is good.</p>"
         emailmess = SystemMailer.template(SYSTEM_SENDER, @participant.email, subject, html_content, @cdata)
+        flash.now[:notice] += "A test message has been sent to your new email address, #{@participant.email}. If it does not arrive in the next two or three minutes, please first check your spam folder, and if it is not there, then double check to make sure there were no typos in the new email you just provided.<br>"        
         begin
           emailmess.deliver
-          flash.now[:notice] += "A test message has been sent to your new email address, #{@participant.email}. If it does not arrive in the next two or three minutes, please first check your spam folder, and if it is not there, then double check to make sure there were no typos in the new email you just provided.<br>"        
         rescue Exception => e
           logger.info("profiles#{update} FAILED delivering email to #{@participant.email}: #{e}")
           flash[:notice] += "Failed to send you a test message to #{@participant.email}<br>"
