@@ -6,9 +6,18 @@
 <p>This Decision Period is still open. These results are preliminary and subject to change.</p>
 <% end -%>
 
+<%
+short_full_a = [['short list','short'],['medium list','medium'],['full list','full']]
+if @period and @period.crosstalk == 'gender'
+  short_full_a << ['by gender','gender']
+elsif @period and @period.crosstalk == 'age'
+  short_full_a << ['by age','age']
+end
+%>
+
 <p>
 	<%= select_tag :period_id, options_for_select([['* all messages *',0]]+@dialog.periods.collect{|p| [p.name,p.id]},@period_id), :onchange=>"reload()" %>
-	<%= select_tag :short_full, options_for_select([['short list','short'],['medium list','medium'],['full list','full'],['by gender','gender'],['by age','age']],@short_full), :onchange=>"reload()" %>
+	<%= select_tag :short_full, options_for_select(short_full_a,@short_full), :onchange=>"reload()" %>
 	<%= select_tag :less_more, options_for_select([['less info','less'],['more info','more']],@less_more),:style=>"display:#{(@short_full=='short' or @short_full=='gender' or @short_full=='age') ? "none" : "inline"}",:onchange=>"reload()" %>
 	<%= select_tag :regress, options_for_select([['regress to mean','regress'],['raw scores','raw']],@regress),:style=>"display:#{(@short_full=='short' or @short_full=='gender' or @short_full=='age') ? "none" : "inline"}",:onchange=>"reload()" %>
 	<%= select_tag :limit_group_id, options_for_select([['all groups',0]]+@dialog.groups.collect{|c| [c.name,c.id]},@limit_group_id), :style=>"display:#{(@short_full=='short' or @short_full=='gender' or @short_full=='age') ? "none" : "inline"}", :onchange=>"reload()" %>	
@@ -109,18 +118,19 @@
   			<% if @data[metamap.id]['matrix']['post_rate'][metamap_node_id].length > 0 %>
     			<% for rate_metamap_node_id,rdata in @data[metamap.id]['matrix']['post_rate'][metamap_node_id] %>
     			  <% if rate_metamap_node_id == metamap_node_id -%>
+    			    <% if false -%>
       				<b><span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> winner chosen by <span title="<%= rate_metamap_node_id %>"><%= @data[metamap.id]['nodes'][rate_metamap_node_id][0] %></span> raters (<%= @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['items'].length %> items, <%= @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['ratings'].length %> votes):</b><br>			
+      				<% end -%>
       				<% for item_id,i in @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] -%>
-      					<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a><br>
       					<% item = @data[0]['items'][item_id] %>
-      					<% iproc = @data[0]['itemsproc'][item_id] %>
-      					<% @itemsproc = @data[0]['itemsproc'] %>
-      					
-        				<%= render :partial => "items/item", :locals => { :item => item, :itemproc=>iproc, :is_reply => false, :odd_or_even => 0, :from=>'result', :top=>0, :exp_item_id=>item_id } %>
-      					
-      					
-      					author: <%=raw i['name'] %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, controversy: <%= sprintf("%.1f",i['controversy'])  %>, ratings:<%=  i['num_raters']  %><br>
-      					<% break %>
+                <% iproc = @data[0]['itemsproc'][item_id] %> 
+                <% @itemsproc = @data[0]['itemsproc'] %>      					
+      					   					
+      					<div class="forumitem forumitemplain forummain forum1">   					
+        				<%= render :partial => "items/item_simple", :locals => { :item => item, :itemproc=>iproc, :from=>'result' } %>
+      					</div>      			
+      					      					
+       					<% break %>
       				<% end -%>
       				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>">see all in the forum list</a>]<br><br>
       			  <% gotdata = true %>

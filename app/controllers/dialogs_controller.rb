@@ -641,20 +641,10 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0)
-    @period_id = params[:period_id].to_i
-
-    @short_full = params[:short_full] || 'short'
     @less_more = params[:less_more] || 'less'
 
-    if @short_full == 'short'
-      @limit_group_id = 0
-      @regress = 'regress'
-    else  
-      @limit_group_id = (params[:limit_group_id] || 0).to_i
-      @limit_group = @limit_group_id > 0 ? Group.find_by_id(@limit_group_id) : nil
-      @regress = params[:regress] || 'regress'
-    end
-    
+    @period_id = params[:period_id].to_i
+
     if not params.include?(:period_id) 
       if @dialog.current_period.to_i > 0
         #-- Use the current period, if we aren't being told anything else
@@ -666,6 +656,32 @@ class DialogsController < ApplicationController
       end
     end
     @period = Period.find_by_id(@period_id) if not @period
+
+    if params[:short_full].to_s != ''
+      @short_full = params[:short_full]
+      if not @period and (@short_full == 'gender' or @short_full == 'age')
+        @short_full = 'short'
+      end  
+    end  
+      
+    if @short_full.to_s != ''
+    elsif @period and @period.crosstalk == 'gender'
+      @short_full = 'gender'
+    elsif @period and @period.crosstalk == 'age'
+      @short_full = 'age'
+    else
+      @short_full = 'short'
+    end
+
+    if @short_full == 'short'
+      @limit_group_id = 0
+      @regress = 'regress'
+    else  
+      @limit_group_id = (params[:limit_group_id] || 0).to_i
+      @limit_group = @limit_group_id > 0 ? Group.find_by_id(@limit_group_id) : nil
+      @regress = params[:regress] || 'regress'
+    end
+    
     
     #@regmean = ((params[:regmean] || 1).to_i == 1)
     @regmean = (@regress == 'regress')
