@@ -660,14 +660,18 @@ class DialogsController < ApplicationController
     if params[:short_full].to_s != ''
       @short_full = params[:short_full]
       if not @period and (@short_full == 'gender' or @short_full == 'age')
+        #-- If gender/age is no longer set (period changed), make sure they aren't selected
         @short_full = 'short'
+      elsif (@period and params[:period_id_bef].to_i > 0 and @period.id != params[:period_id_bef].to_i)
+        #-- If period was changed, move back to default short_full
+        @short_full = ''
       end  
     end  
       
     if @short_full.to_s != ''
-    elsif @period and @period.crosstalk == 'gender'
+    elsif @period and (@period.crosstalk == 'gender' or @period.crosstalk == 'gender1')
       @short_full = 'gender'
-    elsif @period and @period.crosstalk == 'age'
+    elsif @period and (@period.crosstalk == 'age' or @period.crosstalk == 'age1')
       @short_full = 'age'
     else
       @short_full = 'short'
@@ -1149,9 +1153,7 @@ class DialogsController < ApplicationController
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_name'] = metamap_node_name
       end  # ratings
 
-      #-- Put nodes in sorting order and/or alphabetical order
-      #@data[metamap.id]['nodes_sorted'] = @data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
-      @data[metamap.id]['nodes_sorted'] = @data[metamap.id]['nodes'].sort {|a,b| [a[1][1].sortorder,a[1][0]]<=>[b[1][1].sortorder,b[1][0]]}
+      #-- nodes_sorted moved from here
 
       #-- Adding up stats for postedby items. I.e. items posted by people in that meta.
       @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
@@ -1380,6 +1382,35 @@ class DialogsController < ApplicationController
           @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'] = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
 
         end
+      end
+      
+      if ((@short_full == 'gender' and metamap.id == 3) or (@short_full == 'age' and metamap.id == 5))
+        #-- We'd want nodes in order of value of the top item. Hm, that's tricky
+      	for metamap_node_id,minfo in @data[metamap.id]['nodes']
+      		metamap_node_name = minfo[0]
+      		metamap_node = minfo[1]
+      		@data[metamap.id]['nodes'][metamap_node_id][2] = 0
+          if  @data[metamap.id]['postedby']['nodes'][metamap_node_id] and  @data[metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length > 0
+      			if @data[metamap.id]['matrix']['post_rate'][metamap_node_id].length > 0
+        			for rate_metamap_node_id,rdata in @data[metamap.id]['matrix']['post_rate'][metamap_node_id]
+        			  if rate_metamap_node_id == metamap_node_id
+          				for item_id,i in @data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc']
+          					item = @data[0]['items'][item_id]
+                    iproc = @data[0]['itemsproc'][item_id]
+                    #-- It should really be by iproc['value'] but somehow that doesn't work.
+                    @data[metamap.id]['nodes'][metamap_node_id][2] = item.value
+                		break
+                  end
+                end
+              end
+            end
+          end
+        end            
+        @data[metamap.id]['nodes_sorted'] = @data[metamap.id]['nodes'].sort {|a,b| [b[1][2],a[1][1].sortorder,a[1][0]]<=>[a[1][2],b[1][1].sortorder,b[1][0]]}
+      else
+        #-- Put nodes in sorting order and/or alphabetical order
+        #@data[metamap.id]['nodes_sorted'] = @data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
+        @data[metamap.id]['nodes_sorted'] = @data[metamap.id]['nodes'].sort {|a,b| [a[1][1].sortorder,a[1][0]]<=>[b[1][1].sortorder,b[1][0]]}
       end
 
     end # metamaps

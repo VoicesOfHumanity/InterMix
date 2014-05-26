@@ -8,15 +8,16 @@
 
 <%
 short_full_a = [['short list','short'],['medium list','medium'],['full list','full']]
-if @period and @period.crosstalk == 'gender'
+if @period and (@period.crosstalk == 'gender' or @period.crosstalk == 'gender1')
   short_full_a << ['by gender','gender']
-elsif @period and @period.crosstalk == 'age'
+elsif @period and (@period.crosstalk == 'age' or @period.crosstalk == 'age1')
   short_full_a << ['by age','age']
 end
 %>
 
 <p>
 	<%= select_tag :period_id, options_for_select([['* all messages *',0]]+@dialog.periods.collect{|p| [p.name,p.id]},@period_id), :onchange=>"reload()" %>
+	<%= hidden_field_tag :period_id_bef, @period_id.to_i %>
 	<%= select_tag :short_full, options_for_select(short_full_a,@short_full), :onchange=>"reload()" %>
 	<%= select_tag :less_more, options_for_select([['less info','less'],['more info','more']],@less_more),:style=>"display:#{(@short_full=='short' or @short_full=='gender' or @short_full=='age') ? "none" : "inline"}",:onchange=>"reload()" %>
 	<%= select_tag :regress, options_for_select([['regress to mean','regress'],['raw scores','raw']],@regress),:style=>"display:#{(@short_full=='short' or @short_full=='gender' or @short_full=='age') ? "none" : "inline"}",:onchange=>"reload()" %>
@@ -132,7 +133,7 @@ end
       					      					
        					<% break %>
       				<% end -%>
-      				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>">see all in the forum list</a>]<br><br>
+      				[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>">see in the forum list</a>]<br><br>
       			  <% gotdata = true %>
       			<% end -%>
     			<% end -%>
