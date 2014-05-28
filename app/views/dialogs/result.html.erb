@@ -236,6 +236,7 @@ function reload() {
 	var less_more = $('#less_more').val();
 	var regress = $('#regress').val();
 	var period_id = $('#period_id').val();;
+	var period_id_bef = $('#period_id_bef').val();;
 	var limit_group_id = $('#limit_group_id').val();
 	if (short_full=='short' || short_full=='gender' || short_full=='age') {
 		$('#less_more').hide();
@@ -244,6 +245,6 @@ function reload() {
 		$('#less_more').show();
 		$('#regress').show();
 	}
-	window.location.href = "?period_id=" + period_id + "&short_full=" +  short_full + '&less_more=' + less_more + '&regress=' + regress + '&limit_group_id=' + limit_group_id;	
+	window.location.href = "?period_id=" + period_id + "&short_full=" +  short_full + '&less_more=' + less_more + '&regress=' + regress + '&limit_group_id=' + limit_group_id + '&period_id_bef=' + period_id_bef;	
 }
 </script>

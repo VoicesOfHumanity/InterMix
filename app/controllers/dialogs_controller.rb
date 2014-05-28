@@ -677,7 +677,7 @@ class DialogsController < ApplicationController
       @short_full = 'short'
     end
 
-    if @short_full == 'short'
+    if @short_full == 'short' or @short_full == 'gender' or @short_full == 'age'
       @limit_group_id = 0
       @regress = 'regress'
     else  
