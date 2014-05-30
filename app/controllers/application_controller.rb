@@ -199,6 +199,21 @@ class ApplicationController < ActionController::Base
     session[:is_sysadmin] = current_participant.sysadmin
     session[:is_anyadmin] = (session[:is_group_moderator] or session[:is_hub_admin] or session[:is_sysadmin])
   
+    if dialog_id.to_i>0 and group_id.to_i > 0
+      @group = Group.find_by_id(group_id) if not @group
+      #-- Check if they're a member of the group. If not, join them
+      if @group.openness == 'open'
+        group_participant = GroupParticipant.where("participant_id=#{current_participant.id} and group_id=#{group_id}").first
+        if not group_participant
+          group_participant = GroupParticipant.new(:group_id=>group_id,:participant_id=>current_participant.id)
+          group_participant.active = true
+          group_participant.status = 'active'
+          group_participant.save
+          session[:group_is_member] = true
+        end
+      end
+    end  
+  
     if params[:fb_sig_in_iframe].to_i == 1
       session[:cur_baseurl] + '/fbapp'
     elsif not session[:has_required]
