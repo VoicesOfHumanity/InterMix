@@ -1382,7 +1382,7 @@ class GroupsController < ApplicationController
     #-- Look up a few pieces of information about the group and group member, for menus, etc.
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator) or current_participant.sysadmin
+    @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     @has_dialog = (@group.active_dialogs.length > 0)
   end
 

@@ -364,7 +364,7 @@ class ItemsController < ApplicationController
     @group = Group.find_by_id(@item.group_id) if @item.group_id > 0
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first) if @group
     @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator) or current_participant.sysadmin
+    @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     if @item.dialog_id.to_i > 0
       @dialog_id = @item.dialog_id
       @dialog = Dialog.find_by_id(@item.dialog_id)
@@ -562,7 +562,7 @@ class ItemsController < ApplicationController
       if participant_signed_in?
         @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
         @is_member = @group_participant ? true : false
-        @is_moderator = @group_participant and @group_participant.moderator
+        @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
       else
         @is_member = false
         @is_moderator = false
@@ -656,7 +656,7 @@ class ItemsController < ApplicationController
       @group = Group.includes(:owner_participant).find(@group_id)
       @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
       @is_member = @group_participant ? true : false
-      @is_moderator = @group_participant and @group_participant.moderator
+      @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     end
 
     if participant_signed_in? and current_participant.forum_settings

@@ -69,7 +69,7 @@ class DialogsController < ApplicationController
     @group = Group.find(params[:id])
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = @group_participant and @group_participant.moderator
+    @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     update_last_url
     update_prefix
   end
@@ -417,7 +417,7 @@ class DialogsController < ApplicationController
     @group = Group.find(@group_id)
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
     @is_member = @group_participant ? true : false
-    @is_moderator = (@group_participant and @group_participant.moderator)
+    @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first   
   end
   
