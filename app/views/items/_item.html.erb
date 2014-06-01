@@ -148,8 +148,6 @@
 		</div>
 		<% end -%>
 		<div class="iteminfotxt">
-		<%= "@is_moderator:#{@is_moderator}" %>  
-		  
 		<%= link_to_function 'edit', "edititem(#{item.id})", {:class=>'reply_link'} if participant_signed_in? and ((item.posted_by == current_participant.id and not item.edit_locked) or @is_moderator) %>
 		</div>
 	  <div class="iteminfotxt">
