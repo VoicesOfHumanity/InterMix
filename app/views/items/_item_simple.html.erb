@@ -2,6 +2,15 @@
 
 <%=raw sanitizethis(item.html_content) if item.html_content.to_s != '' %>
 
+<div class="itemvoting">
+		<div id="iteminfotxt_<%= item.id %>" class="votesection summary" style="float:right;" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="summaryswitch(<%= item.id %>,0)"<% else %>onmouseover="summary(<%= item.id %>,0)" onmouseout="nosummary(<%= item.id %>,0)"<% end %>>
+			sum
+		</div>
+		<div id="sum_<%= item.id %>" class="iteminfo_summary" style="display:none">
+<%= render :partial => "items/rating_summary", :locals => { :item => item} %>
+		</div>
+</div>
+
 <div class="iteminfo">
 
 <div class="iteminfotxt">
@@ -57,5 +66,7 @@
 <div class="iteminfotxt">	
 	<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
 </div>
+
+ 
 
 </div><!--iteminfo-->
