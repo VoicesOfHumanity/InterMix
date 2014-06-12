@@ -1333,7 +1333,6 @@ class DialogsController < ApplicationController
             mdata['ratings'].each do |rating_id,rating|
               if rating.item_id == item.id
                 iproc['votes'] += 1
-                iproc['num_raters'] +=1 if rating.interest or rating.approval
                 if rating.interest
                   iproc['num_interest'] += 1
                   iproc['tot_interest'] += rating.interest.to_i
