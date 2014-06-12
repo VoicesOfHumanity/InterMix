@@ -1,6 +1,14 @@
 <div class="title">rating summary</div>
 
-<% if @itemsproc and @itemsproc[item.id] -%>
+<% if defined? itemproc -%>
+
+Average interest: <b><%= sprintf("%.1f", itemproc['avg_interest'] ? itemproc['avg_interest'] : 0.0) %></b><br/>
+Average approval: <b><%= sprintf("%.1f", itemproc['avg_approval'] ? itemproc['avg_approval'] : 0.0) %></b><br/>
+Value: <b><%= sprintf("%.1f", itemproc['value'] ? itemproc['value'] : 0.0) %></b> (value = interest x approval)<br/>
+Controversy: <b><%= sprintf("%.1f", itemproc['controversy'] ? itemproc['controversy'] : 0.0) %></b> (maximum=9)<br/>
+Number of raters: <b><%= itemproc['num_raters'] %></b><br/>
+
+<% elsif @itemsproc and @itemsproc[item.id] -%>
 
 <% @isum = @itemsproc[item.id] %>
 
