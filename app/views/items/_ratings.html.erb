@@ -30,7 +30,7 @@
 	<% for item in @items -%>
 		<% odd_or_even = 1-odd_or_even%>
 		<div class="forumitem forumitemplain forummain forum<%= odd_or_even %>" id="item_<%= item.id %>">
-			<%= render :partial => "items/item", :locals => { :item => item, :itemproc=>@itemsproc[item.id], :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0 } %>
+			<%= render :partial => "items/item", :locals => { :item => item, :itemproc=>@itemsproc[item.id], :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0, :exp_item_id=>@exp_item_id.to_i } %>
 			
 			<% if @itemsproc[item.id]['ratings'].length > 0 %>
 			
