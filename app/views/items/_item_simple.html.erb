@@ -19,9 +19,9 @@
 <% if not participant_signed_in? and ( @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread ) -%>
 <%= item.participant ? item.participant.name : item.posted_by %>		
 <% elsif item.dialog and item.dialog.current_period.to_i > 0 and item.period_id==item.dialog.current_period and not item.dialog.settings_with_period["names_visible_voting"] and item.is_first_in_thread -%>
-[<%= current_user.sysadmin ? "(#{item.participant.name}) " : '' %>name withheld during decision period]
+[<%= current_participant.sysadmin ? "(#{item.participant.name}) " : '' %>name withheld during decision period]
 <% elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"] and item.is_first_in_thread -%>
-[<%= current_user.sysadmin ? "(#{item.participant.name}) " : '' %>name withheld for this discussion]
+[<%= current_participant.sysadmin ? "(#{item.participant.name}) " : '' %>name withheld for this discussion]
 <% elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"] -%>
 <%= item.participant ? item.participant.name : item.posted_by %>
 <% elsif not participant_signed_in? -%>
