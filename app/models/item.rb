@@ -518,7 +518,7 @@ class Item < ActiveRecord::Base
     items = items.order("items.id")
 
     extras['sql'] = items.to_sql
-    logger.info("item#list_and_results SQL: #{items.to_sql}")    
+    logger.info("item#list_and_results selected #{items.length} rows with SQL: #{items.to_sql}")    
     #logger.info("item#list_and_results first attributes: #{items[0].attributes} if items[0] ")
     
     #-- Now we have the items. We'll sort them further down, after we have stats for them, in case we sort by that.
@@ -696,6 +696,8 @@ class Item < ActiveRecord::Base
 
     end
     
+    logger.info("item#list_and_results we have #{items2.length} items after removing non-roots");
+    
     # We're probably no longer using the global numbers, as we've added them up just now
     # ['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']  
   
@@ -778,6 +780,8 @@ class Item < ActiveRecord::Base
       #-- Already sorted in ID order
       items = items2
     end
+
+    logger.info("item#list_and_results returning #{items.length} items, #{itemsproc.length} itemsproc");
     
     return [items, itemsproc, extras]
     

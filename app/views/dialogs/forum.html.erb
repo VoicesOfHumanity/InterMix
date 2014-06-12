@@ -67,7 +67,8 @@
 		<%= select_tag "limit_group_id", options_for_select([['All messages',0]]+@groups.collect{|c| [c.name,c.id]},@limit_group_id), :onchange=>"list('limit_group_id')" %>
 		</div>
 		<% else -%>
-		<%= hidden_field_tag :limit_group_id, @groups.length>0 ? @groups[0].id : @limit_group_id %>	
+		<% hidden_field_tag :limit_group_id, @groups.length>0 ? @groups[0].id : @limit_group_id %>	
+		<%= hidden_field_tag :limit_group_id, @limit_group_id %>	
 		<% end -%>
 	
 		<div class="lefttitle">Posted from Country:</div>

@@ -192,6 +192,14 @@ class DialogsController < ApplicationController
     @from = params[:from] || 'dialog'
     @ratings = params[:ratings]
     @exp_item_id = (params[:exp_item_id] || 0).to_i
+    @tag = params[:tag].to_s
+    @subgroup = params[:subgroup].to_s
+    @posted_by_country_code = (params[:posted_by_country_code] || '').to_s
+    @posted_by_admin1uniq = (params[:posted_by_admin1uniq] || '').to_s
+    @posted_by_metro_area_id = (params[:posted_by_metro_area_id] || 0).to_i
+    @rated_by_country_code = (params[:rated_by_country_code] || '').to_s
+    @rated_by_admin1uniq = (params[:rated_by_admin1uniq] || '').to_s
+    @rated_by_metro_area_id = (params[:rated_by_metro_area_id] || 0).to_i
     session[:group_id] = params[:group_id].to_i if params[:group_id].to_i > 0    
     @dialog_id = params[:id].to_i if not @dialog_id
     @period_id = (params[:period_id] || 0).to_i
@@ -206,6 +214,8 @@ class DialogsController < ApplicationController
       @period = @dialog.active_period
       @period_id = @dialog.active_period.id
     end    
+    @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id > 0
+    @has_subgroups = (@limit_group and @limit_group.group_subtags.length > 1)
     
     if not session[:has_required]
       session[:has_required] = current_participant.has_required
@@ -249,7 +259,7 @@ class DialogsController < ApplicationController
     
     #get_params = Rack::Utils.parse_query request.fullpath
     
-    if @dialog.active_period and not (params[:perscr].to_i==100 and params[:threads]=='flat' and not params.include?(:page))
+    if @dialog.active_period and not @from=='result' and not (params[:perscr].to_i==100 and params[:threads]=='flat' and not params.include?(:page))
       @sortby = 'default'
     end
       
@@ -294,7 +304,12 @@ class DialogsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
 
-      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant)
+      #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant)
+
+      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
+
+      #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
+
 
     else
       #-- The old way
