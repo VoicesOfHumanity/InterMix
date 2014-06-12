@@ -1385,17 +1385,25 @@ class DialogsController < ApplicationController
             #-- Go through the items again and do a regression to the mean
             mdata['items'].each do |item_id,item|
               iproc = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id]
+              iproc['ratingwithregmean'] = ''
               if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
+                old_num_interest = iproc['num_interest']
+                old_tot_interest = iproc['tot_interest']
                 iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
                 iproc['num_interest'] = @avg_votes_int
                 iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+                iproc['ratingwithregmean'] += "int votes adjusted #{old_num_interest} -> #{iproc['num_interest']}. int total adjusted #{old_tot_interest} -> #{iproc['tot_interest']}<br>"
               end  
               if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
+                old_num_approval = iproc['num_approval']
+                old_tot_approval = iproc['tot_approval']
                 iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
                 iproc['num_approval'] = @avg_votes_app
                 iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+                iproc['ratingwithregmean'] += "app votes adjusted #{old_num_approval} -> #{iproc['num_approval']}. app total adjusted #{old_tot_approval} -> #{iproc['tot_approval']}<br>"
               end  
               iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+              iproc['ratingwithregmean'] += "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
               @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id] = iproc
             end
           end
