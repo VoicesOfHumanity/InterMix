@@ -133,7 +133,22 @@ end
                   [<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>">see in the forum list</a>]
                 </div>
       					</div>      			
-      					      					
+            		
+            		<% if params[:ratings] and i['ratings'].length > 0 -%>
+              		<b>Ratings summary, no regression to the mean:</b><br>
+              		<%=raw i['ratingnoregmean'] %><br> 
+              		<% if i['ratingwithregmean'] -%>  
+              			<b>Ratings summary, after regression to the mean:</b><br>
+              			<%=raw i['ratingwithregmean'] %>
+                  <% end %>
+                  <b>Ratings:</b><br>
+                  <% i['ratings'].each do |r| %>  
+                    <%= "#{r.created_at} by user:#{r.participant_id} in group:#{r.group_id} discussion:#{r.dialog_id} period:#{r.period_id} interest:#{r.interest ? r.interest.to_i : '-'} approval:#{r.approval ? r.approval.to_i : '-'}" %><br>
+                  <% end -%>
+                <% elsif params[:ratings] -%>
+                  <b>No ratings</b><br>    
+            		<% end -%>
+            		      					      					
        					<% break %>
       				<% end -%>
       			  <% gotdata = true %>
