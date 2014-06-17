@@ -547,11 +547,11 @@ class Item < ActiveRecord::Base
           xitems[item.id] = true
         end
       end
-      #xrates = Rating.where("not ratings.interest is null").select("count(distinct(item_id)) as num_int_items,count(ratings.interest) as num_interest,sum(ratings.interest) as tot_interest")
-      xrates = Rating.scoped
-      xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
-      xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
-      xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
+      #xrates = Rating.scoped
+      #xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
+      #xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
+      #xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
+      xrates = ratings
       num_interest = 0
       num_approval = 0
       tot_interest = 0 
