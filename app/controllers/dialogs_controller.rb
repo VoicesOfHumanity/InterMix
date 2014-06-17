@@ -1491,9 +1491,9 @@ class DialogsController < ApplicationController
           @avg_votes_app = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_app']
           @avg_interest  = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_interest']
           @avg_approval  = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_approval']
-          if metamap.id == 3
-            logger.info("dialogs#result @data[#{metamap.id}]['matrix']['post_rate'][#{item_metamap_node_id}][#{rate_metamap_node_id}]: #{@data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id].inspect}")
-          end
+          #if metamap.id == 3
+          #  logger.info("dialogs#result @data[#{metamap.id}]['matrix']['post_rate'][#{item_metamap_node_id}][#{rate_metamap_node_id}]: #{@data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id].inspect}")
+          #end
           
           if @regmean
             #-- Go through the items again and do a regression to the mean
