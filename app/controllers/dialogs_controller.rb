@@ -1061,7 +1061,7 @@ class DialogsController < ApplicationController
         'nodes' => {}
       }    
       @data[metamap.id]['ratedby'] = {     # stats for what was rated by people in those meta categories
-        'nodes' => {}      
+        'nodes' => {}
       }
       @data[metamap.id]['matrix'] = {      # stats for posted by meta cats crossed by rated by metacats
         'post_rate' => {},
@@ -1098,7 +1098,19 @@ class DialogsController < ApplicationController
             'items' => {},
             'itemsproc' => {},
             'posters' => {},
-            'ratings' => {}
+            'ratings' => {},
+            'ratings' => {},
+            'num_raters' => 0,
+            'num_int_items' => 0,
+            'num_app_items' => 0,
+            'num_interest' => 0,
+            'num_approval' => 0,
+            'tot_interest' => 0,
+            'tot_approval' => 0,
+            'avg_votes_int' => 0,
+            'avg_votes_app' => 0,
+            'avg_interest' => 0,
+            'avg_approval' => 0      
           }
         end
         if not @data[metamap.id]['matrix']['post_rate'][metamap_node_id]
@@ -1135,7 +1147,18 @@ class DialogsController < ApplicationController
             'items' => {},
             'itemsproc' => {},
             'raters' => {},
-            'ratings' => {}
+            'ratings' => {},
+            'num_raters' => 0,
+            'num_int_items' => 0,
+            'num_app_items' => 0,
+            'num_interest' => 0,
+            'num_approval' => 0,
+            'tot_interest' => 0,
+            'tot_approval' => 0,
+            'avg_votes_int' => 0,
+            'avg_votes_app' => 0,
+            'avg_interest' => 0,
+            'avg_approval' => 0      
           }
         end
         if not @data[metamap.id]['matrix']['rate_post'][metamap_node_id]
@@ -1150,7 +1173,7 @@ class DialogsController < ApplicationController
           logger.info("dialogs#result @data[#{metamap.id}]['nodes'][#{item_metamap_node_id}] doesn't exist. Skipping.")
           next
         end  
-        
+
         @data[metamap.id]['postedby']['nodes'][item_metamap_node_id]['ratings'][rating_id] = rating
         if not @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]
           @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id] = {
@@ -1158,7 +1181,18 @@ class DialogsController < ApplicationController
             'rate_name' => '',
             'items' => {},
             'itemsproc' => {},
-            'ratings' => {}
+            'ratings' => {},
+            'num_raters' => 0,
+            'num_int_items' => 0,
+            'num_app_items' => 0,
+            'num_interest' => 0,
+            'num_approval' => 0,
+            'tot_interest' => 0,
+            'tot_approval' => 0,
+            'avg_votes_int' => 0,
+            'avg_votes_app' => 0,
+            'avg_interest' => 0,
+            'avg_approval' => 0      
           }
         end
         #-- Store a matrix crossing the item's meta with the rater's meta (within a particular metamap, e.g. gender)
@@ -1167,12 +1201,14 @@ class DialogsController < ApplicationController
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['post_name'] = @data[metamap.id]['nodes'][item_metamap_node_id][0]
         @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_name'] = metamap_node_name
       end  # ratings
-
+      
       #-- nodes_sorted moved from here
 
       #-- Adding up stats for postedby items. I.e. items posted by people in that meta.
       @data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
         # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
+        item_int_uniq = {}
+        item_app_uniq = {}
         mdata['items'].each do |item_id,item|
           iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'ratings'=>[]}
           mdata['ratings'].each do |rating_id,rating|
@@ -1219,13 +1255,37 @@ class DialogsController < ApplicationController
               end
               iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
               iproc['ratings'] << rating
+              
+              #-- Need this for regmean
+              @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_raters'] += 1 if rating.interest or rating.approval
+              @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_interest'] += 1 if rating.interest
+              @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_approval'] += 1 if rating.approval
+              @data[metamap.id]['postedby']['nodes'][metamap_node_id]['tot_interest'] += rating.interest.to_i if rating.interest
+              @data[metamap.id]['postedby']['nodes'][metamap_node_id]['tot_approval'] += rating.approval.to_i if rating.approval
+              item_int_uniq[item_id] = true if rating.interest
+              item_app_uniq[item_id] = true if rating.approval
+              
             end
           end
           iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
           @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
         end
+        
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_int_items'] = item_int_uniq.length
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_app_items'] = item_app_uniq.length
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_int'] = ( @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_interest'] / @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_int_items'] ).to_i if @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_int_items'] > 0
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_app'] = ( @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_approval'] / @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_app_items'] ).to_i if @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_app_items'] > 0
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_int'] = 20 if @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_int'] > 20
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_app'] = 20 if @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_app'] > 20
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_interest'] = 1.0 * @data[metamap.id]['postedby']['nodes'][metamap_node_id]['tot_interest'] / @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_interest'] if @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_interest'] > 0
+        @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_approval'] = 1.0 * @data[metamap.id]['postedby']['nodes'][metamap_node_id]['tot_approval'] / @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_approval'] if @data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_approval'] > 0
+        @avg_votes_int = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_int']
+        @avg_votes_app = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_app']
+        @avg_interest  = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_interest']
+        @avg_approval  = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_approval']
+        
         if @regmean
-          #-- Go through the items again and do a regression to the mean
+          #-- Go through the items again and do a regression to the mean          
           mdata['items'].each do |item_id,item|
             iproc = @data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
             if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
@@ -1250,6 +1310,8 @@ class DialogsController < ApplicationController
       #-- Adding up stats for ratedby items. I.e. items rated by people in that meta.
       @data[metamap.id]['ratedby']['nodes'].each do |metamap_node_id,mdata|
         # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
+        item_int_uniq = {}
+        item_app_uniq = {}
         mdata['items'].each do |item_id,item|
           iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'ratings'=>[]}
           mdata['ratings'].each do |rating_id,rating|
@@ -1296,11 +1358,35 @@ class DialogsController < ApplicationController
               end
               iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
               iproc['ratings'] << rating
+              
+              #-- Need this for regmean
+              @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_raters'] += 1 if rating.interest or rating.approval
+              @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_interest'] += 1 if rating.interest
+              @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_approval'] += 1 if rating.approval
+              @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['tot_interest'] += rating.interest.to_i if rating.interest
+              @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['tot_approval'] += rating.approval.to_i if rating.approval
+              item_int_uniq[item_id] = true if rating.interest
+              item_app_uniq[item_id] = true if rating.approval
+              
             end
           end
           iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
           @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
-        end        
+        end    
+        
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_int_items'] = item_int_uniq.length
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_app_items'] = item_app_uniq.length
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_int'] = ( @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_interest'] / @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_int_items'] ).to_i if @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_int_items'] > 0
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_app'] = ( @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_approval'] / @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_app_items'] ).to_i if @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_app_items'] > 0
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_int'] = 20 if @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_int'] > 20
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_app'] = 20 if @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_app'] > 20
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_interest'] = 1.0 * @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['tot_interest'] / @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_interest'] if @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_interest'] > 0
+        @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_approval'] = 1.0 * @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['tot_approval'] / @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_approval'] if @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_approval'] > 0
+        @avg_votes_int = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_int']
+        @avg_votes_app = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_app']
+        @avg_interest  = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_interest']
+        @avg_approval  = @data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_approval']
+            
         if @regmean
           #-- Go through the items again and do a regression to the mean
           mdata['items'].each do |item_id,item|
@@ -1327,6 +1413,8 @@ class DialogsController < ApplicationController
         #-- Going through all metas with items that have been rated
         rdata.each do |rate_metamap_node_id,mdata|
           #-- Going through all the metas that have rated items in that meta (all within a particular metamap, like gender)
+          item_int_uniq = {}
+          item_app_uniq = {}
           mdata['items'].each do |item_id,item|
             #-- Going through the items of the second meta that have rated the first meta
             iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'rateapproval'=>0,'rateinterest'=>0,'num_raters'=>0,'ratings'=>[]}
@@ -1375,11 +1463,35 @@ class DialogsController < ApplicationController
                 iproc['num_raters'] += 1
                 iproc['ratingnoregmean'] = "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
                 iproc['ratings'] << rating
+                
+                #-- Need this for regmean
+                @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_raters'] += 1 if rating.interest or rating.approval
+                @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_interest'] += 1 if rating.interest
+                @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_approval'] += 1 if rating.approval
+                @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['tot_interest'] += rating.interest.to_i if rating.interest
+                @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['tot_approval'] += rating.approval.to_i if rating.approval
+                item_int_uniq[item_id] = true if rating.interest
+                item_app_uniq[item_id] = true if rating.approval
+                
               end
             end
             iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
             @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id] = iproc
           end
+          
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_int_items'] = item_int_uniq.length
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_app_items'] = item_app_uniq.length
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_int'] = ( @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_interest'] / @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_int_items'] ).to_i if @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_int_items'] > 0
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_app'] = ( @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_approval'] / @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_app_items'] ).to_i if @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_app_items'] > 0
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_int'] = 20 if @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_int'] > 20
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_app'] = 20 if @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_app'] > 20
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_interest'] = 1.0 * @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['tot_interest'] / @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_interest'] if @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_interest'] > 0
+          @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_approval'] = 1.0 * @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['tot_approval'] / @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_approval'] if @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_approval'] > 0
+          @avg_votes_int = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_int']
+          @avg_votes_app = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_app']
+          @avg_interest  = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_interest']
+          @avg_approval  = @data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_approval']
+          
           if @regmean
             #-- Go through the items again and do a regression to the mean
             mdata['items'].each do |item_id,item|
