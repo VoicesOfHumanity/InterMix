@@ -303,7 +303,7 @@ class ProfilesController < ApplicationController
           #-- Construct an icon image 100x100
           #`rm -f #{tempfilepath2}` if File.exist?(tempfilepath2)
         
-          if iwidth >= iheight
+          if iwidth.to_i >= iheight.to_i and iheight.to_i > 0
             p.change_geometry('1000x100') { |cols, rows, img| img.resize!(cols, rows) }
           else
             p.change_geometry('100x1000') { |cols, rows, img| img.resize!(cols, rows) }
@@ -312,7 +312,7 @@ class ProfilesController < ApplicationController
 
           #if File.exist?(tempfilepath2)
             #p = Magick::Image.read("#{tempfilepath}").first
-            if iwidth >= iheight
+            if iwidth.to_i >= iheight.to_i and iheight.to_i > 0
               #-- If it is a landscape picture, get the middle part
               width = iwidth * 100 / iheight
               offset = ((width - 100) / 2).to_i
