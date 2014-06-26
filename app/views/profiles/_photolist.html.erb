@@ -6,7 +6,7 @@
 		<% if File.exist?("#{@picdir}/#{photo.id}_75.jpg") -%>
 			<a href="<%= "#{@picurl}/#{photo.id}.jpg" %>" target="_blank"><img src="<%= "#{@picurl}/#{photo.id}_75.jpg" %>"/></a><input type="checkbox" name="markpic[]" class="picmark" value="<%= photo.id %>" />
 		<% elsif File.exist?("#{@picdir}/#{photo.id}.jpg") %>	
-		  <a href="<%= "#{@picurl}/#{photo.id}.jpg" %>" target="_blank"><img src="<%= "#{@picurl}/#{photo.id}.jpg" %>"/></a><input type="checkbox" name="markpic[]" class="picmark" value="<%= photo.id %>" />
+		  <a href="<%= "#{@picurl}/#{photo.id}.jpg" %>" target="_blank"><img src="<%= "#{@picurl}/#{photo.id}.jpg" %>" width="75" style="width:75px;"/></a><input type="checkbox" name="markpic[]" class="picmark" value="<%= photo.id %>" />
 		<% else -%>	
 			icon
 		<% end -%>
