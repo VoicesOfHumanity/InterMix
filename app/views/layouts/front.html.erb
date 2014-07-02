@@ -87,11 +87,11 @@
 				<li class="menu full"><a  class="<%= 'selected' if @section=='photos' %>" href="/photos">Photos</a></li>
 				<% end -%>
 				
-				<% if not (@section=='groups' or @section=='dialogs') -%>
+				<% if true or not (@section=='groups' or @section=='dialogs') -%>
   				<% if session[:dialog_id].to_i > 0 -%>
-  				<li class="menu"><a href="/dialogs/<%= session[:dialog_id] %>/forum">List</a></li>
+  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s=='forum' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Forum List</a></li>
   				<% elsif session[:group_id].to_i > 0 -%>
-  				<li class="menu"><a href="/groups/<%= session[:group_id] %>/forum">List</a></li>
+  				<li class="menu"><a class="<%= 'selected' if @section=='groups' and @gsection.to_s=='forum' %>" href="/groups/<%= session[:group_id] %>/forum">Forum List</a></li>
   				<% end -%>
 				<% end -%>
 				

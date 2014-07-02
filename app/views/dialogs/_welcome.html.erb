@@ -57,6 +57,9 @@
 <script>
 var welcome_current = 1;
 function welcome_next(pg) {
+  if (welcome_current>=4) {
+    welcome_current = 1;
+  }
 	$('#welcome_'+welcome_current).hide();
 	welcome_current = pg;
 	$('#welcome_'+welcome_current).show();	
