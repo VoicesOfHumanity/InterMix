@@ -10,6 +10,7 @@ class GroupsController < ApplicationController
   def index
     #-- Show an overview of groups this person has access to
     @section = 'groups'
+    @gsection = 'index'
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id),moderator").includes(:group)
     @groupsina = @groupsin.collect{|g| g.group.id if g.group }
     @ismoderator = false

@@ -89,18 +89,18 @@
 				
 				<% if true or not (@section=='groups' or @section=='dialogs') -%>
   				<% if session[:dialog_id].to_i > 0 -%>
-  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s=='forum' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Forum List</a></li>
+  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s!='index' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Forum List</a></li>
   				<% elsif session[:group_id].to_i > 0 -%>
-  				<li class="menu"><a class="<%= 'selected' if @section=='groups' and @gsection.to_s=='forum' %>" href="/groups/<%= session[:group_id] %>/forum">Forum List</a></li>
+  				<li class="menu"><a class="<%= 'selected' if @section=='groups' and @gsection.to_s!='index' %>" href="/groups/<%= session[:group_id] %>/forum">Forum List</a></li>
   				<% end -%>
 				<% end -%>
 				
-				<li class="menu"><a class="<%= 'selected' if @section=='groups' or @section=='dialogs' %>" href="/groups">Groups</a></li>
+				<li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='index') or (@section=='dialogs' and @dsection=='index') %>" href="/groups">Groups</a></li>
 				<% if false -%>
   				<% if not showingfull and session[:dialog_id].to_i > 0 -%>
-  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>
+  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s=='index' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>
   				<% elsif session[:group_id].to_i > 0 -%>
-  				<li class="menu<%= ' full' if session[:dialog_id].to_i==0 and session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' %>" href="/dialogs">Discussions</a></li>				
+  				<li class="menu<%= ' full' if session[:dialog_id].to_i==0 and session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s=='index' %>" href="/dialogs">Discussions</a></li>				
   				<% else -%>
   				<% end -%>
 				<% end -%>
@@ -138,6 +138,13 @@
 			
 			<div class="sidebarbox">
 		  <% if current_participant %>
+   		  <% if participant_signed_in? -%>
+   			<img src="/assets/overview.gif" id="overview" style="margin: 14px 0 10px 21px;">
+   			Learn the basics of how this site works.
+   			<% end -%>
+   			
+   			<hr style="width:80px;margin: 15px auto 5px auto;">
+		  
 				<img src="/assets/whereami.gif" id="whereami" style="margin: 14px 0 10px 21px;">
 		    <p>You're logged in as:<br/><%= current_participant.name %><br><%= current_participant.email %>
 					<% @group = Group.find_by_id(@group_id) if not @group and @group_id.to_i > 0 %>
@@ -158,9 +165,6 @@
 			</div>
 			
 			<div class="sidebarbox">
-			  <% if participant_signed_in? -%>
-				<img src="/assets/overview.gif" id="overview" style="margin: 14px 0 10px 21px;">
-				<% end -%>
 			  Send questions and comments to <a href="mailto:questions@intermix.org">questions@intermix.org</a>  
 			</div>
 
