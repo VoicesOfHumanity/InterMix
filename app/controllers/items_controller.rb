@@ -393,6 +393,13 @@ class ItemsController < ApplicationController
     @item.link = '' if @item.link == 'http://'
     @item.item_type = 'message'
     @item.posted_by = current_participant.id
+
+    if current_participant.status != 'active'
+      #-- Make sure this is an active member
+      results = {'error'=>true,'message'=>"Your membership is not active",'item_id'=>0}        
+      render :json=>results, :layout=>false
+      return
+    end    
     
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
