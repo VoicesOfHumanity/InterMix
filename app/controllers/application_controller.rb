@@ -124,10 +124,9 @@ class ApplicationController < ActionController::Base
     Sanitize.clean(sometext.force_encoding("UTF-8"), 
       :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img'],
       :attributes => {'a' => ['href', 'title', 'target'], 'img' => ['src', 'alt', 'width', 'height', 'align', 'vspace', 'hspace', 'style']},
-      :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http']} },
+      :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http', :relative]} },
       :allow_comments => false,
-      :output => :xhtml,
-      :remove_contents => ['style']
+      :output => :html
     )
   end
 
@@ -423,6 +422,14 @@ class ApplicationController < ActionController::Base
     else
       return false
     end      
-  end  
+  end 
+  
+  def current_user
+    if participant_signed_in?
+      current_participant 
+    else
+      nil
+    end  
+  end   
   
 end

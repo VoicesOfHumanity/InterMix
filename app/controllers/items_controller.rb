@@ -895,7 +895,7 @@ class ItemsController < ApplicationController
       @item.html_content = Sanitize.clean(@item.html_content, 
         :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img'],
         :attributes => {'a' => ['href'], 'img' => ['src', 'alt', 'width', 'height', 'align', 'vspace', 'hspace', 'style']},
-        :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http']} },
+        :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http', :relative]} },
         :allow_comments => false,
         :output => :html,
         :remove_contents => ['style']
