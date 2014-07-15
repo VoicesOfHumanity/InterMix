@@ -1,5 +1,6 @@
 <form action="/front/groupjoin" method="post">
 <input type="hidden" name="group_id" value="{{ group.id }}"> 	 
+<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
 
 <div style="width:680px;margin:10px auto 10px auto;padding:15px;border: 1px solid black">
 <table><tr><td>

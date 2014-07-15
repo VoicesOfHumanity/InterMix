@@ -295,6 +295,12 @@ class FrontController < ApplicationController
     
     session[:join_group_id] = nil if session[:join_group_id]
     session[:join_dialog_id] = nil if session[:join_dialog_id]
+
+    if request.get?
+      flash[:alert] = "Not allowed"
+      redirect_to "http://#{BASEDOMAIN}/join" 
+      return
+    end
     
     @dialog = Dialog.find_by_id(@dialog_id)
     if @dialog and @group_id == 0
@@ -716,6 +722,12 @@ class FrontController < ApplicationController
 
     session[:join_group_id] = nil if session[:join_group_id]
     session[:join_dialog_id] = nil if session[:join_dialog_id]
+
+    if request.get?
+      flash[:alert] = "Not allowed"
+      redirect_to "http://#{BASEDOMAIN}/join" 
+      return
+    end
     
     @group = Group.find_by_id(@group_id)
 
@@ -1336,6 +1348,12 @@ class FrontController < ApplicationController
 
     session[:join_group_id] = nil if session[:join_group_id]
     session[:join_dialog_id] = nil if session[:join_dialog_id]
+
+    if request.get?
+      flash[:alert] = "Not allowed"
+      redirect_to "http://#{BASEDOMAIN}/join" 
+      return
+    end
 
     @email = params[:email].to_s
     @first_name = params[:first_name].to_s

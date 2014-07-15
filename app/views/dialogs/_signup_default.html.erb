@@ -11,7 +11,8 @@
 	
 <form action="/front/dialogjoin" method="post">
 <input type="hidden" name="group_id" value="{{ group.id }}">      
-<input type="hidden" name="dialog_id" value="{{ dialog.id }}">	
+<input type="hidden" name="dialog_id" value="{{ dialog.id }}">
+<input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />	
 <table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px">    
 
 {% if false %} 
