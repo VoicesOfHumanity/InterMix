@@ -360,6 +360,7 @@ div.forumitem div.itemvoting {
     padding: 0 5px 0 5px;
     z-index:1;
 }
+
 div.forumitem div.interest {
     /* background-color: #ddf; */
     background-color: #ffebcd;
@@ -369,6 +370,16 @@ div.forumitem div.approval {
     background-color: #dfd;
     opacity: 0.9;
 }
+div.forumitem div.interestplus {
+    /* background-color: #ddf; */
+    background-color: #fbcb8a;
+    opacity: 0.9;
+}
+div.forumitem div.approvalplus {
+    background-color: #aca;
+    opacity: 0.9;
+}
+
 div.forumitem div.summary {
     /* background-color: #ffebcd; */
     background-color: #eef;
