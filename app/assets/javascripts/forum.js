@@ -481,6 +481,13 @@ function rate(intapp,id,vote) {
     	data: 'intapp='+intapp+'&item_id='+id+'&vote='+vote,
         complete: function(t){	
             $('#vote_'+intapp+'_rate_'+id).html(t.responseText);
+            if (intapp=='int') {
+                $('#vote_int_'+id).attr('class','votesection interest');   
+            } else if (intapp=='app') {
+                $('#vote_app_'+id).attr('class','votesection approval');                   
+            } else {
+                alert('problem');
+            }
             get_summary(id);
          }
     });	

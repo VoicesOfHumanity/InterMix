@@ -3,7 +3,7 @@
 <%
 intclass = 'interest'
 appclass = 'approval'
-if item.first_in_thread and item.dialog and item.dialog.active_period and @itemsproc[item.id]
+if item.is_first_in_thread and item.dialog and item.dialog.active_period and @itemsproc[item.id]
   intclass = (@itemsproc[item.id]['hasrating'].to_i > 0 and @itemsproc[item.id]['rateinterest']) ? 'interest' : 'interestplus'
   appclass = (@itemsproc[item.id]['hasrating'].to_i > 0 and @itemsproc[item.id]['rateapproval']) ? 'approval' : 'approvalplus'
 end

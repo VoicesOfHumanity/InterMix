@@ -8,6 +8,8 @@
 
 		<%= hidden_field_tag :period_id, @period_id %>
 
+		<%= f.input :period_number, :label=>"Number 1..", :input_html => {:size => 3} %>
+
 		<%= f.input :name, :label=>"Title", :input_html => {:size => 80} %>
 		<%= f.input :shortdesc, :as => :text, :label => "Short description", :input_html => {:rows => 3} %>
 		

@@ -58,7 +58,7 @@ end
 #SYSTEM_SENDER = "noreply@intermix.cr8.com"
 
 if File.dirname(__FILE__) =~ /_websites/
-  BASEDOMAIN = 'intermix.dev'
+  BASEDOMAIN = 'intermix.dev:3002'
   ROOTDOMAIN = 'intermix.dev'
   DATADIR = '/Users/ffunch/_websites/intermix/data'
 else

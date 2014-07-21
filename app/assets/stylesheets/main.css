@@ -365,19 +365,36 @@ div.forumitem div.interest {
     /* background-color: #ddf; */
     background-color: #ffebcd;
     opacity: 0.9;
+    border: 1px solid transparent;
 }
 div.forumitem div.approval {
     background-color: #dfd;
     opacity: 0.9;
+    border: 1px solid transparent;
 }
 div.forumitem div.interestplus {
-    /* background-color: #ddf; */
-    background-color: #fbcb8a;
+    /* background-color: #fbcb8a; */
+    background-color: #ffebcd;
     opacity: 0.9;
+    border: 1px solid #AF7F3E;
+    /*
+    border-top-style: solid;
+    border-right-style: none;
+    border-bottom-style: solid;
+    border-left-style: solid; 
+    */
 }
 div.forumitem div.approvalplus {
-    background-color: #aca;
+    /* background-color: #aca; */
+    background-color: #dfd;
     opacity: 0.9;
+    border: 1px solid #5E805E;
+    /*
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: none; 
+    */
 }
 
 div.forumitem div.summary {
@@ -386,6 +403,7 @@ div.forumitem div.summary {
     opacity: 0.9;
     height: 20px;
     padding: 0 5px 0 5px;
+    border: 1px solid transparent;
 }
 div.forumitem div.votesection {
 	float: left;
