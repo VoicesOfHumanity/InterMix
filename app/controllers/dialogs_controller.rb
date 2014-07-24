@@ -647,6 +647,92 @@ class DialogsController < ApplicationController
   end
 
   def result
+    #-- Results for a particular dialog/period, now based on list_and_results in the item class
+    #-- Results will typically show the overall result, followed by the different meta category results
+    #-- Gender/Age Crosstalk is simplified, though
+
+    @section = 'dialogs'
+    @dsection = 'meta'
+    
+    @from = 'dialog'
+    @dialog_id = params[:id].to_i
+    @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
+    dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
+    @is_admin = (dialogadmin.length > 0)
+    @less_more = params[:less_more] || 'less'
+
+    @period_id = params[:period_id].to_i
+
+    if not params.include?(:period_id) 
+      if @dialog.current_period.to_i > 0
+        #-- Use the current period, if we aren't being told anything else
+        @period_id = @dialog.current_period.to_i
+      else
+        #-- If there's no current period, use the most recent one, if there is one
+        @period = @dialog.recent_period
+        @period_id = @period.id if @period
+      end
+    end
+    @period = Period.find_by_id(@period_id) if not @period
+
+    if params[:short_full].to_s != ''
+      @short_full = params[:short_full]
+      if not @period and (@short_full == 'gender' or @short_full == 'age')
+        #-- If gender/age is no longer set (period changed), make sure they aren't selected
+        @short_full = 'short'
+      elsif (@period and params[:period_id_bef].to_i > 0 and @period.id != params[:period_id_bef].to_i)
+        #-- If period was changed, move back to default short_full
+        @short_full = ''
+      end  
+    end  
+      
+    if @short_full.to_s != ''
+    elsif @period and (@period.crosstalk == 'gender' or @period.crosstalk == 'gender1')
+      @short_full = 'gender'
+    elsif @period and (@period.crosstalk == 'age' or @period.crosstalk == 'age1')
+      @short_full = 'age'
+    else
+      @short_full = 'short'
+    end
+
+    if @short_full == 'short' or @short_full == 'gender' or @short_full == 'age'
+      @limit_group_id = 0
+      @regress = 'regress'
+    else  
+      @limit_group_id = (params[:limit_group_id] || 0).to_i
+      @limit_group = @limit_group_id > 0 ? Group.find_by_id(@limit_group_id) : nil
+      @regress = params[:regress] || 'regress'
+    end
+    
+    #-- Lets start with the overall results
+    @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
+    
+
+    #-- Then by group, if there is more than one, and none has been selected
+    if @limit_group_id == 0
+      #-- Stats by group
+      @data['groups'] = {}
+      for group in @dialog.groups
+
+
+      end
+    endif;
+    
+    
+    list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup=''
+    
+    
+    
+    list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='')
+    list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='')
+    list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='')
+    
+    
+    
+  end  
+
+
+  def result_old
     #-- Results for a particular dialog/period
     #@section = 'results'    
     @section = 'dialogs'

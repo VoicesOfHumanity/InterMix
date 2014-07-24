@@ -130,6 +130,7 @@ Intermix::Application.routes.draw do
       get :forum
       get :meta
       get :result
+      get :result_old
       get :period_edit
       post :period_save
       put :period_save
