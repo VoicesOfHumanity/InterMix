@@ -1329,7 +1329,7 @@ class Item < ActiveRecord::Base
 			"[name withheld during decision period]"
 		elsif period and not period.names_visible_general
 			"[name withheld for this decision period]"
-		elsif not dialog.names_visible_general
+		elsif dialog and not dialog.names_visible_general
 			"[name withheld for this discussion]"
 		else
 			"<a href=\"/participant/#{item.id}/profile\">" + ( item.participant ? item.participant.name : item.posted_by ) + "</a>"
