@@ -395,7 +395,7 @@ class Item < ActiveRecord::Base
     Item.find_by_id(self.first_in_thread)
   end
   
-  def self.list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='')
+  def self.list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='',metabreakdown=false)
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
@@ -783,9 +783,556 @@ class Item < ActiveRecord::Base
 
     logger.info("item#list_and_results returning #{items.length} items, #{itemsproc.length} itemsproc");
     
+    if metabreakdown
+      extras['meta'] = results_meta_breakdown(dialog,period,group)
+    end  
+    
     return [items, itemsproc, extras]
     
   end
+  
+  def self.results_meta_breakdown(dialog,period,group)
+    #-- Produce ranked item listings by meta categories of posters and raters, for the dialog results
+
+    dialog_id = dialog ? dialog.id : 0
+    period_id = period ? period.id : 0
+    group_id = group ? group.id : 0
+
+    #-- Criterion, if we're limiting by period
+    pwhere = (period_id > 0) ? "items.period_id=#{period_id}" : ""
+
+    #-- or by group
+    gwhere = (group_id > 0) ? "items.group_id=#{group_id}" : ""
+
+    data = {}
+
+    metamaps = Metamap.where(:id=>[3,5])
+
+    #-- Find how many people and items for each metamap_node
+    for metamap in metamaps
+
+      metamap_id = metamap.id
+
+      data[metamap.id] = {}
+      data[metamap.id]['name'] = metamap.name
+      data[metamap.id]['nodes'] = {}  # All nodes that have been used, for posting or rating, with their names
+      data[metamap.id]['postedby'] = { # stats for what was posted by people in those meta categories
+        'nodes' => {}
+      }    
+      data[metamap.id]['ratedby'] = {     # stats for what was rated by people in those meta categories
+        'nodes' => {}
+      }
+      data[metamap.id]['matrix'] = {      # stats for posted by meta cats crossed by rated by metacats
+        'post_rate' => {},
+        'rate_post' => {}
+      }
+      data[metamap.id]['items'] = {}     # To keep track of the items marked with that meta cat
+      data[metamap.id]['ratings'] = {}     # Keep track of the ratings of items in that meta cat
+
+      #-- Everything posted, with metanode info
+      items = Item.where("items.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+
+      #-- Everything rated, with metanode info
+      ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+
+      #-- Going through everything posted, group by meta node of poster
+      for item in items
+        item_id = item.id
+        poster_id = item.posted_by
+        metamap_node_id = item.participant.metamap_node_participants[0].metamap_node_id
+        metamap_node_name = item.participant.metamap_node_participants[0].metamap_node.name_as_group ? item.participant.metamap_node_participants[0].metamap_node.name_as_group : item.participant.metamap_node_participants[0].metamap_node.name
+
+        data[metamap.id]['items'][item.id] = metamap_node_id
+
+        logger.info("dialogs#result item ##{item.id} poster meta:#{metamap_node_id}/#{metamap_node_name}") 
+
+        if not data[metamap.id]['nodes'][metamap_node_id]
+          #data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
+          data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,item.participant.metamap_node_participants[0].metamap_node]
+          logger.info("dialogs#result data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
+        end
+        if not data[metamap.id]['postedby']['nodes'][metamap_node_id]
+          data[metamap.id]['postedby']['nodes'][metamap_node_id] = {
+            'name' => item.participant.metamap_node_participants[0].metamap_node.name,
+            'items' => {},
+            'itemsproc' => {},
+            'posters' => {},
+            'ratings' => {},
+            'ratings' => {},
+            'num_raters' => 0,
+            'num_int_items' => 0,
+            'num_app_items' => 0,
+            'num_interest' => 0,
+            'num_approval' => 0,
+            'tot_interest' => 0,
+            'tot_approval' => 0,
+            'avg_votes_int' => 0,
+            'avg_votes_app' => 0,
+            'avg_interest' => 0,
+            'avg_approval' => 0      
+          }
+        end
+        if not data[metamap.id]['matrix']['post_rate'][metamap_node_id]
+          data[metamap.id]['matrix']['post_rate'][metamap_node_id] = {}
+        end
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['items'][item_id] = item
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['posters'][poster_id] = item.participant
+      end
+
+      #-- Going through everything rated, group by meta node of rater
+      for rating in ratings
+        rating_id = rating.id
+        item_id = rating.item_id
+        rater_id = rating.participant_id
+        metamap_node_id = rating.participant.metamap_node_participants[0].metamap_node_id
+        metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name_as_group ? rating.participant.metamap_node_participants[0].metamap_node.name_as_group : rating.participant.metamap_node_participants[0].metamap_node.name
+
+        logger.info("dialogs#result rating ##{rating_id} of item ##{item_id} rater meta:#{metamap_node_id}/#{metamap_node_name}") 
+
+        if not data[0]['items'][item_id]
+          logger.info("dialogs#result item ##{item_id} doesn't exist. Skipping.")
+          next
+        end
+
+        if not data[metamap.id]['nodes'][metamap_node_id]
+          #data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
+          data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,rating.participant.metamap_node_participants[0].metamap_node]
+          #logger.info("dialogs#result data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
+        end
+        data[metamap.id]['ratings'][rating.id] = metamap_node_id
+        if not data[metamap.id]['ratedby']['nodes'][metamap_node_id]
+          data[metamap.id]['ratedby']['nodes'][metamap_node_id] = {
+            'name' => rating.participant.metamap_node_participants[0].metamap_node.name,
+            'items' => {},
+            'itemsproc' => {},
+            'raters' => {},
+            'ratings' => {},
+            'num_raters' => 0,
+            'num_int_items' => 0,
+            'num_app_items' => 0,
+            'num_interest' => 0,
+            'num_approval' => 0,
+            'tot_interest' => 0,
+            'tot_approval' => 0,
+            'avg_votes_int' => 0,
+            'avg_votes_app' => 0,
+            'avg_interest' => 0,
+            'avg_approval' => 0      
+          }
+        end
+        if not data[metamap.id]['matrix']['rate_post'][metamap_node_id]
+          data[metamap.id]['matrix']['rate_post'][metamap_node_id] = {}
+        end
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['items'][item_id] = rating.item
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['raters'][rater_id] = rating.participant
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['ratings'][rating_id] = rating
+        item_metamap_node_id = data[metamap.id]['items'][item_id]
+
+        if not data[metamap.id]['nodes'][item_metamap_node_id]
+          logger.info("dialogs#result data[#{metamap.id}]['nodes'][#{item_metamap_node_id}] doesn't exist. Skipping.")
+          next
+        end  
+
+        data[metamap.id]['postedby']['nodes'][item_metamap_node_id]['ratings'][rating_id] = rating
+        if not data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id] = {
+            'post_name' => '',
+            'rate_name' => '',
+            'items' => {},
+            'itemsproc' => {},
+            'ratings' => {},
+            'num_raters' => 0,
+            'num_int_items' => 0,
+            'num_app_items' => 0,
+            'num_interest' => 0,
+            'num_approval' => 0,
+            'tot_interest' => 0,
+            'tot_approval' => 0,
+            'avg_votes_int' => 0,
+            'avg_votes_app' => 0,
+            'avg_interest' => 0,
+            'avg_approval' => 0      
+          }
+        end
+        #-- Store a matrix crossing the item's meta with the rater's meta (within a particular metamap, e.g. gender)
+        data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['ratings'][rating_id] = rating
+        data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['items'][item_id] = rating.item
+        data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['post_name'] = data[metamap.id]['nodes'][item_metamap_node_id][0]
+        data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][metamap_node_id]['rate_name'] = metamap_node_name
+      end  # ratings
+
+      #-- nodes_sorted moved from here
+
+      #-- Adding up stats for postedby items. I.e. items posted by people in that meta.
+      data[metamap.id]['postedby']['nodes'].each do |metamap_node_id,mdata|
+        # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
+        item_int_uniq = {}
+        item_app_uniq = {}
+        mdata['items'].each do |item_id,item|
+          iproc = {'id'=>item.id,'name'=>show_name_in_result(item,dialog,period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'ratings'=>[]}
+          mdata['ratings'].each do |rating_id,rating|
+            if rating.item_id == item.id
+              iproc['votes'] += 1
+              iproc['num_raters'] += 1
+              if rating.interest
+                iproc['num_interest'] += 1
+                iproc['tot_interest'] += rating.interest
+                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+                case rating.interest.to_i
+                when 0
+                  iproc['int_0_count'] += 1
+                when 1
+                  iproc['int_1_count'] += 1
+                when 2
+                  iproc['int_2_count'] += 1
+                when 3
+                  iproc['int_3_count'] += 1
+                when 4
+                  iproc['int_4_count'] += 1
+                end  
+              end
+              if rating.approval
+                iproc['num_approval'] += 1
+                iproc['tot_approval'] += rating.approval
+                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+                case rating.approval.to_i
+                when -3
+                  iproc['app_n3_count'] +=1   
+                when -2
+                  iproc['app_n2_count'] +=1   
+                when -1
+                  iproc['app_n1_count'] +=1   
+                when 0
+                  iproc['app_0_count'] +=1   
+                when 1
+                  iproc['app_p1_count'] +=1   
+                when 2
+                  iproc['app_p2_count'] +=1   
+                when 3
+                  iproc['app_p3_count'] +=1   
+                end  
+              end
+              iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+              iproc['ratings'] << rating
+
+              #-- Need this for regmean
+              data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_raters'] += 1 if rating.interest or rating.approval
+              data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_interest'] += 1 if rating.interest
+              data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_approval'] += 1 if rating.approval
+              data[metamap.id]['postedby']['nodes'][metamap_node_id]['tot_interest'] += rating.interest.to_i if rating.interest
+              data[metamap.id]['postedby']['nodes'][metamap_node_id]['tot_approval'] += rating.approval.to_i if rating.approval
+              item_int_uniq[item_id] = true if rating.interest
+              item_app_uniq[item_id] = true if rating.approval
+
+            end
+          end
+          iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
+          data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+        end
+
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_int_items'] = item_int_uniq.length
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_app_items'] = item_app_uniq.length
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_int'] = ( data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_interest'] / data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_int_items'] ).to_i if data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_int_items'] > 0
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_app'] = ( data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_approval'] / data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_app_items'] ).to_i if data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_app_items'] > 0
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_int'] = 20 if data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_int'] > 20
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_app'] = 20 if data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_app'] > 20
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_interest'] = 1.0 * data[metamap.id]['postedby']['nodes'][metamap_node_id]['tot_interest'] / data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_interest'] if data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_interest'] > 0
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_approval'] = 1.0 * data[metamap.id]['postedby']['nodes'][metamap_node_id]['tot_approval'] / data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_approval'] if data[metamap.id]['postedby']['nodes'][metamap_node_id]['num_approval'] > 0
+        @avg_votes_int = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_int']
+        @avg_votes_app = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_votes_app']
+        @avg_interest  = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_interest']
+        @avg_approval  = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_approval']
+
+        if @regmean
+          #-- Go through the items again and do a regression to the mean          
+          mdata['items'].each do |item_id,item|
+            iproc = data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
+            if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
+              iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
+              iproc['num_interest'] = @avg_votes_int
+              iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+            end  
+            if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
+              iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
+              iproc['num_approval'] = @avg_votes_app
+              iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+            end  
+            iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+            data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+          end
+        end
+        #data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] = data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| b[1]['value']<=>a[1]['value']}
+        data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'] = data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
+
+      end
+
+      #-- Adding up stats for ratedby items. I.e. items rated by people in that meta.
+      data[metamap.id]['ratedby']['nodes'].each do |metamap_node_id,mdata|
+        # {'num_items'=>0,'num_ratings'=>0,'avg_rating'=>0.0,'num_interest'=>0,'num_approval'=>0,'avg_appoval'=>0.0,'avg_interest'=>0.0,'avg_value'=>0,'value_winner'=>0}
+        item_int_uniq = {}
+        item_app_uniq = {}
+        mdata['items'].each do |item_id,item|
+          iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'ratings'=>[]}
+          mdata['ratings'].each do |rating_id,rating|
+            if rating.item_id == item.id
+              iproc['votes'] += 1
+              iproc['num_raters'] +=1
+              if rating.interest
+                iproc['num_interest'] += 1
+                iproc['tot_interest'] += rating.interest.to_i
+                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+                case rating.interest.to_i
+                when 0
+                  iproc['int_0_count'] += 1
+                when 1
+                  iproc['int_1_count'] += 1
+                when 2
+                  iproc['int_2_count'] += 1
+                when 3
+                  iproc['int_3_count'] += 1
+                when 4
+                  iproc['int_4_count'] += 1
+                end  
+              end
+              if rating.approval
+                iproc['num_approval'] += 1
+                iproc['tot_approval'] += rating.approval.to_i
+                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+                case rating.approval.to_i
+                when -3
+                  iproc['app_n3_count'] +=1   
+                when -2
+                  iproc['app_n2_count'] +=1   
+                when -1
+                  iproc['app_n1_count'] +=1   
+                when 0
+                  iproc['app_0_count'] +=1   
+                when 1
+                  iproc['app_p1_count'] +=1   
+                when 2
+                  iproc['app_p2_count'] +=1   
+                when 3
+                  iproc['app_p3_count'] +=1   
+                end  
+              end
+              iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+              iproc['ratings'] << rating
+
+              #-- Need this for regmean
+              data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_raters'] += 1 if rating.interest or rating.approval
+              data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_interest'] += 1 if rating.interest
+              data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_approval'] += 1 if rating.approval
+              data[metamap.id]['ratedby']['nodes'][metamap_node_id]['tot_interest'] += rating.interest.to_i if rating.interest
+              data[metamap.id]['ratedby']['nodes'][metamap_node_id]['tot_approval'] += rating.approval.to_i if rating.approval
+              item_int_uniq[item_id] = true if rating.interest
+              item_app_uniq[item_id] = true if rating.approval
+
+            end
+          end
+          iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
+          data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+        end    
+
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_int_items'] = item_int_uniq.length
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_app_items'] = item_app_uniq.length
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_int'] = ( data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_interest'] / data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_int_items'] ).to_i if data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_int_items'] > 0
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_app'] = ( data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_approval'] / data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_app_items'] ).to_i if data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_app_items'] > 0
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_int'] = 20 if data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_int'] > 20
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_app'] = 20 if data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_app'] > 20
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_interest'] = 1.0 * data[metamap.id]['ratedby']['nodes'][metamap_node_id]['tot_interest'] / data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_interest'] if data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_interest'] > 0
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_approval'] = 1.0 * data[metamap.id]['ratedby']['nodes'][metamap_node_id]['tot_approval'] / data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_approval'] if data[metamap.id]['ratedby']['nodes'][metamap_node_id]['num_approval'] > 0
+        @avg_votes_int = data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_int']
+        @avg_votes_app = data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_votes_app']
+        @avg_interest  = data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_interest']
+        @avg_approval  = data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_approval']
+
+        if @regmean
+          #-- Go through the items again and do a regression to the mean
+          mdata['items'].each do |item_id,item|
+            iproc = data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
+            if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
+              iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
+              iproc['num_interest'] = @avg_votes_int
+              iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+            end  
+            if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
+              iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
+              iproc['num_approval'] = @avg_votes_app
+              iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+            end  
+            iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+            data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id] = iproc
+          end
+        end
+        data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'] = data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
+      end
+
+      #-- Adding up matrix stats
+      data[metamap.id]['matrix']['post_rate'].each do |item_metamap_node_id,rdata|
+        #-- Going through all metas with items that have been rated
+        rdata.each do |rate_metamap_node_id,mdata|
+          #-- Going through all the metas that have rated items in that meta (all within a particular metamap, like gender)
+          item_int_uniq = {}
+          item_app_uniq = {}
+          mdata['items'].each do |item_id,item|
+            #-- Going through the items of the second meta that have rated the first meta
+            iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'rateapproval'=>0,'rateinterest'=>0,'num_raters'=>0,'ratings'=>[]}
+            mdata['ratings'].each do |rating_id,rating|
+              if rating.item_id == item.id
+                iproc['votes'] += 1
+                if rating.interest
+                  iproc['num_interest'] += 1
+                  iproc['tot_interest'] += rating.interest.to_i
+                  iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+                  case rating.interest.to_i
+                  when 0
+                    iproc['int_0_count'] += 1
+                  when 1
+                    iproc['int_1_count'] += 1
+                  when 2
+                    iproc['int_2_count'] += 1
+                  when 3
+                    iproc['int_3_count'] += 1
+                  when 4
+                    iproc['int_4_count'] += 1
+                  end  
+                end
+                if rating.approval                
+                  iproc['num_approval'] += 1
+                  iproc['tot_approval'] += rating.approval.to_i
+                  iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+                  case rating.approval.to_i
+                  when -3
+                    iproc['app_n3_count'] +=1   
+                  when -2
+                    iproc['app_n2_count'] +=1   
+                  when -1
+                    iproc['app_n1_count'] +=1   
+                  when 0
+                    iproc['app_0_count'] +=1   
+                  when 1
+                    iproc['app_p1_count'] +=1   
+                  when 2
+                    iproc['app_p2_count'] +=1   
+                  when 3
+                    iproc['app_p3_count'] +=1   
+                  end  
+                end
+                iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+                iproc['num_raters'] += 1
+                iproc['ratingnoregmean'] = "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
+                iproc['ratings'] << rating
+
+                #-- Need this for regmean
+                data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_raters'] += 1 if rating.interest or rating.approval
+                data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_interest'] += 1 if rating.interest
+                data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_approval'] += 1 if rating.approval
+                data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['tot_interest'] += rating.interest.to_i if rating.interest
+                data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['tot_approval'] += rating.approval.to_i if rating.approval
+                item_int_uniq[item_id] = true if rating.interest
+                item_app_uniq[item_id] = true if rating.approval
+
+              end
+            end
+            iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
+            data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id] = iproc
+          end
+
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_int_items'] = item_int_uniq.length
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_app_items'] = item_app_uniq.length
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_int'] = ( data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_interest'] / data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_int_items'] ).to_i if data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_int_items'] > 0
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_app'] = ( data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_approval'] / data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_app_items'] ).to_i if data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_app_items'] > 0
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_int'] = 20 if data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_int'] > 20
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_app'] = 20 if data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_app'] > 20
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_interest'] = 1.0 * data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['tot_interest'] / data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_interest'] if data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_interest'] > 0
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_approval'] = 1.0 * data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['tot_approval'] / data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_approval'] if data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_approval'] > 0
+          @avg_votes_int = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_int']
+          @avg_votes_app = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_votes_app']
+          @avg_interest  = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_interest']
+          @avg_approval  = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_approval']
+          #if metamap.id == 3
+          #  logger.info("dialogs#result data[#{metamap.id}]['matrix']['post_rate'][#{item_metamap_node_id}][#{rate_metamap_node_id}]: #{data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id].inspect}")
+          #end
+
+          if @regmean
+            #-- Go through the items again and do a regression to the mean
+            mdata['items'].each do |item_id,item|
+              iproc = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id]
+              iproc['ratingwithregmean'] = ''
+              if iproc['num_interest'] < @avg_votes_int and iproc['num_interest'] > 0
+                old_num_interest = iproc['num_interest']
+                old_tot_interest = iproc['tot_interest']
+                iproc['tot_interest'] += (@avg_votes_int - iproc['num_interest']) * @avg_interest
+                iproc['num_interest'] = @avg_votes_int
+                iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+                iproc['ratingwithregmean'] += "int votes adjusted #{old_num_interest} -> #{iproc['num_interest']}. int total adjusted #{old_tot_interest} -> #{iproc['tot_interest']}<br>"
+              end  
+              if iproc['num_approval'] < @avg_votes_app and iproc['num_approval'] > 0
+                old_num_approval = iproc['num_approval']
+                old_tot_approval = iproc['tot_approval']
+                iproc['tot_approval'] += (@avg_votes_app - iproc['num_approval']) * @avg_approval
+                iproc['num_approval'] = @avg_votes_app
+                iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+                iproc['ratingwithregmean'] += "app votes adjusted #{old_num_approval} -> #{iproc['num_approval']}. app total adjusted #{old_tot_approval} -> #{iproc['tot_approval']}<br>"
+              end  
+              iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+              iproc['ratingwithregmean'] += "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
+              data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id] = iproc
+            end
+          end
+          data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'] = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'].sort {|a,b| [b[1]['value'],b[1]['votes']]<=>[a[1]['value'],a[1]['votes']]}
+
+        end
+      end
+
+      if ((@short_full == 'gender' and metamap.id == 3) or (@short_full == 'age' and metamap.id == 5))
+        #-- We'd want nodes in order of value of the top item. Hm, that's tricky
+      	for metamap_node_id,minfo in data[metamap.id]['nodes']
+      		metamap_node_name = minfo[0]
+      		metamap_node = minfo[1]
+      		data[metamap.id]['nodes'][metamap_node_id][2] = 0
+          if  data[metamap.id]['postedby']['nodes'][metamap_node_id] and  data[metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length > 0
+      			if data[metamap.id]['matrix']['post_rate'][metamap_node_id].length > 0
+        			for rate_metamap_node_id,rdata in data[metamap.id]['matrix']['post_rate'][metamap_node_id]
+        			  if rate_metamap_node_id == metamap_node_id
+          				for item_id,i in data[metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc']
+          					item = data[0]['items'][item_id]
+                    iproc = data[0]['itemsproc'][item_id]
+                    #-- It should really be by iproc['value'] but somehow that doesn't work.
+                    data[metamap.id]['nodes'][metamap_node_id][2] = item.value
+                		break
+                  end
+                end
+              end
+            end
+          end
+        end            
+        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|a,b| [b[1][2],a[1][1].sortorder,a[1][0]]<=>[a[1][2],b[1][1].sortorder,b[1][0]]}
+      else
+        #-- Put nodes in sorting order and/or alphabetical order
+        #data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
+        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|a,b| [a[1][1].sortorder,a[1][0]]<=>[b[1][1].sortorder,b[1][0]]}
+      end
+
+    end # metamaps
+    
+    return data
+      
+  end  
+  
+  def self.show_name_in_result(item,dialog,period)
+    #-- The participants name in results. Don't show it if the settings say so
+		if dialog.current_period.to_i > 0 and item.period_id==dialog.current_period and not dialog.settings_with_period["names_visible_voting"]
+		  #-- Item is in the current period and it says to now show it
+			"[name withheld during decision period]"
+		elsif period and not period.names_visible_general
+			"[name withheld for this decision period]"
+		elsif not dialog.names_visible_general
+			"[name withheld for this discussion]"
+		else
+			"<a href=\"/participant/#{item.id}/profile\">" + ( item.participant ? item.participant.name : item.posted_by ) + "</a>"
+		end
+  end  
 
   def self.custom_item_sort(items, participant_id, dialog)
     #-- Create the default sort for items in a discussion:
