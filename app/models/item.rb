@@ -836,8 +836,10 @@ class Item < ActiveRecord::Base
       ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
 
       #-- Going through everything posted, group by meta node of poster
+      itemlist = {}
       for item in items
         item_id = item.id
+        itemlist[item_id] = true
         poster_id = item.posted_by
         metamap_node_id = item.participant.metamap_node_participants[0].metamap_node_id
         metamap_node_name = item.participant.metamap_node_participants[0].metamap_node.name_as_group ? item.participant.metamap_node_participants[0].metamap_node.name_as_group : item.participant.metamap_node_participants[0].metamap_node.name
@@ -889,7 +891,7 @@ class Item < ActiveRecord::Base
 
         logger.info("dialogs#result rating ##{rating_id} of item ##{item_id} rater meta:#{metamap_node_id}/#{metamap_node_name}") 
 
-        if not data[0]['items'][item_id]
+        if not itemlist[item_id]
           logger.info("dialogs#result item ##{item_id} doesn't exist. Skipping.")
           next
         end
