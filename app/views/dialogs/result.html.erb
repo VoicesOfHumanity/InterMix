@@ -122,7 +122,7 @@ end
       				<b><span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> winner chosen by <span title="<%= rate_metamap_node_id %>"><%= @data['meta'][metamap.id]['nodes'][rate_metamap_node_id][0] %></span> raters (<%= @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['items'].length %> items, <%= @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['ratings'].length %> votes):</b><br>			
       				<% end -%>
       				<% for item_id,i in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] -%>
-      					<% item = @data['totals']['items'][item_id] %>
+      					<% item = Item.find_by_id(item_id) %>
                 <% @itemsproc = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] %>      					
       					   					
       					<div class="forumitem forumitemplain forummain forum1">   					
