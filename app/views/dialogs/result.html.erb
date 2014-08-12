@@ -220,7 +220,7 @@ end
 	<% group_id = group.id %>
 	<div>
 	<h3 title="<%= metamap_node_id %>"><%= group.name %></h3>
-	<% if @data['groups'][group_id]['itemsproc'].length == 0 or @data['groups'][group_id]['ratings'].length == 0 -%>
+	<% if not @data['groups'][group_id] or @data['groups'][group_id]['itemsproc'].length == 0 or @data['groups'][group_id]['ratings'].length == 0 -%>
 		no messages<br>
 	<% else -%>	
 		<% xcount = 0 %>
