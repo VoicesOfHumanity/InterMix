@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
     if @country_code == ''  
       res = [{:val=>0, :txt=>''}]
     else
-      res = [{:val=>0, :txt=>''}] + Geoadmin1.find(:all,:conditions=>"country_code='#{@country_code}' and admin1_code!='00'",:order=>"name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
+      res = [{:val=>0, :txt=>''}] + Geoadmin1.where("country_code='#{@country_code}' and admin1_code!='00'").order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
     end          
     render :layout=>false, :text => res.to_json
   end  
@@ -26,9 +26,9 @@ class ApplicationController < ActionController::Base
     if @admin1uniq == '' and @country_code == '' 
       res = [{:val=>0, :txt=>''}]
     elsif @admin1uniq != ""
-      res = [{:val=>0, :txt=>''}] + Geoadmin2.find(:all,:conditions=>"admin1uniq='#{@admin1uniq}'",:order=>"name").collect {|r| {:val=>r.admin2uniq,:txt=>r.name}}
+      res = [{:val=>0, :txt=>''}] + Geoadmin2.where("admin1uniq='#{@admin1uniq}'").order("name").collect {|r| {:val=>r.admin2uniq,:txt=>r.name}}
     elsif @country_code != ""
-      res = [{:val=>0, :txt=>''}] + Geoadmin2.find(:all,:conditions=>"country_code='#{@country_code}'",:order=>"name").collect {|r| {:val=>r.admin2uniq,:txt=>r.name}}
+      res = [{:val=>0, :txt=>''}] + Geoadmin2.where("country_code='#{@country_code}'").order("name").collect {|r| {:val=>r.admin2uniq,:txt=>r.name}}
     end
     render :layout=>false, :text => res.to_json
   end  
