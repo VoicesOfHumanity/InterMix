@@ -127,6 +127,22 @@
 </div><!--forumcontrol-->
 </form>
 
+<% if @dialog.active_period and @dialog.active_period.id = @period_id and @dialog.active_period.crosstalk!='none' and @dialog.active_period.period_number.to_i > 1 %>
+  <% if @dialog.active_period.previous_period and @dialog.active_period.previous_period.result.class == Hash -%>
+    <% crosstalk = @dialog.active_period.crosstalk %>
+    <div style="border:2px solid #5b92e5;margin:0 0 10px 0;padding:5px 10px 0 10px;">
+      <h3 style="text-align:center;">Previous Winners by <%= crosstalk %></h3>
+      <% result = @dialog.active_period.previous_period.result[crosstalk] %>
+      <% for res in result -%>
+        <b><%= res['label'] %></b>
+        <div class="forumitem forumitemplain forummain forum1">   					
+  			<%= render :partial => "items/item_simple", :locals => { :item => res['item'], :itemproc=>res['iproc'], :from=>'previous' } %>
+        </div>
+      <% end -%>
+    </div>
+  <% end -%>  
+<% end -%>
+
 <div id="newforumitem" class="newforumitem" style="display:none"></div>
 
 <div id="itemlist">

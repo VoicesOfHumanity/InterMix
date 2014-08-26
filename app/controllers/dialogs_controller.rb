@@ -704,6 +704,8 @@ class DialogsController < ApplicationController
       @regress = params[:regress] || 'regress'
     end
 
+    @sortby = '*value*'
+
     @regmean = (@regress == 'regress')
     @all = (@short_full == 'full')
     
