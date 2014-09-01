@@ -5,6 +5,20 @@ function toggleoptions() {
 		$('#forumcontrol3').hide();
 		$('#optionbutton').attr("value","More Options");
 		optionsshowing = false;
+		// Go back to current period and default sort and 
+		var current_period_id = $('#active_period_id').val();
+		var firstsort = $("#sortby > option:first").attr("value");
+		$('#period_id').val(current_period_id);
+		if (firstsort!='default' && had_default) {
+			// Put the Decision Special sort option back, if it is missing
+			$('#sortby').prepend('<option value="default">Decision Special</option>');
+		}
+		$('#sortby').val($("#sortby option:first").val());
+		if ($('#prev_cross')) {
+			// show previous results, if any
+			$('#prev_cross_show').hide();
+			$('#prev_cross').show();
+		}	
 	} else if (optionsshowing) {
 	    if ($('#forumcontrol2')) {
 		    $('#forumcontrol2').hide();
@@ -92,6 +106,12 @@ function list(whatchanged,gotopost) {
             $('#sortby').prepend('<option value="default">Decision Special</option>');
 	    }
 	}
+	
+	// Decide whether previous crosstalk box should be hidden
+	if ($('#period_id') && $('#period_id').val()!=$('#active_period_id').val() && $('#prev_cross')) {
+		$('#prev_cross').hide();
+		$('#prev_cross_show').show();
+	}	
     
 	$('#page').val(1);
 	var pars = $("#searchform").serialize();

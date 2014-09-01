@@ -10,7 +10,7 @@ for period in periods
   
   next if not period.dialog
   
-  puts "Period:#{period.id} #{period.startdate} Name:#{period.name} Discussion:#{period.dialog_id}:#{period.dialog.name}"
+  puts "Period:#{period.id} #{period.period_number.to_i > 0 ? "##{period.period_number} " : ""}#{period.startdate} Name:#{period.name} Discussion:#{period.dialog_id}:#{period.dialog.name}"
 
   @data = {}
   result = {}
@@ -51,7 +51,7 @@ for period in periods
     	          item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'][0]
     	          item = Item.find_by_id(item_id)
     	          puts "    #{metamap_node_name}: #{item.participant.name}: #{item.subject}"
-    	          result[period.crosstalk] << {'item'=>items[0],'iproc'=>itemsproc[items[0].id],'label'=>metamap_node_name}
+    	          result[period.crosstalk] << {'item'=>item,'iproc'=>itemsproc[item.id],'label'=>metamap_node_name}
     	        end
     	      end
     	    end
