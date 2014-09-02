@@ -1308,12 +1308,14 @@ class Item < ActiveRecord::Base
               end
             end
           end
-        end            
-        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|a,b| [b[1][2],a[1][1].sortorder,a[1][0]]<=>[a[1][2],b[1][1].sortorder,b[1][0]]}
+        end        
+        # sort priority order: value, sort order, id    
+        #data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|a,b| [b[1][2],a[1][1].sortorder,a[1][0]]<=>[a[1][2],b[1][1].sortorder,b[1][0]]}
+        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|b,a| [a[1][2],a[1][1].sortorder,a[1][0]]<=>[b[1][2],b[1][1].sortorder,b[1][0]]}
       else
         #-- Put nodes in sorting order and/or alphabetical order
         #data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
-        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|a,b| [a[1][1].sortorder,a[1][0]]<=>[b[1][1].sortorder,b[1][0]]}
+        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|b,a| [a[1][1].sortorder,a[1][0]]<=>[b[1][1].sortorder,b[1][0]]}
       end
 
     end # metamaps

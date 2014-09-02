@@ -16,7 +16,7 @@ end
 %>
 
 <p>
-	<%= select_tag :period_id, options_for_select([['* all messages *',0]]+@dialog.periods.collect{|p| [p.name,p.id]},@period_id), :onchange=>"reload()" %>
+	<%= select_tag :period_id, options_for_select([['* all messages *',0]]+@dialog.periods.order("period_number,id").collect{|p| ["#{p.period_number.to_i > 0 ? "##{p.period_number} " : ""}#{p.name}",p.id]},@period_id), :onchange=>"reload()" %>
 	<%= hidden_field_tag :period_id_bef, @period_id.to_i %>
 	<%= select_tag :short_full, options_for_select(short_full_a,@short_full), :onchange=>"reload()" %>
 	<%= select_tag :less_more, options_for_select([['less info','less'],['more info','more']],@less_more),:style=>"display:#{(@short_full=='short' or @short_full=='gender' or @short_full=='age') ? "none" : "inline"}",:onchange=>"reload()" %>
