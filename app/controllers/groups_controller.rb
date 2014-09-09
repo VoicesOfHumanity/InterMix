@@ -192,7 +192,27 @@ class GroupsController < ApplicationController
   end  
   
   def members
-    #-- List of members, for either a moderator or other members
+    #-- List of members, for other members
+    @section = 'groups'
+    @group_id = params[:id]
+    @group = Group.includes(:group_participants=>:participant).where("group_participants.group_id=#{@group_id}").find(params[:id])
+
+    get_group_info
+
+    if not @is_member
+      redirect_to "/groups/#{@group_id}"
+      return
+    end
+
+    @members = @group.active_members
+    @title = "Group members" 
+
+    update_last_url
+    update_prefix
+  end  
+  
+  def members_admin
+    #-- List of members, for admins
     @section = 'groups'
     @group_id = params[:id]
     @group = Group.includes(:group_participants=>:participant).where("group_participants.group_id=#{@group_id}").find(params[:id])
@@ -223,7 +243,7 @@ class GroupsController < ApplicationController
 
     update_last_url
     update_prefix
-  end  
+  end 
   
   def subgroups
     #-- Show the subgroups that exist and number of members
@@ -300,7 +320,7 @@ class GroupsController < ApplicationController
         end  
       end
     end
-    redirect_to "/groups/#{@group_id}/members?active=#{@active}"
+    redirect_to "/groups/#{@group_id}/members_admin?active=#{@active}"
   end  
   
   def subgroupadd
@@ -1162,7 +1182,7 @@ class GroupsController < ApplicationController
     end
     
     flash[:notice] = "Group member settings updated"
-    url = "/groups/#{@group_id}/members"
+    url = "/groups/#{@group_id}/members_admin"
     if members_active >= 0
       url += "?active=#{@members_active}"
     end

@@ -87,6 +87,7 @@ Intermix::Application.routes.draw do
       get :admin
       get :moderate
       get :members
+      get :members_admin
       get :dialogs
       get :subgroups
       get :subgroup_members
