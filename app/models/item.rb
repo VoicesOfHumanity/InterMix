@@ -400,23 +400,31 @@ class Item < ActiveRecord::Base
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
     
-    if group and group.class == Integer
+    if group.class == Fixnum or group.class == Bignum
       group_id = group
-      group = Group.find_by_id(group_id)
+      if group_id > 0
+        group = Group.find_by_id(group_id)
+      else
+        group = nil
+      end  
     elsif group.class == Group
       group_id = group.id  
     else
       group_id = 0
     end    
-    if dialog and dialog.class == Integer
+    if dialog.class == Fixnum or dialog.class == Bignum
       dialog_id = dialog
-      dialog = Dialog.find_by_id(dialog_id)
+      if dialog_id > 0
+        dialog = Dialog.find_by_id(dialog_id)
+      else
+        dialog = nil  
+      end  
     elsif dialog.class == Dialog
       dialog_id = dialog.id  
     else
       dialog_id = 0
     end    
-    if participant and participant.class == Integer
+    if participant.class == Fixnum or participant.class == Bignum
       participant_id = participant
     elsif participant.class == Participant
       participant_id = participant.id
