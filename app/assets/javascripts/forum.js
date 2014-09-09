@@ -1,6 +1,7 @@
 var optionsshowing = false;
 function toggleoptions() {
-	if (optionsshowing && $('#from').val()=='dialog' && $('#active_period_id').val()>0) {		
+	if (optionsshowing && $('#from').val()=='dialog' && $('#active_period_id').val()>0) {	
+		// Switch to fewer options in a discussion	
 		$('#forumcontrol2').show();
 		$('#forumcontrol3').hide();
 		$('#optionbutton').attr("value","More Options");
@@ -14,15 +15,19 @@ function toggleoptions() {
 			$('#sortby').prepend('<option value="default">Decision Special</option>');
 		}
 		$('#sortby').val($("#sortby option:first").val());
+		// Change the period heading
+    var period_name = $("#period_id option[value='"+current_period_id+"']").text();
+    $('#period_name_heading').html(period_name+' ');
 		if ($('#prev_cross')) {
 			// show previous results, if any
 			$('#prev_cross_show').hide();
 			$('#prev_cross').show();
 		}	
 	} else if (optionsshowing) {
-	    if ($('#forumcontrol2')) {
+		// Switch to fewer options in a group
+	  if ($('#forumcontrol2')) {
 		    $('#forumcontrol2').hide();
-	    }
+	  }
 		$('#forumcontrol3').hide();
 		$('#optionbutton').attr("value","More Options");
 		optionsshowing = false;
@@ -46,56 +51,62 @@ function list(whatchanged,gotopost) {
   gotopost = (typeof gotopost === "undefined") ? "" : ""+gotopost;
   $('#itemlist').css('opacity','0.5');
 	showworking();
-	if ($('#sortby') && $('#sortby').val()=='default') {
+	/* if ($('#sortby') && $('#sortby').val()=='default') {
 	    if ($('#active_period_name')) {
 	        // Put period in heading for the currently active group if we have the Focus Special sort
 	        var period_name = $('#active_period_name').val();
 	        $('#period_name_heading').html(": "+period_name);
         }
 	    $('#period_name_heading').show();	    
-	} else if ($('#period_id') && parseInt($('#period_id').val())>0) {
+	} else */ 
+	if ($('#period_id') && parseInt($('#period_id').val())>0) {
 	    // Put the selected historical period in the heading
 	    var period_id = $('#period_id').val();
         var period_name = $("#period_id option[value='"+period_id+"']").text();
-        $('#period_name_heading').html(": "+period_name);
+        $('#period_name_heading').html(period_name+' ');
 	    $('#period_name_heading').show();
 	} else {
 	    // No period heading
-	    $('#period_name_heading').hide();
+	    $('#period_name_heading').html("[all] ");
 	}
 	
 	if ((whatchanged=='sortby' || whatchanged=='') && $('#sortby').val()=='default') {	
-	    // If the Decision Special sort is selected, make sure we're showing root only and that the active period is selected
-	    $('#threads').val('root');
-	    $('#period_id').val($('#active_period_id').val());
-    } else if (whatchanged=='sortby' && last_sort && last_sort == 'default' && $('#sortby').val()!='default') {
-        // Moving away from Decision Special. Change threads to Roots+Replies
-        $('#threads').val('flat');
-    } else if (whatchanged=='period_id' && $('#period_id').val()>0) {
-        // If we selected a period the sort would no longer be default. Change threads to Roots+Replies
-        $('#threads').val('flat');
-    }
-    if (whatchanged=='period_id' && $('#sortby').val()=='default' && $('#period_id').val()!=$('#active_period_id').val()) {
-        // If we move away from the current period, we can't have the decision special sort
-        $('#sortby').val('items.id desc');
-    }
-    if (whatchanged=='threads' && $('#threads').val()!='root' && $('#sortby').val()=='default') {
-        // If we change threads to anything other than roots only, make sure we're not in focus special
-        $('#sortby').val('items.id desc');
-    }
-    if (whatchanged=='posted_by_metro_area_id' && $('#posted_by_metro_area_id').val()!='0') {
-        $('#posted_by_admin1uniq').val('0');
-    } else if (whatchanged=='posted_by_admin1uniq' && $('#posted_by_admin1uniq').val()!='0') {
-        $('#posted_by_metro_area_id').val('0');
-    }
-    if (whatchanged=='rated_by_metro_area_id' && $('#rated_by_metro_area_id').val()!='0') {
-        $('#rated_by_admin1uniq').val('0');
-    } else if (whatchanged=='rated_by_admin1uniq' && $('#rated_by_admin1uniq').val()!='0') {
-        $('#rated_by_metro_area_id').val('0');
-    }	
-    
-    // Decide whether we show the decision special sort option or not
-    var firstsort = $("#sortby > option:first").attr("value");
+    // If the Decision Special sort is selected, make sure we're showing root only and that the active period is selected
+    $('#threads').val('root');
+    $('#period_id').val($('#active_period_id').val());
+  } else if (whatchanged=='sortby' && last_sort && last_sort == 'default' && $('#sortby').val()!='default') {
+      // Moving away from Decision Special. Change threads to Roots+Replies
+      $('#threads').val('flat');
+  } else if (whatchanged=='period_id' && $('#period_id').val()>0) {
+      // If we selected a period the sort would no longer be default. Change threads to Roots+Replies
+      $('#threads').val('flat');
+  }  
+	if (whatchanged=='period_id' && $('#sortby').val()=='default' && $('#period_id').val()!=$('#active_period_id').val()) {
+      // If we move away from the current period, we can't have the decision special sort
+      $('#sortby').val('items.id desc');
+  } else if (whatchanged=='period_id' && $('#period_id').val()==$('#active_period_id').val()) {
+		// We've moved to the active period
+		$('#prev_cross').show();
+		$('#prev_cross_show').hide();
+	}
+  if (whatchanged=='threads' && $('#threads').val()!='root' && $('#sortby').val()=='default') {
+      // If we change threads to anything other than roots only, make sure we're not in focus special
+      $('#sortby').val('items.id desc');
+  }
+  if (whatchanged=='posted_by_metro_area_id' && $('#posted_by_metro_area_id').val()!='0') {
+      $('#posted_by_admin1uniq').val('0');
+  } else if (whatchanged=='posted_by_admin1uniq' && $('#posted_by_admin1uniq').val()!='0') {
+      $('#posted_by_metro_area_id').val('0');
+  }
+  if (whatchanged=='rated_by_metro_area_id' && $('#rated_by_metro_area_id').val()!='0') {
+      $('#rated_by_admin1uniq').val('0');
+  } else if (whatchanged=='rated_by_admin1uniq' && $('#rated_by_admin1uniq').val()!='0') {
+      $('#rated_by_metro_area_id').val('0');
+  }	
+  
+  // Decide whether we show the decision special sort option or not
+  var firstsort = $("#sortby > option:first").attr("value");
+
 	if ($('#period_id')) {
 	    if ($('#period_id').val()>0 && $('#period_id').val()!=$('#active_period_id').val() && firstsort=='default') {
             // If a another period than the current is selected, remove the Decision Special sort
@@ -110,7 +121,7 @@ function list(whatchanged,gotopost) {
 	// Decide whether previous crosstalk box should be hidden
 	if ($('#period_id') && $('#period_id').val()!=$('#active_period_id').val() && $('#prev_cross')) {
 		$('#prev_cross').hide();
-		$('#prev_cross_show').show();
+		$('#prev_cross_show').hide();
 	}	
     
 	$('#page').val(1);

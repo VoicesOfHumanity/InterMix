@@ -1659,14 +1659,18 @@ class Item < ActiveRecord::Base
       elsif self.period_id.to_i > 0 and not period
         ok = false
         exp = "The decision period doesn't seem to exist"
+      elsif period and period.endrating.to_s != '' and Time.now.strftime("%Y-%m-%d") > period.endrating.strftime("%Y-%m-%d") and self.is_first_in_thread
+        #-- The rating in the period is over, and this is a root item
+        ok = false
+        exp = "The decision period is closed"
       elsif period and period.endrating.to_s != '' and Time.now.strftime("%Y-%m-%d") > period.endrating.strftime("%Y-%m-%d") and self['hasrating'].to_i > 0
         #-- The rating in the period is over, and this person rated the item
         #logger.info("item#voting_ok #{self.id} already rated and period #{self.period_id} is over (#{Time.now.strftime("%Y-%m-%d")} > #{period.endrating})")
         ok = false
-        exp = "Your vote from this decision period is frozen"
+        exp = "Your vote from this decision period is frozen"        
       else
         ok = true
-        exp = "Has discussion, but no reason to now allow vote"
+        exp = "Has discussion, but no reason to not allow vote"
       end
 
     elsif self.group_id.to_i > 0  

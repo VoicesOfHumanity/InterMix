@@ -8,7 +8,7 @@
 Group: <a href="/groups/<%= @group ? @group.id : 0 %>/forum" style="text-decoration:none;"><span style="font-size:20px;color:#000;"><%= @group ? @group.name : '[unknown]' %></span></a><br>
 This Discussion: <span style="font-size:20px"><%= @dialog.name %>&nbsp;&nbsp;</span><img src="/assets/question-mark.png" class="tooltip" width="16" height="16" title="<%= @dialog.description.to_s != '' ? @dialog.description : "No description for this discussion" %>"><br>
 <% if (@dialog.active_period and @sortby=='default') or @period_id.to_i > 0 -%>
-This Decision Period: <span style="font-size:20px"><%= (@period and @period.period_number.to_i > 0) ? "##{@period.period_number} " : ""%><%= @period ? ": #{@period.name}" : "" %>&nbsp;&nbsp;</span><img src="/assets/question-mark.png" class="tooltip" width="16" height="16" title="<%= show_period_instructions(@dialog,@period) %>">
+This Decision Period: <span style="font-size:20px" id="period_name_heading"><%= (@period and @period.period_number.to_i > 0) ? "##{@period.period_number} " : ""%><%= @period ? ": #{@period.name}" : "" %>&nbsp;&nbsp;</span><img src="/assets/question-mark.png" class="tooltip" width="16" height="16" title="<%= show_period_instructions(@dialog,@period) %>">
 	<% if @dsection == 'forum' and @period.shortdesc.to_s != '' -%>
 	<br><div style="border:1px solid #000;width:90%;padding:8px 8px 0px 10px;"><%=raw @period.description %></div>
 	<% end -%>
