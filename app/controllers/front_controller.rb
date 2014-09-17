@@ -560,7 +560,8 @@ class FrontController < ApplicationController
       @message = ""
     end
  
-    if @message != '' or @subject != ''
+    if false and @message != '' or @subject != ''
+      #-- For now we're turning off the message posting 
       @item = Item.new
       @item.dialog_id = @dialog_id
       @item.group_id = @group_id
