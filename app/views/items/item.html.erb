@@ -37,6 +37,7 @@
 
 <script>
 if (window.location.hash=='#reply') {
+	expand(<%= @item.id %>)
 	reply(<%= @item.id %>,false);
 }
 </script>
