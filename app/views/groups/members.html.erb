@@ -1,0 +1,17 @@
+<%= render(:partial => 'groups/menu')%>
+
+<h3><%= @title %></h3>
+
+
+<ul>
+	
+<% for member in @members -%>
+
+<li><a href="/participant/<%= member.id %>/profile"><%= member.name %></a></li>
+
+<% end -%>
+
+</ul>
+
+<p><%= @members.length %> members</p>
+
