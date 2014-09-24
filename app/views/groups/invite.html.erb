@@ -1,6 +1,6 @@
 <%= render(:partial => 'groups/menu')%>
 
-<h3 style="clear:both">Invite new members</h3>
+<h3 style="clear:both">Invite new members to <%= @group.name %></h3>
 
 
 <form action="/groups/<%= @group.id %>/invitedo" method="post">
