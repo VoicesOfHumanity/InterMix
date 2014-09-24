@@ -82,10 +82,9 @@
 			<% else %>
 			<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Home</a></li>
 			<% end -%>
-				
-			<li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='index') or (@section=='dialogs' and @dsection=='index') %>" href="/groups">Groups</a></li>	
-				
+								
 			<% if participant_signed_in? -%>
+			<li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='index') or (@section=='dialogs' and @dsection=='index') %>" href="/groups">Groups</a></li>	
 				<li class="menu"><a class="<%= 'selected' if (@section=='profile' or @section=='wall' or @section=='messages' or @section=='people') %>" href="/me/profile">Me &amp; My Friends</a></li>
 			<% end -%>
 				
