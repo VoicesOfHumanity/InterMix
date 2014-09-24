@@ -5,6 +5,7 @@ class ProfilesController < ApplicationController
   
   def index
     @section = 'profile'
+    @psection = 'profile'
     profile
     update_last_url
   end  

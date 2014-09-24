@@ -157,9 +157,10 @@ ul.mainmenu li.moreless a:hover {
 }
 
 ul.horizmenu {
-    list-style: none;
+  list-style: none;
 	display:block;
 	margin: 6px 0 0px 0;
+	height: 45px;
 }
 ul.horizmenu li {
     margin: 0 0 16px 6px;

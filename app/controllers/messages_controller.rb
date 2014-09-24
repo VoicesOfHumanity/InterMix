@@ -4,6 +4,8 @@ class MessagesController < ApplicationController
   before_filter :authenticate_participant!, :check_group_and_dialog
   
   def index
+    @section = 'messages'
+    @psection = 'mail'
     @from = params[:from] || ''
     
     @sortby = params[:sortby] || "messages.id desc"

@@ -5,6 +5,8 @@ class PeopleController < ApplicationController
 
   def index
     #-- Show people who're visible to whoever's logged in
+    @section = 'people'
+    @psection = 'friends'
     getlist  
     update_last_url
   end  
@@ -46,6 +48,8 @@ class PeopleController < ApplicationController
   
   def friends
     #-- List people that a certain user follows or are followed by
+    @section = 'people'
+    @psection = 'friends'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.includes(:followers,:idols).find(@participant_id)
     

@@ -6,6 +6,7 @@ class WallController < ApplicationController
   def index
     #-- show somebody's wall, or the member's wall
     @section = 'wall'
+    @psection = 'wall'
     @from = 'wall'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@participant_id)
