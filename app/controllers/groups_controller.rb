@@ -874,7 +874,7 @@ class GroupsController < ApplicationController
     @tag = params[:tag].to_s
     @subgroup = params.include?(:subgroup) ? params[:subgroup].to_s : 'my'
     get_group_info
-    @dialog_id = 0
+    @dialog_id = -1
     @limit_group = @group
     
     if not session[:has_required]
