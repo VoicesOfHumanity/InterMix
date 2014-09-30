@@ -17,6 +17,10 @@ class FrontController < ApplicationController
     @content = ""
     cdata = {'cookies'=>cookies}
     if @dialog_id.to_i > 0
+      if participant_signed_in?
+        redirect_to "/dialogs/#{@dialog_id}/forum"
+        return
+      end
       @dialog = Dialog.find_by_id(@dialog_id)
       @group = Group.find_by_id(@group_id) if @group_id.to_i > 0
       cdata['dialog'] = @dialog if @dialog
@@ -40,6 +44,10 @@ class FrontController < ApplicationController
       end
       @content += "<div>#{desc}</div>"
     elsif @group_id.to_i > 0
+      if participant_signed_in?
+        redirect_to "/groups/#{@group_id}/forum"
+        return
+      end
       @group = Group.find_by_id(@group_id)
       cdata['group'] = @group if @group
       cdata['domain'] = (@group and @group.shortname.to_s!='') ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
