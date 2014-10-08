@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+  <title>Intermix</title>
+	<% if params[:compat].to_i==1 -%>
+	<script src="http://ie.microsoft.com/TestDrive/HTML5/CompatInspector/inspector.js"></script>
+	<% end -%>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+	<% "stylesheet_link_tag 'blueprint/print', :media => 'print'" %>
+  <!--[if lt IE 8]>
+    <% "stylesheet_link_tag 'blueprint/ie'" %>
+  <![endif]-->  
+  <%= javascript_include_tag "application" %>
+	<script type="text/javascript">
+	//var CKEDITOR_BASEPATH = '/javascripts/ckeditor/';
+	</script>
+  <% javascript_include_tag "/javascripts/ckeditor/ckeditor.js" %>
+	<% javascript_include_tag '/javascripts/ckeditor/config' %>
+  <%= csrf_meta_tag %>
+	<script>
+   $(document).ready(function() {
+      $('.tooltip').tooltipster({
+				trigger: 'hover',
+				//content: 'Loading...',
+				functionBefore: function(origin,continueTooltip) {
+					//alert(xinspect(origin.context));	//The origin element is in origin.context, like the img or a or div
+					//alert(origin.context.title);
+					continueTooltip();	
+					if (origin.context.id.substring(0,5)=='help_') {			
+						origin.tooltipster('update', 'Loading...');
+						var code = origin.context.id.substring(5,99);
+						if (origin.data('ajax') !== 'cached') {
+			         $.ajax({
+			            type: 'POST',
+			            url: '/helptext/'+code,
+			            success: function(data) {
+			               // update our tooltip content with our returned data and cache it
+			               origin.tooltipster('update', data).data('ajax', 'cached');
+			            }
+			         });
+			      }
+					} else {
+						//alert('not calling ajax');
+					}
+				}
+			});
+			$('#overview').click(function() {
+			  $('#welcomepopup').modal();
+			});
+			$('#whereami').tooltipster({
+				delay: 0,
+				position: 'right'
+			});
+			$('#whereami').tooltipster('update', $('#youareherediv').html());
+   });
+	</script>
+</head>
+<body>
+
+<div class="container">
+	<div class="span-24 last">
+		
+		<div id="header">
+			<div id="mainheader1">&nbsp;</div>
+			<div id="mainheader2"><a href="http://www.intermix.org/intermixhelp.htm" target="_blank"><img src="http://www.intermix.org/help2.png" style="position:absolute;margin:5px 0 0 860px;width:72px;height:72px;" alt="Help"></a><img height="84" alt="logo" src="/assets/logo.gif" width="290"></div>
+			<div id="mainheader3">intermix</div>
+			<div id="mainheader4">&nbsp;</div>
+		</div>
+		
+	</div>
+	<div class="span-24 last">
+		<div id="maincontent">
+			<% if flash[:notice].to_s !="" -%>
+			<p style="color: green"><%=raw flash[:notice] %></p>
+			<% end -%>
+			<% if flash[:alert].to_s !="" -%>
+			<p style="color:#f00;text-align:center;font-weight:bold;font-size:16px;border:1px solid #f00;padding:10px;"><%=raw flash[:alert] %></p>
+			<% end -%>
+			<%= yield %>
+		</div>
+	</div>
+	
+	<div class="span-24 last">
+		<div style="margin-bottom:5px;padding:13px 10px;background-color: #d1cec3;text-align:center;font-size:14px;font-weight:bold;">
+			<div style="float:right;width:88px;margin-top:-13px;"><a href="http://intermix.org/ccattribution3point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("ccattribution3point0.png",:style=>"margin:8px 0 6px 0;") %></a></div>			
+			
+	<a href="/privacy">Control of Posted Material / Privacy</a>
+	<% if false and participant_signed_in? -%>
+	| <%= link_to_function "Easy Opt Out", 'open("/optout", "", "toolbar=no,menubar=no,location=no,scrollbars=no,resizable=yes,width=500,height=200")' %>
+	<% end -%>
+	| <a href="/helppage/faq" target="_blank">FAQ</a>
+		</div>
+	</div>
+</div>
+
+<div id="youareherediv" style="display:none">
+<%= render :partial => "front/youarehere" %>	
+</div>	
+<% if participant_signed_in? %>
+<div id="welcomepopup" class="modaldiv">  
+<%= render(:partial => 'dialogs/welcome')%>
+</div>
+<% end -%>
+
+</body>
+</html>
+<% if participant_signed_in? %>
+<script>
+function whereami() {
+    $('#whereami').tooptipster();
+    $('#whereami').tooltipster('show');
+}
+</script>
+<% end -%>

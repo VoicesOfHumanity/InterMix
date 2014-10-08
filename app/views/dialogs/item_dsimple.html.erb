@@ -1,0 +1,4 @@
+<%= render(:partial => 'dialogs/menu_dsimple')%>
+
+<p>Message X of X</p>
+<%= render( :partial => 'items/item_dsimple', :locals => { :item => @item, :itemproc=>@itemsproc[@item.id], :is_reply => false, :odd_or_even => 1, :from=>@from.to_s, :top=>0, :showlong => true, :exp_item_id=>@item.id } )%>

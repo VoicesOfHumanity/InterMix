@@ -192,6 +192,19 @@ class DialogsController < ApplicationController
     @dsection = 'forum'
     @from = params[:from] || 'dialog'
     @ratings = params[:ratings]
+    if params.has_key?(:simple)
+      @simple = (params[:simple].to_i == 1)  # Simplified interface
+      if @simple
+        current_participant.disc_interface = 'simple'
+      else
+        current_participant.disc_interface = 'normal'
+      end    
+      current_participant.save
+    else
+      @simple = (current_participant.disc_interface == 'simple')
+    end
+    @item_number = params[:item_number].to_i # What item are we looking at, one at a time, in the simplified interface?
+    @item_id = params[:item_id].to_i
     @exp_item_id = (params[:exp_item_id] || 0).to_i
     @tag = params[:tag].to_s
     @subgroup = params[:subgroup].to_s
@@ -302,57 +315,19 @@ class DialogsController < ApplicationController
       end
     end
 
-    if true
-      #-- Get the records, while adding up the stats on the fly
+    #-- Get the records, while adding up the stats on the fly
 
-      #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant)
+    #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant)
 
-      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
+    @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
 
-      #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
-
-
-    else
-      #-- The old way
-
-      @items = Item.scoped
-      @items = @items.where("items.dialog_id = ?", @dialog_id)    
-      if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
-        #- Show original message followed by all replies in a flat list
-        @items = @items.where("is_first_in_thread=1")
-      end
-      @items = @items.includes([:group,:participant,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
-
-      if @dialog_id > 0
-        #-- For a dialog we might need to filter by metamap for poster and/or rater
-        @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
-        for metamap in @metamaps
-          if params["posted_by_metamap_#{metamap.id}"].to_i != 0
-            posted_by_metamap_node_id = params["posted_by_metamap_#{metamap.id}"].to_i
-            #logger.info("items#list Posted by metamap #{metamap.id}: #{posted_by_metamap_node_id}")
-            @items = @items.joins("inner join metamap_node_participants p_mnp_#{metamap.id} on (p_mnp_#{metamap.id}.participant_id=items.posted_by and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id})")
-            #@items = @items.where("p_mnp_#{metamap.id}.participant_id=#{current_participant.id} and p_mnp_#{metamap.id}.metamap_id=#{metamap.id} and p_mnp_#{metamap.id}.metamap_node_id=#{posted_by_metamap_node_id}")
-          end
-          if params["rated_by_metamap_#{metamap.id}"].to_i != 0
-            rated_by_metamap_node_id = params["rated_by_metamap_#{metamap.id}"].to_i
-            #@items = @items.joins("join ratings r_#{metamap_id} on (items.id=ratings.item_id)")
-            @items = @items.where("(select count(*) from ratings r_#{metamap.id} inner join participants r_p_#{metamap.id} on (r_#{metamap.id}.participant_id=r_p_#{metamap.id}.id) inner join metamap_node_participants r_mnp_#{metamap.id} on (r_mnp_#{metamap.id}.participant_id=r_p_#{metamap.id}.id and r_mnp_#{metamap.id}.metamap_node_id=#{rated_by_metamap_node_id}) where r_#{metamap.id}.item_id=items.id)>0")
-          end
-        end
-      end
-
-      @items = @items.joins("left join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})")
-      @items = @items.select("items.*,ratings.participant_id as hasrating,ratings.approval as rateapproval,ratings.interest as rateinterest,'' as explanation")
-    
-    end
+    #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
     
     #if @sortby == 'default'
     #  @items = Item.custom_item_sort(@items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
     #else
     #  @items = @items.order(sortby)
     #end
-
-    @items = @items.paginate :page=>@page, :per_page => @perscr  
     
     if current_participant.new_signup
       @new_signup = true
@@ -367,6 +342,21 @@ class DialogsController < ApplicationController
     
     update_last_url
     update_prefix
+    
+    if @simple and @dialog.active_period
+      #-- Simplified interface, only if we have an active decision period
+      if @item_id.to_i > 0
+        @item = Item.find_by_id(@item_id)
+      else
+        @item = @items[0]
+      end  
+      #-- If @item_number is set, we'll show items one by one. Otherwise a listing
+      @next_item_id = (@items.length > 1) ? @items[1].id : 0
+      render :action => :forum_dsimple, :layout => 'front_nomenu'
+    else
+      @items = @items.paginate :page=>@page, :per_page => @perscr  
+      render :action => :forum  
+    end
 
   end   
   

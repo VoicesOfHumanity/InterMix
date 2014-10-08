@@ -1,0 +1,12 @@
+<%= render(:partial => 'dialogs/menu_dsimple')%>
+
+<% if @item_number.to_i > 0 or @item_id.to_i > 0 -%>
+
+	<p>Message <%= @item_number %> of <%= @items.length %></p>
+	<%= render( :partial => 'items/item_dsimple', :locals => { :item => @item, :itemproc=>@itemsproc[@item.id], :is_reply => false, :odd_or_even => 1, :from=>@from.to_s, :top=>0, :showlong => true, :exp_item_id=>@item.id } )%>
+
+<% else -%>
+
+	<%= render( :partial => 'items/list_dsimple' )%>
+
+<% end -%>

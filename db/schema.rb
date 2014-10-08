@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140812180617) do
+ActiveRecord::Schema.define(:version => 20141008145602) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -598,6 +598,7 @@ ActiveRecord::Schema.define(:version => 20140812180617) do
     t.integer  "last_dialog_id"
     t.string   "provider"
     t.string   "uid"
+    t.string   "disc_interface",                                                       :default => "simple"
   end
 
   add_index "participants", ["confirmation_token"], :name => "index_participants_on_confirmation_token", :unique => true
