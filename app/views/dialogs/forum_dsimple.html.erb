@@ -1,6 +1,8 @@
 <%= render(:partial => 'dialogs/menu_dsimple')%>
 
-<% if @item_number.to_i > 0 or @item_id.to_i > 0 -%>
+<div id="newforumitem" class="newforumitem" style="display:none"></div>
+
+<% if (@item_number.to_i > 0 or @item_id.to_i > 0) and @xmode.to_s != 'list' -%>
 
 	<p>Message <%= @item_number %> of <%= @items.length %></p>
 	<%= render( :partial => 'items/item_dsimple', :locals => { :item => @item, :itemproc=>@itemsproc[@item.id], :is_reply => false, :odd_or_even => 1, :from=>@from.to_s, :top=>0, :showlong => true, :exp_item_id=>@item.id } )%>

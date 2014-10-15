@@ -205,6 +205,7 @@ class DialogsController < ApplicationController
     end
     @item_number = params[:item_number].to_i # What item are we looking at, one at a time, in the simplified interface?
     @item_id = params[:item_id].to_i
+    @xmode = params[:xmode].to_s
     @exp_item_id = (params[:exp_item_id] || 0).to_i
     @tag = params[:tag].to_s
     @subgroup = params[:subgroup].to_s
@@ -345,6 +346,9 @@ class DialogsController < ApplicationController
     
     if @simple and @dialog.active_period
       #-- Simplified interface, only if we have an active decision period
+      if @item_number == 0 and @item_id == 0 and @xmode != 'list'
+        @item_number = 1
+      end  
       if @item_number > 0 or @item_id > 0
         if @item_id.to_i > 0
           @item_number = 1
