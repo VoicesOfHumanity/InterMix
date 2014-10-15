@@ -219,86 +219,83 @@ end
 	<% end -%>
 	</div>		
 	<% end -%>
-
-</div>
-
-
-<p>Please rate this message:</p>
-
-<div style="position:relative;height: 120px;">
-
-	<div id="vote_int_<%= item.id %>" class="votesection <%= intclass %>" style="margin-top:-30px;">
 	
-		<div id="intlong_<%= item.id %>" class="intlong" style="display:inline;left:20px;">
-			<div class="title">interest rating</div>
-			<% if not item.voting_ok(participant_signed_in? ? current_participant.id : 0) -%>
-				<%= item.voting_ok_exp %>
-			<% else -%>
-				<div class="slot">&nbsp;</div><div class="slot">&nbsp;</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">4</div><div class="slot">&nbsp;</div><br/>
-				<div class="slot">&nbsp;</div>
-				<div class="slot"><img src="/assets/sface.gif" alt="face"/></div>
-				<div class="slot"><%= radio_button_tag "int_#{item.id}", '0', is_interest?(@itemsproc[item.id],0), :onclick=>"rate('int',#{item.id},0)" %></div>
-				<div class="slot"><%= radio_button_tag "int_#{item.id}", '1', is_interest?(@itemsproc[item.id],1), :onclick=>"rate('int',#{item.id},1)" %></div>
-				<div class="slot"><%= radio_button_tag "int_#{item.id}", '2', is_interest?(@itemsproc[item.id],2), :onclick=>"rate('int',#{item.id},2)" %></div>
-				<div class="slot"><%= radio_button_tag "int_#{item.id}", '3', is_interest?(@itemsproc[item.id],3), :onclick=>"rate('int',#{item.id},3)" %></div>
-				<div class="slot"><%= radio_button_tag "int_#{item.id}", '4', is_interest?(@itemsproc[item.id],4), :onclick=>"rate('int',#{item.id},4)" %></div>
-				<div class="slot"><img src="/assets/aface.gif" alt="face"/></div><br/>
-				<div class="bigslot left">boring!</div><div class="bigslot right">must&nbsp;see!</div>
-			<% end -%>
-		</div>				
-	</div>
-		
-	<div id="vote_app_<%= item.id %>" class="votesection <%= appclass %>">
-		<div id="applong_<%= item.id %>" class="applong" style="display:inline;left:240px;">
-			<div class="title">approval rating</div>
-			<% if not item.voting_ok(participant_signed_in? ? current_participant.id : 0) -%>
-				<%= item.voting_ok_exp %>
-			<% else -%>				
-				<div class="slot">&nbsp;</div><div class="slot">-3</div><div class="slot">-2</div><div class="slot">-1</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">&nbsp;</div><br/>
-				<div class="slot"><img src="/assets/fface.gif" alt="face"/></div>
-				<div class="slot"><%= radio_button_tag "app_#{item.id}", '-3', is_approval?(@itemsproc[item.id],-3), :onclick=>"rate('app',#{item.id},-3)" %></div>	
-				<div class="slot"><%= radio_button_tag "app_#{item.id}", '-2', is_approval?(@itemsproc[item.id],-2), :onclick=>"rate('app',#{item.id},-2)" %></div>	
-				<div class="slot"><%= radio_button_tag "app_#{item.id}", '-1', is_approval?(@itemsproc[item.id],-1), :onclick=>"rate('app',#{item.id},-1)" %></div>	
-				<div class="slot"><%= radio_button_tag "app_#{item.id}", '0', is_approval?(@itemsproc[item.id],0), :onclick=>"rate('app',#{item.id},0)" %></div>	
-				<div class="slot"><%= radio_button_tag "app_#{item.id}", '1', is_approval?(@itemsproc[item.id],1), :onclick=>"rate('app',#{item.id},1)" %></div>	
-				<div class="slot"><%= radio_button_tag "app_#{item.id}", '2', is_approval?(@itemsproc[item.id],2), :onclick=>"rate('app',#{item.id},2)" %></div>	
-				<div class="slot"><%= radio_button_tag "app_#{item.id}", '3', is_approval?(@itemsproc[item.id],3), :onclick=>"rate('app',#{item.id},3)" %></div>
-				<div class="slot"><img src="/assets/hface.gif" alt="face"/></div>
-				<br/>
-				<div class="bigslot left">disapprove</div><div class="bigslot right">approve</div>
-			<% end -%>
+	
+	<p><br>Please rate the above message:</p>
+	<div style="position:relative;height: 90px;">
+		<div id="vote_int_<%= item.id %>" class="votesection <%= intclass %>" style="width:220px;height:70px;margin-top:-30px;background-color:transparent;border:none;color:#000;">	
+			<div id="intlong_<%= item.id %>" class="intlong" style="display:inline;left:20px;">
+				<div class="title">interest rating</div>
+				<% if not item.voting_ok(participant_signed_in? ? current_participant.id : 0) -%>
+					<%= item.voting_ok_exp %>
+				<% else -%>
+					<div class="slot">&nbsp;</div><div class="slot">&nbsp;</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">4</div><div class="slot">&nbsp;</div><br/>
+					<div class="slot">&nbsp;</div>
+					<div class="slot"><img src="/assets/sface.gif" alt="face"/></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '0', is_interest?(@itemsproc[item.id],0), :onclick=>"rate('int',#{item.id},0)" %></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '1', is_interest?(@itemsproc[item.id],1), :onclick=>"rate('int',#{item.id},1)" %></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '2', is_interest?(@itemsproc[item.id],2), :onclick=>"rate('int',#{item.id},2)" %></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '3', is_interest?(@itemsproc[item.id],3), :onclick=>"rate('int',#{item.id},3)" %></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '4', is_interest?(@itemsproc[item.id],4), :onclick=>"rate('int',#{item.id},4)" %></div>
+					<div class="slot"><img src="/assets/aface.gif" alt="face"/></div><br/>
+					<div class="bigslot left">boring!</div><div class="bigslot right">must&nbsp;see!</div>
+				<% end -%>
+			</div>				
+		</div>		
+		<div id="vote_app_<%= item.id %>" class="votesection <%= appclass %>" style="width:220px;height:70px;margin-top:-30px;background-color:transparent;border:none;color:#000;">
+			<div id="applong_<%= item.id %>" class="applong" style="display:inline;left:240px;">
+				<div class="title">approval rating</div>
+				<% if not item.voting_ok(participant_signed_in? ? current_participant.id : 0) -%>
+					<%= item.voting_ok_exp %>
+				<% else -%>				
+					<div class="slot">&nbsp;</div><div class="slot">-3</div><div class="slot">-2</div><div class="slot">-1</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">&nbsp;</div><br/>
+					<div class="slot"><img src="/assets/fface.gif" alt="face"/></div>
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '-3', is_approval?(@itemsproc[item.id],-3), :onclick=>"rate('app',#{item.id},-3)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '-2', is_approval?(@itemsproc[item.id],-2), :onclick=>"rate('app',#{item.id},-2)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '-1', is_approval?(@itemsproc[item.id],-1), :onclick=>"rate('app',#{item.id},-1)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '0', is_approval?(@itemsproc[item.id],0), :onclick=>"rate('app',#{item.id},0)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '1', is_approval?(@itemsproc[item.id],1), :onclick=>"rate('app',#{item.id},1)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '2', is_approval?(@itemsproc[item.id],2), :onclick=>"rate('app',#{item.id},2)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '3', is_approval?(@itemsproc[item.id],3), :onclick=>"rate('app',#{item.id},3)" %></div>
+					<div class="slot"><img src="/assets/hface.gif" alt="face"/></div>
+					<br/>
+					<div class="bigslot left">disapprove</div><div class="bigslot right">approve</div>
+				<% end -%>
+			</div>	
 		</div>	
-	</div>	
+		
+		<div style="padding:15px 0 0 40px;margin: 0 0 0 20px;">
+			<button type="button" onclick="reply(<%= item.id %>,<%= is_reply %>)" style="font-weight:bold;height:30px;">Add My Comment</button>
+		</div>
+		
+	</div>
 	
-</div>
 
-<p><%= link_to_function "If you wish, leave a comment on the message", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %></p>
+</div>
 
 <% if @itemsproc[item.id]['replies'].length > 0 -%>
-<p>This message has <%= @itemsproc[item.id]['replies'].length %> comments. Click to see them.</p>
+<p><a href="/items/<%= item.id %>/thread">Show comments</a></p>
+<% if false %>
 					<% for reply in @itemsproc[item.id]['replies'] -%>
 						<% odd_or_even = 1-odd_or_even%>
 						<div class="forumitem forumitemplain forumreply forum<%= odd_or_even %>" id="item_<%= reply.id %>">
 							<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id, :exp_item_id=>@exp_item_id.to_i } %>
 						</div>
 					<% end -%>
+<% end %>					
 
 <% else -%>
-<p>There are currently no comments on this message</p>
 <% end -%>
 
 <% if @next_item_id.to_i > 0 -%>
-<p><a href="/dialogs/<%= @dialog.id %>/forum?simple=1&amp;item_id=<%= @next_item_id %>">Go to the next message</a></p>
+<p><button type="button" onclick="document.location='/dialogs/<%= @dialog.id %>/forum?simple=1&amp;item_id=<%= @next_item_id %>'" style="font-weight:bold;height:30px;">Next Message</button>
+</p>
 <% else -%>
 <p>There are no more messages you haven't rated</p>
 <% end -%>
 
+<% if @items.length > 1 -%>
 <p><a href="/dialogs/<%= @dialog_id %>/forum?simple=1">Show full list</a></p>
+<% end -%>
 
-<hr>
-
-<div style="border:1px solid #000;padding:10px;">
-	<img src="/assets/whereami.gif" id="whereami" style="margin: 14px 0 10px 21px;">
-<%= render :partial => "front/youarehere" %>
-</div>
 

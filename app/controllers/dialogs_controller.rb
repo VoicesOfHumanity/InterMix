@@ -345,13 +345,30 @@ class DialogsController < ApplicationController
     
     if @simple and @dialog.active_period
       #-- Simplified interface, only if we have an active decision period
-      if @item_id.to_i > 0
-        @item = Item.find_by_id(@item_id)
-      else
-        @item = @items[0]
+      if @item_number > 0 or @item_id > 0
+        if @item_id.to_i > 0
+          @item_number = 1
+          for item in @items
+            if item.id == @item_id
+              @item = item
+              break
+            end  
+            @item_number += 1
+          end  
+          #@item = Item.find_by_id(@item_id)
+        elsif @item_number.to_i > 1 and @item_number < @items.length
+          @item = @items[@item_number-1]
+        else
+          @item_number = 1
+          @item = @items[0]
+        end  
+        #-- If @item_number is set, we'll show items one by one. Otherwise a listing
+        if @item_number < @items.length
+          @next_item_id = @items[@item_number].id
+        else
+          @next_item_id = 0
+        end    
       end  
-      #-- If @item_number is set, we'll show items one by one. Otherwise a listing
-      @next_item_id = (@items.length > 1) ? @items[1].id : 0
       render :action => :forum_dsimple, :layout => 'front_nomenu'
     else
       @items = @items.paginate :page=>@page, :per_page => @perscr  

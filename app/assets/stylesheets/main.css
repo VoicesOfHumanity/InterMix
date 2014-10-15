@@ -42,6 +42,13 @@ div#header {
 	height: 132px;
 	color: white;
 }
+div#header_narrow {
+	margin: 0 0 0 0;
+	padding: 0;
+	width:750px;
+	height: 132px;
+	color: white;
+}
 div#mainheader1 {
 	height:4px;
 	margin:0;
@@ -163,8 +170,8 @@ ul.horizmenu {
 	height: 45px;
 }
 ul.horizmenu li {
-    margin: 0 0 16px 6px;
-	width: 110px;
+  margin: 0 0 16px 6px;
+	min-width: 110px;
 	overflow: none;
 	float: left;
 }
@@ -183,7 +190,7 @@ ul.horizmenu li a {
   border-left-style: solid;
   border-left-color: black;
   border-left-width: 2px;
-  padding-left: 16px;
+  padding: 0 8px 0 16px;
 }
 ul.horizmenu li a:link, ul.horizmenu li a:visited {
 	background-color: #ccc;

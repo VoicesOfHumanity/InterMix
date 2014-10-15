@@ -71,6 +71,8 @@ gem 'postmark-rails'
 gem 'responds_to_parent'
 
 group :development do
+  gem 'capistrano'
+  gem 'capistrano-rbenv'
   gem 'capistrano-rails'
 end
 
