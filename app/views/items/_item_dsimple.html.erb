@@ -273,20 +273,6 @@ end
 
 </div>
 
-<% if @itemsproc[item.id]['replies'].length > 0 -%>
-<p><a href="/items/<%= item.id %>/thread">Show comments</a></p>
-<% if false %>
-					<% for reply in @itemsproc[item.id]['replies'] -%>
-						<% odd_or_even = 1-odd_or_even%>
-						<div class="forumitem forumitemplain forumreply forum<%= odd_or_even %>" id="item_<%= reply.id %>">
-							<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id, :exp_item_id=>@exp_item_id.to_i } %>
-						</div>
-					<% end -%>
-<% end %>					
-
-<% else -%>
-<% end -%>
-
 <% if @next_item_id.to_i > 0 -%>
 <p><button type="button" onclick="document.location='/dialogs/<%= @dialog.id %>/forum?simple=1&amp;item_id=<%= @next_item_id %>'" style="font-weight:bold;height:30px;">Next Message</button>
 </p>
@@ -295,7 +281,37 @@ end
 <% end -%>
 
 <% if @items.length > 1 -%>
-<p><a href="/dialogs/<%= @dialog_id %>/forum?simple=1&amp;xmode=list">Show full list</a></p>
+<p><a href="/dialogs/<%= @dialog_id %>/forum?simple=1&amp;xmode=list">Show full list of messages</a></p>
 <% end -%>
+
+<% if @itemsproc[item.id]['replies'].length > 0 -%>
+<p><a href="#" onclick="show_hide_comments();return(false);" id="show_comments_link">Show comments</a></p>
+<div id="comments" style="display:none">
+					<% for reply in @itemsproc[item.id]['replies'] -%>
+						<% odd_or_even = 1-odd_or_even%>
+						<div class="forumitem forumitemplain forumreply forum<%= odd_or_even %>" id="item_<%= reply.id %>">
+							<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id, :exp_item_id=>@exp_item_id.to_i, :itemproc=>@itemsproc[reply.id] } %>
+						</div>
+					<% end -%>
+</div>					
+
+<% else -%>
+<% end -%>
+
+<script>
+var showing_comments = false;
+function show_hide_comments() {
+	if (showing_comments) {
+		$('#comments').hide();
+		$('#show_comments_link').html('Show comments');
+		showing_comments = false;
+	} else {
+		$('#comments').show();
+		showing_comments = true;
+		$('#show_comments_link').html('Hide comments');
+	}
+}
+</script>
+
 
 
