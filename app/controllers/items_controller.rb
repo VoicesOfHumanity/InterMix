@@ -200,13 +200,17 @@ class ItemsController < ApplicationController
   end  
   
   def list_comments_simple
-    #-- Comments for a particular item, for the simple view
-    @item_id = params[:id]
+    #-- Comments for a particular item, for the simple view. Probably called after we added a comment
+    @item_id = params[:id].to_i
     item = Item.find_by_id(@item_id)
     
-    @replies = Item.where("is_first_in_thread=0 and first_in_thread=#{item.id}").order("id").all
-    
     #@itemsproc   NB !!!!!!!!!!!!!!!!!!!! Where does that come from?
+    #-- We basically need the same kind of stuff as if we doing a listing, so that we can get an @itemsproc
+    @items, @itemsproc, @extras = Item.list_and_results(nil,item.dialog,item.period_id,0,{},{},true,'default',current_participant)
+
+    #logger.info("items#list_comments_simple @item_id:#{@item_id} item.id:#{item.id} @itemsproc:#{@itemsproc.length} @itemsproc[@item_id]:#{@itemsproc[@item_id].class}")  
+    @replies = @itemsproc[item.id]['replies']
+  
     
     render :partial=>'item_dsimple_comments', :locals => { :item => item, :replies => @replies, :odd_or_even => 1, :from => 'dsimple'}, :layout=>false       
   end  

@@ -316,7 +316,7 @@ function list_comments_simple() {
 			 if (!showing_comments) {
 			 		show_hide_comments();
 			 }
-			 $('#reply_'+item_id).hide();
+			 $('#reply_<%= item.id %>').hide();
      }
    });	
 	

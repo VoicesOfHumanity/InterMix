@@ -440,7 +440,7 @@ class Item < ActiveRecord::Base
     itemsproc = {}  # Stats for each item
     extras = {}     # Some addtional explanations
     
-    items = Item.scoped
+    items = Item.where(true)
     
     items = items.where("items.group_id = #{group_id} or items.first_in_thread_group_id = #{group_id}") if group_id.to_i > 0
     items = items.where("items.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
