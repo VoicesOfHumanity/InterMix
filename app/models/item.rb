@@ -395,7 +395,7 @@ class Item < ActiveRecord::Base
     Item.find_by_id(self.first_in_thread)
   end
   
-  def self.list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='',metabreakdown=false)
+  def self.list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='',metabreakdown=false,withratings='')
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
@@ -474,9 +474,19 @@ class Item < ActiveRecord::Base
 
     #-- We'll add up the stats, but we're including the overall rating summary anyway
     items = items.includes([:dialog,:group,:period,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
-    #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
-    items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{participant_id})") if participant_id.to_i > 0
-    items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation") if participant_id.to_i > 0
+    
+    if participant_id.to_i > 0
+      #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
+      items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{participant_id})")
+      items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation")
+      
+      # withratings is either 'no' for messages not yet rated by this person, 'yes' for only rated messages, or blank for any messages, rated or not      
+      if withratings == 'yes'
+        items = items.where("r_has.participant_id>0")
+      elsif withratings == 'no'
+        items = items.where("r_has.participant_id is null or r_has.participant_id = 0")        
+      end    
+    end
 
     if posted_by_country_code != '0' and posted_by_country_code != ''
       items = items.where("participants.country_code=?",posted_by_country_code)
@@ -522,7 +532,7 @@ class Item < ActiveRecord::Base
       end
       items = items.where("items.group_id in (#{xgpin})")
     end
-    
+        
     items = items.order("items.id")
 
     extras['sql'] = items.to_sql
