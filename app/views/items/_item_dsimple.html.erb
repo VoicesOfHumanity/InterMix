@@ -287,17 +287,13 @@ end
 <% if @itemsproc[item.id]['replies'].length > 0 -%>
 <p><a href="#" onclick="show_hide_comments();return(false);" id="show_comments_link">Show comments</a></p>
 <div id="comments" style="display:none">
-					<% for reply in @itemsproc[item.id]['replies'] -%>
-						<% odd_or_even = 1-odd_or_even%>
-						<div class="forumitem forumitemplain forumreply forum<%= odd_or_even %>" id="item_<%= reply.id %>">
-							<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id, :exp_item_id=>@exp_item_id.to_i, :itemproc=>@itemsproc[reply.id] } %>
-						</div>
-					<% end -%>
+<%= render :partial => "items/item_dsimple_comments", :locals => { :item => item, :replies => @itemsproc[item.id]['replies'], :odd_or_even => 1, :from=>@from.to_s } %>	
 </div>					
 
 <% else -%>
 <% end -%>
 
+<%= hidden_field_tag "from", "dsimple" %>
 <script>
 var showing_comments = false;
 function show_hide_comments() {
@@ -310,6 +306,20 @@ function show_hide_comments() {
 		showing_comments = true;
 		$('#show_comments_link').html('Hide comments');
 	}
+}
+function list_comments_simple() {
+	$.ajax({
+     type: "GET",
+     url: "/items/<%= item.id %>/list_comments_simple",
+     complete: function(t){	
+       $("#comments").html(t.responseText);
+			 if (!showing_comments) {
+			 		show_hide_comments();
+			 }
+			 $('#reply_'+item_id).hide();
+     }
+   });	
+	
 }
 </script>
 

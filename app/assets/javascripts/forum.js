@@ -388,10 +388,11 @@ function saveitem() {
 	            var showmess = t.responseText;
 	        }    
     	   if (replyingid>0) {
-    			$('#reply_'+replyingid).html(showmess);	
-    		 	$('#reply_'+replyingid).css('opacity','1.0');
+    			  $('#reply_'+replyingid).html(showmess);	
+    		 	  $('#reply_'+replyingid).css('opacity','1.0');
         		//window.setTimeout("$('#reply_'+replyingid).remove();list();", 3000);
         		if ($('#sortby').val()=='default') {
+							// If we had default period sort, we'll switch to item order and to showing replies also, so we can see the message we posted
         		    $('#sortby').val('items.id desc');
         		    if ($('#active_period_id') && parseInt($('#active_period_id').val())>0) {
                         $('#period_id').val($('#active_period_id').val());
@@ -430,10 +431,12 @@ function saveitem() {
         	         window.location.hash = '#newforumitem';
         	    }
         	} else {    
-        	    if ($('#from') && $('#from').val()=='individual') {
+        	  if ($('#from') && $('#from').val()=='individual') {
         	        window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];
     		    } else if ($('#from') && $('#from').val()=='thread') {
     		        window.location.reload();
+						} else if ($('#from') && $('#from').val()=='dsimple' && replyingid>0) {
+							list_comments_simple();		
     		    } else if (results['item_id']) {
     		        list(null,results['item_id']);
     		    } else {

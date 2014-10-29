@@ -156,6 +156,7 @@ Intermix::Application.routes.draw do
     get :view, :on => :member
     get :thread, :on => :member
     get :pubgallery, :on => :collection
+    get :list_comments_simple, :on => :member
   end  
   
   resources :messages do

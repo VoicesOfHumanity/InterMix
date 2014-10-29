@@ -1,13 +1,16 @@
+<%= render(:partial => 'dialogs/top_titles')%>
+
 <ul class="horizmenu">
 <% if @dialog.active_period and @dialog.active_period.id = @period_id and @dialog.active_period.crosstalk!='none' and @dialog.active_period.period_number.to_i > 1 %>
   <% if @dialog.active_period.previous_period and @dialog.active_period.previous_period.result.class == Hash -%>	
-<li><a class="menu<%= ' selected' if @dsection=='sprev' %>" href="/dialogs/<%= @dialog.id %>/forum?simple=1">Previous Results</a></li>
+<li><a class="menu<%= ' selected' if @dsection=='sprev' %>" href="/dialogs/<%= @dialog.id %>/forum?simple=1">Show Previous Results</a></li>
 	<% end -%>
 <% end -%>
 <% if session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
 <li><a class="menu<%= ' selected' if @dsection=='sadd' %>" href="#" onclick="newitem('<%= form_authenticity_token %>');return(false);">Add My Message</a></li>
 <% end %>
 <li><a class="menu" href="/dialogs/<%= @dialog.id %>/forum?simple=0">Switch to Techie Mode</a></li>
+<li><a class="menu" href="/participants/sign_out">Sign Out</a></li>
 </ul>
 
 <div style="clear:both;height:1px"></div>

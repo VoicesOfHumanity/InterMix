@@ -199,6 +199,18 @@ class ItemsController < ApplicationController
     end   
   end  
   
+  def list_comments_simple
+    #-- Comments for a particular item, for the simple view
+    @item_id = params[:id]
+    item = Item.find_by_id(@item_id)
+    
+    @replies = Item.where("is_first_in_thread=0 and first_in_thread=#{item.id}").order("id").all
+    
+    @itemsproc   NB !!!!!!!!!!!!!!!!!!!! Where does that come from?
+    
+    render :partial=>'item_dsimple_comments', :locals => { :item => item, :replies => @replies, :odd_or_even => 1, :from => 'dsimple'}, :layout=>false       
+  end  
+  
   def new
     #-- screen for a new item, either new thread or a reply
     @from = params[:from] || ''

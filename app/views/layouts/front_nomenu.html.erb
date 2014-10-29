@@ -59,39 +59,53 @@
 <body>
 
 <div class="container">
-	<div class="span-19 last">
+    <div class="span-24 last">
+        <div class="span-2">&nbsp;</div>
+    	<div class="span-19">
 		
-		<div id="header_narrow">
-			<div id="mainheader1">&nbsp;</div>
-			<div id="mainheader2"><a href="http://www.intermix.org/intermixhelp.htm" target="_blank"><img src="http://www.intermix.org/help2.png" style="position:absolute;margin:5px 0 0 660px;width:72px;height:72px;" alt="Help"></a><img height="84" alt="logo" src="/assets/logo.gif" width="290"></div>
-			<div id="mainheader3">intermix</div>
-			<div id="mainheader4">&nbsp;</div>
-		</div>
+    		<div id="header_narrow">
+    			<div id="mainheader1">&nbsp;</div>
+    			<div id="mainheader2"><a href="http://www.intermix.org/intermixhelp.htm" target="_blank"><img src="http://www.intermix.org/help2.png" style="position:absolute;margin:5px 0 0 660px;width:72px;height:72px;" alt="Help"></a><img height="84" alt="logo" src="/assets/logo.gif" width="290"></div>
+    			<div id="mainheader3">intermix</div>
+    			<div id="mainheader4">&nbsp;</div>
+    		</div>
 		
-	</div>
-	<div class="span-19 last">
-		<div id="maincontent">
-			<% if flash[:notice].to_s !="" -%>
-			<p style="color: green"><%=raw flash[:notice] %></p>
-			<% end -%>
-			<% if flash[:alert].to_s !="" -%>
-			<p style="color:#f00;text-align:center;font-weight:bold;font-size:16px;border:1px solid #f00;padding:10px;"><%=raw flash[:alert] %></p>
-			<% end -%>
-			<%= yield %>
-		</div>
-	</div>
+    	</div>
+        <div class="span-3 last">&nbsp;</div>
+    </div>
+
+    <div class="span-24 last">
+        <div class="span-2">&nbsp;</div>
+    	<div class="span-19">
+    		<div id="maincontent">
+    			<% if flash[:notice].to_s !="" -%>
+    			<p style="color: green"><%=raw flash[:notice] %></p>
+    			<% end -%>
+    			<% if flash[:alert].to_s !="" -%>
+    			<p style="color:#f00;text-align:center;font-weight:bold;font-size:16px;border:1px solid #f00;padding:10px;"><%=raw flash[:alert] %></p>
+    			<% end -%>
+    			<%= yield %>
+    		</div>
+    	</div>
+        <div class="span-3 last">&nbsp;</div>
+    </div>
 	
-	<div class="span-19 last">
-		<div style="margin-bottom:5px;padding:13px 10px;background-color: #d1cec3;text-align:center;font-size:14px;font-weight:bold;">
-			<div style="float:right;width:88px;margin-top:-13px;"><a href="http://intermix.org/ccattribution3point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("ccattribution3point0.png",:style=>"margin:8px 0 6px 0;") %></a></div>			
+    <div class="span-24 last">
+        <div class="span-2">&nbsp;</div>
+    	<div class="span-19">
+    		<div style="margin-bottom:5px;padding:13px 10px;background-color: #d1cec3;text-align:center;font-size:14px;font-weight:bold;">
+    			<div style="float:right;width:88px;margin-top:-13px;"><a href="http://intermix.org/ccattribution3point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("ccattribution3point0.png",:style=>"margin:8px 0 6px 0;") %></a></div>			
 			
-	<a href="/privacy">Control of Posted Material / Privacy</a>
-	<% if false and participant_signed_in? -%>
-	| <%= link_to_function "Easy Opt Out", 'open("/optout", "", "toolbar=no,menubar=no,location=no,scrollbars=no,resizable=yes,width=500,height=200")' %>
-	<% end -%>
-	| <a href="/helppage/faq" target="_blank">FAQ</a>
-		</div>
-	</div>
+    	<a href="/privacy">Control of Posted Material / Privacy</a>
+    	<% if false and participant_signed_in? -%>
+    	| <%= link_to_function "Easy Opt Out", 'open("/optout", "", "toolbar=no,menubar=no,location=no,scrollbars=no,resizable=yes,width=500,height=200")' %>
+    	<% end -%>
+    	| <a href="/helppage/faq" target="_blank">FAQ</a>
+    		</div>
+    	</div>
+        <div class="span-3 last">&nbsp;</div>
+    </div>
+    
 </div>
 
 <div id="youareherediv" style="display:none">
