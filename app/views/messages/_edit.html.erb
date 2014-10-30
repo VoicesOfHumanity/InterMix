@@ -14,7 +14,7 @@
 			<% @message.to_participant_id = current_participant.id %>
 			<%= f.input :to_participant_id, :label => 'to Contact', :as => :select, :collection => @participant.contacts.collect{|c| [c.name,c.id]}+[['*yourself*',current_participant.id]], :input_html=>{:onchange=>"grouporcontact('contact')"} %>	
 			
-			<div style="position:relative;top:-37px;left:80px;width:0;height:0"><img src="/assets/question-mark.png" class="tooltip" id="contacttooltip" style="" width="16" height="16" title="Contacts are people you follow or who follow you.  Your contacts are listed on the Friends page.  Click on someone's name to go to their profile.  At the bottom of the profile page you have the option to follow that person."></div>
+			<div style="position:relative;top:-37px;left:80px;width:0;height:0"><img src="/images/question-mark.png" class="tooltip" id="contacttooltip" style="" width="16" height="16" title="Contacts are people you follow or who follow you.  Your contacts are listed on the Friends page.  Click on someone's name to go to their profile.  At the bottom of the profile page you have the option to follow that person."></div>
 			
 		<% end -%>
 		<% if @groupsadminin.length > 0 -%>

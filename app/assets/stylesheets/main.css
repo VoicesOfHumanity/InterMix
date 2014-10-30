@@ -1,6 +1,6 @@
 body {
 	background-color: #fff;
-	background-image:url('/assets/whitetrk.gif');
+	background-image:url('/images/whitetrk.gif');
 	font-family: Verdana, Helvetica, sans-serif;
 	font-size: 13px;
 }
@@ -57,7 +57,7 @@ div#mainheader1 {
 }
 div#mainheader2 {
 	background-color: #ededed;
-	background-image: url('/assets/header_background.gif');
+	background-image: url('/images/header_background.gif');
 	height: 84px;
 	margin: 0px;
 	padding: 0px;
@@ -113,7 +113,7 @@ ul.mainmenu li {
 }
 
 ul.mainmenu li.menu a {
-	background: transparent url('/assets/menu_bullet_blue.gif') no-repeat scroll 6px 50%;
+	background: transparent url('/images/menu_bullet_blue.gif') no-repeat scroll 6px 50%;
 	font-size: 12px;
   color: #666666;
   line-height: normal;
@@ -141,13 +141,13 @@ ul.mainmenu li.menu a:link, ul.mainmenu li.menu a:visited {
 	text-decoration: none;		
 }	
 ul.mainmenu li.menu a:active, ul.mainmenu li.menu a.selected {
-	background: transparent url('/assets/menu_bullet_red.gif') no-repeat scroll 6px center;
+	background: transparent url('/images/menu_bullet_red.gif') no-repeat scroll 6px center;
 	color: #a02424;
 	background-color: #f3e5dc;
 	border-left-color: #a02424;
 }
 ul.mainmenu li.menu a:hover {
-	background: transparent url('/assets/menu_bullet_red.gif') no-repeat scroll 6px center;
+	background: transparent url('/images/menu_bullet_red.gif') no-repeat scroll 6px center;
   color: #004488;
   background-color: #e5e5e5;
   border-left-color: #a02424; 
@@ -176,7 +176,7 @@ ul.horizmenu li {
 	float: left;
 }
 ul.horizmenu li a {
-	background: transparent url('/assets/menu_bullet_blue.gif') no-repeat scroll 6px 50%;
+	background: transparent url('/images/menu_bullet_blue.gif') no-repeat scroll 6px 50%;
 	font-size: 12px;
   color: #666666;
   line-height: normal;
@@ -204,13 +204,13 @@ ul.horizmenu li a:link, ul.horizmenu li a:visited {
 	text-decoration: none;		
 }	
 ul.horizmenu li a:active, ul.horizmenu li a.selected {
-	background: transparent url('/assets/menu_bullet_red.gif') no-repeat scroll 6px center;
+	background: transparent url('/images/menu_bullet_red.gif') no-repeat scroll 6px center;
 	color: #a02424;
 	background-color: #f3e5dc;
 	border-left-color: #a02424;
 }
 ul.horizmenu li a:hover {
-	background: transparent url('/assets/menu_bullet_red.gif') no-repeat scroll 6px center;
+	background: transparent url('/images/menu_bullet_red.gif') no-repeat scroll 6px center;
   color: #004488;
   background-color: #e5e5e5;
   border-left-color: #a02424; 
@@ -746,7 +746,7 @@ div.modaldiv ul, div.modaldiv ol {
     padding:4px 6px 6px;
 }
 #simplemodal-container a {color:#000;}
-#simplemodal-container a.modalCloseImg {background:url(/assets/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
+#simplemodal-container a.modalCloseImg {background:url(/images/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
 #simplemodal-container h3 {color:#84b8d9;}
 
 

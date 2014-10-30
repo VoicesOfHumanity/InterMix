@@ -72,7 +72,7 @@
 		<li id="uploadli" style="<%= @item.media_type!='picture' ? 'display:none' : '' %>">
 			<div id="mediatitle1" style="width:25%;float:left"><b>Include your picture</b></div>
 			<div style="width:75%;float:left">
-				<%= select_tag :photo_id, options_for_select([['',0]]+Photo.where(:participant_id=>current_participant.id).all.collect{|p| ["#{p.filename} (#{p.width}x#{p.height})",p.id]}) %> <img src="/assets/question-mark.png" class="tooltip" id="photo_id_q" width="16" height="16" title="To include a picture from your computer you must first go to your profile, click the “photos” link there and upload the image.">
+				<%= select_tag :photo_id, options_for_select([['',0]]+Photo.where(:participant_id=>current_participant.id).all.collect{|p| ["#{p.filename} (#{p.width}x#{p.height})",p.id]}) %> <img src="/images/question-mark.png" class="tooltip" id="photo_id_q" width="16" height="16" title="To include a picture from your computer you must first go to your profile, click the “photos” link there and upload the image.">
 			</div>						
 		</li>			
 		<li>

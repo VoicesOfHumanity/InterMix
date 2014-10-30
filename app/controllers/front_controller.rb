@@ -68,7 +68,7 @@ class FrontController < ApplicationController
       end
       @content += "<div>#{desc}</div>"
     else
-      @content += "<div style=\"text-align:right;margin:-3px -5px 0 0\"><img src=\"/assets/composition.jpg\" width=\"285\" height=\"120\"></div>\n"
+      @content += "<div style=\"text-align:right;margin:-3px -5px 0 0\"><img src=\"/images/composition.jpg\" width=\"285\" height=\"120\"></div>\n"
     end
     update_last_url
   end  

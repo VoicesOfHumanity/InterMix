@@ -12,7 +12,7 @@
 <%= select_tag :group_id,raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(Group.where(:openness=>'open').order(:name),'id','name',@group_id) %>
 </td></tr>
 </table>
-<p><input type="image" src="/assets/login/facebook_64.png" alt="Submit" style="vertical-align:middle;float:left;margin-right:10px">	
+<p><input type="image" src="/images/login/facebook_64.png" alt="Submit" style="vertical-align:middle;float:left;margin-right:10px">	
 
 &lt;-- Click the Facebook logo to continue. Facebook will ask you to log in, if you aren't already logged in, and will ask for your permission to use your login and basic profile information for InterMix
 </p>

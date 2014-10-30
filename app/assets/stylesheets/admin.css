@@ -74,7 +74,7 @@ div.field, div.actions {
 }
 .icon {
 	background-color:#4778b3;
-	background-image: url(/assets/sanscons/bg_rounded.gif);
+	background-image: url(/images/sanscons/bg_rounded.gif);
 	background-repeat: no-repeat;
 }
 .icon:hover, .iconhover {
