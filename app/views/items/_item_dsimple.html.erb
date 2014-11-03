@@ -273,16 +273,19 @@ end
 
 </div>
 
+<p>
+  
 <% if @next_item_id.to_i > 0 -%>
-<p><button type="button" onclick="document.location='/dialogs/<%= @dialog.id %>/forum?simple=1&amp;item_id=<%= @next_item_id %>'" style="font-weight:bold;height:30px;">Next Message</button>
-</p>
+<button type="button" onclick="document.location='/dialogs/<%= @dialog.id %>/forum?simple=1&amp;item_id=<%= @next_item_id %>'" style="font-weight:bold;height:30px;">Next Message</button>
 <% else -%>
-<p>There are no more messages you haven't rated</p>
+There are no more messages you haven't rated
 <% end -%>
 
 <% if true or @items.length > 1 -%>
-<p><a href="/dialogs/<%= @dialog_id %>/forum?simple=1&amp;xmode=list">Show full list of messages</a></p>
+&nbsp;&nbsp;<button type="button" onclick="document.location='/dialogs/<%= @dialog_id %>/forum?simple=1&amp;xmode=list#item_<%= item.id %>'" style="font-weight:bold;height:30px;">Show full list of messages</button>
 <% end -%>
+
+</p>
 
 <% if @itemsproc[item.id]['replies'].length > 0 -%>
 <p><a href="#" onclick="show_hide_comments();return(false);" id="show_comments_link">Show comments</a></p>
