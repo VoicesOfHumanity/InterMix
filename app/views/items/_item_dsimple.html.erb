@@ -166,11 +166,13 @@ end
 		<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
 		</div>
 		
+    <% if false -%>
 		<div class="iteminfotxt">
 			<% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
 				<%= link_to_function "Reply", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %>	
 			<% end -%>
 		</div>
+    <% end -%>
 		
 		<div class="iteminfotxt">
 		<a href="/items/<%= item.id %>/view" title="permalink">#</a>	
@@ -202,7 +204,7 @@ end
 			<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
 		</div>
 
-		<% if (@sortby == 'default' and itemproc['replies'].length > 0) or (@threads=='root' and item.num_replies > 0) %>
+		<% if false and ((@sortby == 'default' and itemproc['replies'].length > 0) or (@threads=='root' and item.num_replies > 0)) %>
 		<div class="iteminfotxt">
 		<a href="/items/<%= item.id %>/thread">Show Replies</a>
 		</div>
@@ -266,6 +268,10 @@ end
 		
 		<div style="padding:15px 0 0 40px;margin: 0 0 0 20px;">
 			<button type="button" onclick="reply(<%= item.id %>,<%= is_reply %>)" style="font-weight:bold;height:30px;">Add My Comment</button>
+      
+      <% if @itemsproc[item.id]['replies'].length > 0 -%>
+			&nbsp;<button type="button" onclick="show_hide_comments()" style="font-weight:bold;height:30px;">Show Comments</button>
+      <% end %>
 		</div>
 		
 	</div>
@@ -288,7 +294,6 @@ There are no more messages you haven't rated
 </p>
 
 <% if @itemsproc[item.id]['replies'].length > 0 -%>
-<p><a href="#" onclick="show_hide_comments();return(false);" id="show_comments_link">Show comments</a></p>
 <div id="comments" style="display:none">
 <%= render :partial => "items/item_dsimple_comments", :locals => { :item => item, :replies => @itemsproc[item.id]['replies'], :odd_or_even => 1, :from=>@from.to_s } %>	
 </div>					
