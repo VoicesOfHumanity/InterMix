@@ -203,6 +203,7 @@ class DialogsController < ApplicationController
     else
       @simple = (current_participant.disc_interface == 'simple')
     end
+    @xmode = params[:xmode].to_s    # list or single, if in simple mode
     @item_number = params[:item_number].to_i # What item are we looking at, one at a time, in the simplified interface?
     @item_id = params[:item_id].to_i
     @xmode = params[:xmode].to_s
@@ -320,9 +321,21 @@ class DialogsController < ApplicationController
 
     #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant)
 
-    withratings = @simple ? 'no' : ''
+    if @simple and not @xmode=='list' and not @xmode=='single'
+      #-- Showing messages without ratings if we're in simple mode and not in list mode or single mode
+      withratings = 'no'
+    else
+      withratings = ''
+    end
 
     @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,withratings)
+
+    if @simple and not @xmode=='list' and not @xmode=='single' and @items.length == 0
+      #-- If we're in simple mode and not specifically single mode, and there aren't any unrated message, show the full list
+      @xmode = 'list'
+      withratings = ''
+      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,withratings)
+    end  
 
     #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
     

@@ -166,7 +166,7 @@ end
 		
 		<div class="iteminfotxt">
 			<% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
-				<%= link_to_function "Reply", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %>	
+				<%= link_to_function "Comment", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %>	
 			<% end -%>
 		</div>
 		
@@ -202,7 +202,7 @@ end
 
 		<% if (@sortby == 'default' and itemproc['replies'].length > 0) or (@threads=='root' and item.num_replies > 0) %>
 		<div class="iteminfotxt">
-		<a href="/items/<%= item.id %>/thread">Show Replies</a>
+		<a href="/items/<%= item.id %>/thread">Show Comments</a>
 		</div>
 		<% end -%>
 				
