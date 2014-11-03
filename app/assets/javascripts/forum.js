@@ -437,6 +437,8 @@ function saveitem() {
     		        window.location.reload();
 						} else if ($('#from') && $('#from').val()=='dsimple' && replyingid>0) {
 							list_comments_simple();		
+            } else if ($('#from') && $('#from').val()=='dsimple') {
+              document.location = '/dialogs/' + $('#in_dialog_id').val() + '/forum?item_id=' + results['item_id'];                
     		    } else if (results['item_id']) {
     		        list(null,results['item_id']);
     		    } else {

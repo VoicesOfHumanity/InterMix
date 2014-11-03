@@ -1,5 +1,15 @@
 <%= render(:partial => 'dialogs/menu_dsimple')%>
 
+<input type="hidden" id="authenticity_token" name="authenticity_token" value="<%= form_authenticity_token %>">
+<input type="hidden" id="max_messages" value="<%= @dialog.settings_with_period["max_messages"].to_i %>">	
+<input type="hidden" id="previous_messages" value="<%= @dialog.active_period and @dialog.active_period.max_messages.to_i > 0 ? @previous_messages_period : @previous_messages %>">	
+<input type="hidden" id="showratings" name="showratings" value="<%= params[:showratings].to_i %>">	
+<input type="hidden" id="active_period_id" value="<%= @dialog.active_period ? @dialog.active_period.id : "0" %>">
+<input type="hidden" id="active_period_name" value="<%= @dialog.active_period ? @dialog.active_period.name : "" %>">
+<input type="hidden" id="in_group_id" name="in_group_id" value="<%= session[:group_id].to_i %>">	
+<input type="hidden" id="in_dialog_id" name="in_dialog_id" value="<%= session[:dialog_id].to_i %>">	
+<input type="hidden" id="from" name="from" value="dsimple">	
+
 <div id="newforumitem" class="newforumitem" style="display:none"></div>
 
 <% if (@item_number.to_i > 0 or @item_id.to_i > 0) and @item and @xmode.to_s != 'list' -%>
