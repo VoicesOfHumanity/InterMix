@@ -265,14 +265,18 @@ end
 				<% end -%>
 			</div>	
 		</div>	
-		
+
+    <% if @itemsproc[item.id]['replies'].length > 0 -%>		
+		<div style="padding:0 0 0 40px;margin: 0 0 0 20px;">
+			<button type="button" onclick="reply(<%= item.id %>,<%= is_reply %>)" style="font-weight:bold;height:30px;margin-bottom:5px;width:115px;">Add My Comment</button>
+      <br>
+			<button type="button" onclick="show_hide_comments()" style="font-weight:bold;height:30px;width:115px;">Show Comments</button>
+		</div>
+    <% else -%>
 		<div style="padding:15px 0 0 40px;margin: 0 0 0 20px;">
 			<button type="button" onclick="reply(<%= item.id %>,<%= is_reply %>)" style="font-weight:bold;height:30px;">Add My Comment</button>
-      
-      <% if @itemsproc[item.id]['replies'].length > 0 -%>
-			&nbsp;<button type="button" onclick="show_hide_comments()" style="font-weight:bold;height:30px;">Show Comments</button>
-      <% end %>
-		</div>
+  		</div>
+    <% end -%>
 		
 	</div>
 	
@@ -315,6 +319,7 @@ function show_hide_comments() {
 		$('#comments').show();
 		showing_comments = true;
 		$('#show_comments_link').html('Hide comments');
+    window.location.hash = '#comments';
 	}
 }
 function list_comments_simple() {
@@ -331,6 +336,13 @@ function list_comments_simple() {
    });	
 	
 }
+<% if params[:add_comment].to_i == 1 -%>
+show_hide_comments();
+reply(<%= item.id %>,<%= is_reply %>);
+window.location.hash = '#reply_<%= item.id %>';
+<% elsif params[:show_comments].to_i == 1 -%>
+show_hide_comments();
+<% end -%>
 </script>
 
 
