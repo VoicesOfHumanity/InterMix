@@ -13,7 +13,7 @@ end
 	<p><%= @error_message %></p>
 	<% end -%>
 	
-  <% if @simple and @dialog -%>
+  <% if @simple and @dialog and item.is_first_in_thread -%>
 	<div class="subject subject<%= odd_or_even %>" onclick="document.location='/dialogs/<%= @dialog.id %>/forum?item_id=<%= item.id %>&amp;xmode=single'"><span><%= item.subject %></span></div>
   <% else -%>
 	<div class="subject subject<%= odd_or_even %>" onclick="expand(<%= item.id %>)"><span><%= item.subject %></span></div>
