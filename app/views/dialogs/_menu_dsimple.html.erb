@@ -3,7 +3,11 @@
 <ul class="horizmenu">
 <% if @dialog.active_period and @dialog.active_period.id = @period_id and @dialog.active_period.crosstalk!='none' and @dialog.active_period.period_number.to_i > 1 %>
   <% if @dialog.active_period.previous_period and @dialog.active_period.previous_period.result.class == Hash -%>	
-<li><a class="menu<%= ' selected' if @dsection=='sprev' %>" href="/dialogs/<%= @dialog.id %>/forum?simple=1">Show Previous Results</a></li>
+    <% if @showing_previous -%>
+      <li><%= link_to 'Hide Previous Results', params.merge(show_previous: 0), {:class=>'menu'} %></li>    
+    <% else -%>
+      <li><%= link_to 'Show Previous Results', params.merge(show_previous: 1), {:class=>'menu'} %></li>
+    <% end -%>
 	<% end -%>
 <% end -%>
 <% if session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>

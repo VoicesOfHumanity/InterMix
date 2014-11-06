@@ -716,3 +716,7 @@ function savesubgroup(item_id, group_id) {
 	   }
 	 });	
 }
+function show_previous_results() {
+  // In simple mode, show or hide previous results
+  
+}

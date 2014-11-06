@@ -233,6 +233,19 @@ class DialogsController < ApplicationController
     @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id > 0
     @has_subgroups = (@limit_group and @limit_group.group_subtags.length > 1)
     
+    if params.has_key?(:show_previous)
+      if params[:show_previous].to_i == 1
+        @showing_previous = true
+      else
+        @showing_previous = false
+      end
+      session[:showing_previous] = @showing_previous
+    elsif session.has_key?(:showing_previous)
+      @showing_previous = session[:showing_previous]
+    else
+      @showing_previous = false  
+    end  
+    
     if not session[:has_required]
       session[:has_required] = current_participant.has_required
       if not session[:has_required]
