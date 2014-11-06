@@ -280,15 +280,17 @@ end
 </div>
 
 <p>
-  
+    
 <% if @next_item_id.to_i > 0 -%>
-<button type="button" onclick="document.location='/dialogs/<%= @dialog.id %>/forum?simple=1&amp;item_id=<%= @next_item_id %>'" style="font-weight:bold;height:30px;">Next Message</button>
-<% else -%>
-There are no more messages you haven't rated
+<button type="button" onclick="document.location='/dialogs/<%= @dialog.id %>/forum?simple=1&amp;item_id=<%= @next_item_id %>&amp;xmode=single'" style="font-weight:bold;height:30px;">Next Message &nbsp;&gt;</button>
+<% end -%>
+
+<% if @prev_item_id.to_i > 0 -%>
+&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="document.location='/dialogs/<%= @dialog.id %>/forum?simple=1&amp;item_id=<%= @prev_item_id %>&amp;xmode=single'" style="font-weight:bold;height:30px;">&lt;&nbsp; Previous Message</button>
 <% end -%>
 
 <% if true or @items.length > 1 -%>
-&nbsp;&nbsp;<button type="button" onclick="document.location='/dialogs/<%= @dialog_id %>/forum?simple=1&amp;xmode=list#item_<%= item.id %>'" style="font-weight:bold;height:30px;">Show full list of messages</button>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="document.location='/dialogs/<%= @dialog_id %>/forum?simple=1&amp;xmode=list#item_<%= item.id %>'" style="font-weight:bold;height:30px;">Show full list of messages</button>
 <% end -%>
 
 </p>

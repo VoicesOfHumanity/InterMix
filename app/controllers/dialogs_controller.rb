@@ -317,25 +317,33 @@ class DialogsController < ApplicationController
       end
     end
 
+    if @simple
+      #-- If simple mode, count how many items haven't yet been rated by this user
+      @num_unrated = Item.where(dialog_id: @dialog_id, period_id: @period_id, is_first_in_thread: true).joins("left outer join ratings on (ratings.item_id=items.id and ratings.participant_id=#{current_participant.id})").where("ratings.id is null").count
+    end
+
     #-- Get the records, while adding up the stats on the fly
 
     #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant)
 
-    if @simple and not @xmode=='list' and not @xmode=='single'
-      #-- Showing messages without ratings if we're in simple mode and not in list mode or single mode
-      withratings = 'no'
-    else
+    #if @simple and not @xmode=='list' and not @xmode=='single'
+    #  #-- Showing messages without ratings if we're in simple mode and not in list mode or single mode
+    #  withratings = 'no'
+    #else
       withratings = ''
-    end
+    #end
 
     @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,withratings)
 
-    if @simple and not @xmode=='list' and not @xmode=='single' and @items.length == 0
-      #-- If we're in simple mode and not specifically single mode, and there aren't any unrated message, show the full list
+    #if @simple and not @xmode=='list' and not @xmode=='single' and @items.length == 0
+    #  #-- If we're in simple mode and not specifically single mode, and there aren't any unrated message, show the full list
+    #  @xmode = 'list'
+    #  withratings = ''
+    #  @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,withratings)
+    #end
+    if @simple and not @xmode=='list' and not @xmode=='single' and @num_unrated == 0
       @xmode = 'list'
-      withratings = ''
-      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,withratings)
-    end  
+    end   
 
     #@items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
     
@@ -382,6 +390,11 @@ class DialogsController < ApplicationController
           @item = @items[0]
         end  
         #-- If @item_number is set, we'll show items one by one. Otherwise a listing
+        if @item_number > 1
+          @prev_item_id = @items[@item_number-2].id
+        else
+          @prev_item_id = 0
+        end    
         if @item_number < @items.length
           @next_item_id = @items[@item_number].id
         else
