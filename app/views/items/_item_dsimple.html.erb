@@ -268,9 +268,9 @@ end
 
     <% if @itemsproc[item.id]['replies'].length > 0 -%>		
 		<div style="padding:0 0 0 40px;margin: 0 0 0 20px;">
-			<button type="button" onclick="reply(<%= item.id %>,<%= is_reply %>)" style="font-weight:bold;height:30px;margin-bottom:5px;width:115px;">Add My Comment</button>
+			<button type="button" onclick="reply(<%= item.id %>,<%= is_reply %>)" style="font-weight:bold;height:30px;margin-bottom:5px;width:120px;">Add My Comment</button>
       <br>
-			<button type="button" onclick="show_hide_comments()" style="font-weight:bold;height:30px;width:115px;">Show Comments</button>
+			<button type="button" onclick="show_hide_comments()" style="font-weight:bold;height:30px;width:120px;">Show Comments</button>
 		</div>
     <% else -%>
 		<div style="padding:15px 0 0 40px;margin: 0 0 0 20px;">
@@ -299,13 +299,9 @@ end
 
 </p>
 
-<% if @itemsproc[item.id]['replies'].length > 0 -%>
 <div id="comments" style="display:none">
 <%= render :partial => "items/item_dsimple_comments", :locals => { :item => item, :replies => @itemsproc[item.id]['replies'], :odd_or_even => 1, :from=>@from.to_s } %>	
 </div>					
-
-<% else -%>
-<% end -%>
 
 <%= hidden_field_tag "from", "dsimple" %>
 <script>

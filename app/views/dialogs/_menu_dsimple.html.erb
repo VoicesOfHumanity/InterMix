@@ -13,7 +13,7 @@
 <% if session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
 <li><a class="menu<%= ' selected' if @dsection=='sadd' %>" href="#" onclick="newitem('<%= form_authenticity_token %>');return(false);">Add My Message</a></li>
 <% end %>
-<li><a class="menu" href="/dialogs/<%= @dialog.id %>/forum?simple=0">Switch to Techie Mode</a></li>
+<li><a class="menu" href="/dialogs/<%= @dialog.id %>/forum?simple=0">Switch to Expert Mode</a></li>
 <li><a class="menu" href="/participants/sign_out">Sign Out</a></li>
 </ul>
 
