@@ -525,6 +525,8 @@ function rate(intapp,id,vote) {
                 alert('problem');
             }
             get_summary(id);
+            var classname = 'radio_'+intapp+'_'+(intapp=='app' ? vote+10 : vote);
+            $('.'+classname).prop('checked',true);
          }
     });	
 }
