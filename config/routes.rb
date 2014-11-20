@@ -139,6 +139,7 @@ Intermix::Application.routes.draw do
       get :test_template
       get :get_period_default
       get :test_period_template
+      post :set_show_previous
     end
   end 
   match 'voting_results' => 'dialogs#results'

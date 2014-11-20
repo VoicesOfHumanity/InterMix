@@ -9,12 +9,12 @@
 <input type="hidden" id="in_group_id" name="in_group_id" value="<%= session[:group_id].to_i %>">	
 <input type="hidden" id="in_dialog_id" name="in_dialog_id" value="<%= session[:dialog_id].to_i %>">	
 <input type="hidden" id="from" name="from" value="dsimple">	
+<input type="hidden" id="show_previous" value="<%= @showing_previous ? 1 : 0 %>">
 
 <% if @showing_previous and @dialog.active_period and @dialog.active_period.id = @period_id and @dialog.active_period.crosstalk!='none' and @dialog.active_period.period_number.to_i > 1 %>
   <% if @dialog.active_period.previous_period and @dialog.active_period.previous_period.result.class == Hash -%>
     <% crosstalk = @dialog.active_period.crosstalk %>
     <div style="border:2px solid #654321;margin:20px 0 30px 0;padding:5px 10px 0 10px;" id="prev_cross">
-			<div style="position:absolute;margin:-15px 0 0 670px;padding:0 5px 0 5px;background-color:#fcf9f7;"><a href="#" onclick="$('#prev_cross').hide();$('#prev_cross_show').show();return(false)">hide</a></div>
       <h3 style="text-align:center;margin-top:-17px;width:auto;"><span style="padding:0 5px 0 5px;background-color:#fcf9f7;">Previous Results by <%= crosstalk %></span></h3>
       <% result = @dialog.active_period.previous_period.result[crosstalk] %>
       <% if result.class == Array and result.length > 0 %>

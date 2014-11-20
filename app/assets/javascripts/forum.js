@@ -718,7 +718,26 @@ function savesubgroup(item_id, group_id) {
 	   }
 	 });	
 }
-function show_previous_results() {
-  // In simple mode, show or hide previous results
-  
+function set_show_previous_results() {
+  // In expert mode, show or hide previous results
+  var dialog_id = $('#dialog_id').val();
+  var showing_previous = parseInt($('#show_previous').val());
+  if (showing_previous == 1) {
+    showing_previous = 0;
+  } else {
+    showing_previous = 1;
+  }
+  if (showing_previous) {
+    $('#prev_cross').show();
+    $('#prev_cross_show').hide()
+  } else {
+    $('#prev_cross').hide();
+    $('#prev_cross_show').show();
+  }
+  $('#show_previous').val(showing_previous);
+	$.ajax({
+    type: 'POST',
+    url: '/dialogs/'+dialog_id+'/set_show_previous',
+    data: 'show_previous='+showing_previous
+  });	
 }

@@ -249,8 +249,10 @@ class DialogsController < ApplicationController
       session[:showing_previous] = @showing_previous
     elsif session.has_key?(:showing_previous)
       @showing_previous = session[:showing_previous]
-    else
+    elsif @simple
       @showing_previous = false  
+    else
+      @showing_previous = true  
     end  
     
     if not session[:has_required]
@@ -1878,6 +1880,17 @@ class DialogsController < ApplicationController
     end      
     template = Liquid::Template.parse(template_content)
     render :text => template.render(cdata), :layout=>'front'
+  end
+  
+  def set_show_previous
+    # Record the current state of showing previous results in a cookie
+    if params[:show_previous].to_i == 1
+      @showing_previous = true
+    else
+      @showing_previous = false
+    end
+    session[:showing_previous] = @showing_previous
+    render :text => (@showing_previous ? "1" : "0")
   end
   
   protected 
