@@ -49,6 +49,10 @@ class DialogsController < ApplicationController
     update_last_url
     update_prefix
   end  
+  
+  def show
+    redirect_to :action=>:view
+  end
 
   def view
     #-- Presentation for a group one might want to join
@@ -58,7 +62,7 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @current_period = Period.find(@dialog.current_period) if @dialog.current_period.to_i > 0
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
-    @is_admin = (dialogadmin.length > 0)
+    @is_admin = ((dialogadmin.length > 0) or current_participant.sysadmin)
     update_last_url
     update_prefix
   end  
@@ -77,6 +81,9 @@ class DialogsController < ApplicationController
 
   def new
     #-- Creating a new dialog
+    if not current_participant.sysadmin
+      redirect_to '/groups'
+    end
     @section = 'dialogs'
     @dsection = 'edit'
     @dialog = Dialog.new
@@ -154,8 +161,8 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id]
     @dialog = Dialog.find(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
-    @is_admin = (dialogadmin.length > 0)
-    if not @is_admin and not current_participant.sysadmin
+    @is_admin = ((dialogadmin.length > 0) or current_participant.sysadmin)
+    if not @is_admin
       redirect_to :action=>:view
     end 
     respond_to do |format|
@@ -262,7 +269,7 @@ class DialogsController < ApplicationController
     
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
-    @is_admin = (dialogadmin.length > 0)
+    @is_admin = (dialogadmin.length > 0 or current_participant.sysadmin)
     
     @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
     if @dialog.current_period.to_i > 0
@@ -426,7 +433,7 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id].to_i
     @dialog = Dialog.find(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
-    if dialogadmin.length == 0
+    if dialogadmin.length == 0 and not current_participant.sysadmin
       redirect_to :action=>:view
     end 
     @is_admin = true       
@@ -507,7 +514,7 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id].to_i
     @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
-    @is_admin = (dialogadmin.length > 0)
+    @is_admin = (dialogadmin.length > 0 or current_participant.sysadmin)
     @period_id = params[:period_id].to_i
     
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
@@ -710,7 +717,7 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id].to_i
     @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
-    @is_admin = (dialogadmin.length > 0)
+    @is_admin = (dialogadmin.length > 0 or current_participant.sysadmin)
     @less_more = params[:less_more] || 'less'
 
     @period_id = params[:period_id].to_i
@@ -810,7 +817,7 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id].to_i
     @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
-    @is_admin = (dialogadmin.length > 0)
+    @is_admin = (dialogadmin.length > 0 or current_participant.sysadmin)
     @less_more = params[:less_more] || 'less'
 
     @period_id = params[:period_id].to_i

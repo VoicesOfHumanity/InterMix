@@ -126,8 +126,6 @@ Intermix::Application.routes.draw do
   resources :dialogs do
     member do
       get :view
-      get :edit
-      get :new
       get :forum
       get :meta
       get :result
