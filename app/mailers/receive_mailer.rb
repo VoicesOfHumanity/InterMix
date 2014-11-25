@@ -285,7 +285,10 @@ end
         end  
       end             
       return     
-    end   
+    end
+    
+# NB: At this point we aren't posting items through email
+return     
                       
     puts "  now creating an item"
     @item = Item.new
