@@ -156,6 +156,8 @@ Intermix::Application.routes.draw do
     get :thread, :on => :member
     get :pubgallery, :on => :collection
     get :list_comments_simple, :on => :member
+    get :geoslider, :on => :collection
+    get :geoslider_update, :on => :collection
   end  
   
   resources :messages do

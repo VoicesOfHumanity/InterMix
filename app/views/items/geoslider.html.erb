@@ -1,0 +1,57 @@
+<h1>Geographical Perspectives</h1>
+
+<div id="per_main" style="float:left;width:595px;background-color:#efe;">
+  
+  main
+  
+</div>
+<div style="float:left;width:144px;background-color:#ffe;">
+  
+  
+  <div id="slider-vertical" style="height:200px;float:left"></div>
+  
+  <div style="float:left;width:105px;padding:0 0 0 5px;line-height:34px;">
+  All perspectives<br>
+  Planet Earth<br>
+  Nation<br>
+  State/Province<br>
+  Metro region<br>
+  Current group<br>
+  </div>
+  
+</div> 
+
+<input type="hidden" name="per_level" id="per_level" value="1">
+
+
+<script>
+var cur_level = 1;
+$(function() {
+  $( "#slider-vertical" ).slider({
+    orientation: "vertical",
+    range: "min",
+    min: 1,
+    max: 6,
+    value: cur_level,
+    slide: function( event, ui ) {
+      cur_level = ui.value;
+      $( "#per_level" ).val( cur_level );
+      per_reload(cur_level);
+    }
+  });
+  $( "#per_level" ).val( $( "#slider-vertical" ).slider( "value" ) );
+});
+function per_reload(per_level) {  
+ 	$('#per_main').css('opacity','0.5');
+	$.ajax({
+    type: 'GET',
+	  url: '/items/geoslider_update',
+	  data: 'per_level='+per_level,
+	  complete: function(t){ 
+	    $('#per_main').html(t.responseText);
+      $('#per_main').css('opacity','1.0');
+	  }
+	});	
+  
+}
+</script>

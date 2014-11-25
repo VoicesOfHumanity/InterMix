@@ -790,6 +790,67 @@ class ItemsController < ApplicationController
     @items = Item.where("items.group_id=#{@group_id} and items.has_picture=1 and items.media_type='picture'").includes(:participant).order("items.id desc").limit(12)
   end  
   
+  def geoslider
+    #-- The main screen or the geo slider
+  end
+  
+  def geoslider_update
+    #-- Updating the display for the geo slider
+    # 6: All perspectives
+    # 5: Planet Earth
+    # 4: Nation
+    # 3: State/Province
+    # 2: Metro region
+    # 1: Current group
+    
+    per_level = params[:per_level].to_i
+    levels = {1 => 'group', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet', 6 => 'all'}    
+    level = levels[per_level]
+
+    @group = nil    
+    @posted_by_country_code = ''
+    
+    @title = ""
+    
+    if level == 'group'
+      @group_id = session[:group_id].to_i
+      @group = Group.find_by_id(@group_id) if @group_id > 0
+      @title = "Group: #{@group_id} : #{@group.name}"
+    elsif level == 'metro'
+      @posted_by_metro_area_id = current_participant.metro_area_id
+      @title = "Metro Region: #{current_participant.metro_area_id} : #{current_participant.metro_area.name}"
+    elsif level == 'state'  
+      @posted_by_admin1uniq = current_participant.admin1uniq
+      @title = "State/Province: #{current_participant.admin1uniq} : #{current_participant.geoadmin1.name}"
+    elsif level == 'nation'
+      @posted_by_country_code = current_participant.country_code
+      @title = "Nation: #{current_participant.country_code} : #{current_participant.geocountry.name}"
+    elsif level == 'planet'
+      @title = "Planet Earth"  
+    elsif level == 'all'
+      @title = "All Perspectives"
+    end  
+    
+    @dialog = nil
+    @period = nil
+    
+    @posted_by = 0
+    @posted_meta = {}
+    @rated_meta = {}
+    @rootonly = true
+    @tag = ''
+    @subgroup = 0
+    @sortby = '*value*'
+    
+    @rated_by_country_code = '0'
+    @rated_by_admin1uniq = '0'
+    @rated_by_metro_area_id = 0
+    
+    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog,@period,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
+
+    render :text=>"#{@title} : #{@items.length} items"
+  end
+  
   protected 
   
   def itemvalidate
