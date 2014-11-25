@@ -33,8 +33,8 @@ for period in periods
   @data['meta'] = extras['meta'] 
   if period.crosstalk[0..5] == 'gender' or period.crosstalk[0..2] == 'age'
     for metamap in @metamaps
-      if period.crosstalk == 'gender' and metamap.id == 3
-      elsif period.crosstalk == 'age' and metamap.id == 5
+      if period.crosstalk[0..5] == 'gender' and metamap.id == 3
+      elsif period.crosstalk[0..2] == 'age' and metamap.id == 5
       else
         next
       end  
