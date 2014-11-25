@@ -807,7 +807,9 @@ class ItemsController < ApplicationController
     levels = {1 => 'group', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet', 6 => 'all'}    
     level = levels[per_level]
 
-    @group = nil    
+    @group = nil   
+    @posted_by_metro_area_id = 0 
+    @posted_by_admin1uniq = ''
     @posted_by_country_code = ''
     
     @title = ""
@@ -831,24 +833,24 @@ class ItemsController < ApplicationController
       @title = "All Perspectives"
     end  
     
-    @dialog = nil
-    @period = nil
+    @dialog_id = 0
+    @period_id = 0
     
     @posted_by = 0
     @posted_meta = {}
     @rated_meta = {}
     @rootonly = true
     @tag = ''
-    @subgroup = 0
+    @subgroup = ''
     @sortby = '*value*'
     
-    @rated_by_country_code = '0'
-    @rated_by_admin1uniq = '0'
+    @rated_by_country_code = ''
+    @rated_by_admin1uniq = ''
     @rated_by_metro_area_id = 0
     
-    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog,@period,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
+    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
 
-    render :text=>"#{@title} : #{@items.length} items"
+    render :partial => 'geoslider_update'
   end
   
   protected 
