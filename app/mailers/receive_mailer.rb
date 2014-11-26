@@ -60,7 +60,8 @@ end
         type_list_message = 'owner'
       else
         type_list_message = 'list'
-      end      
+      end     
+      puts "  type_list_message: #{type_list_message}" 
     
       res = to.match('([^\-]+)-([0-9]+-){0,1}(list|admin|owner)@')
       if res
@@ -261,6 +262,7 @@ end
       return
     elsif @group and  type_list_message == 'owner'
       #-- Don't post. Forward the message to the list owner
+      puts "  forwardign to list owner"
       if @group.owner.to_i > 0
         owner = Participant.find_by_id(@group.owner)
         if owner
