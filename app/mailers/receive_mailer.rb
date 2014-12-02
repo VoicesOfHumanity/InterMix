@@ -266,6 +266,7 @@ end
       if @group.owner.to_i > 0
         owner = Participant.find_by_id(@group.owner)
         if owner
+          puts "  owner: #{owner.name} <#{owner.email}>"
           @message = Message.new
           @message.from_participant_id = @participant.id          
           @message.to_participant_id = owner.id
@@ -280,11 +281,15 @@ end
             end  
             logger.info("receive_mailer#receive Message forwarded to list owner")  
           else
+            puts "  but there was a problem saving the message"
             logger.info("receive_mailer#receive Couldn't save message for list owner")  
           end  
         else
+          puts "  except for that we can't find the list owner"
           logger.info("receive_mailer#receive Can't find list owner")  
         end  
+      else
+        puts "  except for that there is no list owner"  
       end             
       return     
     end
