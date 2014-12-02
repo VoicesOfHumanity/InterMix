@@ -408,7 +408,10 @@ class Item < ActiveRecord::Base
         group = nil
       end  
     elsif group.class == Group
-      group_id = group.id  
+      group_id = group.id 
+    elsif group.class == Array
+      #-- An array of group ids 
+      group_id = -1   
     else
       group_id = 0
     end    
@@ -443,6 +446,8 @@ class Item < ActiveRecord::Base
     items = Item.where(true)
     
     items = items.where("items.group_id = #{group_id} or items.first_in_thread_group_id = #{group_id}") if group_id.to_i > 0
+    items = items.where("items.group_id in (#{group.join(',')}) or items.first_in_thread_group_id in (#{group.join(',')})") if group_id.to_i < 0
+    
     items = items.where("items.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
     items = items.where("items.dialog_id = 0 or items.dialog_id is null") if dialog_id.to_i < 0
 

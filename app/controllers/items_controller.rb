@@ -842,7 +842,9 @@ class ItemsController < ApplicationController
       @group = Group.find_by_id(@group_id) if @group_id > 0
       @title += " | Group: #{@group_id} : #{@group.name}"
     elsif group_level == 'user'
-      @title += " |  My groups"
+      #-- Groups they're a member of
+      @group = current_participant.groups_in.collect{|g| g[0]}
+      @title += " |  My #{@group.length} groups"
     elsif group_level == 'all' 
       @group = nil
       @title += " | All groups"   
