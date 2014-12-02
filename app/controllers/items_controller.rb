@@ -796,16 +796,24 @@ class ItemsController < ApplicationController
   
   def geoslider_update
     #-- Updating the display for the geo slider
-    # 6: All perspectives
-    # 5: Planet Earth
-    # 4: Nation
-    # 3: State/Province
-    # 2: Metro region
+    # 5: All perspectives
+    # 4: Planet Earth
+    # 3: Nation
+    # 2: State/Province
+    # 1: Metro region
+    
+    
     # 1: Current group
     
-    per_level = params[:per_level].to_i
-    levels = {1 => 'group', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet', 6 => 'all'}    
-    level = levels[per_level]
+    geo_level = params[:geo_level].to_i
+    geo_levels = {1 => 'metro', 2 => 'state', 3 => 'nation', 4 => 'planet', 5 => 'all'}    
+    geo_level = geo_levels[geo_level]
+    
+    group_level = params[:group_level].to_i
+    group_levels = {1 => 'current', 2 => 'user', 3 => 'all'}
+    group_level = group_levels[group_level]
+
+    #1 => 'group'
 
     @group = nil   
     @posted_by_metro_area_id = 0 
@@ -814,24 +822,31 @@ class ItemsController < ApplicationController
     
     @title = ""
     
-    if level == 'group'
+    if geo_level == 'metro'
+      @posted_by_metro_area_id = current_participant.metro_area_id
+      @title += "Metro Region: #{current_participant.metro_area_id} : #{current_participant.metro_area.name}"
+    elsif geo_level == 'state'  
+      @posted_by_admin1uniq = current_participant.admin1uniq
+      @title += "State/Province: #{current_participant.admin1uniq} : #{current_participant.geoadmin1.name}"
+    elsif geo_level == 'nation'
+      @posted_by_country_code = current_participant.country_code
+      @title += "Nation: #{current_participant.country_code} : #{current_participant.geocountry.name}"
+    elsif geo_level == 'planet'
+      @title += "Planet Earth"  
+    elsif geo_level == 'all'
+      @title += "All Perspectives"
+    end  
+    
+    if group_level == 'current'
       @group_id = session[:group_id].to_i
       @group = Group.find_by_id(@group_id) if @group_id > 0
-      @title = "Group: #{@group_id} : #{@group.name}"
-    elsif level == 'metro'
-      @posted_by_metro_area_id = current_participant.metro_area_id
-      @title = "Metro Region: #{current_participant.metro_area_id} : #{current_participant.metro_area.name}"
-    elsif level == 'state'  
-      @posted_by_admin1uniq = current_participant.admin1uniq
-      @title = "State/Province: #{current_participant.admin1uniq} : #{current_participant.geoadmin1.name}"
-    elsif level == 'nation'
-      @posted_by_country_code = current_participant.country_code
-      @title = "Nation: #{current_participant.country_code} : #{current_participant.geocountry.name}"
-    elsif level == 'planet'
-      @title = "Planet Earth"  
-    elsif level == 'all'
-      @title = "All Perspectives"
-    end  
+      @title += " | Group: #{@group_id} : #{@group.name}"
+    elsif group_level == 'user'
+      @title += " |  My groups"
+    elsif group_level == 'all' 
+      @group = nil
+      @title += " | All groups"   
+    end
     
     @dialog_id = 0
     @period_id = 0

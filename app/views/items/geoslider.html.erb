@@ -5,53 +5,86 @@
   main
   
 </div>
-<div style="float:left;width:139px;padding-left:5px;">
-  
-  
-  <div id="slider-vertical" style="height:200px;float:left"></div>
-  
-  <div style="float:left;width:105px;padding:0 0 0 5px;line-height:34px;">
-  All perspectives<br>
-  Planet Earth<br>
-  Nation<br>
-  State/Province<br>
-  Metro region<br>
-  Current group<br>
-  </div>
-  
-</div> 
 
-<input type="hidden" name="per_level" id="per_level" value="1">
+<div style="float:left;width:139px;padding-left:5px;">
+
+  <div style="">
+  
+    <div id="geoslider" style="height:172px;margin:15px 0 0 0;float:left"></div>
+  
+    <div style="float:left;width:119px;padding:0 0 0 5px;line-height:40px;">
+    All&nbsp;perspectives<br>
+    Planet&nbsp;Earth<br>
+    My&nbsp;Nation<br>
+    My&nbsp;State/Province<br>
+    My&nbsp;Metro&nbsp;region<br>
+    </div>
+  
+  </div> 
+
+  <div style="padding-top:40px;clear:left">
+  
+    <div id="groupslider" style="height:88px;margin:17px 0 0 0;float:left"></div>
+  
+    <div style="float:left;width:105px;padding:0 0 0 5px;line-height:40px;">
+    All groups<br>
+    My groups<br>
+    Current group<br>
+    </div>
+  
+  </div> 
+
+</div>
+
+<input type="hidden" name="geo_level" id="geo_level" value="1">
+<input type="hidden" name="group_level" id="group_level" value="1">
 
 
 <script>
-var cur_level = 1;
+var cur_geo_level = 1;
+var cur_group_level = 1;
 $(function() {
-  $( "#slider-vertical" ).slider({
+  $( "#geoslider" ).slider({
     orientation: "vertical",
     range: "min",
     min: 1,
-    max: 6,
-    value: cur_level,
+    max: 5,
+    value: cur_geo_level,
     slide: function( event, ui ) {
-      cur_level = ui.value;
-      $( "#per_level" ).val( cur_level );
-      per_reload(cur_level);
+      cur_geo_level = ui.value;
+      $( "#geo_level" ).val( cur_geo_level );
+      per_reload();
     }
   });
-  $( "#per_level" ).val( $( "#slider-vertical" ).slider( "value" ) );
+  $( "#geo_level" ).val( $( "#geoslider" ).slider( "value" ) );
+  $( "#groupslider" ).slider({
+    orientation: "vertical",
+    range: "min",
+    min: 1,
+    max: 3,
+    value: cur_group_level,
+    slide: function( event, ui ) {
+      cur_group_level = ui.value;
+      $( "#group_level" ).val( cur_group_level );
+      per_reload();
+    }
+  });
+  $( "#group_level" ).val( $( "#groupslider" ).slider( "value" ) );
 });
-function per_reload(per_level) {  
+
+
+
+function per_reload() {  
  	$('#per_main').css('opacity','0.5');
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-	  data: 'per_level='+per_level,
+	  data: {geo_level: cur_geo_level, group_level: cur_group_level},
 	  complete: function(t){ 
 	    $('#per_main').html(t.responseText);
       $('#per_main').css('opacity','1.0');
 	  }
 	});	
 }
-per_reload(cur_level);
+per_reload();
 </script>
