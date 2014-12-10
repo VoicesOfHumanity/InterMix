@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141008145602) do
+ActiveRecord::Schema.define(:version => 20141209160815) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -429,11 +429,13 @@ ActiveRecord::Schema.define(:version => 20141008145602) do
     t.boolean  "tweeted_group",                                          :default => false
     t.datetime "tweeted_group_at"
     t.boolean  "censored",                                               :default => false
+    t.string   "geo_level"
   end
 
   add_index "items", ["created_at"], :name => "index_items_on_created_at"
   add_index "items", ["dialog_id", "created_at"], :name => "index_items_on_dialog_id_and_created_at"
   add_index "items", ["first_in_thread", "id"], :name => "index_items_on_first_in_thread_and_id"
+  add_index "items", ["geo_level", "id"], :name => "index_items_on_geo_level_and_id", :length => {"geo_level"=>10, "id"=>nil}
   add_index "items", ["group_id", "created_at"], :name => "index_items_on_group_id_and_created_at"
   add_index "items", ["old_message_id"], :name => "index_items_on_old_message_id"
   add_index "items", ["period_id", "id"], :name => "index_items_on_period_id_and_id"

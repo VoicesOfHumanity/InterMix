@@ -220,6 +220,7 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     @reply_to = params[:reply_to].to_i
     @item = Item.new(:media_type=>'text',:link=>'http://',:reply_to=>@reply_to)
+    @item.geo_level = params[:geo_level] if params[:geo_level].to_s != ''
     @items_length = params[:items_length].to_i
     @subgroup = params[:subgroup].to_s
     if params[:group_id].to_i > 0
@@ -409,6 +410,7 @@ class ItemsController < ApplicationController
     @item.link = '' if @item.link == 'http://'
     @item.item_type = 'message'
     @item.posted_by = current_participant.id
+    @item.geo_level = params[:geo_level] if params[:geo_level]
 
     if current_participant.status != 'active'
       #-- Make sure this is an active member
@@ -801,12 +803,15 @@ class ItemsController < ApplicationController
     # 3: Nation
     # 2: State/Province
     # 1: Metro region
-    
-    
-    # 1: Current group
+
+    if session[:num_all_posts].to_i == 0
+      #-- See how many total posts there are, to be able to do a graphic
+      session[:num_all_posts] = Item.where(:is_first_in_thread => true).count
+    end
+    @num_all_posts = session[:num_all_posts]
     
     geo_level = params[:geo_level].to_i
-    geo_levels = {1 => 'metro', 2 => 'state', 3 => 'nation', 4 => 'planet', 5 => 'all'}    
+    geo_levels = GEO_LEVELS               # {1 => 'metro', 2 => 'state', 3 => 'nation', 4 => 'planet', 5 => 'all'}    
     geo_level = geo_levels[geo_level]
     
     group_level = params[:group_level].to_i
@@ -864,8 +869,34 @@ class ItemsController < ApplicationController
     @rated_by_country_code = ''
     @rated_by_admin1uniq = ''
     @rated_by_metro_area_id = 0
+    @metabreakdown = false
+    @withratings = ''
     
-    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
+    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level)
+   
+    @batches = []
+    if @items.length > 4
+      @showmax = (params[:batch_size] || 4).to_i
+      if @items.length < 13
+        @numbatches = 2
+      elsif @items.length <= 30   
+        @numbatches = 3
+      elsif @items.length <= 40
+        @numbatches = 4  
+      else
+        @numbatches = 5  
+      end
+      @batches << 4
+      step = @items.length / (@numbatches - 1)
+      pos = 4
+      (@numbatches-2).times do
+        pos += step
+        @batches << pos
+      end  
+      @batches << @items.length    
+    else
+      @showmax = (params[:batch_size] || @items.length).to_i
+    end  
 
     render :partial => 'geoslider_update'
   end

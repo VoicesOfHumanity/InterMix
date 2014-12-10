@@ -1,5 +1,9 @@
 <h3><%= @title %></h3>
 
+<% show_part = 1.0 * @items.length / @num_all_posts %>
+
+<div style="height:20px;width:590px;background-color:#ccc"><div style="height:20px;width:<%= (show_part * 590).to_i %>px;background-color:#66f;">&nbsp;</div></div>
+
 <p><%= @items.length %> items</p>
 
 <% x = 0 %>
@@ -19,5 +23,37 @@
     <% end -%>	
 	</div><!--forumitem-->
   <% x += 1 %>
-  <% break if x > 3 %>
+  <% break if x >= @showmax %>
 <% end -%>
+
+<% if @batches.length > 0 -%>
+<% step = (560 / (@batches.length-1))-15 %>
+<div id="batchslider" style="margin:0 0 5px 0"></div>
+<div style="width:595px;margin: 0 0 30px 0">
+  <div style="float:left;width:auto;"><%= @batches[0] %></div>
+  <% for x in (1..(@batches.length-1)).to_a do %>
+  <div style="float:left;width:<%= step %>px">&nbsp;</div><div style="float:left;width:auto;"><%= @batches[x] %></div>
+  <% end -%>
+</div>
+<div style="clear:both"></div>
+<% end -%>
+
+<script>
+var batch_sizes = [<%= @batches.join(',') %>];
+$('#batch_size').val(<%= @showmax %>);
+$( "#batchslider" ).slider({
+  orientation: "horizontal",
+  range: "min",
+  min: 1,
+  max: <%= @numbatches %>,
+  value: cur_batch_level,
+  slide: function( event, ui ) {
+    cur_batch_level = ui.value;
+    $( "#batch_level" ).val( cur_batch_level );
+    cur_batch_size = batch_sizes[cur_batch_level-1];
+    $( "#batch_size" ).val( cur_batch_size );
+    per_reload();
+  }
+});
+$( "#batch_level" ).val( $( "#batchslider" ).slider( "value" ) );
+</script>

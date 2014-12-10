@@ -194,7 +194,12 @@ function newitem(token) {
 	if ($('#subgroup') && $('#subgroup').prop("selectedIndex") > 2) {
 	    pars += '&subgroup=' + $('#subgroup').val();
 	}
-    pars += "&authenticity_token="+token;
+  if ($('#geo_level').length) {
+    var geo_level_num = $('#geo_level').val();
+    var geo_level_name = geo_levels[geo_level_num];
+    pars += '&geo_level=' + geo_level_name;
+  }
+  pars += "&authenticity_token="+token;
 	$.ajax({
 		type: "GET",
 		cache: false,
@@ -202,13 +207,14 @@ function newitem(token) {
 		data: pars,
 		complete: function(t){	
 			$('#newforumitem').html(t.responseText);
+      window.location.hash = '#item_html_content';
 			if (t.responseText.substring(0,6) == "<p>You") {
-    			// If what came back wasn't an edit screen (but a message), clear the flag that new item is in progress
-    			in_new_item = 0;
-            	$('.reply_link').each(function(i,obj) {
-            	    $(this).css('opacity','1.0');
-            	});
-    		}
+  			// If what came back wasn't an edit screen (but a message), clear the flag that new item is in progress
+  			in_new_item = 0;
+          	$('.reply_link').each(function(i,obj) {
+          	    $(this).css('opacity','1.0');
+          	});
+  		}
 		}
 	});	
 }
@@ -319,6 +325,7 @@ function canceledit(id) {
 	}
 	$('#newforumitem').hide();
 	$('#newforumitem').html('');
+  window.location.hash = '';
 	replyingid = 0;
 	editingid = 0;
 	in_new_item = 0;
@@ -370,6 +377,11 @@ function saveitem() {
 		var xtype = 'POST';
 	 	$('#newforumitem').css('opacity','0.5');
 	}
+  if ($('#geo_level').length) {
+    var geo_level_num = $('#geo_level').val();
+    var geo_level_name = geo_levels[geo_level_num];
+    pars += '&geo_level=' + geo_level_name;
+  }
 	$.ajax({
 	   type: xtype,
 	   url: url,

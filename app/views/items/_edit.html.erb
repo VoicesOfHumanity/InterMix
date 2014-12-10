@@ -34,6 +34,15 @@
 		<% end -%>
 		</li>
 
+    <% if @item.geo_level.to_s != '' -%>
+      <li class="text optional" id="item_geo_level"><label for="item_geo_level">Perspective</label>
+        <%= select :item, :geo_level, GEO_LEVEL_DESC.each {|level,title| [title,level]} %>
+      </li>
+  		<li class="select optional" id="item_group_id_input"><label for="item_group_id">Group</label>
+  			<%= @item.group.name if @item.group %>
+  		</li>	
+    <% end -%>
+
 		<% if false -%>
 		<li class="select optional" id="item_group_id_input"><label for="item_group_id">To</label>
 			<%= select :item, :group_id, [['*everybody wall/forum*',0],['*my wall*',-1]]+@groupsin.collect{|c| ["Group: #{c.group.name}",c.group.id]} %>

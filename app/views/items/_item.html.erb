@@ -209,6 +209,12 @@ end
 		<div class="iteminfotxt">	
 			<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
 		</div>
+    
+    <% if item.geo_level.to_s != '' -%>
+      <div class="iteminfotxt">
+        Perspective: <%= item.geo_level %>
+      </div>
+    <% end -%>
 
 		<% if (@sortby == 'default' and itemproc['replies'].length > 0) or (@threads=='root' and item.num_replies > 0) %>
 		<div class="iteminfotxt">

@@ -7,7 +7,9 @@
 </div>
 
 <div style="float:left;width:139px;padding-left:5px;">
-
+  
+  <p><input type="button" value="Start New Thread" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')"></p>
+  
   <div style="">
   
     <div id="geoslider" style="height:172px;margin:15px 0 0 0;float:left"></div>
@@ -38,11 +40,20 @@
 
 <input type="hidden" name="geo_level" id="geo_level" value="1">
 <input type="hidden" name="group_level" id="group_level" value="1">
+<input type="hidden" name="batch_level" id="batch_level" value="1">
+<input type="hidden" name="batch_size" id="batch_size" value="4">
+<input type="hidden" id="from" name="from" value="geoslider">	
+<input type="hidden" id="in_group_id" name="in_group_id" value="<%= session[:group_id].to_i %>">	
+
+<div id="newforumitem" class="newforumitem" style="display:none"></div>
 
 
 <script>
+var geo_levels = {1: 'metro', 2: 'state', 3: 'nation', 4: 'planet', 5: 'all'};
 var cur_geo_level = 1;
 var cur_group_level = 1;
+var cur_batch_level = 1;
+var cur_batch_size = 4;
 $(function() {
   $( "#geoslider" ).slider({
     orientation: "vertical",
@@ -71,15 +82,12 @@ $(function() {
   });
   $( "#group_level" ).val( $( "#groupslider" ).slider( "value" ) );
 });
-
-
-
 function per_reload() {  
  	$('#per_main').css('opacity','0.5');
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-	  data: {geo_level: cur_geo_level, group_level: cur_group_level},
+	  data: {geo_level: cur_geo_level, group_level: cur_group_level, batch_level: cur_batch_level, batch_size: cur_batch_size},
 	  complete: function(t){ 
 	    $('#per_main').html(t.responseText);
       $('#per_main').css('opacity','1.0');
