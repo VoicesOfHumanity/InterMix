@@ -24,6 +24,14 @@ class Item < ActiveRecord::Base
     tag_counts.collect {|t| t.name}.join(', ')  
   end
   
+  def excerpt
+    #-- A 35 word excerpt, to use as an alternative to the tweet version
+    plain_content = ActionView::Base.full_sanitizer.sanitize(self.html_content.to_s).strip
+    # plain_content.scan(/(\w|-)+/).size    
+    plain_content.split[0...35].join(' ')
+    #ApplicationController.helpers.my_helper_method
+  end
+  
   def add_image(tempfilepath)
     #-- Handle an image that has been uploaded
     @picdir = "#{DATADIR}/items/#{self.id}"
