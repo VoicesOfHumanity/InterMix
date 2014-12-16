@@ -22,6 +22,20 @@
 		<%= f.input :first_name, :required => true %>
 		<%= f.input :last_name, :required => true %>
 		<%= f.input :title, :required => false %>
+    <%= f.input :picture, :as=>:file, :required => false %>
+    
+  	<li>
+  		<div style="width:25%;float:left;font-weight:bold">&nbsp;</div>
+      <div style="width:75%;float:left">
+        <% if @participant.picture.exists? then -%>
+          <%= image_tag @participant.picture.url(:thumb) %>
+        <% else -%>
+          <img src="/images/default_user_icon-50x50.png" style="background-color:#999">
+        <% end -%>
+      </div>
+    </li>
+    
+    
 		<%= f.input :self_description, :as=>:text, :required => false %>
 		<%= f.input :address1, :required => false %>
 		<%= f.input :address2, :required => false %>

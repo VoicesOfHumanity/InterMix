@@ -134,6 +134,13 @@ end
 	
 	
 	<div class="iteminfo" id="iteminfo_<%= item.id %>">
+    <div class="iteminfopic">
+    <% if item.participant and item.participant.picture.exists? then -%>
+        <%= image_tag item.participant.picture.url(:thumb) %>    
+    <% else -%>
+      <img src="/images/default_user_icon-50x50.png">
+    <% end -%>
+    </div>
 		<div class="iteminfotxt">
 			by 
 		<% "WHAT WAS THE POINT OF THIS?: if @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread" -%>	

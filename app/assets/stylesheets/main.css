@@ -358,6 +358,13 @@ div.forumitem div.iteminfotxt {
 	height: 18px;
 	margin-right: 10px;
 }
+div.forumitem div.iteminfopic {
+	float: left;
+	height: 50px;
+  width: 50px;
+	margin-right: 10px;
+  background-color:#999;
+}
 
 div.forumitem div.itemvoting {
     position: absolute;

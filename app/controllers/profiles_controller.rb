@@ -231,7 +231,7 @@ class ProfilesController < ApplicationController
       #-- Update the setting for whether required fields were entered or not
       session[:has_required] = @participant.has_required
       
-      if @goto != ''
+      if @goto.to_s != ''
         redirect_to @goto and return
       else        
         @subsection = 'view'

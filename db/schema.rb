@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141209160815) do
+ActiveRecord::Schema.define(:version => 20141216181201) do
 
   create_table "authentications", :force => true do |t|
     t.integer  "participant_id"
@@ -601,6 +601,10 @@ ActiveRecord::Schema.define(:version => 20141209160815) do
     t.string   "provider"
     t.string   "uid"
     t.string   "disc_interface",                                                       :default => "simple"
+    t.string   "picture_file_name"
+    t.string   "picture_content_type"
+    t.integer  "picture_file_size"
+    t.datetime "picture_updated_at"
   end
 
   add_index "participants", ["confirmation_token"], :name => "index_participants_on_confirmation_token", :unique => true
