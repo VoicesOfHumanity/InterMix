@@ -212,6 +212,13 @@ class ApplicationController < ActionController::Base
         end
       end
     end  
+    
+    if current_participant.fb_uid.to_i >0 and not current_participant.picture.exists?
+      #-- If they don't have a picture set, and they have a facebook account, get it from there
+      url = "https://graph.facebook.com/#{current_participant.fb_uid}/picture?type=large"
+      current_participant.picture = URI.parse(url)
+      current_participant.save!
+    end
   
     if params[:fb_sig_in_iframe].to_i == 1
       session[:cur_baseurl] + '/fbapp'
