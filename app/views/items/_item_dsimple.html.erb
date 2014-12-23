@@ -232,7 +232,7 @@ end
 	
 	<p><br>Please rate the above message:</p>
 	<div style="position:relative;height: 90px;">
-		<div id="vote_int_<%= item.id %>" class="votesection <%= intclass %>" style="width:220px;height:70px;margin-top:-30px;background-color:transparent;border:none;color:#000;">	
+		<div id="vote_int_<%= item.id %>" class="votesection <%= intclass %>" style="width:220px;height:110px;margin-top:-30px;background-color:transparent;border:none;color:#000;">	
 			<div id="intlong_<%= item.id %>" class="intlong" style="display:inline;left:20px;">
 				<div class="title">interest rating</div>
 				<% if not item.voting_ok(participant_signed_in? ? current_participant.id : 0) -%>
@@ -251,7 +251,7 @@ end
 				<% end -%>
 			</div>				
 		</div>		
-		<div id="vote_app_<%= item.id %>" class="votesection <%= appclass %>" style="width:220px;height:70px;margin-top:-30px;background-color:transparent;border:none;color:#000;">
+		<div id="vote_app_<%= item.id %>" class="votesection <%= appclass %>" style="width:220px;height:110px;margin-top:-30px;background-color:transparent;border:none;color:#000;">
 			<div id="applong_<%= item.id %>" class="applong" style="display:inline;left:240px;">
 				<div class="title">approval rating</div>
 				<% if not item.voting_ok(participant_signed_in? ? current_participant.id : 0) -%>

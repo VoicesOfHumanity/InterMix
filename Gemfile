@@ -55,7 +55,8 @@ gem "will_paginate"
 gem "nifty-generators"
 gem "nokogiri"
 gem "liquid"
-gem 'imagesize', :require => 'image_size'
+#gem 'imagesize', :require => 'image_size'
+gem 'image_size'
 gem 'twitter'
 gem "json"
 gem 'ruby-oembed', :require => 'oembed'

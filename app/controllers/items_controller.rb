@@ -1052,6 +1052,7 @@ class ItemsController < ApplicationController
     elsif params[:photo_id].to_i > 0
       #-- Use one of the user's photos
       tempfilepath = "#{DATADIR}/photos/#{@participant_id}/#{params[:photo_id]}.jpg"     
+      logger.info("items#itempicupload use existing photo at: #{tempfilepath}")      
     elsif @item.link != ''
       #-- Grab file from url
       logger.info("items#itempicupload grabbing:#{@item.link}")      
@@ -1108,6 +1109,7 @@ class ItemsController < ApplicationController
     end    
        
     if not File.exist?(tempfilepath)
+      logger.info("items#itempicupload no picture found at #{tempfilepath}")
       return
     end  
       

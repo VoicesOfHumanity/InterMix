@@ -41,10 +41,10 @@ class Item < ActiveRecord::Base
 
     iwidth = iheight = 0
     begin
-      open("#{tempfilepath}", "rb") do |fh|
-        iwidth,iheight = ImageSize.new(fh.read).get_size
-      end
+      iwidth,iheight = ImageSize.path(tempfilepath).size
     rescue
+      logger.info("item#add_image couldn't get size of #{tempfilepath}")
+      iwidth = iheight = 0
     end
     
     p = Magick::Image.read("#{tempfilepath}").first
@@ -55,17 +55,17 @@ class Item < ActiveRecord::Base
       p.write("#{@bigfilepath}")
     end
     
-    logger.info("item#add_image converting #{tempfilepath} to #{@bigfilepath}")         
+    logger.info("item#add_image converting #{tempfilepath} (#{iwidth}x#{iheight}) to #{@bigfilepath}")         
 
     if p and File.exist?(@bigfilepath)
 
   		bigpicsize = File.stat("#{@bigfilepath}").size
       iwidth = iheight = 0
       begin
-        open("#{@bigfilepath}", "rb") do |fh|
-          iwidth,iheight = ImageSize.new(fh.read).get_size
-        end
+        iwidth,iheight = ImageSize.path(@bigfilepath).size
       rescue
+        logger.info("item#add_image couldn't get size of #{@bigfilepath}")
+        iwidth = iheight = 0
       end  
       logger.info("item#add_image size:#{bigpicsize} dim:#{iwidth}x#{iheight}")
     
