@@ -14,3 +14,14 @@
 	    <% end -%>	
 		</div><!--forumitem-->
 	<% end -%>
+  
+<script>
+setInterval(function () {
+	if (editingid>0) {
+	} else if (replyingid>0) {
+	} else if (in_new_item>0) {
+	} else {
+    location.reload();
+  }
+}, 60000);  
+</script>
