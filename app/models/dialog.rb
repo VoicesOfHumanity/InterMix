@@ -27,11 +27,11 @@ class Dialog < ActiveRecord::Base
   end  
   
   def active_groups
-    groups = Group.includes(:dialog_groups).where("dialog_groups.dialog_id=#{self.id.to_i} and dialog_groups.active=1").all
+    groups = Group.joins(:dialog_groups).where("dialog_groups.dialog_id=#{self.id.to_i} and dialog_groups.active=1")
   end
   
   def pending_groups
-    groups = Group.includes(:dialog_groups).where("dialog_groups.dialog_id=#{self.id.to_i}").where("!(dialog_groups.active=1)").all
+    groups = Group.joins(:dialog_groups).where("dialog_groups.dialog_id=#{self.id.to_i}").where("!(dialog_groups.active=1)")
   end  
   
   def settings_with_period

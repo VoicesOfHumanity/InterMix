@@ -8,7 +8,6 @@ class ParticipantsController < ApplicationController
   
   def search
     @heading = 'Participants'
-    #@participants = Participant.all
     @sort = ['id desc','']
   end
   
@@ -36,7 +35,7 @@ class ParticipantsController < ApplicationController
     if participant_id>0
       @participants = [Participant.find(participant_id)]
     else  
-      @participants = Participant.scoped
+      @participants = Participant.where(nil)
       @participants = @participants.tagged_with(params[:tags]) if params[:tags].to_s != ''
       @participants = @participants.where(:country_code => country_code) if country_code != '*'
       @participants = @participants.where(:status => status) if status != '*'
@@ -87,7 +86,7 @@ class ParticipantsController < ApplicationController
   # POST /participants.xml
   def create
     # NB: There's no validation right now, so this will not be called. We'll redirect sign_up to djoin instead
-    @participant = Participant.new(params[:participant])
+    @participant = Participant.new(participant_params)
     geoupdate
 
     respond_to do |format|
@@ -110,7 +109,7 @@ class ParticipantsController < ApplicationController
     geoupdate
 
     respond_to do |format|
-      if @participant.update_attributes(params[:participant])
+      if @participant.update_attributes(participant_params)
       #if @participant.save
         format.html { render :partial=>'show', :layout=>false, :notice => 'Participant was successfully updated.' }
         format.xml  { head :ok }
@@ -168,5 +167,12 @@ class ParticipantsController < ApplicationController
     end      
   end
   
+  def participant_params
+    params.require(:participant).permit(
+    :first_name, :last_name, :title, :self_description, :address1, :address2, :city, :admin2uniq, :country_code, :country_name, :admin1uniq, :state_code, :state_name, :county_code, :county_name, :zip, :phone,
+    :latitude, :longitude, :timezone, :timezone_offset, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :email, :visibility,
+    :wall_visibility, :item_to_forum, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :forum_email, :group_email, :subgroup_email, :private_email, :system_email, :no_email, :handle
+    )
+  end
   
 end

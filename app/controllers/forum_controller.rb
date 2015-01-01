@@ -27,7 +27,7 @@ class ForumController < ApplicationController
        @sortby = 'items.id desc'
     end
 
-    @items = Item.scoped
+    @items = Item.where(nil)
     @items = @items.where(:posted_to_forum => true)  
     if @group_id > 0
       @items = @items.where("items.group_id = ?", @group_id)    
@@ -48,9 +48,9 @@ class ForumController < ApplicationController
     
     @items = @items.order(@sortby)
     @items = @items.paginate :page=>@page, :per_page => @per_page    
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all      
-    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all      
-    @dialogs = Dialog.all      
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)      
+    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog)      
+    @dialogs = Dialog.where(nil)      
     update_last_url
   end  
   

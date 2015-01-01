@@ -29,7 +29,7 @@ class ProfilesController < ApplicationController
     @participant.save
     if @participant.direct_email_code.to_s == ''
       trycode = Digest::MD5.hexdigest(Time.now.to_f.to_s)[6,10]
-      matches = Participant.where("direct_email_code='#{trycode}'").all
+      matches = Participant.where("direct_email_code='#{trycode}'")
       if matches and matches.length > 0
         logger.info("profiles#settings duplicate direct_email_code:#{trycode}")
       else
@@ -39,9 +39,9 @@ class ProfilesController < ApplicationController
     end
     session[:has_required] = @participant.has_required
     if @participant.country_code.to_s != ''
-      @metro_areas = MetroArea.where(:country_code=>@participant.country_code).order(:name).all.collect{|r| [r.name,r.id]}
+      @metro_areas = MetroArea.where(:country_code=>@participant.country_code).order(:name).collect{|r| [r.name,r.id]}
     else  
-      @metro_areas = MetroArea.includes(:geocountry).order("geocountries.name,metro_areas.name").all.collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
+      @metro_areas = MetroArea.joins(:geocountry).order("geocountries.name,metro_areas.name").collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
     end
     flash.now[:alert] = "Some required fields need to be entered" if not session[:has_required]
     @group = Group.find_by_id(session[:group_id]) if not @group and session[:group_id].to_i > 0
@@ -61,7 +61,7 @@ class ProfilesController < ApplicationController
     @participant = Participant.find(@profile_id)
     if @participant.direct_email_code.to_s == ''
       trycode = Digest::MD5.hexdigest(Time.now.to_f.to_s)[6,10]
-      matches = Participant.where("direct_email_code='#{trycode}'").all
+      matches = Participant.where("direct_email_code='#{trycode}'")
       if matches and matches.length > 0
         logger.info("profiles#settings duplicate direct_email_code:#{trycode}")
       else
@@ -149,7 +149,7 @@ class ProfilesController < ApplicationController
       end
     end
     
-    @participant.assign_attributes(params[:participant]) if params[:participant]
+    @participant.assign_attributes(participant_params) if params[:participant]
     
     @participant.old_email = old_email if emailchanged
 
@@ -249,7 +249,7 @@ class ProfilesController < ApplicationController
     @section = 'profile'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@participant_id)
-    @photos = Photo.where(:participant_id=>@participant_id).all
+    @photos = Photo.where(:participant_id=>@participant_id)
     @picdir = "#{DATADIR}/photos/#{@participant_id}"
     @picurl = "/images/data/photos/#{@participant_id}"
     update_last_url
@@ -494,7 +494,7 @@ class ProfilesController < ApplicationController
 #        if @group
 #          session[:group_name] = @group.name
 #          session[:group_prefix] = @group.shortname
-#          @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+#          @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
 #          @is_member = @group_participant ? true : false
 #          session[:group_is_member] = @is_member
 #        end
@@ -513,4 +513,12 @@ class ProfilesController < ApplicationController
 #    #end
 #  end
   
+  def participant_params
+    params.require(:participant).permit(
+    :first_name, :last_name, :title, :self_description, :address1, :address2, :city, :admin2uniq, :country_code, :country_name, :admin1uniq, :state_code, :state_name, :county_code, :county_name, :zip, :phone,
+    :latitude, :longitude, :timezone, :timezone_offset, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :email, :visibility,
+    :wall_visibility, :item_to_forum, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :forum_email, :group_email, :subgroup_email, :private_email, :system_email, :no_email, :handle
+    )
+  end
+
 end

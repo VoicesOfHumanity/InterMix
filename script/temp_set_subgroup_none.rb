@@ -2,7 +2,7 @@
 
 require File.dirname(__FILE__)+'/cron_helper'
 
-items = Item.where("group_id > 0 and is_first_in_thread=1").all
+items = Item.where("group_id > 0 and is_first_in_thread=1")
 
 processed = 0
 changed = 0
@@ -36,7 +36,7 @@ for item in items
       end  
     end 
   end
-  replies = Item.where("first_in_thread=#{item.id} and is_first_in_thread=0").all
+  replies = Item.where("first_in_thread=#{item.id} and is_first_in_thread=0")
   for reply in replies
     reply.subgroup_list = item.subgroup_list
     reply.save

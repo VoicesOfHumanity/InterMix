@@ -117,7 +117,7 @@ class Admin::HubsController < ApplicationController
 
     @hub = Hub.includes(:participants).find(@hub_id)
     
-    @participants = Participant.all
+    @participants = Participant.where(nil)
     
     render :partial=>"admins", :layout=>false
   end  

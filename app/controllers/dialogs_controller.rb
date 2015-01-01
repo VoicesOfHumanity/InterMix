@@ -12,14 +12,14 @@ class DialogsController < ApplicationController
     @section = 'dialogs'
     @dsection = 'index'
     if false
-      @gpin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id)").includes(:group).all
+      @gpin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id)").includes(:group)
       @groupsina = @gpin.collect{|g| g.group.id}      
       @dialogsin = []   # All dialogs they're in
       @dialogsingroup = []   # Dialogs for the current group, if any
       ddone1 = {}
       ddone2 = {}
       for gp in @gpin
-        gdialogsin = DialogGroup.where("group_id=#{gp.group.id}").includes(:dialog).all
+        gdialogsin = DialogGroup.where("group_id=#{gp.group.id}").includes(:dialog)
         for gd in gdialogsin
           if not ddone1[gd.dialog.id]
             @dialogsin << gd.dialog
@@ -39,9 +39,9 @@ class DialogsController < ApplicationController
     end
     
     #-- See if they're a moderator of a group, or a hub admin. Only those can add new discussions.
-    groupsmodof = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").all
+    groupsmodof = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1")
     @is_group_moderator = (groupsmodof.length > 0)
-    hubadmins = HubAdmin.where("participant_id=#{current_participant.id} and active=1").all
+    hubadmins = HubAdmin.where("participant_id=#{current_participant.id} and active=1")
     @is_hub_admin = (hubadmins.length > 0)
     
     @admin4 = DialogAdmin.where("participant_id=?",current_participant.id).collect{|r| r.dialog_id}
@@ -72,7 +72,7 @@ class DialogsController < ApplicationController
     @section = 'dialogs'
     @dsection = 'admin'
     @group = Group.find(params[:id])
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
     @is_member = @group_participant ? true : false
     @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     update_last_url
@@ -101,10 +101,10 @@ class DialogsController < ApplicationController
     @dialog.names_visible_general = true
     @dialog.posting_open = true
     @dialog.voting_open = true
-    @metamaps = Metamap.all
+    @metamaps = Metamap.where(nil)
     @has_metamaps = {}
     
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)
     render :action=>'edit'
   end  
   
@@ -118,9 +118,9 @@ class DialogsController < ApplicationController
       redirect_to :action=>:view
     end 
     @is_admin = true
-    #@groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all   
+    #@groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)   
     @dialog = Dialog.find_by_id(@dialog_id)
-    @metamaps = Metamap.all
+    @metamaps = Metamap.where(nil)
     @has_metamaps = {}
     @dialog.metamaps.each do |metamap_id,name|
       @has_metamaps[metamap_id] = true
@@ -129,7 +129,7 @@ class DialogsController < ApplicationController
   end  
 
   def create
-    @dialog = Dialog.new(params[:dialog])
+    @dialog = Dialog.new(dialog_params)
     respond_to do |format|
       if dvalidate and @dialog.save
         @dialog.participants << current_participant  # Add as admin
@@ -137,7 +137,7 @@ class DialogsController < ApplicationController
           @group = Group.find(@dialog.group_id)
           @dialog.groups << @group
         end
-        for metamap in Metamap.all
+        for metamap in Metamap.where(nil)
           dialog_metamap = DialogMetamap.where(:dialog_id=>@dialog.id,:metamap_id=>metamap.id).first
           if params[:metamap] and params[:metamap][metamap.id.to_s] and not dialog_metamap
             dialog_metamap = DialogMetamap.new(:dialog_id=>@dialog.id,:metamap_id=>metamap.id)
@@ -166,10 +166,10 @@ class DialogsController < ApplicationController
       redirect_to :action=>:view
     end 
     respond_to do |format|
-      if dvalidate and @dialog.update_attributes(params[:dialog])
+      if dvalidate and @dialog.update_attributes(dialog_params)
         @dialog.shortdesc = view_context.strip_tags(@dialog.shortdesc)[0..123]
         @dialog.save
-        for metamap in Metamap.all
+        for metamap in Metamap.where(nil)
           dialog_metamap = DialogMetamap.where(:dialog_id=>@dialog.id,:metamap_id=>metamap.id).first
           if params[:metamap] and params[:metamap][metamap.id.to_s] and not dialog_metamap
             dialog_metamap = DialogMetamap.new(:dialog_id=>@dialog.id,:metamap_id=>metamap.id)
@@ -181,7 +181,7 @@ class DialogsController < ApplicationController
         format.html { redirect_to :action=>:view, :notice => 'Discussion was successfully updated.' }
         format.xml  { head :ok }
       else
-        @metamaps = Metamap.all
+        @metamaps = Metamap.where(nil)
         @has_metamaps = {}
         @dialog.metamaps.each do |metamap_id,name|
           @has_metamaps[metamap_id] = true
@@ -269,7 +269,7 @@ class DialogsController < ApplicationController
     
     @metamaps = Metamap.joins(:dialogs).where("dialogs.id=#{@dialog_id}")
     
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)
     dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
     @is_admin = (dialogadmin.length > 0 or current_participant.sysadmin)
     
@@ -455,7 +455,7 @@ class DialogsController < ApplicationController
     else
       @period = Period.find(@period_id)
     end
-    @metamaps = Metamap.order("name").all  
+    @metamaps = Metamap.order("name")  
   end
   
   def period_save
@@ -471,7 +471,7 @@ class DialogsController < ApplicationController
     end  
     @period.shortdesc = view_context.strip_tags(@period.shortdesc.to_s)[0..123]
     @period.save!    
-    @period.update_attributes(params[:period])
+    @period.update_attributes(period_params)
     #@period.required_meta = params[:period][:required_meta]
 		#@period.required_message = params[:period][:required_message]
 		#@period.required_subject = params[:period][:required_subject]
@@ -492,7 +492,7 @@ class DialogsController < ApplicationController
     @dialog = Dialog.find_by_id(@dialog_id)
     @group_id = params[:group_id].to_i
     @group = Group.find(@group_id)
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
     @is_member = @group_participant ? true : false
     @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first   
@@ -1785,7 +1785,7 @@ class DialogsController < ApplicationController
     @participant = current_participant
     @email = @participant.email
     @name = @participant.name
-    @countries = Geocountry.order(:name).select([:name,:iso]).all
+    @countries = Geocountry.order(:name).select([:name,:iso])
     @meta = []
     metamaps = @group.metamaps
     for metamap in metamaps
@@ -1974,6 +1974,14 @@ class DialogsController < ApplicationController
 		else
 			"<a href=\"/participant/#{item.id}/profile\">" + ( item.participant ? item.participant.name : item.posted_by ) + "</a>"
 		end
+  end
+  
+  def dialog_params
+    params.require(:dialog).permit(:name, :shortname, :description, :shortdesc, :instructions, :visibility, :openness, :moderation, :publishing, :max_voting_distribution, :max_characters, :max_words, :max_mess_length, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :list_template, :metamap_vote_own, :default_message, :required_message, :required_subject, :alt_logins, :max_messages, :new_message_title, :allow_replies, :required_meta, :value_calc, :profiles_visible, :names_visible_voting, :names_visible_general, :in_voting_round, :posting_open, :voting_open, :current_period, :twitter_hash_tag)
+  end
+  
+  def period_params
+    params.require(:period).permit(:name,:shortname,:description,:shortdesc,:instructions,:max_characters,:max_words,:metamap_vote_own,:default_message,:required_message,:required_subject,:max_messages,:new_message_title,:allow_replies,:required_meta,:value_calc,:profiles_visible,:names_visible_voting,:names_visible_general,:posting_open,:voting_open,:sort_metamap_id,:sort_order,:cross_talk,:period_number)
   end
 
 end

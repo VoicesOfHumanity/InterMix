@@ -1,12 +1,12 @@
 class Participant < ActiveRecord::Base
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :confirmable, :lockable, :timeoutable 
-  devise :database_authenticatable, :token_authenticatable, :registerable,
+  # :token_authenticatable, :confirmable, :lockable, :timeoutable, :token_authenticatable
+  devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
   devise :omniauthable, :omniauth_providers => [:facebook]
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :title, :address1, :address2, :city, :admin1uniq, :county_code, :county_name, :state_code, :state_name, :country_code, :country_name, :phone, :zip, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :status, :self_description, :tag_list, :visibility, :twitter_post, :twitter_username, :forum_email, :group_email, :subgroup_email, :private_email, :system_email, :no_email, :authentication_token, :picture
+  #attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name, :title, :address1, :address2, :city, :admin1uniq, :county_code, :county_name, :state_code, :state_name, :country_code, :country_name, :phone, :zip, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :status, :self_description, :tag_list, :visibility, :twitter_post, :twitter_username, :forum_email, :group_email, :subgroup_email, :private_email, :system_email, :no_email, :authentication_token, :picture
   acts_as_taggable
 
   has_many :group_participants, :dependent => :destroy
@@ -107,7 +107,11 @@ class Participant < ActiveRecord::Base
   
   def ensure_authentication_token!   
     # http://yekmer.posterous.com/single-access-token-using-devise
-    reset_authentication_token! if authentication_token.blank?   
+    # reset_authentication_token! if authentication_token.blank?   
+    # replaced with this. https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
+    if authentication_token.blank?
+      self.authentication_token = generate_authentication_token
+    end
   end
   
   def has_required
@@ -158,7 +162,7 @@ class Participant < ActiveRecord::Base
   def groups_in
     #-- What groups are they in?
     #-- [[5, "Test group"], [7, "The Real Men"], [8, "Individual Initiatives for Nuclear Disarmament"]]
-    gpin = GroupParticipant.where("participant_id=#{id}").includes(:group).all
+    gpin = GroupParticipant.where("participant_id=#{id}").includes(:group)
     groupsin = gpin.collect{|g| [g.group_id,(g.group ? g.group.name : "Unknown Group")] }
     groupsin.uniq
   end  
@@ -171,7 +175,7 @@ class Participant < ActiveRecord::Base
     for group in groupsin
       group_id = group[0]
       group_name = group[1]
-      gdialogsin = DialogGroup.where("group_id=#{group_id}").includes(:dialog).all
+      gdialogsin = DialogGroup.where("group_id=#{group_id}").includes(:dialog)
       gdialogsin.each do |g|
         if g.dialog
           val = [g.dialog.id,g.dialog.name]
@@ -204,7 +208,7 @@ class Participant < ActiveRecord::Base
         metamaps << val if not metamaps.include?(val)
       end
     end
-    rmetamaps = Metamap.where(:global_default).all
+    rmetamaps = Metamap.where(global_default: true)
     logger.info("participant#metamaps_h There are #{rmetamaps.length} global defaults")
     for m in rmetamaps
       val = [m.id,m.name]
@@ -260,5 +264,14 @@ class Participant < ActiveRecord::Base
   def contacts
     ( self.followers + self.idols ).uniq
   end    
+      
+  private
+  
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless Participant.where(authentication_token: token).first
+    end
+  end
       
 end

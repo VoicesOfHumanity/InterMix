@@ -72,7 +72,7 @@
       mdata['value_winner'] = 0
 
       #-- Go through the items tagged as posted by that metamap node, to find the best, the averages, etc
-      items = Item.scoped
+      items = Item.where(nil)
       items = items.where("items.dialog_id = ?", @dialog_id)    
       items = items.where("is_first_in_thread=1")
       items = items.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])

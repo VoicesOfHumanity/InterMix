@@ -119,7 +119,7 @@ class Admin::DialogsController < ApplicationController
 
     @dialog = Dialog.includes(:dialog_admins).find(@dialog_id)
     
-    @participants = Participant.all
+    @participants = Participant.where(nil)
     
     render :partial=>"admins", :layout=>false
   end  
@@ -154,7 +154,7 @@ class Admin::DialogsController < ApplicationController
 
     @dialog = Dialog.includes(:groups).find(@dialog_id)
     
-    @groups = Group.all
+    @groups = Group.where(nil)
     
     render :partial=>"groups", :layout=>false
   end  

@@ -76,9 +76,9 @@ class FrontController < ApplicationController
   def photos
     #-- Show everybody's or somebody's pictures
     @participant_id = params[:id].to_i
-    @photos = Photo.scoped
+    @photos = Photo.where(nil)
     @photos = @photos.where(:participant_id=>@participant_id) if @participant_id > 0
-    @photos = @photos.all
+    @photos = @photos.where(nil)
     @picdir = "#{DATADIR}/photos"
     @picurl = "/images/data/photos"
     update_last_url
@@ -1640,7 +1640,7 @@ class FrontController < ApplicationController
   
   def prepare_join
     @section = 'join'
-    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso]).all
+    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
     @meta = []
     @metamaps = Metamap.where(:global_default=>true)
     for metamap in @metamaps
@@ -1663,7 +1663,7 @@ class FrontController < ApplicationController
   
   def prepare_djoin
     @section = 'join'
-    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso]).all
+    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
     @content = "<p>No discussion was recognized</p>"
     @logo = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
     @meta = []
@@ -1714,7 +1714,7 @@ class FrontController < ApplicationController
   
   def prepare_gjoin
     @section = 'join'
-    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso]).all
+    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
     @content = "<p>No group was recognized</p>"
     @logo = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @meta = []

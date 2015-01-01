@@ -15,7 +15,7 @@ class MessagesController < ApplicationController
     
     @inout = params[:inout] || 'in'
     
-    @messages = Message.scoped
+    @messages = Message.where(nil)
     @messages = @messages.where(:to_group_id => params[:to_group_id]) if params[:to_group_id].to_i > 0
       
     if @inout == 'out'  
@@ -58,8 +58,8 @@ class MessagesController < ApplicationController
       end
     end
     @participant = Participant.includes(:idols).find(current_participant.id)      
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all   
-    @groupsadminin = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").includes(:group).all          
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)   
+    @groupsadminin = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").includes(:group)          
     render :partial=>'edit', :layout=>false
   end  
 

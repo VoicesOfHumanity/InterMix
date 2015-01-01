@@ -26,7 +26,7 @@ class PeopleController < ApplicationController
     @page = 1 if @page < 1
     @perscr = 25 if @perscr < 1
     
-    @participants = Participant.scoped
+    @participants = Participant.where(nil)
     @participants = @participants.includes([:groups])
     @participants = @participants.order(@sortby)
     @participants = @participants.paginate :page=>@page, :per_page => @perscr    
@@ -64,7 +64,7 @@ class PeopleController < ApplicationController
     @participant = Participant.includes(:followers,:idols).find(@participant_id)
     logger.info("people#profile showing profile for #{@participant_id}") 
     if @participant
-      follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").find(:first)
+      follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").first
       @is_following = (follow ? true : false)   
     end 
     update_last_url
@@ -76,13 +76,13 @@ class PeopleController < ApplicationController
     @participant_id = params[:id]
     @participant = Participant.includes(:followers,:idols).find(@participant_id)
     
-    follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").find(:first)
+    follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").first
     if onoff and not follow
       #-- Want to follow, and there isn't already a record of having done that
       follow = Follow.create(:followed_id => @participant_id, :following_id => current_participant.id)
 
       
-      they_follow = Follow.where("followed_id=#{current_participant.id} and following_id=#{@participant_id}").find(:first)
+      they_follow = Follow.where("followed_id=#{current_participant.id} and following_id=#{@participant_id}").first
       @they_following = (they_follow ? true : false)    
       
       if @participant
@@ -136,7 +136,7 @@ class PeopleController < ApplicationController
         if @group
           session[:group_name] = @group.name
           session[:group_prefix] = @group.shortname
-          @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+          @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
           @is_member = @group_participant ? true : false
           session[:group_is_member] = @is_member
         end

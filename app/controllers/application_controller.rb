@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
     if @country_code == ''  
       res = [{:val=>0, :txt=>''}]
     else
-      res = [{:val=>0, :txt=>''}] + MetroArea.where(:country_code=>@country_code).order("population desc").all.collect {|r| {:val=>r.id,:txt=>r.name}}
+      res = [{:val=>0, :txt=>''}] + MetroArea.where(:country_code=>@country_code).order("population desc").collect {|r| {:val=>r.id,:txt=>r.name}}
     end          
     render :layout=>false, :text => res.to_json
   end  
@@ -191,9 +191,9 @@ class ApplicationController < ActionController::Base
     logger.info("application#after_sign_in_path_for cur_baseurl:#{session[:cur_baseurl]}")
 
     #-- See if they're a moderator of a group, or a hub admin. Only those can add new discussions.
-    groupsmodof = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").all
+    groupsmodof = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1")
     session[:is_group_moderator] = (groupsmodof.length > 0)
-    hubadmins = HubAdmin.where("participant_id=#{current_participant.id} and active=1").all
+    hubadmins = HubAdmin.where("participant_id=#{current_participant.id} and active=1")
     session[:is_hub_admin] = (hubadmins.length > 0)
     session[:is_sysadmin] = current_participant.sysadmin
     session[:is_anyadmin] = (session[:is_group_moderator] or session[:is_hub_admin] or session[:is_sysadmin])
@@ -307,7 +307,7 @@ class ApplicationController < ActionController::Base
             session[:group_name] = @group.name
             session[:group_prefix] = @group.shortname
             if participant_signed_in?
-              @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+              @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
               @is_member = @group_participant ? true : false
               session[:group_is_member] = @is_member
               #env['warden'].session[:group_id] = @group_id
@@ -355,7 +355,7 @@ class ApplicationController < ActionController::Base
         if @group
           session[:group_name] = @group.name
           session[:group_prefix] = @group.shortname
-          @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+          @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
           @is_member = @group_participant ? true : false
           session[:group_is_member] = @is_member
         else  
@@ -439,4 +439,21 @@ class ApplicationController < ActionController::Base
     end  
   end   
   
+  #-- To replace devise's token authorization. https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
+  # For this example, we are simply using token authentication
+  # via parameters. However, anyone could use Rails's token
+  # authentication features to get the token from a header.
+  def authenticate_user_from_token!
+    auth_token = params[:auth_token].presence
+    participant       = auth_token && Participant.find_by_authentication_token(auth_token.to_s)
+
+    if participant
+      # Notice we are passing store false, so the user is not
+      # actually stored in the session and a token is needed
+      # for every request. If you want the token to work as a
+      # sign in token, you can simply remove store: false.
+      sign_in participant
+    end
+  end
+        
 end

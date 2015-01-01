@@ -29,7 +29,7 @@ class Admin::ItemsController < ApplicationController
     if item_id>0
       @items = [Item.find(item_id,:include=>[:group,:participant,:dialog])]
     else  
-      @items = Item.scoped
+      @items = Item.where(nil)
       @items = @items.tagged_with(params[:tags]) if params[:tags].to_s != ''
       @items = @items.where(:group_id => params[:group_id]) if params[:group_id].to_i > 0
       @items = @items.where(:posted_by => params[:posted_by]) if params[:posted_by].to_i > 0

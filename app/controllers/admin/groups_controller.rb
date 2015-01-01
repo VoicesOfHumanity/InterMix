@@ -116,8 +116,8 @@ class Admin::GroupsController < ApplicationController
   
   def member_list
     group_id = params[:group_id]
-    #@group_participants = Group.where(:group_id=>group_id).includes(:participants).order("participant.last_name,participant.first_name").select("participants.*").all    
-    @group_participants = GroupParticipant.where("group_id=#{group_id}").order("created_at desc").includes(:participant).all
+    #@group_participants = Group.where(:group_id=>group_id).includes(:participants).order("participant.last_name,participant.first_name").select("participants.*")    
+    @group_participants = GroupParticipant.where("group_id=#{group_id}").order("created_at desc").includes(:participant)
     respond_to do |format|
       format.html { render :partial=>"member_list", :layout=>false }
       format.xml  { render :xml => @group_members }
@@ -130,7 +130,7 @@ class Admin::GroupsController < ApplicationController
 
     @group = Group.includes(:dialogs).find(@group_id)
     
-    @dialogs = Dialog.all
+    @dialogs = Dialog.where(nil)
     
     render :partial=>"dialogs", :layout=>false
   end  

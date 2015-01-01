@@ -14,7 +14,7 @@
 			</div>
 		</li>		
 
-		<%= f.input :group_id, :as => :select, :collection => Group.order(:name).all.collect {|g| [g.name,g.id]} %>	
+		<%= f.input :group_id, :as => :select, :collection => Group.order(:name).collect {|g| [g.name,g.id]} %>	
 		<%= f.input :dialog_id %>
 		<%= f.input :round_id %>
 

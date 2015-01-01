@@ -5,7 +5,7 @@ class Admin::RatingsController < ApplicationController
   # GET /ratings.xml
   def index
     @from = params[:from]
-    @ratings = Rating.all
+    @ratings = Rating.where(nil)
 
     respond_to do |format|
       format.html { render :partial=>'list', :layout=>false }

@@ -17,8 +17,8 @@ class GroupsController < ApplicationController
     for group in @groupsin
       @ismoderator = true if group.moderator
     end  
-    @groupsopen = Group.where("(openness='open' or openness='open_to_apply')").order("id desc").all
-    @groupspublic = Group.where("visibility='public'").order("id desc").all
+    @groupsopen = Group.where("(openness='open' or openness='open_to_apply')").order("id desc")
+    @groupspublic = Group.where("visibility='public'").order("id desc")
     update_last_url
   end  
   
@@ -58,7 +58,7 @@ class GroupsController < ApplicationController
     @group = Group.new
     @group.owner = current_participant.id
     @group.participants << current_participant
-    @metamaps = Metamap.all
+    @metamaps = Metamap.where(nil)
     @has_metamaps = {}
     render :action=>'edit'
   end  
@@ -69,7 +69,7 @@ class GroupsController < ApplicationController
     #@group = Group.includes(:group_participants=>:participant).find(params[:id])
     @group = Group.includes(:owner_participant).find(params[:id])
     get_group_info
-    @metamaps = Metamap.all
+    @metamaps = Metamap.where(nil)
     @has_metamaps = {}
     for metamap in @group.metamaps
       @has_metamaps[metamap.id] = true
@@ -80,13 +80,13 @@ class GroupsController < ApplicationController
   
   def update
     @group = Group.find(params[:id])
-    @metamaps = Metamap.all
+    @metamaps = Metamap.where(nil)
     #logger.info("groups#update metamap parameter: #{params[:metamap]}")
     respond_to do |format|
-      if gvalidate and @group.update_attributes(params[:group])
+      if gvalidate and @group.update_attributes(group_params)
         @group.shortdesc = view_context.strip_tags(@group.shortdesc)[0..123]
         @group.save
-        for metamap in Metamap.all
+        for metamap in Metamap.where(nil)
           group_metamap = GroupMetamap.where(:group_id=>@group.id,:metamap_id=>metamap.id).first
           #logger.info("groups#update metamap:#{metamap.id} param:#{params[:metamap][metamap.id.to_s]} group_metamap:#{group_metamap}")
           if params[:metamap] and params[:metamap][metamap.id.to_s] and not group_metamap
@@ -147,18 +147,18 @@ class GroupsController < ApplicationController
   end  
   
   def create
-    @group = Group.new(params[:group])
+    @group = Group.new(group_params)
     @group.participants << current_participant
-    @metamaps = Metamap.all
+    @metamaps = Metamap.where(nil)
     respond_to do |format|
       if gvalidate and @group.save
         logger.info("groups_controller#create New group created: #{@group.id}")
-        @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+        @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
         @group_participant.status = 'active'
         @group_participant.moderator = true
         @group_participant.active = true
         @group_participant.save
-        for metamap in Metamap.all
+        for metamap in Metamap.where(nil)
           group_metamap = GroupMetamap.where(:group_id=>@group.id,:metamap_id=>metamap.id).first
           if params[:metamap] and params[:metamap][metamap.id.to_s] and not group_metamap
             group_metamap = GroupMetamap.new(:group_id=>@group.id,:metamap_id=>metamap.id)
@@ -184,7 +184,7 @@ class GroupsController < ApplicationController
     @section = 'groups'
     @gsection = 'dialogs'
     @group_id = params[:id]
-    @group = Group.includes(:group_participants=>:participant).includes(:dialogs).where("group_participants.group_id=#{@group_id}").find(params[:id])
+    @group = Group.joins(:group_participants=>:participant).includes(:dialogs).where("group_participants.group_id=#{@group_id}").find(params[:id])
     get_group_info
     update_last_url
     update_prefix  
@@ -195,7 +195,7 @@ class GroupsController < ApplicationController
     #-- List of members, for other members
     @section = 'groups'
     @group_id = params[:id]
-    @group = Group.includes(:group_participants=>:participant).where("group_participants.group_id=#{@group_id}").find(params[:id])
+    @group = Group.joins(:group_participants=>:participant).where("group_participants.group_id=#{@group_id}").find(params[:id])
 
     get_group_info
 
@@ -215,7 +215,7 @@ class GroupsController < ApplicationController
     #-- List of members, for admins
     @section = 'groups'
     @group_id = params[:id]
-    @group = Group.includes(:group_participants=>:participant).where("group_participants.group_id=#{@group_id}").find(params[:id])
+    @group = Group.joins(:group_participants=>:participant).where("group_participants.group_id=#{@group_id}").find(params[:id])
 
     get_group_info
 
@@ -389,7 +389,7 @@ class GroupsController < ApplicationController
     @group = Group.includes(:group_participants=>:participant).find(@group_id)
     @messtext = ''
     @participant = Participant.includes(:idols).find(current_participant.id)  
-    @members = Participant.order("first_name,last_name").all  
+    @members = Participant.order("first_name,last_name")  
     get_group_info
   end  
   
@@ -584,7 +584,7 @@ class GroupsController < ApplicationController
     end  
     @subject = "You were added to a group"
     @participant = Participant.includes(:idols).find(current_participant.id)  
-    @metamaps = Metamap.order("name").all  
+    @metamaps = Metamap.order("name")  
     get_group_info
   end  
   
@@ -608,7 +608,7 @@ class GroupsController < ApplicationController
 
     metamapnames = {}
     metamapids = {}
-    metamaprecs = Metamap.all
+    metamaprecs = Metamap.where(nil)
     for metamap in metamaprecs
       metamapnames[metamap.name.downcase] = metamap.id
       metamapids[metamap.id] = metamap.name
@@ -690,7 +690,7 @@ class GroupsController < ApplicationController
       
       #-- Add to group
       added_to_group = false
-      group_participants = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{participant.id}").all
+      group_participants = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{participant.id}")
       if group_participants.length == 0
         GroupParticipant.create(:group_id=>@group.id, :participant_id=>participant.id,:active=>true,:status=>'active')
         flash[:notice] += "- added to the group<br>"
@@ -824,7 +824,7 @@ class GroupsController < ApplicationController
     @group_id = params[:id].to_i
     @group = Group.find(@group_id)
     if @group.openness == 'open'
-      @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group_id,current_participant.id).find(:first)
+      @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group_id,current_participant.id).first
       if @group_participant
         flash[:notice] = 'You are already a member of this group'
       else  
@@ -846,7 +846,7 @@ class GroupsController < ApplicationController
     #-- Leave a group
     @group_id = params[:id].to_i
     @group = Group.find(@group_id)
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group_id,current_participant.id).find(:first)
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group_id,current_participant.id).first
     if @group_participant
       #-- Remove subgroup membership too
       group_subtag_participants = GroupSubtagParticipant.where(:group_id=>@group_id,:participant_id=>current_participant.id)
@@ -925,7 +925,7 @@ class GroupsController < ApplicationController
     else
       #-- The old way
 
-      @items = Item.scoped
+      @items = Item.where(nil)
       @items = @items.where("items.group_id = ?", @group_id)    
       if @threads == 'flat' or @threads == 'tree'
         #- Show original message followed by all replies in a flat list
@@ -944,8 +944,8 @@ class GroupsController < ApplicationController
         
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id),moderator").includes(:group)
 
-    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all      
-    @dialogsin = DialogGroup.where("group_id=#{@group_id}").includes(:dialog).all      
+    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog)      
+    @dialogsin = DialogGroup.where("group_id=#{@group_id}").includes(:dialog)      
 
     #-- Make a list of the groups subgroups with the current users subgroups first.
     all_subgroups = @group.group_subtags.collect{|s| s.tag}
@@ -1220,7 +1220,7 @@ class GroupsController < ApplicationController
     @participant = current_participant
     @email = @participant.email
     @name = @participant.name
-    @countries = Geocountry.order(:name).select([:name,:iso]).all
+    @countries = Geocountry.order(:name).select([:name,:iso])
     @meta = []
     metamaps = @group.metamaps
     for metamap in metamaps
@@ -1401,10 +1401,15 @@ class GroupsController < ApplicationController
   
   def get_group_info
     #-- Look up a few pieces of information about the group and group member, for menus, etc.
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
     @is_member = @group_participant ? true : false
     @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     @has_dialog = (@group.active_dialogs.length > 0)
   end
+  
+  def group_params
+    params.require(:group).permit(:name, :shortname, :description, :shortdesc, :instructions, :visibility, :message_visibility, :openness, :moderation, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :has_mail_list, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :alt_logins, :required_meta, :tweet_approval_min, :tweet_what, :tweet_subgroups)
+  end
+  
 
 end

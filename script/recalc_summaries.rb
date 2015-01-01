@@ -4,7 +4,7 @@
 
 require File.dirname(__FILE__)+'/cron_helper'
 
-irs = ItemRatingSummary.all
+irs = ItemRatingSummary.where(nil)
 
 for ir in irs
   print "#{ir.item_id}\n"

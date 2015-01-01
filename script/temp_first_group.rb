@@ -4,7 +4,7 @@
 
 require File.dirname(__FILE__)+'/cron_helper'
 
-items = Item.all
+items = Item.where(nil)
 
 for item in items
   if item.is_first_in_thread

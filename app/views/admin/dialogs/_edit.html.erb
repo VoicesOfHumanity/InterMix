@@ -6,7 +6,7 @@
 		<%= f.input :description %>
 		<%= f.input :visibility, :as => :select, :collection =>GROUP_VISIBILITY %>	
 		<%= f.input :openness, :as => :select, :collection =>GROUP_OPENNESS %>	
-		<%= f.input :group_id, :label=>"Origin Group", :as => :select, :collection => Group.order(:name).all.collect {|g| [g.name,g.id]} %>	
+		<%= f.input :group_id, :label=>"Origin Group", :as => :select, :collection => Group.order(:name).collect {|g| [g.name,g.id]} %>	
 		<%= f.input :multigroup, :as => :boolean %>
 		<%= f.input :required_meta, :as=>:boolean %>
 		<%= f.input :metamap_vote_own, :label=>"Voting by Metamap", :as => :select, :collection => METAMAP_VOTE_OWN %>

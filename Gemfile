@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
-#gem 'rails', '~> 3.1'
-gem 'rails', '~> 3.2'
+#gem 'rails', '~> 3.2'
+gem 'rails', '~> 4.2'
 
 gem 'rake'
 
@@ -27,7 +27,8 @@ gem 'jquery-ui-rails'
 gem 'ruby-prof'
 
 #gem 'devise', :git => "http://github.com/plataformatec/devise.git"
-gem 'devise', '3.0.2'
+#gem 'devise', '3.0.2'
+gem 'devise'
 #gem "oauth2"
 gem "omniauth"
 #gem "oa-oauth", :require => "omniauth/oauth"
@@ -75,6 +76,7 @@ group :development do
   gem 'capistrano'
   gem 'capistrano-rbenv'
   gem 'capistrano-rails'
+  gem 'web-console'
 end
 
 

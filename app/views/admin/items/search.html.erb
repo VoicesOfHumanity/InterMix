@@ -3,9 +3,9 @@
 <table class="edittable">
 <tr><td class="left">ID</td><td><%= text_field_tag :item_id, "", "size"=>6 %></td></tr>
 <tr><td class="left">By</td><td><%= select_tag :posted_by, options_for_select(
-[['',0]] + Participant.order(:last_name,:first_name).all.collect {|p| [p.name,p.id]} ) %></td></tr>
+[['',0]] + Participant.order(:last_name,:first_name).collect {|p| [p.name,p.id]} ) %></td></tr>
 <tr><td class="left">Group</td><td><%= select_tag :group_id, options_for_select(
-[['',0]] + Group.order(:name).all.collect {|g| [g.name,g.id]} ) %></td></tr>
+[['',0]] + Group.order(:name).collect {|g| [g.name,g.id]} ) %></td></tr>
 <tr><td class="left">Tags</td><td><%= text_field_tag :tags, "", "size"=>50 %>&nbsp;&nbsp;
 <span style="font-size:10px"><%= raw Tagging.tags_for('Item','addtag') %></span></td></tr>
 <tr><td class="left">Flagged</td><td><%= check_box_tag :is_flagged %></td></tr>

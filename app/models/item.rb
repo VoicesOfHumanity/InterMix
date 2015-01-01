@@ -127,7 +127,7 @@ class Item < ActiveRecord::Base
       participants = group.participants if group
     else
       #logger.info("Item#emailit e-mailing forum message to everybody")
-      #participants = Participant.where("(status='active' or status is null) and forum_email='instant'").all
+      #participants = Participant.where("(status='active' or status is null) and forum_email='instant'")
     end    
     logger.info("Item#emailit #{participants.length} people to distribute to")
     
@@ -443,7 +443,7 @@ class Item < ActiveRecord::Base
       participant_id = 0
     end      
     
-    logger.info("item#list_and_results group:#{group_id},dialog:#{dialog_id},period:#{period_id},posted_by:#{posted_by},posted_meta:#{posted_meta.to_s},rated_meta:#{rated_meta.to_s},rootonly:#{rootonly},sortby:#{sortby},participant:#{participant_id}")
+    logger.info("item#list_and_results group:#{group_id},dialog:#{dialog_id},period:#{period_id},posted_by:#{posted_by},posted_meta:#{posted_meta.to_s},rated_meta:#{rated_meta.to_s},rootonly:#{rootonly},sortby:#{sortby},participant:#{participant_id},regmean:#{regmean}")
     
     dialog = Dialog.includes(:periods).find_by_id(dialog_id) if dialog_id.to_i > 0
     period = Period.find_by_id(period_id) if period_id.to_i > 0
@@ -451,7 +451,7 @@ class Item < ActiveRecord::Base
     itemsproc = {}  # Stats for each item
     extras = {}     # Some addtional explanations
     
-    items = Item.where(true)
+    items = Item.where(nil)
     
     items = items.where("items.group_id = #{group_id} or items.first_in_thread_group_id = #{group_id}") if group_id.to_i > 0
     items = items.where("items.group_id in (#{group.join(',')}) or items.first_in_thread_group_id in (#{group.join(',')})") if group_id.to_i < 0
@@ -461,7 +461,7 @@ class Item < ActiveRecord::Base
 
     items = items.where("items.period_id = ?", period_id) if period_id.to_i > 0  
     
-    items = items.where("geo_level = ? or geo_level is null or geo_level = ''", geo_level) if geo_level.to_s != '' and geo_level != 'all'
+    items = items.where("geo_level = ? or geo_level is null or geo_level = ''", geo_level) if (geo_level.to_s != '' and geo_level != 'all')
     
     num_items_total = items.length if regmean
     
@@ -539,7 +539,7 @@ class Item < ActiveRecord::Base
     
     if visible_by.to_i > 0
       #-- Only items that a certain user has a right to see. I.e. mainly groups he's in
-      gpin = GroupParticipant.where("participant_id=#{visible_by}").all
+      gpin = GroupParticipant.where("participant_id=#{visible_by}")
       xgpin = '999999'
       for gp in gpin
         xgpin += "," if xgpin != ''
@@ -558,9 +558,9 @@ class Item < ActiveRecord::Base
     #-- Even if we've asked for root only, we have all of them, including replies. Sorted out later.
 
     #-- Get the actual ratings
-    ratings = Rating.scoped
+    ratings = Rating.where(nil)
     ratings = ratings.where("ratings.dialog_id=#{dialog_id}") if dialog_id.to_i > 0
-    ratings = ratings.where("items.period_id=#{period_id}") if period_id.to_i >0
+    ratings = ratings.where("ratings.period_id=#{period_id}") if period_id.to_i >0
     ratings = ratings.includes(:participant).includes(:item=>:item_rating_summary)
     if rated_meta
       rated_meta.each do |metamap_id,metamap_node_id| 
@@ -863,10 +863,10 @@ class Item < ActiveRecord::Base
       data[metamap.id]['ratings'] = {}     # Keep track of the ratings of items in that meta cat
 
       #-- Everything posted, with metanode info
-      items = Item.where("items.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      items = Item.where("items.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").joins(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
 
       #-- Everything rated, with metanode info
-      ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).includes(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).joins(:participant=>{:metamap_node_participants=>:metamap_node}).joins(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
 
       #-- Going through everything posted, group by meta node of poster
       itemlist = {}
@@ -892,7 +892,6 @@ class Item < ActiveRecord::Base
             'items' => {},
             'itemsproc' => {},
             'posters' => {},
-            'ratings' => {},
             'ratings' => {},
             'num_raters' => 0,
             'num_int_items' => 0,
@@ -1211,7 +1210,7 @@ class Item < ActiveRecord::Base
           item_app_uniq = {}
           mdata['items'].each do |item_id,item|
             #-- Going through the items of the second meta that have rated the first meta
-            iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'rateapproval'=>0,'rateinterest'=>0,'num_raters'=>0,'ratings'=>[]}
+            iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'rateapproval'=>0,'rateinterest'=>0,'num_raters'=>0,'ratings'=>[]}
             mdata['ratings'].each do |rating_id,rating|
               if rating.item_id == item.id
                 iproc['votes'] += 1
@@ -1344,11 +1343,11 @@ class Item < ActiveRecord::Base
         end        
         # sort priority order: value, sort order, id    
         #data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|a,b| [b[1][2],a[1][1].sortorder,a[1][0]]<=>[a[1][2],b[1][1].sortorder,b[1][0]]}
-        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|b,a| [a[1][2],a[1][1].sortorder,a[1][0]]<=>[b[1][2],b[1][1].sortorder,b[1][0]]}
+        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|b,a| [a[1][2],a[1][1].sortorder.to_s,a[1][0]]<=>[b[1][2],b[1][1].sortorder.to_s,b[1][0]]}
       else
         #-- Put nodes in sorting order and/or alphabetical order
         #data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|a,b| a[1]<=>b[1]}
-        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|b,a| [a[1][1].sortorder,a[1][0]]<=>[b[1][1].sortorder,b[1][0]]}
+        data[metamap.id]['nodes_sorted'] = data[metamap.id]['nodes'].sort {|b,a| [a[1][1].sortorder.to_s,a[1][0]]<=>[b[1][1].sortorder.to_s,b[1][0]]}
       end
 
     end # metamaps
@@ -1665,7 +1664,7 @@ class Item < ActiveRecord::Base
       #-- The message is for a discussion
       #-- Is he a member of a group that's a member of the discussion?
       is_in_discussion = false;
-      groupsin = GroupParticipant.where("participant_id=#{participant_id}").includes(:group).all       
+      groupsin = GroupParticipant.where("participant_id=#{participant_id}").includes(:group)       
       dialoggroupsin = []
       for group1 in dialog.groups
         for group2 in groupsin
@@ -1710,7 +1709,7 @@ class Item < ActiveRecord::Base
       #-- This message belongs to a group
       #-- Is the user a member of it?
       group = self.group ? self.group : Group.find_by_id(self.group_id)
-      group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).find(:first)
+      group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).first
       if not group_participant
         #-- He's not a member
         #logger.info("item#voting_ok #{participant_id} is not a member of the group #{self.group_id} for item #{self.id}")
@@ -1783,7 +1782,7 @@ class Item < ActiveRecord::Base
       end
 
       #-- Is he a member of a group that's a member of the discussion?
-      groupsin = GroupParticipant.where("participant_id=#{participant_id}").includes(:group).all       
+      groupsin = GroupParticipant.where("participant_id=#{participant_id}").includes(:group)       
       dialoggroupsin = []
       for group1 in dialog.groups
         for group2 in groupsin
@@ -1798,7 +1797,7 @@ class Item < ActiveRecord::Base
     elsif self.group_id.to_i > 0  
       #-- This message belongs to a grop
       group = Group.includes(:owner_participant).find_by_id(self.group_id)
-      group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).find(:first)
+      group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).first
       if group_participant
         #-- He's a member
         return true

@@ -2,12 +2,12 @@
 
 	<%= f.inputs do %>
 		<% if @from != 'group' -%>
-			<%= f.input :group_id, :as => :select, :collection => Group.order(:name).all.collect {|g| [g.name,g.id]}, :required => true  %>	
+			<%= f.input :group_id, :as => :select, :collection => Group.order(:name).collect {|g| [g.name,g.id]}, :required => true  %>	
 		<% else -%>
 			<%= f.input :group_id, :as => :hidden %>
 		<% end -%>	
 		<% if @from != 'participant' %>
-			<%= f.input :participant_id, :as => :select, :collection => Participant.order(:last_name,:first_name).all.collect {|p| [p.name,p.id]}, :required => true %>	
+			<%= f.input :participant_id, :as => :select, :collection => Participant.order(:last_name,:first_name).collect {|p| [p.name,p.id]}, :required => true %>	
 		<% else -%>	
 			<%= f.input :participant_id, :as => :hidden  %>	
 		<% end -%>

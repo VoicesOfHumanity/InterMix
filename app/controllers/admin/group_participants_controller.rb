@@ -11,14 +11,14 @@ class Admin::GroupParticipantsController < ApplicationController
     @participant_id = params[:participant_id].to_i
     @order = params[:order] || "id desc"
     @moderator = (params[:moderator].to_s == 'true')
-    #@group_participants = GroupParticipant.where("group_id=#{@group_id}").order("created_at desc").includes(:participant).all
+    #@group_participants = GroupParticipant.where("group_id=#{@group_id}").order("created_at desc").includes(:participant)
     
     # NB: how to get the base, without having to put order first?
     @group_participants = GroupParticipant.order(@order).includes(:participant)
     @group_participants =  @group_participants.where("group_id=#{@group_id}") if @group_id > 0
     @group_participants =  @group_participants.where("participant_id=#{@participant_id}") if @participant_id > 0
     @group_participants =  @group_participants.where("moderator=1") if @moderator
-    @group_participants.all
+    @group_participants.where(nil)
     
     respond_to do |format|
       format.html { render :partial=>"list", :layout=>false }

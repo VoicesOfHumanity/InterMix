@@ -1,11 +1,11 @@
-<% participants = Participant.order(:last_name,:first_name).all.collect {|p| [p.name,p.id]} %>
+<% participants = Participant.order(:last_name,:first_name).collect {|p| [p.name,p.id]} %>
 
 <%= semantic_form_for [:admin, @item] do |f| %>
 
 	<%= f.inputs do %>
 		<%= f.input :item_type, :as => :select, :collection =>ITEM_TYPES, :required => true, :include_blank => false %>
 		<%= f.input :posted_by, :as => :select, :collection => participants, :required => true %>
-		<%= f.input :group_id, :as => :select, :collection => Group.order(:name).all.collect {|g| [g.name,g.id]} %>	
+		<%= f.input :group_id, :as => :select, :collection => Group.order(:name).collect {|g| [g.name,g.id]} %>	
 		<%= f.input :dialog_id %>
 		<%= f.input :dialog_round_id %>
 		<%= f.input :subject %>

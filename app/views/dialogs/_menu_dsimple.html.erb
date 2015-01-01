@@ -1,7 +1,7 @@
 <%= render(:partial => 'dialogs/top_titles')%>
 
 <ul class="horizmenu">
-<% if @dialog.active_period and @dialog.active_period.id = @period_id and @dialog.active_period.crosstalk!='none' and @dialog.active_period.period_number.to_i > 1 %>
+<% if @dialog.active_period and @dialog.active_period.id == @period_id and @dialog.active_period.crosstalk!='none' and @dialog.active_period.period_number.to_i > 1 %>
   <% if @dialog.active_period.previous_period and @dialog.active_period.previous_period.result.class == Hash -%>	
     <% if @showing_previous -%>
       <li><%= link_to 'Hide Previous Results', params.merge(show_previous: 0), {:class=>'menu'} %></li>    

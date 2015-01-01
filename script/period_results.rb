@@ -4,7 +4,7 @@ require File.dirname(__FILE__)+'/cron_helper'
 
 @metamaps = Metamap.where(:id=>[3,5])
 
-periods = Period.all
+periods = Period.where(nil)
 
 for period in periods
   
@@ -81,6 +81,7 @@ for period in periods
     end
   end  
   
+  #puts result.inspect
   period.result = result
   period.save!
   

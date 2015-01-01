@@ -128,7 +128,7 @@
 </div><!--forumcontrol-->
 </form>
 
-<% if @dialog.active_period and @dialog.active_period.id = @period_id and @dialog.active_period.crosstalk!='none' and @dialog.active_period.period_number.to_i > 1 %>
+<% if @dialog.active_period and @dialog.active_period.id == @period_id and @dialog.active_period.crosstalk!='none' and @dialog.active_period.period_number.to_i > 1 %>
   <% if @dialog.active_period.previous_period and @dialog.active_period.previous_period.result.class == Hash -%>
     <% crosstalk = @dialog.active_period.crosstalk %>
     <div style="border:2px solid #654321;margin:20px 0 10px 0;padding:5px 10px 0 10px;display:none;" id="prev_cross">

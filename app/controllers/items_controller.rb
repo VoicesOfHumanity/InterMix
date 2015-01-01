@@ -41,7 +41,7 @@ class ItemsController < ApplicationController
     @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id > 0
     @has_subgroups = (@limit_group and @limit_group.group_subtags.length > 1)
     
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@limit_group.id,current_participant.id).find(:first) if @limit_group
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@limit_group.id,current_participant.id).first if @limit_group
     @is_member = @group_participant ? true : false
     @is_moderator = (@group_participant and @group_participant.moderator) or current_participant.sysadmin
     
@@ -97,7 +97,7 @@ class ItemsController < ApplicationController
     else
       # old way
         
-      @items = Item.scoped
+      @items = Item.where(nil)
       #@items = @items.tagged_with(params[:tags]) if params[:tags].to_s != ''
       #@items = @items.where(:group_id => params[:group_id]) if params[:group_id].to_i > 0
       #@items = @items.includes([:group,:participant,:ratings,:item_rating_summary]).where("ratings.participant_id=#{current_participant.id} or ratings.participant_id is null")
@@ -277,8 +277,8 @@ class ItemsController < ApplicationController
       @subgroup_add = @subgroup
     end   
 
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all       
-    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all  
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)       
+    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog)  
     @dialoggroupsin = []
     if @dialog
       #-- The user might be a member of several of the groups participating in the current dialog, if any
@@ -379,7 +379,7 @@ class ItemsController < ApplicationController
   def prepare_edit
     #-- Get a few things ready for editing or adding an item
     @group = Group.find_by_id(@item.group_id) if @item.group_id > 0
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first) if @group
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first if @group
     @is_member = @group_participant ? true : false
     @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     if @item.dialog_id.to_i > 0
@@ -387,8 +387,8 @@ class ItemsController < ApplicationController
       @dialog = Dialog.find_by_id(@item.dialog_id)
       @dialog_name = (@dialog ? @dialog.name : '???')
     end  
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all       
-    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog).all  
+    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)       
+    @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog) 
     @dialoggroupsin = []
     if @dialog
       #-- The user might be a member of several of the groups participating in the current dialog, if any
@@ -406,7 +406,7 @@ class ItemsController < ApplicationController
     
   def create
     @from = params[:from] || ''
-    @item = Item.new(params[:item])
+    @item = Item.new(item_params)
     @item.link = '' if @item.link == 'http://'
     @item.item_type = 'message'
     @item.posted_by = current_participant.id
@@ -525,7 +525,7 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
     @item.link = '' if @item.link == 'http://'
     
-    @item.assign_attributes(params[:item])
+    @item.assign_attributes(item_params)
     
     @item.censored = false if not params[:item][:censored] or params[:item][:censored].to_i == 0
 
@@ -585,7 +585,7 @@ class ItemsController < ApplicationController
     if @group_id.to_i > 0
       @group = Group.includes(:owner_participant).find(@group_id)
       if participant_signed_in?
-        @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+        @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
         @is_member = @group_participant ? true : false
         @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
       else
@@ -605,7 +605,7 @@ class ItemsController < ApplicationController
       @groups = @dialog.groups if @dialog and @dialog.groups
       @periods = @dialog.periods if @dialog and @dialog.periods
       if participant_signed_in?
-        @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
+        @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)
         dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
         @is_admin = (dialogadmin.length > 0)
         @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog_id).count
@@ -620,7 +620,7 @@ class ItemsController < ApplicationController
     if @dialog_id.to_i > 0 and @group_id.to_i > 0 and participant_signed_in? and not @is_member
       #-- If the reader isn't a member of the group the message is posted under, see if he's a member of another group in the discussion
       for group in @dialog.groups
-        group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group_id,current_participant.id).find(:first)
+        group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group_id,current_participant.id).first
         if group_participant and group_participant.group
           @group_id = group.id
           @group = group
@@ -670,7 +670,7 @@ class ItemsController < ApplicationController
       @dialog = Dialog.includes(:groups).find_by_id(@dialog_id)   
       @groups = @dialog.groups if @dialog and @dialog.groups
       @periods = @dialog.periods if @dialog and @dialog.periods
-      @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group).all
+      @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)
       dialogadmin = DialogAdmin.where("dialog_id=? and participant_id=?",@dialog_id, current_participant.id)
       @is_admin = (dialogadmin.length > 0)
       @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
@@ -679,7 +679,7 @@ class ItemsController < ApplicationController
     @group_id = @item.group_id
     if @group_id.to_i > 0
       @group = Group.includes(:owner_participant).find(@group_id)
-      @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).find(:first)
+      @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
       @is_member = @group_participant ? true : false
       @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     end
@@ -734,7 +734,8 @@ class ItemsController < ApplicationController
     end
     
     #-- See if that user already has rated that item, or create a new rating if they haven't
-    rating = Rating.find_or_initialize_by_item_id_and_participant_id_and_rating_type(item_id,current_participant.id,'AllRatings')
+    #rating = Rating.find_or_initialize_by_item_id_and_participant_id_and_rating_type(item_id,current_participant.id,'AllRatings')
+    rating = Rating.where(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize
     
     if intapp == 'int'
       rating.interest = vote
@@ -744,7 +745,8 @@ class ItemsController < ApplicationController
     
     rating.save!
     
-    item_rating_summary = ItemRatingSummary.find_or_create_by_item_id(item_id)
+    #item_rating_summary = ItemRatingSummary.find_or_create_by_item_id(item_id)
+    item_rating_summary = ItemRatingSummary.where(item_id: item_id).first_or_create
     if current_participant.id == 6
       item_rating_summary.recalculate(false,item.dialog)      
     else
@@ -1168,6 +1170,10 @@ class ItemsController < ApplicationController
         session[:cur_baseurl] = "http://" + BASEDOMAIN    
       end
     end 
+  end
+  
+  def item_params
+    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level)
   end
     
 end
