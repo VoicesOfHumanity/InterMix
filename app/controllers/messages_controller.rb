@@ -103,7 +103,7 @@ class MessagesController < ApplicationController
       end
       render :text=>"#{messsent} of #{tosend} messages sent. #{emailsent} sent by e-mail", :layout=>false
     else
-      @message = Message.new(params[:message])
+      @message = Message.new(message_params)
       @message.from_participant_id = current_participant.id
       @message.sendmethod = 'web'
       @message.sent_at = Time.now
@@ -141,6 +141,13 @@ class MessagesController < ApplicationController
 #      session[:dialog_id] = current_participant.last_dialog_id
 #    end  
 #  end
-  
+
+  private
+
+  def message_params
+    params.require(:message).permit(
+    :to_participant_id, :to_group_id, :template_id, :subject, :message, :sendmethod, :response_to_id, :mail_template, :group_id, :dialog_id
+    )
+  end
   
 end
