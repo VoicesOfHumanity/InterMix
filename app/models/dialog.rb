@@ -15,6 +15,8 @@ class Dialog < ActiveRecord::Base
   serialize :coordinators
 
   has_attached_file :logo, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :path => "#{DATADIR}/:class/:attachment/:id/:style_:basename.:extension", :url => "/images/data/:class/:attachment/:id/:style_:basename.:extension"  
+  validates_attachment_content_type :logo, :content_type => /\Aimage\/.*\Z/
+
   def metamaps
     #-- Get the metamaps associated with this dialog
     #-- [[2, "Nationality"], [3, "Gender"]]

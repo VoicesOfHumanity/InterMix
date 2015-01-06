@@ -2021,7 +2021,7 @@ class DialogsController < ApplicationController
   end
   
   def dialog_params
-    params.require(:dialog).permit(:name, :shortname, :description, :shortdesc, :instructions, :visibility, :openness, :moderation, :publishing, :max_voting_distribution, :max_characters, :max_words, :max_mess_length, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :list_template, :metamap_vote_own, :default_message, :required_message, :required_subject, :alt_logins, :max_messages, :new_message_title, :allow_replies, :required_meta, :value_calc, :profiles_visible, :names_visible_voting, :names_visible_general, :in_voting_round, :posting_open, :voting_open, :current_period, :twitter_hash_tag)
+    params.require(:dialog).permit(:logo, :name, :shortname, :description, :shortdesc, :instructions, :visibility, :openness, :moderation, :publishing, :max_voting_distribution, :max_characters, :max_words, :max_mess_length, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :list_template, :metamap_vote_own, :default_message, :required_message, :required_subject, :alt_logins, :max_messages, :new_message_title, :allow_replies, :required_meta, :value_calc, :profiles_visible, :names_visible_voting, :names_visible_general, :in_voting_round, :posting_open, :voting_open, :current_period, :twitter_hash_tag)
   end
   
   def period_params

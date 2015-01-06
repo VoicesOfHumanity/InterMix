@@ -20,6 +20,7 @@ class Group < ActiveRecord::Base
   has_many :group_subtags
   
   has_attached_file :logo, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :path => "#{DATADIR}/:class/:attachment/:id/:style_:basename.:extension", :url => "/images/data/:class/:attachment/:id/:style_:basename.:extension"
+  validates_attachment_content_type :logo, :content_type => /\Aimage\/.*\Z/
   
   #validates_presence_of     :name, :shortname, :visibility, :openness, :owner
 
