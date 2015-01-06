@@ -1034,12 +1034,13 @@ class GroupsController < ApplicationController
     get_group_info
     @dialog_id = params[:dialog_id].to_i
     @dialog = Dialog.find_by_id(@dialog_id)
-    @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first   
+    @dialog_group = DialogGroup.where("group_id=#{@group_id} and dialog_id=#{@dialog_id}").first  
   end
   
   def dialog_settings_save
     @group_id = params[:id].to_i
     @group = Group.find(@group_id)
+    
     @dialog_group_id = params[:dialog_group_id]
     @dialog_group = DialogGroup.find_by_id(@dialog_group_id)
     @dialog_group.signup_template = params[:dialog_group][:signup_template]
