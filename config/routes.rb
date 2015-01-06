@@ -164,12 +164,12 @@ Rails.application.routes.draw do
       get :subtag_edit
       post :subtag_save
       get :dialog_settings
-      post :dialog_settings_save
+      patch :dialog_settings_save
       get :remove_dialog
       post :apply_dialog
       post :add_moderator
       get :group_participant_edit
-      post :group_participant_save
+      patch :group_participant_save
       get :get_default
       get :get_dg_default
       get :test_template
