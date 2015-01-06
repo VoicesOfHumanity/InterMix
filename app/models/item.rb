@@ -488,8 +488,14 @@ class Item < ActiveRecord::Base
     items = items.where("items.created_at<='#{end_at.strftime("%Y-%m-%d %H:%M:%S")}'") if end_at.to_s != ''
 
     #-- We'll add up the stats, but we're including the overall rating summary anyway
-    items = items.joins(:participant=>{:metamap_node_participants=>:metamap_node})
     items = items.includes([:dialog,:group,:period,:item_rating_summary])
+
+    items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
+    #items = items.joins(:participant=>{:metamap_node_participants=>:metamap_node})
+    #items = items.joins("left join participants on participants.id=items.posted_by")
+    #items = items.joins("left join metamap_node_participants on metamap_node_participants.participant_id=items.posted_by")
+    #items = items.joins("left join metamap_nodes on metamap_nodes.id=metamap_node_participants.metamap_node_id")
+
     
     if participant_id.to_i > 0
       #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
