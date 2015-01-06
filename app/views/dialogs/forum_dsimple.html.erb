@@ -10,6 +10,8 @@
 <input type="hidden" id="in_dialog_id" name="in_dialog_id" value="<%= session[:dialog_id].to_i %>">	
 <input type="hidden" id="from" name="from" value="dsimple">	
 <input type="hidden" id="show_previous" value="<%= @showing_previous ? 1 : 0 %>">
+<input type="hidden" id="last_item_id" value="0">
+<input type="hidden" id="first_odd_or_even" value="0">
 
 <% if @showing_previous and @dialog.active_period and @dialog.active_period.id = @period_id and @dialog.active_period.crosstalk!='none' and @dialog.active_period.period_number.to_i > 1 %>
   <% if @dialog.active_period.previous_period and @dialog.active_period.previous_period.result.class == Hash -%>
@@ -41,7 +43,28 @@
 
 <% else -%>
 
+  <div id="forumitems">
 	<%= render( :partial => 'items/list_dsimple' )%>
+  </div>
+  
+  <script>
+  function addnew() {
+  	if (editingid>0) {
+  	} else if (replyingid>0) {
+  	} else if (in_new_item>0) {
+  	} else {
+    	$.ajax({
+          type: "GET",
+          url: '/dialogs/<%= @dialog.id %>/show_latest',
+          data: {period_id: <%= @dialog.active_period.id %>, last_item_id: $('#last_item_id').val(), odd_or_even: 1-$('#first_odd_or_even').val()},
+          complete: function(t){	
+            $('#forumitems').prepend(t.responseText);
+          }
+       });	
+    }
+  };
+  setInterval( addnew, 20000 );
+  </script>
 
 <% end -%>
 

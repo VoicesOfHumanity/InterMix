@@ -195,6 +195,7 @@ Rails.application.routes.draw do
       get :get_period_default
       get :test_period_template
       post :set_show_previous
+      get :show_latest
     end
   end 
   get 'voting_results' => 'dialogs#results'

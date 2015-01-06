@@ -431,6 +431,50 @@ class DialogsController < ApplicationController
 
   end   
   
+  def show_latest
+    #-- Get any new postings into the simple list mode for a certain discussion/period by ajax
+    @dialog_id = params[:id].to_i
+    @period_id = params[:period_id].to_i
+    
+    @last_item_id = params[:last_item_id].to_i
+    @odd_or_even = params[:odd_or_even]
+    
+    @new_items = Item.where(dialog_id: @dialog_id, period_id: @period_id).where("id>#{@last_item_id}").count
+    
+    if @new_items > 0
+      @sortby == 'default'
+      sortby = 'items.id desc'
+      @threads = 'root'
+      @rootonly = true
+      withratings = ''
+      @limit_group = 0
+      @posted_meta={}
+      @rated_meta={}
+      @posted_by_country_code = ''
+      @posted_by_admin1uniq = ''
+      @posted_by_metro_area_id = 0
+      @rated_by_country_code = ''
+      @rated_by_admin1uniq = ''
+      @rated_by_metro_area_id = 0
+      @tag = ''
+      @subgroup = ''
+
+      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog_id,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,withratings)
+    
+      @items.delete_if{|item| item.id <= @last_item_id}
+      
+      @items.each{|item| @last_item_id = item.id if item.id > @last_item_id}
+    
+      render :partial => 'items/list_dsimple'
+    
+    else
+    
+      render :text => ''
+    
+    end
+    
+  end
+  
   def period_edit
     @dialog_id = params[:id].to_i
     @dialog = Dialog.find(@dialog_id)

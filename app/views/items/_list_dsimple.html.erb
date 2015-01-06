@@ -1,8 +1,11 @@
-	<% odd_or_even = 0 %>
+	<% @last_item_id = 0 %>
+  <% odd_or_even = @odd_or_even.to_i %>
+  <% @first_odd_or_even = odd_or_even %>
 	<% for item in @items -%>
 		<% odd_or_even = 1-odd_or_even%>
 		<div class="forumitem forumitemplain forummain forum<%= odd_or_even %>" id="item_<%= item.id %>">
 			<%= render :partial => "items/item", :locals => { :item => item, :itemproc=>@itemsproc[item.id], :is_reply => false, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>0, :exp_item_id=>@exp_item_id.to_i } %>
+	    <% @last_item_id = item.id if item.id > @last_item_id %>
 			<% if @threads == 'flat' and @sortby != 'default' -%>
 				<% @replies = Item.where("is_first_in_thread=0 and first_in_thread=#{item.id}").order("id") -%>
 				<% for reply in @itemsproc[item.id]['replies'] -%>
@@ -15,15 +18,7 @@
 		</div><!--forumitem-->
 	<% end -%>
   
-<script>
-<% if false -%>
-setInterval(function () {
-	if (editingid>0) {
-	} else if (replyingid>0) {
-	} else if (in_new_item>0) {
-	} else {
-    //location.reload();
-  }
-}, 60000);  
-<% end -%>
-</script>
+  <script>
+  $('#last_item_id').val(<%= @last_item_id %>);
+  $('#first_odd_or_even').val(<%= @first_odd_or_even %>);
+  </script>
