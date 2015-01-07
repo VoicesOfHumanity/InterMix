@@ -38,7 +38,7 @@
 
 <% if (@item_number.to_i > 0 or @item_id.to_i > 0) and @item and @xmode.to_s != 'list' -%>
 
-	<p>Message <%= @item_number %> of <%= @items.length %><%= (not @item.hasrating) ? " - please rate the messages that you read!" : "" %></p>
+	<p>Message <%= @item_number %> of <%= @items.length %><%= (@item.respond_to?(:hasrating) and not @item.hasrating) ? " - please rate the messages that you read!" : "" %></p>
 	<%= render( :partial => 'items/item_dsimple', :locals => { :item => @item, :itemproc=>@itemsproc[@item.id], :is_reply => false, :odd_or_even => 1, :from=>@from.to_s, :top=>0, :showlong => true, :exp_item_id=>@item.id } )%>
 
 <% else -%>

@@ -189,7 +189,7 @@ Rails.application.routes.draw do
       post :period_save
       put :period_save
       get :group_settings
-      put :group_settings_save
+      patch :group_settings_save
       get :get_default
       get :test_template
       get :get_period_default
