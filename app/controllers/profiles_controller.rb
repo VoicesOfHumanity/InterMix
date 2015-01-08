@@ -1,6 +1,7 @@
 class ProfilesController < ApplicationController
   
   layout "front"
+  before_filter :authenticate_user_from_token!
   before_filter :authenticate_participant!, :check_group_and_dialog
   
   def index

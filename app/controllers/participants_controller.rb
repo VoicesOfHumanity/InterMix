@@ -3,6 +3,7 @@
 class ParticipantsController < ApplicationController
   
 	layout "admin"
+  before_filter :authenticate_user_from_token!, :except=>:create
   before_filter :authenticate_participant!, :except=>:create
   respond_to :html, :xml, :json
   

@@ -3,6 +3,7 @@ require 'will_paginate/array'
 class ItemsController < ApplicationController
 
   layout "front"
+  before_filter :authenticate_user_from_token!, :except=>[:pubgallery,:view]
   before_filter :authenticate_participant!, :except=>[:pubgallery,:view]
 
   def index

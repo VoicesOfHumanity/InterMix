@@ -3,6 +3,7 @@ require 'will_paginate/array'
 class DialogsController < ApplicationController
 
 	layout "front"
+  before_filter :authenticate_user_from_token!
   before_filter :authenticate_participant!
   before_filter :check_group_and_dialog, :check_required, :check_status
   before_filter :redirect_subdom, :except => :index
