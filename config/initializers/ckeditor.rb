@@ -15,7 +15,7 @@ Ckeditor.setup do |config|
   # config.attachment_file_types = ["doc", "docx", "xls", "odt", "ods", "pdf", "rar", "zip", "tar", "swf"]
 
   # Setup authorization to be run as a before filter
-  config.authorize_with :cancan
+  #config.authorize_with :cancan
 end
 
 #Ckeditor::ApplicationController.send :define_method, :ckeditor_filebrowser_scope do |o|

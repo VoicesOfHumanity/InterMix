@@ -58,12 +58,13 @@
           url: '/dialogs/<%= @dialog.id %>/show_latest',
           data: {period_id: <%= @dialog.active_period.id %>, last_item_id: $('#last_item_id').val(), odd_or_even: 1-$('#first_odd_or_even').val()},
           complete: function(t){	
-            $('#forumitems').prepend(t.responseText);
+            //$('#forumitems').prepend(t.responseText);
+            $(t.responseText).hide().prependTo('#forumitems').show('slow');
           }
        });	
     }
   };
-  setInterval( addnew, 20000 );
+  setInterval( addnew, 15000 );
   </script>
 
 <% end -%>
