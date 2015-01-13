@@ -607,7 +607,8 @@ function mess_characters(htmlval,plainval) {
     if ($('#js_message_length')) {
         $('#js_message_length').val(char_count);
     }
-    var words = plainval.match(/\S+/g);
+    //var words = plainval.match(/\S+/g);
+    var words = plainval.match(/(\w|-)+/g);
     if (words) {
         var word_count = words.length;
     } else {
