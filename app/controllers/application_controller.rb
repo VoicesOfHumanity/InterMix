@@ -124,7 +124,7 @@ class ApplicationController < ActionController::Base
     Sanitize.clean(sometext.force_encoding("UTF-8"), 
       :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img'],
       :attributes => {'a' => ['href', 'title', 'target'], 'img' => ['src', 'alt', 'width', 'height', 'align', 'vspace', 'hspace', 'style']},
-      :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http', :relative]} },
+      :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http', 'https', :relative]} },
       :allow_comments => false,
       :output => :html
     )

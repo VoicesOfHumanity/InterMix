@@ -271,7 +271,7 @@ Rails.application.routes.draw do
   get 'me/wall' => 'wall#index'
   get 'me/photos' => 'profiles#photos'
   get 'me/photolist' => 'profiles#photolist'
-  get 'me/picupload' => 'profiles#picupload'
+  post 'me/picupload' => 'profiles#picupload'
   post 'me/picdelete' => 'profiles#picdelete'
   get 'me/twitauth' => 'profiles#twitauth'
   get 'me/twitcallback' => 'profiles#twitcallback'
