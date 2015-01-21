@@ -53,7 +53,9 @@ end
   <% if @data['totals']['itemsproc'].length == 0 -%>
   	no overall winner<br>
   <% else -%>	
-  	<% for item_id,i in @data['totals']['itemsproc'] -%>
+  	<% "for item_id,i in @data['totals']['itemsproc']" -%>
+  	<% for item in @data['totals']['items'] -%>
+      <% item_id = item.id; i = @data['totals']['itemsproc'][item_id] %>
   		<a href="/items/<%= item_id %>/view" style="<%= "font-size:14px;font-weight:bold" if @short_full=='short'%>"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%=raw i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value'])  %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  i['num_raters']  %><br>
   		<% if params[:ratings] and i['ratings'].length > 0 -%>
     		<b>Ratings summary, no regression to the mean:</b><br>
