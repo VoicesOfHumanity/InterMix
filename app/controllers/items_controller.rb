@@ -1022,14 +1022,14 @@ class ItemsController < ApplicationController
       itempicupload
     else
       logger.info("items#itemprocess before clean:#{@item.html_content.inspect}") 
-      @item.html_content = Sanitize.clean(@item.html_content, 
-        :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img'],
-        :attributes => {'a' => ['href'], 'img' => ['src', 'alt', 'width', 'height', 'align', 'vspace', 'hspace', 'style']},
-        :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http', 'https', :relative]} },
-        :allow_comments => false,
-        :output => :html,
-        :remove_contents => ['style']
-      )
+      #@item.html_content = Sanitize.clean(@item.html_content, 
+      #  :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img'],
+      #  :attributes => {'a' => ['href'], 'img' => ['src', 'alt', 'width', 'height', 'align', 'vspace', 'hspace', 'style']},
+      #  :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http', 'https', :relative]} },
+      #  :allow_comments => false,
+      #  :output => :html
+      #)
+      #:remove_contents => ['style']
       #-- Make all links open a new window
       logger.info("items#itemprocess before regex:#{@item.html_content.inspect}") 
       @item.html_content.gsub!(/a href/im,'a target="_blank" href')

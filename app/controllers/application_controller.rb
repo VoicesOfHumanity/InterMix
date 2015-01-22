@@ -125,6 +125,9 @@ class ApplicationController < ActionController::Base
       :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img'],
       :attributes => {'a' => ['href', 'title', 'target'], 'img' => ['src', 'alt', 'width', 'height', 'align', 'vspace', 'hspace', 'style']},
       :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http', 'https', :relative]} },
+      :css => {
+          :properties => ['width','height','float','border-width','border-style','margin']
+      },
       :allow_comments => false,
       :output => :html
     )
