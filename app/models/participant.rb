@@ -111,6 +111,7 @@ class Participant < ActiveRecord::Base
     # replaced with this. https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
     if authentication_token.blank?
       self.authentication_token = generate_authentication_token
+      self.save
     end
   end
   

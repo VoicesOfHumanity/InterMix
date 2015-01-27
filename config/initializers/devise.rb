@@ -127,7 +127,7 @@ Devise.setup do |config|
   # ==> Configuration for :token_authenticatable
   # Defines name of the authentication token params key
   # http://yekmer.posterous.com/single-access-token-using-devise
-  config.token_authentication_key = :auth_token
+  #config.token_authentication_key = :auth_token
 
   # If true, authentication through token does not store user in session and needs
   # to be supplied on each request. Useful if you are using the token as API token.
