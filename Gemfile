@@ -72,18 +72,18 @@ gem 'postmark-rails'
 
 gem 'responds_to_parent'
 
-group :development do
+group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
   gem 'capistrano-rails'
   gem 'web-console'  
-  gem 'rspec-rails'
-  gem 'capybara'
-  gem 'selenium-webdriver'
-  gem 'capybara-webkit'
-  gem 'factory_girl_rails'
 end
 
+gem 'rspec-rails'
+gem 'capybara'
+gem 'selenium-webdriver'
+gem 'capybara-webkit'
+gem 'factory_girl_rails'
 
 # Gems used only for assets and not required
 # in production environments by default.

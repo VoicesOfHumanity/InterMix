@@ -1308,7 +1308,6 @@ class DialogsController < ApplicationController
             'itemsproc' => {},
             'posters' => {},
             'ratings' => {},
-            'ratings' => {},
             'num_raters' => 0,
             'num_int_items' => 0,
             'num_app_items' => 0,

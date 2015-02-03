@@ -157,14 +157,14 @@ class ApplicationController < ActionController::Base
     session[:dialog_name] = ''
     session[:dialog_prefix] = ''
     
-    #if current_participant.status != 'active'
-    #  flash[:alert] = "Your account is not active"
-    #  flash.now[:alert] = "Your account is not active"
+    if current_participant.status != 'active'
+      flash[:alert] = "Your account is not active"
+      flash.now[:alert] = "Your account is not active"
       #auth.logout
-    #  sign_out :participant 
-    #  '/'
-    #  return
-    #end  
+      sign_out :participant 
+      '/'
+      return
+    end  
     #if current_participant.status == 'unconfirmed'
       #  #-- If they logged in, but are unconfirmed, it is probably the first time
       #  current_participant.status = 'active'

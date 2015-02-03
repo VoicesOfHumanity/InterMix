@@ -44,3 +44,11 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 end
+
+MAILDOMAIN = 'trantor.cr8.com'
+
+TWITTER_CONSUMER_KEY = 'Ew8NROMK7YbDa3XIph6gA'   # = API key. And this is for the Posting app, not the Login app
+TWITTER_CONSUMER_SECRET = 'ghQ41Vu377BAh3oVRACpKdYzeUo5SJardQunvALkj8'
+
+FACEBOOK_APP_ID          = '1406266652976637'
+FACEBOOK_API_SECRET      = 'ec6fc05777932b40f23434bdbdadabec'
