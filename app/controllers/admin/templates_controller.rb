@@ -29,7 +29,7 @@ class Admin::TemplatesController < ApplicationController
     if template_id>0
       @templates = [Template.find(group_id)]
     else  
-      @templates = Template.paginate :page=>@page, :per_page => @per_page, :conditions=>"#{xcond}", :order=>xorder    
+      @templates = Template.where(xcond).order(xorder).paginate(:page=>@page, :per_page => @per_page)    
     end
     
     respond_to do |format|

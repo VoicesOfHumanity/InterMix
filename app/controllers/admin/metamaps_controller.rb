@@ -27,7 +27,7 @@ class Admin::MetamapsController < ApplicationController
     if metamap_id>0
       @metamaps = [Metamap.find(metamap_id)]
     else  
-      @metamaps = Metamap.paginate :page=>@page, :per_page => @per_page, :conditions=>"#{xcond}", :order=>xorder    
+      @metamaps = Metamap.where(xcond).order(xorder).paginate(:page=>@page, :per_page => @per_page)    
     end
     
     respond_to do |format|

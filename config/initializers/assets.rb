@@ -9,3 +9,6 @@ Rails.application.config.assets.version = '1.0'
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 # Rails.application.config.assets.precompile += %w( search.js )
+
+# not included everywhere, but specifically linked to:
+Rails.application.config.assets.precompile += %w( admin.css formtastic.css formtastic_changes.css pepper-grinder/jquery-ui-1.8.6.custom.css blueprint/print.css blueprint/ie.css )

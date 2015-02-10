@@ -34,7 +34,7 @@ class Admin::HelpTextsController < ApplicationController
         xcond += " and code='#{code}'" if code != ''
         xcond += " and description like '#{description}'" if description != ''
         
-        @help_texts = HelpText.paginate :page=>@page, :per_page => @per_page, :conditions=>"#{xcond}", :order=>xorder    
+        @help_texts = HelpText.where(xcond).order(xorder).paginate(:page=>@page, :per_page => @per_page)    
       end
 
       respond_to do |format|

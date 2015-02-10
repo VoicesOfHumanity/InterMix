@@ -29,7 +29,7 @@ class Admin::DialogsController < ApplicationController
     if dialog_id>0
       @dialogs = [Dialog.find(group_id)]
     else  
-      @dialogs = Dialog.paginate :page=>@page, :per_page => @per_page, :include=>[:creator,:maingroup], :conditions=>"#{xcond}", :order=>xorder    
+      @dialogs = Dialog.where(xcond).order(xorder).includes(:creator,:maingroup).paginate(:page=>@page, :per_page => @per_page)    
     end
     
     respond_to do |format|
@@ -41,7 +41,7 @@ class Admin::DialogsController < ApplicationController
   # GET /dialogs/1
   # GET /dialogs/1.xml
   def show
-    @dialog = Dialog.find(params[:id],:include=>[:creator,:maingroup])
+    @dialog = Dialog.includes(:creator,:maingroup).find(params[:id])
     respond_to do |format|
       format.html { render :partial=>'show', :layout=>false }
       format.xml  { render :xml => @dialog }

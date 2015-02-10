@@ -30,7 +30,7 @@ class Admin::GroupsController < ApplicationController
     if group_id>0
       @groups = [Group.find(group_id)]
     else  
-      @groups = Group.paginate :page=>@page, :per_page => @per_page, :conditions=>"#{xcond}", :order=>xorder    
+      @groups = Group.where(xcond).order(xorder).paginate(:page=>@page, :per_page => @per_page)    
     end
     
     respond_to do |format|

@@ -29,7 +29,7 @@ class Admin::HubsController < ApplicationController
     if hub_id>0
       @hubs = [Hub.find(hub_id)]
     else  
-      @hubs = Hub.paginate :page=>@page, :per_page => @per_page, :conditions=>"#{xcond}", :order=>xorder    
+      @hubs = Hub.where(xcond).order(xorder).paginate(:page=>@page, :per_page => @per_page)  
     end
     
     respond_to do |format|
