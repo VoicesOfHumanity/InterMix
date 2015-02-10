@@ -426,10 +426,12 @@ class ApplicationController < ActionController::Base
   
   def is_sysadmin
     if not participant_signed_in?
+      redirect_to '/'
       return false
     elsif current_participant.sysadmin
       return true
     else
+      redirect_to '/'
       return false
     end      
   end 
