@@ -27,9 +27,9 @@
 <% elsif not participant_signed_in? -%>
 <%= item['participant'] ? item['participant']['name'] : item['posted_by'] %>
 <% elsif @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item['is_first_in_thread'] -%>
-<a href="/participant/<%= item.posted_by %>/wall"><%= item['participant'] ? item['participant']['name'] : item['posted_by'] %></a>		
+<a href="/participant/<%= item['posted_by'] %>/wall"><%= item['participant'] ? item['participant']['name'] : item['posted_by'] %></a>		
 <% else -%>
-<a href="/participant/<%= item.posted_by %>/wall"><%= item['participant'] ? item['participant']['name'] : item['posted_by'] %></a>
+<a href="/participant/<%= item['posted_by'] %>/wall"><%= item['participant'] ? item['participant']['name'] : item['posted_by'] %></a>
 <% end -%>
 </div>
 
