@@ -60,6 +60,7 @@ end
                 useitem['subgroup_list'] = item.subgroup_list
                 useitem['show_subgroup'] = item.show_subgroup
                 useitem['tag_list'] = item.tag_list
+                useitem['item_rating_summary'] = item.item_rating_summary
                 
                 useitem['participant'] = item.participant ? item.participant.attributes : nil
                 useitem['dialog'] = item.dialog ? item.dialog.attributes : nil

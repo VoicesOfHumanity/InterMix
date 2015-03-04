@@ -21,12 +21,12 @@ Number of raters: <b><%= @isum['num_raters'] %></b><br/>
 <% else -%>
 
 <% if false -%>
-Total interest: <b><%= sprintf("%.1f", item.item_rating_summary ? item.item_rating_summary.int_average * item.item_rating_summary.int_count : 0.0) %></b> (total interest = avg interest * number of raters)<br/>
+Total interest: <b><%= sprintf("%.1f", item['item_rating_summary'] ? item['item_rating_summary']['int_average'] * item['item_rating_summary']['int_count'] : 0.0) %></b> (total interest = avg interest * number of raters)<br/>
 <% end -%>
-Average interest: <b><%= sprintf("%.1f", item.item_rating_summary ? item.item_rating_summary.int_average : 0.0) %></b><br/>
-Average approval: <b><%= sprintf("%.1f", item.item_rating_summary ? item.item_rating_summary.app_average : 0.0) %></b><br/>
-Value: <b><%= sprintf("%.1f", item.item_rating_summary ? item.item_rating_summary.value : 0.0) %></b> (value = interest x approval)<br/>
-Controversy: <b><%= sprintf("%.1f", item.item_rating_summary ? item.item_rating_summary.controversy : 0.0) %></b> (maximum=9)<br/>
-Number of raters: <b><%= item.item_rating_summary ? [item.item_rating_summary.int_count,item.item_rating_summary.app_count].max : 0 %></b><br/>
+Average interest: <b><%= sprintf("%.1f", item['item_rating_summary'] ? item['item_rating_summary']['int_average'] : 0.0) %></b><br/>
+Average approval: <b><%= sprintf("%.1f", item['item_rating_summary'] ? item['item_rating_summary']['app_average'] : 0.0) %></b><br/>
+Value: <b><%= sprintf("%.1f", item['item_rating_summary'] ? item['item_rating_summary']['value'] : 0.0) %></b> (value = interest x approval)<br/>
+Controversy: <b><%= sprintf("%.1f", item['item_rating_summary'] ? item['item_rating_summary']['controversy'] : 0.0) %></b> (maximum=9)<br/>
+Number of raters: <b><%= item['item_rating_summary'] ? [item['item_rating_summary']['int_count'],item['item_rating_summary']['app_count']].max : 0 %></b><br/>
 
 <% end -%>
