@@ -515,6 +515,7 @@ class DialogsController < ApplicationController
       @period.group_dialog = 'dialog'
     end  
     @period.shortdesc = view_context.strip_tags(@period.shortdesc.to_s)[0..123]
+    #@period.shortdesc = ActionController::Base.helpers.strip_tags(@period.shortdesc.to_s)[0..123]
     @period.save!    
     @period.update_attributes(period_params)
     #@period.required_meta = params[:period][:required_meta]

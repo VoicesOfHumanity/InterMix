@@ -1332,7 +1332,7 @@ class Item < ActiveRecord::Base
       		metamap_node_name = minfo[0]
       		metamap_node = minfo[1]
       		data[metamap.id]['nodes'][metamap_node_id][2] = 0
-          if  data[metamap.id]['postedby']['nodes'][metamap_node_id] and  data[metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length > 0
+          if data[metamap.id]['postedby']['nodes'][metamap_node_id] and  data[metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length > 0
       			if data[metamap.id]['matrix']['post_rate'][metamap_node_id].length > 0
         			for rate_metamap_node_id,rdata in data[metamap.id]['matrix']['post_rate'][metamap_node_id]
         			  if rate_metamap_node_id == metamap_node_id
@@ -1340,7 +1340,7 @@ class Item < ActiveRecord::Base
           					item = data[0]['items'][item_id]
                     iproc = data[0]['itemsproc'][item_id]
                     #-- It should really be by iproc['value'] but somehow that doesn't work.
-                    data[metamap.id]['nodes'][metamap_node_id][2] = item.value
+                    data[metamap.id]['nodes'][metamap_node_id][2] = item['value']
                 		break
                   end
                 end

@@ -20,7 +20,8 @@ for period in periods
   @data['totals'] = {'items'=>items, 'itemsproc'=>itemsproc, 'extras'=>extras}
   
   puts "  #{items.size} items"
-  
+
+if false  
   if items.size > 0
     win = items[0]
     puts "  winner: #{win.participant.name}: #{win.subject}"
@@ -28,6 +29,7 @@ for period in periods
   else
     puts "  no results"
   end  
+end
   
   #-- And meta category results
   @data['meta'] = extras['meta'] 
@@ -51,7 +53,28 @@ for period in periods
     	          item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'][0]
     	          item = Item.find_by_id(item_id)
     	          puts "    #{metamap_node_name}: #{item.participant.name}: #{item.subject}"
-    	          result[period.crosstalk] << {'item'=>item,'iproc'=>itemsproc[item.id],'label'=>metamap_node_name}
+    	          #result[period.crosstalk] << {'item'=>item,'iproc'=>itemsproc[item.id],'label'=>metamap_node_name}
+                
+                useitem = item.attributes
+                
+                useitem['subgroup_list'] = item.subgroup_list
+                useitem['show_subgroup'] = item.show_subgroup
+                useitem['tag_list'] = item.tag_list
+                
+                useitem['participant'] = item.participant ? item.participant.attributes : nil
+                useitem['dialog'] = item.dialog ? item.dialog.attributes : nil
+                useitem['group'] = item.group ? item.group.attributes : nil
+                useitem['period'] = item.period ? item.period.attributes : nil
+                
+                useitem['participant']['name'] = item.participant.name if item.participant
+                useitem['dialog']['settings_with_period'] = item.dialog.settings_with_period if item.dialog
+                
+                
+                iproc = itemsproc[item.id]
+                useiproc = []
+                
+                result[period.crosstalk] << {'item'=>useitem,'iproc'=>useiproc,'label'=>metamap_node_name}                
+                
     	        end
     	      end
     	    end
@@ -61,6 +84,7 @@ for period in periods
     end   
   end
   
+if false  
   #-- Results per group
   @data['groups'] = {}
   result['groups'] = {}
@@ -80,9 +104,11 @@ for period in periods
       end  
     end
   end  
-  
+end
+
   #puts result.inspect
   period.result = result
   period.save!
   
 end
+

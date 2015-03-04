@@ -241,8 +241,11 @@ class ItemsController < ApplicationController
       @item.period_id = @dialog.current_period if @dialog
     end  
     @item.dialog_id = @dialog_id
-    @max_characters = @dialog ? @dialog.max_characters : 0    
-    @max_words = @dialog ? @dialog.max_words : 0
+    #@max_characters = @dialog ? @dialog.max_characters : 0    
+    #@max_words = @dialog ? @dialog.max_words : 0
+    
+    @max_characters = @dialog ? @dialog.settings_with_period["max_characters"] : 0
+    @max_words = @dialog ? @dialog.settings_with_period["max_words"] : 0
     
     if current_participant.status != 'active'
       #-- Make sure this is an active member
@@ -920,14 +923,15 @@ class ItemsController < ApplicationController
     else
       message_length = plain_content.length
     end
+    logger.info("items#itemvalidate length:#{message_length} first_in_thread:#{@item.is_first_in_thread} dialog:#{dialog.class} max_characters:#{dialog.settings_with_period["max_characters"].to_i}")
     if plain_content == '' and @item.media_type =='text' and ((dialog and dialog.settings_with_period["required_message"]) or subject != '')
       @xmessage += "Please include at least a brief message<br>"
     elsif @item.short_content == ''
       @xmessage += "Please include at least a short message<br>"
-    elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_characters"].to_i > 0 and message_length > dialog.settings_with_period["max_characters"]  
+    elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_words"].to_i > 0 and 1.0 * plain_content.scan(/(\w|-)+/).size > dialog.settings_with_period["max_words"] * 1.04
+      @xmessage += "That's too many words"
+    elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_characters"].to_i > 0 and 1.0 * message_length > dialog.settings_with_period["max_characters"] * 1.04 
       @xmessage += "The maximum message length is #{dialog.settings_with_period["max_characters"]} characters<br>"
-    #elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_words"].to_i > 0 and plain_content.scan(/(\w|-)+/).size > dialog.settings_with_period["max_words"]
-    #  @xmessage += "That's too many words"
     elsif dialog and dialog.settings_with_period["required_subject"] and subject.to_s == '' and html_content.gsub(/<\/?[^>]*>/, "").strip != ''
       @xmessage += "Please choose a subject line<br>"
     #elsif subject != '' and ((subject[0,3] != 'Re:' and subject.length > 48) or subject.length > 52)

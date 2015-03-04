@@ -1,12 +1,12 @@
-<div class="subject subject1" onclick="expand(<%= item.id %>)"><span><%= item.subject %></span></div>
+<div class="subject subject1" onclick="expand(<%= item['id'] %>)"><span><%= item['subject'] %></span></div>
 
-<%=raw sanitizethis(item.html_content) if item.html_content.to_s != '' %>
+<%=raw sanitizethis(item['html_content']) if item['html_content'].to_s != '' %>
 
 <div class="itemvoting">
-		<div id="iteminfotxt_<%= item.id %>" class="votesection summary" style="float:right;" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="summaryswitch(<%= item.id %>,0)"<% else %>onmouseover="summary(<%= item.id %>,0)" onmouseout="nosummary(<%= item.id %>,0)"<% end %>>
+		<div id="iteminfotxt_<%= item['id'] %>" class="votesection summary" style="float:right;" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="summaryswitch(<%= item['id'] %>,0)"<% else %>onmouseover="summary(<%= item['id'] %>,0)" onmouseout="nosummary(<%= item['id'] %>,0)"<% end %>>
 			sum
 		</div>
-		<div id="sum_<%= item.id %>" class="iteminfo_summary" style="display:none">
+		<div id="sum_<%= item['id'] %>" class="iteminfo_summary" style="display:none">
 <%= render :partial => "items/rating_summary", :locals => { :item => item, :itemproc => itemproc} %>
 		</div>
 </div>
@@ -16,55 +16,55 @@
 <div class="iteminfotxt">
 	by 
 <% "WHAT WAS THE POINT OF THIS?: if @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread" -%>	
-<% if not participant_signed_in? and ( @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread ) -%>
-<%= item.participant ? item.participant.name : item.posted_by %>		
-<% elsif item.dialog and item.dialog.current_period.to_i > 0 and item.period_id==item.dialog.current_period and not item.dialog.settings_with_period["names_visible_voting"] and item.is_first_in_thread -%>
-[<%= current_participant.sysadmin ? "(#{item.participant.name}) " : '' %>name withheld during decision period]
-<% elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"] and item.is_first_in_thread -%>
-[<%= current_participant.sysadmin ? "(#{item.participant.name}) " : '' %>name withheld for this discussion]
-<% elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"] -%>
-<%= item.participant ? item.participant.name : item.posted_by %>
+<% if not participant_signed_in? and ( @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item['is_first_in_thread'] ) -%>
+<%= item['participant'] ? item['participant']['name'] : item['posted_by'] %>		
+<% elsif item['dialog'] and item['dialog']['current_period'].to_i > 0 and item['period_id']==item['dialog']['current_period'] and not item['dialog']['settings_with_period']["names_visible_voting"] and item['is_first_in_thread'] -%>
+[<%= current_participant.sysadmin ? "(#{item['participant']['name']}) " : '' %>name withheld during decision period]
+<% elsif item['dialog'] and item['dialog']['current_period'].to_i == 0 and not item['dialog']['settings_with_period']["names_visible_general"] and item['is_first_in_thread'] -%>
+[<%= current_participant.sysadmin ? "(#{item['participant']['name']}) " : '' %>name withheld for this discussion]
+<% elsif item['dialog'] and not item['dialog']['settings_with_period']["profiles_visible"] -%>
+<%= item['participant'] ? item['participant']['name'] : item['posted_by'] %>
 <% elsif not participant_signed_in? -%>
-<%= item.participant ? item.participant.name : item.posted_by %>
-<% elsif @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread -%>
-<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>		
+<%= item['participant'] ? item['participant']['name'] : item['posted_by'] %>
+<% elsif @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item['is_first_in_thread'] -%>
+<a href="/participant/<%= item.posted_by %>/wall"><%= item['participant'] ? item['participant']['name'] : item['posted_by'] %></a>		
 <% else -%>
-<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>
+<a href="/participant/<%= item.posted_by %>/wall"><%= item['participant'] ? item['participant']['name'] : item['posted_by'] %></a>
 <% end -%>
 </div>
 
 <div class="iteminfotxt">
-<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
+<%= item['created_at'].strftime("%Y-%m-%d %H:%M") %>
 </div>
 
 <div class="iteminfotxt">
-<a href="/items/<%= item.id %>/view" title="permalink">#</a>	
+<a href="/items/<%= item['id'] %>/view" title="permalink">#</a>	
 </div>	
 
 <div class="iteminfotxt">
-	<% if @group_id.to_i > 0 and item.group and item.group_id != @group_id %><span style="color:#f99"><% end %>
-	<%= "Group: " + (item.group ? item.group.name : item.group_id.to_s) if item.group %>
-	<% if @group_id.to_i > 0 and item.group and item.group_id != @group_id %></span><% end %>
+	<% if @group_id.to_i > 0 and item['group'] and item['group_id'] != @group_id %><span style="color:#f99"><% end %>
+	<%= "Group: " + (item['group'] ? item['group']['name'] : item['group_id'].to_s) if item['group'] %>
+	<% if @group_id.to_i > 0 and item['group'] and item['group_id'] != @group_id %></span><% end %>
 </div>
 
 <div class="iteminfotxt">
-	<%= "Discussion: " + (item.dialog ? item.dialog.name : item.dialog_id.to_s) if item.dialog_id.to_i > 0 %>
+	<%= "Discussion: " + (item['dialog'] ? item['dialog']['name'] : item['dialog_id'].to_s) if item['dialog_id'].to_i > 0 %>
 </div>
 
 <div class="iteminfotxt">
-	<%= "Decision Period: " + (item.period ? item.period.name : item.period_id.to_s) if item.period_id.to_i > 0 %>
+	<%= "Decision Period: " + (item['period'] ? item['period']['name'] : item['period_id'].to_s) if item['period_id'].to_i > 0 %>
 </div>
 
-<% if (@from == 'group' or @from == 'individual') and item.subgroup_list.length > 0 -%>	
+<% if (@from == 'group' or @from == 'individual') and item['subgroup_list'].length > 0 -%>	
 <div class="iteminfotxt">	
-	Subgroup: <%= item.show_subgroup %>	
-	<% if item.reply_to.to_i ==0 and @limit_group and @limit_group.group_subtags.length >= item.subgroup_list.length -%>
-	<span class="item_subgroup_add" id="item_subgroup_add_<%= item.id %>" onclick="showsubgroupadd(<%= item.id %>)" title="Add to subgroup">+</span>
+	Subgroup: <%= item['show_subgroup'] %>	
+	<% if item['reply_to'].to_i ==0 and @limit_group and @limit_group.group_subtags.length >= item['subgroup_list'].length -%>
+	<span class="item_subgroup_add" id="item_subgroup_add_<%= item['id'] %>" onclick="showsubgroupadd(<%= item['id'] %>)" title="Add to subgroup">+</span>
 	<% end -%>		
 </div>
 <% end -%>
 <div class="iteminfotxt">	
-	<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
+	<%= "Tags: #{item['tag_list']}" if item['tag_list'].to_s!='' %>			
 </div>
 
  

@@ -8,9 +8,9 @@ Value: <b><%= sprintf("%.1f", itemproc['value'] ? itemproc['value'] : 0.0) %></b
 Controversy: <b><%= sprintf("%.1f", itemproc['controversy'] ? itemproc['controversy'] : 0.0) %></b> (maximum=9)<br/>
 Number of raters: <b><%= itemproc['num_raters'] %></b><br/>
 
-<% elsif @itemsproc and @itemsproc[item.id] -%>
+<% elsif @itemsproc and @itemsproc[item['id']] -%>
 
-<% @isum = @itemsproc[item.id] %>
+<% @isum = @itemsproc[item['id']] %>
 
 Average interest: <b><%= sprintf("%.1f", @isum['avg_interest'] ? @isum['avg_interest'] : 0.0) %></b><br/>
 Average approval: <b><%= sprintf("%.1f", @isum['avg_approval'] ? @isum['avg_approval'] : 0.0) %></b><br/>

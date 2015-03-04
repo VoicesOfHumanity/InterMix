@@ -2,6 +2,7 @@ class Period < ActiveRecord::Base
   belongs_to :group
   belongs_to :dialog
   has_many :items
+  has_many :ratings
   
   serialize :result
   

@@ -2,8 +2,13 @@ require "rails_helper"
 
 describe "the signin process", :type => :feature, :js => true do
   before :each do
-    #Participant.create!(:email => 'ffunch327@newciv.org', :password => 'test')
-    @participant = FactoryGirl.create(:participant)
+    Rails.logger.info("create participant--------------------")
+    @participant = Participant.new(email: 'ffunch234@newciv.org', password: 'test', password_confirmation: 'test')
+    @participant.save!
+    @participant.confirmed_at = Time.now
+    @participant.status = 'active'
+    @participant.save!
+    #@participant = FactoryGirl.create(:participant)
   end
   
 

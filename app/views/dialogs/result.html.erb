@@ -79,6 +79,8 @@ end
   </div>
 <% end -%>
 
+<p><% @data['meta'].inspect %></p>
+
 <% for metamap in @metamaps -%>
 
   <% next if (@short_full == 'gender' and metamap.id != 3) or (@short_full == 'age' and metamap.id != 5) %>

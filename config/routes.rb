@@ -186,7 +186,7 @@ Rails.application.routes.draw do
       get :result
       get :result_old
       get :period_edit
-      post :period_save
+      patch :period_save
       put :period_save
       get :group_settings
       patch :group_settings_save
