@@ -30,7 +30,7 @@ if false
     puts "  no results"
   end  
 end
-  
+
   #-- And meta category results
   @data['meta'] = extras['meta'] 
   if period.crosstalk[0..5] == 'gender' or period.crosstalk[0..2] == 'age'
@@ -40,9 +40,10 @@ end
       else
         next
       end  
-      puts "  meta:#{metamap.name}"
+      puts "  meta:##{metamap.id}:#{metamap.name}"
       result[period.crosstalk] = []
     
+      puts @data['meta'][metamap.id]['nodes_sorted'].inspect
       for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
     		metamap_node_name = minfo[0]
     		metamap_node = minfo[1]

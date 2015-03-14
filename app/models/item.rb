@@ -834,9 +834,9 @@ class Item < ActiveRecord::Base
   def self.results_meta_breakdown(dialog,period,group)
     #-- Produce ranked item listings by meta categories of posters and raters, for the dialog results
 
-    dialog_id = dialog ? dialog.id : 0
-    period_id = period ? period.id : 0
-    group_id = group ? group.id : 0
+    dialog_id = dialog.class==Dialog ? dialog.id : dialog.to_i
+    period_id = period.class==Period ? period.id : period.to_i
+    group_id = group.class==Group ? group.id : group.to_i
 
     #-- Criterion, if we're limiting by period
     pwhere = (period_id > 0) ? "items.period_id=#{period_id}" : ""
@@ -886,12 +886,12 @@ class Item < ActiveRecord::Base
 
         data[metamap.id]['items'][item.id] = metamap_node_id
 
-        logger.info("dialogs#result item ##{item.id} poster meta:#{metamap_node_id}/#{metamap_node_name}") 
+        logger.info("item#results_meta_breakdown item ##{item.id} poster meta:#{metamap_node_id}/#{metamap_node_name}") 
 
         if not data[metamap.id]['nodes'][metamap_node_id]
           #data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
           data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,item.participant.metamap_node_participants[0].metamap_node]
-          logger.info("dialogs#result data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
+          logger.info("item#results_meta_breakdown data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
         end
         if not data[metamap.id]['postedby']['nodes'][metamap_node_id]
           data[metamap.id]['postedby']['nodes'][metamap_node_id] = {
@@ -928,10 +928,10 @@ class Item < ActiveRecord::Base
         metamap_node_id = rating.participant.metamap_node_participants[0].metamap_node_id
         metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name_as_group ? rating.participant.metamap_node_participants[0].metamap_node.name_as_group : rating.participant.metamap_node_participants[0].metamap_node.name
 
-        logger.info("dialogs#result rating ##{rating_id} of item ##{item_id} rater meta:#{metamap_node_id}/#{metamap_node_name}") 
+        logger.info("item#results_meta_breakdown rating ##{rating_id} of item ##{item_id} rater meta:#{metamap_node_id}/#{metamap_node_name}") 
 
         if not itemlist[item_id]
-          logger.info("dialogs#result item ##{item_id} doesn't exist. Skipping.")
+          logger.info("item#results_meta_breakdown item ##{item_id} doesn't exist. Skipping.")
           next
         end
 
@@ -970,7 +970,7 @@ class Item < ActiveRecord::Base
         item_metamap_node_id = data[metamap.id]['items'][item_id]
 
         if not data[metamap.id]['nodes'][item_metamap_node_id]
-          logger.info("dialogs#result data[#{metamap.id}]['nodes'][#{item_metamap_node_id}] doesn't exist. Skipping.")
+          logger.info("item#results_meta_breakdown data[#{metamap.id}]['nodes'][#{item_metamap_node_id}] doesn't exist. Skipping.")
           next
         end  
 

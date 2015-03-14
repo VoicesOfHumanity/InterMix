@@ -1626,7 +1626,7 @@ class DialogsController < ApplicationController
           item_app_uniq = {}
           mdata['items'].each do |item_id,item|
             #-- Going through the items of the second meta that have rated the first meta
-            iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'rateapproval'=>0,'rateinterest'=>0,'num_raters'=>0,'ratings'=>[]}
+            iproc = {'id'=>item.id,'name'=>show_name_in_result(item,@dialog,@period),'subject'=>item.subject,'votes'=>0,'num_raters'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'rateapproval'=>0,'rateinterest'=>0,'ratings'=>[]}
             mdata['ratings'].each do |rating_id,rating|
               if rating.item_id == item.id
                 iproc['votes'] += 1
