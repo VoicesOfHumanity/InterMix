@@ -834,9 +834,9 @@ class Item < ActiveRecord::Base
   def self.results_meta_breakdown(dialog,period,group)
     #-- Produce ranked item listings by meta categories of posters and raters, for the dialog results
 
-    dialog_id = dialog.class==Dialog ? dialog.id : dialog.to_i
-    period_id = period.class==Period ? period.id : period.to_i
-    group_id = group.class==Group ? group.id : group.to_i
+    dialog_id = dialog.class.to_s == 'Dialog' ? dialog.id : dialog.to_i
+    period_id = period.class.to_s == 'Period' ? period.id : period.to_i
+    group_id = group.class.to_s == 'Group' ? group.id : group.to_i
 
     #-- Criterion, if we're limiting by period
     pwhere = (period_id > 0) ? "items.period_id=#{period_id}" : ""
@@ -869,20 +869,34 @@ class Item < ActiveRecord::Base
       data[metamap.id]['items'] = {}     # To keep track of the items marked with that meta cat
       data[metamap.id]['ratings'] = {}     # Keep track of the ratings of items in that meta cat
 
-      #-- Everything posted, with metanode info
-      items = Item.where("items.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").joins(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      #-- Everything posted, now leaving out metanode info
+      #items = Item.where("items.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").joins(:participant=>{:metamap_node_participants=>:metamap_node}).includes(:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      #items = Item.where("items.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1")
+      #.joins(:participant)
+      #.joins("join metamap_node_participants on (metamap_node_participants.metamap_id=#{metamap_id} and participants.id=metamap_node_participants.participant_id)")
+      #.joins("join metamap_nodes on (metamap_nodes.id=metamap_node_participants.metamap_node_id and metamap_nodes.metamap_id=#{metamap_id})").includes(:item_rating_summary)
+      items = Item.where("items.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").joins(:participant).includes(:item_rating_summary)
 
-      #-- Everything rated, with metanode info
+      #-- Everything rated, now leaving out metanode info
       ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).joins(:participant=>{:metamap_node_participants=>:metamap_node}).joins(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).joins(:participant).joins(:item=>:item_rating_summary)
 
       #-- Going through everything posted, group by meta node of poster
       itemlist = {}
       for item in items
         item_id = item.id
+        
+        metamap_node_participant = MetamapNodeParticipant.where(participant_id: item.posted_by, metamap_id: metamap_id).joins(:metamap_node).first
+        next if not metamap_node_participant
+        next if not metamap_node_participant.metamap_id == metamap_id
+        next if not metamap_node_participant.metamap_node
+        metamap_node_id = metamap_node_participant.metamap_node_id
+        metamap_node_name = metamap_node_participant.metamap_node.name
+        
         itemlist[item_id] = true
         poster_id = item.posted_by
-        metamap_node_id = item.participant.metamap_node_participants[0].metamap_node_id
-        metamap_node_name = item.participant.metamap_node_participants[0].metamap_node.name_as_group ? item.participant.metamap_node_participants[0].metamap_node.name_as_group : item.participant.metamap_node_participants[0].metamap_node.name
+        #metamap_node_id = item.participant.metamap_node_participants[0].metamap_node_id
+        #metamap_node_name = item.participant.metamap_node_participants[0].metamap_node.name_as_group ? item.participant.metamap_node_participants[0].metamap_node.name_as_group : item.participant.metamap_node_participants[0].metamap_node.name
 
         data[metamap.id]['items'][item.id] = metamap_node_id
 
@@ -925,8 +939,16 @@ class Item < ActiveRecord::Base
         rating_id = rating.id
         item_id = rating.item_id
         rater_id = rating.participant_id
-        metamap_node_id = rating.participant.metamap_node_participants[0].metamap_node_id
-        metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name_as_group ? rating.participant.metamap_node_participants[0].metamap_node.name_as_group : rating.participant.metamap_node_participants[0].metamap_node.name
+        
+        metamap_node_participant = MetamapNodeParticipant.where(participant_id: rater_id, metamap_id: metamap_id).joins(:metamap_node).first
+        next if not metamap_node_participant
+        next if not metamap_node_participant.metamap_id == metamap_id
+        next if not metamap_node_participant.metamap_node
+        metamap_node_id = metamap_node_participant.metamap_node_id
+        metamap_node_name = metamap_node_participant.metamap_node.name
+        
+        #metamap_node_id = rating.participant.metamap_node_participants[0].metamap_node_id
+        #metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name_as_group ? rating.participant.metamap_node_participants[0].metamap_node.name_as_group : rating.participant.metamap_node_participants[0].metamap_node.name
 
         logger.info("item#results_meta_breakdown rating ##{rating_id} of item ##{item_id} rater meta:#{metamap_node_id}/#{metamap_node_name}") 
 
