@@ -109,6 +109,7 @@ if false
 end
 
   #puts result.inspect
+  period.result_will_change!
   period.result = result
   period.save!
   
