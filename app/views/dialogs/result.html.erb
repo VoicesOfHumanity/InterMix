@@ -226,7 +226,10 @@ end
 		no messages<br>
 	<% else -%>	
 		<% xcount = 0 %>
-		<% for item_id,i in @data['groups'][group_id]['itemsproc'] -%>
+		<% "for item_id,i in @data['groups'][group_id]['itemsproc']" -%>
+		<% for item in @data['groups'][group_id]['items'] -%>
+      <% item_id = item.id %>
+      <% i = @data['groups'][group_id]['itemsproc'][item_id] %>
 			<% if xcount == 0 and !@all and i['value'] <= 0 %>
 				no positive results<br>
 				<% break %>

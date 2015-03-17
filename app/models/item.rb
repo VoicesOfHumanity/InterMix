@@ -899,7 +899,7 @@ class Item < ActiveRecord::Base
         next if not metamap_node_participant.metamap_id == metamap_id
         next if not metamap_node_participant.metamap_node
         metamap_node_id = metamap_node_participant.metamap_node_id
-        metamap_node_name = metamap_node_participant.metamap_node.name
+        metamap_node_name = metamap_node_participant.metamap_node.name_as_group
         
         itemlist[item_id] = true
         poster_id = item.posted_by
@@ -953,7 +953,7 @@ class Item < ActiveRecord::Base
         next if not metamap_node_participant.metamap_id == metamap_id
         next if not metamap_node_participant.metamap_node
         metamap_node_id = metamap_node_participant.metamap_node_id
-        metamap_node_name = metamap_node_participant.metamap_node.name
+        metamap_node_name = metamap_node_participant.metamap_node.name_as_group
         
         #metamap_node_id = rating.participant.metamap_node_participants[0].metamap_node_id
         #metamap_node_name = rating.participant.metamap_node_participants[0].metamap_node.name_as_group ? rating.participant.metamap_node_participants[0].metamap_node.name_as_group : rating.participant.metamap_node_participants[0].metamap_node.name
