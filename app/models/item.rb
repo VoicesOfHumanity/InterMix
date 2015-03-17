@@ -490,7 +490,8 @@ class Item < ActiveRecord::Base
     items = items.where("items.created_at<='#{end_at.strftime("%Y-%m-%d %H:%M:%S")}'") if end_at.to_s != ''
 
     #-- We'll add up the stats, but we're including the overall rating summary anyway
-    items = items.includes([:dialog,:group,:period,:item_rating_summary])
+    # trying to leave this out, to make the query more simple
+    #items = items.includes([:dialog,:group,:period,:item_rating_summary])
 
     items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
     #items = items.joins(:participant=>{:metamap_node_participants=>:metamap_node})
