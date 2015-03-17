@@ -108,8 +108,11 @@ if false
   end  
 end
 
+  period.result = nil
+  period.save!
+
   #puts result.inspect
-  period.result_will_change!
+  #period.result_will_change!
   period.result = result
   period.save!
   
