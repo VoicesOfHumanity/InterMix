@@ -408,6 +408,8 @@ class Item < ActiveRecord::Base
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
     
+    lstart = Time.now
+    
     if group.class == Fixnum or group.class == Bignum
       group_id = group
       if group_id > 0
@@ -826,6 +828,9 @@ class Item < ActiveRecord::Base
     if metabreakdown
       extras['meta'] = results_meta_breakdown(dialog,period,group)
     end  
+    
+    duration = (Time.now - lstart) * 1000
+    logger.info("item#list_and_results elapsed time: #{duration} milliseconds")
     
     return [items, itemsproc, extras]
     
