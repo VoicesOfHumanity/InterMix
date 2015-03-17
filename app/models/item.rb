@@ -834,6 +834,8 @@ class Item < ActiveRecord::Base
   def self.results_meta_breakdown(dialog,period,group)
     #-- Produce ranked item listings by meta categories of posters and raters, for the dialog results
 
+    start = Time.now
+
     dialog_id = dialog.class.to_s == 'Dialog' ? dialog.id : dialog.to_i
     period_id = period.class.to_s == 'Period' ? period.id : period.to_i
     group_id = group.class.to_s == 'Group' ? group.id : group.to_i
@@ -1380,6 +1382,9 @@ class Item < ActiveRecord::Base
       end
 
     end # metamaps
+    
+    duration = (Time.now - start) * 1000
+    logger.info("item#results_meta_breakdown elapsed time: #{duration} milliseconds")
     
     return data
       
