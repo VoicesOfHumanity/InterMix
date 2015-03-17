@@ -43,7 +43,7 @@ end
       puts "  meta:##{metamap.id}:#{metamap.name}"
       result[period.crosstalk] = []
     
-      puts @data['meta'][metamap.id]['nodes_sorted'].inspect
+      #puts @data['meta'][metamap.id]['nodes_sorted'].inspect
       for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
     		metamap_node_name = minfo[0]
     		metamap_node = minfo[1]
@@ -75,7 +75,11 @@ end
                 iproc = itemsproc[item.id]
                 useiproc = []
                 
-                result[period.crosstalk] << {'item'=>useitem,'iproc'=>useiproc,'label'=>metamap_node_name}                
+                crosstalkresult = {'item'=>useitem,'iproc'=>useiproc,'label'=>metamap_node_name}
+                
+                puts "    adding approximately #{crosstalkresult.inspect.to_s.length} characters for #{period.crosstalk}"
+                
+                result[period.crosstalk] << crosstalkresult                
                 
     	        end
     	      end
@@ -108,11 +112,12 @@ if false
   end  
 end
 
-  period.result = nil
-  period.save!
+  #period.result = nil
+  #period.save!
 
   #puts result.inspect
-  #period.result_will_change!
+  period.result_will_change!
+  puts "  adding #{result.inspect.to_s.length} characters to period #{period.id} result"
   period.result = result
   period.save!
   
