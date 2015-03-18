@@ -2026,7 +2026,7 @@ class DialogsController < ApplicationController
   end
   
   def period_params
-    params.require(:period).permit(:name,:shortname,:description,:shortdesc,:instructions,:max_characters,:max_words,:metamap_vote_own,:default_message,:required_message,:required_subject,:max_messages,:new_message_title,:allow_replies,:required_meta,:value_calc,:profiles_visible,:names_visible_voting,:names_visible_general,:posting_open,:voting_open,:sort_metamap_id,:sort_order,:cross_talk,:period_number)
+    params.require(:period).permit(:name,:shortname,:description,:shortdesc,:instructions,:max_characters,:max_words,:metamap_vote_own,:default_message,:required_message,:required_subject,:max_messages,:new_message_title,:allow_replies,:required_meta,:value_calc,:profiles_visible,:names_visible_voting,:names_visible_general,:posting_open,:voting_open,:sort_metamap_id,:sort_order,:crosstalk,:period_number,:startdate,:endposting,:endrating)
   end
 
 end
