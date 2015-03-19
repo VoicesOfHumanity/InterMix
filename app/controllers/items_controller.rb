@@ -923,7 +923,7 @@ class ItemsController < ApplicationController
     else
       message_length = plain_content.length
     end
-    logger.info("items#itemvalidate length:#{message_length} first_in_thread:#{@item.is_first_in_thread} dialog:#{dialog.class} max_characters:#{dialog.settings_with_period["max_characters"].to_i}")
+    logger.info("items#itemvalidate length:#{message_length} first_in_thread:#{@item.is_first_in_thread} dialog:#{dialog.class if dialog} max_characters:#{dialog.settings_with_period["max_characters"].to_i if dialog}")
     if plain_content == '' and @item.media_type =='text' and ((dialog and dialog.settings_with_period["required_message"]) or subject != '')
       @xmessage += "Please include at least a brief message<br>"
     elsif @item.short_content == ''
