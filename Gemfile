@@ -60,8 +60,9 @@ gem "liquid"
 gem 'image_size'
 gem 'twitter'
 gem "json"
-gem 'ruby-oembed', :require => 'oembed'
+#gem 'ruby-oembed', :require => 'oembed'
 #gem 'ruby-oembed'
+gem 'embedly'
 # tmail conflicts with formtastic. Should be required only where used. app/mailers/receive_mailer
 #gem 'tmail', :require => false
 #gem 'exception_notification', :require => 'exception_notifier'

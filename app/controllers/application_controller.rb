@@ -89,8 +89,26 @@ class ApplicationController < ActionController::Base
     return true
     
   end  
-  
+
   def get_embedly(url)
+    #-- Look up a media link in embed.ly and return the fields:
+    return {} if not url or url.to_s == ''
+
+    embedly_api = Embedly::API.new :user_agent => 'Mozilla/5.0 (compatible; mytestapp/1.0; my@email.com)'
+
+    begin
+      results = embedly_api.oembed :url => url
+      if results.length > 0
+        results[0]
+      else
+        {}
+      end  
+    rescue
+      {}
+    end    
+  end
+  
+  def get_embedly_old(url)
     #-- Look up a media link in embed.ly and return the fields:
     # type (required) The resource type. Valid values, along with value-specific parameters, are described below.
     # version (required) The oEmbed version number. This must be 1.0.
@@ -113,7 +131,7 @@ class ApplicationController < ActionController::Base
         
     my_provider = OEmbed::Provider.new("http://api.embed.ly/1/oembed")
     begin
-      resource = my_provider.get(url)
+      resource = embedly_api.oembed :url => url
       resource.fields
     rescue
       {}

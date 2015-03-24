@@ -99,6 +99,10 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
+    embedly (1.9.1)
+      json
+      oauth
+      querystring
     equalizer (0.0.9)
     erubis (2.7.0)
     exception_notification (4.0.0)
@@ -194,6 +198,7 @@ GEM
     postmark-rails (0.9.0)
       actionmailer (>= 3.0.0)
       postmark (~> 1.4.0)
+    querystring (0.1.0)
     rack (1.6.0)
     rack-openid (1.3.1)
       rack (>= 1.1.0)
@@ -247,7 +252,6 @@ GEM
       rspec-mocks (~> 3.1.0)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.2)
-    ruby-oembed (0.8.11)
     ruby-openid (2.6.0)
     ruby-prof (0.15.2)
     rubyzip (1.1.6)
@@ -330,6 +334,7 @@ DEPENDENCIES
   coffee-rails (>= 3.2.1)
   deep_cloneable
   devise
+  embedly
   exception_notification (= 4.0.0)
   factory_girl_rails
   formtastic
@@ -355,7 +360,6 @@ DEPENDENCIES
   rest-graph
   rmagick
   rspec-rails
-  ruby-oembed
   ruby-prof
   sanitize
   sass-rails (>= 3.2.3)
