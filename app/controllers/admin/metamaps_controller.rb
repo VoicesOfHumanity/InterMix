@@ -64,7 +64,7 @@ class Admin::MetamapsController < ApplicationController
   # POST /hubs
   # POST /hubs.xml
   def create
-    @metamap = Metamap.new(params[:metamap])
+    @metamap = Metamap.new(metamap_params)
 
     respond_to do |format|
       if @metamap.save
@@ -83,7 +83,7 @@ class Admin::MetamapsController < ApplicationController
     @metamap = Metamap.find(params[:id])
 
     respond_to do |format|
-      if @metamap.update_attributes(params[:metamap])
+      if @metamap.update_attributes(metamap_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Metamap was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -150,7 +150,7 @@ class Admin::MetamapsController < ApplicationController
     @metamap_node_id = params[:node_id].to_i
     @metamap_node = MetamapNode.find_by_id(@metamap_node_id)
     @metamap_id = @metamap_node.metamap_id 
-    if @metamap_node.update_attributes(params[:metamap_node])
+    if @metamap_node.update_attributes(node_params)
       render :partial=>'node_show', :layout=>false, :notice => 'Node was successfully updated.'
     else
       render :partial => "node_edit", :layout=>false
@@ -163,6 +163,16 @@ class Admin::MetamapsController < ApplicationController
     @metamap_node = MetamapNode.find_by_id(@metamap_node_id)  
     @metamap_id = @metamap_node.metamap_id  
     render :partial=>'node_show', :layout=>false
+  end
+  
+  protected
+  
+  def metamap_params
+    params.require(:metamap).permit(:name,:global_default)
+  end
+
+  def node_params
+    params.require(:metamap_node).permit(:name,:name_as_group,:description,:sortorder)
   end
   
 end
