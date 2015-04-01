@@ -123,8 +123,8 @@ class Item < ActiveRecord::Base
     participants = []
     if self.group_id.to_i > 0
       logger.info("Item#emailit e-mailing members of group ##{self.group_id}")
-      group = Group.includes(:participants).find_by_id(self.group_id)
-      participants = group.participants if group
+      group = Group.find_by_id(self.group_id)
+      participants = group.active_members if group
     else
       #logger.info("Item#emailit e-mailing forum message to everybody")
       #participants = Participant.where("(status='active' or status is null) and forum_email='instant'")

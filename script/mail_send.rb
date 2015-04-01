@@ -222,6 +222,15 @@ for p in participants
           send_it = true
         end    
       end  
+      
+      #if in_group and not in_dialog
+      #  #-- Check the user's status in the group
+      #  group_participant = GroupParticipant.where(group_id: item.group_id, participant_id: p.id).first
+      #  if not group_participant or not group_participant.active or group_participant.status != 'active'
+      #    puts "    user is not an active member of the group"
+      #    send_it = false
+      #  end
+      #end
    
       if not send_it
         puts "    no setting to send this" if testonly

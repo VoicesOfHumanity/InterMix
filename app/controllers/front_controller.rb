@@ -10,6 +10,7 @@ class FrontController < ApplicationController
 	
 	before_filter :check_status
   
+  append_before_action :authenticate_participant!, :only=>[:optout,:optout_confirm]
   
   def index
     @section = 'home'
