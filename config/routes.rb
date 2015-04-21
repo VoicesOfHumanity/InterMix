@@ -188,6 +188,7 @@ Rails.application.routes.draw do
       get :previous_result
       get :period_edit
       patch :period_save
+      post :period_save
       put :period_save
       get :group_settings
       patch :group_settings_save

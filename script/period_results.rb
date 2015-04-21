@@ -19,9 +19,11 @@ for period in periods
   
   #-- Get the HTML that will be shown above forum item listings. For each type of crosstalk
 
+  puts "  getting gender results"
   app.get "/dialogs/#{period.dialog_id}/previous_result?period_id=#{period.id}&crosstalk=gender"
   result['gender'] = app.response.body
 
+  puts "  getting age results"
   app.get "/dialogs/#{period.dialog_id}/previous_result?period_id=#{period.id}&crosstalk=age"
   result['age'] = app.response.body
 

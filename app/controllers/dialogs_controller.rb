@@ -856,17 +856,27 @@ class DialogsController < ApplicationController
 
   def previous_result
     #-- Show a snippet that can appear at the top of the forum, indicating the results for the previous round
-    #-- http://intermix.dev:3002/dialogs/4/previous_result?period_id=17&crosstalk=gender
+    #-- http://intermix.dev:3002/dialogs/4/previous_result?period_id=3&crosstalk=gender
+    #-- This is most likely called from the script that caches it
     @dialog_id = params[:id].to_i
     @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
     @period_id = params[:period_id].to_i    # This is the period we want results for
     @period = Period.find_by_id(@period_id)
     @crosstalk = params[:crosstalk]
     
-    @metamaps = Metamap.where(:id=>[3,5])
+    #puts "  previous_result: crosstalk #{@crosstalk} for period #{@period_id} of discussion #{@dialog_id}"
+    logger.info("dialogs#previous_result crosstalk #{@crosstalk} for period #{@period_id} of discussion #{@dialog_id}")
+    
+    if @crosstalk == 'gender'
+      @metamaps = Metamap.where(:id=>[3])
+    elsif @crosstalk == 'age'
+      @metamaps = Metamap.where(:id=>[5])
+    else
+      @metamaps = Metamap.where(:id=>[3,5])
+    end
     
     @data = {}
-    @allresult = {}
+    @result = []
   
     #-- Overall results
     items, itemsproc, extras = Item.list_and_results(nil,@dialog,@period.id,0,{},{},true,'*value*',nil,true,0,'','','','','','','','','','',true)
@@ -874,15 +884,16 @@ class DialogsController < ApplicationController
 
     #-- Meta category results
     @data['meta'] = extras['meta'] 
-    if @period.crosstalk[0..5] == 'gender' or @period.crosstalk[0..2] == 'age'
+    #if @period.crosstalk[0..5] == 'gender' or @period.crosstalk[0..2] == 'age'
+    if true
       for metamap in @metamaps
-        if @period.crosstalk[0..5] == 'gender' and metamap.id == 3
-        elsif @period.crosstalk[0..2] == 'age' and metamap.id == 5
-        else
-          next
-        end  
+        #if @period.crosstalk[0..5] == 'gender' and metamap.id == 3
+        #elsif @period.crosstalk[0..2] == 'age' and metamap.id == 5
+        #else
+        #  next
+        #end
         puts "  meta:##{metamap.id}:#{metamap.name}"
-        @allresult[@period.crosstalk] = []
+        logger.info("dialogs#previous_result meta:##{metamap.id}:#{metamap.name}")
     
         #puts @data['meta'][metamap.id]['nodes_sorted'].inspect
         for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
@@ -895,6 +906,7 @@ class DialogsController < ApplicationController
       	          item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'][0]
       	          item = Item.find_by_id(item_id)
       	          puts "    #{metamap_node_name}: #{item.participant.name}: #{item.subject}"
+                  logger.info("dialogs#previous_result #{metamap_node_name}: #{item.participant.name}: #{item.subject}")
       	          #result[period.crosstalk] << {'item'=>item,'iproc'=>itemsproc[item.id],'label'=>metamap_node_name}
                 
                   useitem = item.attributes
@@ -918,21 +930,17 @@ class DialogsController < ApplicationController
                 
                   crosstalkresult = {'item'=>useitem,'iproc'=>useiproc,'label'=>metamap_node_name}
                 
-                  #puts "    adding approximately #{crosstalkresult.inspect.to_s.length} characters for #{@period.crosstalk}"
-                
-                  @allresult[@period.crosstalk] << crosstalkresult                
+                  @result << crosstalkresult                
                 
       	        end
       	      end
       	    end
           end
         end  
+        logger.info("dialogs#previous_result meta:##{metamap.id}:#{metamap.name} got #{@result.length} result items")
     
       end   
     end
-    
-    @result = @allresult.has_key?(@crosstalk+'1') ? @allresult[@crosstalk+'1'] : @allresult[@crosstalk]
-          
     
     render :partial => 'previous_result'
   end
