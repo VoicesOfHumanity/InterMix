@@ -4,8 +4,8 @@ class DialogsController < ApplicationController
 
 	layout "front"
   append_before_action :authenticate_user_from_token!
-  append_before_action :authenticate_participant!
-  append_before_action :check_group_and_dialog, :check_required, :check_status
+  append_before_action :authenticate_participant!, :except => :previous_result
+  append_before_action :check_group_and_dialog, :check_required, :check_status, :except => :previous_result
   append_before_action :redirect_subdom, :except => :index
 
   def index
@@ -854,6 +854,88 @@ class DialogsController < ApplicationController
     
   end  
 
+  def previous_result
+    #-- Show a snippet that can appear at the top of the forum, indicating the results for the previous round
+    #-- http://intermix.dev:3002/dialogs/4/previous_result?period_id=17&crosstalk=gender
+    @dialog_id = params[:id].to_i
+    @dialog = Dialog.includes(:periods).find_by_id(@dialog_id)
+    @period_id = params[:period_id].to_i    # This is the period we want results for
+    @period = Period.find_by_id(@period_id)
+    @crosstalk = params[:crosstalk]
+    
+    @metamaps = Metamap.where(:id=>[3,5])
+    
+    @data = {}
+    @allresult = {}
+  
+    #-- Overall results
+    items, itemsproc, extras = Item.list_and_results(nil,@dialog,@period.id,0,{},{},true,'*value*',nil,true,0,'','','','','','','','','','',true)
+    @data['totals'] = {'items'=>items, 'itemsproc'=>itemsproc, 'extras'=>extras}
+
+    #-- Meta category results
+    @data['meta'] = extras['meta'] 
+    if @period.crosstalk[0..5] == 'gender' or @period.crosstalk[0..2] == 'age'
+      for metamap in @metamaps
+        if @period.crosstalk[0..5] == 'gender' and metamap.id == 3
+        elsif @period.crosstalk[0..2] == 'age' and metamap.id == 5
+        else
+          next
+        end  
+        puts "  meta:##{metamap.id}:#{metamap.name}"
+        @allresult[@period.crosstalk] = []
+    
+        #puts @data['meta'][metamap.id]['nodes_sorted'].inspect
+        for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
+      		metamap_node_name = minfo[0]
+      		metamap_node = minfo[1]
+      		if  @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id] and  @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length > 0
+      			if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id].length > 0
+        			for rate_metamap_node_id,rdata in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
+        			  if rate_metamap_node_id == metamap_node_id
+      	          item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'][0]
+      	          item = Item.find_by_id(item_id)
+      	          puts "    #{metamap_node_name}: #{item.participant.name}: #{item.subject}"
+      	          #result[period.crosstalk] << {'item'=>item,'iproc'=>itemsproc[item.id],'label'=>metamap_node_name}
+                
+                  useitem = item.attributes
+                
+                  useitem['subgroup_list'] = item.subgroup_list
+                  useitem['show_subgroup'] = item.show_subgroup
+                  useitem['tag_list'] = item.tag_list
+                  useitem['item_rating_summary'] = item.item_rating_summary
+                
+                  useitem['participant'] = item.participant ? item.participant.attributes : nil
+                  useitem['dialog'] = item.dialog ? item.dialog.attributes : nil
+                  useitem['group'] = item.group ? item.group.attributes : nil
+                  useitem['period'] = item.period ? item.period.attributes : nil
+                
+                  useitem['participant']['name'] = item.participant.name if item.participant
+                  useitem['dialog']['settings_with_period'] = item.dialog.settings_with_period if item.dialog
+                
+                
+                  iproc = itemsproc[item.id]
+                  useiproc = []
+                
+                  crosstalkresult = {'item'=>useitem,'iproc'=>useiproc,'label'=>metamap_node_name}
+                
+                  #puts "    adding approximately #{crosstalkresult.inspect.to_s.length} characters for #{@period.crosstalk}"
+                
+                  @allresult[@period.crosstalk] << crosstalkresult                
+                
+      	        end
+      	      end
+      	    end
+          end
+        end  
+    
+      end   
+    end
+    
+    @result = @allresult.has_key?(@crosstalk+'1') ? @allresult[@crosstalk+'1'] : @allresult[@crosstalk]
+          
+    
+    render :partial => 'previous_result'
+  end
 
   def result_old
     #-- Results for a particular dialog/period

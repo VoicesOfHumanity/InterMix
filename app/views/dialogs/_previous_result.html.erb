@@ -1,0 +1,15 @@
+      
+      <h3 style="text-align:center;margin-top:-17px;width:auto;"><span style="padding:0 5px 0 5px;background-color:#fcf9f7;">Previous Results by <%= @crosstalk %></span></h3>
+
+      <% if @result.class == Array and @result.length > 0 %>
+      
+        <% for res in @result -%>
+          <b><%= res['label'] %></b>
+          <div class="forumitem forumitemplain forummain forum1">   					
+    			<%= render :partial => "items/item_simple", :locals => { :item => res['item'], :itemproc=>res['iproc'], :from=>'previous' } %>
+          </div>
+        <% end -%>
+			<% else -%>	
+				no results
+      <% end -%>
+      

@@ -185,6 +185,7 @@ Rails.application.routes.draw do
       get :meta
       get :result
       get :result_old
+      get :previous_result
       get :period_edit
       patch :period_save
       put :period_save

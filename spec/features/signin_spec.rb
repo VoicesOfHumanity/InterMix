@@ -1,6 +1,7 @@
 require "rails_helper"
 
-describe "the signin process", :type => :feature, :js => true do
+#describe "the signin process", :type => :feature, :js => true do
+describe "the signin process", :type => :feature do
   before :each do
     Rails.logger.info("create participant--------------------")
     @participant = Participant.new(email: 'ffunch234@newciv.org', password: 'test', password_confirmation: 'test')
@@ -9,6 +10,12 @@ describe "the signin process", :type => :feature, :js => true do
     @participant.status = 'active'
     @participant.save!
     #@participant = FactoryGirl.create(:participant)
+    Rails.logger.info("create group--------------------")
+    @group = Group.new(name: 'Test Group', shortname: 'testg')
+    @group.participants << @participant
+    @group.save!
+    #request.host = "testg.intermix.dev"
+    #host! "testg.#{host}"
   end
   
 

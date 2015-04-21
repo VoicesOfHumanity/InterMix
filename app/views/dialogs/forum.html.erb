@@ -133,18 +133,7 @@
     <% crosstalk = @dialog.active_period.crosstalk %>
     <div style="border:2px solid #654321;margin:20px 0 10px 0;padding:5px 10px 0 10px;display:none;" id="prev_cross">
 			<div style="position:absolute;margin:-15px 0 0 670px;padding:0 5px 0 5px;background-color:#fcf9f7;"><a href="#" onclick="set_show_previous_results();return(false)">hide</a></div>
-      <h3 style="text-align:center;margin-top:-17px;width:auto;"><span style="padding:0 5px 0 5px;background-color:#fcf9f7;">Previous Results by <%= crosstalk %></span></h3>
-      <% result = @dialog.active_period.previous_period.result.has_key?(crosstalk+'1') ? @dialog.active_period.previous_period.result[crosstalk+'1'] : @dialog.active_period.previous_period.result[crosstalk] %>
-      <% if result.class == Array and result.length > 0 %>
-        <% for res in result -%>
-          <b><%= res['label'] %></b>
-          <div class="forumitem forumitemplain forummain forum1">   					
-    			<%= render :partial => "items/item_simple", :locals => { :item => res['item'], :itemproc=>res['iproc'], :from=>'previous' } %>
-          </div>
-        <% end -%>
-			<% else -%>	
-				no results
-      <% end -%>
+      <%=raw @dialog.active_period.previous_period.result[crosstalk] %>
     </div>
 		<div style="display:inline;padding:5px 0 10px 0;" id="prev_cross_show"><a href="#" onclick="set_show_previous_results();return(false)">Show previous Results by <%= crosstalk %></a></div>
   <% end -%>  

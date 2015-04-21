@@ -419,7 +419,9 @@ class ApplicationController < ActionController::Base
   
   def check_required
     #-- If required profile fields aren't entered, redirect to the profile
-    if not session[:has_required]
+    if not participant_signed_in?
+      return
+    elsif not session[:has_required]
       session[:has_required] = current_participant.has_required
       if not session[:has_required]
         redirect_to :controller => :profiles, :action=>:edit

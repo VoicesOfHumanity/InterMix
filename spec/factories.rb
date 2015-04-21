@@ -6,4 +6,10 @@ FactoryGirl.define do
     confirmed_at = Time.now
     status = 'active'
   end
+  factory :group do
+    name 'Test Group'
+    shortname 'testg'
+    openness 'open'
+    visibility 'public'
+  end
 end
