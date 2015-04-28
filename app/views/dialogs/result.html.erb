@@ -89,7 +89,7 @@ end
     <% if @short_full == 'gender' or @short_full == 'age' %>
       <% if metamap_node.id != @cross_results[metamap.id]['sumcat'] or not @cross_results[metamap.id]['aggsum'] %>
         <% sumcat = @cross_results[metamap.id]['sumcat'] %>
-		    <h3 title="<%= metamap_node_id %>"><%= metamap_node_name %><%= @cross_results[metamap.id]['nodes'][metamap_node.id] == @cross_results[metamap.id]['nodes'][sumcat]  ? " + Voice of Humanity" : "" %></h3>
+		    <h3 title="<%= metamap_node_id %>"><%= metamap_node_name %><%= (metamap_node_id != sumcat and @cross_results[metamap.id]['nodes'][metamap_node.id] == @cross_results[metamap.id]['nodes'][sumcat])  ? " + Voice of Humanity" : "" %></h3>
       <% end %>
 		<% else %>
 		  <h3 title="<%= metamap_node_id %>"><%= metamap_node_name %></h3>    
