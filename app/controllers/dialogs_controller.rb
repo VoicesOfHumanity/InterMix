@@ -865,13 +865,15 @@ class DialogsController < ApplicationController
           end
         else
           gotdata = false
-          for rate_metamap_node_id,rdata in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
-            if rate_metamap_node_id == metamap_node_id
-              if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].length > 0
-  				      item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].first
-  				      item = Item.find_by_id(item_id)
-                gotdata = true
-                @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
+          if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
+            for rate_metamap_node_id,rdata in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
+              if rate_metamap_node_id == metamap_node_id
+                if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].length > 0
+    				      item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].first
+    				      item = Item.find_by_id(item_id)
+                  gotdata = true
+                  @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
+                end
               end
             end
           end
