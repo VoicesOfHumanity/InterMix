@@ -10,6 +10,7 @@
 <% for gp in @groupsin -%>
 	<% if gp.group -%>
 		<% dom = ((gp.group.shortname.to_s != "") ? "#{gp.group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
+    <% dom = Rails.env == 'development' ? 'intermix.dev:3002' : dom %>
 		<li><a href="http://<%= dom %>/groups/<%= gp.group.id %>/forum"><%= gp.group.name %></a>
 			(<%= gp.group.group_participants_count.to_i %>)
 			<a href="http://<%= dom %>/groups/<%= gp.group.id %>/view">info</a>
@@ -19,7 +20,7 @@
 		  <a href="http://<%= dom %>/groups/<%= gp.group.id %>/unjoin" onclick="return confirm('Are you sure you want to leave this group?')">leave</a>
 		  <% if gp.group.dialogs.length > 0 -%>
     	  <% for dialog in gp.group.dialogs -%>
-    	    <% ddom = dialog.shortname + '.' + dom %>
+    	    <% ddom = Rails.env == 'development' ? 'intermix.dev:3002' : (dialog.shortname + '.' + dom) %>
     		  <br>&nbsp;&nbsp;&nbsp;&nbsp;Group Discussion: <a href="http://<%= ddom %>/dialogs/<%= dialog.id %>/forum?group_id=<%= gp.group.id %>"><%= dialog.name %></a>
     	  <% end -%>
     	<% end -%>
@@ -37,6 +38,7 @@
 	<% for group in @groupspublic -%>
 		<% if not @groupsina.include?(group.id) -%>
 			<% dom = ((group.shortname.to_s != "") ? "#{group.shortname}.#{ROOTDOMAIN}" : "#{BASEDOMAIN}") %>
+      <% dom = Rails.env == 'development' ? 'intermix.dev:3002' : dom %>
 			<li><a href="http://<%= dom %>/groups/<%= group.id %>/view"><%= group.name %></a> (<%= group.group_participants_count.to_i %>)
 			<%= GROUP_OPENNESS_TEXT[group.openness] %>	
 			</li>

@@ -11,6 +11,7 @@
 		<th>Name</th>
 		<th>Group</th>
 		<th>Sort</th>
+    <th>Sum</th>
   </tr>
 
 <% odd_or_even = 0 %>
@@ -22,6 +23,7 @@
 		<td><%= metamap_node.name %></td>
 		<td><%= metamap_node.name_as_group %></td>
 		<td><%= metamap_node.sortorder %></td>
+    <td><%= metamap_node.sumcat ? '*' : '' %></td>
   </tr>
 <% end %>
 </table>

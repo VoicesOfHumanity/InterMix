@@ -912,7 +912,8 @@ class Item < ActiveRecord::Base
 
         if not data[metamap.id]['nodes'][metamap_node_id]
           #data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
-          data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,item.participant.metamap_node_participants[0].metamap_node]
+          #data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,item.participant.metamap_node_participants[0].metamap_node]
+          data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,metamap_node_participant.metamap_node]
           logger.info("item#results_meta_breakdown data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
         end
         if not data[metamap.id]['postedby']['nodes'][metamap_node_id]

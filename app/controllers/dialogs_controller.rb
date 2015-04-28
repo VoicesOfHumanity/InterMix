@@ -822,7 +822,7 @@ class DialogsController < ApplicationController
     #list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='')
     items, itemsproc, extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,{},{},true,@sortby,current_participant,true,0,'','','','','','','','','','',true)
     @data['totals'] = {'items'=>items, 'itemsproc'=>itemsproc, 'extras'=>extras}
-    @data['meta'] = extras['meta']
+    @data['meta'] = extras['meta']    
 
 #    items = Item.where("items.dialog_id=#{@dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").includes(:participant).includes(:item_rating_summary)
 
@@ -844,6 +844,45 @@ class DialogsController < ApplicationController
     #items, itemsproc, extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,{},{},true,@sortby,current_participant,true,0,'','','','','','','','','','')
     @metamaps = Metamap.where(:id=>[3,5])
     
+    #-- Check cross results and see if the voice of humanity matches one of them
+    @cross_results = {}
+    for metamap in @metamaps
+      @cross_results[metamap.id] = {'sumcat'=>0,'aggsum'=>false,'nodes'=>{}}
+    	for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
+    		metamap_node_name = minfo[0]
+    		metamap_node = minfo[1]
+        @cross_results[metamap.id][metamap_node_id] = {}
+        if metamap_node.sumcat
+          sumcat = metamap_node.id
+          @cross_results[metamap.id]['sumcat'] = metamap_node.id
+          gotdata = false
+          if @data['totals']['items'].length > 0
+            item = @data['totals']['items'][0]
+            item_id = item.id
+            i = @data['totals']['itemsproc'][item_id]
+            gotdata = true
+            @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
+          end
+        else
+          gotdata = false
+          for rate_metamap_node_id,rdata in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
+            if rate_metamap_node_id == metamap_node_id
+              if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].length > 0
+  				      item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].first
+  				      item = Item.find_by_id(item_id)
+                gotdata = true
+                @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
+              end
+            end
+          end
+        end
+      end
+      @cross_results[metamap.id]['nodes'].each do |metamap_node_id,item_id|
+        if item_id == @cross_results[metamap.id]['nodes'][sumcat]
+          @cross_results[metamap.id]['aggsum'] = true
+        end
+      end
+    end
 
 
     

@@ -40,7 +40,6 @@ end
 
 <% if false %>chosen by all voters (<%= @data['totals']['items'].length %> items, <%=@data['totals']['ratings'].length %> votes)<% end %>
 
-
 <% if params[:ratings] -%>
 <% if true -%>
 <p><b>SQL for selecting items:</b> <%= @data['totals']['extras']['sql'] %></p>
@@ -87,8 +86,15 @@ end
 	<% for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted'] -%>
 		<% metamap_node_name = minfo[0] %>
 		<% metamap_node = minfo[1] %>
-		<h3 title="<%= metamap_node_id %>"><%= metamap_node_name %></h3>
-		
+    <% if @short_full == 'gender' or @short_full == 'age' %>
+      <% if metamap_node.id != @cross_results[metamap.id]['sumcat'] or not @cross_results[metamap.id]['aggsum'] %>
+        <% sumcat = @cross_results[metamap.id]['sumcat'] %>
+		    <h3 title="<%= metamap_node_id %>"><%= metamap_node_name %><%= @cross_results[metamap.id]['nodes'][metamap_node.id] == @cross_results[metamap.id]['nodes'][sumcat]  ? " + Voice of Humanity" : "" %></h3>
+      <% end %>
+		<% else %>
+		  <h3 title="<%= metamap_node_id %>"><%= metamap_node_name %></h3>    
+    <% end %>
+    
 		<% if @short_full == 'short' -%>
 		
 			<% if  @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id] and  @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>			
@@ -113,6 +119,42 @@ end
 			<% end -%>
 			<br>
 			
+    <% elsif metamap_node.sumcat and @short_full == 'gender' or @short_full == 'age' %> 
+       <% next if @cross_results[metamap.id]['aggsum'] %>
+
+      <% if @data['totals']['itemsproc'].length == 0 -%>
+      	<p>There is no data</p>
+      <% else -%>	
+      	<% "for item_id,i in @data['totals']['itemsproc']" -%>
+      	<% for item in @data['totals']['items'] -%>
+          <% item_id = item.id; i = @data['totals']['itemsproc'][item_id] %>
+          <% @itemsproc = @data['totals']['itemsproc'] %>
+          
+					<div class="forumitem forumitemplain forummain forum1">   					
+  				  <%= render :partial => "items/item_simple", :locals => { :item => item, :itemproc=>i, :from=>'result' } %>
+            <div>
+              [<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result">see all in the forum list</a>]
+            </div>
+					</div>
+          
+      		<% if params[:ratings] and i['ratings'].length > 0 -%>
+        		<b>Ratings summary, no regression to the mean:</b><br>
+        		<%=raw i['ratingnoregmean'] %> 
+        		<% if i['ratingwithregmean'] -%>  
+        			<b>Ratings summary, after regression to the mean:</b><br>
+        			<%=raw i['ratingwithregmean'] %>
+            <% end %>
+            <b>Ratings:</b><br>
+            <% i['ratings'].each do |r| %>  
+              <%= "#{r.created_at} by user:#{r.participant_id} in group:#{r.group_id} discussion:#{r.dialog_id} period:#{r.period_id} interest:#{r.interest ? r.interest.to_i : '-'} approval:#{r.approval ? r.approval.to_i : '-'}" %><br>
+            <% end -%>
+          <% elsif params[:ratings] -%>
+            <b>No ratings</b><br>    
+      		<% end -%>
+      		<% break  %>
+      	<% end -%>
+      <% end -%>      
+      
 		<% elsif @short_full == 'gender' or @short_full == 'age' %>	
 		
 		  <% gotdata = false %>

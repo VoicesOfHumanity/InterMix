@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141231195725) do
+ActiveRecord::Schema.define(version: 20150428141916) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -490,6 +490,7 @@ ActiveRecord::Schema.define(version: 20141231195725) do
     t.integer  "parent_id",     limit: 4
     t.text     "description",   limit: 65535
     t.string   "sortorder",     limit: 255
+    t.boolean  "sumcat",        limit: 1,     default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

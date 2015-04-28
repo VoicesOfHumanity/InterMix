@@ -172,7 +172,7 @@ class Admin::MetamapsController < ApplicationController
   end
 
   def node_params
-    params.require(:metamap_node).permit(:name,:name_as_group,:description,:sortorder)
+    params.require(:metamap_node).permit(:name,:name_as_group,:description,:sortorder,:sumcat)
   end
   
 end
