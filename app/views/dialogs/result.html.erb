@@ -120,7 +120,7 @@ end
 			<br>
 			
     <% elsif metamap_node.sumcat and @short_full == 'gender' or @short_full == 'age' %> 
-       <% next if @cross_results[metamap.id]['aggsum'] %>
+       <% next if false and @cross_results[metamap.id]['aggsum'] %>
 
       <% if @data['totals']['itemsproc'].length == 0 -%>
       	<p>There is no data</p>
