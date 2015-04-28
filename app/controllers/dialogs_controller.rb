@@ -880,7 +880,7 @@ class DialogsController < ApplicationController
         end
       end
       @cross_results[metamap.id]['nodes'].each do |metamap_node_id,item_id|
-        if item_id == @cross_results[metamap.id]['nodes'][sumcat]
+        if metamap_node_id != sumcat and item_id == @cross_results[metamap.id]['nodes'][sumcat]
           @cross_results[metamap.id]['aggsum'] = true
         end
       end
