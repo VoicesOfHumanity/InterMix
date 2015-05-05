@@ -845,49 +845,7 @@ class DialogsController < ApplicationController
     @metamaps = Metamap.where(:id=>[3,5])
     
     #-- Check cross results and see if the voice of humanity matches one of them
-    @cross_results = {}
-    for metamap in @metamaps
-      @cross_results[metamap.id] = {'sumcat'=>0,'aggsum'=>false,'nodes'=>{}}
-    	for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
-    		metamap_node_name = minfo[0]
-    		metamap_node = minfo[1]
-        @cross_results[metamap.id][metamap_node_id] = {}
-        if metamap_node.sumcat
-          sumcat = metamap_node.id
-          @cross_results[metamap.id]['sumcat'] = metamap_node.id
-          gotdata = false
-          if @data['totals']['items'].length > 0
-            item = @data['totals']['items'][0]
-            item_id = item.id
-            i = @data['totals']['itemsproc'][item_id]
-            gotdata = true
-            @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
-          end
-        else
-          gotdata = false
-          if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
-            for rate_metamap_node_id,rdata in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
-              if rate_metamap_node_id == metamap_node_id
-                if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].length > 0
-    				      item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].first
-    				      item = Item.find_by_id(item_id)
-                  gotdata = true
-                  @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
-                end
-              end
-            end
-          end
-        end
-      end
-      @cross_results[metamap.id]['nodes'].each do |metamap_node_id,item_id|
-        if metamap_node_id != sumcat and item_id == @cross_results[metamap.id]['nodes'][sumcat]
-          @cross_results[metamap.id]['aggsum'] = true
-        end
-      end
-    end
-
-
-    
+    @cross_results = cross_results
     #list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='')
     #list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='')
     #list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='')
@@ -922,6 +880,10 @@ class DialogsController < ApplicationController
     #-- Overall results
     items, itemsproc, extras = Item.list_and_results(nil,@dialog,@period.id,0,{},{},true,'*value*',nil,true,0,'','','','','','','','','','',true)
     @data['totals'] = {'items'=>items, 'itemsproc'=>itemsproc, 'extras'=>extras}
+    @data['meta'] = extras['meta']    
+
+    #-- Check cross results and see if the voice of humanity matches one of them
+    @cross_results = cross_results
 
     #-- Meta category results
     @data['meta'] = extras['meta'] 
@@ -933,8 +895,10 @@ class DialogsController < ApplicationController
         #else
         #  next
         #end
+        #next if @cross_results[metamap.id]['aggsum']
         puts "  meta:##{metamap.id}:#{metamap.name}"
         logger.info("dialogs#previous_result meta:##{metamap.id}:#{metamap.name}")
+        @metamap_id = metamap.id
     
         #puts @data['meta'][metamap.id]['nodes_sorted'].inspect
         for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
@@ -944,8 +908,24 @@ class DialogsController < ApplicationController
       			if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id].length > 0
         			for rate_metamap_node_id,rdata in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
         			  if rate_metamap_node_id == metamap_node_id
-      	          item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'][0]
-      	          item = Item.find_by_id(item_id)
+                  
+                  if metamap_node_id == @cross_results[metamap.id]['sumcat']
+                    #-- This is the summary category, use totals, rather than category results
+                    
+                    item = @data['totals']['items'][0]
+                    item_id = item.id
+                    # @itemsproc = @data['totals']['itemsproc']
+                    i = @data['totals']['itemsproc'][item_id]
+                    is_sumcat = true
+                    
+                  else
+                  
+      	            item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'][0]
+        	          item = Item.find_by_id(item_id)
+                    is_sumcat = false
+                  
+                  end
+                  
       	          puts "    #{metamap_node_name}: #{item.participant.name}: #{item.subject}"
                   logger.info("dialogs#previous_result #{metamap_node_name}: #{item.participant.name}: #{item.subject}")
       	          #result[period.crosstalk] << {'item'=>item,'iproc'=>itemsproc[item.id],'label'=>metamap_node_name}
@@ -964,12 +944,19 @@ class DialogsController < ApplicationController
                 
                   useitem['participant']['name'] = item.participant.name if item.participant
                   useitem['dialog']['settings_with_period'] = item.dialog.settings_with_period if item.dialog
-                
-                
+
                   iproc = itemsproc[item.id]
                   useiproc = []
+                 
+                  crosstalkresult = {'item'=>useitem,'iproc'=>useiproc,'label'=>metamap_node_name,'metamap_id'=>metamap.id,'metamap_node_id'=>metamap_node_id,'hide'=>false,'combinesum'=>false}
                 
-                  crosstalkresult = {'item'=>useitem,'iproc'=>useiproc,'label'=>metamap_node_name}
+                  sumcat = @cross_results[metamap.id]['sumcat']
+                  if is_sumcat and @cross_results[metamap.id]['aggsum']
+                    crosstalkresult['hide'] = true
+                  elsif metamap_node_id != sumcat and item_id == @cross_results[metamap.id]['nodes'][sumcat]
+                    crosstalkresult['combinesum'] = true
+                    crosstalkresult['label'] =  metamap_node_name + " + Voice of Humanity"
+                  end
                 
                   @result << crosstalkresult                
                 
@@ -984,6 +971,56 @@ class DialogsController < ApplicationController
     end
     
     render :partial => 'previous_result'
+  end
+  
+  def cross_results
+    #-- Called by result and previous_result    
+    #-- Check cross results and see if the voice of humanity matches one of them
+    #-- Needs @data to already have been filled in and @metamaps to be available
+    @cross_results = {}
+    for metamap in @metamaps
+      @cross_results[metamap.id] = {'sumcat'=>0,'aggsum'=>false,'nodes'=>{}}
+    	for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
+    		metamap_node_name = minfo[0]
+    		metamap_node = minfo[1]
+        @cross_results[metamap.id][metamap_node_id] = {}
+        if metamap_node.sumcat
+          #-- This is the voice of humanity summary category
+          sumcat = metamap_node.id
+          @cross_results[metamap.id]['sumcat'] = metamap_node.id
+          gotdata = false
+          if @data['totals']['items'].length > 0
+            item = @data['totals']['items'][0]
+            item_id = item.id
+            i = @data['totals']['itemsproc'][item_id]
+            gotdata = true
+            @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
+          end
+        else
+          #-- This is not the summary category
+          gotdata = false
+          if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
+            for rate_metamap_node_id,rdata in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
+              if rate_metamap_node_id == metamap_node_id
+                if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].length > 0
+    				      item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].first
+    				      item = Item.find_by_id(item_id)
+                  gotdata = true
+                  @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
+                end
+              end
+            end
+          end
+        end
+      end
+      @cross_results[metamap.id]['nodes'].each do |metamap_node_id,item_id|
+        if metamap_node_id != sumcat and item_id == @cross_results[metamap.id]['nodes'][sumcat]
+          #-- Flag that there is a category has the same result as the summary category.
+          @cross_results[metamap.id]['aggsum'] = true
+        end
+      end
+    end
+    return @cross_results
   end
 
   def result_old

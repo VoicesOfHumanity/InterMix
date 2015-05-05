@@ -4,10 +4,18 @@
       <% if @result.class == Array and @result.length > 0 %>
       
         <% for res in @result -%>
-          <b><%= res['label'] %></b>
-          <div class="forumitem forumitemplain forummain forum1">   					
-    			<%= render :partial => "items/item_simple", :locals => { :item => res['item'], :itemproc=>res['iproc'], :from=>'previous' } %>
-          </div>
+        
+          <% if res['hide'] -%>
+          <% else %>
+
+            <b><%= res['label'] %></b>
+
+            <div class="forumitem forumitemplain forummain forum1">   					
+      			<%= render :partial => "items/item_simple", :locals => { :item => res['item'], :itemproc=>res['iproc'], :from=>'previous' } %>
+            </div>
+          
+          <% end %>
+        
         <% end -%>
 			<% else -%>	
 				no results

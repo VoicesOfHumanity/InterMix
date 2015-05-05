@@ -8,7 +8,10 @@
 
 <%
 short_full_a = [['short list','short'],['medium list','medium'],['full list','full']]
-if @period and (@period.crosstalk == 'gender' or @period.crosstalk == 'gender1')
+if @period and @period.crosstalk.to_s != ''
+  short_full_a << ['by gender','gender']
+  short_full_a << ['by age','age']
+elsif @period and (@period.crosstalk == 'gender' or @period.crosstalk == 'gender1')
   short_full_a << ['by gender','gender']
 elsif @period and (@period.crosstalk == 'age' or @period.crosstalk == 'age1')
   short_full_a << ['by age','age']
