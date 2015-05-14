@@ -7,7 +7,7 @@
 <% for member in @members -%>
 <tr>
 	<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= member.id %>" /></td>
-	<td><a href="/participant/<%= member.participant_id %>/profile"><%= member.participant.name %></a></td>
+	<td><a href="/participant/<%= member.participant_id %>/profile"><%= member.participant ? member.participant.name : '???' %></a></td>
 </tr>
 <% end -%>
 </table>
