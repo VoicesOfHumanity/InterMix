@@ -248,6 +248,7 @@ Rails.application.routes.draw do
   post 'front/join', :controller=>:front, :action=>:join
   get 'fbjoin', :controller=>:front, :action=>:fbjoinform
   get 'front/fbjoinfinal', :controller=>:front, :action=>:fbjoinfinal
+  get 'front/fbjoin', :controller=>:front, :action=>:fbjoin
   post 'front/fbjoin', :controller=>:front, :action=>:fbjoin
   get 'youarehere', :controller=>:front, :action=>:youarehere
   
