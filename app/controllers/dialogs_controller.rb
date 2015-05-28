@@ -1012,6 +1012,13 @@ class DialogsController < ApplicationController
             end
           end
         end
+        if @cross_results[metamap.id]['sumcat'] == 0
+          #-- Didn't find the summary category. Look again
+          xmetamap_node = MetamapNode.where(metamap_id: metamap.id, sumcat: true).first
+          if xmetamap_node
+            @cross_results[metamap.id]['sumcat'] = xmetamap_node.id
+          end
+        end
       end
       @cross_results[metamap.id]['nodes'].each do |metamap_node_id,item_id|
         if metamap_node_id != sumcat and item_id == @cross_results[metamap.id]['nodes'][sumcat]

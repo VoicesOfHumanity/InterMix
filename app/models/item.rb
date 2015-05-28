@@ -894,7 +894,7 @@ class Item < ActiveRecord::Base
       for item in items
         item_id = item.id
         
-        metamap_node_participant = MetamapNodeParticipant.where(participant_id: item.posted_by, metamap_id: metamap_id).joins(:metamap_node).first
+        metamap_node_participant = MetamapNodeParticipant.where(participant_id: item.posted_by, metamap_id: metamap_id).includes(:metamap_node).first
         next if not metamap_node_participant
         next if not metamap_node_participant.metamap_id == metamap_id
         next if not metamap_node_participant.metamap_node
@@ -914,7 +914,7 @@ class Item < ActiveRecord::Base
           #data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
           #data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,item.participant.metamap_node_participants[0].metamap_node]
           data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,metamap_node_participant.metamap_node]
-          logger.info("item#results_meta_breakdown data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
+          logger.info("item#results_meta_breakdown data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name} id:#{data[metamap.id]['nodes'][metamap_node_id][1].id} (set from item)")
         end
         if not data[metamap.id]['postedby']['nodes'][metamap_node_id]
           data[metamap.id]['postedby']['nodes'][metamap_node_id] = {
@@ -949,7 +949,7 @@ class Item < ActiveRecord::Base
         item_id = rating.item_id
         rater_id = rating.participant_id
         
-        metamap_node_participant = MetamapNodeParticipant.where(participant_id: rater_id, metamap_id: metamap_id).joins(:metamap_node).first
+        metamap_node_participant = MetamapNodeParticipant.where(participant_id: rater_id, metamap_id: metamap_id).includes(:metamap_node).first
         next if not metamap_node_participant
         next if not metamap_node_participant.metamap_id == metamap_id
         next if not metamap_node_participant.metamap_node
@@ -961,6 +961,7 @@ class Item < ActiveRecord::Base
 
         logger.info("item#results_meta_breakdown rating ##{rating_id} of item ##{item_id} rater meta:#{metamap_node_id}/#{metamap_node_name}") 
 
+        # NB: Why did we do that?
         if not itemlist[item_id]
           logger.info("item#results_meta_breakdown item ##{item_id} doesn't exist. Skipping.")
           next
@@ -968,8 +969,8 @@ class Item < ActiveRecord::Base
 
         if not data[metamap.id]['nodes'][metamap_node_id]
           #data[metamap.id]['nodes'][metamap_node_id] = metamap_node_name
-          data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,rating.participant.metamap_node_participants[0].metamap_node]
-          #logger.info("dialogs#result data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name}")
+          data[metamap.id]['nodes'][metamap_node_id] = [metamap_node_name,metamap_node_participant.metamap_node]
+          logger.info("item#results_meta_breakdown data[#{metamap.id}]['nodes'][#{metamap_node_id}] = #{metamap_node_name} id:#{data[metamap.id]['nodes'][metamap_node_id][1].id} (set from rating)")
         end
         data[metamap.id]['ratings'][rating.id] = metamap_node_id
         if not data[metamap.id]['ratedby']['nodes'][metamap_node_id]

@@ -735,10 +735,10 @@ function set_show_previous_results() {
   // In expert mode, show or hide previous results
   var dialog_id = $('#dialog_id').val();
   var showing_previous = parseInt($('#show_previous').val());
-  if (showing_previous == 1) {
-    showing_previous = 0;
-  } else {
+  if (showing_previous == 0) {
     showing_previous = 1;
+  } else {
+    showing_previous = 0;
   }
   if (showing_previous) {
     $('#prev_cross').show();
