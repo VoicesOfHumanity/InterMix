@@ -561,7 +561,7 @@ class Item < ActiveRecord::Base
     items = items.order("items.id")
 
     extras['sql'] = items.to_sql
-    logger.info("item#list_and_results selected #{items.length} rows with SQL: #{items.to_sql}")    
+    logger.info("item#list_and_results selected #{items.length} rows")    # with SQL: #{items.to_sql}
     #logger.info("item#list_and_results first attributes: #{items[0].attributes} if items[0] ")
     
     #-- Now we have the items. We'll sort them further down, after we have stats for them, in case we sort by that.
@@ -580,6 +580,7 @@ class Item < ActiveRecord::Base
         end
       end
     end
+    logger.info("item#list_and_results got #{ratings.length} ratings: #{ratings.to_sql}")    
     
     if regmean
       #-- Prepare regression to the mean
@@ -649,6 +650,7 @@ class Item < ActiveRecord::Base
 
     items2 = []     # The items for the next step
     
+    logger.info("item#list_and_results going through #{items.length} items and #{ratings.length} ratings")    
     for item in items
       #-- Add up stats, and filter out non-roots, if necessary, into items2
       iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[],'hasrating'=>0,'rateapproval'=>0,'rateinterest'=>0,'num_raters'=>0,'ratings'=>[]}
@@ -775,6 +777,7 @@ class Item < ActiveRecord::Base
       #items = Item.custom_item_sort(items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
       items = Item.custom_item_sort(items2, participant_id, dialog)
     elsif sortby.to_s == '*value*' or sortby.to_s == ''
+      logger.info("item#list_and_results sorting by value")
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[1]['id']]<=>[a[1]['value'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|
@@ -821,6 +824,7 @@ class Item < ActiveRecord::Base
       items = items2.sort {|a,b| b.id <=> a.id}
     else  
       #-- Already sorted in ID order
+      logger.info("item#list_and_results leaving sorted by ID")
       items = items2
     end
 
@@ -847,10 +851,12 @@ class Item < ActiveRecord::Base
     group_id = group.class.to_s == 'Group' ? group.id : group.to_i
 
     #-- Criterion, if we're limiting by period
-    pwhere = (period_id > 0) ? "items.period_id=#{period_id}" : ""
+    ipwhere = (period_id > 0) ? "items.period_id=#{period_id}" : ""
+    rpwhere = (period_id > 0) ? "ratings.period_id=#{period_id}" : ""
 
     #-- or by group
-    gwhere = (group_id > 0) ? "items.group_id=#{group_id}" : ""
+    igwhere = (group_id > 0) ? "items.group_id=#{group_id}" : ""
+    rgwhere = (group_id > 0) ? "ratings.group_id=#{group_id}" : ""
 
     data = {}
 
@@ -883,11 +889,11 @@ class Item < ActiveRecord::Base
       #.joins(:participant)
       #.joins("join metamap_node_participants on (metamap_node_participants.metamap_id=#{metamap_id} and participants.id=metamap_node_participants.participant_id)")
       #.joins("join metamap_nodes on (metamap_nodes.id=metamap_node_participants.metamap_node_id and metamap_nodes.metamap_id=#{metamap_id})").includes(:item_rating_summary)
-      items = Item.where("items.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).where("is_first_in_thread=1").joins(:participant).includes(:item_rating_summary)
+      items = Item.where("items.dialog_id=#{dialog_id}").where(ipwhere).where(igwhere).where("is_first_in_thread=1").joins(:participant).includes(:item_rating_summary)
 
       #-- Everything rated, now leaving out metanode info
-      ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).joins(:participant=>{:metamap_node_participants=>:metamap_node}).joins(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
-      ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).joins(:participant).joins(:item=>:item_rating_summary)
+      #ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(pwhere).where(gwhere).joins(:participant=>{:metamap_node_participants=>:metamap_node}).joins(:item=>:item_rating_summary).where("metamap_node_participants.metamap_id=#{metamap_id}")
+      ratings = Rating.where("ratings.dialog_id=#{dialog_id}").where(rpwhere).where(rgwhere).joins(:participant).joins(:item=>:item_rating_summary)
 
       #-- Going through everything posted, group by meta node of poster
       itemlist = {}
