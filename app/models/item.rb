@@ -844,6 +844,9 @@ class Item < ActiveRecord::Base
   def self.results_meta_breakdown(dialog,period,group)
     #-- Produce ranked item listings by meta categories of posters and raters, for the dialog results
 
+    #-- Not sure why this wasn't set
+    @regmean = true
+
     start = Time.now
 
     dialog_id = dialog.class.to_s == 'Dialog' ? dialog.id : dialog.to_i
@@ -1122,8 +1125,7 @@ class Item < ActiveRecord::Base
         @avg_interest  = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_interest']
         @avg_approval  = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_approval']
 
-        #if @regmean
-        if true
+        if @regmean
           #-- Go through the items again and do a regression to the mean          
           mdata['items'].each do |item_id,item|
             iproc = data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
