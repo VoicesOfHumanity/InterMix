@@ -13,10 +13,11 @@
 	<td><a href="/groups/<%= @group.id %>/group_participant_edit?participant_id=<%= member.id %>&amp;active=<%= @active %>"><%= member.name %></a></td>
 	<td style="text-align:right"><a href="/participant/<%= member.id %>/profile"><%= member.id %></a></td>
 	<td><%= member.status ? member.status : "???" %></td>
-	<td><%= member.group_participants[0].active ? "ok" : "inactive" %></td>
-	<td><%= member.group_participants[0].status ? member.group_participants[0].status : "???" %></td>
-	<td	<td><%= member.group_participants[0].moderator ? "yes" : "-" %></td>
-	<td><%= member.group_participants[0].subtags %></td>
+  <% group_participant = GroupParticipant.where(group_id: @group.id, participant_id: member.id).first %>  
+	<td><%= group_participant.active ? "ok" : "inactive" %></td>
+	<td><%= group_participant.status ? group_participant.status : "???" %></td>
+	<td	<td><%= group_participant.moderator ? "yes" : "-" %></td>
+	<td><%= group_participant.subtags %></td>
 </tr>
 <% end -%>
 </table>
