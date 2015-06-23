@@ -1122,7 +1122,8 @@ class Item < ActiveRecord::Base
         @avg_interest  = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_interest']
         @avg_approval  = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_approval']
 
-        if @regmean
+        #if @regmean
+        if true
           #-- Go through the items again and do a regression to the mean          
           mdata['items'].each do |item_id,item|
             iproc = data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
