@@ -247,7 +247,6 @@ class DialogsController < ApplicationController
       else
         @showing_previous = false
       end
-      session[:showing_previous] = @showing_previous
     elsif session.has_key?(:showing_previous)
       @showing_previous = session[:showing_previous]
     elsif @simple
@@ -255,6 +254,7 @@ class DialogsController < ApplicationController
     else
       @showing_previous = true  
     end  
+    session[:showing_previous] = @showing_previous
     
     if not session[:has_required]
       session[:has_required] = current_participant.has_required

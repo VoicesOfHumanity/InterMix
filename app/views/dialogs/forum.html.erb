@@ -136,15 +136,15 @@
     <div style="border:2px solid #654321;margin:20px 0 10px 0;padding:5px 10px 0 10px;display:none;" id="prev_cross">
       
       <div class="prevres" id="ctcurrentres">
+        <div style="position:absolute;margin:-20px 0 0 505px;padding:0 5px 0 5px;background-color:#fcf9f7;"><a href="#prev_cross" onclick="$('.prevres').toggle();return(false)">Show previous Results by <%= othercrosstalk %></a></div>
   			<div style="position:absolute;margin:0px 0 0 670px;padding:0 5px 0 5px;background-color:#fcf9f7;"><a href="#" onclick="set_show_previous_results();return(false)">hide</a></div>
         <%=raw @dialog.active_period.previous_period.result[crosstalk] %>
-        <div style="position:absolute;margin:-10px 0 0 480px;padding:0 5px 0 5px;background-color:#fcf9f7;"><a href="#prev_cross" onclick="$('.prevres').toggle();return(false)">Show previous Results by <%= othercrosstalk %></a></div>
       </div>
 
       <div class="prevres" id="ctotherres" style="display:none;">
+        <div style="position:absolute;margin:-20px 0 0 505px;padding:0 5px 0 5px;background-color:#fcf9f7;"><a href="#prev_cross" onclick="$('.prevres').toggle();return(false);">Show previous Results by <%= crosstalk %></a></div>
   			<div style="position:absolute;margin:0px 0 0 670px;padding:0 5px 0 5px;background-color:#fcf9f7;"><a href="#" onclick="set_show_previous_results();return(false)">hide</a></div>
         <%=raw @dialog.active_period.previous_period.result[othercrosstalk] %>
-        <div style="position:absolute;margin:-10px 0 0 480px;padding:0 5px 0 5px;background-color:#fcf9f7;"><a href="#prev_cross" onclick="$('.prevres').toggle();return(false);">Show previous Results by <%= crosstalk %></a></div>
       </div>
         
     </div>
@@ -213,7 +213,7 @@ function chgcountry(what) {
 	}) 
 }
 var last_sort = $('#sortby').val();
-<% if session[:showing_previous] -%>
+<% if @showing_previous -%>
 $('#prev_cross').show();
 $('#prev_cross_show').hide()
 <% end -%>

@@ -16,18 +16,18 @@ function toggleoptions() {
 		}
 		$('#sortby').val($("#sortby option:first").val());
 		// Change the period heading
-    var period_name = $("#period_id option[value='"+current_period_id+"']").text();
-    $('#period_name_heading').html(period_name+' ');
-		if ($('#prev_cross')) {
-			// show previous results, if any
-			$('#prev_cross_show').hide();
-			$('#prev_cross').show();
-		}	
+        var period_name = $("#period_id option[value='"+current_period_id+"']").text();
+        $('#period_name_heading').html(period_name+' ');
+		//if ($('#prev_cross')) {
+		//	// show previous results, if any
+		//	$('#prev_cross_show').hide();
+		//	$('#prev_cross').show();
+		//}	
 	} else if (optionsshowing) {
 		// Switch to fewer options in a group
-	  if ($('#forumcontrol2')) {
+	    if ($('#forumcontrol2')) {
 		    $('#forumcontrol2').hide();
-	  }
+	    }
 		$('#forumcontrol3').hide();
 		$('#optionbutton').attr("value","More Options");
 		optionsshowing = false;
