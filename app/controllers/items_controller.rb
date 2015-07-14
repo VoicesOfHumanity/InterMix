@@ -29,6 +29,8 @@ class ItemsController < ApplicationController
     @rated_by_country_code = (params[:rated_by_country_code] || '').to_s
     @rated_by_admin1uniq = (params[:rated_by_admin1uniq] || '').to_s
     @rated_by_metro_area_id = (params[:rated_by_metro_area_id] || 0).to_i
+    @want_crosstalk = params[:want_crosstalk].to_s
+    session[:want_crosstalk] = @want_crosstalk if @want_crosstalk != ''
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
     @perscr = 25 if @perscr < 1    
@@ -91,7 +93,7 @@ class ItemsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
       
-      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup)
+      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,'','',@want_crosstalk)
       
       #logger.info("items_controller#list @items: #{@items.inspect}")
       

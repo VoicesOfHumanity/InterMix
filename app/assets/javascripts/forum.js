@@ -85,10 +85,10 @@ function list(whatchanged,gotopost) {
       // If we move away from the current period, we can't have the decision special sort
       $('#sortby').val('items.id desc');
   } else if (whatchanged=='period_id' && $('#period_id').val()==$('#active_period_id').val()) {
-		// We've moved to the active period
-		$('#prev_cross').show();
-		$('#prev_cross_show').hide();
-	}
+    // We've moved to the active period
+  	$('#prev_cross').show();
+  	$('#prev_cross_show').hide();
+  }
   if (whatchanged=='threads' && $('#threads').val()!='root' && $('#sortby').val()=='default') {
       // If we change threads to anything other than roots only, make sure we're not in focus special
       $('#sortby').val('items.id desc');
@@ -103,6 +103,17 @@ function list(whatchanged,gotopost) {
   } else if (whatchanged=='rated_by_admin1uniq' && $('#rated_by_admin1uniq').val()!='0') {
       $('#rated_by_metro_area_id').val('0');
   }	
+  
+  // If we're trying to change the crosstalk, change it
+  if (whatchanged=='crosstalk') {
+    var crosstalk = $('#want_crosstalk').val();
+    if (crosstalk=='age' || crosstalk=='age1') {
+      crosstalk = 'gender';
+    } else {
+      crosstalk = 'age';
+    }
+    $('#want_crosstalk').val(crosstalk); 
+  }
   
   // Decide whether we show the decision special sort option or not
   var firstsort = $("#sortby > option:first").attr("value");
@@ -748,6 +759,10 @@ function set_show_previous_results() {
     $('#prev_cross_show').show();
   }
   $('#show_previous').val(showing_previous);
+  if ($('#show_crosstalk_name').length) {
+    var crosstalk = $('#want_crosstalk').val();
+    $('#show_crosstalk_name').html(crosstalk);
+  }
 	$.ajax({
     type: 'POST',
     url: '/dialogs/'+dialog_id+'/set_show_previous',

@@ -240,6 +240,11 @@ class DialogsController < ApplicationController
     end    
     @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id > 0
     @has_subgroups = (@limit_group and @limit_group.group_subtags.length > 1)
+    if params[:want_crosstalk].to_s != ''
+      @want_crosstalk = params[:want_crosstalk].to_s
+    else
+      @want_crosstalk = session[:want_crosstalk].to_s
+    end
     
     if params.has_key?(:show_previous)
       if params[:show_previous].to_i == 1
@@ -356,7 +361,7 @@ class DialogsController < ApplicationController
       withratings = ''
     #end
 
-    @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,withratings)
+    @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,withratings,'',@want_crosstalk)
 
     #if @simple and not @xmode=='list' and not @xmode=='single' and @items.length == 0
     #  #-- If we're in simple mode and not specifically single mode, and there aren't any unrated message, show the full list

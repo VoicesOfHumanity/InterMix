@@ -403,7 +403,7 @@ class Item < ActiveRecord::Base
     Item.find_by_id(self.first_in_thread)
   end
   
-  def self.list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='',metabreakdown=false,withratings='',geo_level='')
+  def self.list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='',metabreakdown=false,withratings='',geo_level='',want_crosstalk='')
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
@@ -774,8 +774,14 @@ class Item < ActiveRecord::Base
     end
   
     if sortby.to_s == 'default'
-      #items = Item.custom_item_sort(items, @page, @perscr, current_participant.id, @dialog).paginate :page=>@page, :per_page => @perscr
-      items = Item.custom_item_sort(items2, participant_id, dialog)
+      #-- Fancy sort, trying to mix genders/ages. First figure out which one, if we weren't already told
+      if want_crosstalk
+      elsif dialog and period and dialog.active_period.id == period.id and period.crosstalk != 'none'
+        want_crosstalk = period.crosstalk
+      else
+        want_crosstalk = 'gender'
+      end
+      items = Item.custom_item_sort(items2, participant_id, dialog, want_crosstalk)
     elsif sortby.to_s == '*value*' or sortby.to_s == ''
       logger.info("item#list_and_results sorting by value")
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[1]['id']]<=>[a[1]['value'],a[1]['votes'],a[1]['id']]}
@@ -1421,15 +1427,21 @@ class Item < ActiveRecord::Base
 		end
   end  
 
-  def self.custom_item_sort(items, participant_id, dialog)
+  def self.custom_item_sort(items, participant_id, dialog, want_crosstalk='')
     #-- Create the default sort for items in a discussion:
     #-- current user's own item first
     #-- items he hasn't yet rated, alternating:
-    #-- - from own gender
-    #-- - from other genders
+    #-- - from own gender (or age)
+    #-- - from other genders (or ages)
     #-- already rated items
 
-    metamap_id = 3
+    if want_crosstalk == 'age'
+      metamap_id = 5
+      logger.info("item#custom_item_sort according to age (got:#{want_crosstalk})")
+    else
+      metamap_id = 3
+      logger.info("item#custom_item_sort according to gender (got:#{want_crosstalk})")
+    end
     sort2 = 'date'
 
     if dialog and dialog.active_period
