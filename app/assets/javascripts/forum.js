@@ -565,6 +565,7 @@ function get_summary(id) {
 }
 var sumshowing = false;
 function summary(id,top) {
+  console.log('summary:'+id);
 	$('#item_'+id).css("z-index",10);
 	if (top) {
 		$('#item_'+top).css("z-index",10);
@@ -573,6 +574,7 @@ function summary(id,top) {
 	sumshowing = true;	
 }
 function nosummary(id,top) {
+  console.log('nosummary:'+id);
 	$('#sum_'+id).hide();	
 	$('#item_'+id).css("z-index",0);
 	if (top) {

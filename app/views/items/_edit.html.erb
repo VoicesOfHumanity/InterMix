@@ -26,6 +26,7 @@
 
 		<li><label>Media</label>
 		<% xarr = ['text','picture','video','audio','link'] -%>
+		<% xarr = ['text','video','audio'] -%>
 		<% x = 0 -%>
 		<% for xi in xarr -%>
 			<span id="<%= "media_#{xi}" %>"><%= link_to_function xi, "mediachange('#{xi}')" %></span>
