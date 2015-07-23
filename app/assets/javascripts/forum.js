@@ -571,6 +571,7 @@ function summary(id,top) {
 		$('#item_'+top).css("z-index",10);
 	}
 	$('#sum_'+id).show();
+	$('#sum_'+id).css('position','absolute');
 	sumshowing = true;	
 }
 function nosummary(id,top) {
