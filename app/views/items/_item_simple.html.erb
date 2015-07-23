@@ -11,7 +11,7 @@ end
 <%=raw sanitizethis(item['html_content']) if item['html_content'].to_s != '' %>
 
 <div class="itemvoting">
-		<div id="iteminfotxt_<%= item['id'] %>" class="votesection summary" style="float:right;" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="summaryswitch('<%= sum_id %>',0)"<% else %>onmouseover="summary('<%= sum_id %>',0)" onmouseout="nosummary('<%= sum_id %>',0)"<% end %>>
+		<div id="iteminfotxt_<%= item['id'] %>" class="votesection summary" style="float:right;" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="summaryswitch('<%= dom_id %>',0)"<% else %>onmouseover="summary('<%= dom_id %>',0)" onmouseout="nosummary('<%= dom_id %>',0)"<% end %>>
 			sum
 		</div>
 		<div id="sum_<%= dom_id %>" class="iteminfo_summary" style="display:none">
