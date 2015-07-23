@@ -1,12 +1,20 @@
+<%
+if @is_previous_result and @crosstalk.to_s != ;
+  dom_id = "#{item['id']}_result_#{@crosstalk}"
+else
+  dom_id = item['id']
+end
+%>
+
 <div class="subject subject1" onclick="expand(<%= item['id'] %>)"><span><%= item['subject'] %></span></div>
 
 <%=raw sanitizethis(item['html_content']) if item['html_content'].to_s != '' %>
 
 <div class="itemvoting">
-		<div id="iteminfotxt_<%= item['id'] %>" class="votesection summary" style="float:right;" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="summaryswitch(<%= item['id'] %>,0)"<% else %>onmouseover="summary(<%= item['id'] %>,0)" onmouseout="nosummary(<%= item['id'] %>,0)"<% end %>>
+		<div id="iteminfotxt_<%= item['id'] %>" class="votesection summary" style="float:right;" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="summaryswitch('<%= sum_id %>',0)"<% else %>onmouseover="summary('<%= sum_id %>',0)" onmouseout="nosummary('<%= sum_id %>',0)"<% end %>>
 			sum
 		</div>
-		<div id="sum_<%= item['id'] %>" class="iteminfo_summary" style="display:none">
+		<div id="sum_<%= dom_id %>" class="iteminfo_summary" style="display:none">
 <%= render :partial => "items/rating_summary", :locals => { :item => item, :itemproc => itemproc} %>
 		</div>
 </div>

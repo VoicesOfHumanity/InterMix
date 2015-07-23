@@ -565,7 +565,6 @@ function get_summary(id) {
 }
 var sumshowing = false;
 function summary(id,top) {
-  console.log('summary:'+id);
 	$('#item_'+id).css("z-index","10");
 	if (top) {
 		$('#item_'+top).css("z-index","10");
@@ -574,11 +573,8 @@ function summary(id,top) {
 	$('#sum_'+id).show();
 	$('#sum_'+id).css('position','absolute');
 	sumshowing = true;	
-  console.log('showing:'+$('#sum_'+id).css('display'));
-  console.log('z-index:'+$('#sum_'+id).css('z-index'));
 }
 function nosummary(id,top) {
-  console.log('nosummary:'+id);
 	$('#sum_'+id).hide();	
 	$('#item_'+id).css("z-index",0);
 	if (top) {

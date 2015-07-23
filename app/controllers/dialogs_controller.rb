@@ -975,6 +975,9 @@ class DialogsController < ApplicationController
       end   
     end
     
+    # @crosstalk and @is_previous_result should change the ways Ids show, to not duplicate existing DOM elements
+    @is_previous_result = true
+    
     render :partial => 'previous_result'
   end
   
