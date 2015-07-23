@@ -1,5 +1,5 @@
 <%
-if @is_previous_result and @crosstalk.to_s != ;
+if @is_previous_result and @crosstalk.to_s != ''
   dom_id = "#{item['id']}_result_#{@crosstalk}"
 else
   dom_id = item['id']
