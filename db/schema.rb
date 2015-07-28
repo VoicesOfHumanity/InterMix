@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150428141916) do
+ActiveRecord::Schema.define(version: 20150723210848) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -493,6 +493,7 @@ ActiveRecord::Schema.define(version: 20150428141916) do
     t.boolean  "sumcat",        limit: 1,     default: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "binary_on",     limit: 1,     default: false
   end
 
   add_index "metamap_nodes", ["metamap_id", "sortorder"], name: "index_metamap_nodes_on_metamap_id_and_sortorder", length: {"metamap_id"=>nil, "sortorder"=>10}, using: :btree
@@ -504,6 +505,7 @@ ActiveRecord::Schema.define(version: 20150428141916) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "global_default", limit: 1,   default: false
+    t.boolean  "binary",         limit: 1,   default: false
   end
 
   add_index "metamaps", ["created_at"], name: "index_metamaps_on_created_at", using: :btree

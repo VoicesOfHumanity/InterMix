@@ -951,9 +951,10 @@ class DialogsController < ApplicationController
                   useitem['dialog']['settings_with_period'] = item.dialog.settings_with_period if item.dialog
 
                   iproc = itemsproc[item.id]
-                  useiproc = []
+                  # What was the intention of this
+                  #useiproc = []
                  
-                  crosstalkresult = {'item'=>useitem,'iproc'=>useiproc,'label'=>metamap_node_name,'metamap_id'=>metamap.id,'metamap_node_id'=>metamap_node_id,'hide'=>false,'combinesum'=>false}
+                  crosstalkresult = {'item'=>useitem,'iproc'=>iproc,'label'=>metamap_node_name,'metamap_id'=>metamap.id,'metamap_node_id'=>metamap_node_id,'hide'=>false,'combinesum'=>false}
                 
                   sumcat = @cross_results[metamap.id]['sumcat']
                   if is_sumcat and @cross_results[metamap.id]['aggsum']

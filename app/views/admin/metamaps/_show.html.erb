@@ -2,6 +2,7 @@
 <tr><td class="left">ID:</td><td><%= @metamap.id %></td></tr>	
 <tr><td class="left">Name:</td><td><%= @metamap.name %></td></tr>	
 <tr><td class="left">Default:</td><td><%= @metamap.global_default ? "yes" : "no" %></td></tr>	
+<tr><td class="left">Binary:</td><td><%= @metamap.binary ? "yes" : "no" %></td></tr>	
 <tr><td class="left">Created:</td><td><%= @metamap.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 <tr><td class="left">Updated:</td><td><%= @metamap.updated_at.strftime("%Y-%m-%d %H:%M") if @metamap.updated_at %></td></tr>	
 </table>

@@ -218,7 +218,8 @@ function newitem(token) {
 		data: pars,
 		complete: function(t){	
 			$('#newforumitem').html(t.responseText);
-      window.location.hash = '#item_subject';
+      //window.location.hash = '#item_subject';
+      window.location.hash = '#edit_item_';
 			if (t.responseText.substring(0,6) == "<p>You") {
   			// If what came back wasn't an edit screen (but a message), clear the flag that new item is in progress
   			in_new_item = 0;

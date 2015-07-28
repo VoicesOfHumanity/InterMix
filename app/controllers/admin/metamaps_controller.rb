@@ -168,11 +168,11 @@ class Admin::MetamapsController < ApplicationController
   protected
   
   def metamap_params
-    params.require(:metamap).permit(:name,:global_default)
+    params.require(:metamap).permit(:name,:global_default,:binary)
   end
 
   def node_params
-    params.require(:metamap_node).permit(:name,:name_as_group,:description,:sortorder,:sumcat)
+    params.require(:metamap_node).permit(:name,:name_as_group,:description,:sortorder,:sumcat,:binary_on)
   end
   
 end
