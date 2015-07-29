@@ -781,7 +781,7 @@ class Item < ActiveRecord::Base
       else
         want_crosstalk = 'gender'
       end
-      items = Item.custom_item_sort(items2, participant_id, dialog, want_crosstalk)
+      items = Item.custom_item_sort(items2, itemsproc, participant_id, dialog, want_crosstalk)
     elsif sortby.to_s == '*value*' or sortby.to_s == ''
       logger.info("item#list_and_results sorting by value")
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[1]['id']]<=>[a[1]['value'],a[1]['votes'],a[1]['id']]}
@@ -1427,7 +1427,7 @@ class Item < ActiveRecord::Base
 		end
   end  
 
-  def self.custom_item_sort(items, participant_id, dialog, want_crosstalk='')
+  def self.custom_item_sort(items, itemsproc, participant_id, dialog, want_crosstalk='')
     #-- Create the default sort for items in a discussion:
     #-- current user's own item first
     #-- items he hasn't yet rated, alternating:
@@ -1481,7 +1481,7 @@ class Item < ActiveRecord::Base
     
     xorder = 0
     
-    #-- Let's go through them and put them in different piles
+    #-- Let's go through them and put them in different piles: own_items, rated, own_cat, other_cat
     for item in items
       #xitem = item.clone
       if dialog and dialog.current_period.to_i > 0 and item.period_id.to_i != dialog.current_period.to_i
@@ -1492,7 +1492,9 @@ class Item < ActiveRecord::Base
         xorder += 1
         item.explanation = "##{xorder}: own item" if item['explanation']
         own_items << item
-      elsif item['rateapproval'].to_i > 0 and item['rateinterest'].to_i > 0
+        #elsif item['rateapproval'].to_i > 0 and item['rateinterest'].to_i > 0
+      elsif itemsproc[item.id]['hasrating'].to_i > 0
+        #logger.info("item#custom_item_sort rated item")
         rated << item
       else
         xcat = -1
@@ -1517,6 +1519,7 @@ class Item < ActiveRecord::Base
     #-- Sort the rated items in descending value order
     rated.sort! {|a,b| [b['value'],b['votes'],b['id']]<=>[a['value'],a['votes'],a['id']]}
     
+    # Own items go first
     newitems = own_items
     
     gotown = 0
@@ -1525,7 +1528,7 @@ class Item < ActiveRecord::Base
     
     isdone = false
     
-    #-- Mix them together
+    #-- Mix the remaining unrated ones together, followed by the rated
     while not isdone
       if gotother < other_cat.length or gotown < own_cat.length
         if gotother < other_cat.length
@@ -1539,6 +1542,7 @@ class Item < ActiveRecord::Base
           end
           xorder += 1
           item.explanation = "##{xorder}: other cat (#{xcat})" if item['explanation']
+          logger.info("item#custom_item_sort item #{item.id} ##{xorder}: other cat (#{xcat})")
           newitems << item
           gotother += 1
         end
@@ -1553,13 +1557,15 @@ class Item < ActiveRecord::Base
           end
           xorder += 1
           item.explanation = "##{xorder}: own cat (#{xcat})" if item['explanation']
+          logger.info("item#custom_item_sort item #{item.id} ##{xorder}: own cat (#{xcat})")
           newitems << item
           gotown += 1
         end
       elsif gotrated < rated.length
         item = rated[gotrated]
         xorder += 1
-        item.explanation = "##{xorder}: previously rated (#{item.rateinterest}/#{item.rateapproval})" if item['explanation']        
+        item.explanation = "##{xorder}: previously rated" if item['explanation']        
+        logger.info("item#custom_item_sort item #{item.id} ##{xorder}: previously rated")
         newitems << item
         gotrated += 1
       else
