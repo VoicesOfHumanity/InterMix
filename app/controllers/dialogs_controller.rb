@@ -950,7 +950,8 @@ class DialogsController < ApplicationController
                   useitem['participant']['name'] = item.participant.name if item.participant
                   useitem['dialog']['settings_with_period'] = item.dialog.settings_with_period if item.dialog
 
-                  iproc = itemsproc[item.id]
+                  #iproc = itemsproc[item.id]
+                  iproc = i
                   # What was the intention of this
                   #useiproc = []
                  
