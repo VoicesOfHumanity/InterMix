@@ -209,7 +209,7 @@ end
 
 			<% if  @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id] and  @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length > 0 -%>
 				<% if @all -%>
-				<b>highest rated <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> chosen by all voters (<%= @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %> items, <%= @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %> votes):</b><br>
+				<b>highest rated <span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> chosen by all voters (<%= @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'].length %> items, <%= @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %> votes):</b><br>
 				<% else -%>
 				<b><span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> winner chosen by all voters (<%= @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length %> items, <%= @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['ratings'].length %> votes):</b><br>
 				<% end -%>
