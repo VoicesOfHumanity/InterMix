@@ -63,10 +63,10 @@ end
     		<b>Ratings summary, no regression to the mean:</b><br>
     		<%=raw i['ratingnoregmean'] %> 
     		<% if i['ratingwithregmean'] -%>  
-    			<b>Ratings summary, after regression to the mean:</b><br>
+    			<br><b>Ratings summary, after regression to the mean:</b><br>
     			<%=raw i['ratingwithregmean'] %>
         <% end %>
-        <b>Ratings:</b><br>
+        <br><b>Ratings:</b><br>
         <% i['ratings'].each do |r| %>  
           <%= "#{r.created_at} by user:#{r.participant_id} in group:#{r.group_id} discussion:#{r.dialog_id} period:#{r.period_id} interest:#{r.interest ? r.interest.to_i : '-'} approval:#{r.approval ? r.approval.to_i : '-'}" %><br>
         <% end -%>
@@ -248,6 +248,23 @@ end
 					<% end -%>
 					<% for item_id,i in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] -%>
 						<a href="/items/<%= item_id %>/view"><%= i['subject'] || "no subject" %></a> <% if @less_more=='more' %>author: <%=raw i['name'] %><% end %> interest: <%= sprintf("%.1f",i['avg_interest']) %>, approval: <%= sprintf("%.1f",i['avg_approval']) %>, value:<%= sprintf("%.1f",i['value']) %>, <% if @less_more=='more' %>controversy: <%= sprintf("%.1f",i['controversy'])  %>,<% end %> ratings:<%=  i['num_raters']  %><br>
+            
+        		<% if params[:ratings] and i['ratings'].length > 0 -%>
+          		<b>Ratings summary, no regression to the mean:</b><br>
+          		<%=raw i['ratingnoregmean'] %> 
+          		<% if i['ratingwithregmean'] -%>  
+          			<br><b>Ratings summary, after regression to the mean:</b><br>
+          			<%=raw i['ratingwithregmean'] %>
+              <% end %>
+              <br><b>Ratings:</b><br>
+              <% i['ratings'].each do |r| %>  
+                <%= "#{r.created_at} by user:#{r.participant_id} in group:#{r.group_id} discussion:#{r.dialog_id} period:#{r.period_id} interest:#{r.interest ? r.interest.to_i : '-'} approval:#{r.approval ? r.approval.to_i : '-'}" %><br>
+              <% end -%>
+            <% elsif params[:ratings] -%>
+              <b>No ratings</b><br>    
+        		<% end -%>
+            
+            
 						<% break if not @all %>
 					<% end -%>
 					[<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>">see all in the forum list</a>]<br><br>
