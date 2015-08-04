@@ -837,7 +837,7 @@ class Item < ActiveRecord::Base
     logger.info("item#list_and_results returning #{items.length} items, #{itemsproc.length} itemsproc");
     
     if metabreakdown
-      extras['meta'] = results_meta_breakdown(dialog,period,group)
+      extras['meta'] = results_meta_breakdown(dialog,period,group,regmean)
     end  
     
     duration = (Time.now - lstart) * 1000
@@ -847,11 +847,11 @@ class Item < ActiveRecord::Base
     
   end
   
-  def self.results_meta_breakdown(dialog,period,group)
+  def self.results_meta_breakdown(dialog,period,group,regmean=false)
     #-- Produce ranked item listings by meta categories of posters and raters, for the dialog results
 
     #-- Not sure why this wasn't set
-    @regmean = true
+    #@regmean = true
 
     start = Time.now
 
@@ -1131,7 +1131,7 @@ class Item < ActiveRecord::Base
         @avg_interest  = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_interest']
         @avg_approval  = data[metamap.id]['postedby']['nodes'][metamap_node_id]['avg_approval']
 
-        if @regmean
+        if regmean
           #-- Go through the items again and do a regression to the mean          
           mdata['items'].each do |item_id,item|
             iproc = data[metamap.id]['postedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
@@ -1234,7 +1234,7 @@ class Item < ActiveRecord::Base
         @avg_interest  = data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_interest']
         @avg_approval  = data[metamap.id]['ratedby']['nodes'][metamap_node_id]['avg_approval']
 
-        if @regmean
+        if regmean
           #-- Go through the items again and do a regression to the mean
           mdata['items'].each do |item_id,item|
             iproc = data[metamap.id]['ratedby']['nodes'][metamap_node_id]['itemsproc'][item_id]
@@ -1342,7 +1342,7 @@ class Item < ActiveRecord::Base
           #  logger.info("dialogs#result data[#{metamap.id}]['matrix']['post_rate'][#{item_metamap_node_id}][#{rate_metamap_node_id}]: #{data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id].inspect}")
           #end
 
-          if @regmean
+          if regmean
             #-- Go through the items again and do a regression to the mean
             mdata['items'].each do |item_id,item|
               iproc = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['itemsproc'][item_id]

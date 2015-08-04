@@ -825,7 +825,7 @@ class DialogsController < ApplicationController
     
     #-- Lets start with the overall results
     #list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='')
-    items, itemsproc, extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,{},{},true,@sortby,current_participant,true,0,'','','','','','','','','','',true)
+    items, itemsproc, extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,{},{},true,@sortby,current_participant,@regmean,0,'','','','','','','','','','',true)
     @data['totals'] = {'items'=>items, 'itemsproc'=>itemsproc, 'extras'=>extras}
     @data['meta'] = extras['meta']    
 
