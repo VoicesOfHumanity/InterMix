@@ -122,7 +122,7 @@ end
 			<% end -%>
 			<br>
 			
-    <% elsif metamap_node.sumcat and @short_full == 'gender' or @short_full == 'age' %> 
+    <% elsif metamap_node.sumcat and (@short_full == 'gender' or @short_full == 'age') %> 
        <% next if @cross_results[metamap.id]['aggsum'] %>
 
       <% if @data['totals']['itemsproc'].length == 0 -%>
