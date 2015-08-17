@@ -52,15 +52,22 @@
 		<%= f.input :tag_list, :required => false, :as => :string, :input_html => {:size=>80}  %>
 		<% end -%>
 		
-		<% @participant.metamaps_h.each do |metamap_id,metamap_name| -%>
-		<% metamap_nodes = @participant.metamap_nodes_h %>
-		<% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
-		<li class="select required" id="meta_#{metamap_id}_input">
-			<div style="width:25%;float:left;font-weight:bold"><%= metamap_name %><%= '*' if metamap_id==3 or metamap_id==5 %></div>
-			<div style="width:75%;float:left">
-				<%= select_tag "meta[#{metamap_id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap_id),'id','name',(info ? info[1] : 0)), :id=>"meta_#{metamap_id}"%>
-			</div>
-		</li>		
+		<% @participant.metamaps_h.each do |metamap_id,metamap_name,metamap| -%>
+  		<% metamap_nodes = @participant.metamap_nodes_h %>
+  		<% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
+  		<li class="select required" id="meta_#{metamap_id}_input">
+  			<div style="width:25%;float:left;font-weight:bold"><%= metamap_name %><%= '*' if metamap_id==3 or metamap_id==5 %></div>
+  			<div style="width:75%;float:left">    
+          <% if metamap.binary -%>
+            <%= check_box_tag "meta[#{metamap_id}]", 1, (info and info[1]), :id=>"meta_#{metamap_id}" %>
+            <% if metamap_name == 'Indigenous' -%>
+              check here if you identify with an indigenous people or tribe
+            <% end -%>
+          <% else -%>    
+  				  <%= select_tag "meta[#{metamap_id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap_id),'id','name',(info ? info[1] : 0)), :id=>"meta_#{metamap_id}"%>
+          <% end -%>
+  			</div>
+  		</li>		
 		<% end -%>
 		
 	<% end %>

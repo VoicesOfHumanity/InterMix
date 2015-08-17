@@ -134,12 +134,15 @@ class Participant < ActiveRecord::Base
     else  
       #-- everything in metamaps_h should be filled in
       mnodes = metamap_nodes_h
-      metamaps_h.each do |metamap_id,metamap_name|
+      metamaps_h.each do |metamap_id,metamap_name,metamap|
         mnode = mnodes[metamap_id] ? mnodes[metamap_id] : nil
         if mnode 
-          if mnode[1].to_i == 0
-            ok = false
-            exp += "metamap#{metamap_id} "  
+          if metamap.binary
+          else
+            if mnode[1].to_i == 0
+              ok = false
+              exp += "metamap#{metamap_id} "  
+            end
           end  
         else
           ok = false
@@ -197,7 +200,7 @@ class Participant < ActiveRecord::Base
     logger.info("participant#metamaps_h is in #{dialogs_in.length} discussions")
     for d in dialogsin
       Metamap.joins(:dialogs).where("dialogs.id=?",d[0]).order("sortorder,metamaps.name").each do |m|
-        val = [m.id,m.name]
+        val = [m.id,m.name,m]
         metamaps << val if not metamaps.include?(val)
       end
     end   
@@ -205,14 +208,14 @@ class Participant < ActiveRecord::Base
     logger.info("participant#metamaps_h is in #{groups_in.length} groups")
     for g in groupsin
       Metamap.joins(:groups).where("groups.id=?",g[0]).order("sortorder,metamaps.name").each do |m|
-        val = [m.id,m.name]
+        val = [m.id,m.name,m]
         metamaps << val if not metamaps.include?(val)
       end
     end
     rmetamaps = Metamap.where(global_default: true)
     logger.info("participant#metamaps_h There are #{rmetamaps.length} global defaults")
     for m in rmetamaps
-      val = [m.id,m.name]
+      val = [m.id,m.name,m]
       metamaps << val if not metamaps.include?(val)
     end      
     metamaps.uniq
@@ -220,7 +223,7 @@ class Participant < ActiveRecord::Base
   
   def metamap_nodes_h
     #-- Get the current value/name for each, for this user
-    #-- {2=>["Nationality", 59, "Danish",""], 3=>["Gender affinity", 207, "male", "Men"]}
+    #-- {2=>["Nationality", 59, "Danish",""], 3=>["Gender affinity", 207, "male", "Men"], 9=>["Indigenous"", true, ""]}
     #-- NB: This was colliding with the metamap_nodes association
     metamap_nodes = {}
     for m in metamaps
@@ -230,13 +233,24 @@ class Participant < ActiveRecord::Base
       metamap_name = m.name
       mnps = MetamapNodeParticipant.where(:metamap_id=>metamap_id, :participant_id=>id).includes(:metamap_node)
       if mnps.length > 0
+        # A value has been selected for this metamap for this user
         mnp = mnps[0]
         metamap_node_id = mnp.metamap_node_id
         name = mnp.metamap_node.name
         name_as_group = mnp.metamap_node.name_as_group
-        metamap_nodes[metamap_id] = [metamap_name,metamap_node_id,name,name_as_group]
+        if m.binary
+          # For binary metamaps, where there's only a yes and a no value possible, return the binary value, rather than the node id
+          metamap_nodes[metamap_id] = [metamap_name, mnp.metamap_node.binary_on, name, name_as_group]
+        else
+          metamap_nodes[metamap_id] = [metamap_name, metamap_node_id, name, name_as_group]
+        end
       else
-        metamap_nodes[metamap_id] = [metamap_name,0,'','']
+        # Nothing filled in for this metamap for this user
+        if m.binary
+          metamap_nodes[metamap_id] = [metamap_name, false, '', '']
+        else
+          metamap_nodes[metamap_id] = [metamap_name, 0, '', '']
+        end
       end
     end
     metamap_nodes

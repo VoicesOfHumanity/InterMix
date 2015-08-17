@@ -6,7 +6,9 @@
 		<%= f.input :description, :label=>"Description", :required => false %>
 		<%= f.input :sortorder, :label=>"Sort order", :required => false %>
 		<%= f.input :sumcat, :label=>"Summary category?", :required => false %>
-		<%= f.input :sumcat, :label=>"Summary category?", :required => false %>
+    <% if @metamap_node.metamap.binary %>
+		  <%= f.input :binary_on, :label=>"Binary YES?", :required => false %>
+    <% end %>
 	<% end %>
 
 <% end %>

@@ -166,22 +166,59 @@ class ProfilesController < ApplicationController
     # Save any metamap assignments
     if params[:meta]
       metamap_nodes = @participant.metamap_nodes_h  # Any previous settings
-      @participant.metamaps_h.each do |metamap_id,metamap_name|
-        val = params[:meta]["#{metamap_id}"].to_i   # New value we're getting
-        if val > 0
-          mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>@participant.id).first
-          if mnp
-            mnp.metamap_node_id = val
-            mnp.save
+      @participant.metamaps_h.each do |metamap_id,metamap_name,metamap|
+        val = params[:meta]["#{metamap_id}"].to_i
+        if metamap.binary
+          # The value is 1/0 for true/false. Corresponding to two different nodes
+          if params[:meta].has_key?("#{metamap_id}")
+            # Look up the matching node
+            if val == 1
+              metamap_node = MetamapNode.where(metamap_id: metamap_id, binary_on: true).first
+              if metamap_node
+                val = metamap_node.id
+              else
+                val = 0
+              end
+            else
+              metamap_node = MetamapNode.where(metamap_id: metamap_id, binary_on: false).first
+              if metamap_node
+                val = metamap_node.id
+              else
+                val = 0
+              end
+            end
+            # val is now the node id, rather than 1/0
+            if val > 0
+              mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>@participant.id).first
+              if mnp
+                mnp.metamap_node_id = val
+                mnp.save
+              else
+                MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
+              end 
+            end 
+          elsif metamap.global_default
+            flash.now[:alert] += "#{metamap_name} is required by InterMix<br>"
           else
-            MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
-          end  
-        elsif not params[:meta].has_key?("#{metamap_id}") and metamap_nodes[metamap_id] and metamap_nodes[metamap_id][1].to_i > 0
-          # We didn't get it, but it is already filled in, so no problem
-        elsif metamap_id==3 or metamap_id==5   
-           flash.now[:alert] += "#{metamap_name} is required by InterMix<br>"
+            flash.now[:alert] += "#{metamap_name} is required by one of the groups or discussions you're in<br>"             
+          end
         else
-          flash.now[:alert] += "#{metamap_name} is required by one of the groups or discussions you're in<br>"             
+          # The value would be a node number normally
+          if val > 0
+            mnp = MetamapNodeParticipant.where(:metamap_id=>metamap_id,:participant_id=>@participant.id).first
+            if mnp
+              mnp.metamap_node_id = val
+              mnp.save
+            else
+              MetamapNodeParticipant.create(:metamap_id=>metamap_id,:metamap_node_id=>val,:participant_id=>@participant.id)
+            end  
+          elsif not params[:meta].has_key?("#{metamap_id}") and metamap_nodes[metamap_id] and metamap_nodes[metamap_id][1].to_i > 0
+            # We didn't get it, but it is already filled in, so no problem
+          elsif metamap.global_default or metamap_id==3 or metamap_id==5   
+             flash.now[:alert] += "#{metamap_name} is required by InterMix<br>"
+          else
+            flash.now[:alert] += "#{metamap_name} is required by one of the groups or discussions you're in<br>"             
+          end
         end
       end 
     end    

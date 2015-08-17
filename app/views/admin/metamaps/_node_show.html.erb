@@ -4,6 +4,10 @@
 <tr><td class="left">Name as group:</td><td><%= @metamap_node.name_as_group %></td></tr>	
 <tr><td class="left">Description:</td><td><%= @metamap_node.description %></td></tr>	
 <tr><td class="left">Sort order:</td><td><%= @metamap_node.sortorder %></td></tr>	
+<tr><td class="left">Summary category?</td><td><%= @metamap_node.sumcat ? "yes" : "no" %></td></tr>	
+<% if @metamap_node.metamap.binary %>
+  <tr><td class="left">Binary YES?</td><td><%= @metamap_node.binary_on ? "yes" : "no" %></td></tr>	
+<% end %>
 </table>
 
 <p>
