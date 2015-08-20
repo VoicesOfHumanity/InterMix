@@ -70,6 +70,11 @@
   		</li>		
 		<% end -%>
 		
+		<b>Indigenous</b>
+		<%= f.input :indigenous, :as => :boolean, :label=>"check here if you identify with an indigenous people or tribe" %>
+		<b>Other Minority</b>
+		<%= f.input :other_minority, :as => :boolean, :label=>"check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country" %>
+		
 	<% end %>
 	<br>
 	<%= f.inputs do %>	

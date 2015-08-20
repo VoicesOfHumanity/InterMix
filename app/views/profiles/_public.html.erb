@@ -31,6 +31,12 @@
 <% info = metamap_nodes[metamap.id] if metamap_nodes[metamap.id] %>
 <tr><td class="label"><%= metamap.name %></td><td><%= info ? (info[3].to_s!='' ? info[3] : info[2]) : '???' %></td></tr>
 <% end -%>
+<% if @participant.indigenous -%>
+<tr><td class="label">Indigenous:</td><td>yes</td></tr>	
+<% end -%>
+<% if @participant.other_minority -%>
+<tr><td class="label">Other Minority:</td><td>yes</td></tr>	
+<% end -%>
 
 <tr><td class="label">Groups:</td><td>
 <% if @participant.groups.length == 0 -%>

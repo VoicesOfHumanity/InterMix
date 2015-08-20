@@ -848,6 +848,14 @@ class DialogsController < ApplicationController
     #-- And anything rated by anything
     #items, itemsproc, extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,{},{},true,@sortby,current_participant,true,0,'','','','','','','','','','')
     @metamaps = Metamap.where(:id=>[3,5])
+    # Add indigenous, if it was selected for the discussion
+    indigenous_metamap = Metamap.where("name like 'Indi%'").first
+    if indigenous_metamap
+      has_indi = DialogMetamap.where(:dialog_id=>@dialog.id,:metamap_id=>indigenous_metamap.id).first
+      if has_indi
+        @metamaps << indigenous_metamap
+      end
+    end
     
     #-- Check cross results and see if the voice of humanity matches one of them
     @cross_results = cross_results
@@ -989,6 +997,7 @@ class DialogsController < ApplicationController
     #-- Needs @data to already have been filled in and @metamaps to be available
     @cross_results = {}
     for metamap in @metamaps
+      next if not [3,5].include?(metamap.id)
       @cross_results[metamap.id] = {'sumcat'=>0,'aggsum'=>false,'nodes'=>{}}
     	for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
     		metamap_node_name = minfo[0]

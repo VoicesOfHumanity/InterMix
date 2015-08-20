@@ -91,7 +91,16 @@
 		<%= select_tag "posted_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["posted_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('posted_by_metamap_#{metamap.id}')" %>
 		</div>  	
 		<% end -%>
-	
+
+		<div class="lefttitle">Posted by Indigenous:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'posted_by_indigenous', 1, false %>
+		</div>
+		<div class="lefttitle">Posted by Other Minority:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'posted_by_other_minority', 1, false %>
+		</div>
+			
 		<div class="lefttitle">Rated from Country:</div>
 		<div class="leftfield">
 			<%= select_tag "rated_by_country_code", raw('<option value="0">*any*</option>')+options_from_collection_for_select(Geocountry.order(:name),'iso','name',@rated_by_country_code), :onchange=>"chgcountry('rated');" %>
@@ -111,6 +120,15 @@
 		<%= select_tag "rated_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["rated_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('rated_by_metamap_#{metamap.id}')" %>
 		</div>  	
 		<% end -%>
+
+		<div class="lefttitle">Rated by Indigenous:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'rated_by_indigenous', 1, false %>
+		</div>
+		<div class="lefttitle">Rated by Other Minority:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'rated_by_other_minority', 1, false %>
+		</div>
 	
 		<div class="lefttitle">Show:</div>
 		<div class="leftfield">
@@ -220,5 +238,17 @@ var last_sort = $('#sortby').val();
 $('#prev_cross').show();
 $('#prev_cross_show').hide()
 <% end -%>
+$('#posted_by_indigenous').change(function() {
+	list('posted_by_indigenous');
+});
+$('#posted_by_other_minority').change(function() {
+	list('posted_by_other_minority');
+});
+$('#rated_by_indigenous').change(function() {
+	list('rated_by_indigenous');
+});
+$('#rated_by_other_minority').change(function() {
+	list('rated_by_other_minority');
+});
 </script>
 
