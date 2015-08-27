@@ -1353,7 +1353,7 @@ class Item < ActiveRecord::Base
           @avg_approval  = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_approval']
           if metamap.id == 3
             #logger.info("dialogs#result data[#{metamap.id}]['matrix']['post_rate'][#{item_metamap_node_id}][#{rate_metamap_node_id}]: #{data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id].inspect}")
-            logger.info("dialogs#result gender (3) matrix posted by #{item_metamap_node_id} rated by #{rate_metamap_node_id} num_int_items:#{item_int_uniq.length} num_app_items:#{item_app_uniq.length} avg_votes_int:#{@avg_votes_int} avg_votes_app:#{@avg_votes_app} avg_interest:#{@avg_interest} avg_approval:#{@avg_approval}")
+            logger.info("dialogs#result gender (3) matrix posted by #{item_metamap_node_id} rated by #{rate_metamap_node_id} num_interest:#{data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_interest']} / num_int_items:#{item_int_uniq.length} =  avg_votes_int:#{@avg_votes_int}, num_approval:#{data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['num_approval']} / num_app_items:#{item_app_uniq.length}  = avg_votes_app:#{@avg_votes_app} avg_interest:#{@avg_interest} avg_approval:#{@avg_approval}")
           end
 
           if regmean
