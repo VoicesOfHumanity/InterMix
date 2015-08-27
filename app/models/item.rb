@@ -1352,7 +1352,8 @@ class Item < ActiveRecord::Base
           @avg_interest  = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_interest']
           @avg_approval  = data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id]['avg_approval']
           if metamap.id == 3
-            logger.info("dialogs#result data[#{metamap.id}]['matrix']['post_rate'][#{item_metamap_node_id}][#{rate_metamap_node_id}]: #{data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id].inspect}")
+            #logger.info("dialogs#result data[#{metamap.id}]['matrix']['post_rate'][#{item_metamap_node_id}][#{rate_metamap_node_id}]: #{data[metamap.id]['matrix']['post_rate'][item_metamap_node_id][rate_metamap_node_id].inspect}")
+            logger.info("dialogs#result avg_votes_int:#{@avg_votes_int} avg_votes_app:#{@avg_votes_app} avg_interest:#{@avg_interest} avg_approval:#{@avg_approval}")
           end
 
           if regmean
