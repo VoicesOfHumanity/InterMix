@@ -10,7 +10,7 @@
   
   <p><input type="button" value="Start New Thread" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')"></p>
   
-  <div style="">
+  <div style="height:220px">
   
     <div id="geoslider" style="height:172px;margin:15px 0 0 0;float:left"></div>
   
@@ -24,7 +24,7 @@
   
   </div> 
 
-  <div style="padding-top:40px;clear:left">
+  <div style="height:130px;clear:left">
   
     <div id="groupslider" style="height:88px;margin:17px 0 0 0;float:left"></div>
   
@@ -35,6 +35,11 @@
     </div>
   
   </div> 
+  
+  <div style="margin: 20px 0 0 0;">
+    <input type="checkbox" id="indigenous" value="1" onclick="per_reload()">Indigenous<br>
+    <input type="checkbox" id="other_minority" value="1" onclick="per_reload()">Other Minority
+  </div>
 
 </div>
 
@@ -84,10 +89,12 @@ $(function() {
 });
 function per_reload() {  
  	$('#per_main').css('opacity','0.5');
+  var indigenous = $('#indigenous').is(':checked') ? 1 : 0;
+  var other_minority = $('#other_minority').is(':checked') ? 1 : 0;
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-	  data: {geo_level: cur_geo_level, group_level: cur_group_level, batch_level: cur_batch_level, batch_size: cur_batch_size},
+	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, batch_level: cur_batch_level, batch_size: cur_batch_size},
 	  complete: function(t){ 
 	    $('#per_main').html(t.responseText);
       $('#per_main').css('opacity','1.0');

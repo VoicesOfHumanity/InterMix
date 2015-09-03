@@ -829,6 +829,9 @@ class ItemsController < ApplicationController
     group_level = params[:group_level].to_i
     group_levels = {1 => 'current', 2 => 'user', 3 => 'all'}
     group_level = group_levels[group_level]
+    
+    indigenous = (params[:indigenous].to_i == 1) ? true : false
+    other_minority = (params[:other_minority].to_i == 1) ? true : false
 
     #1 => 'group'
 
@@ -883,8 +886,14 @@ class ItemsController < ApplicationController
     @rated_by_metro_area_id = 0
     @metabreakdown = false
     @withratings = ''
+    @want_crosstalk = ''
     
-    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level)
+    @posted_by_indigenous = indigenous
+    @posted_by_other_minority = other_minority
+    @rated_by_indigenous = false
+    @rated_by_other_minority = false
+    
+    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level,@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@rated_by_indigenous,@rated_by_other_minority)
    
     @batches = []
     if @items.length > 4
