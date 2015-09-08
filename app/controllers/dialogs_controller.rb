@@ -51,6 +51,11 @@ class DialogsController < ApplicationController
     update_prefix
   end  
   
+  def slider
+    @dialog_id = params[:id]
+    @dialog = Dialog.includes(:creator).find(@dialog_id)
+  end
+  
   def show
     redirect_to :action=>:view
   end

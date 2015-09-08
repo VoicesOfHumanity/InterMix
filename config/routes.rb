@@ -198,6 +198,7 @@ Rails.application.routes.draw do
       get :test_period_template
       post :set_show_previous
       get :show_latest
+      get :slider
     end
   end 
   get 'voting_results' => 'dialogs#results'

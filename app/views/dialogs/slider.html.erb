@@ -1,8 +1,8 @@
-<h1>Geographical Perspectives</h1>
+<%= render(:partial => 'dialogs/menu') %>
 
 <div id="per_main" style="float:left;width:595px;">
   
-  main
+  loading...
   
 </div>
 
@@ -38,9 +38,23 @@
   <div style="margin: 20px 0 0 0;">
     <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
       <% if not metamap_node.sumcat -%>
-        <input type="checkbox" name="meta_3[]" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" checked onclick="per_reload()"><%= metamap_node.name %><br>
-      <% end -%>
+        <% if false %>
+          <input type="checkbox" name="meta_3[]" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" checked onclick="per_reload()"><%= metamap_node.name %><br>
+        <% else %>
+          <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
+        <% end -%>
+      <% end %>
     <% end %>
+    <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
+  </div>
+
+  <div style="margin: 20px 0 0 0;">
+    <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
+      <% if not metamap_node.sumcat -%>
+        <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
+      <% end %>
+    <% end %>
+    <input type="radio" name="meta_5" id="meta_5_0" value="0" checked onclick="per_reload()">all<br>
   </div>
   
   <div style="margin: 20px 0 0 0;">
@@ -49,6 +63,8 @@
   </div>
   
 </div>
+
+<input type="hidden" name="dialog_id" id="dialog_id" value="<%= @dialog_id %>">
 
 <input type="hidden" name="geo_level" id="geo_level" value="1">
 <input type="hidden" name="group_level" id="group_level" value="1">
@@ -98,13 +114,17 @@ function per_reload() {
  	$('#per_main').css('opacity','0.5');
   var indigenous = $('#indigenous').is(':checked') ? 1 : 0;
   var other_minority = $('#other_minority').is(':checked') ? 1 : 0;
-  var meta_3 = $("input[name='meta_3[]']:checked").map(function(){
-    return $(this).val();
-  }).get();
+  //checkbox
+  //var meta_3 = $("input[name='meta_3[]']:checked").map(function(){
+  //  return $(this).val();
+  //}).get();
+  var meta_3 = $("input[name='meta_3']:checked").val()
+  var meta_5 = $("input[name='meta_5']:checked").val()
+  var dialog_id = $('#dialog_id').val();
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, batch_level: cur_batch_level, batch_size: cur_batch_size},
+	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5},
 	  complete: function(t){ 
 	    $('#per_main').html(t.responseText);
       $('#per_main').css('opacity','1.0');

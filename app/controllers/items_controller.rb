@@ -810,7 +810,7 @@ class ItemsController < ApplicationController
   
   def geoslider_update
     #-- Updating the display for the geo slider
-    # 5: All perspectives
+    # 5: All perspectives (Removed)
     # 4: Planet Earth
     # 3: Nation
     # 2: State/Province
@@ -832,6 +832,9 @@ class ItemsController < ApplicationController
     
     indigenous = (params[:indigenous].to_i == 1) ? true : false
     other_minority = (params[:other_minority].to_i == 1) ? true : false
+    
+    @dialog_id = params[:dialog_id].to_i
+    @period_id = params[:period_id].to_i
 
     #1 => 'group'
 
@@ -869,12 +872,22 @@ class ItemsController < ApplicationController
       @group = nil
       @title += " | All groups"   
     end
+
+    @posted_meta = {}
+    if params[:meta_3].to_i > 0
+      @posted_meta[3] = params[:meta_3].to_i
+    end
+    if params[:meta_5].to_i > 0
+      @posted_meta[5] = params[:meta_5].to_i
+    end
+    # Do we do rated also?
     
-    @dialog_id = 0
-    @period_id = 0
+    
+    #@dialog_id = 0
+    #@period_id = 0
     
     @posted_by = 0
-    @posted_meta = {}
+    #@posted_meta = {}
     @rated_meta = {}
     @rootonly = true
     @tag = ''
