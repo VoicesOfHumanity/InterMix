@@ -37,6 +37,7 @@
   </div> 
 
   <div style="margin: 20px 0 0 0;">
+    <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
     <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
       <% if not metamap_node.sumcat -%>
         <% if false %>
@@ -46,16 +47,15 @@
         <% end -%>
       <% end %>
     <% end %>
-    <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
   </div>
 
   <div style="margin: 20px 0 0 0;">
+    <input type="radio" name="meta_5" id="meta_5_0" value="0" checked onclick="per_reload()">all<br>
     <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
       <% if not metamap_node.sumcat -%>
         <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
       <% end %>
     <% end %>
-    <input type="radio" name="meta_5" id="meta_5_0" value="0" checked onclick="per_reload()">all<br>
   </div>
   
   <div style="margin: 20px 0 0 0;">
