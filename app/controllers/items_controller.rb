@@ -810,11 +810,11 @@ class ItemsController < ApplicationController
   
   def geoslider_update
     #-- Updating the display for the geo slider
-    # 5: All perspectives (Removed)
-    # 4: Planet Earth
-    # 3: Nation
-    # 2: State/Province
-    # 1: Metro region
+    # 5: Planet Earth
+    # 4: Nation
+    # 4: State/Province
+    # 2: Metro region
+    # 1: City
 
     if session[:num_all_posts].to_i == 0
       #-- See how many total posts there are, to be able to do a graphic
@@ -823,7 +823,7 @@ class ItemsController < ApplicationController
     @num_all_posts = session[:num_all_posts]
     
     geo_level = params[:geo_level].to_i
-    geo_levels = GEO_LEVELS               # {1 => 'metro', 2 => 'state', 3 => 'nation', 4 => 'planet', 5 => 'all'}    
+    geo_levels = GEO_LEVELS               # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}    
     geo_level = geo_levels[geo_level]
     
     group_level = params[:group_level].to_i
@@ -839,13 +839,17 @@ class ItemsController < ApplicationController
     #1 => 'group'
 
     @group = nil   
+    @posted_by_city = ''
     @posted_by_metro_area_id = 0 
     @posted_by_admin1uniq = ''
     @posted_by_country_code = ''
     
     @title = ""
     
-    if geo_level == 'metro'
+    if geo_level == 'city'
+      @posted_by_city = current_participant.city
+      @title += "City/Town: #{current_participant.city}"
+    elsif geo_level == 'metro'
       @posted_by_metro_area_id = current_participant.metro_area_id
       @title += "Metro Region: #{current_participant.metro_area_id} : #{current_participant.metro_area.name}"
     elsif geo_level == 'state'  
@@ -894,6 +898,7 @@ class ItemsController < ApplicationController
     @subgroup = ''
     @sortby = '*value*'
     
+    @rated_by_city = ''
     @rated_by_country_code = ''
     @rated_by_admin1uniq = ''
     @rated_by_metro_area_id = 0
@@ -906,7 +911,7 @@ class ItemsController < ApplicationController
     @rated_by_indigenous = false
     @rated_by_other_minority = false
     
-    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level,@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@rated_by_indigenous,@rated_by_other_minority)
+    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level,@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@rated_by_indigenous,@rated_by_other_minority,@posted_by_city,@rated_by_city)
    
     @batches = []
     if @items.length > 4

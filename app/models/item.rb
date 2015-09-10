@@ -403,7 +403,7 @@ class Item < ActiveRecord::Base
     Item.find_by_id(self.first_in_thread)
   end
   
-  def self.list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='',metabreakdown=false,withratings='',geo_level='',want_crosstalk='',posted_by_indigenous=false,posted_by_other_minority=false,rated_by_indigenous=false,rated_by_other_minority=false)
+  def self.list_and_results(group=nil,dialog=nil,period_id=0,posted_by=0,posted_meta={},rated_meta={},rootonly=true,sortby='',participant=nil,regmean=true,visible_by=0,start_at='',end_at='',posted_by_country_code='',posted_by_admin1uniq='',posted_by_metro_area_id=0,rated_by_country_code='',rated_by_admin1uniq='',rated_by_metro_area_id=0,tag='',subgroup='',metabreakdown=false,withratings='',geo_level='',want_crosstalk='',posted_by_indigenous=false,posted_by_other_minority=false,rated_by_indigenous=false,rated_by_other_minority=false,posted_by_city='',rated_by_city='')
     #-- Get a bunch of items, based on complicated criteria. Add up their ratings and value within just those items.
     #-- The criteria might include meta category of posters or of a particular group of raters. metamap_id => metamap_node_id
     #-- An array is being returned, optionally sorted
@@ -521,6 +521,13 @@ class Item < ActiveRecord::Base
     elsif posted_by_admin1uniq != '' and posted_by_admin1uniq != '0'
       items = items.where("participants.admin1uniq=?",posted_by_admin1uniq)
     end  
+    
+    if posted_by_city != ''
+      items = items.where("participants.city=?",posted_by_city)
+    end
+    if rated_by_city != ''
+      items = items.where("(select count(*) from ratings r_geo inner join participants r_p_geo on (r_geo.participant_id=r_p_geo.id and r_p_geo.city=?) where r_geo.item_id=items.id)>0",rated_by_city)
+    end
     
     if posted_by_indigenous
       items = items.where("participants.indigenous=1")
