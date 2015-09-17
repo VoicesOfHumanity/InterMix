@@ -835,10 +835,13 @@ class ItemsController < ApplicationController
     
     @dialog_id = params[:dialog_id].to_i
     @period_id = params[:period_id].to_i
+    
+    show_result = (params[:show_result].to_i == 1)
 
     #1 => 'group'
 
     @group = nil   
+    @group_id = 0
     @posted_by_city = ''
     @posted_by_metro_area_id = 0 
     @posted_by_admin1uniq = ''
@@ -876,6 +879,7 @@ class ItemsController < ApplicationController
       @group = nil
       @title += " | All groups"   
     end
+    @limit_group_id = @group_id
 
     @posted_meta = {}
     if params[:meta_3].to_i > 0
@@ -902,7 +906,7 @@ class ItemsController < ApplicationController
     @rated_by_country_code = ''
     @rated_by_admin1uniq = ''
     @rated_by_metro_area_id = 0
-    @metabreakdown = false
+    @metabreakdown = show_result
     @withratings = ''
     @want_crosstalk = ''
     
@@ -913,34 +917,112 @@ class ItemsController < ApplicationController
     
     @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level,@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@rated_by_indigenous,@rated_by_other_minority,@posted_by_city,@rated_by_city)
    
-    @batches = []
-    if @items.length > 4
-      @showmax = (params[:batch_size] || 4).to_i
-      if @items.length < 13
-        @numbatches = 2
-      elsif @items.length <= 30   
-        @numbatches = 3
-      elsif @items.length <= 40
-        @numbatches = 4  
-      else
-        @numbatches = 5  
-      end
-      @batches << 4
-      step = @items.length / (@numbatches - 1)
-      pos = 4
-      (@numbatches-2).times do
-        pos += step
-        @batches << pos
-      end  
-      @batches << @items.length    
-    else
-      @showmax = (params[:batch_size] || @items.length).to_i
-    end  
+    @data = {}
+    if show_result
+      @data['totals'] = {'items'=>@items, 'itemsproc'=>@itemsproc, 'extras'=>@extras}
+      @data['meta'] = @extras['meta']    
 
-    render :partial => 'geoslider_update'
+      # We have a breakdown by gender (2), by age (3), or both mixed together (6)
+      
+      @metamaps = Metamap.where(:id=>[3,5])
+      
+      #-- Check cross results and see if the voice of humanity matches one of them
+      @cross_results = cross_results
+          
+      
+    else
+      # Listing. Divide into reasonable batches
+      @batches = []
+      if @items.length > 4
+        @showmax = (params[:batch_size] || 4).to_i
+        if @items.length < 13
+          @numbatches = 2
+        elsif @items.length <= 30   
+          @numbatches = 3
+        elsif @items.length <= 40
+          @numbatches = 4  
+        else
+          @numbatches = 5  
+        end
+        @batches << 4
+        step = @items.length / (@numbatches - 1)
+        pos = 4
+        (@numbatches-2).times do
+          pos += step
+          @batches << pos
+        end  
+        @batches << @items.length    
+      else
+        @showmax = (params[:batch_size] || @items.length).to_i
+      end  
+    end
+
+    if show_result
+      render :partial=>'simple_result'
+    else
+      render :partial => 'geoslider_update'
+    end
   end
   
   protected 
+  
+  def cross_results
+    #-- Called by result and previous_result    
+    #-- Check cross results and see if the voice of humanity matches one of them
+    #-- Needs @data to already have been filled in and @metamaps to be available
+    @cross_results = {}
+    for metamap in @metamaps
+      next if not [3,5].include?(metamap.id)
+      @cross_results[metamap.id] = {'sumcat'=>0,'aggsum'=>false,'nodes'=>{}}
+    	for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted']
+    		metamap_node_name = minfo[0]
+    		metamap_node = minfo[1]
+        @cross_results[metamap.id][metamap_node_id] = {}
+        if metamap_node.sumcat
+          #-- This is the voice of humanity summary category
+          sumcat = metamap_node.id
+          @cross_results[metamap.id]['sumcat'] = metamap_node.id
+          gotdata = false
+          if @data['totals']['items'].length > 0
+            item = @data['totals']['items'][0]
+            item_id = item.id
+            i = @data['totals']['itemsproc'][item_id]
+            gotdata = true
+            @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
+          end
+        else
+          #-- This is not the summary category
+          gotdata = false
+          if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
+            for rate_metamap_node_id,rdata in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id]
+              if rate_metamap_node_id == metamap_node_id
+                if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].length > 0
+    				      item_id,i = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'].first
+    				      item = Item.find_by_id(item_id)
+                  gotdata = true
+                  @cross_results[metamap.id]['nodes'][metamap_node_id] = item_id
+                end
+              end
+            end
+          end
+        end
+        if @cross_results[metamap.id]['sumcat'] == 0
+          #-- Didn't find the summary category. Look again
+          xmetamap_node = MetamapNode.where(metamap_id: metamap.id, sumcat: true).first
+          if xmetamap_node
+            @cross_results[metamap.id]['sumcat'] = xmetamap_node.id
+          end
+        end
+      end
+      @cross_results[metamap.id]['nodes'].each do |metamap_node_id,item_id|
+        if metamap_node_id != sumcat and item_id == @cross_results[metamap.id]['nodes'][sumcat]
+          #-- Flag that there is a category has the same result as the summary category.
+          @cross_results[metamap.id]['aggsum'] = true
+        end
+      end
+    end
+    return @cross_results
+  end
   
   def itemvalidate
     @xmessage = '' if not @xmessage

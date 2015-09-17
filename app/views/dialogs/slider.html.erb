@@ -62,6 +62,11 @@
     <input type="checkbox" id="indigenous" value="1" onclick="per_reload()">Indigenous<br>
     <input type="checkbox" id="other_minority" value="1" onclick="per_reload()">Other Minority
   </div>
+
+  <div style="margin: 20px 0 0 0;">
+    <input type="radio" name="show_result" value="0" checked onclick="per_reload()">Listing<br>
+    <input type="radio" name="show_result" value="1" onclick="per_reload()">Results
+  </div>
   
 </div>
 
@@ -115,6 +120,7 @@ function per_reload() {
  	$('#per_main').css('opacity','0.5');
   var indigenous = $('#indigenous').is(':checked') ? 1 : 0;
   var other_minority = $('#other_minority').is(':checked') ? 1 : 0;
+  var show_result = $('input[name=show_result]:checked').val();
   //checkbox
   //var meta_3 = $("input[name='meta_3[]']:checked").map(function(){
   //  return $(this).val();
@@ -125,7 +131,7 @@ function per_reload() {
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5},
+	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result},
 	  complete: function(t){ 
 	    $('#per_main').html(t.responseText);
       $('#per_main').css('opacity','1.0');
