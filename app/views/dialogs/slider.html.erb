@@ -133,8 +133,8 @@ function per_reload() {
 	  url: '/items/geoslider_update',
 	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result},
 	  complete: function(t){ 
-	    $('#per_main').html(t.responseText);
       $('#per_main').css('opacity','1.0');
+	    $('#per_main').html(t.responseText);
 	  }
 	});	
 }
