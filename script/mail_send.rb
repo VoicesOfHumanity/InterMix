@@ -231,6 +231,16 @@ for p in participants
       #    send_it = false
       #  end
       #end
+      
+      if send_it and item.group and item.group.is_global
+        # Only send Global Townhall Square messages if they're from the admin
+        # is it posted by an admin?
+        group_participant = GroupParticipant.where(group_id: item.group_id, participant_id: item.posted_by).first
+        if group_participant.moderator
+        else
+          send_it = false
+        end
+      end
    
       if not send_it
         puts "    no setting to send this" if testonly
