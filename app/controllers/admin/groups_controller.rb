@@ -72,7 +72,7 @@ class Admin::GroupsController < ApplicationController
   # POST /groups
   # POST /groups.xml
   def create
-    @group = Group.new(params[:group])
+    @group = Group.new(group_params)
 
     respond_to do |format|
       if @group.save
@@ -92,7 +92,7 @@ class Admin::GroupsController < ApplicationController
     logger.info("groups#update #{@group.id}")
 
     respond_to do |format|
-      if @group.update_attributes(params[:group])
+      if @group.update_attributes(group_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -135,5 +135,10 @@ class Admin::GroupsController < ApplicationController
     render :partial=>"dialogs", :layout=>false
   end  
  
+  protected
+  
+  def group_params
+    params.require(:group).permit(:is_global, :logo, :name, :shortname, :description, :shortdesc, :instructions, :visibility, :message_visibility, :openness, :moderation, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :has_mail_list, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :alt_logins, :required_meta, :tweet_approval_min, :tweet_what, :tweet_subgroups, :is_network)
+  end
   
 end

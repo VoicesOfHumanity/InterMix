@@ -6,6 +6,7 @@
 <tr><td class="left">Openness:</td><td><%= @group.openness %></td></tr>	
 <tr><td class="left">Moderation:</td><td><%= @group.moderation ? 'yes' : '' %></td></tr>	
 <tr><td class="left">Network:</td><td><%= @group.is_network ? 'yes' : '' %></td></tr>	
+<tr><td class="left">Global Town Square:</td><td><%= @group.is_global ? 'yes' : '' %></td></tr>	
 <tr><td class="left">Members:</td><td align="right"><a href="#" onclick="getlist2(<%= @group.id %>)"><%= @group.group_participants_count %></a></td></tr>	
 <tr><td class="left">Items:</td><td align="right"><%= @group.items_count %></td></tr>	
 <tr><td class="left">Created:</td><td><%= @group.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	

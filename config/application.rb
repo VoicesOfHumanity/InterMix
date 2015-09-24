@@ -49,6 +49,9 @@ module Intermix
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
     
+    # This is temporary, because I can't find out to make the parameters work for groupsx   
+    #config.action_controller.permit_all_parameters = true
+    
   end
 end
 
