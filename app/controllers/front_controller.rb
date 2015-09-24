@@ -221,6 +221,9 @@ class FrontController < ApplicationController
     end
     
     @participant.groups << @group
+    
+    # Also join Global Townhall Square
+    group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
  
     @item = Item.new
     @item.group_id = @group_id
@@ -542,6 +545,9 @@ class FrontController < ApplicationController
       @group_participant.status = 'applied'      
     end
     @group_participant.save
+    
+    # Also join Global Townhall Square
+    group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
 
     @participant.ensure_authentication_token!
 
@@ -901,6 +907,9 @@ class FrontController < ApplicationController
       @group_participant.status = 'applied'      
     end
     @group_participant.save
+
+    # Also join Global Townhall Square
+    group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
         
     @participant.ensure_authentication_token!
 
@@ -1248,6 +1257,9 @@ class FrontController < ApplicationController
       @group_participant.status = 'applied'      
     end
     @group_participant.save
+
+    # Also join Global Townhall Square
+    group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
         
     @participant.ensure_authentication_token!
     
@@ -1490,6 +1502,9 @@ class FrontController < ApplicationController
       render :action=>:joinform
       return
     end  
+
+    # Also join Global Townhall Square
+    group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
 
     @participant.ensure_authentication_token!
 

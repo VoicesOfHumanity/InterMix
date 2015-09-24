@@ -17,7 +17,9 @@
 		  <% if gp.moderator or session[:is_hub_admin] or session[:is_sysadmin] -%>
 		  <a href="http://<%= dom %>/groups/<%= gp.group.id %>/admin">administrate</a> 
 		  <% end -%>
+      <% if not gp.group.is_global -%>
 		  <a href="http://<%= dom %>/groups/<%= gp.group.id %>/unjoin" onclick="return confirm('Are you sure you want to leave this group?')">leave</a>
+      <% end -%>
 		  <% if gp.group.dialogs.length > 0 -%>
     	  <% for dialog in gp.group.dialogs -%>
     	    <% ddom = Rails.env == 'development' ? 'intermix.dev:3002' : (dialog.shortname + '.' + dom) %>

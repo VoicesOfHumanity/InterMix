@@ -128,3 +128,6 @@ Paperclip.options[:command_path] = "/usr/bin"
 
 TWITTER_CONSUMER_KEY = 'Ew8NROMK7YbDa3XIph6gA'   # = API key. And this is for the Posting app, not the Login app
 TWITTER_CONSUMER_SECRET = 'ghQ41Vu377BAh3oVRACpKdYzeUo5SJardQunvALkj8'
+
+GLOBAL_GROUP_ID = 20
+
