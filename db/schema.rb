@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150924183158) do
+ActiveRecord::Schema.define(version: 20151001194958) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -611,6 +611,8 @@ ActiveRecord::Schema.define(version: 20150924183158) do
     t.datetime "picture_updated_at"
     t.boolean  "indigenous",             limit: 1,                              default: false
     t.boolean  "other_minority",         limit: 1,                              default: false
+    t.boolean  "veteran",                limit: 1,                              default: false
+    t.boolean  "interfaith",             limit: 1,                              default: false
   end
 
   add_index "participants", ["confirmation_token"], name: "index_participants_on_confirmation_token", unique: true, using: :btree

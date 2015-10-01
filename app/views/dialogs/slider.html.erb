@@ -60,12 +60,14 @@
   
   <div style="margin: 20px 0 0 0;">
     <input type="checkbox" id="indigenous" value="1" onclick="per_reload()">Indigenous<br>
-    <input type="checkbox" id="other_minority" value="1" onclick="per_reload()">Other Minority
+    <input type="checkbox" id="other_minority" value="1" onclick="per_reload()">Other Minority<br>
+    <input type="checkbox" id="veteran" value="1" onclick="per_reload()">Veteran<br>
+    <input type="checkbox" id="interfaith" value="1" onclick="per_reload()">Interfaith<br>
   </div>
 
-  <div style="margin: 20px 0 0 0;">
-    <input type="radio" name="show_result" value="0" checked onclick="per_reload()">Listing<br>
-    <input type="radio" name="show_result" value="1" onclick="per_reload()">Results
+  <div style="display:none;margin: 20px 0 0 0;">
+    <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload()">Listing<br>
+    <input type="radio" name="show_result" value="1" <%= @show_result.to_i == 1 ? "checked" : "" %> onclick="per_reload()">Results
   </div>
   
 </div>

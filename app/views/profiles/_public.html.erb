@@ -37,6 +37,12 @@
 <% if @participant.other_minority -%>
 <tr><td class="label">Other Minority:</td><td>yes</td></tr>	
 <% end -%>
+<% if @participant.veteran -%>
+<tr><td class="label">Veteran:</td><td>yes</td></tr>	
+<% end -%>
+<% if @participant.interfaith -%>
+<tr><td class="label">Interfaith:</td><td>yes</td></tr>	
+<% end -%>
 
 <tr><td class="label">Groups:</td><td>
 <% if @participant.groups.length == 0 -%>

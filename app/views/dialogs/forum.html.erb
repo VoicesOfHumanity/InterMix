@@ -100,6 +100,14 @@
 		<div class="leftfield">
 			<%= check_box_tag 'posted_by_other_minority', 1, false %>
 		</div>
+		<div class="lefttitle">Posted by Veteran:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'posted_by_veteran', 1, false %>
+		</div>
+		<div class="lefttitle">Posted by Interfaith:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'posted_by_interfaith', 1, false %>
+		</div>
 			
 		<div class="lefttitle">Rated from Country:</div>
 		<div class="leftfield">
@@ -128,6 +136,14 @@
 		<div class="lefttitle">Rated by Other Minority:</div>
 		<div class="leftfield">
 			<%= check_box_tag 'rated_by_other_minority', 1, false %>
+		</div>
+		<div class="lefttitle">Rated by Veteran:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'rated_by_veteran', 1, false %>
+		</div>
+		<div class="lefttitle">Rated by Interfaith:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'rated_by_interfaith', 1, false %>
 		</div>
 	
 		<div class="lefttitle">Show:</div>
@@ -244,11 +260,24 @@ $('#posted_by_indigenous').change(function() {
 $('#posted_by_other_minority').change(function() {
 	list('posted_by_other_minority');
 });
+$('#posted_by_veteran').change(function() {
+	list('posted_by_veteran');
+});
+$('#posted_by_interfaith').change(function() {
+	list('posted_by_interfaith');
+});
 $('#rated_by_indigenous').change(function() {
 	list('rated_by_indigenous');
 });
 $('#rated_by_other_minority').change(function() {
 	list('rated_by_other_minority');
 });
+$('#rated_by_veteran').change(function() {
+	list('rated_by_veteran');
+});
+$('#rated_by_interfaith').change(function() {
+	list('rated_by_interfaith');
+});
+toggleoptions();
 </script>
 

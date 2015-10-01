@@ -834,3 +834,9 @@ td.dotted {
   text-align: right;
 }
 
+
+/* Slider */
+
+#per_main img {
+  max-width: 570px;
+}

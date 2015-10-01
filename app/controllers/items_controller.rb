@@ -28,11 +28,15 @@ class ItemsController < ApplicationController
     @posted_by_metro_area_id = (params[:posted_by_metro_area_id] || 0).to_i
     @posted_by_indigenous = (params[:posted_by_indigenous].to_i == 1)
     @posted_by_other_minority = (params[:posted_by_other_minority].to_i == 1)
+    @posted_by_veteran = (params[:posted_by_veteran].to_i == 1)
+    @posted_by_interfaith = (params[:posted_by_interfaith].to_i == 1)
     @rated_by_country_code = (params[:rated_by_country_code] || '').to_s
     @rated_by_admin1uniq = (params[:rated_by_admin1uniq] || '').to_s
     @rated_by_metro_area_id = (params[:rated_by_metro_area_id] || 0).to_i
     @rated_by_indigenous = (params[:rated_by_indigenous].to_i == 1)
     @rated_by_other_minority = (params[:rated_by_other_minority].to_i == 1)
+    @rated_by_veteran = (params[:rated_by_veteran].to_i == 1)
+    @rated_by_interfaith = (params[:rated_by_interfaith].to_i == 1)
     @want_crosstalk = params[:want_crosstalk].to_s
     session[:want_crosstalk] = @want_crosstalk if @want_crosstalk != ''
     @page = ( params[:page] || 1 ).to_i
@@ -97,7 +101,7 @@ class ItemsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
       
-      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,'','',@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@rated_by_indigenous,@rated_by_other_minority)
+      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,'','',@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@posted_by_veteran,@posted_by_interfaith,@rated_by_indigenous,@rated_by_other_minority,@rated_by_veteran,@rated_by_interfaith)
       
       #logger.info("items_controller#list @items: #{@items.inspect}")
       
@@ -832,6 +836,8 @@ class ItemsController < ApplicationController
     
     indigenous = (params[:indigenous].to_i == 1) ? true : false
     other_minority = (params[:other_minority].to_i == 1) ? true : false
+    veteran = (params[:veteran].to_i == 1) ? true : false
+    interfaith = (params[:interfaith].to_i == 1) ? true : false
     
     @dialog_id = params[:dialog_id].to_i
     @period_id = params[:period_id].to_i
@@ -912,10 +918,14 @@ class ItemsController < ApplicationController
     
     @posted_by_indigenous = indigenous
     @posted_by_other_minority = other_minority
+    @posted_by_veteran = veteran
+    @posted_by_interfaith = interfaith
     @rated_by_indigenous = false
     @rated_by_other_minority = false
+    @rated_by_veteran = false
+    @rated_by_interfaith = false
     
-    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level,@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@rated_by_indigenous,@rated_by_other_minority,@posted_by_city,@rated_by_city)
+    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level,@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@posted_by_veteran,@posted_by_interfaith,@rated_by_indigenous,@rated_by_other_minority,@rated_by_veteran,@rated_by_interfaith,@posted_by_city,@rated_by_city)
    
     @data = {}
     if show_result

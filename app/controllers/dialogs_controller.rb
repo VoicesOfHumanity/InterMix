@@ -54,6 +54,12 @@ class DialogsController < ApplicationController
   def slider
     @dialog_id = params[:id]
     @dialog = Dialog.includes(:creator).find(@dialog_id)
+    @show_result = params[:show_result].to_i
+    if @show_result == 1
+      @dsection = 'meta'
+    else
+      @dsection = 'list'
+    end
   end
   
   def show
@@ -853,14 +859,6 @@ class DialogsController < ApplicationController
     #-- And anything rated by anything
     #items, itemsproc, extras = Item.list_and_results(@limit_group,@dialog,@period_id,0,{},{},true,@sortby,current_participant,true,0,'','','','','','','','','','')
     @metamaps = Metamap.where(:id=>[3,5])
-    # Add indigenous, if it was selected for the discussion
-    indigenous_metamap = Metamap.where("name like 'Indi%'").first
-    if indigenous_metamap
-      has_indi = DialogMetamap.where(:dialog_id=>@dialog.id,:metamap_id=>indigenous_metamap.id).first
-      if has_indi
-        @metamaps << indigenous_metamap
-      end
-    end
     
     #-- Check cross results and see if the voice of humanity matches one of them
     @cross_results = cross_results

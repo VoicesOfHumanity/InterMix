@@ -58,14 +58,7 @@
   		<li class="select required" id="meta_#{metamap_id}_input">
   			<div style="width:25%;float:left;font-weight:bold"><%= metamap_name %><%= '*' if metamap_id==3 or metamap_id==5 %></div>
   			<div style="width:75%;float:left">    
-          <% if metamap.binary -%>
-            <%= check_box_tag "meta[#{metamap_id}]", 1, (info and info[1]), :id=>"meta_#{metamap_id}" %>
-            <% if metamap_name == 'Indigenous' -%>
-              check here if you identify with an indigenous people or tribe
-            <% end -%>
-          <% else -%>    
   				  <%= select_tag "meta[#{metamap_id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap_id),'id','name',(info ? info[1] : 0)), :id=>"meta_#{metamap_id}"%>
-          <% end -%>
   			</div>
   		</li>		
 		<% end -%>
@@ -76,7 +69,12 @@
 		<div style="display:inline;position:relative;top:20px"><b>Other Minority</b></div>
     <% min_checked = {}; min_checked[:checked] = 'checked' if @participant.other_minority %>
 		<%= f.input :other_minority, :as => :boolean, :label=>"check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country", :input_html => min_checked %>
-		
+		<div style="display:inline;position:relative;top:20px"><b>Veteran</b></div>
+    <% vet_checked = {}; vet_checked[:checked] = 'checked' if @participant.veteran %>
+		<%= f.input :veteran, :as => :boolean, :label=>"check here if you are a veteran", :input_html => vet_checked %>		
+    <div style="display:inline;position:relative;top:20px"><b>Interfaith</b></div>
+    <% int_checked = {}; int_checked[:checked] = 'checked' if @participant.interfaith %>
+		<%= f.input :interfaith, :as => :boolean, :label=>"check here if you identify as interfaith", :input_html => int_checked %>		
 	<% end %>
 	<br>
 	<%= f.inputs do %>	
