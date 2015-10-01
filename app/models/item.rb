@@ -124,7 +124,18 @@ class Item < ActiveRecord::Base
     if self.group_id.to_i > 0
       logger.info("Item#emailit e-mailing members of group ##{self.group_id}")
       group = Group.find_by_id(self.group_id)
+      
+      if group and group.is_global
+        # Only send Global Townhall Square messages if they're from a moderator
+        group_participant = GroupParticipant.where(group_id: self.group_id, participant_id: self.posted_by).first
+        if group_participant.moderator
+        else
+          return
+        end
+      end
+      
       participants = group.active_members if group
+      
     else
       #logger.info("Item#emailit e-mailing forum message to everybody")
       #participants = Participant.where("(status='active' or status is null) and forum_email='instant'")

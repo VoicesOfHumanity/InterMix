@@ -30,7 +30,7 @@
 
 <p><b>Membership:</b> 
 <% if @group.is_global -%>  
-  everybody is a member
+  Everybody is a member
 <% else -%>
   <%= GROUP_OPENNESS_TEXT[@group.openness] %>
   <% if not @is_member and @group.openness == 'open' -%>	
@@ -43,7 +43,11 @@
 
 <p><b>Group Visibility:</b> <%= GROUP_VISIBILITY_TEXT[@group.visibility] %></p>
 
-<p><b>Message Visibility:</b> <%= GROUP_MESSAGE_VISIBILITY_TEXT[@group.message_visibility] %></p>
+<% if @group.is_global -%>
+  <p><b>Message Visibility:</b> Public. Everybody can see messages posted.</p>
+<% else -%>
+  <p><b>Message Visibility:</b> <%= GROUP_MESSAGE_VISIBILITY_TEXT[@group.message_visibility] %></p>
+<% end -%>
 
 <p><b>Has mailing list:</b> <%= @group.has_mail_list ? 'yes' : 'no' %></p>
 
