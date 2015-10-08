@@ -1,75 +1,79 @@
 <%= render(:partial => 'dialogs/menu') %>
 
-<div id="per_main" style="float:left;width:595px;">
-  
-  loading...
-  
-</div>
+<div id="slider_container" style="overflow:none;width:740px;min-height:600px">
 
-<div style="float:left;width:139px;padding-left:5px;">
+  <div id="per_main" style="float:left;width:595px;min-height:600px">
   
-  <p><input type="button" value="Start New Thread" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')"></p>
+    loading...
   
-  <div style="height:220px">
+  </div>
+
+  <div style="float:left;width:139px;padding-left:5px;">
   
-    <div id="geoslider" style="height:172px;margin:15px 0 0 0;float:left"></div>
+    <p><input type="button" value="Start New Thread" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')"></p>
   
-    <div style="float:left;width:119px;padding:0 0 0 5px;line-height:40px;">
-    Planet&nbsp;Earth<br>
-    My&nbsp;Nation<br>
-    My&nbsp;State/Province<br>
-    My&nbsp;Metro&nbsp;region<br>
-    My&nbsp;City/Town<br>
+    <div style="height:220px">
+  
+      <div id="geoslider" style="height:172px;margin:15px 0 0 0;float:left"></div>
+  
+      <div style="float:left;width:119px;padding:0 0 0 5px;line-height:40px;">
+      Planet&nbsp;Earth<br>
+      My&nbsp;Nation<br>
+      My&nbsp;State/Province<br>
+      My&nbsp;Metro&nbsp;region<br>
+      My&nbsp;City/Town<br>
+      </div>
+  
+    </div> 
+
+    <div style="height:130px;clear:left">
+  
+      <div id="groupslider" style="height:88px;margin:17px 0 0 0;float:left"></div>
+  
+      <div style="float:left;width:105px;padding:0 0 0 5px;line-height:40px;">
+      All groups<br>
+      My groups<br>
+      Current group<br>
+      </div>
+  
+    </div> 
+
+    <div style="margin: 20px 0 0 0;">
+      <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
+      <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
+        <% if not metamap_node.sumcat -%>
+          <% if false %>
+            <input type="checkbox" name="meta_3[]" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" checked onclick="per_reload()"><%= metamap_node.name %><br>
+          <% else %>
+            <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
+          <% end -%>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div style="margin: 20px 0 0 0;">
+      <input type="radio" name="meta_5" id="meta_5_0" value="0" checked onclick="per_reload()">all<br>
+      <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
+        <% if not metamap_node.sumcat -%>
+          <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
+        <% end %>
+      <% end %>
     </div>
   
-  </div> 
+    <div style="margin: 20px 0 0 0;">
+      <input type="checkbox" id="indigenous" value="1" onclick="per_reload()">Indigenous<br>
+      <input type="checkbox" id="other_minority" value="1" onclick="per_reload()">Other Minority<br>
+      <input type="checkbox" id="veteran" value="1" onclick="per_reload()">Veteran<br>
+      <input type="checkbox" id="interfaith" value="1" onclick="per_reload()">Interfaith<br>
+    </div>
 
-  <div style="height:130px;clear:left">
-  
-    <div id="groupslider" style="height:88px;margin:17px 0 0 0;float:left"></div>
-  
-    <div style="float:left;width:105px;padding:0 0 0 5px;line-height:40px;">
-    All groups<br>
-    My groups<br>
-    Current group<br>
+    <div style="display:none;margin: 20px 0 0 0;">
+      <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload()">Listing<br>
+      <input type="radio" name="show_result" value="1" <%= @show_result.to_i == 1 ? "checked" : "" %> onclick="per_reload()">Results
     </div>
   
-  </div> 
-
-  <div style="margin: 20px 0 0 0;">
-    <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
-    <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
-      <% if not metamap_node.sumcat -%>
-        <% if false %>
-          <input type="checkbox" name="meta_3[]" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" checked onclick="per_reload()"><%= metamap_node.name %><br>
-        <% else %>
-          <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
-        <% end -%>
-      <% end %>
-    <% end %>
   </div>
 
-  <div style="margin: 20px 0 0 0;">
-    <input type="radio" name="meta_5" id="meta_5_0" value="0" checked onclick="per_reload()">all<br>
-    <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
-      <% if not metamap_node.sumcat -%>
-        <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
-      <% end %>
-    <% end %>
-  </div>
-  
-  <div style="margin: 20px 0 0 0;">
-    <input type="checkbox" id="indigenous" value="1" onclick="per_reload()">Indigenous<br>
-    <input type="checkbox" id="other_minority" value="1" onclick="per_reload()">Other Minority<br>
-    <input type="checkbox" id="veteran" value="1" onclick="per_reload()">Veteran<br>
-    <input type="checkbox" id="interfaith" value="1" onclick="per_reload()">Interfaith<br>
-  </div>
-
-  <div style="display:none;margin: 20px 0 0 0;">
-    <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload()">Listing<br>
-    <input type="radio" name="show_result" value="1" <%= @show_result.to_i == 1 ? "checked" : "" %> onclick="per_reload()">Results
-  </div>
-  
 </div>
 
 <input type="hidden" name="dialog_id" id="dialog_id" value="<%= @dialog_id %>">
