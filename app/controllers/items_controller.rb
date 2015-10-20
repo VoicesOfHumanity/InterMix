@@ -952,21 +952,39 @@ class ItemsController < ApplicationController
       genders = MetamapNode.where(metamap_id: 3).order(:sortorder)
     
       if age > 0 and gender > 0
-        # only one combined result
-        name = 'Everything'
+        # One particular result
+        age_id = age
+        age_name = MetamapNode.where(id: age).first.name
+        gender_id = gender
+        gender_name = MetamapNode.where(id: gender).first.name
+        name = "#{age_name} #{gender_name}"
         item = nil
         iproc = nil
         @data['all'] = {name: name, item: item, iproc: iproc}
       elsif age == 0 and gender == 0
-        # six combinations of age and gender
+        # two genders, three ages, and voice of humanity
+        # total
+        name = "Voice of Humanity"
+        item = nil
+        iproc = nil
+        @data['all'] = {name: name, item: item, iproc: iproc}
+        for gender_rec in genders
+          gender_id = gender_rec.id
+          gender_name = gender_rec.name
+          code = "#{gender_id}"
+          name = "#{gender_name}"
+          if not gender_rec.sumcat
+            item = nil
+            iproc = nil
+            @data[code] = {name: name, item: item, iproc: iproc}
+          end
+        end
         for age_rec in ages
           age_id = age_rec.id
           age_name = age_rec.name
-          for gender_rec in genders
-            gender_id = gender_rec.id
-            gender_name = gender_rec.name
-            code = "#{age_id}_#{gender_id}"
-            name = "#{age_name} #{gender_name}"
+          code = "#{age_id}"
+          name = "#{age_name}"
+          if not age_rec.sumcat
             item = nil
             iproc = nil
             @data[code] = {name: name, item: item, iproc: iproc}
@@ -980,12 +998,13 @@ class ItemsController < ApplicationController
         for gender_rec in genders
           gender_id = gender_rec.id
           gender_name = gender_rec.name
-          sumcat = gender_rec.sumcat
           code = "#{age_id}_#{gender_id}"
           name = "#{age_name} #{gender_name}"
-          item = nil
-          iproc = nil
-          @data[code] = {name: name, item: item, iproc: iproc}
+          if not gender_rec.sumcat
+            item = nil
+            iproc = nil
+            @data[code] = {name: name, item: item, iproc: iproc}
+          end
         end
       
       elsif age == 0 and gender > 0
@@ -995,12 +1014,13 @@ class ItemsController < ApplicationController
         for age_rec in ages
           age_id = age_rec.id
           age_name = age_rec.name
-          sumcat = age_rec.sumcat
           code = "#{age_id}_#{gender_id}"
           name = "#{age_name} #{gender_name}"
-          item = nil
-          iproc = nil
-          @data[code] = {name: name, item: item, iproc: iproc}
+          if not age_rec.sumcat
+            item = nil
+            iproc = nil
+            @data[code] = {name: name, item: item, iproc: iproc}
+          end
         end
         
       end
