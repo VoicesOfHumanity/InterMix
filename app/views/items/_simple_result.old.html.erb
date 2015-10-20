@@ -1,0 +1,70 @@
+<% for metamap in @metamaps -%>
+
+	<div>
+	<% for metamap_node_id,minfo in @data['meta'][metamap.id]['nodes_sorted'] -%>
+		<% metamap_node_name = minfo[0] %>
+		<% metamap_node = minfo[1] %>
+    <% if metamap_node.id != @cross_results[metamap.id]['sumcat'] or not @cross_results[metamap.id]['aggsum'] %>
+      <% sumcat = @cross_results[metamap.id]['sumcat'] %>
+	    <h3 title="<%= metamap_node_id %>"><%= metamap_node_name %><%= (metamap_node_id != sumcat and @cross_results[metamap.id]['nodes'][metamap_node.id] == @cross_results[metamap.id]['nodes'][sumcat])  ? " + Voice of Humanity" : "" %></h3>
+    <% end %>
+
+    <% if metamap_node.sumcat %> 
+       <% next if @cross_results[metamap.id]['aggsum'] %>
+
+      <% if @data['totals']['itemsproc'].length == 0 -%>
+      	<p>There is no data</p>
+      <% else -%>	
+      	<% "for item_id,i in @data['totals']['itemsproc']" -%>
+      	<% for item in @data['totals']['items'] -%>
+          <% item_id = item.id; i = @data['totals']['itemsproc'][item_id] %>
+          <% @itemsproc = @data['totals']['itemsproc'] %>
+          
+					<div class="forumitem forumitemplain forummain forum1">   					
+  				  <%= render :partial => "items/item_simple", :locals => { :item => item, :itemproc=>i, :from=>'result' } %>
+            <div>
+              [<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result">see all in the forum list</a>]
+            </div>
+					</div>
+          
+      		<% break  %>
+      	<% end -%>
+      <% end -%>      
+      
+		<% else %>	
+		
+		  <% gotdata = false %>
+  		<% if  @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id] and  @data['meta'][metamap.id]['postedby']['nodes'][metamap_node_id]['items'].length > 0 -%>
+  			<% if @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id].length > 0 %>
+    			<% for rate_metamap_node_id,rdata in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id] %>
+    			  <% if rate_metamap_node_id == metamap_node_id -%>
+    			    <% if false -%>
+      				<b><span title="<%= metamap_node_id %>"><%= metamap_node_name %></span> winner chosen by <span title="<%= rate_metamap_node_id %>"><%= @data['meta'][metamap.id]['nodes'][rate_metamap_node_id][0] %></span> raters (<%= @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['items'].length %> items, <%= @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['ratings'].length %> votes):</b><br>			
+      				<% end -%>
+      				<% for item_id,i in @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] -%>
+      					<% item = Item.find_by_id(item_id) %>
+                <% @itemsproc = @data['meta'][metamap.id]['matrix']['post_rate'][metamap_node_id][rate_metamap_node_id]['itemsproc'] %>      					
+      					   					
+      					<div class="forumitem forumitemplain forummain forum1">   					
+        				  <%= render :partial => "items/item_simple", :locals => { :item => item, :itemproc=>i, :from=>'result' } %>
+                  <div>
+                    [<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %><%=raw @limit_group_id > 0 ? "limit_group_id=#{@limit_group_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result&amp;posted_by_metamap_<%= metamap.id %>=<%= metamap_node_id %>&amp;rated_by_metamap_<%= metamap.id %>=<%= rate_metamap_node_id %>">see in the forum list</a>]
+                  </div>
+      					</div>      			
+            		            		      					      					
+       					<% break %>
+      				<% end -%>
+      			  <% gotdata = true %>
+      			<% end -%>
+    			<% end -%>
+    		<% end -%>	
+  		<% end -%>
+  		<% if not gotdata -%>
+				<p>There is no data</p>
+			<% end %>	
+				
+		<% end -%>
+  <% end -%>
+  </div>
+
+<% end -%>

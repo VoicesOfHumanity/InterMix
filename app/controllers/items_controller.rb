@@ -811,8 +811,246 @@ class ItemsController < ApplicationController
   def geoslider
     #-- The main screen or the geo slider
   end
-  
+
   def geoslider_update
+    # Getting listings and results tailored to the slider in discussions
+    # Variables are:
+    # geo_level: city, metro, state, nation, earth
+    # group_level: current, my, all groups. 
+  
+    # indigenous, other minority, veteran, interfaith
+
+    if session[:num_all_posts].to_i == 0
+      #-- See how many total posts there are, to be able to do a graphic
+      session[:num_all_posts] = Item.where(:is_first_in_thread => true).count
+    end
+    @num_all_posts = session[:num_all_posts]
+  
+    geo_level = params[:geo_level].to_i
+    geo_levels = GEO_LEVELS               # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}    
+    geo_level = geo_levels[geo_level]
+  
+    group_level = params[:group_level].to_i
+    group_levels = {1 => 'current', 2 => 'user', 3 => 'all'}
+    group_level = group_levels[group_level]
+  
+    indigenous = (params[:indigenous].to_i == 1) ? true : false
+    other_minority = (params[:other_minority].to_i == 1) ? true : false
+    veteran = (params[:veteran].to_i == 1) ? true : false
+    interfaith = (params[:interfaith].to_i == 1) ? true : false
+  
+    dialog_id = params[:dialog_id].to_i
+    period_id = params[:period_id].to_i
+  
+    gender = params[:meta_3].to_i
+    age = params[:meta_5].to_i
+  
+    show_result = (params[:show_result].to_i == 1)
+  
+    @title = ""
+
+    # Start preparing the queries
+    items = Item.where(nil)
+    ratings = Rating.where(nil)
+
+    # Discussion and period
+    items = items.where("items.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
+    items = items.where("items.dialog_id = 0 or items.dialog_id is null") if dialog_id.to_i < 0
+    items = items.where("items.period_id = ?", period_id) if period_id.to_i > 0    
+    ratings = ratings.where("ratings.dialog_id=#{dialog_id}") if dialog_id.to_i > 0
+    ratings = ratings.where("ratings.period_id=#{period_id}") if period_id.to_i >0  
+
+    items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
+    ratings = ratings.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
+
+
+    # Group slider selections
+    group = nil   
+    group_id = 0  
+    if group_level == 'current'
+      group_id = session[:group_id].to_i
+      group = Group.find_by_id(group_id) if group_id > 0
+      items = items.where("items.group_id = #{group_id} or items.first_in_thread_group_id = #{group_id}")
+      ratings = ratings.where("ratings.group_id = #{group_id}")
+      @title += " | Group: #{group_id} : #{group.name}"
+    elsif group_level == 'user'
+      #-- Groups they're a member of
+      groups = current_participant.groups_in.collect{|g| g[0]}
+      items = items.where("items.group_id in (#{groups.join(',')}) or items.first_in_thread_group_id in (#{groups.join(',')})")
+      ratings = ratings.where("ratings.group_id in (#{groups.join(',')})")
+      @title += " |  My #{groups.length} groups"
+    elsif group_level == 'all' 
+      @title += " | All groups"   
+    end
+  
+    # Either posted in that geo level or no geo level given
+    items = items.where("geo_level = ? or geo_level is null or geo_level = ''", geo_level) if (geo_level.to_s != '' and geo_level != 'all')
+  
+    if geo_level == 'city'
+      items = items.where("participants.city=?",current_participant.city)
+      ratings = ratings.where("participants.city=?",current_participant.city)
+      @title += "City/Town: #{current_participant.city}"
+    elsif geo_level == 'metro'
+      items = items.where("participants.metro_area_id=?",current_participant.metro_area_id)
+      ratings = ratings.where("participants.metro_area_id=?",current_participant.metro_area_id)
+      @title += "Metro Region: #{current_participant.metro_area_id} : #{current_participant.metro_area.name}"
+    elsif geo_level == 'state'  
+      items = items.where("participants.admin1uniq=?",current_participant.admin1uniq)
+      ratings = ratings.where("participants.admin1uniq=?",current_participant.admin1uniq)
+      @title += "State/Province: #{current_participant.admin1uniq} : #{current_participant.geoadmin1.name}"
+    elsif geo_level == 'nation'
+      items = items.where("participants.country_code=?",current_participant.country_code)
+      ratings = ratings.where("participants.country_code=?",current_participant.country_code)
+      @title += "Nation: #{current_participant.country_code} : #{current_participant.geocountry.name}"
+    elsif geo_level == 'planet'
+      @title += "Planet Earth"  
+    elsif geo_level == 'all'
+      @title += "All Perspectives"
+    end  
+
+    if indigenous
+      items = items.where("participants.indigenous=1")
+      ratings = ratings.where("participants.indigenous=1")
+    end
+    if other_minority
+      items = items.where("participants.other_minority=1")
+      ratings = ratings.where("participants.other_minority=1")
+    end
+    if veteran
+      items = items.where("participants.veteran=1")
+      ratings = ratings.where("participants.veteran=1")
+    end
+    if interfaith
+      items = items.where("participants.interfaith=1")
+      ratings = ratings.where("participants.interfaith=1")
+    end
+  
+    if gender != 0
+      items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{gender})")   
+      ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{gender})")   
+    end
+    if age != 0
+      items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{age})")   
+      ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{age})")   
+    end
+
+    #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
+    items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
+    items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation")
+
+    logger.info("items#geoslider_update #{items.length} items and #{ratings.length} ratings")
+    #logger.info("items#geoslider_update items[0]:#{items[0].inspect} ratings[0]:#{ratings[0].inspect}")
+
+    @data = {}  
+  
+    if show_result
+      # If we're showing results, then add up results for the required gender and age combinations
+      # We will go through the overall items and ratings we have, and put them in those several buckets
+      # Then we will add up the results in each of those buckets
+    
+      ages = MetamapNode.where(metamap_id: 5).order(:sortorder)
+      genders = MetamapNode.where(metamap_id: 3).order(:sortorder)
+    
+      if age > 0 and gender > 0
+        # only one combined result
+        name = 'Everything'
+        item = nil
+        iproc = nil
+        @data['all'] = {name: name, item: item, iproc: iproc}
+      elsif age == 0 and gender == 0
+        # six combinations of age and gender
+        for age_rec in ages
+          age_id = age_rec.id
+          age_name = age_rec.name
+          for gender_rec in genders
+            gender_id = gender_rec.id
+            gender_name = gender_rec.name
+            code = "#{age_id}_#{gender_id}"
+            name = "#{age_name} #{gender_name}"
+            item = nil
+            iproc = nil
+            @data[code] = {name: name, item: item, iproc: iproc}
+          end
+        end
+      
+      elsif age > 0 and gender == 0
+        # two genders with a particular age
+        age_id = age
+        age_name = MetamapNode.where(id: age).first.name
+        for gender_rec in genders
+          gender_id = gender_rec.id
+          gender_name = gender_rec.name
+          sumcat = gender_rec.sumcat
+          code = "#{age_id}_#{gender_id}"
+          name = "#{age_name} #{gender_name}"
+          item = nil
+          iproc = nil
+          @data[code] = {name: name, item: item, iproc: iproc}
+        end
+      
+      elsif age == 0 and gender > 0
+        # three ages with a particular gender
+        gender_id = gender
+        gender_name = MetamapNode.where(id: gender).first.name
+        for age_rec in ages
+          age_id = age_rec.id
+          age_name = age_rec.name
+          sumcat = age_rec.sumcat
+          code = "#{age_id}_#{gender_id}"
+          name = "#{age_name} #{gender_name}"
+          item = nil
+          iproc = nil
+          @data[code] = {name: name, item: item, iproc: iproc}
+        end
+        
+      end
+    
+    
+    
+      render :partial=>'simple_result'
+    
+    else
+    
+      # Add up results for those items and those ratings, to show in the item summaries in the listing
+      # I.e. add up the number of interest/approval ratings for each item, do regression to the mean, calculate value, etc
+      @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+  
+      # Items probably need to be sorted, based on the results we calculated
+      sortby = '*value*'
+      @items = Item.get_sorted(items,@itemsproc,sortby)
+  
+      # Listing. Divide into reasonable batches
+      @batches = []
+      if @items.length > 4
+        @showmax = (params[:batch_size] || 4).to_i
+        if @items.length < 13
+          @numbatches = 2
+        elsif @items.length <= 30   
+          @numbatches = 3
+        elsif @items.length <= 40
+          @numbatches = 4  
+        else
+          @numbatches = 5  
+        end
+        @batches << 4
+        step = @items.length / (@numbatches - 1)
+        pos = 4
+        (@numbatches-2).times do
+          pos += step
+          @batches << pos
+        end  
+        @batches << @items.length    
+      else
+        @showmax = (params[:batch_size] || @items.length).to_i
+      end  
+
+      render :partial => 'geoslider_update'
+  
+    end
+
+  end
+  
+  def geoslider_update_old
     #-- Updating the display for the geo slider
     # 5: Planet Earth
     # 4: Nation

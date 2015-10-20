@@ -890,6 +890,280 @@ class Item < ActiveRecord::Base
     
   end
   
+  def self.get_itemsproc(items,ratings,participant_id)
+    # Add things up based on given items and ratings. Return itemsproc
+    logger.info("item#get_itemsproc #{items.length} items and #{ratings.length} ratings")
+    
+    regmean = true
+    rootonly = false
+    sortby = ''
+
+    itemsproc = {}  # Stats for each item
+    extras = {}     # Some addtional explanations
+    
+    if regmean
+      #-- Prepare regression to the mean
+      exp = "regression to the mean used.<br>"
+      xitems = {}
+      for item in items
+        if item.is_first_in_thread
+          xitems[item.id] = true
+        end
+      end
+      #xrates = Rating.scoped
+      #xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
+      #xrates = xrates.where("ratings.dialog_id = ?", dialog_id) if dialog_id.to_i > 0
+      #xrates = xrates.where("ratings.period_id = ?", period_id) if period_id.to_i > 0  
+      xrates = ratings
+      num_interest = 0
+      num_approval = 0
+      tot_interest = 0 
+      tot_approval = 0
+      item_int_uniq = {}
+      item_app_uniq = {}
+      for xrate in xrates
+        if xitems[xrate.item_id]
+          num_interest += 1 if xrate.interest
+          num_approval += 1 if xrate.approval
+          tot_interest += xrate.interest.to_i if xrate.interest
+          tot_approval += xrate.approval.to_i if xrate.approval
+          item_int_uniq[xrate.item_id] = true if xrate.interest
+          item_app_uniq[xrate.item_id] = true if xrate.approval
+        end  
+      end 
+      num_int_items = item_int_uniq.length
+      num_app_items = item_app_uniq.length
+      avg_votes_int = num_int_items > 0 ? ( num_interest / num_int_items ).to_i : 0 
+      exp += "#{num_int_items} items have interest ratings by #{num_interest} people, totalling #{tot_interest}. Average # of votes per item: #{avg_votes_int}<br>"
+      if avg_votes_int > 20
+        avg_votes_int = 20 
+        exp += "Average # of interest votes adjusted down to 20<br>"    
+      end
+      if num_interest > 0
+        avg_interest = 1.0 * tot_interest / num_interest 
+        exp += "Average interest: #{tot_interest} / #{num_interest} = #{avg_interest}<br>"
+      else
+        avg_interest = 0
+        exp += "Average interest: 0<br>"  
+      end  
+      
+      avg_votes_app = num_app_items > 0 ? ( num_approval / num_app_items ).to_i : 0
+      exp += "#{num_app_items} items have approval ratings by #{num_approval} people, totalling #{tot_approval}. Average # of votes per item: #{avg_votes_app}<br>"
+      if avg_votes_app > 20
+        avg_votes_app = 20
+        exp += "Average # of approval votes adjusted down to 20<br>"            
+      end  
+      if num_approval > 0
+        avg_approval = 1.0 * tot_approval / num_approval 
+        exp += "Average approval: #{tot_approval} / #{num_approval} = #{avg_approval}<br>"
+      else
+        avg_approval = 0
+        exp += "Average approval: 0<br>"  
+      end    
+      logger.info("item#get_itemsproc regression to mean. avg_votes_int:#{avg_votes_int} avg_interest:#{avg_interest} avg_votes_app:#{avg_votes_app} avg_approval:#{avg_approval}")
+      extras['regression'] = exp
+    else
+       logger.info("item#get_itemsproc no regression to mean")
+       extras['regression'] = "No regression to the mean used"
+    end
+
+    items2 = []     # The items for the next step
+    
+    logger.info("item#get_itemsproc going through #{items.length} items and #{ratings.length} ratings")    
+    for item in items
+      #-- Add up stats, and filter out non-roots, if necessary, into items2
+      iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[],'hasrating'=>0,'rateapproval'=>0,'rateinterest'=>0,'num_raters'=>0,'ratings'=>[]}
+      if participant_id.to_i > 0 
+        if item.respond_to?(:hasrating)
+          #-- item.attributes would show all attributes, not just item.inspect
+          iproc['hasrating'] = item.hasrating
+          iproc['rateapproval'] = item.rateapproval
+          iproc['rateinterest'] = item.rateinterest
+        else
+          #-- Horrible hack. Some kind of bug makes those joined fields sometimes not be there. Look them up.
+          p_rating = Rating.where(:item_id=>item.id,:participant_id=>participant_id).first
+          if p_rating
+            iproc['hasrating'] = participant_id
+            iproc['rateapproval'] = p_rating.approval
+            iproc['rateinterest'] = p_rating.interest
+          end
+        end
+      end
+      for rating in ratings
+        if rating.item_id == item.id
+          iproc['votes'] += 1
+          if rating.interest
+            iproc['num_interest'] += 1
+            iproc['tot_interest'] += rating.interest.to_i
+            iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+            case rating.interest.to_i
+            when 0
+              iproc['int_0_count'] += 1
+            when 1
+              iproc['int_1_count'] += 1
+            when 2
+              iproc['int_2_count'] += 1
+            when 3
+              iproc['int_3_count'] += 1
+            when 4
+              iproc['int_4_count'] += 1
+            end  
+          end 
+          if rating.approval     
+            iproc['num_approval'] += 1
+            iproc['tot_approval'] += rating.approval.to_i
+            iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+            case rating.approval.to_i
+            when -3
+              iproc['app_n3_count'] +=1   
+            when -2
+              iproc['app_n2_count'] +=1   
+            when -1
+              iproc['app_n1_count'] +=1   
+            when 0
+              iproc['app_0_count'] +=1   
+            when 1
+              iproc['app_p1_count'] +=1   
+            when 2
+              iproc['app_p2_count'] +=1   
+            when 3
+              iproc['app_p3_count'] +=1   
+            end  
+          end
+          iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+          
+          #iproc['num_raters'] = [iproc['num_interest'],iproc['num_approval']].max
+          iproc['num_raters'] += 1
+          
+          iproc['ratingnoregmean'] = "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
+          
+          #iproc['ratings'] << {'participant_id'=>rating.participant_id, 'group_id'=>rating.group_id, 'dialog_id'=>rating.dialog_id, 'period_id'=>rating.period_id, 'approval'=>rating.approval, 'interest'=>rating.interest, 'created_at'=>rating.created_at}
+          iproc['ratings'] << rating
+          
+        end
+      end
+      iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
+      itemsproc[item.id] = iproc
+      
+      if rootonly or sortby=='default'
+        #-- If we need roots only
+        if item.is_first_in_thread
+          #-- This is a root, put it on the main list
+          items2 << item  
+        elsif item.first_in_thread.to_i > 0 and itemsproc[item.first_in_thread]
+          #-- This is a reply, store it with the proper root
+          itemsproc[item.first_in_thread]['replies'] << item
+        end
+      else
+        items2 << item  
+      end
+
+    end
+    
+    logger.info("item#get_itemsproc we have #{items2.length} items after removing non-roots");
+    
+    # We're probably no longer using the global numbers, as we've added them up just now
+    # ['Value','items.value desc,items.id desc'],['Approval','items.approval desc,items.id desc'],['Interest','items.interest desc,items.id desc'],['Controversy','items.controversy desc,items.id desc']  
+  
+    if regmean
+      #-- Go through the items again and adjust them with a regression to the mean
+      for item in items
+        iproc = itemsproc[item.id]
+        iproc['ratingwithregmean'] = ''
+        if iproc['num_interest'] < avg_votes_int and iproc['num_interest'] > 0
+          old_num_interest = iproc['num_interest']
+          old_tot_interest = iproc['tot_interest']
+          iproc['tot_interest'] += (avg_votes_int - iproc['num_interest']) * avg_interest
+          iproc['num_interest'] = avg_votes_int
+          iproc['avg_interest'] = 1.0 * iproc['tot_interest'] / iproc['num_interest']
+          iproc['ratingwithregmean'] += "int votes adjusted #{old_num_interest} -> #{iproc['num_interest']}. int total adjusted #{old_tot_interest} -> #{iproc['tot_interest']}<br>"
+        end  
+        if iproc['num_approval'] < avg_votes_app and iproc['num_approval'] > 0
+          old_num_approval = iproc['num_approval']
+          old_tot_approval = iproc['tot_approval']
+          iproc['tot_approval'] += (avg_votes_app - iproc['num_approval']) * avg_approval
+          iproc['num_approval'] = avg_votes_app
+          iproc['avg_approval'] = 1.0 * iproc['tot_approval'] / iproc['num_approval']
+          iproc['ratingwithregmean'] += "app votes adjusted #{old_num_approval} -> #{iproc['num_approval']}. app total adjusted #{old_tot_approval} -> #{iproc['tot_approval']}<br>"
+        end  
+        iproc['value'] = iproc['avg_interest'] * iproc['avg_approval']
+        iproc['ratingwithregmean'] += "Average interest: #{iproc['tot_interest']} total / #{iproc['num_interest']} ratings = #{iproc['avg_interest']}<br>" + "Average approval: #{iproc['tot_approval']} total / #{iproc['num_approval']} ratings = #{iproc['avg_approval']}<br>" + "Value: #{iproc['avg_interest']} interest * #{iproc['avg_approval']} approval = #{iproc['value']}"
+        itemsproc[item.id] = iproc
+      end
+    end
+
+    return(itemsproc)
+  end
+  
+  def self.get_sorted(items2,itemsproc,sortby)
+    #-- Return items sorted by something in itemsproc (value, etc.)
+    
+    #need: rootonly, want_crosstalk, dialog, period, participant_id
+    rootonly = false
+    
+    #if sortby.to_s == 'default'
+    #  #-- Fancy sort, trying to mix genders/ages. First figure out which one, if we weren't already told
+    #  if want_crosstalk
+    #  elsif dialog and period and dialog.active_period.id == period.id and period.crosstalk != 'none'
+    #    want_crosstalk = period.crosstalk
+    #  else
+    #    want_crosstalk = 'gender'
+    #  end
+    #  items = Item.custom_item_sort(items2, itemsproc, participant_id, dialog, want_crosstalk)
+    if sortby.to_s == 'default'
+      sortby.to_s = 'items.id desc'
+    end
+      
+    if sortby.to_s == '*value*' or sortby.to_s == ''
+      logger.info("item#list_and_results sorting by value")
+      itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[1]['id']]<=>[a[1]['value'],a[1]['votes'],a[1]['id']]}
+      outitems = []
+      itemsproc_sorted.each do |item_id,iproc|
+        if (not rootonly) or iproc['item'].is_first_in_thread
+          outitems << iproc['item']
+        end
+      end
+      items = outitems
+    elsif sortby == '*approval*'      
+      itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_approval'],b[1]['votes'],b[1]['id']]<=>[a[1]['avg_approval'],a[1]['votes'],a[1]['id']]}
+      outitems = []
+      itemsproc_sorted.each do |item_id,iproc|
+        if (not rootonly) or iproc['item'].is_first_in_thread
+          outitems << iproc['item']
+        end
+      end
+      items = outitems
+    elsif sortby == '*interest*'      
+      itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['avg_interest'],b[1]['votes'],b[1]['id']]<=>[a[1]['avg_interest'],a[1]['votes'],a[1]['id']]}
+      outitems = []
+      itemsproc_sorted.each do |item_id,iproc|
+        if (not rootonly) or iproc['item'].is_first_in_thread
+          outitems << iproc['item']
+        end
+      end
+      items = outitems
+    elsif sortby == '*controversy*'      
+      itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['controversy'],b[1]['votes'],b[1]['id']]<=>[a[1]['controversy'],a[1]['votes'],a[1]['id']]}
+      outitems = []
+      itemsproc_sorted.each do |item_id,iproc|
+        if (not rootonly) or iproc['item'].is_first_in_thread
+          outitems << iproc['item']
+        end
+      end
+      items = outitems
+    elsif items2.class != Array
+      items = items2.order(sortby)
+    elsif sortby == 'items.id desc'
+      items = items2.sort {|a,b| b.id <=> a.id}
+    else  
+      #-- Already sorted in ID order
+      logger.info("item#get_sorted leaving sorted by ID")
+      items = items2
+    end
+    
+    return items
+  end
+  
   def self.results_meta_breakdown(dialog,period,group,regmean=false)
     #-- Produce ranked item listings by meta categories of posters and raters, for the dialog results
 

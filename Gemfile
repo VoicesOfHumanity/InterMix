@@ -8,7 +8,8 @@ gem 'rake'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'mysql2'
+#gem 'mysql2'
+gem 'mysql2', '~> 0.3.18'
 
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
@@ -96,9 +97,9 @@ end
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'therubyracer', :platforms => :ruby
 
-  gem 'uglifier', '>= 1.0.3'
+  gem 'uglifier'
   
-  gem 'libv8', '>=3.12'
+  gem 'libv8'
 #end
 
 
