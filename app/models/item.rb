@@ -890,6 +890,108 @@ class Item < ActiveRecord::Base
     
   end
   
+  def self.get_items(crit,current_participant)
+    #-- Get the items and records that match a certain criteria. Mainly for geoslider
+  
+    # Start preparing the queries
+    items = Item.where(nil)
+    ratings = Rating.where(nil)
+    title = ''
+
+    # Discussion and period
+    items = items.where("items.dialog_id = ?", crit[:dialog_id]) if crit[:dialog_id].to_i > 0
+    items = items.where("items.dialog_id = 0 or items.dialog_id is null") if crit[:dialog_id].to_i < 0
+    items = items.where("items.period_id = ?", crit[:period_id]) if crit[:period_id].to_i > 0    
+    ratings = ratings.where("ratings.dialog_id=#{crit[:dialog_id]}") if crit[:dialog_id].to_i > 0
+    ratings = ratings.where("ratings.period_id=#{crit[:period_id]}") if crit[:period_id].to_i >0  
+
+    items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
+    ratings = ratings.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
+
+
+    # Group slider selections
+    group = nil   
+    group_id = 0  
+    if crit[:group_level] == 'current'
+      group_id = crit[:group_id].to_i
+      group = Group.find_by_id(group_id) if group_id > 0
+      items = items.where("items.group_id = #{group_id} or items.first_in_thread_group_id = #{group_id}")
+      ratings = ratings.where("ratings.group_id = #{group_id}")
+      if group
+        title += " | Group: #{group_id} : #{group.name}"
+      else
+        title += " | Group: #{group_id}"        
+      end
+    elsif crit[:group_level] == 'user'
+      #-- Groups they're a member of
+      groups = current_participant.groups_in.collect{|g| g[0]}
+      items = items.where("items.group_id in (#{groups.join(',')}) or items.first_in_thread_group_id in (#{groups.join(',')})")
+      ratings = ratings.where("ratings.group_id in (#{groups.join(',')})")
+      title += " |  My #{groups.length} groups"
+    elsif crit[:group_level] == 'all' 
+      title += " | All groups"   
+    end
+  
+    # Either posted in that geo level or no geo level given
+    items = items.where("geo_level = ? or geo_level is null or geo_level = ''", crit[:geo_level]) if (crit[:geo_level].to_s != '' and crit[:geo_level] != 'all')
+  
+    if crit[:geo_level] == 'city'
+      items = items.where("participants.city=?",current_participant.city)
+      ratings = ratings.where("participants.city=?",current_participant.city)
+      title += "City/Town: #{current_participant.city}"
+    elsif crit[:geo_level] == 'metro'
+      items = items.where("participants.metro_area_id=?",current_participant.metro_area_id)
+      ratings = ratings.where("participants.metro_area_id=?",current_participant.metro_area_id)
+      title += "Metro Region: #{current_participant.metro_area_id} : #{current_participant.metro_area.name}"
+    elsif crit[:geo_level] == 'state'  
+      items = items.where("participants.admin1uniq=?",current_participant.admin1uniq)
+      ratings = ratings.where("participants.admin1uniq=?",current_participant.admin1uniq)
+      title += "State/Province: #{current_participant.admin1uniq} : #{current_participant.geoadmin1.name}"
+    elsif crit[:geo_level] == 'nation'
+      items = items.where("participants.country_code=?",current_participant.country_code)
+      ratings = ratings.where("participants.country_code=?",current_participant.country_code)
+      title += "Nation: #{current_participant.country_code} : #{current_participant.geocountry.name}"
+    elsif crit[:geo_level] == 'planet'
+      title += "Planet Earth"  
+    elsif crit[:geo_level] == 'all'
+      title += "All Perspectives"
+    end  
+
+    if crit[:indigenous]
+      items = items.where("participants.indigenous=1")
+      ratings = ratings.where("participants.indigenous=1")
+    end
+    if crit[:other_minority]
+      items = items.where("participants.other_minority=1")
+      ratings = ratings.where("participants.other_minority=1")
+    end
+    if crit[:veteran]
+      items = items.where("participants.veteran=1")
+      ratings = ratings.where("participants.veteran=1")
+    end
+    if crit[:interfaith]
+      items = items.where("participants.interfaith=1")
+      ratings = ratings.where("participants.interfaith=1")
+    end
+  
+    if crit[:gender] != 0
+      items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
+      ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
+    end
+    if crit[:age] != 0
+      items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
+      ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
+    end
+
+    #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
+    items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
+    items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation")
+  
+    logger.info("item#get_items #{items.length} items and #{ratings.length} ratings")
+  
+    return items,ratings,title
+  end
+  
   def self.get_itemsproc(items,ratings,participant_id)
     # Add things up based on given items and ratings. Return itemsproc
     logger.info("item#get_itemsproc #{items.length} items and #{ratings.length} ratings")
