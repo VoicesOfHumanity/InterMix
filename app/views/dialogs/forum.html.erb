@@ -88,7 +88,7 @@
 		<% for metamap in @metamaps -%>
 		<div class="lefttitle">Posted by <%= metamap.name %>:</div>
 		<div class="leftfield">
-		<%= select_tag "posted_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["posted_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('posted_by_metamap_#{metamap.id}')" %>
+		<%= select_tag "posted_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(sumcat: false).where(:metamap_id=>metamap.id),'id','name',params["posted_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('posted_by_metamap_#{metamap.id}')" %>
 		</div>  	
 		<% end -%>
 
@@ -125,7 +125,7 @@
 		<% for metamap in @metamaps -%>
 		<div class="lefttitle">Rated by <%= metamap.name %>:</div>
 		<div class="leftfield">
-		<%= select_tag "rated_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap.id),'id','name',params["rated_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('rated_by_metamap_#{metamap.id}')" %>
+		<%= select_tag "rated_by_metamap_#{metamap.id}", raw('<option value="0">*any*</option>')+options_from_collection_for_select(MetamapNode.where(sumcat: false).where(:metamap_id=>metamap.id),'id','name',params["rated_by_metamap_#{metamap.id}"].to_i), :onchange=>"list('rated_by_metamap_#{metamap.id}')" %>
 		</div>  	
 		<% end -%>
 

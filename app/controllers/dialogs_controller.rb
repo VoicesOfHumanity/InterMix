@@ -55,11 +55,26 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id]
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
+    @sortby = '*value*'
     if @show_result == 1
       @dsection = 'meta'
+      @period_id = 0
+      if @dialog.previous_period
+        @period_id = @dialog.previous_period.id
+      elsif @dialog.recent_period
+        @period_id = @dialog.recent_period.id
+      else
+        @period_id = 0
+      end
     else
       @dsection = 'list'
+      if @dialog.recent_period
+        @period_id = @dialog.recent_period.id
+      else
+        @period_id = 0
+      end
     end
+    @period = Period.find_by_id(@period_id) if @period_id > 0
   end
   
   def show

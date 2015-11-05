@@ -247,8 +247,8 @@ class ApplicationController < ActionController::Base
       #session[:cur_baseurl] + '/me/profile/edit#settings'
       session[:cur_baseurl] + '/me/profile/meta'
     elsif dialog_id.to_i > 0
-      logger.info("application#after_sign_in_path_for setting path to dialog forum")
-      session[:cur_baseurl] + "/dialogs/#{dialog_id}/forum"
+      logger.info("application#after_sign_in_path_for setting path to dialog slider list")
+      session[:cur_baseurl] + "/dialogs/#{dialog_id}/slider"
     elsif group_id.to_i > 0
       logger.info("application#after_sign_in_path_for setting path to group forum")
       session[:cur_baseurl] + "/groups/#{group_id}/forum"      

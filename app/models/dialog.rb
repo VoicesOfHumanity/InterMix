@@ -98,6 +98,16 @@ class Dialog < ActiveRecord::Base
     end    
   end  
   
+  def previous_period
+    #-- Find the period before this one, if any
+    periods = Period.where("dialog_id=#{self.id}").order("id")
+    if periods.length > 1
+      periods[1]
+    else
+      nil
+    end
+  end
+  
   def to_liquid
       {'id'=>id,'name'=>name,'shortname'=>shortname,'description'=>description}
   end

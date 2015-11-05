@@ -1217,7 +1217,7 @@ class Item < ActiveRecord::Base
     end
       
     if sortby.to_s == '*value*' or sortby.to_s == ''
-      logger.info("item#list_and_results sorting by value")
+      logger.info("item#get_sorted sorting by value")
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[1]['id']]<=>[a[1]['value'],a[1]['votes'],a[1]['id']]}
       outitems = []
       itemsproc_sorted.each do |item_id,iproc|

@@ -853,6 +853,9 @@ class ItemsController < ApplicationController
   
     @dialog_id = crit[:dialog_id]
     @period_id = crit[:period_id]
+    
+    @dialog = Dialog.find_by_id(crit[:dialog_id]) if crit[:dialog_id] > 0
+    @period = Period.find_by_id(crit[:period_id]) if crit[:period_id] > 0
   
     @title = ""
 
@@ -1023,7 +1026,8 @@ class ItemsController < ApplicationController
       @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
   
       # Items probably need to be sorted, based on the results we calculated
-      sortby = '*value*'
+      #sortby = '*value*'
+      sortby = params[:sortby]
       @items = Item.get_sorted(items,@itemsproc,sortby)
   
       # Listing. Divide into reasonable batches
