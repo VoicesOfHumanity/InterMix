@@ -2,11 +2,11 @@
   <h3><%= info[:name ]%></h3>
   
   <% if @period_id.to_i > 0 and @dialog.previous_period and @period_id == @dialog.previous_period.id -%>
-  <p>These results are for the previous period, which ended on <%= @dialog.previous_period.enddate ? @dialog.previous_period.enddate.strftime("%Y-%m-%d") : '???' %>.</p>
+  <p>These results are for the previous period, which ended on <%= @dialog.previous_period.endposting ? @dialog.previous_period.endposting.strftime("%Y-%m-%d") : '???' %>.</p>
   <% elsif @period_id.to_i > 0 and @dialog.active_period and @period_id == @dialog.active_period.id -%>
   <p>This Decision Period is still open. These results are preliminary and subject to change.</p>
   <% elsif @period_id.to_i > 0 %>
-  <p>These results are for the period which ended on <%= @period.enddate ? @period.enddate.strftime("%Y-%m-%d") : '???' %></p>
+  <p>These results are for the period which ended on <%= @period.endposting ? @period.endposting.strftime("%Y-%m-%d") : '???' %></p>
   <% end -%>
 
   <% if info[:item] -%>
