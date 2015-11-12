@@ -119,10 +119,10 @@
 			<% end -%>
 			
 			</b></div>
-			<div style="width:75%;float:left">
+			<div style="width:75%;float:left;clear:left;">
 				<div id="textdiv" style="<%= @item.media_type!='text' ? 'display:none' : '' %>">
 				<% "ckeditor_textarea( :item, :html_content, :ajax => true, :width=>'97%', :height=>'250', :toolbar=>'Basic' )" %> 
-				<%= cktext_area(:item, :html_content, :ckeditor => {:ajax => true, :width=>(@item.reply_to.to_i>0 ? 466 : 516), :height=>'250', :toolbar=>'Custom'}) %>
+				<%= cktext_area(:item, :html_content, :ckeditor => {:ajax => true, :width=>(@item.reply_to.to_i>0 ? 500 : 516), :height=>'250', :toolbar=>'Custom'}) %>
 				</div>
 				<div id="linkdiv" style="<%= @item.media_type=='text' ? 'display:none' : '' %>">
 				<input id="item_link" maxlength="255" name="item[link]" value="<%= @item.link %>" size="50" type="text" /> 
@@ -130,7 +130,7 @@
 			</div>
 		</li>
 
-    <li class="text optional" id="item_short_content_input"><label for="item_short_content">Short summary<br/>/ twitter version<br/>(<span id="charsused">0</span> of 106 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 466 : 516 %>px;height: 80px"><%= @item.short_content %></textarea></li>
+    <li class="text optional" id="item_short_content_input"><label for="item_short_content">Short summary<br/>/ twitter version<br/>(<span id="charsused">0</span> of 106 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px"><%= @item.short_content %></textarea></li>
 
 		<% if true -%>
     <li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Tags</label><input id="item_tag_list" name="item[tag_list]" size="80" type="text" value="" /></li>

@@ -890,7 +890,7 @@ class Item < ActiveRecord::Base
     
   end
   
-  def self.get_items(crit,current_participant)
+  def self.get_items(crit,current_participant,rootonly=true)
     #-- Get the items and records that match a certain criteria. Mainly for geoslider
   
     # Start preparing the queries
@@ -982,6 +982,13 @@ class Item < ActiveRecord::Base
       items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
       ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
     end
+    
+    if rootonly
+      # Leaving non-roots in there. Will be sorted out in get_itemsproc
+      #items = items.where("is_first_in_thread=1")
+      # So, if we limit items to rootonly, we might have ratings for other items too
+      # That should hopefully not matter.
+    end
 
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
     items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
@@ -992,12 +999,11 @@ class Item < ActiveRecord::Base
     return items,ratings,title
   end
   
-  def self.get_itemsproc(items,ratings,participant_id)
+  def self.get_itemsproc(items,ratings,participant_id,rootonly=true)
     # Add things up based on given items and ratings. Return itemsproc
-    logger.info("item#get_itemsproc #{items.length} items and #{ratings.length} ratings")
+    logger.info("item#get_itemsproc start with #{items.length} items and #{ratings.length} ratings")
     
     regmean = true
-    rootonly = false
     sortby = ''
 
     itemsproc = {}  # Stats for each item
@@ -1197,11 +1203,11 @@ class Item < ActiveRecord::Base
     return(itemsproc)
   end
   
-  def self.get_sorted(items2,itemsproc,sortby)
+  def self.get_sorted(items2,itemsproc,sortby,rootonly=true)
     #-- Return items sorted by something in itemsproc (value, etc.)
     
     #need: rootonly, want_crosstalk, dialog, period, participant_id
-    rootonly = false
+    #rootonly = false
     
     #if sortby.to_s == 'default'
     #  #-- Fancy sort, trying to mix genders/ages. First figure out which one, if we weren't already told
@@ -1254,14 +1260,31 @@ class Item < ActiveRecord::Base
       end
       items = outitems
     elsif items2.class != Array
+      logger.info("item#get_sorted not array, sorting query")
       items = items2.order(sortby)
+      outitems = []
+      for item in items
+        if (not rootonly) or item.is_first_in_thread
+          outitems << item
+        end
+      end
+      items = outitems
     elsif sortby == 'items.id desc'
       items = items2.sort {|a,b| b.id <=> a.id}
+      outitems = []
+      for item in items
+        if (not rootonly) or item.is_first_in_thread
+          outitems << item
+        end
+      end
+      items = outitems
     else  
       #-- Already sorted in ID order
       logger.info("item#get_sorted leaving sorted by ID")
       items = items2
     end
+
+    logger.info("item#get_sorted sorted #{items.length} items by #{sortby}");
     
     return items
   end
@@ -2218,7 +2241,7 @@ class Item < ActiveRecord::Base
     self.v_ok_exp = exp
     self.v_p_id = participant_id
     
-    logger.info("item#voting_ok ##{self.id} ok:#{ok} exp:#{exp}")
+    #logger.info("item#voting_ok ##{self.id} ok:#{ok} exp:#{exp}")
     
     ok
   end  

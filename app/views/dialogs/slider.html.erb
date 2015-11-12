@@ -16,6 +16,10 @@
     			<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
     			<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"per_reload()" %></p>
       <% end -%>
+      
+  		<p>Threads: 
+        <%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"per_reload()" %>
+  		</p>
     
   		<% if @dialog.periods.length > 0 -%>
   		<p>Decision Period:
@@ -156,11 +160,12 @@ function per_reload() {
   var meta_5 = $("input[name='meta_5']:checked").val()
   var dialog_id = $('#dialog_id').val();
   var period_id = $('#period_id').val();
+  var threads = $('#threads').val();
   var sortby = $('#sortby').val();
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, sortby: sortby},
+	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby},
 	  complete: function(t){ 
       $('#per_main').css('opacity','1.0');
 	    $('#per_main').html(t.responseText);

@@ -1018,17 +1018,24 @@ class ItemsController < ApplicationController
       render :partial=>'simple_result'
     
     else
+      
+      @threads = params[:threads]
+      if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
+        rootonly = true
+      else
+        rootonly = false
+      end
     
-      items,ratings,@title = Item.get_items(crit,current_participant)
+      items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
     
       # Add up results for those items and those ratings, to show in the item summaries in the listing
       # I.e. add up the number of interest/approval ratings for each item, do regression to the mean, calculate value, etc
-      @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+      @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
   
       # Items probably need to be sorted, based on the results we calculated
       #sortby = '*value*'
       sortby = params[:sortby]
-      @items = Item.get_sorted(items,@itemsproc,sortby)
+      @items = Item.get_sorted(items,@itemsproc,sortby,rootonly)
   
       # Listing. Divide into reasonable batches
       @batches = []
