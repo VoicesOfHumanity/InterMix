@@ -1,5 +1,6 @@
 <p style="clear:both;padding:0 19px 0 0">
-<% if @dsection == 'meta' -%>
+  
+<% if false and @dsection == 'meta' -%>
 <% @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id.to_i > 0 %>
 <span style="font-size:16px"><%= @period_id.to_i==0 ? "Overall": "Decision" %> Results for Discussion:</span><br/><span style="font-size:20px"><%= @dialog.name %></span><span style="font-size:16px"><%= @period ? ": #{@period.name}" : "" %></span>
 	<% if @limit_group %><br><span style="font-size:16px">Results for group: <span style="color:#900;font-weight:bold;"><%= @limit_group.name %></span></span><% end %>
@@ -7,11 +8,23 @@
 <% @group = Group.find_by_id(@group_id.to_i > 0 ? @group_id : session[:group_id]) if not @group %>
 Group: <a href="/groups/<%= @group ? @group.id : 0 %>/forum" style="text-decoration:none;"><span style="font-size:20px;color:#000;"><%= @group ? @group.name : '[unknown]' %></span></a><br>
 This Discussion: <span style="font-size:20px"><%= @dialog.name %>&nbsp;&nbsp;</span><img src="/images/question-mark.png" class="tooltip" width="16" height="16" title="<%= @dialog.description.to_s != '' ? @dialog.description : "No description for this discussion" %>"><br>
+
 <% if (@dialog.active_period and @sortby=='default') or @period_id.to_i > 0 -%>
-This Decision Period: <span style="font-size:20px" id="period_name_heading"><%= (@period and @period.period_number.to_i > 0) ? "##{@period.period_number} " : ""%><%= @period ? ": #{@period.name}" : "" %>&nbsp;&nbsp;</span><img src="/images/question-mark.png" class="tooltip" width="16" height="16" title="<%= show_period_instructions(@dialog,@period) %>">
+Decision Period: 
+<% if @dsection=='list' or @dsection=='meta' -%>
+  		<% if @dialog.periods.length > 0 -%>
+  		<%= select_tag "period_id", options_for_select([['All messages',0]]+@dialog.periods.collect{|c| ["#{c.period_number.to_i>0 ? "##{c.period_number} " : ""}#{c.name}",c.id]},@period_id), :onchange=>"per_reload()" %>
+  		<% else -%>
+  		<%= hidden_field_tag :period_id, 0 %>	
+  		<% end -%>
+<% else -%>
+<span style="font-size:20px" id="period_name_heading"><%= (@period and @period.period_number.to_i > 0) ? "##{@period.period_number} " : ""%><%= @period ? ": #{@period.name}" : "" %>&nbsp;&nbsp;</span>
+<% end -%>
+<img src="/images/question-mark.png" class="tooltip" width="16" height="16" title="<%= show_period_instructions(@dialog,@period) %>">
 	<% if @dsection == 'forum' and @period.shortdesc.to_s != '' -%>
 	<br><div style="border:1px solid #000;width:90%;padding:8px 8px 0px 10px;"><%=raw @period.description %></div>
 	<% end -%>
 <% end -%>
+
 <% end -%>
 </p>

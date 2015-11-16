@@ -851,8 +851,16 @@ class ItemsController < ApplicationController
     @dialog = Dialog.find_by_id(crit[:dialog_id]) if crit[:dialog_id] > 0
     @period = Period.find_by_id(crit[:period_id]) if crit[:period_id] > 0
 
+    @threads = params[:threads]
+    if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
+      rootonly = true
+    else
+      rootonly = false
+    end
+
     #-- See how many total posts there are, to be able to do a graphic
-    all_posts = Item.where(:is_first_in_thread => true)
+    all_posts = Item.where(nil)
+    all_posts = all_posts.where(:is_first_in_thread => true) if rootonly
     all_posts = all_posts.where(dialog_id: crit[:dialog_id]) if crit[:dialog_id] > 0
     all_posts = all_posts.where(period_id: crit[:period_id]) if crit[:period_id] > 0
     @num_all_posts = all_posts.count
@@ -1017,14 +1025,7 @@ class ItemsController < ApplicationController
       render :partial=>'simple_result'
     
     else
-      
-      @threads = params[:threads]
-      if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
-        rootonly = true
-      else
-        rootonly = false
-      end
-    
+          
       items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
     
       # Add up results for those items and those ratings, to show in the item summaries in the listing
