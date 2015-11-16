@@ -819,12 +819,6 @@ class ItemsController < ApplicationController
     # group_level: current, my, all groups. 
   
     # indigenous, other minority, veteran, interfaith
-
-    if session[:num_all_posts].to_i == 0
-      #-- See how many total posts there are, to be able to do a graphic
-      session[:num_all_posts] = Item.where(:is_first_in_thread => true).count
-    end
-    @num_all_posts = session[:num_all_posts]
   
     crit = {}
   
@@ -856,9 +850,14 @@ class ItemsController < ApplicationController
     
     @dialog = Dialog.find_by_id(crit[:dialog_id]) if crit[:dialog_id] > 0
     @period = Period.find_by_id(crit[:period_id]) if crit[:period_id] > 0
+
+    #-- See how many total posts there are, to be able to do a graphic
+    all_posts = Item.where(:is_first_in_thread => true)
+    all_posts = all_posts.where(dialog_id: crit[:dialog_id]) if crit[:dialog_id] > 0
+    all_posts = all_posts.where(period_id: crit[:period_id]) if crit[:period_id] > 0
+    @num_all_posts = all_posts.count
   
     @title = ""
-
 
     @data = {}  
   

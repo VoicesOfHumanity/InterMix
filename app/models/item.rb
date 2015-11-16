@@ -918,18 +918,18 @@ class Item < ActiveRecord::Base
       items = items.where("items.group_id = #{group_id} or items.first_in_thread_group_id = #{group_id}")
       ratings = ratings.where("ratings.group_id = #{group_id}")
       if group
-        title += " | Group: #{group_id} : #{group.name}"
+        title += "#{group.name}"
       else
-        title += " | Group: #{group_id}"        
+        title += "#{group_id}"        
       end
     elsif crit[:group_level] == 'user'
       #-- Groups they're a member of
       groups = current_participant.groups_in.collect{|g| g[0]}
       items = items.where("items.group_id in (#{groups.join(',')}) or items.first_in_thread_group_id in (#{groups.join(',')})")
       ratings = ratings.where("ratings.group_id in (#{groups.join(',')})")
-      title += " |  My #{groups.length} groups"
+      title += "My groups"
     elsif crit[:group_level] == 'all' 
-      title += " | All groups"   
+      title += "All groups"   
     end
   
     # Either posted in that geo level or no geo level given
@@ -938,23 +938,23 @@ class Item < ActiveRecord::Base
     if crit[:geo_level] == 'city'
       items = items.where("participants.city=?",current_participant.city)
       ratings = ratings.where("participants.city=?",current_participant.city)
-      title += "City/Town: #{current_participant.city}"
+      title += " | #{current_participant.city}"
     elsif crit[:geo_level] == 'metro'
       items = items.where("participants.metro_area_id=?",current_participant.metro_area_id)
       ratings = ratings.where("participants.metro_area_id=?",current_participant.metro_area_id)
-      title += "Metro Region: #{current_participant.metro_area_id} : #{current_participant.metro_area.name}"
+      title += " | #{current_participant.metro_area.name}"
     elsif crit[:geo_level] == 'state'  
       items = items.where("participants.admin1uniq=?",current_participant.admin1uniq)
       ratings = ratings.where("participants.admin1uniq=?",current_participant.admin1uniq)
-      title += "State/Province: #{current_participant.admin1uniq} : #{current_participant.geoadmin1.name}"
+      title += " | #{current_participant.geoadmin1.name}"
     elsif crit[:geo_level] == 'nation'
       items = items.where("participants.country_code=?",current_participant.country_code)
       ratings = ratings.where("participants.country_code=?",current_participant.country_code)
-      title += "Nation: #{current_participant.country_code} : #{current_participant.geocountry.name}"
+      title += " | #{current_participant.geocountry.name}"
     elsif crit[:geo_level] == 'planet'
-      title += "Planet Earth"  
+      title += " | Planet Earth"  
     elsif crit[:geo_level] == 'all'
-      title += "All Perspectives"
+      title += " | All Perspectives"
     end  
 
     if crit[:indigenous]
