@@ -820,13 +820,17 @@ class ItemsController < ApplicationController
   
     # indigenous, other minority, veteran, interfaith
   
+    show_result = (params[:show_result].to_i == 1)
+  
     crit = {}
   
     geo_level = params[:geo_level].to_i
+    session[:geo_level] = geo_level
     geo_levels = GEO_LEVELS               # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}    
     crit[:geo_level] = geo_levels[geo_level]
   
     group_level = params[:group_level].to_i
+    session[:group_level] = group_level
     group_levels = {1 => 'current', 2 => 'user', 3 => 'all'}
     crit[:group_level] = group_levels[group_level]
   
@@ -837,14 +841,17 @@ class ItemsController < ApplicationController
   
     crit[:dialog_id] = params[:dialog_id].to_i
     crit[:period_id] = params[:period_id].to_i
+    if show_result
+      session[:slider_result_period_id] = crit[:period_id]
+    else
+      session[:slider_list_period_id] = crit[:period_id]
+    end
     
     crit[:group_id] = session[:group_id].to_i
   
     crit[:gender] = params[:meta_3].to_i
     crit[:age] = params[:meta_5].to_i
-  
-    show_result = (params[:show_result].to_i == 1)
-  
+    
     @dialog_id = crit[:dialog_id]
     @period_id = crit[:period_id]
     

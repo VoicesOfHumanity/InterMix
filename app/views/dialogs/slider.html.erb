@@ -108,8 +108,8 @@
 
 <script>
 var geo_levels = {1: 'city', 2: 'metro', 3: 'state', 4: 'nation', 5: 'planet'};
-var cur_geo_level = 1;
-var cur_group_level = 1;
+var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 5 %>;
+var cur_group_level = <%= @group_level > 0 ? @group_level : 3 %>;
 var cur_batch_level = 1;
 var cur_batch_size = 4;
 $(function() {

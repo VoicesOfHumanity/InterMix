@@ -56,10 +56,24 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     @sortby = '*value*'
+    
+    # geo level defaults to Planet Earth, but a different choice is remembered in the current session
+    if session[:geo_level].to_i > 0
+      @geo_level = session[:geo_level]
+    else
+      @geo_level = 5
+    end
+    if session[:group_level].to_i > 0
+      @group_level = session[:group_level]
+    else
+      @group_level = 3
+    end
+    
     if @show_result == 1
       @dsection = 'meta'
-      @period_id = 0
-      if @dialog.previous_period
+      if session.has_key?(:slider_result_period_id)
+        @period_id = session[:slider_result_period_id].to_i
+      elsif @dialog.previous_period
         @period_id = @dialog.previous_period.id
       elsif @dialog.recent_period
         @period_id = @dialog.recent_period.id
@@ -68,7 +82,9 @@ class DialogsController < ApplicationController
       end
     else
       @dsection = 'list'
-      if @dialog.recent_period
+      if session.has_key?(:slider_list_period_id)
+        @period_id = session[:slider_list_period_id].to_i
+      elsif @dialog.recent_period
         @period_id = @dialog.recent_period.id
       else
         @period_id = 0

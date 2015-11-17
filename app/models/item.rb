@@ -956,6 +956,31 @@ class Item < ActiveRecord::Base
     elsif crit[:geo_level] == 'all'
       title += " | All Perspectives"
     end  
+    
+    if crit[:gender] != 0
+      items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
+      ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
+    end
+    if crit[:age] != 0
+      items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
+      ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
+    end
+
+    if crit[:gender] > 0 and crit[:age] == 0
+      gender = MetamapNode.find_by_id(crit[:gender])
+      title += " | #{gender.name_as_group}"
+    elsif crit[:gender] == 0 and crit[:age] > 0
+      age = MetamapNode.find_by_id(crit[:age])
+      title += " | #{age.name_as_group}"
+    elsif crit[:gender] > 0 and crit[:age] > 0
+      gender = MetamapNode.find_by_id(crit[:gender])
+      age = MetamapNode.find_by_id(crit[:age])
+      xtit = gender.name_as_group
+      xtit2 = xtit[0..8] + age.name.capitalize + ' ' + xtit[9..100]
+      title += " | #{xtit2}"    
+    else
+      title += " | Voice of Humanity"
+    end
 
     if crit[:indigenous]
       items = items.where("participants.indigenous=1")
@@ -973,16 +998,7 @@ class Item < ActiveRecord::Base
       items = items.where("participants.interfaith=1")
       ratings = ratings.where("participants.interfaith=1")
     end
-  
-    if crit[:gender] != 0
-      items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
-      ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
-    end
-    if crit[:age] != 0
-      items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
-      ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
-    end
-    
+      
     if rootonly
       # Leaving non-roots in there. Will be sorted out in get_itemsproc
       #items = items.where("is_first_in_thread=1")
