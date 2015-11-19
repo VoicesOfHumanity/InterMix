@@ -985,18 +985,22 @@ class Item < ActiveRecord::Base
     if crit[:indigenous]
       items = items.where("participants.indigenous=1")
       ratings = ratings.where("participants.indigenous=1")
+      title += " | Indigenous"
     end
     if crit[:other_minority]
       items = items.where("participants.other_minority=1")
       ratings = ratings.where("participants.other_minority=1")
+      title += " | Other minority"
     end
     if crit[:veteran]
       items = items.where("participants.veteran=1")
       ratings = ratings.where("participants.veteran=1")
+      title += " | Veteran"    
     end
     if crit[:interfaith]
       items = items.where("participants.interfaith=1")
       ratings = ratings.where("participants.interfaith=1")
+      title += " | Interfaith"
     end
       
     if rootonly
@@ -1238,7 +1242,16 @@ class Item < ActiveRecord::Base
       sortby.to_s = 'items.id desc'
     end
       
-    if sortby.to_s == '*value*' or sortby.to_s == ''
+    if sortby.to_s == 'default'
+      #-- Fancy sort, trying to mix genders/ages. First figure out which one, if we weren't already told
+      if want_crosstalk
+      elsif dialog and period and dialog.active_period.id == period.id and period.crosstalk != 'none'
+        want_crosstalk = period.crosstalk
+      else
+        want_crosstalk = 'gender'
+      end
+      items = Item.custom_item_sort(items2, itemsproc, participant_id, dialog, want_crosstalk)
+    elsif sortby.to_s == '*value*' or sortby.to_s == ''
       logger.info("item#get_sorted sorting by value")
       itemsproc_sorted = itemsproc.sort {|a,b| [b[1]['value'],b[1]['votes'],b[1]['id']]<=>[a[1]['value'],a[1]['votes'],a[1]['id']]}
       outitems = []

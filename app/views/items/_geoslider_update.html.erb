@@ -38,6 +38,12 @@
 <div style="clear:both"></div>
 <% end -%>
 
+<div style="text-align: center">
+	<p>Sort:
+	<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
+	<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"per_reload()" %></p>
+</div>
+
 <script>
 var batch_sizes = [<%= @batches.join(',') %>];
 $('#batch_size').val(<%= @showmax %>);

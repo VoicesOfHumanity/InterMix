@@ -841,11 +841,7 @@ class ItemsController < ApplicationController
   
     crit[:dialog_id] = params[:dialog_id].to_i
     crit[:period_id] = params[:period_id].to_i
-    if show_result
-      session[:slider_result_period_id] = crit[:period_id]
-    else
-      session[:slider_list_period_id] = crit[:period_id]
-    end
+    session[:slider_period_id] = crit[:period_id]
     
     crit[:group_id] = session[:group_id].to_i
   
@@ -1041,8 +1037,8 @@ class ItemsController < ApplicationController
   
       # Items probably need to be sorted, based on the results we calculated
       #sortby = '*value*'
-      sortby = params[:sortby]
-      @items = Item.get_sorted(items,@itemsproc,sortby,rootonly)
+      @sortby = params[:sortby]
+      @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
   
       # Listing. Divide into reasonable batches
       @batches = []

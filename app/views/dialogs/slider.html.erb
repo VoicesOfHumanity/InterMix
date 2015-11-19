@@ -7,20 +7,15 @@
     <div id="per_main" style="width:595px;min-height:600px">
   
       loading...
+      
+      <input type="hidden" id="sortby" value="<%= @sortby %>">
   
     </div>
   
-    <div style="text-align: center">
-      <% if @show_result == 0 -%>
-      		<p>Sort:
-    			<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
-    			<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"per_reload()" %></p>
-      <% end -%>
-      
+    <div style="text-align: center">      
   		<p>Threads: 
         <%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"per_reload()" %>
   		</p>
-    
     </div>
     
   
@@ -95,7 +90,7 @@
 </div>
 
 <input type="hidden" name="dialog_id" id="dialog_id" value="<%= @dialog_id %>">
-
+<input type="hidden" name="in_dialog_id" id="in_dialog_id" value="<%= @dialog_id %>">
 <input type="hidden" name="geo_level" id="geo_level" value="1">
 <input type="hidden" name="group_level" id="group_level" value="1">
 <input type="hidden" name="batch_level" id="batch_level" value="1">
@@ -144,6 +139,8 @@ function per_reload() {
  	$('#per_main').css('opacity','0.5');
   var indigenous = $('#indigenous').is(':checked') ? 1 : 0;
   var other_minority = $('#other_minority').is(':checked') ? 1 : 0;
+  var veteran = $('#veteran').is(':checked') ? 1 : 0;
+  var interfaith = $('#interfaith').is(':checked') ? 1 : 0;
   var show_result = $('input[name=show_result]:checked').val();
   //checkbox
   //var meta_3 = $("input[name='meta_3[]']:checked").map(function(){
@@ -158,7 +155,7 @@ function per_reload() {
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby},
+	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby},
 	  complete: function(t){ 
       $('#per_main').css('opacity','1.0');
 	    $('#per_main').html(t.responseText);

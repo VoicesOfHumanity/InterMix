@@ -311,7 +311,8 @@ div.forumitem .subject {
 	padding: 0 5px 0 0px;
 	font-weight: bold;
 	background-color: transparent;
-	width: 420px;
+	/* width: 420px; */
+    width: 305px;
 	margin-bottom: -15px;
 	cursor: pointer;	
 }

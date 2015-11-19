@@ -55,7 +55,6 @@ class DialogsController < ApplicationController
     @dialog_id = params[:id]
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
-    @sortby = '*value*'
     
     # geo level defaults to Planet Earth, but a different choice is remembered in the current session
     if session[:geo_level].to_i > 0
@@ -71,26 +70,38 @@ class DialogsController < ApplicationController
     
     if @show_result == 1
       @dsection = 'meta'
-      if session.has_key?(:slider_result_period_id)
-        @period_id = session[:slider_result_period_id].to_i
-      elsif @dialog.previous_period
-        @period_id = @dialog.previous_period.id
-      elsif @dialog.recent_period
-        @period_id = @dialog.recent_period.id
-      else
-        @period_id = 0
-      end
     else
       @dsection = 'list'
-      if session.has_key?(:slider_list_period_id)
-        @period_id = session[:slider_list_period_id].to_i
-      elsif @dialog.recent_period
+    end
+    
+    if session.has_key?(:slider_period_id)
+      @period_id = session[:slider_period_id].to_i
+    elsif @dialog.recent_period
+      @period_id = @dialog.recent_period.id
+    else
+      @period_id = 0
+    end
+    @period = Period.find_by_id(@period_id) if @period_id > 0
+    if @period and @period.dialog_id != @dialog_id
+      # If the remembered period was for a different discussion, don't use it
+      if @dialog.recent_period
         @period_id = @dialog.recent_period.id
       else
         @period_id = 0
       end
+      @period = Period.find_by_id(@period_id) if @period_id > 0
     end
-    @period = Period.find_by_id(@period_id) if @period_id > 0
+
+    if @period and @period.sort_order == 'date'
+      @sortby = "items.id desc"
+    elsif @period and @period.sort_order == 'value'
+      @sortby = '*value*'      
+    elsif @period and @period.sort_order.to_s != ''
+      @sortby = @period.sort_order      
+    else
+      @sortby = '*value*'
+    end
+
   end
   
   def show
