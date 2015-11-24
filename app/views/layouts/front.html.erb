@@ -76,7 +76,7 @@
 				
 				
 			<% if session[:dialog_id].to_i > 0 -%>
-			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dsection.to_s!='index') %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Home</a></li>
+			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dsection.to_s!='index') %>" href="/dialogs/<%= session[:dialog_id] %>/slider">Home</a></li>
 			<% elsif session[:group_id].to_i > 0 -%>
 			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='groups' and @gsection.to_s!='index') %>" href="/groups/<%= session[:group_id] %>/forum">Home</a></li>
 			<% else %>
@@ -110,7 +110,7 @@
 				
 					<% if true or not (@section=='groups' or @section=='dialogs') -%>
 	  				<% if session[:dialog_id].to_i > 0 -%>
-	  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s!='index' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Forum List</a></li>
+	  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s!='index' %>" href="/dialogs/<%= session[:dialog_id] %>/slider">Forum List</a></li>
 	  				<% elsif session[:group_id].to_i > 0 -%>
 	  				<li class="menu"><a class="<%= 'selected' if @section=='groups' and @gsection.to_s!='index' %>" href="/groups/<%= session[:group_id] %>/forum">Forum List</a></li>
 	  				<% end -%>
@@ -119,7 +119,7 @@
 					<li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='index') or (@section=='dialogs' and @dsection=='index') %>" href="/groups">Groups</a></li>
 					<% if false -%>
 	  				<% if not showingfull and session[:dialog_id].to_i > 0 -%>
-	  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s=='index' %>" href="/dialogs/<%= session[:dialog_id] %>/forum">Discussion</a></li>
+	  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s=='index' %>" href="/dialogs/<%= session[:dialog_id] %>/slider">Discussion</a></li>
 	  				<% elsif session[:group_id].to_i > 0 -%>
 	  				<li class="menu<%= ' full' if session[:dialog_id].to_i==0 and session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s=='index' %>" href="/dialogs">Discussions</a></li>				
 	  				<% else -%>

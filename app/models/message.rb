@@ -60,7 +60,7 @@ class Message < ActiveRecord::Base
             d['name'] = dialog.name
             d['description'] = dialog.description
             d['shortdesc'] = dialog.shortdesc
-            d['forumlink'] = "<a href=\"http://#{dialog.shortname}.#{domain}/dialogs/#{dialog.id}/forum?auth_token=#{recipient.authentication_token}\">http://#{dialog.shortname}.#{domain}/dialogs/#{dialog.id}/forum?auth_token=#{recipient.authentication_token}</a>"
+            d['forumlink'] = "<a href=\"http://#{dialog.shortname}.#{domain}/dialogs/#{dialog.id}/slider?auth_token=#{recipient.authentication_token}\">http://#{dialog.shortname}.#{domain}/dialogs/#{dialog.id}/slider?auth_token=#{recipient.authentication_token}</a>"
             d['logo'] = "#{BASEDOMAIN}#{dialog.logo.url}" if dialog.logo.exists?        
             d['dialog_logo'] = "#{BASEDOMAIN}#{dialog.logo.url}" if dialog.logo.exists?        
             dialogs[dialog.shortname] = d

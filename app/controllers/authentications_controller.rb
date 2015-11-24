@@ -76,7 +76,7 @@ class AuthenticationsController < ApplicationController
             end  
           end  
           if session[:dialog_id].to_i > 0
-            @forum_link = "/dialogs/#{session[:dialog_id]}/forum"
+            @forum_link = "/dialogs/#{session[:dialog_id]}/slider"
           elsif session[:group_id].to_i > 0
             @forum_link = "/groups/#{session[:group_id]}/forum"
           else

@@ -20,7 +20,7 @@ class FrontController < ApplicationController
     cdata = {'cookies'=>cookies}
     if @dialog_id.to_i > 0
       if participant_signed_in?
-        redirect_to "/dialogs/#{@dialog_id}/forum"
+        redirect_to "/dialogs/#{@dialog_id}/slider"
         return
       end
       @dialog = Dialog.find_by_id(@dialog_id)
@@ -1079,7 +1079,7 @@ class FrontController < ApplicationController
           template = Liquid::Template.parse(confirm_welcome_template)
           @content += template.render(cdata)
         else    
-          @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum\">http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/forum</a> to see the messages. You are already logged in.</p>"
+          @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider\">http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider</a> to see the messages. You are already logged in.</p>"
         end
       elsif @group  
         cdata['domain'] = "#{@group.shortname}.#{ROOTDOMAIN}" if @group.shortname.to_s != ""
@@ -1610,7 +1610,7 @@ class FrontController < ApplicationController
       sign_in(:participant, @participant)
       @dialog = Dialog.find_by_id(dialog_id) if dialog_id > 0
       if @dialog
-        redirect_to "/dialogs/#{@dialog.id}/forum"
+        redirect_to "/dialogs/#{@dialog.id}/slider"
       else
         redirect_to "/"
       end

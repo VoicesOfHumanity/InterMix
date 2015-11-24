@@ -455,14 +455,18 @@ function saveitem() {
         	         window.location.hash = '#newforumitem';
         	    }
         	} else {    
-        	  if ($('#from') && $('#from').val()=='individual') {
+        	    if ($('#from') && $('#from').val()=='individual') {
         	        window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];
     		    } else if ($('#from') && $('#from').val()=='thread') {
     		        window.location.reload();
-						} else if ($('#from') && $('#from').val()=='dsimple' && replyingid>0) {
-							list_comments_simple();		
-            } else if ($('#from') && $('#from').val()=='dsimple') {
-              document.location = '/dialogs/' + $('#in_dialog_id').val() + '/forum?item_id=' + results['item_id'];                
+				} else if ($('#from') && $('#from').val()=='dsimple' && replyingid>0) {
+					list_comments_simple();		
+                } else if ($('#from') && $('#from').val()=='dsimple') {
+                    document.location = '/dialogs/' + $('#in_dialog_id').val() + '/forum?item_id=' + results['item_id'];                
+                } else if ($('#from') && $('#from').val()=='geoslider') {
+                    per_reload();
+                } else if ($('#from') && $('#from').val()=='geoslider') {
+                    per_reload();
     		    } else if (results['item_id']) {
     		        list(null,results['item_id']);
     		    } else {

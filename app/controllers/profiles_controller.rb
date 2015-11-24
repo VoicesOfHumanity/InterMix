@@ -47,7 +47,7 @@ class ProfilesController < ApplicationController
     flash.now[:alert] = "Some required fields need to be entered" if not session[:has_required]
     @group = Group.find_by_id(session[:group_id]) if not @group and session[:group_id].to_i > 0
     if session[:dialog_id].to_i > 0
-      @forum_link = "/dialogs/#{session[:dialog_id]}/forum"
+      @forum_link = "/dialogs/#{session[:dialog_id]}/slider"
     elsif @group
       @forum_link = "/groups/#{@group.id}/forum"
     else
@@ -87,7 +87,7 @@ class ProfilesController < ApplicationController
     @group = Group.find_by_id(@group_id) if not @group and @group_id > 0
 
     if session[:dialog_id].to_i > 0
-      @forum_link = "/dialogs/#{session[:dialog_id]}/forum"
+      @forum_link = "/dialogs/#{session[:dialog_id]}/slider"
     elsif @group
       @forum_link = "/groups/#{@group.id}/forum"
     else
