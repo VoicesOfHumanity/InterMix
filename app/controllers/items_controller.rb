@@ -973,12 +973,13 @@ class ItemsController < ApplicationController
       elsif age > 0 and gender == 0
         # two genders with a particular age
         age_id = age
-        age_name = MetamapNode.where(id: age).first.name
+        age_name = MetamapNode.where(id: age).first.name_as_group
         for gender_rec in genders
           gender_id = gender_rec.id
-          gender_name = gender_rec.name
+          #gender_name = gender_rec.name
+          gender_name = gender_pos[gender_id]
           code = "#{age_id}_#{gender_id}"
-          name = "#{age_name} #{gender_name}"
+          name = "#{gender_name} #{age_name}"
           if not gender_rec.sumcat
             item = nil
             iproc = nil
@@ -1001,12 +1002,13 @@ class ItemsController < ApplicationController
       elsif age == 0 and gender > 0
         # three ages with a particular gender
         gender_id = gender
-        gender_name = MetamapNode.where(id: gender).first.name
+        #gender_name = MetamapNode.where(id: gender).first.name
+        gender_name = gender_pos[gender_id]
         for age_rec in ages
           age_id = age_rec.id
-          age_name = age_rec.name
+          age_name = age_rec.name_as_group
           code = "#{age_id}_#{gender_id}"
-          name = "#{age_name} #{gender_name}"
+          name = "#{gender_name} #{age_name}"
           if not age_rec.sumcat
             item = nil
             iproc = nil
