@@ -921,7 +921,7 @@ class GroupsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
 
-      @items, @itemsproc, @extras = Item.list_and_results(@group,nil,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','','','',0,'','',0,@tag,@subgroup)
+      #@items, @itemsproc, @extras = Item.list_and_results(@group,nil,@period_id,0,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','','','',0,'','',0,@tag,@subgroup)
 
     else
       #-- The old way
@@ -941,7 +941,7 @@ class GroupsController < ApplicationController
     
     end
     
-    @items = @items.paginate :page=>@page, :per_page => @perscr  
+    #@items = @items.paginate :page=>@page, :per_page => @perscr  
         
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id),moderator").includes(:group)
 

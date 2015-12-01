@@ -882,14 +882,17 @@ class ItemsController < ApplicationController
       
       age = crit[:age]
       gender = crit[:gender]
+      
+      gender_pos = {207=>"Men's",208=>"Women's"}
     
       if age > 0 and gender > 0
         # One particular result
         age_id = age
-        age_name = MetamapNode.where(id: age).first.name
+        age_name = MetamapNode.where(id: age).first.name_as_group
         gender_id = gender
-        gender_name = MetamapNode.where(id: gender).first.name
-        name = "#{age_name} #{gender_name}"
+        #gender_name = MetamapNode.where(id: gender).first.name
+        gender_name = gender_pos[gender_id]
+        name = "#{gender_name} #{age_name}"
         item = nil
         iproc = nil
         
@@ -908,7 +911,7 @@ class ItemsController < ApplicationController
       elsif age == 0 and gender == 0
         # two genders, three ages, and voice of humanity
         # total
-        name = "Voice of Humanity"
+        name = "Voice of Humanity-as-One"
         item = nil
         iproc = nil
         
@@ -924,7 +927,7 @@ class ItemsController < ApplicationController
         @data['all'] = {name: name, item: item, iproc: iproc}
         for gender_rec in genders
           gender_id = gender_rec.id
-          gender_name = gender_rec.name
+          gender_name = gender_rec.name_as_group
           code = "#{gender_id}"
           name = "#{gender_name}"
           if not gender_rec.sumcat
@@ -946,7 +949,7 @@ class ItemsController < ApplicationController
         end
         for age_rec in ages
           age_id = age_rec.id
-          age_name = age_rec.name
+          age_name = age_rec.name_as_group
           code = "#{age_id}"
           name = "#{age_name}"
           if not age_rec.sumcat
