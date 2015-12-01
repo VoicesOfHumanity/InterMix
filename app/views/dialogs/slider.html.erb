@@ -90,6 +90,8 @@
 </div>
 
 <input type="hidden" name="dialog_id" id="dialog_id" value="<%= @dialog_id %>">
+<input type="hidden" id="active_period_id" value="<%= @dialog.active_period ? @dialog.active_period.id : "0" %>">
+<input type="hidden" id="active_period_name" value="<%= @dialog.active_period ? @dialog.active_period.name : "" %>">
 <input type="hidden" name="in_dialog_id" id="in_dialog_id" value="<%= @dialog_id %>">
 <input type="hidden" name="geo_level" id="geo_level" value="1">
 <input type="hidden" name="group_level" id="group_level" value="1">
@@ -152,6 +154,12 @@ function per_reload() {
   var period_id = $('#period_id').val();
   var threads = $('#threads').val();
   var sortby = $('#sortby').val();
+  var active_period_id = $('#active_period_id').val();
+  if (period_id==active_period_id) {
+    $('#newthreadbutton').prop('disabled', false);    
+  } else {
+    $('#newthreadbutton').prop('disabled', true);   
+  }
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
