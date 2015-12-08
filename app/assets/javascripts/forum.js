@@ -465,8 +465,7 @@ function saveitem() {
                     document.location = '/dialogs/' + $('#in_dialog_id').val() + '/forum?item_id=' + results['item_id'];                
                 } else if ($('#from') && $('#from').val()=='geoslider') {
                     per_reload();
-                } else if ($('#from') && $('#from').val()=='geoslider') {
-                    per_reload();
+                    window.location.hash = '#item_' + results['item_id'];
     		    } else if (results['item_id']) {
     		        list(null,results['item_id']);
     		    } else {
