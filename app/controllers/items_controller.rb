@@ -884,6 +884,7 @@ class ItemsController < ApplicationController
       gender = crit[:gender]
       
       gender_pos = {207=>"Men's",208=>"Women's"}
+      gender_single = {207=>"Men",208=>"Women"}
     
       if age > 0 and gender > 0
         # One particular result
@@ -913,8 +914,7 @@ class ItemsController < ApplicationController
         # total
         name = "Voice of Humanity-as-One"
         item = nil
-        iproc = nil
-        
+        iproc = nil        
         items,ratings,title = Item.get_items(crit,current_participant)
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
@@ -923,8 +923,8 @@ class ItemsController < ApplicationController
           item = items[0]
           iproc = itemsproc[item.id]
         end
-        
         @data['all'] = {name: name, item: item, iproc: iproc}
+        
         for gender_rec in genders
           gender_id = gender_rec.id
           gender_name = gender_rec.name_as_group
@@ -974,6 +974,21 @@ class ItemsController < ApplicationController
         # two genders with a particular age
         age_id = age
         age_name = MetamapNode.where(id: age).first.name_as_group
+        
+        name = "#{age_name}"
+        item = nil
+        iproc = nil        
+        crit[:age] = age_id
+        items,ratings,title = Item.get_items(crit,current_participant)
+        itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        sortby = '*value*'
+        items = Item.get_sorted(items,itemsproc,sortby)
+        if items.length > 0
+          item = items[0]
+          iproc = itemsproc[item.id]
+        end
+        @data['all'] = {name: name, item: item, iproc: iproc}
+        
         for gender_rec in genders
           gender_id = gender_rec.id
           #gender_name = gender_rec.name
@@ -1004,6 +1019,21 @@ class ItemsController < ApplicationController
         gender_id = gender
         #gender_name = MetamapNode.where(id: gender).first.name
         gender_name = gender_pos[gender_id]
+        
+        name = "Voice of #{gender_single[gender_id]}"
+        item = nil
+        iproc = nil        
+        crit[:gender] = gender_id
+        items,ratings,title = Item.get_items(crit,current_participant)
+        itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        sortby = '*value*'
+        items = Item.get_sorted(items,itemsproc,sortby)
+        if items.length > 0
+          item = items[0]
+          iproc = itemsproc[item.id]
+        end
+        @data['all'] = {name: name, item: item, iproc: iproc}
+        
         for age_rec in ages
           age_id = age_rec.id
           age_name = age_rec.name_as_group
