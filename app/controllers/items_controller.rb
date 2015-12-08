@@ -873,6 +873,8 @@ class ItemsController < ApplicationController
     @data = {}  
   
     if show_result
+      # Results will be for the previous period, if there's a current period
+      
       # If we're showing results, then add up results for the required gender and age combinations
       # We will go through the overall items and ratings we have, and put them in those several buckets
       # Then we will add up the results in each of those buckets

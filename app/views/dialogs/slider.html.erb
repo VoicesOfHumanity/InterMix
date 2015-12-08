@@ -14,7 +14,7 @@
   
     <div style="text-align: center">      
   		<p>Threads: 
-        <%= select_tag "threads", options_for_select([['None',''],['Root+Replies','flat'],['Root only','root'],['Tree View','tree']],@threads), :onchange=>"per_reload()" %>
+        <%= select_tag "threads", options_for_select([['None',''],['Candidate+Comments','flat'],['Candidate only','root'],['Tree View','tree']],@threads), :onchange=>"per_reload()" %>
   		</p>
     </div>
     

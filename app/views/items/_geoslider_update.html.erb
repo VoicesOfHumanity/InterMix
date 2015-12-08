@@ -4,7 +4,7 @@
 
 <div style="height:20px;width:590px;background-color:#ccc"><div style="height:20px;width:<%= (show_part * 590).to_i %>px;background-color:#66f;">&nbsp;</div></div>
 
-<p><%= @items.length %> items</p>
+<p><%= @items.length %> item<%= 's' if @items.length != 1 %></p>
 
 <% x = 0 %>
 <% odd_or_even = 0 %>
