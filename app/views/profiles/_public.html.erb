@@ -43,6 +43,9 @@
 <% if @participant.interfaith -%>
 <tr><td class="label">Interfaith:</td><td>yes</td></tr>	
 <% end -%>
+<% if @participant.refugee -%>
+<tr><td class="label">Refugee:</td><td>yes</td></tr>	
+<% end -%>
 
 <tr><td class="label">Groups:</td><td>
 <% if @participant.groups.length == 0 -%>

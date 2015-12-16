@@ -102,3 +102,5 @@ GEO_LEVEL_DESC = {'city' => "My city/town", 'metro' => "My metro region", "state
 
 BITLY_USERNAME = 'intermix2'
 BITLY_TOKEN = 'c9d06623cb928bca6977ae80bbdb1a4cc676309c'
+
+VOH_DISCUSSION_ID = 4

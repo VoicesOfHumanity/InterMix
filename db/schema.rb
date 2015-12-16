@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151001194958) do
+ActiveRecord::Schema.define(version: 20151216221657) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 20151001194958) do
   create_table "dialog_admins", force: :cascade do |t|
     t.integer  "dialog_id",      limit: 4
     t.integer  "participant_id", limit: 4
-    t.boolean  "active",         limit: 1, default: true
+    t.boolean  "active",                   default: true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 20151001194958) do
   create_table "dialog_groups", force: :cascade do |t|
     t.integer  "dialog_id",                limit: 4
     t.integer  "group_id",                 limit: 4
-    t.boolean  "active",                   limit: 1,     default: true
+    t.boolean  "active",                                 default: true
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "signup_template",          limit: 65535
@@ -84,8 +84,8 @@ ActiveRecord::Schema.define(version: 20151001194958) do
   create_table "dialog_participants", force: :cascade do |t|
     t.integer  "dialog_id",         limit: 4
     t.integer  "participant_id",    limit: 4
-    t.boolean  "moderator",         limit: 1,   default: false
-    t.boolean  "active",            limit: 1,   default: true
+    t.boolean  "moderator",                     default: false
+    t.boolean  "active",                        default: true
     t.string   "direct_email_code", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -110,7 +110,7 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.datetime "updated_at"
     t.string   "shortname",                limit: 255
     t.integer  "created_by",               limit: 4
-    t.boolean  "multigroup",               limit: 1,     default: false
+    t.boolean  "multigroup",                             default: false
     t.integer  "group_id",                 limit: 4
     t.string   "openness",                 limit: 255
     t.integer  "max_mess_length",          limit: 4
@@ -127,20 +127,20 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.integer  "logo_file_size",           limit: 4
     t.datetime "logo_updated_at"
     t.text     "default_message",          limit: 65535
-    t.boolean  "required_message",         limit: 1,     default: true
-    t.boolean  "required_subject",         limit: 1,     default: true
-    t.boolean  "alt_logins",               limit: 1,     default: true
+    t.boolean  "required_message",                       default: true
+    t.boolean  "required_subject",                       default: true
+    t.boolean  "alt_logins",                             default: true
     t.integer  "max_messages",             limit: 4,     default: 0
     t.string   "new_message_title",        limit: 255
-    t.boolean  "allow_replies",            limit: 1,     default: true
-    t.boolean  "required_meta",            limit: 1,     default: true
+    t.boolean  "allow_replies",                          default: true
+    t.boolean  "required_meta",                          default: true
     t.string   "value_calc",               limit: 255,   default: "total"
-    t.boolean  "profiles_visible",         limit: 1,     default: true
-    t.boolean  "names_visible_voting",     limit: 1,     default: true
-    t.boolean  "names_visible_general",    limit: 1,     default: true
-    t.boolean  "in_voting_round",          limit: 1,     default: false
-    t.boolean  "posting_open",             limit: 1,     default: true
-    t.boolean  "voting_open",              limit: 1,     default: true
+    t.boolean  "profiles_visible",                       default: true
+    t.boolean  "names_visible_voting",                   default: true
+    t.boolean  "names_visible_general",                  default: true
+    t.boolean  "in_voting_round",                        default: false
+    t.boolean  "posting_open",                           default: true
+    t.boolean  "voting_open",                            default: true
     t.integer  "current_period",           limit: 4
     t.string   "twitter_hash_tag",         limit: 255
   end
@@ -151,7 +151,7 @@ ActiveRecord::Schema.define(version: 20151001194958) do
   create_table "follows", force: :cascade do |t|
     t.integer  "following_id", limit: 4
     t.integer  "followed_id",  limit: 4
-    t.boolean  "mutual",       limit: 1, default: false
+    t.boolean  "mutual",                 default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -164,7 +164,7 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.string  "country_code", limit: 2
     t.string  "admin1_code",  limit: 10
     t.string  "name",         limit: 255
-    t.boolean "has_admin2s",  limit: 1
+    t.boolean "has_admin2s"
   end
 
   add_index "geoadmin1s", ["country_code", "admin1_code"], name: "admin1_code", using: :btree
@@ -229,8 +229,8 @@ ActiveRecord::Schema.define(version: 20151001194958) do
   create_table "group_participants", force: :cascade do |t|
     t.integer  "group_id",          limit: 4
     t.integer  "participant_id",    limit: 4
-    t.boolean  "moderator",         limit: 1,   default: false
-    t.boolean  "active",            limit: 1,   default: true
+    t.boolean  "moderator",                     default: false
+    t.boolean  "active",                        default: true
     t.string   "status",            limit: 255, default: "active"
     t.string   "direct_email_code", limit: 255
     t.datetime "created_at"
@@ -257,7 +257,7 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.string   "tag",         limit: 30
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "selfadd",     limit: 1,     default: true
+    t.boolean  "selfadd",                   default: true
     t.text     "description", limit: 65535
   end
 
@@ -272,20 +272,20 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.string   "visibility",               limit: 255,   default: "public"
     t.string   "openness",                 limit: 255
     t.string   "message_visibility",       limit: 255,   default: "public"
-    t.boolean  "moderation",               limit: 1,     default: false
-    t.boolean  "is_network",               limit: 1,     default: false
-    t.boolean  "is_global",                limit: 1,     default: false
+    t.boolean  "moderation",                             default: false
+    t.boolean  "is_network",                             default: false
+    t.boolean  "is_global",                              default: false
     t.integer  "owner",                    limit: 4
     t.integer  "group_participants_count", limit: 4,     default: 0
     t.integer  "items_count",              limit: 4,     default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "twitter_post",             limit: 1,     default: true
+    t.boolean  "twitter_post",                           default: true
     t.string   "twitter_username",         limit: 255
     t.string   "twitter_oauth_token",      limit: 255
     t.string   "twitter_oauth_secret",     limit: 255
     t.string   "twitter_hash_tag",         limit: 255
-    t.boolean  "has_mail_list",            limit: 1,     default: true
+    t.boolean  "has_mail_list",                          default: true
     t.string   "logo_file_name",           limit: 255
     t.string   "logo_content_type",        limit: 255
     t.integer  "logo_file_size",           limit: 4
@@ -298,11 +298,11 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.text     "confirm_template",         limit: 65535
     t.text     "confirm_email_template",   limit: 65535
     t.text     "confirm_welcome_template", limit: 65535
-    t.boolean  "alt_logins",               limit: 1,     default: true
-    t.boolean  "required_meta",            limit: 1,     default: true
+    t.boolean  "alt_logins",                             default: true
+    t.boolean  "required_meta",                          default: true
     t.integer  "tweet_approval_min",       limit: 4,     default: 1
     t.string   "tweet_what",               limit: 255,   default: "roots"
-    t.boolean  "tweet_subgroups",          limit: 1,     default: false
+    t.boolean  "tweet_subgroups",                        default: false
   end
 
   add_index "groups", ["name"], name: "index_groups_on_name", using: :btree
@@ -321,7 +321,7 @@ ActiveRecord::Schema.define(version: 20151001194958) do
   create_table "hub_admins", force: :cascade do |t|
     t.integer  "hub_id",         limit: 4
     t.integer  "participant_id", limit: 4
-    t.boolean  "active",         limit: 1, default: true
+    t.boolean  "active",                   default: true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -345,7 +345,7 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.integer  "item_id",        limit: 4
     t.integer  "participant_id", limit: 4
     t.text     "comment",        limit: 65535
-    t.boolean  "cleared",        limit: 1,     default: false
+    t.boolean  "cleared",                      default: false
     t.integer  "moderator_id",   limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -397,8 +397,8 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.integer  "dialog_round_id",          limit: 4
     t.string   "subject",                  limit: 255
     t.integer  "subject_id",               limit: 4
-    t.boolean  "promoted_to_forum",        limit: 1
-    t.boolean  "posted_to_forum",          limit: 1,                             default: true
+    t.boolean  "promoted_to_forum"
+    t.boolean  "posted_to_forum",                                                default: true
     t.string   "election_area_type",       limit: 255
     t.string   "moderation_status",        limit: 255
     t.datetime "moderated_at"
@@ -415,21 +415,21 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.decimal  "controversy",                            precision: 6, scale: 2, default: 0.0
     t.text     "oembed_response",          limit: 65535
     t.text     "embed_code",               limit: 65535
-    t.boolean  "has_picture",              limit: 1,                             default: false
+    t.boolean  "has_picture",                                                    default: false
     t.string   "posted_via",               limit: 255,                           default: "web"
     t.integer  "reply_to",                 limit: 4
-    t.boolean  "is_first_in_thread",       limit: 1
+    t.boolean  "is_first_in_thread"
     t.integer  "first_in_thread",          limit: 4
     t.integer  "old_message_id",           limit: 4
-    t.boolean  "is_flagged",               limit: 1,                             default: false
-    t.boolean  "edit_locked",              limit: 1,                             default: false
+    t.boolean  "is_flagged",                                                     default: false
+    t.boolean  "edit_locked",                                                    default: false
     t.integer  "period_id",                limit: 4
     t.integer  "first_in_thread_group_id", limit: 4
-    t.boolean  "tweeted_user",             limit: 1,                             default: false
+    t.boolean  "tweeted_user",                                                   default: false
     t.datetime "tweeted_user_at"
-    t.boolean  "tweeted_group",            limit: 1,                             default: false
+    t.boolean  "tweeted_group",                                                  default: false
     t.datetime "tweeted_group_at"
-    t.boolean  "censored",                 limit: 1,                             default: false
+    t.boolean  "censored",                                                       default: false
     t.string   "geo_level",                limit: 255
   end
 
@@ -450,21 +450,21 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.string   "subject",             limit: 255
     t.text     "message",             limit: 65535
     t.string   "sendmethod",          limit: 255
-    t.boolean  "sent",                limit: 1
+    t.boolean  "sent"
     t.datetime "sent_at"
     t.integer  "response_to_id",      limit: 4
-    t.boolean  "read_email",          limit: 1
-    t.boolean  "read_web",            limit: 1
+    t.boolean  "read_email"
+    t.boolean  "read_web"
     t.datetime "read_at"
-    t.boolean  "sender_delete",       limit: 1
-    t.boolean  "recipient_delete",    limit: 1
+    t.boolean  "sender_delete"
+    t.boolean  "recipient_delete"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "message_id",          limit: 255
     t.string   "mail_template",       limit: 255
     t.integer  "group_id",            limit: 4
     t.integer  "dialog_id",           limit: 4
-    t.boolean  "email_sent",          limit: 1,     default: false
+    t.boolean  "email_sent",                        default: false
     t.datetime "email_sent_at"
   end
 
@@ -491,10 +491,10 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.integer  "parent_id",     limit: 4
     t.text     "description",   limit: 65535
     t.string   "sortorder",     limit: 255
-    t.boolean  "sumcat",        limit: 1,     default: false
+    t.boolean  "sumcat",                      default: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "binary_on",     limit: 1,     default: false
+    t.boolean  "binary_on",                   default: false
   end
 
   add_index "metamap_nodes", ["metamap_id", "sortorder"], name: "index_metamap_nodes_on_metamap_id_and_sortorder", length: {"metamap_id"=>nil, "sortorder"=>10}, using: :btree
@@ -505,8 +505,8 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.integer  "created_by",     limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "global_default", limit: 1,   default: false
-    t.boolean  "binary",         limit: 1,   default: false
+    t.boolean  "global_default",             default: false
+    t.boolean  "binary",                     default: false
   end
 
   add_index "metamaps", ["created_at"], name: "index_metamaps_on_created_at", using: :btree
@@ -571,7 +571,7 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.string   "confirmation_token",     limit: 255
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.boolean  "sysadmin",               limit: 1,                              default: false
+    t.boolean  "sysadmin",                                                      default: false
     t.integer  "items_count",            limit: 4,                              default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -579,8 +579,8 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.string   "fb_link",                limit: 255
     t.string   "visibility",             limit: 255,                            default: "visible_to_all"
     t.string   "wall_visibility",        limit: 255,                            default: "all"
-    t.boolean  "item_to_forum",          limit: 1,                              default: true
-    t.boolean  "twitter_post",           limit: 1,                              default: true
+    t.boolean  "item_to_forum",                                                 default: true
+    t.boolean  "twitter_post",                                                  default: true
     t.string   "twitter_username",       limit: 255
     t.string   "twitter_oauth_token",    limit: 255
     t.string   "twitter_oauth_secret",   limit: 255
@@ -589,17 +589,17 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.string   "subgroup_email",         limit: 255,                            default: "instant"
     t.string   "private_email",          limit: 255,                            default: "instant"
     t.string   "system_email",           limit: 255,                            default: "instant"
-    t.boolean  "no_email",               limit: 1,                              default: false
+    t.boolean  "no_email",                                                      default: false
     t.string   "direct_email_code",      limit: 255
-    t.boolean  "has_participated",       limit: 1,                              default: false
+    t.boolean  "has_participated",                                              default: false
     t.integer  "old_user_id",            limit: 4
     t.text     "forum_settings",         limit: 65535
     t.string   "last_url",               limit: 255
     t.string   "handle",                 limit: 255
     t.string   "authentication_token",   limit: 255
-    t.boolean  "new_signup",             limit: 1,                              default: true
-    t.boolean  "dialog_pop_shown",       limit: 1,                              default: false
-    t.boolean  "required_entered",       limit: 1,                              default: false
+    t.boolean  "new_signup",                                                    default: true
+    t.boolean  "dialog_pop_shown",                                              default: false
+    t.boolean  "required_entered",                                              default: false
     t.integer  "last_group_id",          limit: 4
     t.integer  "last_dialog_id",         limit: 4
     t.string   "provider",               limit: 255
@@ -609,10 +609,11 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.string   "picture_content_type",   limit: 255
     t.integer  "picture_file_size",      limit: 4
     t.datetime "picture_updated_at"
-    t.boolean  "indigenous",             limit: 1,                              default: false
-    t.boolean  "other_minority",         limit: 1,                              default: false
-    t.boolean  "veteran",                limit: 1,                              default: false
-    t.boolean  "interfaith",             limit: 1,                              default: false
+    t.boolean  "indigenous",                                                    default: false
+    t.boolean  "other_minority",                                                default: false
+    t.boolean  "veteran",                                                       default: false
+    t.boolean  "interfaith",                                                    default: false
+    t.boolean  "refugee",                                                       default: false
   end
 
   add_index "participants", ["confirmation_token"], name: "index_participants_on_confirmation_token", unique: true, using: :btree
@@ -639,24 +640,24 @@ ActiveRecord::Schema.define(version: 20151001194958) do
     t.text     "shortdesc",             limit: 65535
     t.text     "instructions",          limit: 65535
     t.text     "metamaps",              limit: 65535
-    t.boolean  "metamaps_frozen",       limit: 1,        default: false
+    t.boolean  "metamaps_frozen",                        default: false
     t.integer  "max_characters",        limit: 4
     t.integer  "max_words",             limit: 4
     t.string   "metamap_vote_own",      limit: 255
     t.text     "default_message",       limit: 65535
-    t.boolean  "required_message",      limit: 1,        default: true
-    t.boolean  "required_subject",      limit: 1,        default: true
+    t.boolean  "required_message",                       default: true
+    t.boolean  "required_subject",                       default: true
     t.integer  "max_messages",          limit: 4,        default: 0
     t.string   "new_message_title",     limit: 255
-    t.boolean  "allow_replies",         limit: 1,        default: true
-    t.boolean  "required_meta",         limit: 1,        default: true
+    t.boolean  "allow_replies",                          default: true
+    t.boolean  "required_meta",                          default: true
     t.string   "value_calc",            limit: 255,      default: "total"
-    t.boolean  "profiles_visible",      limit: 1,        default: true
-    t.boolean  "names_visible_voting",  limit: 1,        default: true
-    t.boolean  "names_visible_general", limit: 1,        default: true
-    t.boolean  "in_voting_round",       limit: 1,        default: false
-    t.boolean  "posting_open",          limit: 1,        default: true
-    t.boolean  "voting_open",           limit: 1,        default: true
+    t.boolean  "profiles_visible",                       default: true
+    t.boolean  "names_visible_voting",                   default: true
+    t.boolean  "names_visible_general",                  default: true
+    t.boolean  "in_voting_round",                        default: false
+    t.boolean  "posting_open",                           default: true
+    t.boolean  "voting_open",                            default: true
     t.integer  "sort_metamap_id",       limit: 4
     t.string   "sort_order",            limit: 255,      default: "date"
     t.string   "crosstalk",             limit: 255,      default: "none"

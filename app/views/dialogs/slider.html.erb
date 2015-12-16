@@ -78,6 +78,7 @@
       <input type="checkbox" id="other_minority" value="1" onclick="per_reload()">Other Minority<br>
       <input type="checkbox" id="veteran" value="1" onclick="per_reload()">Veteran<br>
       <input type="checkbox" id="interfaith" value="1" onclick="per_reload()">Interfaith<br>
+      <input type="checkbox" id="refugee" value="1" onclick="per_reload()">Refugee<br>
     </div>
 
     <div style="display:none;margin: 20px 0 0 0;">
@@ -143,6 +144,7 @@ function per_reload() {
   var other_minority = $('#other_minority').is(':checked') ? 1 : 0;
   var veteran = $('#veteran').is(':checked') ? 1 : 0;
   var interfaith = $('#interfaith').is(':checked') ? 1 : 0;
+  var refugee = $('#refugee').is(':checked') ? 1 : 0;
   var show_result = $('input[name=show_result]:checked').val();
   //checkbox
   //var meta_3 = $("input[name='meta_3[]']:checked").map(function(){
@@ -163,7 +165,7 @@ function per_reload() {
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby},
+	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby},
 	  complete: function(t){ 
       $('#per_main').css('opacity','1.0');
 	    $('#per_main').html(t.responseText);

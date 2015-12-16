@@ -108,6 +108,10 @@
 		<div class="leftfield">
 			<%= check_box_tag 'posted_by_interfaith', 1, false %>
 		</div>
+		<div class="lefttitle">Posted by Refugee:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'posted_by_refugee', 1, false %>
+		</div>
 			
 		<div class="lefttitle">Rated from Country:</div>
 		<div class="leftfield">
@@ -144,6 +148,10 @@
 		<div class="lefttitle">Rated by Interfaith:</div>
 		<div class="leftfield">
 			<%= check_box_tag 'rated_by_interfaith', 1, false %>
+		</div>
+		<div class="lefttitle">Rated by Refugee:</div>
+		<div class="leftfield">
+			<%= check_box_tag 'rated_by_refugee', 1, false %>
 		</div>
 	
 		<div class="lefttitle">Show:</div>
@@ -266,6 +274,9 @@ $('#posted_by_veteran').change(function() {
 $('#posted_by_interfaith').change(function() {
 	list('posted_by_interfaith');
 });
+$('#posted_by_refugee').change(function() {
+	list('posted_by_refugee');
+});
 $('#rated_by_indigenous').change(function() {
 	list('rated_by_indigenous');
 });
@@ -277,6 +288,9 @@ $('#rated_by_veteran').change(function() {
 });
 $('#rated_by_interfaith').change(function() {
 	list('rated_by_interfaith');
+});
+$('#rated_by_refugee').change(function() {
+	list('rated_by_refugee');
 });
 toggleoptions();
 </script>

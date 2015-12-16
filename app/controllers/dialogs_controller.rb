@@ -56,6 +56,16 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     
+    if params.has_key?(:group_id)
+      session[:group_id] = params[:group_id].to_i
+      @group_id = params[:group_id].to_i
+    else
+      @group_id = session[:group_id]
+    end        
+    @group = Group.find(@group_id)
+    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
+    @is_member = @group_participant ? true : false
+    
     # geo level defaults to Planet Earth, but a different choice is remembered in the current session
     if session[:geo_level].to_i > 0
       @geo_level = session[:geo_level]

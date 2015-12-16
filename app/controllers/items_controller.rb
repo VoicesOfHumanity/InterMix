@@ -30,6 +30,7 @@ class ItemsController < ApplicationController
     @posted_by_other_minority = (params[:posted_by_other_minority].to_i == 1)
     @posted_by_veteran = (params[:posted_by_veteran].to_i == 1)
     @posted_by_interfaith = (params[:posted_by_interfaith].to_i == 1)
+    @posted_by_refugee = (params[:posted_by_refugee].to_i == 1)
     @rated_by_country_code = (params[:rated_by_country_code] || '').to_s
     @rated_by_admin1uniq = (params[:rated_by_admin1uniq] || '').to_s
     @rated_by_metro_area_id = (params[:rated_by_metro_area_id] || 0).to_i
@@ -37,6 +38,7 @@ class ItemsController < ApplicationController
     @rated_by_other_minority = (params[:rated_by_other_minority].to_i == 1)
     @rated_by_veteran = (params[:rated_by_veteran].to_i == 1)
     @rated_by_interfaith = (params[:rated_by_interfaith].to_i == 1)
+    @rated_by_refugee = (params[:rated_by_refugee].to_i == 1)
     @want_crosstalk = params[:want_crosstalk].to_s
     session[:want_crosstalk] = @want_crosstalk if @want_crosstalk != ''
     @page = ( params[:page] || 1 ).to_i
@@ -101,7 +103,7 @@ class ItemsController < ApplicationController
     if true
       #-- Get the records, while adding up the stats on the fly
       
-      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,'','',@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@posted_by_veteran,@posted_by_interfaith,@rated_by_indigenous,@rated_by_other_minority,@rated_by_veteran,@rated_by_interfaith)
+      @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,'','',@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@posted_by_veteran,@posted_by_interfaith,@posted_by_refugee,@rated_by_indigenous,@rated_by_other_minority,@rated_by_veteran,@rated_by_interfaith,@rated_by_refugee)
       
       #logger.info("items_controller#list @items: #{@items.inspect}")
       
@@ -818,7 +820,7 @@ class ItemsController < ApplicationController
     # geo_level: city, metro, state, nation, earth
     # group_level: current, my, all groups. 
   
-    # indigenous, other minority, veteran, interfaith
+    # indigenous, other minority, veteran, interfaith, refugee
   
     show_result = (params[:show_result].to_i == 1)
   
@@ -838,6 +840,7 @@ class ItemsController < ApplicationController
     crit[:other_minority] = (params[:other_minority].to_i == 1) ? true : false
     crit[:veteran] = (params[:veteran].to_i == 1) ? true : false
     crit[:interfaith] = (params[:interfaith].to_i == 1) ? true : false
+    crit[:refugee] = (params[:refugee].to_i == 1) ? true : false
   
     crit[:dialog_id] = params[:dialog_id].to_i
     crit[:period_id] = params[:period_id].to_i
@@ -1134,6 +1137,7 @@ class ItemsController < ApplicationController
     other_minority = (params[:other_minority].to_i == 1) ? true : false
     veteran = (params[:veteran].to_i == 1) ? true : false
     interfaith = (params[:interfaith].to_i == 1) ? true : false
+    refugee = (params[:refugee].to_i == 1) ? true : false
     
     @dialog_id = params[:dialog_id].to_i
     @period_id = params[:period_id].to_i
@@ -1216,12 +1220,14 @@ class ItemsController < ApplicationController
     @posted_by_other_minority = other_minority
     @posted_by_veteran = veteran
     @posted_by_interfaith = interfaith
+    @posted_by_refugee = refugee
     @rated_by_indigenous = false
     @rated_by_other_minority = false
     @rated_by_veteran = false
     @rated_by_interfaith = false
+    @rated_by_refugee = false
     
-    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level,@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@posted_by_veteran,@posted_by_interfaith,@rated_by_indigenous,@rated_by_other_minority,@rated_by_veteran,@rated_by_interfaith,@posted_by_city,@rated_by_city)
+    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,@metabreakdown,@withratings,geo_level,@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@posted_by_veteran,@posted_by_interfaith,@posted_by_refugee,@rated_by_indigenous,@rated_by_other_minority,@rated_by_veteran,@rated_by_interfaith,@rated_by_refugee,@posted_by_city,@rated_by_city)
    
     @data = {}
     if show_result
