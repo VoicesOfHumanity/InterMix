@@ -843,6 +843,7 @@ class ItemsController < ApplicationController
     crit[:refugee] = (params[:refugee].to_i == 1) ? true : false
   
     crit[:dialog_id] = params[:dialog_id].to_i
+    
     crit[:period_id] = params[:period_id].to_i
     session[:slider_period_id] = crit[:period_id]
     
@@ -856,6 +857,18 @@ class ItemsController < ApplicationController
     
     @dialog = Dialog.find_by_id(crit[:dialog_id]) if crit[:dialog_id] > 0
     @period = Period.find_by_id(crit[:period_id]) if crit[:period_id] > 0
+    
+    if @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
+      # If this is an active period and there's a previous period, use that instead
+      @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
+      if @period
+        @period_id = @period.id
+        crit[:period_id] = @period.id
+        session[:slider_period_id] = @period.id
+      else
+         @period = Period.find_by_id(crit[:period_id])
+      end
+    end
 
     @threads = params[:threads]
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
