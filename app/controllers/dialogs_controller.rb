@@ -52,6 +52,8 @@ class DialogsController < ApplicationController
   end  
   
   def slider
+    @section = 'dialogs'
+    @dsection = 'slider'
     @dialog_id = params[:id]
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i

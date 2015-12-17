@@ -76,7 +76,7 @@
     <% int_checked = {}; int_checked[:checked] = 'checked' if @participant.interfaith %>
 		<%= f.input :interfaith, :as => :boolean, :label=>"check here if you identify as interfaith", :input_html => int_checked %>		
     <div style="display:inline;position:relative;top:20px"><b>Refugee</b></div>
-    <% ref_checked = {}; int_checked[:checked] = 'checked' if @participant.refugee %>
+    <% ref_checked = {}; ref_checked[:checked] = 'checked' if @participant.refugee %>
 		<%= f.input :refugee, :as => :boolean, :label=>"check here if you identify as a refugee", :input_html => ref_checked %>		
 	<% end %>
 	<br>

@@ -1,6 +1,6 @@
 <h3><%= @title %></h3>
 
-<% show_part = 1.0 * @items.length / @num_all_posts %>
+<% show_part = (@num_all_posts ? (1.0 * @items.length / @num_all_posts) : 0) %>
 
 <div style="height:20px;width:590px;background-color:#ccc"><div style="height:20px;width:<%= (show_part * 590).to_i %>px;background-color:#66f;">&nbsp;</div></div>
 
