@@ -168,13 +168,21 @@
 			</ul>
 			
 			<div class="sidebarbox">
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="2HZ3L3HJ8RBJG">
+<input type="image" src="http://www.intermix.org/voh/paypalbutton001.jpg" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" style="margin:-5px 0 0 -6px">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+
 		  <% if current_participant %>
-   		  <% if participant_signed_in? -%>
+      
+   		  <% if false and participant_signed_in? -%>
    			<img src="/images/overview.gif" id="overview" style="margin: 14px 0 10px 21px;cursor:pointer;">
    			Learn the basics of how this site works.
+   			<hr style="width:80px;margin: 15px auto 5px auto;">
    			<% end -%>
    			
-   			<hr style="width:80px;margin: 15px auto 5px auto;">
 		  
 				<img src="/images/whereami.gif" id="whereami" style="margin: 14px 0 10px 21px;">
 		    <p>You're logged in as:<br/><%= current_participant.name %><br><%= current_participant.email %>
