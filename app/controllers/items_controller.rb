@@ -858,7 +858,7 @@ class ItemsController < ApplicationController
     @dialog = Dialog.find_by_id(crit[:dialog_id]) if crit[:dialog_id] > 0
     @period = Period.find_by_id(crit[:period_id]) if crit[:period_id] > 0
     
-    if @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
+    if show_result and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
       # If this is an active period and there's a previous period, use that instead
       @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
       if @period
