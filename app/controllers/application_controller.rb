@@ -354,6 +354,7 @@ class ApplicationController < ActionController::Base
   def check_group_and_dialog  
     #-- This is probably rather inconsistent. When do we call which method to look for group or dialog ids?
     #-- This is called from after_sign_in_path_for as a supplement to get_group_dialog_from_subdomain
+    #-- It is also called before each action in the dialog controller
     #-- It is meant for people who're logged in, to make sure the group and discussion are set
     #-- We will set a cookie, to ensure that this gets run, but not more than once
     return if participant_signed_in? and session[:group_checked]

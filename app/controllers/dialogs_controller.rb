@@ -5,7 +5,7 @@ class DialogsController < ApplicationController
 	layout "front"
   append_before_action :authenticate_user_from_token!
   append_before_action :authenticate_participant!, :except => :previous_result
-  append_before_action :check_group_and_dialog, :check_required, :check_status, :except => :previous_result
+  append_before_action :get_group_dialog_from_subdomain, :check_group_and_dialog, :check_required, :check_status, :except => :previous_result
   append_before_action :redirect_subdom, :except => :index
 
   def index
@@ -64,9 +64,13 @@ class DialogsController < ApplicationController
     else
       @group_id = session[:group_id]
     end        
-    @group = Group.find(@group_id)
-    @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
-    @is_member = @group_participant ? true : false
+    @group = Group.find_by_id(@group_id)
+    if @group
+      @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
+      @is_member = @group_participant ? true : false
+    else
+      @is_member = false
+    end
     
     # geo level defaults to Planet Earth, but a different choice is remembered in the current session
     if session[:geo_level].to_i > 0
