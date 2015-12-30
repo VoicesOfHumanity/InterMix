@@ -846,6 +846,7 @@ class ItemsController < ApplicationController
     
     crit[:period_id] = params[:period_id].to_i
     session[:slider_period_id] = crit[:period_id]
+    logger.info("items#geoslider_update slider_period:#{session[:slider_period_id]}")
     
     crit[:group_id] = session[:group_id].to_i
   
@@ -864,7 +865,7 @@ class ItemsController < ApplicationController
       if @period
         @period_id = @period.id
         crit[:period_id] = @period.id
-        session[:slider_period_id] = @period.id
+        #session[:slider_period_id] = @period.id
       else
          @period = Period.find_by_id(crit[:period_id])
       end

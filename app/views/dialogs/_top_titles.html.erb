@@ -13,7 +13,7 @@
     Decision Period: 
     <% if @dsection=='list' or @dsection=='meta' -%>
     		<% if @dialog.periods.length > 0 -%>
-    		  <%= select_tag "period_id", options_for_select([['All messages',0]]+@dialog.periods.collect{|c| ["#{c.period_number.to_i>0 ? "##{c.period_number} " : ""}#{c.name}",c.id]},@period_id), :onchange=>"per_reload()" %>
+    		  <%= select_tag "period_id", options_for_select([['All messages',0]]+@dialog.periods.collect{|c| ["#{c.period_number.to_i>0 ? "##{c.period_number} " : ""}#{c.name}",c.id]},session[:slider_period_id]), :onchange=>"per_reload()" %>
     		<% else -%>
     		  <%= hidden_field_tag :period_id, 0 %>	
     		<% end -%>

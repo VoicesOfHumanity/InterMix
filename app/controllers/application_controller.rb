@@ -334,6 +334,14 @@ class ApplicationController < ActionController::Base
               #env['warden'].session[:group_id] = @group_id
               #env['warden'].session[:group_name] = @group.name
             end
+          else
+            session[:group_id] = GLOBAL_GROUP_ID
+            @group = Group.find_by_id(GLOBAL_GROUP_ID)
+            session[:group_name] = @group.name
+            session[:group_prefix] = @group.shortname
+            if participant_signed_in?
+              session[:group_is_member] = true
+            end
           end
         end
       end
@@ -366,9 +374,13 @@ class ApplicationController < ActionController::Base
     end  
     if participant_signed_in? and session[:group_id].to_i == 0
       #-- Get our last group/dialog if we don't already have one
-      session[:group_id] = current_participant.last_group_id
+      session[:group_id] = current_participant.last_group_id.to_i
       session[:dialog_id] = current_participant.last_dialog_id if session[:dialog_id].to_i == 0
     end      
+    if participant_signed_in? and session[:group_id].to_i == 0
+      # If we don't have anything else, put them in the global town square
+      session[:group_id] = GLOBAL_GROUP_ID
+    end    
     if participant_signed_in? and (not session.has_key?(:group_is_member) or not session.has_key?(:group_prefix))
       #-- If  we don't know if the user is a member or the group prefix, look it up
       if session[:group_id].to_i > 0

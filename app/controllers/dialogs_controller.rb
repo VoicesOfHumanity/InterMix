@@ -54,7 +54,7 @@ class DialogsController < ApplicationController
   def slider
     @section = 'dialogs'
     @dsection = 'slider'
-    @dialog_id = params[:id]
+    @dialog_id = params[:id].to_i
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     
@@ -90,16 +90,21 @@ class DialogsController < ApplicationController
       @dsection = 'list'
     end
     
-    if session.has_key?(:slider_period_id)
+    if session.has_key?(:slider_period_id) and session[:slider_period_id].to_i > 0
+      logger.info("dialogs#slider setting period based on slider_period_id")
       @period_id = session[:slider_period_id].to_i
     elsif @dialog.recent_period
+      logger.info("dialogs#slider setting period based on recent_period")
       @period_id = @dialog.recent_period.id
     else
+      logger.info("dialogs#slider setting period to zero")
       @period_id = 0
     end
+    logger.info("dialogs#slider period:#{@period_id}")
     @period = Period.find_by_id(@period_id) if @period_id > 0
     if @period and @period.dialog_id != @dialog_id
       # If the remembered period was for a different discussion, don't use it
+      logger.info("dialogs#slider period #{@period.id} is not for dialog #{@dialog_id} so changing it")
       if @dialog.recent_period
         @period_id = @dialog.recent_period.id
       else
@@ -107,6 +112,8 @@ class DialogsController < ApplicationController
       end
       @period = Period.find_by_id(@period_id) if @period_id > 0
     end
+    session[:slider_period_id] = @period_id
+    logger.info("dialogs#slider slider_period:#{session[:slider_period_id]}")
 
     if @period and @period.sort_order == 'date'
       @sortby = "items.id desc"
