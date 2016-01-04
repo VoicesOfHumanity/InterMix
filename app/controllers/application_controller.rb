@@ -309,6 +309,7 @@ class ApplicationController < ActionController::Base
     xgroup_id = nil
     xdialog_id = nil
     for subdomain in request.subdomains
+      subdomain = 'voh' if subdomain == 'ugc'
       @dialog = Dialog.find_by_shortname(subdomain)
       if @dialog
         xdialog_id = @dialog.id
