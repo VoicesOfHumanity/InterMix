@@ -357,6 +357,10 @@ class ApplicationController < ActionController::Base
     @group_id = "#{session[:group_id]}".to_i
     @dialog_id = "#{session[:dialog_id]}".to_i
     logger.info("application#get_group_dialog_from_subdomain group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
+    if session[:dialog_prefix] != '' and session[:group_prefix] != ''
+      session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
+    end
+    
     return @group_id, @dialog_id
   end  
   
