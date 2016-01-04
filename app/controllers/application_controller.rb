@@ -359,6 +359,7 @@ class ApplicationController < ActionController::Base
     logger.info("application#get_group_dialog_from_subdomain group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
     if session[:dialog_prefix] != '' and session[:group_prefix] != ''
       session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
+      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
     end
     
     return @group_id, @dialog_id
