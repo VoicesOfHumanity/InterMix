@@ -20,7 +20,7 @@ class FrontController < ApplicationController
     cdata = {'cookies'=>cookies}
     if @dialog_id.to_i > 0
       if participant_signed_in?
-        redirect_to "/dialogs/#{@dialog_id}/slider"
+        redirect_to "#{session[:cur_baseurl]}/dialogs/#{@dialog_id}/slider"
         return
       end
       @dialog = Dialog.find_by_id(@dialog_id)
