@@ -1,5 +1,6 @@
+<% if @period -%>
 <p>These results are for the period "<%= @period.name %>"</p>
-
+<% end -%>
 
 <% @data.each do |name,info| -%>
   <h3><%= info[:name ]%></h3>

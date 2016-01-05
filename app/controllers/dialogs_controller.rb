@@ -115,6 +115,11 @@ class DialogsController < ApplicationController
     session[:slider_period_id] = @period_id
     logger.info("dialogs#slider slider_period:#{session[:slider_period_id]}")
 
+    @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
+    if @dialog.current_period.to_i > 0
+      @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
+    end
+
     if @period and @period.sort_order == 'date'
       @sortby = "items.id desc"
     elsif @period and @period.sort_order == 'value'
