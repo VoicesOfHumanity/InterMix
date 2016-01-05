@@ -17,3 +17,10 @@
   <% end -%>
 
 <% end -%>
+
+<script>
+var showing_period_id = <%= @period ? @period.id : 0 %>;
+if ($('#period_id').length && $('#period_id').val()!=showing_period_id) {
+  $('#period_id').val(showing_period_id);
+}
+</script>
