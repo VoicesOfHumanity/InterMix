@@ -882,6 +882,14 @@ class ItemsController < ApplicationController
       else
          @period = Period.find_by_id(crit[:period_id])
       end
+    elsif not show_result and @first==1
+      # List should always be active/latest period  
+      if @dialog.active_period
+        @period = @dialog.active_period
+      elsif @dialog.recent_period
+        @period = @dialog.recent_period        
+      end
+      @period_id = @period.id
     end
 
     @threads = params[:threads]
