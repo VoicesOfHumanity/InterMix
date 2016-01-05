@@ -90,7 +90,8 @@
 								
 			<% if participant_signed_in? -%>
         <% if session[:group_id].to_i > 0 -%>
-			    <li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='forum') %>" href="/groups/<%= session[:group_id] %>/forum">Current Group</a></li>
+          <% grpdom = Rails.env!='development' ? "http://#{session[:group_prefix]}.#{ROOTDOMAIN}" : '' %>
+			    <li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='forum') %>" href="<%= grpdom %>/groups/<%= session[:group_id] %>/forum">Current Group</a></li>
         <% end -%>
 			  <li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='index') or (@section=='dialogs' and @dsection=='index') %>" href="/groups">Other Groups</a></li>	
 				<li class="menu"><a class="<%= 'selected' if (@section=='profile' or @section=='wall' or @section=='messages' or @section=='people') %>" href="/me/profile">Me &amp; My Friends</a></li>
