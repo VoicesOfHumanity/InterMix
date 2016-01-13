@@ -7,7 +7,9 @@
 <% else -%>
   <% @group = Group.find_by_id(@group_id.to_i > 0 ? @group_id : session[:group_id]) if not @group %>
   Group: <a href="/groups/<%= @group ? @group.id : 0 %>/forum" style="text-decoration:none;"><span style="font-size:20px;color:#000;"><%= @group ? @group.name : '[unknown]' %></span></a><br>
+  <% if false -%>
   This Discussion: <span style="font-size:20px"><%= @dialog.name %>&nbsp;&nbsp;</span><img src="/images/question-mark.png" class="tooltip" width="16" height="16" title="<%= @dialog.description.to_s != '' ? @dialog.description : "No description for this discussion" %>"><br>
+  <% end -%>
 
   <% if @dsection=='list' or @dsection=='meta' or (@dialog.active_period and @sortby=='default') or @period_id.to_i > 0 -%>
     Decision Period: 

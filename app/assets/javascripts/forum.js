@@ -187,6 +187,9 @@ function newitem(token) {
 	$('.reply_link').each(function(i,obj) {
 	    $(this).css('opacity','0.4');
 	});
+	if (CKEDITOR.instances['item_html_content_editor']) { 
+		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
+	}
 	$('#newforumitem').html("working...");
 	$('#newforumitem').show();
 	pars = 'a=1';
@@ -217,16 +220,20 @@ function newitem(token) {
 		url: '/items/new?xtime=' + (new Date()).getTime(),
 		data: pars,
 		complete: function(t){	
-			$('#newforumitem').html(t.responseText);
-      //window.location.hash = '#item_subject';
-      window.location.hash = '#edit_item_';
-			if (t.responseText.substring(0,6) == "<p>You") {
-  			// If what came back wasn't an edit screen (but a message), clear the flag that new item is in progress
-  			in_new_item = 0;
-          	$('.reply_link').each(function(i,obj) {
-          	    $(this).css('opacity','1.0');
-          	});
-  		}
+		    $('#newforumitem').html(t.responseText);
+            //window.location.hash = '#item_subject';
+            window.location.hash = '#edit_item_';
+		    if (t.responseText.substring(0,6) == "<p>You") {
+  			    // If what came back wasn't an edit screen (but a message), clear the flag that new item is in progress
+  			    in_new_item = 0;
+          	    $('.reply_link').each(function(i,obj) {
+          	        $(this).css('opacity','1.0');
+          	    });
+  		    } else {
+                $('#item_short_content').val('');
+                short_updated = false;
+                editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, '' )
+  		    }
 		}
 	});	
 }
@@ -248,6 +255,9 @@ function reply(item_id,to_reply) {
 	$('.reply_link').each(function(i,obj) {
 	    $(this).css('opacity','0.4');
 	});
+	if (CKEDITOR.instances['item_html_content_editor']) { 
+		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
+	}
 	
 	var newcontent = '<div class="forumitem forumreply" id="reply_'+item_id+'">working...</div>';
 	if (to_reply) {
@@ -275,6 +285,7 @@ function reply(item_id,to_reply) {
      	data: params,
 		complete: function(t){	
 			$('#reply_'+item_id).html(t.responseText);
+            editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
 		}
 	});	
 }
@@ -303,12 +314,15 @@ function edititem(id) {
 	var token = $('#authenticity_token') ? $('#authenticity_token').val() : '';
 	$('#shortcontent_'+id).hide();	
 	$('#htmlcontent_'+id).show();
+    short_updated = false;
 	$.ajax({
         type: "GET",
         url: '/items/'+id+'/edit?xtime=' + (new Date()).getTime(),
         data: "authenticity_token="+token+"&items_length="+$('#items_length').val(),
         complete: function(t){	
           $('#htmlcontent_'+id).html(t.responseText);
+          short_updated = false;
+          editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
         }
      });	
 }

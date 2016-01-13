@@ -51,7 +51,7 @@ $( "#batchslider" ).slider({
   orientation: "horizontal",
   range: "min",
   min: 1,
-  max: <%= @numbatches %>,
+  max: <%= @numbatches.to_i %>,
   value: cur_batch_level,
   slide: function( event, ui ) {
     cur_batch_level = ui.value;

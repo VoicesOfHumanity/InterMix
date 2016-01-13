@@ -942,17 +942,35 @@ class Item < ActiveRecord::Base
     items = items.where("geo_level = ? or geo_level is null or geo_level = ''", crit[:geo_level]) if (crit[:geo_level].to_s != '' and crit[:geo_level] != 'all')
   
     if crit[:geo_level] == 'city'
-      items = items.where("participants.city=?",current_participant.city)
-      ratings = ratings.where("participants.city=?",current_participant.city)
-      title += " | #{current_participant.city}"
+      if current_participant.city.to_s != ''
+        items = items.where("participants.city=?",current_participant.city)
+        ratings = ratings.where("participants.city=?",current_participant.city)
+        title += " | #{current_participant.city}"
+      else
+        items = items.where("1=0")
+        ratings = items.where("1=0")
+        title += " | Unknown City"
+      end  
     elsif crit[:geo_level] == 'metro'
-      items = items.where("participants.metro_area_id=?",current_participant.metro_area_id)
-      ratings = ratings.where("participants.metro_area_id=?",current_participant.metro_area_id)
-      title += " | #{current_participant.metro_area.name}"
+      if current_participant.metro_area_id.to_i > 0
+        items = items.where("participants.metro_area_id=?",current_participant.metro_area_id)
+        ratings = ratings.where("participants.metro_area_id=?",current_participant.metro_area_id)
+        title += " | #{current_participant.metro_area.name}"
+      else
+        items = items.where("1=0")
+        ratings = items.where("1=0")
+        title += " | Unknown Metro Area"
+      end  
     elsif crit[:geo_level] == 'state'  
-      items = items.where("participants.admin1uniq=?",current_participant.admin1uniq)
-      ratings = ratings.where("participants.admin1uniq=?",current_participant.admin1uniq)
-      title += " | #{current_participant.geoadmin1.name}"
+      if current_participant.admin1uniq.to_s != ''
+        items = items.where("participants.admin1uniq=?",current_participant.admin1uniq)
+        ratings = ratings.where("participants.admin1uniq=?",current_participant.admin1uniq)
+        title += " | #{current_participant.geoadmin1.name}"
+      else
+        items = items.where("1=0")
+        ratings = items.where("1=0")
+        title += " | Unknown State"
+      end  
     elsif crit[:geo_level] == 'nation'
       items = items.where("participants.country_code=?",current_participant.country_code)
       ratings = ratings.where("participants.country_code=?",current_participant.country_code)
