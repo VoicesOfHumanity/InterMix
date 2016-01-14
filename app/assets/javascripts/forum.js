@@ -187,6 +187,9 @@ function newitem(token) {
 	$('.reply_link').each(function(i,obj) {
 	    $(this).css('opacity','0.4');
 	});
+	if (CKEDITOR.instances['item_html_content']) { 
+		CKEDITOR.remove(CKEDITOR.instances['item_html_content']);
+	}
 	if (CKEDITOR.instances['item_html_content_editor']) { 
 		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
 	}
@@ -230,6 +233,7 @@ function newitem(token) {
           	        $(this).css('opacity','1.0');
           	    });
   		    } else {
+                $('#item_html_content').val('');
                 $('#item_short_content').val('');
                 short_updated = false;
                 editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, '' )
@@ -285,6 +289,9 @@ function reply(item_id,to_reply) {
      	data: params,
 		complete: function(t){	
 			$('#reply_'+item_id).html(t.responseText);
+            $('#item_html_content').val('');
+            $('#item_short_content').val('');
+            short_updated = false;
             editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
 		}
 	});	

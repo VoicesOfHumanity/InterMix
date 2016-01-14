@@ -192,7 +192,9 @@ var short_updated = <%= (@item.id.to_i > 0 or flash[:alert].to_s !="" or @item.m
 function editor_change() {
 	var htmlval = CKEDITOR.instances['item_html_content'].getData();
 	var plainval = $.trim(strip(htmlval));
+  alert(short_updated);
 	if (!short_updated) {
+    alert('html_to_short');
 		html_to_short(htmlval,plainval);
 	}
 	mess_characters(htmlval,plainval);
