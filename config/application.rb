@@ -42,6 +42,7 @@ module Intermix
     # in your app. As such, your models will need to explicitly whitelist or blacklist accessible
     # parameters by using an attr_accessible or attr_protected declaration.
     #config.active_record.whitelist_attributes = false
+    config.action_controller.permit_all_parameters = true
 
     # Enable the asset pipeline
     config.assets.enabled = true

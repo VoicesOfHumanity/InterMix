@@ -828,11 +828,13 @@ class ItemsController < ApplicationController
   
     geo_level = params[:geo_level].to_i
     session[:geo_level] = geo_level
+    @geo_level = geo_level
     geo_levels = GEO_LEVELS               # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}    
     crit[:geo_level] = geo_levels[geo_level]
   
     group_level = params[:group_level].to_i
     session[:group_level] = group_level
+    @group_level = group_level
     group_levels = {1 => 'current', 2 => 'user', 3 => 'all'}
     crit[:group_level] = group_levels[group_level]
   
