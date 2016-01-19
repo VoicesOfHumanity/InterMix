@@ -193,7 +193,6 @@ function editor_change() {
 	var htmlval = CKEDITOR.instances['item_html_content'].getData();
 	var plainval = $.trim(strip(htmlval));
 	if (!short_updated) {
-    alert('html_to_short');
 		html_to_short(htmlval,plainval);
 	}
 	mess_characters(htmlval,plainval);
