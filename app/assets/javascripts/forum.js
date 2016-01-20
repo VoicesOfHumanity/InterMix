@@ -194,6 +194,9 @@ function newitem(token) {
 		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
 	}
 	$('#newforumitem').html("working...");
+    if ($('#per_main').length) {
+        $('#per_main').prepend($('#newforumitem'));
+    }
 	$('#newforumitem').show();
 	pars = 'a=1';
 	if ($('#in_group_id').val()>0) {
@@ -225,7 +228,8 @@ function newitem(token) {
 		complete: function(t){	
 		    $('#newforumitem').html(t.responseText);
             //window.location.hash = '#item_subject';
-            window.location.hash = '#edit_item_';
+            //window.location.hash = '#edit_item_';
+            window.location.hash = '#newforumitem';
 		    if (t.responseText.substring(0,6) == "<p>You") {
   			    // If what came back wasn't an edit screen (but a message), clear the flag that new item is in progress
   			    in_new_item = 0;
