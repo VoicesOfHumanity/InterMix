@@ -72,12 +72,24 @@ class DialogsController < ApplicationController
       @is_member = false
     end
     
+    @geo_levels = [
+      [5,'Planet&nbsp;Earth'],
+      [4,'My&nbsp;Nation'],
+      [3,'My&nbsp;State/Province'],
+      [2,'My&nbsp;Metro&nbsp;region'],
+      [1,'My&nbsp;City/Town']
+    ]
     # geo level defaults to Planet Earth, but a different choice is remembered in the current session
     if session[:geo_level].to_i > 0
       @geo_level = session[:geo_level]
     else
       @geo_level = 5
     end
+    @group_levels = [
+      [3,'All groups'],
+      [2,'My groups'],
+      [1,'Current group']
+    ]
     if session[:group_level].to_i > 0
       @group_level = session[:group_level]
     else

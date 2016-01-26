@@ -46,9 +46,11 @@
 
 <script>
 $("#geo_level").val(<%= @geo_level %>);
-$("#geoslider").slider("option", "value", <%= @geo_level %>);
 $("#group_level").val(<%= @group_level %>);
+<% if false -%>
+$("#geoslider").slider("option", "value", <%= @geo_level %>);
 $("#groupslider").slider("option", "value", <%= @group_level %>);
+<% end -%>
 var batch_sizes = [<%= @batches.join(',') %>];
 $('#batch_size').val(<%= @showmax %>);
 $( "#batchslider" ).slider({
