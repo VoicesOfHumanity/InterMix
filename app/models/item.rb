@@ -939,7 +939,7 @@ class Item < ActiveRecord::Base
     end
   
     # Either posted in that geo level or no geo level given
-    items = items.where("geo_level = ? or geo_level is null or geo_level = ''", crit[:geo_level]) if (crit[:geo_level].to_s != '' and crit[:geo_level] != 'all')
+    #items = items.where("geo_level = ? or geo_level is null or geo_level = ''", crit[:geo_level]) if (crit[:geo_level].to_s != '' and crit[:geo_level] != 'all')
   
     if crit[:geo_level] == 'city'
       if current_participant.city.to_s != ''
