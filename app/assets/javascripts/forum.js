@@ -214,8 +214,8 @@ function newitem(token) {
 	if ($('#subgroup') && $('#subgroup').prop("selectedIndex") > 2) {
 	    pars += '&subgroup=' + $('#subgroup').val();
 	}
-  if ($('#geo_level').length) {
-    var geo_level_num = $('#geo_level').val();
+  if ($("input[name='geo_level_radio']").length) {
+    var geo_level_num = $("input[name='geo_level_radio']:checked").val()
     var geo_level_name = geo_levels[geo_level_num];
     pars += '&geo_level=' + geo_level_name;
   }
@@ -237,10 +237,10 @@ function newitem(token) {
           	        $(this).css('opacity','1.0');
           	    });
   		    } else {
-                $('#item_html_content').val('');
+                //$('#item_html_content').val('');
                 $('#item_short_content').val('');
                 short_updated = false;
-                editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, '' )
+                editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'} )
   		    }
 		}
 	});	

@@ -75,7 +75,7 @@ class DialogsController < ApplicationController
     @geo_levels = [
       [5,'Planet&nbsp;Earth'],
       [4,'My&nbsp;Nation'],
-      [3,'My&nbsp;State/Province'],
+      [3,'State/Province'],
       [2,'My&nbsp;Metro&nbsp;region'],
       [1,'My&nbsp;City/Town']
     ]
