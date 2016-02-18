@@ -41,6 +41,7 @@ gem 'omniauth-twitter'
 
 gem 'rest-graph'
 
+RMAGICK_BYPASS_VERSION_TEST = true
 gem 'rmagick', :require => "rmagick"
 gem 'acts-as-taggable-on'
 #gem 'simple_captcha'
