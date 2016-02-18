@@ -41,7 +41,7 @@ gem 'omniauth-twitter'
 
 gem 'rest-graph'
 
-gem 'rmagick', :require => "RMagick"
+gem 'rmagick', :require => "rmagick"
 gem 'acts-as-taggable-on'
 #gem 'simple_captcha'
 #gem 'ckeditor', '3.4.2.pre'
