@@ -156,7 +156,7 @@ GEM
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
-    mysql2 (0.4.2)
+    mysql2 (0.3.20)
     naught (1.1.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -350,7 +350,7 @@ DEPENDENCIES
   json
   libv8
   liquid
-  mysql2
+  mysql2 (~> 0.3.18)
   nifty-generators
   nokogiri
   omniauth
