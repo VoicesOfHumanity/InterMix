@@ -100,7 +100,7 @@ class Dialog < ActiveRecord::Base
   
   def previous_period
     #-- Find the period before this one, if any
-    periods = Period.where("dialog_id=#{self.id}").order("id")
+    periods = Period.where("dialog_id=#{self.id}").order("id desc")
     if periods.length > 1
       periods[1]
     else

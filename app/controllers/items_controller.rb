@@ -847,8 +847,8 @@ class ItemsController < ApplicationController
     crit[:dialog_id] = params[:dialog_id].to_i
     
     crit[:period_id] = params[:period_id].to_i
-    session[:slider_period_id] = crit[:period_id]
-    logger.info("items#geoslider_update slider_period:#{session[:slider_period_id]}")
+    #session[:slider_period_id] = crit[:period_id]
+    #logger.info("items#geoslider_update slider_period:#{session[:slider_period_id]}")
     
     crit[:group_id] = session[:group_id].to_i
   
@@ -874,24 +874,33 @@ class ItemsController < ApplicationController
     #     @period = Period.find_by_id(crit[:period_id])
     #  end
     #end
-    if show_result and @first==1 and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
-      # If this is an active period and there's a previous period, use that instead
-      @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
-      if @period
-        @period_id = @period.id
-        crit[:period_id] = @period.id
-        #session[:slider_period_id] = @period.id
-      else
-         @period = Period.find_by_id(crit[:period_id])
-      end
-    elsif not show_result and @first==1
-      # List should always be active/latest period  
-      if @dialog.active_period
-        @period = @dialog.active_period
-      elsif @dialog.recent_period
-        @period = @dialog.recent_period        
-      end
-      @period_id = @period.id
+    #if show_result and @first==1 and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
+    #  # If this is an active period and there's a previous period, use that instead
+    #  @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
+    #  if @period
+    #    @period_id = @period.id
+    #    crit[:period_id] = @period.id
+    #    #session[:slider_period_id] = @period.id
+    #  else
+    #     @period = Period.find_by_id(crit[:period_id])
+    #  end
+    #elsif not show_result and @first==1
+    #  # List should always be active/latest period  
+    #  if @dialog.active_period
+    #    @period = @dialog.active_period
+    #  elsif @dialog.recent_period
+    #    @period = @dialog.recent_period        
+    #  end
+    #  @period_id = @period.id
+    #end
+    @period_id = @period_id
+    
+    if show_result
+      session[:result_period_id] = @period_id
+      logger.info("items#geoslider_update set result_period_id to #{@period_id}")
+    else
+      session[:list_period_id] = @period_id
+      logger.info("items#geoslider_update set list_period_id to #{@period_id}")
     end
 
     @threads = params[:threads]

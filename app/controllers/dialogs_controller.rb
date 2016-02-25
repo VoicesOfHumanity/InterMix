@@ -102,16 +102,50 @@ class DialogsController < ApplicationController
       @dsection = 'list'
     end
     
-    if session.has_key?(:slider_period_id) and session[:slider_period_id].to_i > 0
-      logger.info("dialogs#slider setting period based on slider_period_id")
-      @period_id = session[:slider_period_id].to_i
-    elsif @dialog.recent_period
-      logger.info("dialogs#slider setting period based on recent_period")
-      @period_id = @dialog.recent_period.id
+    logger.info("dialogs#slider session list_period_id:#{session[:list_period_id]} result_period_id:#{session[:result_period_id]}")    
+    
+    if @show_result.to_i > 0
+      #-- Results will show either the previous period (if the latest period was chosen in list)
+      #-- or the same period, if any other than the latest period was chosen in list
+      recent_period_id = @dialog.recent_period ? @dialog.recent_period.id : 0
+      previous_period_id = @dialog.previous_period ? @dialog.previous_period.id : 0
+      if session.has_key?(:list_period_id) and session[:list_period_id].to_i > 0
+        list_period_id = session[:list_period_id]
+        if list_period_id == recent_period_id
+          #-- Most recent period was picked in listing. Use the one before
+          @period_id = previous_period_id
+          logger.info("dialogs#slider setting result period to the previous #{@period_id}")
+        else  
+          #-- Use the same one as in listing
+          @period_id = session[:list_period_id].to_i
+          logger.info("dialogs#slider setting result period to same as listing #{@period_id}")
+        end
+      else
+        #-- No sign of a selection in listing. Pick the next to last period
+        @period_id = recent_period_id
+        logger.info("dialogs#slider setting result period to previous #{@period_id}, as no listing was indicated")
+      end
+      if @period_id == 0
+        @period_id = recent_period_id
+        logger.info("dialogs#slider setting result period to #{@period_id} as it was zero")
+      end
     else
-      logger.info("dialogs#slider setting period to zero")
-      @period_id = 0
+      #-- Listing will always start off showing the latest period, no matter where one comes from
+      logger.info("dialogs#slider setting listing period based on recent_period")
+      @period_id = @dialog.recent_period.id
+      session[:list_period_id] = @period_id
     end
+    
+    #if session.has_key?(:slider_period_id) and session[:slider_period_id].to_i > 0
+    #  logger.info("dialogs#slider setting period based on slider_period_id")
+    #  @period_id = session[:slider_period_id].to_i
+    #elsif @dialog.recent_period
+    #  logger.info("dialogs#slider setting period based on recent_period")
+    #  @period_id = @dialog.recent_period.id
+    #else
+    #  logger.info("dialogs#slider setting period to zero")
+    #  @period_id = 0
+    #end
     logger.info("dialogs#slider period:#{@period_id}")
     @period = Period.find_by_id(@period_id) if @period_id > 0
     if @period and @period.dialog_id != @dialog_id
