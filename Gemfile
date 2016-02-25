@@ -8,9 +8,9 @@ gem 'rake'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-#gem 'mysql2'
+gem 'mysql2'
 #gem 'mysql2', '~> 0.3.18'
-gem 'mysql2', '~> 0.4.2'
+#gem 'mysql2', '~> 0.4.2'
 
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
@@ -81,7 +81,7 @@ group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
   gem 'capistrano-rails'
-  gem 'web-console'  
+  gem 'web-console', '2.3.0'  
   gem 'rspec-rails'
   gem 'capybara'
   gem 'selenium-webdriver'
