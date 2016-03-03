@@ -2,14 +2,14 @@
 
 <h2>Facebook Sign up</h2>
 
-<p>We just need to know what group you want to join. Other profile details can be filled in later.</p>
+<p>We just need to know what group you want to join, if any. Other profile details can be filled in later.</p>
 
 <form action="/front/fbjoin" method="post" enctype="multipart/form-data">
 <input type="hidden" id="authenticity_token" name="authenticity_token" value="<%= form_authenticity_token %>">
 
 <table style="background-color:#fff;margin-left:auto;margin-right:auto;width:700px">		
 <tr><td>Group*</td><td>
-<%= select_tag :group_id,raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(Group.where(:openness=>'open').order(:name),'id','name',@group_id) %>
+<%= select_tag :group_id,raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(Group.where(openness: 'open',is_global: false).order(:name),'id','name',@group_id) %>
 </td></tr>
 </table>
 <p><input type="image" src="/images/login/facebook_64.png" alt="Submit" style="vertical-align:middle;float:left;margin-right:10px">	

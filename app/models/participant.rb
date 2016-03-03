@@ -79,8 +79,15 @@ class Participant < ActiveRecord::Base
     when 'facebook'
       if ['info']
         self.email = omniauth['info']['email'] if email.blank?
-        self.first_name = omniauth['info']['first_name'] if first_name.blank?
-        self.last_name = omniauth['info']['last_name'] if last_name.blank?
+        if omniauth['info'].has_key?('first_name')
+          self.first_name = omniauth['info']['first_name'] if first_name.blank?
+          self.last_name = omniauth['info']['last_name'] if last_name.blank?
+        elsif omniauth['info'].has_key?('name')
+          narr = omniauth['info']['name'].split(' ')
+          self.last_name = narr[narr.length-1]
+          self.first_name = ''
+          self.first_name = narr[0,narr.length-1].join(' ') if narr.length > 1          
+        end
         self.fb_link = omniauth['info']['urls']['Facebook'] if omniauth['info']['urls'] and omniauth['info']['urls']['Facebook']
         self.fb_uid = omniauth['uid']
       else

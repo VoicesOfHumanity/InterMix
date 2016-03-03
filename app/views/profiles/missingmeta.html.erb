@@ -28,11 +28,29 @@
 <% ok = false %>
 <% end -%>
 
-<% if @participant.country_code.to_s == '' -%>
+<% if @participant.city.to_s == '' -%>
 <%= f.input :city, :required => false %>
+<% ok = false %>
+<% end -%>
+
+<% if @participant.country_code.to_s == '' -%>
 <%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
 <% ok = false %>
 <% end -%>
+
+<% if @participant.admin1uniq.to_s == '' -%>
+<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]} %>
+<% ok = false %>
+<% end -%>
+
+<% if @participant.metro_area_id.to_i == 0 -%>
+<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false %>
+<% ok = false %>
+<% end -%>
+
+		
+
+
 
 <% metamap_nodes = @participant.metamap_nodes_h %>
 <% @participant.metamaps_h.each do |metamap_id,metamap_name| -%>

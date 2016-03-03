@@ -86,6 +86,12 @@ class ProfilesController < ApplicationController
     @group_id = session[:group_id].to_i if @group_id.to_i == 0
     @group = Group.find_by_id(@group_id) if not @group and @group_id > 0
 
+    if @participant.country_code.to_s != ''
+      @metro_areas = MetroArea.where(:country_code=>@participant.country_code).order(:name).collect{|r| [r.name,r.id]}
+    else  
+      @metro_areas = MetroArea.joins(:geocountry).order("geocountries.name,metro_areas.name").collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
+    end
+
     if session[:dialog_id].to_i > 0
       @forum_link = "/dialogs/#{session[:dialog_id]}/slider"
     elsif @group

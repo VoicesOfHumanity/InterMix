@@ -1122,11 +1122,11 @@ class FrontController < ApplicationController
     
     flash[:alert] = ''
     
-    if @group_id == 0
-      #flash[:alert] += "You'll need to choose what group to join<br>"
-      redirect_to '/fbjoin'     # fbjoinform
-      return   
-    elsif @group_id > 0
+    #if @group_id == 0
+    #  #flash[:alert] += "You'll need to choose what group to join<br>"
+    #  redirect_to '/fbjoin'     # fbjoinform
+    #  return   
+    if @group_id > 0
       @group = Group.find_by_id(@group_id)
       if not @group
         flash[:alert] += "Sorry, that group seems to no longer exist<br>"
@@ -1141,6 +1141,8 @@ class FrontController < ApplicationController
         redirect_to '/fbjoin'    # fbjoinform
         return   
       end
+    else
+      @group = GLOBAL_GROUP_ID  
     end 
     
     session[:join_group_id] = @group_id
@@ -1165,6 +1167,7 @@ class FrontController < ApplicationController
     flash[:alert] = '' 
     
     flash[:notice] += "You have successfully authenticated with Facebook"
+    logger.info("front#fbjoinfinal authenticated with Facebook")
     
     @group_id = session[:join_group_id].to_i
     @dialog_id = session[:join_dialog_id].to_i
@@ -1172,9 +1175,9 @@ class FrontController < ApplicationController
     session[:join_group_id] = nil if session[:join_group_id]
     session[:join_dialog_id] = nil if session[:join_dialog_id]
     
-    if @group_id == 0
-      flash[:alert] += "But, sorry, there's no indication of what group this would be added to<br>"
-    elsif @group_id > 0
+    #if @group_id == 0
+    #  flash[:alert] += "But, sorry, there's no indication of what group this would be added to<br>"
+    if @group_id > 0
       @group = Group.find_by_id(@group_id)
       if not @group
         flash[:alert] += "But, sorry, this group seems to no longer exist<br>"
@@ -1247,30 +1250,43 @@ class FrontController < ApplicationController
       return   
     end  
     
-    @group_participant = GroupParticipant.new(:group_id=>@group.id,:participant_id=>@participant.id)
-    if @group.openness == 'open'
-      @group_participant.active = true
-      @group_participant.status = 'active'
+    if @group
+      @group_participant = GroupParticipant.new(:group_id=>@group.id,:participant_id=>@participant.id)
+      if @group.openness == 'open'
+        @group_participant.active = true
+        @group_participant.status = 'active'
+      else
+        #-- open_to_apply probably
+        @group_participant.active = false
+        @group_participant.status = 'applied'      
+      end
+      @group_participant.save
     else
-      #-- open_to_apply probably
-      @group_participant.active = false
-      @group_participant.status = 'applied'      
+      @group = Group.find_by_id(GLOBAL_GROUP_ID)  
     end
-    @group_participant.save
 
-    # Also join Global Townhall Square
-    group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
+    if @group.id != GLOBAL_GROUP_ID
+      # Also join Global Townhall Square, if not already done
+      group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
+    end
+        
+    if @participant.fb_uid.to_i >0 and not @participant.picture.exists?
+      #-- Use their facebook photo, if they don't already have one.
+      url = "https://graph.facebook.com/#{@participant.fb_uid}/picture?type=large"
+      @participant.picture = URI.parse(url)
+      @participant.save!
+    end
         
     @participant.ensure_authentication_token!
     
     # Pick an appropriate logo
-    if @group.logo.exists?
+    if @group and @group.logo.exists?
       @logo = "http://#{BASEDOMAIN}#{@group.logo.url}"
     else
       @logo = nil
     end
 
-    if @group.shortname.to_s != ""
+    if @group and @group.shortname.to_s != ""
       dom = "#{@group.shortname}.#{ROOTDOMAIN}"
     else
       dom = BASEDOMAIN
