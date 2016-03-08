@@ -232,8 +232,8 @@ for p in participants
       #  end
       #end
       
-      if send_it and item.group and item.group.is_global
-        # Only send Global Townhall Square messages if they're from the admin
+      if send_it and item.group and item.group.is_global and item.dialog_id.to_i == 0
+        # Only send Global Townhall Square gts group messages (GLOBAL_GROUP_ID) if they're from the admin
         # is it posted by an admin?
         group_participant = GroupParticipant.where(group_id: item.group_id, participant_id: item.posted_by).first
         if group_participant.moderator
