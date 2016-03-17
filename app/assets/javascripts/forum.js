@@ -334,6 +334,9 @@ function edititem(id) {
           $('#htmlcontent_'+id).html(t.responseText);
           short_updated = false;
           editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
+      	  CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
+      			this.document.on("keyup", editor_change);
+      	  });
         }
      });	
 }
