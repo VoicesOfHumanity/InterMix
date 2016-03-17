@@ -132,7 +132,7 @@ class DialogsController < ApplicationController
     else
       #-- Listing will always start off showing the latest period, no matter where one comes from
       logger.info("dialogs#slider setting listing period based on recent_period")
-      @period_id = @dialog.recent_period.id
+      @period_id = @dialog.recent_period ? @dialog.recent_period.id : 0
       session[:list_period_id] = @period_id
     end
     

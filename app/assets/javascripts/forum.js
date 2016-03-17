@@ -479,6 +479,13 @@ function saveitem() {
         	    } else {
         	         window.location.hash = '#newforumitem';
         	    }
+            	if (CKEDITOR.instances['item_html_content_editor']) { 
+            		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
+            	}
+                editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
+        		CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
+        			this.document.on("keyup", editor_change);
+        		});
         	} else {    
         	    if ($('#from') && $('#from').val()=='individual') {
         	        window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];

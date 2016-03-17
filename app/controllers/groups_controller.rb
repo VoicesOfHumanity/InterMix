@@ -1404,6 +1404,10 @@ class GroupsController < ApplicationController
   def get_group_info
     #-- Look up a few pieces of information about the group and group member, for menus, etc.
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
+    if @group.id == GLOBAL_GROUP_ID and not @group_participant
+      #-- If it is the global townhall, add them if they somehow aren't there
+      @group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: current_participant.id, active: true, status: 'active')
+    end
     @is_member = @group_participant ? true : false
     @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
     @has_dialog = (@group.active_dialogs.length > 0)

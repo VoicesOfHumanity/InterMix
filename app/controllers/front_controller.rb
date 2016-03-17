@@ -1267,7 +1267,7 @@ class FrontController < ApplicationController
 
     if @group.id != GLOBAL_GROUP_ID
       # Also join Global Townhall Square, if not already done
-      group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
+      @group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
     end
         
     if @participant.fb_uid.to_i >0 and not @participant.picture.exists?
