@@ -77,7 +77,7 @@ end
 </div>
 
 <div class="iteminfotxt">
-  <% if item.dialog -%>
+  <% if item.class != Hash and item.dialog -%>
 	<%= "Discussion: " + item.dialog.name %>  
   <% else -%>
 	<%= "Discussion: " + (item['dialog'] ? item['dialog']['name'] : item['dialog_id'].to_s) if item['dialog_id'].to_i > 0 %>
@@ -85,7 +85,7 @@ end
 </div>
 
 <div class="iteminfotxt">
-  <% if item.period -%>
+  <% if item.class != Hash and item.period -%>
 	<%= "Decision Period: " + item.period.name %>  
   <% else -%>
 	<%= "Decision Period: " + (item['period'] ? item['period']['name'] : item['period_id'].to_s) if item['period_id'].to_i > 0 %>
