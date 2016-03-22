@@ -895,6 +895,9 @@ class ItemsController < ApplicationController
     #end
     @period_id = @period_id
     
+    session[:slider_dialog_id] = @dialog_id
+    session[:slider_group_id] = @group_id
+    
     if show_result
       session[:result_period_id] = @period_id
       logger.info("items#geoslider_update set result_period_id to #{@period_id}")
@@ -1126,6 +1129,7 @@ class ItemsController < ApplicationController
       # Items probably need to be sorted, based on the results we calculated
       #sortby = '*value*'
       @sortby = params[:sortby]
+      session[:list_sortby] = @sortby
       @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
   
       # Listing. Divide into reasonable batches

@@ -166,7 +166,21 @@ class DialogsController < ApplicationController
       @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
     end
 
-    if @period and @period.sort_order == 'date'
+    @sortby = nil
+    if session.include?(:list_sortby) and session.include?(:slider_dialog_id)
+      #-- Look at the previous sort used and see if we should use the same
+      if session[:slider_dialog_id] !=  @dialog.id
+        #-- It was for a different discussion
+      elsif session.include?(:slider_group_id) and session[:slider_group_id].to_i != @group_id
+        #-- It was for a different group
+      else
+        @sortby = session[:list_sortby]
+      end
+    end
+
+    if @sortby
+      #-- If we already have the sort key, keep that
+    elsif @period and @period.sort_order == 'date'
       @sortby = "items.id desc"
     elsif @period and @period.sort_order == 'value'
       @sortby = '*value*'      
