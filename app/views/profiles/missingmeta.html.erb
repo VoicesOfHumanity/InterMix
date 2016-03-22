@@ -48,10 +48,6 @@
 <% ok = false %>
 <% end -%>
 
-		
-
-
-
 <% metamap_nodes = @participant.metamap_nodes_h %>
 <% @participant.metamaps_h.each do |metamap_id,metamap_name| -%>
   <% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
@@ -65,6 +61,24 @@
     <% ok = false %>
   <% end -%>
 <% end -%>
+
+<% ok = false %>
+<div style="display:inline;position:relative;top:20px"><b>Indigenous</b></div>
+<% ind_checked = {}; ind_checked[:checked] = 'checked' if @participant.indigenous %>
+<%= f.input :indigenous, :as => :boolean, :label=>"check here if you identify with an indigenous people or tribe", :input_html => ind_checked %>
+<div style="display:inline;position:relative;top:20px"><b>Other Minority</b></div>
+<% min_checked = {}; min_checked[:checked] = 'checked' if @participant.other_minority %>
+<%= f.input :other_minority, :as => :boolean, :label=>"check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country", :input_html => min_checked %>
+<div style="display:inline;position:relative;top:20px"><b>Veteran</b></div>
+<% vet_checked = {}; vet_checked[:checked] = 'checked' if @participant.veteran %>
+<%= f.input :veteran, :as => :boolean, :label=>"check here if you are a veteran", :input_html => vet_checked %>		
+<div style="display:inline;position:relative;top:20px"><b>Interfaith</b></div>
+<% int_checked = {}; int_checked[:checked] = 'checked' if @participant.interfaith %>
+<%= f.input :interfaith, :as => :boolean, :label=>"check here if you identify as interfaith", :input_html => int_checked %>		
+<div style="display:inline;position:relative;top:20px"><b>Refugee</b></div>
+<% ref_checked = {}; ref_checked[:checked] = 'checked' if @participant.refugee %>
+<%= f.input :refugee, :as => :boolean, :label=>"check here if you identify as a refugee", :input_html => ref_checked %>		
+
 
 <% if ok -%>
 <p>Actually, never mind, everything is in order, so just <a href="<%= @forum_link %>">click here to go to the list</a>.</p>
