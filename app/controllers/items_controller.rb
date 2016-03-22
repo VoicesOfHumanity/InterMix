@@ -992,6 +992,7 @@ class ItemsController < ApplicationController
             items = Item.get_sorted(items,itemsproc,sortby)
             if items.length > 0
               item = items[0]
+              logger.debug("geoslider_update item.participant:#{item.participant.class}")
               iproc = itemsproc[item.id]
             end
             
@@ -1114,6 +1115,7 @@ class ItemsController < ApplicationController
       render :partial=>'simple_result'
     
     else
+      #-- Listing
           
       items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
     

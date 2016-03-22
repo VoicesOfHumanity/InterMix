@@ -4,8 +4,9 @@
 
 <% @data.each do |name,info| -%>
   <h3><%= info[:name ]%></h3>
-  
+    
   <% if info[:item] -%>
+  <p><%= info[:item].dialog.class %></p>
     <div class="forumitem forumitemplain forummain forum1">
       <%= render :partial => "items/item_simple", :locals => { :item => info[:item], :itemproc=>info[:iproc], :from=>'result' } %>
         <div>

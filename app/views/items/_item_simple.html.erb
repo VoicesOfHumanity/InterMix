@@ -22,9 +22,23 @@ end
 <div class="iteminfo">
 
 <div class="iteminfotxt">
-	by 
-<% "WHAT WAS THE POINT OF THIS?: if @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread" -%>	
+	by
+<% "WHAT WAS THE POINT OF THIS?: if @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread" -%>
+
 <% if not participant_signed_in? and ( @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item['is_first_in_thread'] ) -%>
+<%= item.participant ? item.participant.name : item.posted_by %>		
+<% elsif item.dialog and item.dialog.current_period.to_i > 0 and item.period_id==item.dialog.current_period and not item.dialog.settings_with_period['names_visible_voting'] and item.is_first_in_thread -%>
+[<%= current_participant.sysadmin ? "(#{item.participant.name}) " : '' %>name withheld during decision period]
+<% elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period['names_visible_general'] and item.is_first_in_thread -%>
+[<%= current_participant.sysadmin ? "(#{item.participant.name}) " : '' %>name withheld for this discussion]
+<% elsif item.dialog and not item.dialog.settings_with_period['profiles_visible'] -%>
+<%= item.participant ? item.participant.name : item.posted_by %>
+<% elsif not participant_signed_in? -%>
+<%= item.participant ? item.participant.name : item.posted_by %>
+<% elsif @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item.is_first_in_thread -%>
+<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>		
+	
+<% elsif not participant_signed_in? and ( @from.to_s == 'individual' or (@from.to_s != 'dialog' and @from.to_s != 'result') or not item['is_first_in_thread'] ) -%>
 <%= item['participant'] ? item['participant']['name'] : item['posted_by'] %>		
 <% elsif item['dialog'] and item['dialog']['current_period'].to_i > 0 and item['period_id']==item['dialog']['current_period'] and not item['dialog']['settings_with_period']["names_visible_voting"] and item['is_first_in_thread'] -%>
 [<%= current_participant.sysadmin ? "(#{item['participant']['name']}) " : '' %>name withheld during decision period]
@@ -56,11 +70,19 @@ end
 </div>
 
 <div class="iteminfotxt">
+  <% if item.dialog -%>
+	<%= "Discussion: " + item.dialog.name %>  
+  <% else -%>
 	<%= "Discussion: " + (item['dialog'] ? item['dialog']['name'] : item['dialog_id'].to_s) if item['dialog_id'].to_i > 0 %>
+  <% end -%>
 </div>
 
 <div class="iteminfotxt">
+  <% if item.period -%>
+	<%= "Decision Period: " + item.period.name %>  
+  <% else -%>
 	<%= "Decision Period: " + (item['period'] ? item['period']['name'] : item['period_id'].to_s) if item['period_id'].to_i > 0 %>
+  <% end -%>
 </div>
 
 <% if (@from == 'group' or @from == 'individual') and item['subgroup_list'].length > 0 -%>	
