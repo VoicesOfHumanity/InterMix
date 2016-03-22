@@ -9,7 +9,9 @@
     <div class="forumitem forumitemplain forummain forum1">
       <%= render :partial => "items/item_simple", :locals => { :item => info[:item], :itemproc=>info[:iproc], :from=>'result' } %>
         <div>
+        <% if false -%>
         [<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result">see all in the forum list</a>]
+        <% end -%>
       </div>
 		</div>
   <% else -%>
