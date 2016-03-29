@@ -522,8 +522,8 @@ div.iteminfo_summary {
 	position: absolute;
 	/* bottom: -10px;
 	left: 260px;
-	width: 470px; */
-	margin: 19px -100px 0 -10px;
+	width: 470px; */	
+    margin: 19px -100px 0 -10px;
 	height: 120px;
 	padding: 0 10px 20px 10px;
 	border: 1px solid #666;

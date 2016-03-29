@@ -2,7 +2,7 @@
 if @is_previous_result and @crosstalk.to_s != ''
   dom_id = "#{item['id']}_result_#{@crosstalk}"
 else
-  dom_id = item['id']
+  dom_id = item['id'].to_s + '_' + Digest::MD5.hexdigest(Time.now.to_f.to_s)
 end
 %>
 

@@ -500,7 +500,11 @@ function saveitem() {
                     document.location = '/dialogs/' + $('#in_dialog_id').val() + '/forum?item_id=' + results['item_id'];                
                 } else if ($('#from') && $('#from').val()=='geoslider') {
                     $('#sortby').val('items.id desc');
-                    $('#threads').val('root');
+                    if (replyingid>0) {
+                        $('#threads').val('');
+                    } else {    
+                        $('#threads').val('root');
+                    }
                     per_reload();
                     window.location.hash = '#item_' + results['item_id'];
     		    } else if (results['item_id']) {
