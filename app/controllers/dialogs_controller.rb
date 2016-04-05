@@ -171,11 +171,15 @@ class DialogsController < ApplicationController
       #-- Look at the previous sort used and see if we should use the same
       if session[:slider_dialog_id] !=  @dialog.id
         #-- It was for a different discussion
+        session.delete(:list_sortby)
       elsif session.include?(:slider_group_id) and session[:slider_group_id].to_i != @group_id
         #-- It was for a different group
+        session.delete(:list_sortby)
       else
         @sortby = session[:list_sortby]
       end
+    else
+      session.delete(:list_sortby) if session.include?(:list_sortby) 
     end
 
     if @sortby

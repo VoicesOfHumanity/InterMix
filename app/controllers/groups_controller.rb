@@ -15,6 +15,8 @@ class GroupsController < ApplicationController
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").select("distinct(group_id),moderator").includes(:group)
     @groupsina = @groupsin.collect{|g| g.group.id if g.group }
     @ismoderator = false
+    session.delete(:list_sortby) if session.include?(:list_sortby) 
+    session.delete(:slider_period_id) if session.include?(:slider_period_id)
     for group in @groupsin
       @ismoderator = true if group.moderator
     end  
@@ -1384,6 +1386,8 @@ class GroupsController < ApplicationController
     else
       session[:cur_baseurl] = "http://" + BASEDOMAIN    
     end
+    session.delete(:list_sortby) if session.include?(:list_sortby) 
+    session.delete(:slider_period_id) if session.include?(:slider_period_id)
     if participant_signed_in? and ( session[:group_id] != before_group_id or session[:dialog_id] != before_dialog_id )
        current_participant.last_group_id = session[:group_id] if session[:group_id]
        current_participant.last_dialog_id = session[:dialog_id] if session[:dialog_id]
