@@ -20,10 +20,17 @@
 	<tr><td>*{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
 	{% endfor %}
 	<tr><td>*Country of Residence</td><td><select name="country_code"><option value="">* choose *</option>{% for country in countries %}<option value="{{ country.iso }}"{% if country.iso == country_code %} selected="selected"{% endif %}>{{ country.name }}</option>{% endfor %}</select></td></tr>
-	<tr><td>*Name</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>    
+  <tr><td>Metro Area</td><td><select name="metro_area_id"><option value="">* choose *</option>{% for m in metro_areas %}<option value="{{ m[1] }}">{{ m[0] }}</option>{% endfor %}</select></td></tr>
+  <tr><td>City</td><td><input type="text" name="city" value="" size="30" style="width:200px"></td></tr>    
+  <tr><td>*Name</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>    
 	<tr><td>*E-mail</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>    
 	<tr><td>*Password</td><td><input type="password" name="password" value="{{ @password }}" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="{{ @password_confirmation }}" size="30" style="width:200px"></td></tr>
-	</table>
+  <tr><td>Indigenous</td><td><input type="checkbox" name="indigenous" value="1"> check here if you identify with an indigenous people or tribe</td></tr>
+  <tr><td>Other Minority</td><td><input type="checkbox" name="other_minority" value="1"> check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country</td></tr>
+  <tr><td>Veteran</td><td><input type="checkbox" name="veteran" value="1"> check here if you are a veteran</td></tr>
+  <tr><td>Interfaith</td><td><input type="checkbox" name="interfaith" value="1"> check here if you identify as interfaith</td></tr>
+  <tr><td>Refugee</td><td><input type="checkbox" name="refugee" value="1"> check here if you identify as a refugee</td></tr>
+  </table>
 
 {% if group.openness == 'open' %}
 <input type="submit" value="Register!">    
