@@ -520,6 +520,13 @@ class FrontController < ApplicationController
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+      @participant.metro_area_id - params[:metro_area_id].to_i
+      @participant.city = params[:city].to_s
+      @participant.indigenous = (params[:indigenous].to_i == 1)
+      @participant.other_minority = (params[:other_minority].to_i == 1)
+      @participant.veteran = (params[:veteran].to_i == 1)
+      @participant.interfaith = (params[:interfaith].to_i == 1)
+      @participant.refugee = (params[:refugee].to_i == 1)
     end
 
     if flash[:alert] != ''
@@ -888,6 +895,13 @@ class FrontController < ApplicationController
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+      @participant.metro_area_id - params[:metro_area_id].to_i
+      @participant.city = params[:city].to_s
+      @participant.indigenous = (params[:indigenous].to_i == 1)
+      @participant.other_minority = (params[:other_minority].to_i == 1)
+      @participant.veteran = (params[:veteran].to_i == 1)
+      @participant.interfaith = (params[:interfaith].to_i == 1)
+      @participant.refugee = (params[:refugee].to_i == 1)
     end
 
     if not @participant.save!  
@@ -1700,6 +1714,11 @@ class FrontController < ApplicationController
     @content = "<p>No discussion was recognized</p>"
     @logo = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
     @meta = []
+    #if @participant.country_code.to_s != ''
+    #  @metro_areas = MetroArea.where(:country_code=>'US').order(:name).collect{|r| [r.name,r.id]}
+    #else  
+      @metro_areas = MetroArea.joins(:geocountry).order("geocountries.name,metro_areas.name").collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
+    #end
     if @dialog
       metamaps = @dialog.metamaps
       for metamap in metamaps
@@ -1729,7 +1748,7 @@ class FrontController < ApplicationController
         @dialog_group = nil 
       end
       
-      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo}
+      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
       cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
       cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
       if @dialog_group and @dialog_group.signup_template.to_s != ''
@@ -1743,6 +1762,7 @@ class FrontController < ApplicationController
       template = Liquid::Template.parse(template_content)
       @content = template.render(cdata)
     end
+    
   end
   
   def prepare_gjoin
@@ -1751,6 +1771,7 @@ class FrontController < ApplicationController
     @content = "<p>No group was recognized</p>"
     @logo = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @meta = []
+    @metro_areas = MetroArea.joins(:geocountry).order("geocountries.name,metro_areas.name").collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
     metamaps = @group.metamaps
     for metamap in metamaps
       #m = OpenStruct.new
@@ -1769,7 +1790,7 @@ class FrontController < ApplicationController
       @meta << m
     end
         
-    cdata = {'group'=>@group, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies, 'logo'=>@logo}
+    cdata = {'group'=>@group, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
     cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     if @group and @group.signup_template.to_s != ''
       template_content = @group.signup_template
