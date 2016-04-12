@@ -497,14 +497,14 @@ function saveitem() {
         			this.document.on("keyup", editor_change);
         		});
         	} else {    
-    		    replyingid = 0;
-    		    editingid = 0;
-            	in_new_item = 0;
         	    if ($('#from') && $('#from').val()=='individual') {
         	        window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];
     		    } else if ($('#from') && $('#from').val()=='thread') {
     		        window.location.reload();
 				} else if ($('#from') && $('#from').val()=='dsimple' && replyingid>0) {
+        		    replyingid = 0;
+        		    editingid = 0;
+                	in_new_item = 0;
 					list_comments_simple();		
                 } else if ($('#from') && $('#from').val()=='dsimple') {
                     document.location = '/dialogs/' + $('#in_dialog_id').val() + '/forum?item_id=' + results['item_id'];                
@@ -515,16 +515,28 @@ function saveitem() {
                     } else {    
                         $('#threads').val('root');
                     }
+        		    replyingid = 0;
+        		    editingid = 0;
+                	in_new_item = 0;
                     per_reload();
                     window.location.hash = '#item_' + results['item_id'];
     		    } else if (results['item_id']) {
+        		    replyingid = 0;
+        		    editingid = 0;
+                	in_new_item = 0;
     		        list(null,results['item_id']);
     		    } else {
+        		    replyingid = 0;
+        		    editingid = 0;
+                	in_new_item = 0;
     		        list();
 		        }
             	$('.reply_link').each(function(i,obj) {
             	    $(this).css('opacity','1.0');
             	});
+    		    replyingid = 0;
+    		    editingid = 0;
+            	in_new_item = 0;
 		    }
 		}
 	 });	
