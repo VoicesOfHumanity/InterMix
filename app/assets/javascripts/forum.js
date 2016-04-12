@@ -238,7 +238,7 @@ function newitem(token) {
           	    });
   		    } else {
                 //$('#item_html_content').val('');
-                $('#item_short_content').val('');
+                //$('#item_short_content').val('');
                 short_updated = false;
                 editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'} )
   		    }

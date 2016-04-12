@@ -158,6 +158,16 @@ $(function() {
   }
 });
 function per_reload(first) {
+	if (editingid>0) {
+	    alert("Please save or cancel the edit that is in progress");
+	    return;
+	} else if (replyingid>0) {
+	    alert("Please save or cancel the reply that is in progress");
+	    return;
+	} else if (in_new_item>0) {
+	    alert("Please save or cancel the new thread that is in progress");
+	    return;
+	}
   if (first === undefined) {
     first = false;
   } 

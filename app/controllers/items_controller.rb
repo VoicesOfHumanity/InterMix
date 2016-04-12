@@ -288,6 +288,7 @@ class ItemsController < ApplicationController
     else
       if @dialog and @dialog.settings_with_period["default_message"].to_s != ''
         @item.html_content = @dialog.settings_with_period["default_message"]
+        #@item.short_content = @item.html_content
       end 
       #@item.subgroup_list = @subgroup if @subgroup.to_s != ''   
       @subgroup_add = @subgroup
