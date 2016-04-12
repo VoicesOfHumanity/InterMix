@@ -1,3 +1,8 @@
+<script>
+if (CKEDITOR.instances['item_html_content']) { 
+	CKEDITOR.remove(CKEDITOR.instances['item_html_content']);
+}
+</script>
 <form accept-charset="UTF-8" action="/items/<%= @item.id %>" class="formtastic item" id="edit_item_<%= @item.id %>" method="post" enctype="multipart/form-data">
 <div style="margin:0;padding:0;display:inline">
 	<input name="utf8" type="hidden" value="&#x2713;" />
@@ -171,7 +176,12 @@
 
 
 <script>
-$(document).ready(function() {
+console.log('_edit');
+//console.log('before editor replace')
+//editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'} )
+//console.log('after editor replace')
+
+//$(document).ready(function() {
 	if (!CKEDITOR.instances) {
 		alert('CKEDITOR: ' + JSON.stringify(CKEDITOR));
 	} else if (!('item_html_content' in CKEDITOR.instances)) {
@@ -187,7 +197,7 @@ $(document).ready(function() {
 			this.document.on("keyup", editor_change);
 		});
 	}
-});
+//});
 var short_updated = <%= (@item.id.to_i > 0 or flash[:alert].to_s !="" or @item.media_type != 'text') ? "true" : "false" %>;
 function editor_change() {
 	var htmlval = CKEDITOR.instances['item_html_content'].getData();
