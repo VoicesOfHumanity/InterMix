@@ -24,12 +24,12 @@
   <tr><td>City</td><td><input type="text" name="city" value="" size="30" style="width:200px"></td></tr>    
   <tr><td>*Name</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>    
 	<tr><td>*E-mail</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>    
-	<tr><td>*Password</td><td><input type="password" name="password" value="{{ @password }}" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="{{ @password_confirmation }}" size="30" style="width:200px"></td></tr>
-  <tr><td>Indigenous</td><td><input type="checkbox" name="indigenous" value="1"> check here if you identify with an indigenous people or tribe</td></tr>
-  <tr><td>Other Minority</td><td><input type="checkbox" name="other_minority" value="1"> check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country</td></tr>
-  <tr><td>Veteran</td><td><input type="checkbox" name="veteran" value="1"> check here if you are a veteran</td></tr>
-  <tr><td>Interfaith</td><td><input type="checkbox" name="interfaith" value="1"> check here if you identify as interfaith</td></tr>
-  <tr><td>Refugee</td><td><input type="checkbox" name="refugee" value="1"> check here if you identify as a refugee</td></tr>
+	<tr><td>*Password</td><td><input type="password" name="password" value="{{ @password }}" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="{{ @password_confirmation }}" size="30" style="width:200px"></td></tr>  
+  <tr><td>Indigenous</td><td><input type="checkbox" name="indigenous" value="1"<%= @indigenous.to_i==1 ? "checked" : "" %>> check here if you identify with an indigenous people or tribe</td></tr>
+  <tr><td>Other Minority</td><td><input type="checkbox" name="other_minority" value="1"<%= @other_minority.to_i==1 ? "checked" : "" %>> check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country</td></tr>
+  <tr><td>Veteran</td><td><input type="checkbox" name="veteran" value="1"<%= @veteran.to_i==1 ? "checked" : "" %>> check here if you are a veteran</td></tr>
+  <tr><td>Interfaith</td><td><input type="checkbox" name="interfaith" value="1"<%= @interfaith.to_i==1 ? "checked" : "" %>> check here if you identify as interfaith</td></tr>
+  <tr><td>Refugee</td><td><input type="checkbox" name="refugee" value="1"<%= @refugee.to_i==1 ? "checked" : "" %>> check here if you identify as a refugee</td></tr>
   </table>
 
 {% if group.openness == 'open' %}

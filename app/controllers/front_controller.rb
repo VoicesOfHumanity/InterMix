@@ -352,6 +352,11 @@ class FrontController < ApplicationController
     end
     @email = params[:email].to_s
     @country_code = params[:country_code].to_s
+    @indigenous = params[:indigenous].to_i
+    @other_minority = params[:other_minority].to_i
+    @veteran = params[:veteran].to_i
+    @interfaith = params[:interfaith].to_i
+    @refugee = params[:refugee].to_i
     tempfilepath = ''
     
     flash[:notice] = ''
@@ -763,6 +768,11 @@ class FrontController < ApplicationController
     end
     @email = params[:email].to_s
     @country_code = params[:country_code].to_s
+    @indigenous = params[:indigenous].to_i
+    @other_minority = params[:other_minority].to_i
+    @veteran = params[:veteran].to_i
+    @interfaith = params[:interfaith].to_i
+    @refugee = params[:refugee].to_i
     tempfilepath = ''
     
     flash[:notice] = ''
@@ -1751,6 +1761,12 @@ class FrontController < ApplicationController
       cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
       cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
       cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
+      cdata['indigenous'] = @indigenous.to_i
+      cdata['other_minority'] = @other_minority.to_i
+      cdata['veteran'] = @veteran.to_i
+      cdata['interfaith'] = @interfaith.to_i
+      cdata['refugee'] = @refugee.to_i
+      
       if @dialog_group and @dialog_group.signup_template.to_s != ''
         template_content = @dialog_group.signup_template
       elsif @dialog.signup_template.to_s != ''
