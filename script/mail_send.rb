@@ -118,11 +118,11 @@ for p in participants
     end  
     message.email_sent 
     if not message.email_sent
-      message.email_sent 
+      message.email_sent = true
       message.email_sent_at = Time.now
     end
     if not message.sent
-      message.sent 
+      message.sent = true
       message.sent_at = Time.now
     end
     message.save
