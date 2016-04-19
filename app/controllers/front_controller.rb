@@ -520,7 +520,7 @@ class FrontController < ApplicationController
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
-      @participant.metro_area_id - params[:metro_area_id].to_i
+      @participant.metro_area_id = params[:metro_area_id].to_i
       @participant.city = params[:city].to_s
       @participant.indigenous = (params[:indigenous].to_i == 1)
       @participant.other_minority = (params[:other_minority].to_i == 1)
@@ -895,7 +895,7 @@ class FrontController < ApplicationController
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
-      @participant.metro_area_id - params[:metro_area_id].to_i
+      @participant.metro_area_id = params[:metro_area_id].to_i
       @participant.city = params[:city].to_s
       @participant.indigenous = (params[:indigenous].to_i == 1)
       @participant.other_minority = (params[:other_minority].to_i == 1)
