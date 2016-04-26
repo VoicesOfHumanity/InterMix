@@ -1318,7 +1318,7 @@ class Item < ActiveRecord::Base
       end
       items = outitems
     elsif items2.class != Array
-      logger.info("item#get_sorted not array, sorting query")
+      logger.info("item#get_sorted not array, sorting query by #{sortby}")
       items = items2.order(sortby)
       outitems = []
       for item in items

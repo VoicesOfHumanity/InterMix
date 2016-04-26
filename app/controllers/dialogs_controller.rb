@@ -194,6 +194,50 @@ class DialogsController < ApplicationController
       @sortby = '*value*'
     end
 
+    @threads = nil
+    if session.include?(:list_threads) and session.include?(:slider_dialog_id)
+      #-- Look at the previous comment setting used and see if we should use the same
+      if session[:slider_dialog_id] !=  @dialog.id
+        #-- It was for a different discussion
+        session.delete(:list_threads)
+      elsif session.include?(:slider_group_id) and session[:slider_group_id].to_i != @group_id
+        #-- It was for a different group
+        session.delete(:list_threads)
+      else
+        @threads = session[:list_threads]
+      end
+    else
+      session.delete(:list_threads) if session.include?(:list_threads) 
+    end
+
+    if @threads
+      #-- If we have a comment setting, use it
+    else
+      @threads = 'root'
+    end
+    
+    @batch_size = nil
+    @batch_level = nil
+    if session.include?(:list_batch_size) and session.include?(:slider_dialog_id)
+      #-- Look at the previous batch size used and see if we should use the same
+      if session[:slider_dialog_id] !=  @dialog.id
+        #-- It was for a different discussion
+        session.delete(:list_batch_size)
+        session.delete(:list_batch_level)
+      elsif session.include?(:slider_group_id) and session[:slider_group_id].to_i != @group_id
+        #-- It was for a different group
+        session.delete(:list_batch_size)
+        session.delete(:list_batch_level)
+      else
+        @batch_size = session[:list_batch_size]
+        @batch_level= session[:list_batch_level]
+      end
+    else
+      session.delete(:list_batch_size) if session.include?(:list_batch_size) 
+      session.delete(:list_batch_level) if session.include?(:list_batch_level)
+    end
+    @showmax = @batch_size || 4
+
   end
   
   def show

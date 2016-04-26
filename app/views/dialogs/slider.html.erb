@@ -113,8 +113,8 @@
 <input type="hidden" name="in_dialog_id" id="in_dialog_id" value="<%= @dialog_id %>">
 <input type="hidden" name="geo_level" id="geo_level" value="1">
 <input type="hidden" name="group_level" id="group_level" value="1">
-<input type="hidden" name="batch_level" id="batch_level" value="1">
-<input type="hidden" name="batch_size" id="batch_size" value="4">
+<input type="hidden" name="batch_level" id="batch_level" value="<%= (@batch_level || 1).to_i %>">
+<input type="hidden" name="batch_size" id="batch_size" value="<%= (@batch_size || 4).to_i %>">
 <input type="hidden" id="from" name="from" value="geoslider">	
 <input type="hidden" id="in_group_id" name="in_group_id" value="<%= session[:group_id].to_i %>">	
 
@@ -125,8 +125,8 @@
 var geo_levels = {1: 'city', 2: 'metro', 3: 'state', 4: 'nation', 5: 'planet'};
 var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 5 %>;
 var cur_group_level = <%= @group_level > 0 ? @group_level : 3 %>;
-var cur_batch_level = 1;
-var cur_batch_size = 4;
+var cur_batch_level = <%= (@batch_level || 1).to_i %>;
+var cur_batch_size = <%= (@batch_size || 4).to_i %>;
 $(function() {
   if (false) {
     $( "#geoslider" ).slider({

@@ -908,6 +908,7 @@ class ItemsController < ApplicationController
     end
 
     @threads = params[:threads]
+    session[:list_threads] = @threads
     if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
       rootonly = true
     else
@@ -1132,11 +1133,12 @@ class ItemsController < ApplicationController
       @sortby = params[:sortby]
       session[:list_sortby] = @sortby
       @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
-  
-      # Listing. Divide into reasonable batches
+
+      @batch_size = params[:batch_size].to_i
+            
+      @batch_level = 1
       @batches = []
       if @items.length > 4
-        @showmax = (params[:batch_size] || 4).to_i
         if @items.length < 13
           @numbatches = 2
         elsif @items.length <= 30   
@@ -1153,10 +1155,20 @@ class ItemsController < ApplicationController
           pos += step
           @batches << pos
         end  
-        @batches << @items.length    
-      else
-        @showmax = (params[:batch_size] || @items.length).to_i
+        @batches << @items.length   
+        
+        if @batches.include?(@batch_size)
+          @batch_level = @batches.index(@batch_size) + 1
+        else  
+          @batch_size = 4
+        end  
+      elsif @batch_size == 0
+        @batch_size = @items.length
       end  
+      
+      session[:list_batch_level] = @batch_level
+      session[:list_batch_size] = @batch_size
+      @showmax = @batch_size
 
       render :partial => 'geoslider_update'
   
