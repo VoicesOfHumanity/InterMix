@@ -146,7 +146,8 @@ function list(whatchanged,gotopost) {
 	   listdone();
        if (gotopost != '') {
              window.location.hash = '#item_'+gotopost;
-        }
+         }
+         $('body').scrollTop(0);
      }
    });	
 }
@@ -531,6 +532,7 @@ function saveitem() {
                 	in_new_item = 0;
     		        list();
 		        }
+                $('body').scrollTop(0);
             	$('.reply_link').each(function(i,obj) {
             	    $(this).css('opacity','1.0');
             	});
