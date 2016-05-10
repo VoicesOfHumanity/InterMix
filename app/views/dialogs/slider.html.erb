@@ -61,11 +61,13 @@
     <% end -%>
     </div>
 
-    <div style="margin: 20px 0 0 0;">
-    <% @group_levels.each do |group_level,group_desc| -%>
-      <input type="radio" name="group_level_radio" value="<%= group_level %>" <%= group_level == @group_level ? "checked" : "" %> onclick="per_reload()"><%=raw group_desc %><br>    
+    <% if false -%>
+      <div style="margin: 20px 0 0 0;">
+      <% @group_levels.each do |group_level,group_desc| -%>
+        <input type="radio" name="group_level_radio" value="<%= group_level %>" <%= group_level == @group_level ? "checked" : "" %> onclick="per_reload()"><%=raw group_desc %><br>    
+      <% end -%>
+      </div>
     <% end -%>
-    </div>
 
 
     <div style="margin: 20px 0 0 0;">
@@ -200,7 +202,8 @@ function per_reload(first) {
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-	  data: {geo_level: cur_geo_level, group_level: cur_group_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first},
+    //group_level: cur_group_level, 
+	  data: {geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first},
 	  complete: function(t){ 
       $('#per_main').css('opacity','1.0');
 	    $('#per_main').html(t.responseText);
