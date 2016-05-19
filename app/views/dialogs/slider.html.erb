@@ -14,7 +14,7 @@
   
     <div style="text-align: center">      
   		<p>Comments: 
-        <%= select_tag "threads", options_for_select([['Show','flat'],["Don't show",'root'],['Unthreaded','']],@threads), :onchange=>"per_reload()" %>
+        <%= select_tag "threads", options_for_select([['Show',''],["Don't show",'root'],['Unthreaded','flat']],@threads), :onchange=>"per_reload()" %>
   		</p>
     </div>
     

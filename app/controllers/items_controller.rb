@@ -914,7 +914,7 @@ class ItemsController < ApplicationController
 
     @threads = params[:threads]
     session[:list_threads] = @threads
-    if @threads == 'flat' or @threads == 'tree' or @threads == 'root'
+    if @threads == '' or @threads == 'tree' or @threads == 'root'
       rootonly = true
     else
       rootonly = false
