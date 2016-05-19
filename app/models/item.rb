@@ -1051,7 +1051,7 @@ class Item < ActiveRecord::Base
     return items,ratings,title
   end
   
-  def self.get_itemsproc(items,ratings,participant_id,rootonly=true)
+  def self.get_itemsproc(items,ratings,participant_id,rootonly=false)
     # Add things up based on given items and ratings. Return itemsproc
     logger.info("item#get_itemsproc start with #{items.length} items and #{ratings.length} ratings")
     
@@ -1066,9 +1066,9 @@ class Item < ActiveRecord::Base
       exp = "regression to the mean used.<br>"
       xitems = {}
       for item in items
-        if item.is_first_in_thread
+        #if item.is_first_in_thread
           xitems[item.id] = true
-        end
+        #end
       end
       #xrates = Rating.scoped
       #xrates = xrates.where("ratings.group_id = ?", group_id) if group_id.to_i > 0
@@ -1205,7 +1205,7 @@ class Item < ActiveRecord::Base
       iproc['controversy'] = (1.0 * ( iproc['app_n3_count'] * (-3.0 - iproc['avg_approval'])**2 + iproc['app_n2_count'] * (-2.0 - iproc['avg_approval'])**2 + iproc['app_n1_count'] * (-1.0 - iproc['avg_approval'])**2 + iproc['app_0_count'] * (0.0 - iproc['avg_approval'])**2 + iproc['app_p1_count'] * (1.0 - iproc['avg_approval'])**2 + iproc['app_p2_count'] * (2.0 - iproc['avg_approval'])**2 + iproc['app_p3_count'] * (3.0 - iproc['avg_approval'])**2 ) / iproc['num_approval']) if iproc['num_approval'] != 0
       itemsproc[item.id] = iproc
       
-      if rootonly or sortby=='default'
+      if false and (rootonly or sortby=='default')
         #-- If we need roots only
         if item.is_first_in_thread
           #-- This is a root, put it on the main list

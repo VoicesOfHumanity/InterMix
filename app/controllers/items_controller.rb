@@ -963,7 +963,7 @@ class ItemsController < ApplicationController
         items,ratings,title = Item.get_items(crit,current_participant)
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
-        items = Item.get_sorted(items,itemsproc,sortby)
+        items = Item.get_sorted(items,itemsproc,sortby,false)
         if items.length > 0
           item = items[0]
           iproc = itemsproc[item.id]
@@ -979,7 +979,7 @@ class ItemsController < ApplicationController
         items,ratings,title = Item.get_items(crit,current_participant)
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
-        items = Item.get_sorted(items,itemsproc,sortby)
+        items = Item.get_sorted(items,itemsproc,sortby,false)
         if items.length > 0
           item = items[0]
           iproc = itemsproc[item.id]
@@ -999,7 +999,7 @@ class ItemsController < ApplicationController
             items,ratings,title = Item.get_items(crit,current_participant)
             itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             sortby = '*value*'
-            items = Item.get_sorted(items,itemsproc,sortby)
+            items = Item.get_sorted(items,itemsproc,sortby,false)
             if items.length > 0
               item = items[0]
               logger.debug("geoslider_update item.participant:#{item.participant.class}")
@@ -1022,7 +1022,7 @@ class ItemsController < ApplicationController
             items,ratings,title = Item.get_items(crit,current_participant)
             itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             sortby = '*value*'
-            items = Item.get_sorted(items,itemsproc,sortby)
+            items = Item.get_sorted(items,itemsproc,sortby,false)
             if items.length > 0
               item = items[0]
               iproc = itemsproc[item.id]
@@ -1044,7 +1044,7 @@ class ItemsController < ApplicationController
         items,ratings,title = Item.get_items(crit,current_participant)
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
-        items = Item.get_sorted(items,itemsproc,sortby)
+        items = Item.get_sorted(items,itemsproc,sortby,false)
         if items.length > 0
           item = items[0]
           iproc = itemsproc[item.id]
@@ -1066,7 +1066,7 @@ class ItemsController < ApplicationController
             items,ratings,title = Item.get_items(crit,current_participant)
             itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             sortby = '*value*'
-            items = Item.get_sorted(items,itemsproc,sortby)
+            items = Item.get_sorted(items,itemsproc,sortby,false)
             if items.length > 0
               item = items[0]
               iproc = itemsproc[item.id]
@@ -1089,7 +1089,7 @@ class ItemsController < ApplicationController
         items,ratings,title = Item.get_items(crit,current_participant)
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
-        items = Item.get_sorted(items,itemsproc,sortby)
+        items = Item.get_sorted(items,itemsproc,sortby,false)
         if items.length > 0
           item = items[0]
           iproc = itemsproc[item.id]
@@ -1110,7 +1110,7 @@ class ItemsController < ApplicationController
             items,ratings,title = Item.get_items(crit,current_participant)
             itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             sortby = '*value*'
-            items = Item.get_sorted(items,itemsproc,sortby)
+            items = Item.get_sorted(items,itemsproc,sortby,false)
             if items.length > 0
               item = items[0]
               iproc = itemsproc[item.id]
