@@ -1425,9 +1425,11 @@ class ItemsController < ApplicationController
       @xmessage += "Please include at least a brief message<br>"
     elsif @item.short_content == ''
       @xmessage += "Please include at least a short message<br>"
-    elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_words"].to_i > 0 and 1.0 * plain_content.scan(/(\w|-)+/).size > dialog.settings_with_period["max_words"] * 1.05
+      #elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_words"].to_i > 0 and 1.0 * plain_content.scan(/(\w|-)+/).size > dialog.settings_with_period["max_words"] * 1.05
+    elsif dialog and dialog.settings_with_period["max_words"].to_i > 0 and 1.0 * plain_content.scan(/(\w|-)+/).size > dialog.settings_with_period["max_words"] * 1.05
       @xmessage += "That's too many words"
-    elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_characters"].to_i > 0 and 1.0 * message_length > dialog.settings_with_period["max_characters"] * 1.05
+      #elsif @item.is_first_in_thread and dialog and dialog.settings_with_period["max_characters"].to_i > 0 and 1.0 * message_length > dialog.settings_with_period["max_characters"] * 1.05
+    elsif dialog and dialog.settings_with_period["max_characters"].to_i > 0 and 1.0 * message_length > dialog.settings_with_period["max_characters"] * 1.05
       @xmessage += "The maximum message length is #{dialog.settings_with_period["max_characters"]} characters<br>"
     elsif dialog and dialog.settings_with_period["required_subject"] and subject.to_s == '' and html_content.gsub(/<\/?[^>]*>/, "").strip != ''
       @xmessage += "Please choose a subject line<br>"

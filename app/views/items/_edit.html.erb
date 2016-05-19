@@ -111,7 +111,7 @@ if (CKEDITOR.instances['item_html_content']) {
 			
 			<% plain_content = strip_tags(@item.html_content.to_s) %>
 			<% if @item.media_type != "text" -%>
-			<% elsif @max_words.to_i > 0 and @max_characters.to_i > 0 and @item.reply_to.to_i == 0 -%>
+			<% elsif @max_words.to_i > 0 and @max_characters.to_i > 0 #and @item.reply_to.to_i == 0 -%>
 			(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> of <%= @max_words.to_i %> words,
 			<span id="item_long_length"><%= @item.html_content ? @item.html_content.length : 0 %></span> of <%= @max_characters.to_i %> char)
 			
