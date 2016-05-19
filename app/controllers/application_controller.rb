@@ -241,11 +241,15 @@ class ApplicationController < ActionController::Base
       current_participant.save!
     end
   
+    # Return the URL they will be sent to
     if params[:fb_sig_in_iframe].to_i == 1
       session[:cur_baseurl] + '/fbapp'
     elsif not session[:has_required]
       #session[:cur_baseurl] + '/me/profile/edit#settings'
       session[:cur_baseurl] + '/me/profile/meta'
+    elsif true
+      # Send everybody to Order out of Chaos  
+      session[:cur_baseurl] + "/dialogs/#{VOH_DISCUSSION_ID}/slider"
     elsif dialog_id.to_i > 0
       logger.info("application#after_sign_in_path_for setting path to dialog slider list")
       session[:cur_baseurl] + "/dialogs/#{dialog_id}/slider"
@@ -258,6 +262,7 @@ class ApplicationController < ActionController::Base
       logger.info("application#after_sign_in_path_for using default path")
       super
     end  
+    
   end
   
   def after_token_authentication
