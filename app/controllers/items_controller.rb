@@ -461,6 +461,10 @@ class ItemsController < ApplicationController
       @item.first_in_thread_group_id = @item.group_id
     end    
     logger.info("items#create by #{@item.posted_by}")
+    
+    if @item.group_id.to_i == 0
+      @item.group_id = GLOBAL_GROUP_ID
+    end
 
     if not itemvalidate
       logger.info("items#create by #{@item.posted_by}: failing validation: #{@xmessage}")

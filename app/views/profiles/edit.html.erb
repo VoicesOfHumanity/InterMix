@@ -94,9 +94,11 @@
 
 		<%= f.input :private_email, :label => 'Personal messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :system_email, :label => 'System messages', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
-		<%= f.input :group_email, :label => 'Group postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<% if false %>
+    <%= f.input :group_email, :label => 'Group postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		<%= f.input :subgroup_email, :label => 'Sub-Group postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
-		<%= f.input :forum_email, :label => 'Discussion postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
+		<% end %>
+    <%= f.input :forum_email, :label => 'Discussion postings', :as => :select, :collection =>EMAIL_PREFS_TEXT.invert %>	
 		
 		<li>To reply by email without going online, specify "E-mail each one right away".</li>
 		
@@ -118,7 +120,7 @@
 	<p><br>
 	  <input type="button" value="Cancel" onclick="document.location.href='/me/profile'" />
 	  <input type="submit" value="Save" />
-		<% if @forum_link.to_s != '' -%>
+		<% if false and @forum_link.to_s != '' -%>
 	  <input type="button" value="Save and go to Forum" onclick="$('#goto').val($('#forum_link').val());$('#profile_edit').submit();" />
 		<% end -%>
 	<br><br></p>

@@ -61,6 +61,7 @@ if (CKEDITOR.instances['item_html_content']) {
 		</li>
 		<% end -%>
 
+    <% if false -%>
 		<% if @item.dialog_id.to_i > 0 -%>
 			<li class="select optional" id="item_group_id_input"><label for="item_group_id">Group</label>
 			<%= select :item, :group_id, @dialoggroupsin.collect{|g| [g.name,g.id]} %>
@@ -70,6 +71,7 @@ if (CKEDITOR.instances['item_html_content']) {
 			<%= @group.name if @group %>
 			</li>
 		<% end -%>
+    <% end -%>
 		
 
 		<li class="string optional" id="item_subject_input"><label for="item_subject">Subject</label><input id="item_subject" maxlength="255" name="item[subject]" size="50" type="text" value="<%= @item.subject %>" /></li>

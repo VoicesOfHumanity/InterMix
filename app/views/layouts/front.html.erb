@@ -195,13 +195,16 @@
    			<% end -%>
    			
 		  
+        <% if false -%>
 				<img src="/images/whereami.gif" id="whereami" style="margin: 14px 0 10px 21px;">
+        <% end -%>
 		    <p>You're logged in as:<br/><%= current_participant.name %><br><%= current_participant.email %>
 					<% @group = Group.find_by_id(@group_id) if not @group and @group_id.to_i > 0 %>
 					<% @group = Group.find_by_id(session[:group_id]) if not @group and session[:group_id].to_i > 0 %>
 					<% @dialog = Dialog.find_by_id(@dialog_id) if not @dialog and @dialog_id.to_i > 0 %>
 					<% @dialog = Dialog.find_by_id(session[:dialog_id]) if not @dialog and session[:dialog_id].to_i > 0 %>
-					<% if @group -%>	
+					
+          <% if false and @group -%>	
 						<% if session[:group_is_member] -%>
 							<%=raw "participating as a member of the group: <b>#{@group.name}</b>" %>
 							<%=raw "in the discussion: <b>#{@dialog.name}</b>" if @dialog %>
@@ -210,6 +213,11 @@
 							<%=raw "and the discussion: <b>#{@dialog.name}</b>" if @dialog %>						
 						<% end -%>
 					<% end -%>
+          
+          <% if @dialog -%>
+          in the discussion <b><%= @dialog.name %></b>
+          <% end %>
+          
 				</p>
 		  <% end %>
 			</div>
