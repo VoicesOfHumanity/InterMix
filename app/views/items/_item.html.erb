@@ -219,6 +219,13 @@ end
 			<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
 		</div>
     
+    <% if item.reply_to.to_i > 0 -%>
+    <div class="iteminfotxt">
+      In reply to <a href="/items/<%= item.reply_to %>/view">this message</a>.
+    </div>
+    <% end -%>
+    
+    
     <% if item.geo_level.to_s != '' -%>
       <div class="iteminfotxt">
         Perspective: <%= item.geo_level %>
