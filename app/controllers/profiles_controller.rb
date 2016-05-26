@@ -92,13 +92,14 @@ class ProfilesController < ApplicationController
       @metro_areas = MetroArea.joins(:geocountry).order("geocountries.name,metro_areas.name").collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
     end
 
-    if session[:dialog_id].to_i > 0
-      @forum_link = "/dialogs/#{session[:dialog_id]}/slider"
-    elsif @group
-      @forum_link = "/groups/#{@group.id}/forum"
-    else
-      @forum_link = '/groups/'
-    end  
+    #if session[:dialog_id].to_i > 0
+    #  @forum_link = "/dialogs/#{session[:dialog_id]}/slider"
+    #elsif @group
+    #  @forum_link = "/groups/#{@group.id}/forum"
+    #else
+    #  @forum_link = '/groups/'
+    #end
+    @forum_link = "/dialogs/#{VOH_DISCUSSION_ID}/slider"  
     
   end  
   
