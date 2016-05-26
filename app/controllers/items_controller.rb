@@ -236,14 +236,24 @@ class ItemsController < ApplicationController
     @item.geo_level = params[:geo_level] if params[:geo_level].to_s != ''
     @items_length = params[:items_length].to_i
     @subgroup = params[:subgroup].to_s
+    
+    if @item.reply_to.to_i > 0
+      @olditem = Item.find_by_id(@item.reply_to)
+    end
+    
+    
     if params[:group_id].to_i > 0
       @item.group_id = params[:group_id] 
+    elsif @olditem and @olditem.group_id.to_i > 0
+      @group_id = @olditem.group_id
     else
       @item.group_id = 0      
     end
     if params[:dialog_id].to_i > 0
       @dialog_id = params[:dialog_id].to_i
       @item.group_id = session[:group_id].to_i if @item.group_id == 0
+    elsif @olditem and @olditem.dialog_id.to_i > 0
+      @dialog_id = @olditem.dialog_id
     else
       @dialog_id = 0      
     end
@@ -267,7 +277,7 @@ class ItemsController < ApplicationController
     
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
-      @olditem = Item.find_by_id(@item.reply_to)
+      #@olditem = Item.find_by_id(@item.reply_to)
       if @olditem
         @item.first_in_thread = @olditem.first_in_thread
         if @olditem.subject.to_s != '' and @olditem.subject[0,3] != 'Re:' and @olditem.subject[0,3] != 're:'
