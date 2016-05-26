@@ -458,9 +458,7 @@ function saveitem() {
                         $('#period_id').val($('#active_period_id').val());
             		}
         		}
-        		if ($('#threads').val()=='root') {
-        		    $('#threads').val('flat');
-    		    }        		
+        		$('#threads').val('flat');
     	  	} else if (id>0) {
     	    	$('#htmlcontent_'+id).html(showmess);
     			$('#htmlcontent_'+id).css('opacity','1.0');
@@ -512,7 +510,7 @@ function saveitem() {
                 } else if ($('#from') && $('#from').val()=='geoslider') {
                     $('#sortby').val('items.id desc');
                     if (replyingid>0) {
-                        $('#threads').val('');
+                        $('#threads').val('flat');
                     } else {    
                         $('#threads').val('root');
                     }
