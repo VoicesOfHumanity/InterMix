@@ -1174,6 +1174,9 @@ class ItemsController < ApplicationController
         
         if @batches.include?(@batch_size)
           @batch_level = @batches.index(@batch_size) + 1
+        elsif params[:batch_level].to_i <= @numbatches
+          @batch_level = params[:batch_level].to_i
+          @batch_size = @batches[@batch_level-1]
         else  
           @batch_size = 4
         end  

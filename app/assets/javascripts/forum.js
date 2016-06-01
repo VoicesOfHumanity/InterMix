@@ -50,27 +50,27 @@ function list(whatchanged,gotopost) {
   whatchanged = (typeof whatchanged === "undefined") ? "" : whatchanged;
   gotopost = (typeof gotopost === "undefined") ? "" : ""+gotopost;
   $('#itemlist').css('opacity','0.5');
-	showworking();
-	/* if ($('#sortby') && $('#sortby').val()=='default') {
-	    if ($('#active_period_name')) {
-	        // Put period in heading for the currently active group if we have the Focus Special sort
-	        var period_name = $('#active_period_name').val();
-	        $('#period_name_heading').html(": "+period_name);
-        }
-	    $('#period_name_heading').show();	    
-	} else */ 
-	if ($('#period_id') && parseInt($('#period_id').val())>0) {
-	    // Put the selected historical period in the heading
-	    var period_id = $('#period_id').val();
-        var period_name = $("#period_id option[value='"+period_id+"']").text();
-        $('#period_name_heading').html(period_name+' ');
-	    $('#period_name_heading').show();
-	} else {
-	    // No period heading
-	    $('#period_name_heading').html("[all] ");
-	}
-	
-	if ((whatchanged=='sortby' || whatchanged=='') && $('#sortby').val()=='default') {	
+  showworking();
+  /* if ($('#sortby') && $('#sortby').val()=='default') {
+      if ($('#active_period_name')) {
+          // Put period in heading for the currently active group if we have the Focus Special sort
+          var period_name = $('#active_period_name').val();
+          $('#period_name_heading').html(": "+period_name);
+      }
+      $('#period_name_heading').show();	    
+  } else */ 
+  if ($('#period_id') && parseInt($('#period_id').val())>0) {
+      // Put the selected historical period in the heading
+      var period_id = $('#period_id').val();
+      var period_name = $("#period_id option[value='"+period_id+"']").text();
+      $('#period_name_heading').html(period_name+' ');
+      $('#period_name_heading').show();
+  } else {
+      // No period heading
+      $('#period_name_heading').html("[all] ");
+  }
+
+  if ((whatchanged=='sortby' || whatchanged=='') && $('#sortby').val()=='default') {	
     // If the Decision Special sort is selected, make sure we're showing root only and that the active period is selected
     $('#threads').val('root');
     $('#period_id').val($('#active_period_id').val());
@@ -144,9 +144,10 @@ function list(whatchanged,gotopost) {
      complete: function(t){	
        $("#itemlist").html(t.responseText);
 	   listdone();
-       if (gotopost != '') {
-             window.location.hash = '#item_'+gotopost;
-         }
+       //if (gotopost != '') {
+        //     window.location.hash = '#item_'+gotopost;
+         //}
+         removeHash();
          $('body').scrollTop(0);
      }
    });	
@@ -155,6 +156,22 @@ var listdone = function(t) {
   $('#itemlist').show();
   hideworking();
   $('#itemlist').css('opacity','1.0');
+}
+function removeHash () { 
+    var scrollV, scrollH, loc = window.location;
+    if ("pushState" in history)
+        history.pushState("", document.title, loc.pathname + loc.search);
+    else {
+        // Prevent scrolling by storing the page's current scroll offset
+        scrollV = document.body.scrollTop;
+        scrollH = document.body.scrollLeft;
+
+        loc.hash = "";
+
+        // Restore the scroll offset, should be flicker free
+        document.body.scrollTop = scrollV;
+        document.body.scrollLeft = scrollH;
+    }
 }
 var gotopage = function(page) {
     $('#itemlist').css('opacity','0.5');
@@ -496,6 +513,7 @@ function saveitem() {
         			this.document.on("keyup", editor_change);
         		});
         	} else {    
+                removeHash();
         	    if ($('#from') && $('#from').val()=='individual') {
         	        window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];
     		    } else if ($('#from') && $('#from').val()=='thread') {
@@ -518,7 +536,7 @@ function saveitem() {
         		    editingid = 0;
                 	in_new_item = 0;
                     per_reload();
-                    window.location.hash = '#item_' + results['item_id'];
+                    //window.location.hash = '#item_' + results['item_id'];
     		    } else if (results['item_id']) {
         		    replyingid = 0;
         		    editingid = 0;
@@ -530,7 +548,8 @@ function saveitem() {
                 	in_new_item = 0;
     		        list();
 		        }
-                $('body').scrollTop(0);
+                removeHash();
+                $('body,html').scrollTop(0);
             	$('.reply_link').each(function(i,obj) {
             	    $(this).css('opacity','1.0');
             	});
