@@ -974,9 +974,11 @@ class ItemsController < ApplicationController
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
         items = Item.get_sorted(items,itemsproc,sortby,false)
-        if items.length > 0
-          item = items[0]
-          iproc = itemsproc[item.id]
+        if items.length > 0 and ratings.length > 0
+          if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['votes'] > 0
+            item = items[0]
+            iproc = itemsproc[item.id]
+          end
         end
         
         @data['all'] = {name: name, item: item, iproc: iproc}
@@ -990,9 +992,11 @@ class ItemsController < ApplicationController
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
         items = Item.get_sorted(items,itemsproc,sortby,false)
-        if items.length > 0
-          item = items[0]
-          iproc = itemsproc[item.id]
+        if items.length > 0 and ratings.length > 0
+          if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['votes'] > 0
+            item = items[0]
+            iproc = itemsproc[item.id]
+          end
         end
         @data['all'] = {name: name, item: item, iproc: iproc}
         
@@ -1010,10 +1014,11 @@ class ItemsController < ApplicationController
             itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             sortby = '*value*'
             items = Item.get_sorted(items,itemsproc,sortby,false)
-            if items.length > 0
-              item = items[0]
-              logger.debug("geoslider_update item.participant:#{item.participant.class}")
-              iproc = itemsproc[item.id]
+            if items.length > 0 and ratings.length > 0
+              if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['votes'] > 0
+                item = items[0]
+                iproc = itemsproc[item.id]
+              end
             end
             
             @data[code] = {name: name, item: item, iproc: iproc}
@@ -1033,9 +1038,11 @@ class ItemsController < ApplicationController
             itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             sortby = '*value*'
             items = Item.get_sorted(items,itemsproc,sortby,false)
-            if items.length > 0
-              item = items[0]
-              iproc = itemsproc[item.id]
+            if items.length > 0 and ratings.length > 0
+              if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['votes'] > 0
+                item = items[0]
+                iproc = itemsproc[item.id]
+              end
             end
             
             @data[code] = {name: name, item: item, iproc: iproc}
@@ -1055,9 +1062,11 @@ class ItemsController < ApplicationController
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
         items = Item.get_sorted(items,itemsproc,sortby,false)
-        if items.length > 0
-          item = items[0]
-          iproc = itemsproc[item.id]
+        if items.length > 0 and ratings.length > 0
+          if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['votes'] > 0
+            item = items[0]
+            iproc = itemsproc[item.id]
+          end
         end
         @data['all'] = {name: name, item: item, iproc: iproc}
         
@@ -1077,9 +1086,11 @@ class ItemsController < ApplicationController
             itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             sortby = '*value*'
             items = Item.get_sorted(items,itemsproc,sortby,false)
-            if items.length > 0
-              item = items[0]
-              iproc = itemsproc[item.id]
+            if items.length > 0 and ratings.length > 0
+              if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['votes'] > 0
+                item = items[0]
+                iproc = itemsproc[item.id]
+              end
             end
             
             @data[code] = {name: name, item: item, iproc: iproc}
@@ -1100,9 +1111,11 @@ class ItemsController < ApplicationController
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
         items = Item.get_sorted(items,itemsproc,sortby,false)
-        if items.length > 0
-          item = items[0]
-          iproc = itemsproc[item.id]
+        if items.length > 0 and ratings.length > 0
+          if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['votes'] > 0
+            item = items[0]
+            iproc = itemsproc[item.id]
+          end
         end
         @data['all'] = {name: name, item: item, iproc: iproc}
         
@@ -1121,9 +1134,11 @@ class ItemsController < ApplicationController
             itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             sortby = '*value*'
             items = Item.get_sorted(items,itemsproc,sortby,false)
-            if items.length > 0
-              item = items[0]
-              iproc = itemsproc[item.id]
+            if items.length > 0 and ratings.length > 0
+              if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['votes'] > 0
+                item = items[0]
+                iproc = itemsproc[item.id]
+              end
             end
             
             @data[code] = {name: name, item: item, iproc: iproc}
