@@ -219,19 +219,23 @@ class ApplicationController < ActionController::Base
     session[:is_sysadmin] = current_participant.sysadmin
     session[:is_anyadmin] = (session[:is_group_moderator] or session[:is_hub_admin] or session[:is_sysadmin])
   
-    if dialog_id.to_i>0 and group_id.to_i > 0
+    #if dialog_id.to_i>0 and group_id.to_i > 0
+    if group_id.to_i > 0
       @group = Group.find_by_id(group_id) if not @group
       #-- Check if they're a member of the group. If not, join them
-      if @group.openness == 'open'
+      #if @group.openness == 'open'
+        # No longer caring about group settings
         group_participant = GroupParticipant.where("participant_id=#{current_participant.id} and group_id=#{group_id}").first
-        if not group_participant
+        if group_participant
+          session[:group_is_member] = true
+        else
           group_participant = GroupParticipant.new(:group_id=>group_id,:participant_id=>current_participant.id)
           group_participant.active = true
           group_participant.status = 'active'
           group_participant.save
           session[:group_is_member] = true
         end
-      end
+      #end
     end  
     
     if current_participant.fb_uid.to_i >0 and not current_participant.picture.exists?
