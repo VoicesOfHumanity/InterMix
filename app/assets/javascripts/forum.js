@@ -413,6 +413,7 @@ function deleteitem() {
     });
 }
 function saveitem() {
+    console.log('saveitem');
 	id = curid;
 	var media_type = $('#item_media_type').val();
 	if (media_type=='text') {
@@ -452,6 +453,7 @@ function saveitem() {
 	   url: url,
 	   data: pars,
 	   complete: function(t){
+           console.log('saveitem complete');
 	       var was_error = true;
 	       if (t.responseText.substring(0,1)=='{') {
 	            // looks like json
@@ -498,21 +500,25 @@ function saveitem() {
     		}
     		//if (!$('#saveresult') || $('#saveresult').val() != 'error') {
         	if (was_error) {
-        	    if (replyingid>0) {
-        	        window.location.hash = '#reply_' + replyingid;
-        	    } else if (id>0) {
-        	        window.location.hash = '#htmlcontent_' + id;
-        	    } else {
-        	         window.location.hash = '#newforumitem';
-        	    }
+        	    //if (replyingid>0) {
+        	    //    window.location.hash = '#reply_' + replyingid;
+        	    //} else if (id>0) {
+        	    //    window.location.hash = '#htmlcontent_' + id;
+        	    //} else {
+        	    //     window.location.hash = '#newforumitem';
+        	    //}
+                console.log('saveitem was_error');
             	if (CKEDITOR.instances['item_html_content_editor']) { 
             		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
             	}
                 editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
+                removeHash();
+                $('body,html').scrollTop(0);
         		CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
         			this.document.on("keyup", editor_change);
         		});
         	} else {    
+                console.log('saveitem not was_error');
                 removeHash();
         	    if ($('#from') && $('#from').val()=='individual') {
         	        window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];
