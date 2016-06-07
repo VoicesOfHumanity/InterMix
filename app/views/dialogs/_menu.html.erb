@@ -2,13 +2,11 @@
 
 <% if true or session[:dialog_id].to_i == 0 -%>
 <ul class="horizmenu">
-<li><a class="menu<%= ' selected' if @dsection=='info' %>" href="/dialogs/<%= @dialog.id %>/view">Info</a></li>
-<% if false -%>
-<li><a class="menu<%= ' selected' if @dsection=='forum' %>" href="/dialogs/<%= @dialog.id %>/forum">List</a></li>
-<li><a class="menu<%= ' selected' if @dsection=='meta' %>" href="/dialogs/<%= @dialog.id %>/result">Results</a></li>
-<% end -%>
-<li><a class="menu<%= ' selected' if @dsection=='list' %>" href="/dialogs/<%= @dialog.id %>/slider?show_result=0">List</a></li>
+
+<li><a class="menu<%= ' selected' if @dsection=='list' %>" href="/dialogs/<%= @dialog.id %>/slider?show_result=0">Forum</a></li>
 <li><a class="menu<%= ' selected' if @dsection=='meta' %>" href="/dialogs/<%= @dialog.id %>/slider?show_result=1">Voices of Humanity</a></li>
+<li><a class="menu<%= ' selected' if @dsection=='info' %>" href="/dialogs/<%= @dialog.id %>/view">About</a></li>
+
 <% if false -%>
 <li><a class="menu<%= ' selected' if @dsection=='forum' %>" href="/dialogs/<%= @dialog.id %>/forum">More Options</a></li>
 <% end -%>
