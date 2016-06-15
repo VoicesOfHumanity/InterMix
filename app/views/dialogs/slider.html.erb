@@ -27,6 +27,8 @@
     	elsif not ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) then "Maximum messages have been reached"
     	else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
     		<% end -%>
+        
+        <input type="button" value="Options" style="margin-top:10px" id="options_button" onclick="chg_options()">
       </p>
   
     <% if false -%>
@@ -154,7 +156,7 @@ $(function() {
     $( "#group_level" ).val( $( "#groupslider" ).slider( "value" ) );
   }
 });
-function per_reload(first) {
+function per_reload(first,num) {
 	if (editingid>0) {
 	    alert("Please save or cancel the edit that is in progress");
 	    return;
@@ -169,6 +171,9 @@ function per_reload(first) {
     first = false;
   } 
   first = first ? 1 : 0;
+  if (num === undefined) {
+    num = 2;
+  }
  	$('#per_main').css('opacity','0.5');
   cur_geo_level = $("input[name='geo_level_radio']:checked").val()
   cur_group_level = $("input[name='group_level_radio']:checked").val()
@@ -186,8 +191,11 @@ function per_reload(first) {
   var meta_5 = $("input[name='meta_5']:checked").val()
   var dialog_id = $('#dialog_id').val();
   var period_id = $('#period_id').val();
-  var threads = $('#threads').val();
-  var sortby = $('#sortby').val();
+  var threads = $('#threads'+num).val();
+  var sortby = $('#sortby'+num).val();
+  var othernum = (num==2) ? 1 : 2;
+  $('#threads'+othernum).val(threads);
+  $('#sortby'+othernum).val(sortby);
   var active_period_id = $('#active_period_id').val();
   if (period_id==active_period_id) {
     $('#newthreadbutton').prop('disabled', false);    
@@ -198,7 +206,7 @@ function per_reload(first) {
     type: 'GET',
 	  url: '/items/geoslider_update',
     //group_level: cur_group_level, 
-	  data: {geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first},
+	  data: {geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options},
 	  complete: function(t){ 
       $('#per_main').css('opacity','1.0');
 	    $('#per_main').html(t.responseText);
@@ -206,4 +214,16 @@ function per_reload(first) {
 	});	
 }
 per_reload(true);
+var showing_options = 'less';
+function chg_options() {
+  if (showing_options=='more') {
+    $('#options_top').hide();
+    showing_options = 'less';
+    $('#options_button').val("Options");
+  } else {
+    $('#options_top').show();
+    showing_options = 'more';
+    $('#options_button').val("Hide Options");
+  }
+}
 </script>

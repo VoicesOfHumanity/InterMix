@@ -879,6 +879,8 @@ class ItemsController < ApplicationController
     
     @first = params[:first].to_i    # 1 if we got here when the page loads, rather than when parameters changed
     
+    @showing_options = params[:showing_options] # less or more
+    
     #if show_result and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
     #  # If this is an active period and there's a previous period, use that instead
     #  @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last

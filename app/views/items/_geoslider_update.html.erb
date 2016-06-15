@@ -6,6 +6,10 @@
 
 <p><%= @items.length %> item<%= 's' if @items.length != 1 %></p>
 
+<div style="border:1px solid #000;padding:0px 0 0 0;margin-bottom:20px;display:<%= @showing_options=='more' ? 'block' : 'none' %>" id="options_top">
+  <%= render partial: 'items/geoslider_options', locals: {num: 1} %>
+</div>
+
 <% x = 0 %>
 <% odd_or_even = 0 %>
 <% for item in @items -%>
@@ -28,20 +32,7 @@
 
 
 <div style="border:1px solid #000;padding:0px 0 0 0;margin-bottom:20px">
-  <div style="position:relative;top:-10px;left:20px;background-color:#fcf9f7;padding: 0 5px 0 5px;font-weight:bold;width:60px">Options</div>
-  
-  <div style="text-align: center">
-  	<p>Sort:
-  	<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
-  	<%= select_tag "sortby", options_for_select(sortarr,@sortby), :onchange=>"per_reload()" %></p>
-  </div>
-
-  <div style="text-align: center">      
-  	<p>Comments: 
-      <%= select_tag "threads", options_for_select([['Show',''],["Don't show",'root'],['Unthreaded','flat']],@threads), :onchange=>"per_reload()" %>
-  	</p>
-  </div>
-
+  <%= render partial: 'items/geoslider_options', locals: {num: 2} %>
 </div>
 
 <% if @batches.length > 0 -%>
