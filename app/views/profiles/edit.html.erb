@@ -84,8 +84,10 @@
 		
 		<h3 id="settings"><br>Settings</h3>
 		
+    <% if false -%>
 		<%= f.input :visibility, :label => 'Profile visibility', :as => :select, :collection =>PARTICIPANT_VISIBILITY_TEXT.invert %>
-		<% if false %>	
+		<% end -%>
+    <% if false %>	
 		<%= f.input :wall_visibility, :label => 'Wall visibility', :as => :select, :collection =>PARTICIPANT_WALL_VISIBILITY_TEXT.invert %>	
 		<%= f.input :item_to_forum, :label=>'Post wall items to the forum?', :as => :radio %>
 		<% end %>
