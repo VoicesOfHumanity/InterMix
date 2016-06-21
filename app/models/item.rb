@@ -258,7 +258,9 @@ class Item < ActiveRecord::Base
       cdata['group_domain'] = group_domain
       #@cdata['attachments'] = @attachments
       
-      if group and group.logo.exists? then
+      if dialog and dialog.logo.exists? then
+        cdata['logo'] = "#{BASEDOMAIN}#{dialog.logo.url}"
+      elsif group and group.logo.exists? then
        cdata['logo'] = "#{BASEDOMAIN}#{group.logo.url}"
       else
         cdata['logo'] = nil
@@ -283,11 +285,12 @@ class Item < ActiveRecord::Base
       
       itext += "<p>by "
 
-  		if dialog and dialog.current_period.to_i > 0 and not dialog.settings_with_period["names_visible_voting"]  and self.is_first_in_thread
-  		  itext += "[name withheld during decision period]"
-  		elsif dialog and dialog.current_period.to_i == 0 and not dialog.settings_with_period["names_visible_general"] and self.is_first_in_thread
-  		  itext += "[name withheld for this discussion]"  		
-  		elsif dialog and not dialog.settings_with_period["profiles_visible"]
+  		#if dialog and dialog.current_period.to_i > 0 and not dialog.settings_with_period["names_visible_voting"]  and self.is_first_in_thread
+  		#  itext += "[name withheld during decision period]"
+      #elsif dialog and dialog.current_period.to_i == 0 and not dialog.settings_with_period["names_visible_general"] and self.is_first_in_thread
+  		#  itext += "[name withheld for this discussion]"  		
+  		#els
+      if dialog and not dialog.settings_with_period["profiles_visible"]
   		  itext += self.participant ? self.participant.name : self.posted_by
   		else
   		  itext += "<a href=\"http://#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
@@ -295,11 +298,11 @@ class Item < ActiveRecord::Base
   		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
   		itext += " <a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		
-  		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/slider?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\">#{dialog.name}</a>" if dialog
-  		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/slider?period_id=#{self.period_id}&auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\">#{period.name}</a>" if period  		
-  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\"#{" style=\"color:#f00\"" if group_mismatch}>#{group.name}</a>" if group
-  		subgrouplink = "http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}&amp;subgroup="
-  		itext += " Subgroup: #{self.show_subgroup_with_link(subgrouplink)}" if self.subgroup_list.length > 0
+  		#itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/slider?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\">#{dialog.name}</a>" if dialog
+  		#itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/slider?period_id=#{self.period_id}&auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\">#{period.name}</a>" if period  		
+  		#itext += " Group: <a href=\"http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\"#{" style=\"color:#f00\"" if group_mismatch}>#{group.name}</a>" if group
+  		#subgrouplink = "http://#{group_domain}/groups/#{self.group_id}/forum?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}&amp;subgroup="
+  		#itext += " Subgroup: #{self.show_subgroup_with_link(subgrouplink)}" if self.subgroup_list.length > 0
       itext += "</p>"
       
       if group

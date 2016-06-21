@@ -193,11 +193,13 @@ end
 		<a href="/items/<%= item.id %>/view" title="permalink">#</a>	
 		</div>	
 		
+    <% if false -%>
 		<div class="iteminfotxt">
 			<% if @group_id.to_i > 0 and item.group and item.group_id != @group_id %><span style="color:#f99"><% end %>
 			<%= "Group: " + (item.group ? item.group.name : item.group_id.to_s) if item.group %>
 			<% if @group_id.to_i > 0 and item.group and item.group_id != @group_id %></span><% end %>
 		</div>
+    <% end -%>
 
 		<div class="iteminfotxt">
 			<%= "Discussion: " + (item.dialog ? item.dialog.name : item.dialog_id.to_s) if item.dialog_id.to_i > 0 %>
@@ -207,7 +209,7 @@ end
 			<%= "Decision Period: " + (item.period ? item.period.name : item.period_id.to_s) if item.period_id.to_i > 0 %>
 		</div>
 			
-		<% if (@from == 'group' or @from == 'individual') and item.subgroup_list.length > 0 -%>	
+		<% if (@from == 'group' or @from == 'individual') and item.subgroup_list.length > 0 and false -%>	
 		<div class="iteminfotxt">	
 			Subgroup: <%= item.show_subgroup %>	
 			<% if item.reply_to.to_i ==0 and @limit_group and @limit_group.group_subtags.length >= item.subgroup_list.length -%>
