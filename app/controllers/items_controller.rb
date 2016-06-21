@@ -972,7 +972,7 @@ class ItemsController < ApplicationController
         
         crit[:age] = age_id
         crit[:gender] = gender_id
-        items,ratings,title = Item.get_items(crit,current_participant)
+        items,ratings,@title = Item.get_items(crit,current_participant)
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
         items = Item.get_sorted(items,itemsproc,sortby,false)
@@ -990,7 +990,7 @@ class ItemsController < ApplicationController
         name = "Voice of Humanity-as-One"
         item = nil
         iproc = nil        
-        items,ratings,title = Item.get_items(crit,current_participant)
+        items,ratings,@title = Item.get_items(crit,current_participant)
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
         items = Item.get_sorted(items,itemsproc,sortby,false)
@@ -1060,7 +1060,7 @@ class ItemsController < ApplicationController
         item = nil
         iproc = nil        
         crit[:age] = age_id
-        items,ratings,title = Item.get_items(crit,current_participant)
+        items,ratings,@title = Item.get_items(crit,current_participant)
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
         items = Item.get_sorted(items,itemsproc,sortby,false)
@@ -1109,7 +1109,7 @@ class ItemsController < ApplicationController
         item = nil
         iproc = nil        
         crit[:gender] = gender_id
-        items,ratings,title = Item.get_items(crit,current_participant)
+        items,ratings,@title = Item.get_items(crit,current_participant)
         itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
         sortby = '*value*'
         items = Item.get_sorted(items,itemsproc,sortby,false)
