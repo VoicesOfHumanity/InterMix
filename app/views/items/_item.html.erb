@@ -201,9 +201,11 @@ end
 		</div>
     <% end -%>
 
+    <% if false -%>
 		<div class="iteminfotxt">
 			<%= "Discussion: " + (item.dialog ? item.dialog.name : item.dialog_id.to_s) if item.dialog_id.to_i > 0 %>
 		</div>
+    <% end -%>
 
 		<div class="iteminfotxt">
 			<%= "Decision Period: " + (item.period ? item.period.name : item.period_id.to_s) if item.period_id.to_i > 0 %>

@@ -268,11 +268,12 @@ class Item < ActiveRecord::Base
       
       email = recipient.email
       
-      if group and group.shortname.to_s != '' then
-        msubject = "[#{group.shortname}] #{self.subject}"
-      else
-        msubject = subject
-      end  
+      msubject = "[voicesofhumanity] #{self.subject}"
+      #if group and group.shortname.to_s != '' then
+      #  msubject = "[#{group.shortname}] #{self.subject}"
+      #else
+      #  msubject = subject
+      #end  
       
       content = self.html_content != '' ? self.html_with_auth(recipient) : self.short_content
       
