@@ -1,11 +1,10 @@
 <%= render(:partial => 'dialogs/menu')%>
 
 <% if @dialog.logo.exists? then -%>
-<p><%= image_tag @dialog.logo.url %></p>
-<% else %>
-<p>[no logo]</p>
+<img src="<%= @dialog.logo.url %>" style="float:right;padding: 0 0 10px 10px">
 <% end -%>
 
+<% if false -%>
 <p id="participatinggroups"><b>Participating Groups:</b>
 <% if @dialog.active_groups.length == 0 -%>
 	none
@@ -15,6 +14,7 @@
 	<% end -%>
 <% end -%>		
 </p>
+<% end -%>
 
 <% if false -%>
 <p><b>Name:</b> <%= @dialog.name %></p>
