@@ -17,6 +17,7 @@
 
 <input type="hidden" id="from" name="from" value="<%= @from %>">
 
+<% if false -%>
 <ul>
 <% if @item.dialog_id.to_i > 0 -%>
 <li><a href="/dialogs/<%= @item.dialog_id %>/slider">Discussion</a></li>
@@ -25,3 +26,4 @@
 <li><a href="/groups/<%= @item.group_id %>/forum">Group Forum</a></li>
 <% end -%>
 </ul>
+<% end -%>

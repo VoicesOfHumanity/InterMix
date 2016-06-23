@@ -15,7 +15,7 @@ else
 end
 %>	
 	
-<% if @cdata['item].dialog -%>
+<% if @cdata['item'].dialog -%>
 <p id="following">The following message was posted on <a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['dialog'].name %>' forum, where you are a member:</p>
 <% else -%>  
 <p id="following">The following message was posted on <a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['group'].name %>' forum, where you are a member:</p>
@@ -51,8 +51,10 @@ end
 
 <p id="footer">
 	<a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.
-	<a href="http://<%= dom %>/groups/<%= @cdata['item'].group_id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Group Forum</a>. 	
-	<% if @cdata['item'].dialog_id.to_i > 0 %><a href="http://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id.to_i %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Discussion Forum</a>. <% end %>
+	<% if false -%>
+  <a href="http://<%= dom %>/groups/<%= @cdata['item'].group_id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Group Forum</a>. 	
+  <% end -%>
+	<% if @cdata['item'].dialog_id.to_i > 0 %><a href="http://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id.to_i %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Forum</a>. <% end %>
 <% if false -%>  
 If you have problems, write to the moderator at <%= @cdata['group'].shortname %>-owner@<%= BASEDOMAIN %>.
 <% end -%>

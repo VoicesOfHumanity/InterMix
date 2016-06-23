@@ -265,6 +265,7 @@ class Item < ActiveRecord::Base
       else
         cdata['logo'] = nil
       end
+      logger.info("Item#emailit logo: #{cdata['logo']}")
       
       email = recipient.email
       
@@ -315,7 +316,7 @@ class Item < ActiveRecord::Base
 
       begin
         logger.info("Item#emailit delivering email to #{recipient.id}:#{recipient.name}")
-        email.deliver
+        email.deliver_now
         message_id = email.message_id
       rescue Exception => e
         logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
