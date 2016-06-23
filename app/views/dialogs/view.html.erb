@@ -34,10 +34,11 @@
 </div>
 <% end -%>
 
-<p><b>Short Description:</b> <%=raw @dialog.shortdesc %></p>
 
 
 <% if false -%>
+<p><b>Short Description:</b> <%=raw @dialog.shortdesc %></p>
+
 <p><b>Created:</b> <%= @dialog.created_at.strftime("%m/%d/%Y") %></p>
 
 <p><b>Owner:</b> <%= @dialog.creator.name if @dialog.creator %></p>
@@ -56,7 +57,7 @@
 <% @dialog.metamaps.each do |metamap_id,metamap_name| -%>
 <%= metamap_id %>:<%= metamap_name %><br/>
 <% end -%>
-<% end -%>
 
 <p><b>Current Decision Period:</b> <%= @current_period ? @current_period.name : "none" %></p>
+<% end -%>
 
