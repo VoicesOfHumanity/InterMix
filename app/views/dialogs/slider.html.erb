@@ -98,8 +98,8 @@
     </div>
 
     <div style="display:none;margin: 20px 0 0 0;">
-      <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload()">Listing<br>
-      <input type="radio" name="show_result" value="1" <%= @show_result.to_i == 1 ? "checked" : "" %> onclick="per_reload()">Results
+      <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Listing<br>
+      <input type="radio" name="show_result" value="1" <%= @show_result.to_i == 1 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Results
     </div>
   
   </div>
@@ -156,7 +156,7 @@ $(function() {
     $( "#group_level" ).val( $( "#groupslider" ).slider( "value" ) );
   }
 });
-function per_reload(first,num) {
+function per_reload(first,num,whatchanged) {
 	if (editingid>0) {
 	    alert("Please save or cancel the edit that is in progress");
 	    return;
@@ -202,11 +202,15 @@ function per_reload(first,num) {
   } else {
     $('#newthreadbutton').prop('disabled', true);   
   }
+  var data = {geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options}
+  if (whatchanged !== undefined) {
+    data['whatchanged'] = whatchanged;
+  }
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
     //group_level: cur_group_level, 
-	  data: {geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options},
+	  data: data,
 	  complete: function(t){ 
       $('#per_main').css('opacity','1.0');
 	    $('#per_main').html(t.responseText);

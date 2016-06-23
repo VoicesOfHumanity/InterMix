@@ -58,6 +58,7 @@ $("#groupslider").slider("option", "value", <%= @group_level %>);
 <% end -%>
 var batch_sizes = [<%= @batches.join(',') %>];
 $('#batch_size').val(<%= @showmax %>);
+cur_batch_level = <%= @batch_level %>;
 $( "#batchslider" ).slider({
   orientation: "horizontal",
   range: "min",

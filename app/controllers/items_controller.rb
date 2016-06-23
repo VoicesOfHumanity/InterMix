@@ -838,6 +838,7 @@ class ItemsController < ApplicationController
     # indigenous, other minority, veteran, interfaith, refugee
   
     show_result = (params[:show_result].to_i == 1)
+    whatchanged = params[:whatchanged].to_s
   
     crit = {}
   
@@ -1190,14 +1191,17 @@ class ItemsController < ApplicationController
         end  
         @batches << @items.length   
         
-        if @batches.include?(@batch_size)
+        if @batches.include?(@batch_size) and @whatchanged != 'threads' and @whatchanged != 'sortby'
           @batch_level = @batches.index(@batch_size) + 1
-        elsif params[:batch_level].to_i <= @numbatches
+        elsif params[:batch_level].to_i <= @numbatches and @whatchanged != 'threads' and @whatchanged != 'sortby'
           @batch_level = params[:batch_level].to_i
           @batch_size = @batches[@batch_level-1]
         else  
           @batch_size = 4
         end  
+        if @whatchanged == 'threads' and @whatchanged == 'sortby'
+          @batch_level = 1
+        end
       elsif @batch_size == 0
         @batch_size = @items.length
       end  
