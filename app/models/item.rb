@@ -1009,7 +1009,7 @@ class Item < ActiveRecord::Base
       xtit = gender.name_as_group
       xtit2 = xtit[0..8] + age.name.capitalize + ' ' + xtit[9..100]
       title += " | #{xtit2}"    
-    else
+    elsif not crit[:show_result]
       title += " | Voice of Humanity"
     end
 

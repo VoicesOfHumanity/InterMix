@@ -940,6 +940,7 @@ class ItemsController < ApplicationController
     @num_all_posts = all_posts.count
   
     @title = ""
+    crit[:show_result] = show_result
 
     @data = {}  
   
