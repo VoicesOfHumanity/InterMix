@@ -6,7 +6,9 @@
 <body>
 	
 <%	
-if @cdata['dialog'] and @cdata['dialog'].shortname.to_s != "" and @cdata['group'] and @cdata['group'].shortname.to_s != ""
+if @cdata['dialog'] and @cdata['dialog'].shortname.to_s != ""
+	dom =  "#{@cdata['dialog'].shortname}.#{ROOTDOMAIN}"
+elsif @cdata['dialog'] and @cdata['dialog'].shortname.to_s != "" and @cdata['group'] and @cdata['group'].shortname.to_s != ""
 	dom =  "#{@cdata['dialog'].shortname}.#{@cdata['group'].shortname}.#{ROOTDOMAIN}"
 elsif @cdata['group'].shortname.to_s != ""
 	dom =  "#{@cdata['group'].shortname}.#{ROOTDOMAIN}"
