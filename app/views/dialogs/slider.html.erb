@@ -9,6 +9,7 @@
       loading...
       
       <input type="hidden" id="sortby" value="<%= @sortby %>">
+      <input type="hidden" id="threads" value="<%= @threads %>">
   
     </div>
   
@@ -191,11 +192,16 @@ function per_reload(first,num,whatchanged) {
   var meta_5 = $("input[name='meta_5']:checked").val()
   var dialog_id = $('#dialog_id').val();
   var period_id = $('#period_id').val();
-  var threads = $('#threads'+num).val();
-  var sortby = $('#sortby'+num).val();
-  var othernum = (num==2) ? 1 : 2;
-  $('#threads'+othernum).val(threads);
-  $('#sortby'+othernum).val(sortby);
+  if (first) {
+    var threads = $('#threads').val();
+    var sortby = $('#sortby').val();    
+  } else {
+    var threads = $('#threads'+num).val();
+    var sortby = $('#sortby'+num).val();
+    var othernum = (num==2) ? 1 : 2;
+    $('#threads'+othernum).val(threads);
+    $('#sortby'+othernum).val(sortby);
+  }
   var active_period_id = $('#active_period_id').val();
   if (period_id==active_period_id) {
     $('#newthreadbutton').prop('disabled', false);    

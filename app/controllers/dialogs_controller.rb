@@ -215,6 +215,8 @@ class DialogsController < ApplicationController
     else
       @threads = 'root'
     end
+
+    logger.info("dialogs#slider @sortby:#{@sortby} @threads:#{@threads}")
     
     @batch_size = nil
     @batch_level = nil
