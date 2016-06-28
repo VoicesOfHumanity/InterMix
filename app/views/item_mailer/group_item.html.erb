@@ -16,7 +16,7 @@ end
 %>	
 	
 <% if @cdata['item'].dialog -%>
-<p id="following">The following message was posted on <a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['dialog'].name %>' forum, where you are a member:</p>
+<p id="following">The following message was posted on <a href="http://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>"><%= @cdata['dialog'].name %></a>, where you are a member:</p>
 <% else -%>  
 <p id="following">The following message was posted on <a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['group'].name %>' forum, where you are a member:</p>
 <% end -%>
