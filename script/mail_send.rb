@@ -302,9 +302,9 @@ for p in participants
       
       itext += "<p>by "
 
-  		if item.dialog and item.dialog.current_period.to_i > 0 and not item.dialog.settings_with_period["names_visible_voting"]  and item.is_first_in_thread
+  		if false and item.dialog and item.dialog.current_period.to_i > 0 and not item.dialog.settings_with_period["names_visible_voting"]  and item.is_first_in_thread
   		  itext += "[name withheld during decision period]"
-  		elsif item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"] and item.is_first_in_thread
+  		elsif false and item.dialog and item.dialog.current_period.to_i == 0 and not item.dialog.settings_with_period["names_visible_general"] and item.is_first_in_thread
   		  itext += "[name withheld for this discussion]"  		
   		elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"]
   		  itext += item.participant ? item.participant.name : item.posted_by
@@ -316,11 +316,14 @@ for p in participants
       
       itext += " <a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}#reply\">One Click reply</a>"
       
-  		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{item.dialog.name}</a>" if item.dialog
-  		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}&auth_token=#{p.authentication_token}\">#{item.period.name}</a>" if item.period  		
-  		itext += " Group: <a href=\"http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if item.group
-  		subgrouplink = "http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}&amp;subgroup="
-  		itext += " Subgroup: #{item.show_subgroup_with_link(subgrouplink)}" if item.subgroup_list.length > 0
+      if false
+    		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{item.dialog.name}</a>" if item.dialog
+    		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}&auth_token=#{p.authentication_token}\">#{item.period.name}</a>" if item.period  		
+    		itext += " Group: <a href=\"http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if item.group
+    		subgrouplink = "http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}&amp;subgroup="
+    		itext += " Subgroup: #{item.show_subgroup_with_link(subgrouplink)}" if item.subgroup_list.length > 0
+      end
+      
       itext += "</p>"
       itext += "<hr>"
       
@@ -346,7 +349,8 @@ for p in participants
   #-- Send any daily digest for this person. We do that every day, if there's something to send.
   if tdaily != ''
   
-    subject = "InterMix Daily Digest, #{dstart.strftime("%Y-%m-%d")}"
+    #subject = "InterMix Daily Digest, #{dstart.strftime("%Y-%m-%d")}"
+    subject = "[voicesofhumanity] Daily Digest, #{dstart.strftime("%Y-%b-%d")}"
   
     email = ItemMailer.digest(subject, tdaily, p.email_address_with_name, cdata)
   
