@@ -473,11 +473,15 @@ function saveitem() {
         		if ($('#sortby').val()=='default') {
 							// If we had default period sort, we'll switch to item order and to showing replies also, so we can see the message we posted
         		    $('#sortby').val('items.id desc');
+        		    $('#sortby1').val('items.id desc');
+        		    $('#sortby2').val('items.id desc');
         		    if ($('#active_period_id') && parseInt($('#active_period_id').val())>0) {
                         $('#period_id').val($('#active_period_id').val());
             		}
         		}
         		$('#threads').val('flat');
+        		$('#threads1').val('flat');
+        		$('#threads2').val('flat');
     	  	} else if (id>0) {
     	    	$('#htmlcontent_'+id).html(showmess);
     			$('#htmlcontent_'+id).css('opacity','1.0');
@@ -533,10 +537,16 @@ function saveitem() {
                     document.location = '/dialogs/' + $('#in_dialog_id').val() + '/forum?item_id=' + results['item_id'];                
                 } else if ($('#from') && $('#from').val()=='geoslider') {
                     $('#sortby').val('items.id desc');
+                    $('#sortby1').val('items.id desc');
+                    $('#sortby2').val('items.id desc');
                     if (replyingid>0) {
                         $('#threads').val('flat');
+                        $('#threads1').val('flat');
+                        $('#threads2').val('flat');
                     } else {    
                         $('#threads').val('root');
+                        $('#threads1').val('root');
+                        $('#threads2').val('root');
                     }
         		    replyingid = 0;
         		    editingid = 0;

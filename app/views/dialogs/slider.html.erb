@@ -7,13 +7,11 @@
     <div id="per_main" style="width:595px;min-height:600px">
   
       loading...
-      
-      <input type="hidden" id="sortby" value="<%= @sortby %>">
-      <input type="hidden" id="threads" value="<%= @threads %>">
-  
+        
     </div>
   
-    
+    <input type="hidden" id="sortby" value="<%= @sortby %>">
+    <input type="hidden" id="threads" value="<%= @threads %>">
   
   </div>
 
@@ -201,6 +199,8 @@ function per_reload(first,num,whatchanged) {
     var othernum = (num==2) ? 1 : 2;
     $('#threads'+othernum).val(threads);
     $('#sortby'+othernum).val(sortby);
+    $('#threads').val(threads);
+    $('#sortby').val(sortby);
   }
   var active_period_id = $('#active_period_id').val();
   if (period_id==active_period_id) {
