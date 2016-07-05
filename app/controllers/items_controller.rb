@@ -874,16 +874,18 @@ class ItemsController < ApplicationController
     
     @datetype = params[:datetype]
     @datefixed = params[:datefixed]
-    if @datetype == 'range'
+    if @datetype == 'fixed'
       if @datefixed == 'day'
         @datefrom = Date.today - 1
       elsif @datefixed == 'week'
         @datefrom = Date.today - 7
       elsif @datefixed == 'month'
-          @datefrom = Date.today - 30
+        @datefrom = Date.today - 30
       end
+      logger.info("items#geoslider_update set datefrom to #{@datefrom} based on datetype:#{@datetype} datefixed:#{@datefixed}")
     else
       @datefrom = params[:datefrom]    
+      logger.info("items#geoslider_update set datefrom to #{@datefrom} based on datetype:#{@datetype}")
     end
     crit[:datefrom] = @datefrom
     
