@@ -9,7 +9,12 @@
 <img src="http://<%= BASEDOMAIN %>/images/logo.gif"/>
 <% end -%>
 
-<br/><br/>
+<p>
+<% if false -%>  
+<a href="http://<%= BASEDOMAIN %>/groups?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a> to respond to or rate any of these posts, to access more features, or if you're having trouble seeing this. 
+<% end -%>
+To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
+
 <hr/>
 
 
@@ -18,12 +23,6 @@
 </div>
 
 <hr style="clear:both">
-
-<p>
-<% if false -%>  
-<a href="http://<%= BASEDOMAIN %>/groups?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a> to respond to or rate any of these posts, to access more features, or if you're having trouble seeing this. 
-<% end -%>
-To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
 
 <% if false %>
 <img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['item'].id.to_i if @cdata['item'] %>_<%= @cdata['recipient'].id.to_i if @cdata['recipient'] %>.gif" width="0" height="0" border="0" style="display:none">

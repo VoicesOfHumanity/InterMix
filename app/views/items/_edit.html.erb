@@ -139,7 +139,7 @@ if (CKEDITOR.instances['item_html_content']) {
 
     <li class="text optional" id="item_short_content_input"><label for="item_short_content">Short summary<br/>/ twitter version<br/>(<span id="charsused">0</span> of 106 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px"><%= @item.short_content %></textarea></li>
 
-		<% if true -%>
+		<% if false -%>
     <li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Tags</label><input id="item_tag_list" name="item[tag_list]" size="80" type="text" value="" /></li>
 		<% end -%>
 		<% if @item.dialog_id.to_i == 0 and @item.reply_to.to_i == 0 and @group and @group.group_subtags.length > 0 -%>
