@@ -11,3 +11,14 @@
       <%= select_tag "threads#{num}", options_for_select([['Show',''],["Don't show",'root'],['Unthreaded','flat']],@threads), :onchange=>"per_reload(false,#{num},'threads')" %>
   	</p>
   </div>
+
+  <div style="padding-left:220px;width:300px;text-align:left">
+    <p>
+      <%= radio_button_tag "datetype#{num}", @datetype, (@datetype=='fixed'), :onclick=>"per_reload(false,#{num},'datetype')" %>
+        <%= select_tag "datefixed#{num}", options_for_select([["In last 24 hours",'day'],["In last week",'week'],["In last month",'month']],@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>
+        <br>
+      <%= radio_button_tag "datetype#{num}", "range", (@datetype=='range'), :onclick=>"per_reload(false,#{num},'datetype')" %> Since
+         <%= date_field_tag "datefrom#{num}", @datefrom, :onchange=>"per_reload(false,#{num},'datefrom')" %>
+    
+    <p>
+  </div>

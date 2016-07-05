@@ -102,6 +102,10 @@ class DialogsController < ApplicationController
       @dsection = 'list'
     end
     
+    @datetype = 'fixed'
+    @datefixed = 'month'
+    @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
+    
     logger.info("dialogs#slider session list_period_id:#{session[:list_period_id]} result_period_id:#{session[:result_period_id]}")    
     
     if @show_result.to_i > 0

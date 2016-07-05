@@ -912,9 +912,12 @@ class Item < ActiveRecord::Base
     # Discussion and period
     items = items.where("items.dialog_id = ?", crit[:dialog_id]) if crit[:dialog_id].to_i > 0
     items = items.where("items.dialog_id = 0 or items.dialog_id is null") if crit[:dialog_id].to_i < 0
-    items = items.where("items.period_id = ?", crit[:period_id]) if crit[:period_id].to_i > 0    
+    #items = items.where("items.period_id = ?", crit[:period_id]) if crit[:period_id].to_i > 0    
     ratings = ratings.where("ratings.dialog_id=#{crit[:dialog_id]}") if crit[:dialog_id].to_i > 0
-    ratings = ratings.where("ratings.period_id=#{crit[:period_id]}") if crit[:period_id].to_i >0  
+    #ratings = ratings.where("ratings.period_id=#{crit[:period_id]}") if crit[:period_id].to_i >0  
+
+    # Date period
+    items = items.where("items.created_at >= ?", crit[:datefrom])
 
     items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
     ratings = ratings.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)

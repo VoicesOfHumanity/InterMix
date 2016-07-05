@@ -12,6 +12,9 @@
   
     <input type="hidden" id="sortby" value="<%= @sortby %>">
     <input type="hidden" id="threads" value="<%= @threads %>">
+    <input type="hidden" id="datetype" value="fixed">
+    <input type="hidden" id="datefixed" value="month">
+    <input type="hidden" id="datefrom" value="<%= @datefrom %>">
   
   </div>
 
@@ -193,14 +196,30 @@ function per_reload(first,num,whatchanged) {
   if (first) {
     var threads = $('#threads').val();
     var sortby = $('#sortby').val();    
+    var datetype = $('#datetype').val(); 
+    var datefixed = $('#datefixed').val();   
+    var datefrom = $('#datefrom').val();    
   } else {
     var threads = $('#threads'+num).val();
     var sortby = $('#sortby'+num).val();
+    var datetype = $('#datetype').val(); 
+    var sel = $("input[type='radio'][name='datetype"+num+"']:checked");
+    if (sel.length > 0) {
+        datetype = sel.val();
+    }
+    var datefixed = $('#datefixed'+num).val();
+    var datefrom = $('#datefrom'+num).val();
     var othernum = (num==2) ? 1 : 2;
     $('#threads'+othernum).val(threads);
     $('#sortby'+othernum).val(sortby);
+    $('#datetype'+othernum).val(datetype);
+    $('#datefixed'+othernum).val(datefixed);
+    $('#datefrom'+othernum).val(datefrom);
     $('#threads').val(threads);
     $('#sortby').val(sortby);
+    $('#datetype').val(datetype);
+    $('#datefixed').val(datefixed);
+    $('#datefrom').val(datefrom);
   }
   var active_period_id = $('#active_period_id').val();
   if (period_id==active_period_id) {
@@ -208,7 +227,7 @@ function per_reload(first,num,whatchanged) {
   } else {
     $('#newthreadbutton').prop('disabled', true);   
   }
-  var data = {geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options}
+  var data = {geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom}
   if (whatchanged !== undefined) {
     data['whatchanged'] = whatchanged;
   }

@@ -872,6 +872,21 @@ class ItemsController < ApplicationController
     crit[:gender] = params[:meta_3].to_i
     crit[:age] = params[:meta_5].to_i
     
+    @datetype = params[:datetype]
+    @datefixed = params[:datefixed]
+    if @datetype == 'range'
+      if @datefixed == 'day'
+        @datefrom = Date.today - 1
+      elsif @datefixed == 'week'
+        @datefrom = Date.today - 7
+      elsif @datefixed == 'month'
+          @datefrom = Date.today - 30
+      end
+    else
+      @datefrom = params[:datefrom]    
+    end
+    crit[:datefrom] = @datefrom
+    
     @dialog_id = crit[:dialog_id]
     @period_id = crit[:period_id]
     
