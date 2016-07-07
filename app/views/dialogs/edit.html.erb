@@ -100,7 +100,13 @@
 		<%= f.input :names_visible_general,:label=>"Should names be visible?" ,:as=>:boolean %>
 		<%= f.input :posting_open,:label=>"Open for posting?" ,:as=>:boolean %>
 		<%= f.input :voting_open,:label=>"Open for voting?" ,:as=>:boolean %>
-		<%= f.input :current_period, :as => :select, :collection =>[['*none*',0]]+@dialog.periods.collect{|c| ["#{c.period_number.to_i>0 ? "##{c.period_number}: " : ""}#{c.startdate}-#{c.endposting}/#{c.endrating}: #{c.name}",c.id]} %>			
+		<%= f.input :current_period, :as => :select, :collection =>[['*none*',0]]+@dialog.periods.collect{|c| ["#{c.period_number.to_i>0 ? "##{c.period_number}: " : ""}#{c.startdate}-#{c.endposting}/#{c.endrating}: #{c.name}",c.id]} %>		
+    
+		<%= f.input :default_datetype, label: "Default date option type", as: :select, collection: [["In last...",'fixed'],["Since...",'range']]  %>
+    <%= f.input :default_datefixed, label: "In last...", as: :select, collection: ['month','week','day'] %>
+    <%= f.input :default_datefrom, label: "Since..." %>
+    
+    	
 	<% end %>
 
 	<p>

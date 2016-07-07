@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151216221657) do
+ActiveRecord::Schema.define(version: 20160707192855) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -143,6 +143,9 @@ ActiveRecord::Schema.define(version: 20151216221657) do
     t.boolean  "voting_open",                            default: true
     t.integer  "current_period",           limit: 4
     t.string   "twitter_hash_tag",         limit: 255
+    t.string   "default_datetype",         limit: 255,   default: "fixed"
+    t.string   "default_datefixed",        limit: 255,   default: "month"
+    t.date     "default_datefrom"
   end
 
   add_index "dialogs", ["name"], name: "index_dialogs_on_name", length: {"name"=>30}, using: :btree
