@@ -1,16 +1,4 @@
   <div style="position:relative;top:-10px;left:20px;background-color:#fcf9f7;padding: 0 5px 0 5px;font-weight:bold;width:60px">Options</div>
-  
-  <div style="text-align: center">
-  	<p>Sort:
-  	<% sortarr = [['Date','items.id desc'],['Value','*value*'],['Approval','*approval*'],['Interest','*interest*'],['Controversy','*controversy*']] %>
-  	<%= select_tag "sortby#{num}", options_for_select(sortarr,@sortby), :onchange=>"per_reload(false,#{num},'sortby')" %></p>
-  </div>
-
-  <div style="text-align: center">      
-  	<p>Comments: 
-      <%= select_tag "threads#{num}", options_for_select([['Show',''],["Don't show",'root'],['Unthreaded','flat']],@threads), :onchange=>"per_reload(false,#{num},'threads')" %>
-  	</p>
-  </div>
 
   <div style="padding-left:220px;width:300px;text-align:left">
     <p>
