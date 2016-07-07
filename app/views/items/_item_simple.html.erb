@@ -76,6 +76,7 @@ end
 	<% if @group_id.to_i > 0 and item['group'] and item['group_id'] != @group_id %></span><% end %>
 </div>
 
+<% if false -%>
 <div class="iteminfotxt">
   <% if item.class != Hash and item.dialog -%>
 	<%= "Discussion: " + item.dialog.name %>  
@@ -83,7 +84,6 @@ end
 	<%= "Discussion: " + (item['dialog'] ? item['dialog']['name'] : item['dialog_id'].to_s) if item['dialog_id'].to_i > 0 %>
   <% end -%>
 </div>
-
 <div class="iteminfotxt">
   <% if item.class != Hash and item.period -%>
 	<%= "Decision Period: " + item.period.name %>  
@@ -91,6 +91,7 @@ end
 	<%= "Decision Period: " + (item['period'] ? item['period']['name'] : item['period_id'].to_s) if item['period_id'].to_i > 0 %>
   <% end -%>
 </div>
+<% end -%>
 
 <% if (@from == 'group' or @from == 'individual') and item['subgroup_list'].length > 0 -%>	
 <div class="iteminfotxt">	
