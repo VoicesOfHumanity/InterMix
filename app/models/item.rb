@@ -917,7 +917,9 @@ class Item < ActiveRecord::Base
     #ratings = ratings.where("ratings.period_id=#{crit[:period_id]}") if crit[:period_id].to_i >0  
 
     # Date period
-    items = items.where("items.created_at >= ?", crit[:datefrom])
+    items = items.where("items.created_at >= ?", crit[:datefromuse])
+    logger.info("item#get_items from date: #{crit[:datefromuse]}")
+    # Don't look at date for ratings
 
     items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
     ratings = ratings.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)

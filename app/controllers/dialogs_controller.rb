@@ -102,11 +102,13 @@ class DialogsController < ApplicationController
       @dsection = 'list'
     end
     
-    @datetype = 'fixed'
-    @datefixed = 'month'
-    @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
     
-    logger.info("dialogs#slider session list_period_id:#{session[:list_period_id]} result_period_id:#{session[:result_period_id]}")    
+    @datetype = session.has_key?(:datetype) ? session[:datetype] : 'fixed'
+    @datefixed = session.has_key?(:datefixed) ? session[:datefixed] : 'month'
+    @datefrom = session.has_key?(:datefrom) ? session[:datefrom] : Date.today.beginning_of_month.strftime('%Y-%m-%d')
+    logger.info("dialogs#slider datetype:#{@datetype} datefixed:#{@datefixed} datefrom:#{@datefrom}")    
+    
+    #logger.info("dialogs#slider session list_period_id:#{session[:list_period_id]} result_period_id:#{session[:result_period_id]}")    
     
     if @show_result.to_i > 0
       #-- Results will show either the previous period (if the latest period was chosen in list)
