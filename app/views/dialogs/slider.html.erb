@@ -30,7 +30,11 @@
     	else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
     		<% end -%>
         
-        <input type="button" value="Options" style="margin-top:10px" id="options_button" onclick="chg_options()">
+        <% if @showing_options == 'more' -%>
+          <input type="button" value="Hide Options" style="margin-top:10px" id="options_button" onclick="chg_options()">        
+        <% else -%>
+          <input type="button" value="Options" style="margin-top:10px" id="options_button" onclick="chg_options()">
+        <% end -%>
       </p>
   
     <% if false -%>
@@ -128,6 +132,7 @@ var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 5 %>;
 var cur_group_level = <%= @group_level > 0 ? @group_level : 3 %>;
 var cur_batch_level = <%= (@batch_level || 1).to_i %>;
 var cur_batch_size = <%= (@batch_size || 4).to_i %>;
+var showing_options = '<%= @showing_options %>';
 $(function() {
   if (false) {
     $( "#geoslider" ).slider({
@@ -243,7 +248,6 @@ function per_reload(first,num,whatchanged) {
 	});	
 }
 per_reload(true);
-var showing_options = 'less';
 function chg_options() {
   if (showing_options=='more') {
     $('#options_top').hide();

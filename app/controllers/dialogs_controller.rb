@@ -102,6 +102,7 @@ class DialogsController < ApplicationController
       @dsection = 'list'
     end
     
+    @showing_options = 'less'
     if session.has_key?(:datetype)
       @datetype = session[:datetype]
     elsif @dialog.default_datetype.to_s != ''
@@ -109,6 +110,9 @@ class DialogsController < ApplicationController
     else
       @datetype = 'fixed'
     end
+    if @show_result.to_i > 0 and @dialog.default_datetype.to_s != '' and @datetype != @dialog.default_datetype
+      @showing_options = 'more'
+    end  
     if session.has_key?(:datefixed)
       @datefixed = session[:datefixed]
     elsif @dialog.default_datefixed.to_s != ''
@@ -116,6 +120,9 @@ class DialogsController < ApplicationController
     else
       @datefixed = 'month'
     end
+    if @show_result.to_i > 0 and @dialog.default_datefixed.to_s != '' and @datefixed != @dialog.default_datefixed
+      @showing_options = 'more'
+    end  
     if session.has_key?(:datefrom)
       @datefrom = session[:datefrom]
     elsif @dialog.default_datefrom.to_s != ''
@@ -126,6 +133,9 @@ class DialogsController < ApplicationController
     if @datefrom.class != Date
       @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')      
     end
+    if @show_result.to_i > 0 and @dialog.default_datefrom.to_s != '' and @datefrom != @dialog.default_datefrom
+      @showing_options = 'more'
+    end  
 
     #@datefrom = session.has_key?(:datefrom) ? session[:datefrom] : Date.today.beginning_of_month.strftime('%Y-%m-%d')
     logger.info("dialogs#slider datetype:#{@datetype} datefixed:#{@datefixed} datefrom:#{@datefrom}")    
