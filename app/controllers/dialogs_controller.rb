@@ -121,10 +121,13 @@ class DialogsController < ApplicationController
     elsif @dialog.default_datefrom.to_s != ''
       @datefrom = @dialog.default_datefrom
     else
-      @datetype = Date.today.beginning_of_month.strftime('%Y-%m-%d')
+      @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
+    end
+    if @datefrom.class != Date
+      @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')      
     end
 
-    @datefrom = session.has_key?(:datefrom) ? session[:datefrom] : Date.today.beginning_of_month.strftime('%Y-%m-%d')
+    #@datefrom = session.has_key?(:datefrom) ? session[:datefrom] : Date.today.beginning_of_month.strftime('%Y-%m-%d')
     logger.info("dialogs#slider datetype:#{@datetype} datefixed:#{@datefixed} datefrom:#{@datefrom}")    
     
     #logger.info("dialogs#slider session list_period_id:#{session[:list_period_id]} result_period_id:#{session[:result_period_id]}")    
