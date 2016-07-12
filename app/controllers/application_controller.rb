@@ -314,6 +314,26 @@ class ApplicationController < ActionController::Base
 
   def get_group_dialog_from_subdomain
     #-- If we've gotten a group and/or dialog shortname in the subdomain
+    #-- Now, if anything other than voh. change it to that and reload
+    if Rails.env.production?
+      xsub = ''
+      for subdomain in request.subdomains
+        if subdomain != 'intermix'
+          xsub += '.' if xsub != ''
+          xsub += subdomain
+        end
+      end
+      if xsub != 'voh'
+        new_url =  "http://voh.#{ROOTDOMAIN}#{request.fullpath}"
+        redirect_to new_url
+      end
+    end
+    @group_id = GLOBAL_GROUP_ID
+    @dialog_id = VOH_DISCUSSION_ID
+    session[:dialog_id] = @dialog_id
+    session[:group_id] = @group_id     
+    return @group_id, @dialog_id
+    #------
     logger.info("application#get_group_dialog_from_subdomain: #{request.subdomains.join(' ')} signed_in: #{participant_signed_in? ? 'yes' : 'no'}")    
     xgroup_id = nil
     xdialog_id = nil
