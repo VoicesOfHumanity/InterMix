@@ -323,7 +323,7 @@ class ApplicationController < ActionController::Base
           xsub += subdomain
         end
       end
-      if xsub != 'voh'
+      if xsub != 'voh' and not params.include?('auth_token')
         new_url =  "http://voh.#{ROOTDOMAIN}#{request.fullpath}"
         redirect_to new_url
       end
