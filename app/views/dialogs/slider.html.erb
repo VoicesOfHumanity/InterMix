@@ -21,7 +21,9 @@
   <div style="float:left;width:139px;padding-left:5px;">
   
     <p>
-    		<% if session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
+        <% if true -%>
+        <input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
+    		<% elsif session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
     		<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
     		<% else -%>
     			<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" title="<%= 
@@ -227,11 +229,12 @@ function per_reload(first,num,whatchanged) {
     $('#datefrom').val(datefrom);
   }
   var active_period_id = $('#active_period_id').val();
-  if (period_id==active_period_id) {
-    $('#newthreadbutton').prop('disabled', false);    
-  } else {
-    $('#newthreadbutton').prop('disabled', true);   
-  }
+  $('#newthreadbutton').prop('disabled', false);
+  //if (period_id==active_period_id) {
+  //  $('#newthreadbutton').prop('disabled', false);    
+  //} else {
+  //  $('#newthreadbutton').prop('disabled', true);   
+  //}
   var data = {geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom}
   if (whatchanged !== undefined) {
     data['whatchanged'] = whatchanged;

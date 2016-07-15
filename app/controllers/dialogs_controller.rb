@@ -130,9 +130,9 @@ class DialogsController < ApplicationController
     else
       @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
     end
-    if @datefrom.class != Date
-      @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')      
-    end
+    #if @datefrom.class != Date
+    #  @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')      
+    #end
     if @show_result.to_i > 0 and @dialog.default_datefrom.to_s != '' and @datefrom != @dialog.default_datefrom
       @showing_options = 'more'
     end  
