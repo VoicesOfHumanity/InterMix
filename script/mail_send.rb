@@ -375,7 +375,8 @@ for p in participants
   #-- Send any weekly digest for this person, if it is the day we run weeklies, and there's something to send
   if is_weekly and tweekly != ''
   
-    subject = "InterMix Weekly Digest, #{wstart.strftime("%Y-%m-%d")} - #{pend.strftime("%Y-%m-%d")}"
+    #subject = "InterMix Weekly Digest, #{wstart.strftime("%Y-%m-%d")} - #{pend.strftime("%Y-%m-%d")}"
+    subject = "[voicesofhumanity] Weekly Digest, #{wstart.strftime("%Y-%b-%d")} - #{pend.strftime("%Y-%b-%d")}"
   
     email = ItemMailer.digest(subject, tweekly, p.email_address_with_name, cdata)
   
