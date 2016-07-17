@@ -313,10 +313,8 @@ class ApplicationController < ActionController::Base
     end  
     
   end
-
-  def get_group_dialog_from_subdomain
-    #-- If we've gotten a group and/or dialog shortname in the subdomain
-    #-- Now, if anything other than voh. change it to that and reload
+  
+  def redirect_if_not_voh
     #if Rails.env.production? and participant_signed_in? and not params.include?('auth_token')
     if Rails.env.production? and not params.include?('auth_token')
       xsub = ''
@@ -329,9 +327,15 @@ class ApplicationController < ActionController::Base
       if xsub != 'voh'
         new_url =  "http://voh.#{ROOTDOMAIN}#{request.fullpath}"
         redirect_to new_url
-        return false,false
+        return true
       end
-    end
+    end    
+    return false
+  end
+
+  def get_group_dialog_from_subdomain
+    #-- If we've gotten a group and/or dialog shortname in the subdomain
+    #-- Now, if anything other than voh. change it to that and reload
     @group_id = GLOBAL_GROUP_ID
     @dialog_id = VOH_DISCUSSION_ID
     session[:dialog_id] = @dialog_id

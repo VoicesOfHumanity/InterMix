@@ -52,6 +52,7 @@ class DialogsController < ApplicationController
   end  
   
   def slider
+    return if redirect_if_not_voh
     @section = 'dialogs'
     @dsection = 'slider'
     @dialog_id = params[:id].to_i
