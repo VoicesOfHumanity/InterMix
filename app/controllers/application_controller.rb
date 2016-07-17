@@ -194,6 +194,7 @@ class ApplicationController < ActionController::Base
     session[:has_required] = current_participant.has_required
     
     group_id,dialog_id = get_group_dialog_from_subdomain
+    return if not group_id and not dialog_id
     group_id,dialog_id = check_group_and_dialog if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
 
     if session[:dialog_prefix] != '' and session[:group_prefix] != ''
@@ -287,6 +288,7 @@ class ApplicationController < ActionController::Base
     session[:has_required] = current_participant.has_required
     
     group_id,dialog_id = get_group_dialog_from_subdomain
+    return if not group_id and not dialog_id
     group_id,dialog_id = check_group_and_dialog if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
 
     if session[:dialog_prefix] != '' and session[:group_prefix] != ''
@@ -315,7 +317,8 @@ class ApplicationController < ActionController::Base
   def get_group_dialog_from_subdomain
     #-- If we've gotten a group and/or dialog shortname in the subdomain
     #-- Now, if anything other than voh. change it to that and reload
-    if Rails.env.production? and participant_signed_in? and not params.include?('auth_token')
+    #if Rails.env.production? and participant_signed_in? and not params.include?('auth_token')
+    if Rails.env.production? and not params.include?('auth_token')
       xsub = ''
       for subdomain in request.subdomains
         if subdomain != 'intermix'
@@ -326,6 +329,7 @@ class ApplicationController < ActionController::Base
       if xsub != 'voh'
         new_url =  "http://voh.#{ROOTDOMAIN}#{request.fullpath}"
         redirect_to new_url
+        return false,false
       end
     end
     @group_id = GLOBAL_GROUP_ID
