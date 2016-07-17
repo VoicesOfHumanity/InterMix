@@ -600,6 +600,7 @@ class ItemsController < ApplicationController
   
   def view
     #-- Show an individual post
+    return if redirect_if_not_voh
     @from = params[:from] || 'individual'
     @item_id = params[:id]
     @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
@@ -696,6 +697,7 @@ class ItemsController < ApplicationController
   
   def thread
     #-- Show the whole thread, based on an item
+    return if redirect_if_not_voh
     @from = params[:from] || 'thread'
     @item_id = params[:id]
     @exp_item_id = (params[:exp_item_id] || 0).to_i
