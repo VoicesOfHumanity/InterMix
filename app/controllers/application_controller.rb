@@ -315,7 +315,7 @@ class ApplicationController < ActionController::Base
   def get_group_dialog_from_subdomain
     #-- If we've gotten a group and/or dialog shortname in the subdomain
     #-- Now, if anything other than voh. change it to that and reload
-    if Rails.env.production?
+    if Rails.env.production? and participant_signed_in? and not params.include?('auth_token')
       xsub = ''
       for subdomain in request.subdomains
         if subdomain != 'intermix'
@@ -323,7 +323,7 @@ class ApplicationController < ActionController::Base
           xsub += subdomain
         end
       end
-      if xsub != 'voh' and not params.include?('auth_token')
+      if xsub != 'voh'
         new_url =  "http://voh.#{ROOTDOMAIN}#{request.fullpath}"
         redirect_to new_url
       end
