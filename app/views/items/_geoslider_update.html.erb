@@ -27,7 +27,9 @@
     <% end -%>	
 	</div><!--forumitem-->
   <% x += 1 %>
+  <% if false %>
   <% break if x >= @showmax %>
+  <% end %>
 <% end -%>
 
 
@@ -35,7 +37,7 @@
   <%= render partial: 'items/geoslider_options', locals: {num: 2} %>
 </div>
 
-<% if @batches.length > 0 -%>
+<% if false and @batches.length > 0 -%>
 <% step = (560 / (@batches.length-1))-15 %>
 <div id="batchslider" style="margin:0 0 5px 0"></div>
 <div style="width:595px;margin: 0 0 30px 0">
@@ -47,7 +49,13 @@
 <div style="clear:both"></div>
 <% end -%>
 
-
+<%= "#{(@items.current_page-1)*@items.per_page+1}-#{[@items.total_entries,@items.current_page*@items.per_page].min} of #{@items.total_entries} items" if @items.respond_to?('total_entries') and @items.total_entries.to_i>1 %>
+&nbsp;&nbsp;&nbsp;
+<%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.respond_to?('current_page') and @items.current_page>1 %>
+<%= raw %(<a href="javascript:gotopage(#{@items.previous_page})">&lt;</a>) if @items.respond_to?('previous_page') and @items.previous_page %>
+<%= raw "page #{@items.current_page} of #{@items.total_pages}" if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 %>
+<%= raw %(<a href="javascript:gotopage(#{@items.next_page})">&gt;</a>) if @items.respond_to?('next_page') and @items.next_page %>
+<%= raw %(<a href="javascript:gotopage(#{@items.total_pages})">&gt;&gt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.current_page<@items.total_pages %>
 
 <script>
 $("#geo_level").val(<%= @geo_level %>);

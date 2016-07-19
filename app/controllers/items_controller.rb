@@ -843,7 +843,11 @@ class ItemsController < ApplicationController
     # group_level: current, my, all groups. 
   
     # indigenous, other minority, veteran, interfaith, refugee
-  
+
+    @per_page = (params[:per_page] || 11).to_i
+    @page = ( params[:page] || 1 ).to_i
+    @page = 1 if @page < 1
+      
     show_result = (params[:show_result].to_i == 1)
     whatchanged = params[:whatchanged].to_s
   
@@ -1235,6 +1239,8 @@ class ItemsController < ApplicationController
       elsif @batch_size == 0
         @batch_size = @items.length
       end  
+      
+      @items = @items.paginate :page=>@page, :per_page => @per_page   
       
       session[:list_batch_level] = @batch_level
       session[:list_batch_size] = @batch_size

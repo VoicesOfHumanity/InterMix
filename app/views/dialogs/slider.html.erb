@@ -165,7 +165,7 @@ $(function() {
     $( "#group_level" ).val( $( "#groupslider" ).slider( "value" ) );
   }
 });
-function per_reload(first,num,whatchanged) {
+function per_reload(first,num,whatchanged,page) {
 	if (editingid>0) {
 	    alert("Please save or cancel the edit that is in progress");
 	    return;
@@ -182,6 +182,9 @@ function per_reload(first,num,whatchanged) {
   first = first ? 1 : 0;
   if (num === undefined) {
     num = 2;
+  }
+  if (page === undefined) {
+    page = 1;
   }
  	$('#per_main').css('opacity','0.5');
   cur_geo_level = $("input[name='geo_level_radio']:checked").val()
@@ -235,7 +238,7 @@ function per_reload(first,num,whatchanged) {
   //} else {
   //  $('#newthreadbutton').prop('disabled', true);   
   //}
-  var data = {geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom}
+  var data = {page: page, geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom}
   if (whatchanged !== undefined) {
     data['whatchanged'] = whatchanged;
   }
@@ -261,5 +264,8 @@ function chg_options() {
     showing_options = 'more';
     $('#options_button').val("Hide Options");
   }
+}
+function gotopage(page) {
+	per_reload(false,1,'page',page)
 }
 </script>
