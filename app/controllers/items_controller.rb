@@ -962,11 +962,12 @@ class ItemsController < ApplicationController
       rootonly = false
     end
 
-    #-- See how many total posts there are, to be able to do a graphic
+    #-- See how many total posts there are in the selected period, to be able to do a graphic
     all_posts = Item.where(nil)
     all_posts = all_posts.where(:is_first_in_thread => true) if rootonly
     all_posts = all_posts.where(dialog_id: crit[:dialog_id]) if crit[:dialog_id] > 0
-    all_posts = all_posts.where(period_id: crit[:period_id]) if crit[:period_id] > 0
+    #all_posts = all_posts.where(period_id: crit[:period_id]) if crit[:period_id] > 0
+    all_posts = all_posts.where("items.created_at >= ?", crit[:datefromuse])
     @num_all_posts = all_posts.count
   
     @title = ""
