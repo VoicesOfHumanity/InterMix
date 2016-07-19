@@ -24,6 +24,9 @@
 <tr><td class="label">Metropolitan Area:</td><td><%= @participant.metro_area ?  @participant.metro_area.name : @participant.metropolitan_area %></td></tr>	
 <tr><td class="label">Bio Region:</td><td><%= @participant.bioregion %></td></tr>	
 <tr><td class="label">Faith Tradition:</td><td><%= @participant.faith_tradition %></td></tr>	
+
+<tr><td class="label">Community Tags:</td><td><%= @participant.tag_list if @participant.tag_list.to_s!='' %></td></tr>	
+
 <tr><td class="label">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %> GMT</td></tr>	
 <tr><td class="label">Member #:</td><td><%= @participant.id %></td></tr>	
 <% @participant.metamaps.each do |metamap| -%>
