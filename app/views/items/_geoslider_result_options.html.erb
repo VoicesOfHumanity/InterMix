@@ -1,12 +1,15 @@
   <div style="position:relative;top:-10px;left:20px;background-color:#fcf9f7;padding: 0 5px 0 5px;font-weight:bold;width:60px">Options</div>
-
-  <div style="padding-left:220px;width:300px;text-align:left">
-    <p>
-      <%= radio_button_tag "datetype#{num}", "fixed", (@datetype=='fixed'), :onclick=>"per_reload(false,#{num},'datetype')" %>
-        <%= select_tag "datefixed#{num}", options_for_select([["In last 24 hours",'day'],["In last week",'week'],["In last month",'month']],@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>
-        <br>
-      <%= radio_button_tag "datetype#{num}", "range", (@datetype=='range'), :onclick=>"per_reload(false,#{num},'datetype')" %> Since
-         <%= date_field_tag "datefrom#{num}", @datefrom, :onchange=>"per_reload(false,#{num},'datefrom')" %>
-    
-    <p>
-  </div>
+  
+  <table>  
+    <tr>
+      <td style="text-align:right;vertical-align:top;background-color:transparent">Date range:</td>
+      <td style="background-color:transparent">
+        <%= radio_button_tag "datetype#{num}", "fixed", (@datetype=='fixed'), :onclick=>"per_reload(false,#{num},'datetype')" %>
+          <%= select_tag "datefixed#{num}", options_for_select([["In last 24 hours",'day'],["In last week",'week'],["In last month",'month']],@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>
+          <br>
+        <%= radio_button_tag "datetype#{num}", "range", (@datetype=='range'), :onclick=>"per_reload(false,#{num},'datetype')" %> Since
+           <%= date_field_tag "datefrom#{num}", @datefrom, :onchange=>"per_reload(false,#{num},'datefrom')" %>
+      </td>
+    </tr>
+  </table>  
+  
