@@ -878,7 +878,8 @@ class ItemsController < ApplicationController
     #session[:slider_period_id] = crit[:period_id]
     #logger.info("items#geoslider_update slider_period:#{session[:slider_period_id]}")
     
-    crit[:group_id] = session[:group_id].to_i
+    #crit[:group_id] = session[:group_id].to_i
+    crit[:group_id] = 0
   
     crit[:gender] = params[:meta_3].to_i
     crit[:age] = params[:meta_5].to_i
@@ -1239,6 +1240,8 @@ class ItemsController < ApplicationController
       elsif @batch_size == 0
         @batch_size = @items.length
       end  
+      
+      @items_length = @items.length
       
       @items = @items.paginate :page=>@page, :per_page => @per_page   
       

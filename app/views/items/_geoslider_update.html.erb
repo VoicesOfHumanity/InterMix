@@ -1,10 +1,10 @@
 <h3><%= @title %></h3>
 
-<% show_part = (@num_all_posts.to_i>0 ? (1.0 * @items.length / @num_all_posts) : 0) %>
+<% show_part = (@num_all_posts.to_i>0 ? (1.0 * @items_length / @num_all_posts) : 0) %>
 
 <div style="height:20px;width:590px;background-color:#ccc"><div style="height:20px;width:<%= (show_part * 590).to_i %>px;background-color:#66f;">&nbsp;</div></div>
 
-<p><%= @items.length %> item<%= 's' if @items.length != 1 %></p>
+<p><%= @items_length %> item<%= 's' if @items_length != 1 %></p>
 
 <div style="border:1px solid #000;padding:0px 0 0 0;margin-bottom:20px;display:<%= @showing_options=='more' ? 'block' : 'none' %>" id="options_top">
   <%= render partial: 'items/geoslider_options', locals: {num: 1} %>
