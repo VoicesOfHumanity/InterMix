@@ -1056,7 +1056,7 @@ class Item < ActiveRecord::Base
     items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
     items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation")
   
-    logger.info("item#get_items #{items.length} items and #{ratings.length} ratings")
+    logger.info("item#get_items #{items.length if items} items and #{ratings.length if ratings} ratings")
   
     return items,ratings,title
   end
