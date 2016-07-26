@@ -69,6 +69,11 @@
 <meta itemprop="image" content="<%= @item.best_image %>">
 <meta itemprop="url" content="http://voh.<%= ROOTDOMAIN %>/items/<%= @item.id %>/view">
 <link rel="canonical" href="http://voh.<%= ROOTDOMAIN %>/items/<%= @item.id %>/view">
+<% else -%>
+<meta property="og:image" content="<%= VOL_LOGO %>">
+<meta property="og:site_name" content="Voices of Humanity">
+<meta property="fb:app_id" content="<%= FACEBOOK_APP_ID %>">
+<meta itemprop="image" content="<%= VOL_LOGO %>">
 <% end -%>   
 </head>
 <body>
