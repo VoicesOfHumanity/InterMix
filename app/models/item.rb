@@ -115,6 +115,16 @@ class Item < ActiveRecord::Base
     self.save
   end  
   
+  def best_image
+    #-- Return the best image to represent an item, for example for facebook
+    #-- That will either be the picture that goes with the item, or a site logo
+    if File.exist?("#{DATADIR}/items/#{self.id}/thumb.jpg")
+      return "/images/data/items/#{self.id}/thumb.jpg"
+    else
+      return VOL_LOGO
+    end
+  end
+  
   def emailit
     #-- E-mail this item to everybody who's allowed to see it, and who's configured to receive it
     #-- Group items are only available to group members. Other items are available to everybody
