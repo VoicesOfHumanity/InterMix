@@ -105,5 +105,3 @@ BITLY_USERNAME = 'intermix2'
 BITLY_TOKEN = 'c9d06623cb928bca6977ae80bbdb1a4cc676309c'
 
 VOH_DISCUSSION_ID = 4
-
-VOL_LOGO = "http://voh.intermix.org/images/data/dialogs/logos/7/original_VoiceofHumanity.jpg"
