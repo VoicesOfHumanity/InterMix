@@ -56,6 +56,20 @@
 			$('#whereami').tooltipster('update', $('#youareherediv').html());
    });
 	</script>
+<% if @item and controller_name == 'items' -%>
+<meta property="og:title" content="<%= @item.subject %>">
+<meta property="og:type" content="article">
+<meta property="og:image" content="<%= @item.best_image %>">
+<meta property="og:url" content="http://voh.<%= ROOTDOMAIN %>/items/<%= @item.id %>/view">
+<meta property="og:description" content="<%= @item.short_content %>">
+<meta property="og:site_name" content="Voices of Humanity">
+<meta property="fb:app_id" content="<%= FACEBOOK_APP_ID %>">
+<meta itemprop="name" content="<%= @item.subject %>">
+<meta itemprop="description" content="<%= @item.short_content %>">
+<meta itemprop="image" content="<%= @item.best_image %>">
+<meta itemprop="url" content="http://voh.<%= ROOTDOMAIN %>/items/<%= @item.id %>/view">
+<link rel="canonical" href="http://voh.<%= ROOTDOMAIN %>/items/<%= @item.id %>/view">
+<% end -%>   
 </head>
 <body>
 
