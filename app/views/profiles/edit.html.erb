@@ -6,6 +6,8 @@
 
 	<input type="hidden" id="forum_link" name="forum_link" value="<%= @forum_link %>">
 	<input type="hidden" id="goto" name="goto" value="">
+  <input type="hidden" id="tag_list" name="participant[tag_list]" value="<%= @participant.tag_list %>">
+		
 
 	<%= f.inputs do %>
 
@@ -48,8 +50,20 @@
 		<%= f.input :bioregion, :required => false %>
 		<%= f.input :political, :required => false, :label => 'Political Affiliation' %>
 		<%= f.input :faith_tradition, :required => false %>
-		<%= f.input :tag_list, label: "Community tags",:required => false, :as => :string, :input_html => {:size=>45}  %>
-		
+    
+    <li class="select required">
+      <label class="label">Community tags</label>
+      <select size="5" id="comtags" style="width: 150px;float:left">
+        <% for tag in @participant.tag_list -%>
+          <option><%= tag %></option>
+        <% end -%>
+      </select>
+      <div style="width: 160px;float:left;padding: 0 0 0 5px">
+        <input type="button" value="&lt; add" onclick="addtag()"> <input type="text" style="width: 100px" id="tag2add"><br>
+        <input type="button" value="&gt; remove" onclick="remtag()">
+      </div>
+    </li>
+    
 		<% @participant.metamaps_h.each do |metamap_id,metamap_name,metamap| -%>
   		<% metamap_nodes = @participant.metamap_nodes_h %>
   		<% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
@@ -118,8 +132,8 @@
 	<% end %>
 
 	<p><br>
-	  <input type="button" value="Cancel" onclick="document.location.href='/me/profile'" />
-	  <input type="submit" value="Save" />
+	  <input type="button" value="Cancel" onclick="document.location.href='/me/profile'">
+	  <input type="submit" value="Save" onclick="savetags();return(true)">
 		<% if false and @forum_link.to_s != '' -%>
 	  <input type="button" value="Save and go to Forum" onclick="$('#goto').val($('#forum_link').val());$('#profile_edit').submit();" />
 		<% end -%>
@@ -152,5 +166,37 @@ function chgcountry() {
 			
 		$('#profile_edit').css('opacity','1.0');
 	})
+}
+function addtag() {
+  var val = $('#tag2add').val();
+  if (val.charAt(0)=='#') {
+    val = val.substring(1);
+  }
+  if (val!='') {
+    var xfound = false;
+    $('#comtags option').each(function() {
+      if ($(this).val()==val) {
+        xfound = true;
+      }
+    });
+    if (!xfound) {
+      $('#comtags').append($('<option>',{text: val}))
+    }
+    $('#tag2add').val('');
+  }
+}
+function remtag() {
+  $('#comtags option:selected').remove();
+}
+function savetags() {
+  var xlist = '';
+  $('#comtags option').each(function() {
+    var tag = $(this).val();
+    if (xlist != '') {
+      xlist += ',';
+    }
+    xlist += tag;
+  });  
+  $('#tag_list').val(xlist);
 }
 </script>
