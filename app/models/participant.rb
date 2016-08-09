@@ -286,6 +286,20 @@ class Participant < ActiveRecord::Base
   def contacts
     ( self.followers + self.idols ).uniq
   end    
+  
+  def show_tag_list(with_links=false)
+    xlist = ''
+    tags.each do |tag|
+      xlist += ', ' if xlist != ''
+      xlist += '#'
+      if with_links
+        xlist += "<a href=\"/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{tag.name}\">" + tag.name + "</a>"
+      else
+        xlist += tag.name
+      end 
+    end
+    xlist
+  end
       
   private
   

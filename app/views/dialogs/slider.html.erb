@@ -15,6 +15,7 @@
     <input type="hidden" id="datetype" value="<%= @datetype %>">
     <input type="hidden" id="datefixed" value="<%= @datefixed %>">
     <input type="hidden" id="datefrom" value="<%= @datefrom %>">
+    <input type="hidden" id="comtag" value="<%= @comtag %>">
   
   </div>
 
@@ -203,6 +204,7 @@ function per_reload(first,num,whatchanged,page) {
   var meta_5 = $("input[name='meta_5']:checked").val()
   var dialog_id = $('#dialog_id').val();
   var period_id = $('#period_id').val();
+  var comtag = $('#comtag').val()
   if (first) {
     var threads = $('#threads').val();
     var sortby = $('#sortby').val();    
@@ -238,7 +240,7 @@ function per_reload(first,num,whatchanged,page) {
   //} else {
   //  $('#newthreadbutton').prop('disabled', true);   
   //}
-  var data = {page: page, geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom}
+  var data = {page: page, geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag}
   if (whatchanged !== undefined) {
     data['whatchanged'] = whatchanged;
   }

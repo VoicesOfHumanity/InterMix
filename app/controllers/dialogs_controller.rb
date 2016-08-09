@@ -59,6 +59,8 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     
+    @comtag = params[:comtag].to_s
+    
     if params.has_key?(:group_id)
       session[:group_id] = params[:group_id].to_i
       @group_id = params[:group_id].to_i

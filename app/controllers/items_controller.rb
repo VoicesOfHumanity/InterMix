@@ -884,6 +884,8 @@ class ItemsController < ApplicationController
     crit[:gender] = params[:meta_3].to_i
     crit[:age] = params[:meta_5].to_i
     
+    crit[:comtag] = params[:comtag].to_s
+    
     @datetype = params[:datetype]
     @datefixed = params[:datefixed]
     @datefrom = params[:datefrom]    
