@@ -1057,6 +1057,18 @@ class Item < ActiveRecord::Base
     # tags
     if crit[:comtag].to_s != ''
       title += " | ##{crit[:comtag]}"
+      # does the current user have that tag?
+      has_tag = false
+      for tag in current_participant.tag_list
+        if tag == crit[:comtag]
+          has_tag = true
+        end
+      end
+      if has_tag
+        title += " <input type=\"button\" value=\"leave\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+      else
+        title += " <input type=\"button\" value=\"join\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+      end
       plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
       if plist != ''
         items = items.where("participants.id in (#{plist})")

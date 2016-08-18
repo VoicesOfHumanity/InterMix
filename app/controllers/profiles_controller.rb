@@ -487,6 +487,15 @@ class ProfilesController < ApplicationController
     
     
   end  
+  
+  def comtag
+    #-- Join or leave a tag
+    comtag = params[:comtag]
+    which = params[:which]
+    
+    #current_participant.
+    
+  end
 
   protected
   

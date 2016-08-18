@@ -280,6 +280,7 @@ Rails.application.routes.draw do
   get 'me/twitauth' => 'profiles#twitauth'
   get 'me/twitcallback' => 'profiles#twitcallback'
   get 'me/friends' => 'people#friends'
+  get 'me/comtag' => 'profiles#comtag'
   
   get 'fbapp(/:action)', :controller=>:fbapp
   

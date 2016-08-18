@@ -270,4 +270,23 @@ function chg_options() {
 function gotopage(page) {
 	per_reload(false,1,'page',page)
 }
+function joinleave(comtag) {
+  var which = $('#comtagjoin').prop('value');
+  var data = {
+    'comtag': comtag,
+    'which': which,
+  };
+	$.ajax({
+    type: 'GET',
+	  url: '/me/comtag',
+	  data: data,
+	  complete: function(t){ 
+      if (which=='join') {
+        $('#comtagjoin').prop('value','leave');
+      } else {
+        $('#comtagjoin').prop('value','join');
+      }
+	  }
+	});
+}
 </script>
