@@ -1003,15 +1003,6 @@ class Item < ActiveRecord::Base
       title += "All Perspectives"
     end  
     
-    # tags
-    if crit[:comtag].to_s != ''
-      plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
-      if plist != ''
-        items = items.where("participants.id in (#{plist})")
-        #title += " | ##{crit[:comtag]}"
-      end
-    end
-    
     if crit[:gender] != 0
       items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
       ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
@@ -1061,6 +1052,17 @@ class Item < ActiveRecord::Base
       items = items.where("participants.refugee=1")
       ratings = ratings.where("participants.refugee=1")
       title += " | Refugee"
+    end
+    
+    # tags
+    if crit[:comtag].to_s != ''
+      title += " | ##{crit[:comtag]}"
+      plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
+      if plist != ''
+        items = items.where("participants.id in (#{plist})")
+      else
+        items = items.where(false)
+      end
     end
       
     if rootonly
