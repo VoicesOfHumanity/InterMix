@@ -491,10 +491,13 @@ class ProfilesController < ApplicationController
   def comtag
     #-- Join or leave a tag
     comtag = params[:comtag]
-    which = params[:which]
-    
-    #current_participant.
-    
+    which = params[:which]    
+    if which == 'join'
+      current_participant.tag_list.add(comtag)
+    else
+      current_participant.tag_list.remove(comtag)
+    end
+    current_participant.save
   end
 
   protected
