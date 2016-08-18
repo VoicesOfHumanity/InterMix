@@ -1073,7 +1073,7 @@ class Item < ActiveRecord::Base
       if plist != ''
         items = items.where("participants.id in (#{plist})")
       else
-        items = items.where(false)
+        items = items.where("1=0")
       end
     end
       
