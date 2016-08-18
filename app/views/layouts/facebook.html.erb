@@ -11,14 +11,14 @@
   <%= javascript_include_tag :defaults, :ckeditor, "forum", "front", "jquery.treeview.js" %>
   <%= csrf_meta_tag %>
   <% if @item and controller_name == 'items' -%>
-  <meta property="og:title" content="<%= @item.subject %>">
+  <meta property="og:title" content="Voices of Humanity: <%= @item.subject %>">
   <meta property="og:type" content="article">
   <meta property="og:image" content="http://voh.<%= ROOTDOMAIN %><%= @item.best_image %>">
   <meta property="og:url" content="http://voh.<%= ROOTDOMAIN %>/items/<%= @item.id %>/view">
   <meta property="og:description" content="<%= @item.short_content %>">
   <meta property="og:site_name" content="Voices of Humanity">
   <meta property="fb:app_id" content="<%= FACEBOOK_APP_ID %>">
-  <meta itemprop="name" content="<%= @item.subject %>">
+  <meta itemprop="name" content="Voices of Humanity: <%= @item.subject %>">
   <meta itemprop="description" content="<%= @item.short_content %>">
   <meta itemprop="image" content="http://voh.<%= ROOTDOMAIN %><%= @item.best_image %>">
   <meta itemprop="url" content="http://voh.<%= ROOTDOMAIN %>/items/<%= @item.id %>/view">
