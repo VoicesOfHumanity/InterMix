@@ -36,9 +36,9 @@ end
 	<%=raw (@cdata['item'].oembed_response and @cdata['item'].oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"#{@cdata['item'].oembed_response['thumbnail_url']}\" class=\"item_img_sm_w\" alt=\"thumbnail\">" : 'video' %><br>
 	<%=raw @cdata['item'].short_content %>
 <% elsif @cdata['item'].media_type == 'audio' -%>
-  <p><a href=\"#{item.link}\" target=\"_blank\">item.subject</a></p>
+  <p><a href="<%= @cdata['item'].link %>" target="_blank"><%= @cdata['item'].subject %></a></p>
   <p>
-	<%=raw (@cdata['item'].oembed_response and @cdata['item'].oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"#{@cdata['item'].oembed_response['thumbnail_url']}\" class=\"item_img_sm_w\" alt=\"thumbnail\">" : "<a href=\"#{item.link}\" target=\"_blank\">audio</a>" %></p>
+	<%=raw (@cdata['item'].oembed_response and @cdata['item'].oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"#{@cdata['item'].oembed_response['thumbnail_url']}\" class=\"item_img_sm_w\" alt=\"thumbnail\">" : "<a href=\"#{@cdata['item'].link}\" target=\"_blank\">audio</a>" %></p>
 	<%=raw @cdata['item'].short_content %>
 <% elsif @message and @message.to_s != '' %>
 	<%=raw @message %>
