@@ -885,6 +885,7 @@ class ItemsController < ApplicationController
     crit[:age] = params[:meta_5].to_i
     
     crit[:comtag] = params[:comtag].to_s
+    crit[:messtag] = params[:messtag].to_s
     
     @datetype = params[:datetype]
     @datefixed = params[:datefixed]
@@ -1580,6 +1581,17 @@ class ItemsController < ApplicationController
         subitem.save
       end
     end  
+    
+    # Add/remove tags, based on which hashtags are included in the message text
+    if @item.media_type == 'video' or @item.media_type == 'audio'
+      xtxt = @item.short_content
+    else
+      xtxt = @item.html_content
+    end
+    tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$)/i).map{|s| s[0]}
+    logger.info("items#itemprocess tags:#{tagmatches}") 
+    @item.tag_list = tagmatches
+    
     
     if @send_to == 'wall'
       @item.posted_to_forum = false

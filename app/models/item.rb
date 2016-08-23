@@ -1076,6 +1076,10 @@ class Item < ActiveRecord::Base
         items = items.where("1=0")
       end
     end
+    if crit[:messtag].to_s != ''
+      title += " | ##{crit[:messtag]}"
+      items = items.tagged_with(crit[:messtag])      
+    end    
       
     if rootonly
       # Leaving non-roots in there. Will be sorted out in get_itemsproc
@@ -2434,5 +2438,19 @@ class Item < ActiveRecord::Base
     #-- Show a subgroup list with links. Construct link tag from url, ending in =
     ( self.subgroup_list - ['none'] ).collect{|tag| "<a href=\"#{link}#{tag}\">#{tag}</a>"}.join(', ')
   end   
-    
+
+  def show_tag_list(with_links=false)
+    xlist = ''
+    tags.each do |tag|
+      xlist += ', ' if xlist != ''
+      xlist += '#'
+      if with_links
+        xlist += "<a href=\"/dialogs/#{VOH_DISCUSSION_ID}/slider?messtag=#{tag.name}\">" + tag.name + "</a>"
+      else
+        xlist += tag.name
+      end 
+    end
+    xlist
+  end
+      
 end
