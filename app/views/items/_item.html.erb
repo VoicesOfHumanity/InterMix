@@ -238,7 +238,7 @@ end
       </div>
     <% end -%>
     
-    <% if showlong and item.participant -%>
+    <% if true and item.participant -%>
       <% comtags = item.participant.show_tag_list(true) %>
       <% if comtags.to_s != '' -%>
         <div class="iteminfotxt">
@@ -247,7 +247,7 @@ end
       <% end -%>
     <% end -%>  
 
-    <% if showlong -%>
+    <% if true -%>
       <% messtags = item.show_tag_list(true) %>
       <% if messtags.to_s != '' -%>
         <div class="iteminfotxt">
