@@ -77,9 +77,10 @@
     <% end -%>
     
     <div style="margin: 20px 0 0 0;">
-      <input type="radio" name="comtag_radio" value="" onclick="per_reload()" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br> 
+      <input type="radio" name="comtag_radio" value="" onclick="per_reload()" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
+      <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload()" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br> 
       <% current_participant.tags.each do |tag| -%>
-        <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload()">#<%= tag.name %><br> 
+        <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload()">@<%= tag.name %><br> 
       <% end %>
     </div>
 

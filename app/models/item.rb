@@ -1055,8 +1055,23 @@ class Item < ActiveRecord::Base
     end
     
     # tags
-    if crit[:comtag].to_s != ''
-      title += " | ##{crit[:comtag]}"
+    if crit[:comtag].to_s == '*my*'
+      title += " | My Communities"
+      plist = ''
+      ps = {}
+      for tag in current_participant.tag_list
+        for p in Participant.tagged_with(tag)
+          ps[p.id] = true
+        end
+      end
+      plist = ps.collect{|k, v| k}.join(',')
+      if plist != ''
+        items = items.where("participants.id in (#{plist})")
+      else
+        items = items.where("1=0")
+      end      
+    elsif crit[:comtag].to_s != ''
+      title += " | @#{crit[:comtag]}"
       # does the current user have that tag?
       has_tag = false
       for tag in current_participant.tag_list
