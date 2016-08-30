@@ -1588,6 +1588,7 @@ class ItemsController < ApplicationController
     else
       xtxt = @item.html_content
     end
+    xtxt = ActionView::Base.full_sanitizer.sanitize(xtxt)
     tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$)/i).map{|s| s[0]}
     logger.info("items#itemprocess tags:#{tagmatches}") 
     @item.tag_list = tagmatches
