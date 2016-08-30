@@ -238,6 +238,7 @@ end
       </div>
     <% end -%>
     
+    <div id="tags_<%= item.id %>" style="<% if showlong===false %>display:none<% end %>">
     <% if true and item.participant -%>
       <% comtags = item.participant.show_tag_list(true) %>
       <% if comtags.to_s != '' -%>
@@ -246,7 +247,6 @@ end
         </div>
       <% end -%>
     <% end -%>  
-
     <% if true -%>
       <% messtags = item.show_tag_list(true) %>
       <% if messtags.to_s != '' -%>
@@ -255,6 +255,7 @@ end
         </div>
       <% end -%>
     <% end -%>  
+    </div>
 
 		<% if (@sortby == 'default' and itemproc['replies'].length > 0) or (@threads=='root' and item.num_replies > 0) %>
 		<div class="iteminfotxt">

@@ -747,13 +747,15 @@ function expand(id) {
 		$('#shortcontent_'+id).show();
 		//$('#vote_int_'+id).hide();
 		//$('#vote_app_'+id).hide();
-		$('#expand_'+id).html("+")
+        $('#tags_'+id).hide();
+		$('#expand_'+id).html("+");
 	} else {
 		$('#shortcontent_'+id).hide();
 		$('#htmlcontent_'+id).show();
 		$('#vote_int_'+id).show();
 		$('#vote_app_'+id).show();
-		$('#expand_'+id).html("−")
+        $('#tags_'+id).show();
+        $('#expand_'+id).html("−")
 	}
 }
 function mediachange(media) {
