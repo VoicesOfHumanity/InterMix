@@ -291,7 +291,7 @@ class Participant < ActiveRecord::Base
     xlist = ''
     tags.each do |tag|
       xlist += ', ' if xlist != ''
-      xlist += '#'
+      xlist += '@'
       if with_links
         xlist += "<a href=\"/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{tag.name}\">" + tag.name + "</a>"
       else
