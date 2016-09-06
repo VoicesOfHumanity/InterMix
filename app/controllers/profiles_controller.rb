@@ -493,7 +493,10 @@ class ProfilesController < ApplicationController
     comtag = params[:comtag]
     which = params[:which]    
     if which == 'join'
-      current_participant.tag_list.add(comtag)
+      comtag.gsub!(/[^0-9A-za-z_]/,'').downcase!
+      if comtag != ''
+        current_participant.tag_list.add(comtag)
+      end
     else
       current_participant.tag_list.remove(comtag)
     end

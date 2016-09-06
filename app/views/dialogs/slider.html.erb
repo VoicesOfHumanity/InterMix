@@ -78,8 +78,8 @@
     
     <div style="margin: 20px 0 0 0;">
       <input type="radio" name="comtag_radio" value="" onclick="per_reload()" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
-      <% if @comtag.to_s != '' and not current_participant.tags.include?(@comtag) -%>
-      <input type="radio" name="comtag_radio" value="<%= @comtag %>" onclick="per_reload()" checked><%= @comtag %><br>
+      <% if @comtag.to_s != '' and not current_participant.tag_list.include?(@comtag) -%>
+      <input type="radio" name="comtag_radio" value="<%= @comtag %>" onclick="per_reload()" checked>@<%= @comtag %><br>
       <% end -%>
       <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload()" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br> 
       <% current_participant.tags.each do |tag| -%>

@@ -172,6 +172,7 @@ function addtag() {
   if (val.charAt(0)=='#') {
     val = val.substring(1);
   }
+  val = val.replace(/[^0-9A-za-z_]/gi, '').toLowerCase();
   if (val!='') {
     var xfound = false;
     $('#comtags option').each(function() {
@@ -192,10 +193,13 @@ function savetags() {
   var xlist = '';
   $('#comtags option').each(function() {
     var tag = $(this).val();
-    if (xlist != '') {
-      xlist += ',';
+    tag = tag.replace(/[^0-9A-za-z_]/gi, '').toLowerCase();
+    if (tag != '') {
+      if (xlist != '') {
+        xlist += ',';
+      }
+      xlist += tag;
     }
-    xlist += tag;
   });  
   $('#tag_list').val(xlist);
 }
