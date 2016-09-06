@@ -59,8 +59,18 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     
-    @comtag = params[:comtag].to_s
-    @messtag = params[:messtag].to_s
+    if params.has_key?(:comtag)
+      @comtag = params[:comtag].to_s
+      session[:comtag] = @comtag
+    else
+      @comtag = session[:comtag].to_s
+    end
+    if params.has_key?(:messtag)
+      @messtag = params[:messtag].to_s
+      session[:messtag] = @messtag
+    else
+      @messtag = session[:messtag].to_s
+    end
     
     if params.has_key?(:group_id)
       session[:group_id] = params[:group_id].to_i
@@ -99,6 +109,37 @@ class DialogsController < ApplicationController
     else
       @group_level = 3
     end
+    
+    if params.has_key?(:indigenous)
+      @indigenous = params[:indigenous]     
+      session[:indigenous] = @indigenous
+    else
+      @indigenous = session.has_key?(:indigenous) ? session[:indigenous] : false
+    end
+    if params.has_key?(:other_minority)
+      @other_minority = params[:other_minority]     
+      session[:other_minority] = @other_minority
+    else
+      @other_minority = session.has_key?(:other_minority) ? session[:other_minority] : false
+    end
+    if params.has_key?(:veteran)
+      @indigenous = params[:veteran]     
+      session[:veteran] = @veteran
+    else
+      @veteran = session.has_key?(:veteran) ? session[:veteran] : false
+    end
+    if params.has_key?(:interfaith)
+      @interfaith = params[:interfaith]     
+      session[:interfaith] = @interfaith
+    else
+      @interfaith = session.has_key?(:interfaith) ? session[:interfaith] : false
+    end
+    if params.has_key?(:refugee)
+      @refugee = params[:refugee]     
+      session[:refugee] = @refugee
+    else
+      @refugee = session.has_key?(:refugee) ? session[:refugee] : false
+    end    
     
     if @show_result == 1
       @dsection = 'meta'

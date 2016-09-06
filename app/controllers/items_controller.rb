@@ -871,6 +871,12 @@ class ItemsController < ApplicationController
     crit[:veteran] = (params[:veteran].to_i == 1) ? true : false
     crit[:interfaith] = (params[:interfaith].to_i == 1) ? true : false
     crit[:refugee] = (params[:refugee].to_i == 1) ? true : false
+    
+    session[:indigenous] = crit[:indigenous]
+    session[:other_minority] = crit[:other_minority]
+    session[:veteran] = crit[:veteran]
+    session[:interfaith] = crit[:interfaith]
+    session[:refugee] = crit[:refugee]
   
     crit[:dialog_id] = params[:dialog_id].to_i
     
@@ -886,6 +892,8 @@ class ItemsController < ApplicationController
     
     crit[:comtag] = params[:comtag].to_s
     crit[:messtag] = params[:messtag].to_s
+    session[:comtag] = crit[:comtag]
+    session[:messtag] = crit[:messtag]
     
     @datetype = params[:datetype]
     @datefixed = params[:datefixed]
