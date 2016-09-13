@@ -116,6 +116,17 @@
       <input type="checkbox" id="interfaith" value="1" onclick="per_reload()"<% if @interfaith %> checked<% end %>>Interfaith<br>
       <input type="checkbox" id="refugee" value="1" onclick="per_reload()"<% if @refugee %> checked<% end %>>Refugee<br>
     </div>
+    
+    <div style="margin: 20px 0 0 0;">
+      <input type="radio" name="messtag_radio" value="" onclick="per_reload()" <%= @messtag.to_s=='' ? "checked" : "" %>>no selection<br>
+      <% if @messtag.to_s != '' and not current_participant.tag_list.include?(@messtag) -%>
+      <input type="radio" name="messtag_radio" value="<%= @messtag %>" onclick="per_reload()" checked>#<%= @messtag %><br>
+      <% end -%>
+      <% current_participant.tags.each do |tag| -%>
+        <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload()">#<%= tag.name %><br> 
+      <% end %>
+      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload()">#<input type="text" id="messtag_other" size="10">
+    </div>
 
     <div style="display:none;margin: 20px 0 0 0;">
       <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Listing<br>
@@ -143,6 +154,7 @@
 <script>
 var geo_levels = {1: 'city', 2: 'metro', 3: 'state', 4: 'nation', 5: 'planet'};
 var cur_comtag = '';
+var cur_messtag = '';
 var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 5 %>;
 var cur_group_level = <%= @group_level > 0 ? @group_level : 3 %>;
 var cur_batch_level = <%= (@batch_level || 1).to_i %>;
@@ -201,6 +213,10 @@ function per_reload(first,num,whatchanged,page) {
   }
  	$('#per_main').css('opacity','0.5');
   cur_comtag = $("input[name='comtag_radio']:checked").val();
+  cur_messtag = $("input[name='messtag_radio']:checked").val();
+  if (cur_messtag == '*other*') {
+    cur_messtag = $('#messtag_other').val();
+  }
   cur_geo_level = $("input[name='geo_level_radio']:checked").val();
   cur_group_level = $("input[name='group_level_radio']:checked").val();
   var indigenous = $('#indigenous').is(':checked') ? 1 : 0;
@@ -219,7 +235,7 @@ function per_reload(first,num,whatchanged,page) {
   var period_id = $('#period_id').val();
   //var comtag = $('#comtag').val()
   var comtag = cur_comtag;
-  var messtag = $('#messtag').val()
+  var messtag = cur_messtag;
   if (first) {
     var threads = $('#threads').val();
     var sortby = $('#sortby').val();    
