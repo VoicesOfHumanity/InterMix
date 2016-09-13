@@ -17,7 +17,7 @@
 			<div style="position:relative;top:-37px;left:80px;width:0;height:0"><img src="/images/question-mark.png" class="tooltip" id="contacttooltip" style="" width="16" height="16" title="Contacts are people you follow or who follow you.  Your contacts are listed on the Friends page.  Click on someone's name to go to their profile.  At the bottom of the profile page you have the option to follow that person."></div>
 			
 		<% end -%>
-		<% if @groupsadminin.length > 0 -%>
+		<% if false and @groupsadminin.length > 0 -%>
 			<%= f.input :to_group_id, :label => 'or Group', :as => :select, :collection => @groupsadminin.collect{|c| [c.group.name,c.group.id]}, :input_html=>{:onchange=>"grouporcontact('group')"} %>	
 		<% end -%>
 		<%= f.input :subject, :input_html=>{:size=>68} %>
@@ -30,7 +30,7 @@
 				<% else -%>
 					<%= cktext_area(:message, :message, :ckeditor => {:ajax => true, :width=>500, :height=>200, :toolbar=>'Custom'}) %>
 				<% end -%>
-				<% if @groupsadminin.length > 0 -%>
+				<% if false and @groupsadminin.length > 0 -%>
 				<br>Available macros for group messages:<br>{{ groupforumlink }} {{ group_logo }} {{ editsettingslink }} {{ recipient.first_name }} {{ discussionprefix.forumlink }} {{ discussionprefix.logo }}
 				<% end -%>
 			</div>
