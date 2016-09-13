@@ -59,20 +59,36 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     
-    if params.has_key?(:comtag)
+    if params.has_key?(:show_result)
+      is_new = false
+    else
+      # We come in from the order out of chaos button, rather than the tabs. Reset the session cookies
+      is_new = true 
+    end
+    
+    if is_new
+      @comtag = ''
+      session[:comtag] = @comtag
+    elsif params.has_key?(:comtag)
       @comtag = params[:comtag].to_s
       session[:comtag] = @comtag
     else
       @comtag = session[:comtag].to_s
     end
-    if params.has_key?(:messtag)
+    if is_new
+      @messtag = ''
+      session[:messtag] = @messtag
+    elsif params.has_key?(:messtag)
       @messtag = params[:messtag].to_s
       session[:messtag] = @messtag
     else
       @messtag = session[:messtag].to_s
     end
     
-    if params.has_key?(:group_id)
+    if is_new
+      @group_id = 0
+      session[:group_id] = @group_id
+    elsif params.has_key?(:group_id)
       session[:group_id] = params[:group_id].to_i
       @group_id = params[:group_id].to_i
     else
@@ -94,7 +110,9 @@ class DialogsController < ApplicationController
       [1,'My&nbsp;City/Town']
     ]
     # geo level defaults to Planet Earth, but a different choice is remembered in the current session
-    if session[:geo_level].to_i > 0
+    if is_new
+      @geo_level = 5
+    elsif session[:geo_level].to_i > 0
       @geo_level = session[:geo_level]
     else
       @geo_level = 5
@@ -104,37 +122,54 @@ class DialogsController < ApplicationController
       [2,'My groups'],
       [1,'Current group']
     ]
-    if session[:group_level].to_i > 0
+    if is_new
+      @group_level = 3
+    elsif session[:group_level].to_i > 0
       @group_level = session[:group_level]
     else
       @group_level = 3
     end
     
-    if params.has_key?(:indigenous)
+    if is_new
+      @indigenous = false
+      session[:indigenous] = @indigenous
+    elsif params.has_key?(:indigenous)
       @indigenous = params[:indigenous]     
       session[:indigenous] = @indigenous
     else
       @indigenous = session.has_key?(:indigenous) ? session[:indigenous] : false
     end
-    if params.has_key?(:other_minority)
+    if is_new
+      @other_minority = false
+      session[:other_minority] = @other_minority
+    elsif params.has_key?(:other_minority)
       @other_minority = params[:other_minority]     
       session[:other_minority] = @other_minority
     else
       @other_minority = session.has_key?(:other_minority) ? session[:other_minority] : false
     end
-    if params.has_key?(:veteran)
-      @indigenous = params[:veteran]     
+    if is_new
+      @veteran = false
+      session[:veteran] = @veteran
+    elsif params.has_key?(:veteran)
+      @veteran = params[:veteran]     
       session[:veteran] = @veteran
     else
       @veteran = session.has_key?(:veteran) ? session[:veteran] : false
     end
-    if params.has_key?(:interfaith)
+    if is_new
+      @interfaith = false
+      session[:interfaith] = @interfaith
+    elsif params.has_key?(:interfaith)
       @interfaith = params[:interfaith]     
       session[:interfaith] = @interfaith
     else
       @interfaith = session.has_key?(:interfaith) ? session[:interfaith] : false
     end
-    if params.has_key?(:refugee)
+    if is_new
+      @refugee = false
+      session[:refugee] = @refugee
+    elsif params.has_key?(:refugee)
       @refugee = params[:refugee]     
       session[:refugee] = @refugee
     else
@@ -148,7 +183,9 @@ class DialogsController < ApplicationController
     end
     
     @showing_options = 'less'
-    if session.has_key?(:datetype)
+    if is_new
+      @datetype = 'fixed'
+    elsif session.has_key?(:datetype)
       @datetype = session[:datetype]
     elsif @dialog.default_datetype.to_s != ''
       @datetype = @dialog.default_datetype
@@ -158,7 +195,9 @@ class DialogsController < ApplicationController
     if @show_result.to_i > 0 and @dialog.default_datetype.to_s != '' and @datetype != @dialog.default_datetype
       @showing_options = 'more'
     end  
-    if session.has_key?(:datefixed)
+    if is_new
+      @datefixed = 'month'
+    elsif session.has_key?(:datefixed)
       @datefixed = session[:datefixed]
     elsif @dialog.default_datefixed.to_s != ''
       @datefixed = @dialog.default_datefixed
@@ -168,7 +207,9 @@ class DialogsController < ApplicationController
     if @show_result.to_i > 0 and @dialog.default_datefixed.to_s != '' and @datefixed != @dialog.default_datefixed
       @showing_options = 'more'
     end  
-    if session.has_key?(:datefrom)
+    if is_new
+      @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
+    elsif session.has_key?(:datefrom)
       @datefrom = session[:datefrom]
     elsif @dialog.default_datefrom.to_s != ''
       @datefrom = @dialog.default_datefrom

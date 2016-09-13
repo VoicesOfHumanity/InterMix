@@ -970,7 +970,7 @@ class Item < ActiveRecord::Base
         title += "#{current_participant.city}"
       else
         items = items.where("1=0")
-        ratings = items.where("1=0")
+        ratings = ratings.where("1=0")
         title += "Unknown City"
       end  
     elsif crit[:geo_level] == 'metro'
@@ -980,7 +980,7 @@ class Item < ActiveRecord::Base
         title += "#{current_participant.metro_area.name}"
       else
         items = items.where("1=0")
-        ratings = items.where("1=0")
+        ratings = ratings.where("1=0")
         title += "Unknown Metro Area"
       end  
     elsif crit[:geo_level] == 'state'  
@@ -990,7 +990,7 @@ class Item < ActiveRecord::Base
         title += "#{current_participant.geoadmin1.name}"
       else
         items = items.where("1=0")
-        ratings = items.where("1=0")
+        ratings = ratings.where("1=0")
         title += "Unknown State"
       end  
     elsif crit[:geo_level] == 'nation'
