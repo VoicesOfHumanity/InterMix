@@ -59,12 +59,14 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     
-    if params.has_key?(:show_result)
-      is_new = false
-    else
+    if params.length <= 3
+      # {"controller"=>"dialogs", "action"=>"slider", "id"=>"5"}
       # We come in from the order out of chaos button, rather than the tabs. Reset the session cookies
       is_new = true 
+    else
+      is_new = false
     end
+    #logger.info("params.length:#{params.length} params:#{params.inspect}")
     
     if is_new
       @comtag = ''
