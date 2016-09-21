@@ -238,7 +238,7 @@ end
       </div>
     <% end -%>
     
-    <div id="tags_<%= item.id %>" style="<% if showlong===false %>display:none<% end %>">
+    <div id="tags_<%= item.id %>" style="<% if false and showlong===false %>display:none<% end %>">
     <% if true and item.participant -%>
       <% comtags = item.participant.show_tag_list(true) %>
       <% if comtags.to_s != '' -%>
