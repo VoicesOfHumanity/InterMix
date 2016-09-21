@@ -86,6 +86,17 @@
         <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload()">@<%= tag.name %><br> 
       <% end %>
     </div>
+    
+    <div style="margin: 20px 0 0 0;">
+      <input type="radio" name="messtag_radio" value="" onclick="per_reload()" <%= @messtag.to_s=='' ? "checked" : "" %>>any hashtag<br>
+      <% if @messtag.to_s != '' and not current_participant.tag_list.include?(@messtag) -%>
+      <input type="radio" name="messtag_radio" value="<%= @messtag %>" onclick="per_reload()" checked>#<%= @messtag %><br>
+      <% end -%>
+      <% current_participant.tags.each do |tag| -%>
+        <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload()">#<%= tag.name %><br> 
+      <% end %>
+      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload()">#<input type="text" id="messtag_other" size="10" maxlength="14" onchange="per_reload()">
+    </div>
 
     <div style="margin: 20px 0 0 0;">
       <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
@@ -115,17 +126,6 @@
       <input type="checkbox" id="veteran" value="1" onclick="per_reload()"<% if @veteran %> checked<% end %>>Veteran<br>
       <input type="checkbox" id="interfaith" value="1" onclick="per_reload()"<% if @interfaith %> checked<% end %>>Interfaith<br>
       <input type="checkbox" id="refugee" value="1" onclick="per_reload()"<% if @refugee %> checked<% end %>>Refugee<br>
-    </div>
-    
-    <div style="margin: 20px 0 0 0;">
-      <input type="radio" name="messtag_radio" value="" onclick="per_reload()" <%= @messtag.to_s=='' ? "checked" : "" %>>no selection<br>
-      <% if @messtag.to_s != '' and not current_participant.tag_list.include?(@messtag) -%>
-      <input type="radio" name="messtag_radio" value="<%= @messtag %>" onclick="per_reload()" checked>#<%= @messtag %><br>
-      <% end -%>
-      <% current_participant.tags.each do |tag| -%>
-        <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload()">#<%= tag.name %><br> 
-      <% end %>
-      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload()">#<input type="text" id="messtag_other" size="10">
     </div>
 
     <div style="display:none;margin: 20px 0 0 0;">
@@ -216,6 +216,9 @@ function per_reload(first,num,whatchanged,page) {
   cur_messtag = $("input[name='messtag_radio']:checked").val();
   if (cur_messtag == '*other*') {
     cur_messtag = $('#messtag_other').val();
+  }
+  if (cur_messtag == '') {
+    $("input[name=messtag_radio][value='']").attr('checked', 'checked');
   }
   cur_geo_level = $("input[name='geo_level_radio']:checked").val();
   cur_group_level = $("input[name='group_level_radio']:checked").val();
