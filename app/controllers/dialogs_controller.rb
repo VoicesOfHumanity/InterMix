@@ -186,7 +186,11 @@ class DialogsController < ApplicationController
     
     @showing_options = 'less'
     if is_new
-      @datetype = 'fixed'
+      if @dialog.default_datetype.to_s != ''
+        @datetype = @dialog.default_datetype
+      else
+        @datetype = 'fixed'
+      end
     elsif session.has_key?(:datetype)
       @datetype = session[:datetype]
     elsif @dialog.default_datetype.to_s != ''
@@ -198,7 +202,11 @@ class DialogsController < ApplicationController
       @showing_options = 'more'
     end  
     if is_new
-      @datefixed = 'month'
+      if @dialog.default_datefixed.to_s != ''
+        @datefixed = @dialog.default_datefixed
+      else
+        @datefixed = 'month'
+      end
     elsif session.has_key?(:datefixed)
       @datefixed = session[:datefixed]
     elsif @dialog.default_datefixed.to_s != ''
@@ -210,7 +218,11 @@ class DialogsController < ApplicationController
       @showing_options = 'more'
     end  
     if is_new
-      @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
+      if @dialog.default_datefrom.to_s != ''
+        @datefrom = @dialog.default_datefrom
+      else
+        @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
+      end
     elsif session.has_key?(:datefrom)
       @datefrom = session[:datefrom]
     elsif @dialog.default_datefrom.to_s != ''
