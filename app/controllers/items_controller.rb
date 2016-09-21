@@ -1598,8 +1598,15 @@ class ItemsController < ApplicationController
     end
     xtxt = ActionView::Base.full_sanitizer.sanitize(xtxt)
     tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$)/i).map{|s| s[0]}
+    tagmatches2 = []
+    for tagmatch in tagmatches
+      if tagmatch.length > 14
+        tagmatch = tagmatch[0..13]
+      end
+      tagmatches2 << tagmatch
+    end
     logger.info("items#itemprocess tags:#{tagmatches}") 
-    @item.tag_list = tagmatches
+    @item.tag_list = tagmatches2
     
     
     if @send_to == 'wall'
