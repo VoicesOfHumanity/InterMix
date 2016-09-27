@@ -747,7 +747,7 @@ function expand(id) {
 		$('#shortcontent_'+id).show();
 		//$('#vote_int_'+id).hide();
 		//$('#vote_app_'+id).hide();
-        $('#tags_'+id).hide();
+        //$('#tags_'+id).hide();
 		$('#expand_'+id).html("+");
 	} else {
 		$('#shortcontent_'+id).hide();
