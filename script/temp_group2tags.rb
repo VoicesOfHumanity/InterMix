@@ -47,6 +47,7 @@ group_participants = GroupParticipant.where(group_id: group_id).includes(:partic
 puts "#{group_participants.length} members"
 for group_participant in group_participants
   participant = group_participant.participant
+  participant.tag_list.remove('-i1')
   for tag in tags_a
     participant.tag_list.add(tag)
   end
@@ -65,6 +66,7 @@ end
 items = Item.where(group_id: group_id)
 puts "#{items.length} items"
 for item in items
+  item.tag_list.remove('-i1')
   for tag in tags_a
     item.tag_list.add(tag)
   end
