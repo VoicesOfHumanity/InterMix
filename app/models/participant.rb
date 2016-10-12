@@ -272,6 +272,15 @@ class Participant < ActiveRecord::Base
     return '???'
   end
   
+  def generation
+    self.metamap_nodes.each do |mn|
+      if mn.metamap_id == 5
+        return mn.name
+      end
+    end  
+    return '???'
+  end
+  
   def them
     #-- Return him, her, them, depending on what we know about their gender
     if self.gender == 'male'

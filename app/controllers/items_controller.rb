@@ -236,6 +236,8 @@ class ItemsController < ApplicationController
     @item.geo_level = params[:geo_level] if params[:geo_level].to_s != ''
     @items_length = params[:items_length].to_i
     @subgroup = params[:subgroup].to_s
+    @comtag = params[:comtag].to_s
+    @messtag = params[:messtag].to_s
     
     if @item.reply_to.to_i > 0
       @olditem = Item.find_by_id(@item.reply_to)
@@ -374,6 +376,39 @@ class ItemsController < ApplicationController
         end
       end
     end
+    
+    #-- Fill in some default message tags
+    tags = []
+    if current_participant.gender == 'male'
+      tags << 'VoiceOfMen'
+    elsif current_participant.gender == 'female'
+      tags << 'VoiceOfWomen'
+    end
+    if current_participant.generation == 'young'
+      tags << 'VoiceOfYouth'
+    elsif current_participant.generation == 'middle-aged'
+      tags << 'VoiceOfExperience'
+    elsif current_participant.generation == 'senior'
+      tags << 'VoiceOfWisdom'
+    end
+    if @item.geo_level == 'city' and current_participant.city.to_s != ''
+      tags << current_participant.city
+    elsif @item.geo_level == 'metro' and current_participant.metro_area_id.to_i > 0
+      tags << current_participant.metro_area.name
+    elsif @item.geo_level == 'state' and current_participant.admin1uniq.to_s != ''
+      tags << current_participant.geoadmin1.name
+    elsif @item.geo_level == 'nation' and current_participant.geocountry
+      tags << current_participant.geocountry.name
+    end
+    tags << @messtag if @messtag != ''
+    tags << @comtag if @comtag != ''
+    tagtext = ''
+    tags.uniq.each do |tag|
+      tagtext += ', ' if tagtext != ''
+      tag.gsub!(/[^a-z0-9]/i,'')
+      tagtext += "##{tag}"
+    end
+    @item.html_content += "<p><br>#{tagtext}</p>"
     
     render :partial=>'edit', :layout=>false
   end  

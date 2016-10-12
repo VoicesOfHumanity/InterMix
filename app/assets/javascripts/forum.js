@@ -238,9 +238,17 @@ function newitem(token) {
 	    pars += '&subgroup=' + $('#subgroup').val();
 	}
   if ($("input[name='geo_level_radio']").length) {
-    var geo_level_num = $("input[name='geo_level_radio']:checked").val()
-    var geo_level_name = geo_levels[geo_level_num];
-    pars += '&geo_level=' + geo_level_name;
+      var geo_level_num = $("input[name='geo_level_radio']:checked").val();
+      var geo_level_name = geo_levels[geo_level_num];
+      pars += '&geo_level=' + geo_level_name;
+  }
+  if ($("input[name='comtag_radio']").length) {
+      var comtag = $("input[name='comtag_radio']:checked").val();
+      pars += '&comtag='+comtag;
+  }
+  if ($("input[name='messtag_radio']").length) {
+      var messtag = $("input[name='messtag_radio']:checked").val();
+      pars += '&messtag='+messtag;
   }
   pars += "&authenticity_token="+token;
 	$.ajax({
