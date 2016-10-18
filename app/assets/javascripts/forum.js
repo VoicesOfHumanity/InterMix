@@ -320,6 +320,19 @@ function reply(item_id,to_reply) {
 	if ($('#items_length')) {
 	    params += '&items_length=' + $('#items_length').val();
 	}	
+    if ($("input[name='geo_level_radio']").length) {
+        var geo_level_num = $("input[name='geo_level_radio']:checked").val();
+        var geo_level_name = geo_levels[geo_level_num];
+        params += '&geo_level=' + geo_level_name;
+    }
+    if ($("input[name='comtag_radio']").length) {
+        var comtag = $("input[name='comtag_radio']:checked").val();
+        params += '&comtag='+comtag;
+    }
+    if ($("input[name='messtag_radio']").length) {
+        var messtag = $("input[name='messtag_radio']:checked").val();
+        params += '&messtag='+messtag;
+    }
 	$.ajax({
 		type: "GET",
 		url: '/items/new',
