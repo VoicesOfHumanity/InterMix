@@ -326,10 +326,10 @@ function reply(item_id,to_reply) {
      	data: params,
 		complete: function(t){	
 			$('#reply_'+item_id).html(t.responseText);
-            $('#item_html_content').val('');
-            $('#item_short_content').val('');
+            //$('#item_html_content').val('');
+            //$('#item_short_content').val('');
             short_updated = false;
-            editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
+            //editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
 		}
 	});	
 }

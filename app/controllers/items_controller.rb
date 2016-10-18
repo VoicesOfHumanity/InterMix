@@ -232,7 +232,7 @@ class ItemsController < ApplicationController
     #-- screen for a new item, either new thread or a reply
     @from = params[:from] || ''
     @reply_to = params[:reply_to].to_i
-    @item = Item.new(:media_type=>'text',:link=>'http://',:reply_to=>@reply_to)
+    @item = Item.new(:media_type=>'text',:link=>'http://',:reply_to=>@reply_to,html_content: '')
     @item.geo_level = params[:geo_level] if params[:geo_level].to_s != ''
     @items_length = params[:items_length].to_i
     @subgroup = params[:subgroup].to_s
@@ -379,6 +379,9 @@ class ItemsController < ApplicationController
     
     #-- Fill in some default message tags
     tags = []
+    if @item.reply_to.to_i > 0 and @olditem
+      tags.concat @olditem.tag_list
+    end
     if current_participant.gender == 'male'
       tags << 'VoiceOfMen'
     elsif current_participant.gender == 'female'
