@@ -1629,15 +1629,18 @@ class ItemsController < ApplicationController
     end  
     
     # Add/remove tags, based on which hashtags are included in the message text
+    logger.info("items#itemprocess html_content:#{@item.html_content.length}") 
     if @item.media_type == 'video' or @item.media_type == 'audio'
       xtxt = @item.short_content
     else
       xtxt = @item.html_content
     end
     xtxt = ActionView::Base.full_sanitizer.sanitize(xtxt)
+    logger.info("items#itemprocess xtxt:#{xtxt}") 
     tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$)/i).map{|s| s[0]}
     tagmatches2 = []
     for tagmatch in tagmatches
+      tagmatch.gsub!(/[^0-9A-za-z_]/,'')
       if tagmatch.length > 14
         tagmatch = tagmatch[0..13]
       end
