@@ -261,10 +261,10 @@ end
 		<div class="iteminfotxt">
       <% if @simple -%>
         <% if item.is_first_in_thread -%>
-		      <a href="/dialogs/<%= item.dialog_id %>/forum?item_id=<%= item.id %>&amp;xmode=single&amp;show_comments=1">Show Comments</a>
+		      <a href="/dialogs/<%= item.dialog_id %>/forum?item_id=<%= item.id %>&amp;xmode=single&amp;show_comments=1"><strong>Show Comments</strong></a>
         <% end -%>
       <% else -%>
-		    <a href="/items/<%= item.id %>/thread">Show Comments</a>
+		    <a href="/items/<%= item.id %>/thread"><strong>Show Comments</strong></a>
       <% end -%>
 		</div>
 		<% end -%>
