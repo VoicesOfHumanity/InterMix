@@ -94,7 +94,7 @@ class ApplicationController < ActionController::Base
     #-- Look up a media link in embed.ly and return the fields:
     return {} if not url or url.to_s == ''
 
-    embedly_api = Embedly::API.new :user_agent => 'Mozilla/5.0 (compatible; mytestapp/1.0; my@email.com)'
+    embedly_api = Embedly::API.new key: EMBEDLY_API_KEY, user_agent: 'Mozilla/5.0 (compatible; mytestapp/1.0; my@email.com)'
 
     begin
       results = embedly_api.oembed :url => url

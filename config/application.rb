@@ -104,4 +104,6 @@ GEO_LEVEL_DESC = {'city' => "My city/town", 'metro' => "My metro region", "state
 BITLY_USERNAME = 'intermix2'
 BITLY_TOKEN = 'c9d06623cb928bca6977ae80bbdb1a4cc676309c'
 
+EMBEDLY_API_KEY = '69a93eaedc814b13ad46aa4952e75107'
+
 VOH_DISCUSSION_ID = 4
