@@ -132,16 +132,19 @@ class Item < ActiveRecord::Base
     #-- or it might be people who don't have any matching tags, but who have Other Communities set to instant
     #-- Each person might be configured to receive e-mails or not 
 
-    tags = (self.tag_list + self.participant.tag_list).uniq
+    #tags = (self.tag_list + self.participant.tag_list).uniq
 
     participants = []   
     
+    # mycom: will go to people who share any community with the author and who has any community tag matching a message tag
+    
     allpeople = Participant.where(status: 'active').where("mycom_email='daily' or othercom_email='daily'")
     for person in allpeople
-      hasmatch = ( person.tag_list.length > 0 and person.tag_list.all?{|t| tags.include? t } )
-      if hasmatch and person.mycom_email == 'instant'
+      hasmessmatch = ( person.tag_list.length > 0 and person.tag_list.all?{|t| self.tag_list.include?(t) } )
+      hascommatch = ( person.tag_list.length > 0 and person.tag_list.all?{|t| self.participant.tag_list } )
+      if hasmessmatch and hascommatch and person.mycom_email == 'instant'
         participants << person
-      elsif not hasmatch and person.othercom_email == 'instant'
+      elsif not (hasmessmatch and hascommatch) and person.othercom_email == 'instant'
         participants << person
       end      
     end

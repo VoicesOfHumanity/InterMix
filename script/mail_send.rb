@@ -65,7 +65,7 @@ numweeklyerror = 0
 
 #-- Go through all users that have any setting of daily or weekly mail, and who hasn't blocked mail altogether
 for p in participants
-  puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} mycom:#{p.mycom_email} othercom:#{p.othercom_email}"
+  puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} mycom:#{p.mycom_email} othercom:#{p.othercom_email} tags:#{p.tag_list}"
 
   participant = p
 
