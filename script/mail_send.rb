@@ -163,16 +163,19 @@ for p in participants
     for item in items
       
       puts "    ##{item.id}: #{item.created_at}: #{item.subject} : #{item.tag_list}" if testonly
-      
+      #puts "    item.tag_list:#{item.tag_list.inspect}"
+            
       #-- Is it an item we need, or do we skip it?
       in_week = true
       in_day = (item.created_at > dstart)
 
       # Does the user have any tags found in the message tags for that message?
-      hasmessmatch = ( p.tag_list.length > 0 and p.tag_list.all?{|t| item.tag_list.include?(t) } )
+      hasmessmatch = ( p.tag_list.length > 0 and p.tag_list.any?{|t| item.tag_list.include?(t) } )
+      #puts "    p.tag_list:#{p.tag_list.inspect}"
+
       
       # Does the user have any tags found in the community tags of the author of that message
-      hascommatch = ( p.tag_list.length > 0 and p.tag_list.all?{|t| item.participant.tag_list.include?(t) } )
+      hascommatch = ( p.tag_list.length > 0 and p.tag_list.any?{|t| item.participant.tag_list.include?(t) } )
 
       send_it = false
       is_mycom = (hasmessmatch and hascommatch)
