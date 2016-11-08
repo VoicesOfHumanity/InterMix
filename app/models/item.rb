@@ -141,7 +141,7 @@ class Item < ActiveRecord::Base
     allpeople = Participant.where(status: 'active').where("mycom_email='daily' or othercom_email='daily'")
     for person in allpeople
       hasmessmatch = ( person.tag_list.length > 0 and person.tag_list.all?{|t| self.tag_list.include?(t) } )
-      hascommatch = ( person.tag_list.length > 0 and person.tag_list.all?{|t| self.participant.tag_list } )
+      hascommatch = ( person.tag_list.length > 0 and person.tag_list.all?{|t| self.participant.tag_list?(t) } )
       if hasmessmatch and hascommatch and person.mycom_email == 'instant'
         participants << person
       elsif not (hasmessmatch and hascommatch) and person.othercom_email == 'instant'
