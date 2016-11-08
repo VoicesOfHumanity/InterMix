@@ -172,10 +172,11 @@ for p in participants
       hasmessmatch = ( p.tag_list.length > 0 and p.tag_list.all?{|t| item.tag_list.include?(t) } )
       
       # Does the user have any tags found in the community tags of the author of that message
-      hascommatch = ( p.tag_list.length > 0 and p.tag_list.all?{|t| item.participant.tag_list } )
+      hascommatch = ( p.tag_list.length > 0 and p.tag_list.all?{|t| item.participant.tag_list.include?(t) } )
 
       send_it = false
       is_mycom = (hasmessmatch and hascommatch)
+      puts "    hasmessmatch:#{hasmessmatch} hascommatch:#{hascommatch} is_mycom:#{is_mycom}"
       
       if is_mycom and p.mycom_email == 'daily' and in_day
         puts "    community match. user set for daily my community mail" if testonly
