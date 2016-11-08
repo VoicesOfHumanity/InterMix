@@ -242,8 +242,7 @@ class ItemsController < ApplicationController
     if @item.reply_to.to_i > 0
       @olditem = Item.find_by_id(@item.reply_to)
     end
-    
-    
+       
     if params[:group_id].to_i > 0
       @item.group_id = params[:group_id] 
     elsif @olditem and @olditem.group_id.to_i > 0
@@ -277,6 +276,7 @@ class ItemsController < ApplicationController
       return
     end    
     
+    tags = []
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
       #@olditem = Item.find_by_id(@item.reply_to)
@@ -296,6 +296,20 @@ class ItemsController < ApplicationController
           @item.period_id = @dialog.current_period if @dialog
         end  
         @item.subgroup_list = @olditem.subgroup_list if @olditem.subgroup_list.to_s != ''
+        
+        # Get the message tags from the previous message, if any
+        xtxt = ActionView::Base.full_sanitizer.sanitize(@olditem.html_content)
+        logger.info("items#itemprocess xtxt:#{xtxt}") 
+        tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$)/i).map{|s| s[0]}
+        tags = []
+        for tagmatch in tagmatches
+          tagmatch.gsub!(/[^0-9A-za-z_]/,'')
+          if tagmatch.length > 14
+            tagmatch = tagmatch[0..13]
+          end
+          tags << tagmatch
+        end
+        
       end
     else
       if @dialog and @dialog.settings_with_period["default_message"].to_s != ''
@@ -377,34 +391,37 @@ class ItemsController < ApplicationController
       end
     end
     
-    #-- Fill in some default message tags
-    tags = []
-    if @item.reply_to.to_i > 0 and @olditem
-      tags.concat @olditem.tag_list
+    if @item.reply_to.to_i == 0
+      #-- Fill in some default message tags, if it is a root message
+      tags = []
+      if @item.reply_to.to_i > 0 and @olditem
+        tags.concat @olditem.tag_list
+      end
+      if current_participant.gender == 'male'
+        tags << 'VoiceOfMen'
+      elsif current_participant.gender == 'female'
+        tags << 'VoiceOfWomen'
+      end
+      if current_participant.generation == 'young'
+        tags << 'VoiceOfYouth'
+      elsif current_participant.generation == 'middle-aged'
+        tags << 'VoiceOfExperience'
+      elsif current_participant.generation == 'senior'
+        tags << 'VoiceOfWisdom'
+      end
+      if @item.geo_level == 'city' and current_participant.city.to_s != ''
+        tags << current_participant.city
+      elsif @item.geo_level == 'metro' and current_participant.metro_area_id.to_i > 0
+        tags << current_participant.metro_area.name
+      elsif @item.geo_level == 'state' and current_participant.admin1uniq.to_s != ''
+        tags << current_participant.geoadmin1.name
+      elsif @item.geo_level == 'nation' and current_participant.geocountry
+        tags << current_participant.geocountry.name
+      end
+      tags << @messtag if @messtag != ''
+      tags << @comtag if @comtag != ''
     end
-    if current_participant.gender == 'male'
-      tags << 'VoiceOfMen'
-    elsif current_participant.gender == 'female'
-      tags << 'VoiceOfWomen'
-    end
-    if current_participant.generation == 'young'
-      tags << 'VoiceOfYouth'
-    elsif current_participant.generation == 'middle-aged'
-      tags << 'VoiceOfExperience'
-    elsif current_participant.generation == 'senior'
-      tags << 'VoiceOfWisdom'
-    end
-    if @item.geo_level == 'city' and current_participant.city.to_s != ''
-      tags << current_participant.city
-    elsif @item.geo_level == 'metro' and current_participant.metro_area_id.to_i > 0
-      tags << current_participant.metro_area.name
-    elsif @item.geo_level == 'state' and current_participant.admin1uniq.to_s != ''
-      tags << current_participant.geoadmin1.name
-    elsif @item.geo_level == 'nation' and current_participant.geocountry
-      tags << current_participant.geocountry.name
-    end
-    tags << @messtag if @messtag != ''
-    tags << @comtag if @comtag != ''
+    
     tagtext = ''
     tags.uniq.each do |tag|
       tagtext += ', ' if tagtext != ''
