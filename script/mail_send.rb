@@ -53,7 +53,8 @@ puts "Day: #{dstart} - #{pend}"
 if participant_id.to_i > 0
   participants = Participant.where(:id=>participant_id)
 else
-  participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or subgroup_email='daily' or subgroup_email='weekly' or group_email='daily' or group_email='weekly' or forum_email='daily' or forum_email='weekly')").order(:id)
+  #participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or subgroup_email='daily' or subgroup_email='weekly' or group_email='daily' or group_email='weekly' or forum_email='daily' or forum_email='weekly')").order(:id)
+  participants = Participant.where("status='active' and no_email=0 and (private_email='daily' or private_email='weekly' or system_email='daily' or system_email='weekly' or mycom_email='daily' or mycom_email='weekly' or othercom_email='daily' or othercom_email='weekly')").order(:id)
 end
 puts "#{participants.length} participants"
 
@@ -64,7 +65,9 @@ numweeklyerror = 0
 
 #-- Go through all users that have any setting of daily or weekly mail, and who hasn't blocked mail altogether
 for p in participants
-  puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} group:#{p.group_email} subgroup:#{p.subgroup_email} discussion:#{p.forum_email}"
+  puts "#{p.id}: #{p.name}: private:#{p.private_email} system:#{p.system_email} mycom:#{p.mycom_email} othercom:#{p.othercom_email}"
+
+  participant = p
 
   tdaily = ''
   tweekly = ''
@@ -128,11 +131,10 @@ for p in participants
     message.save
   end
   
-  #-- Group items have a different setting from Discussion items
-  #-- Discussion items are the forum_email setting. Group items are the group_email setting.
+  #-- Now dealing with the mycom_email or othercom_email settings
   
-  need_daily = ( p.group_email == 'daily' or p.forum_email == 'daily' or p.subgroup_email == 'daily' )
-  need_weekly = ((p.group_email == 'weekly' or p.forum_email == 'weekly' or p.subgroup_email == 'weekly' or do_weekly) and is_weekly)
+  need_daily = ( p.mycom_email == 'daily' or p.othercom_email == 'daily' )
+  need_weekly = (( p.mycom_email == 'weekly' or p.othercom_email == 'weekly' or do_weekly) and is_weekly)
     
   if need_daily or need_weekly
     #-- Get the forum Items
@@ -154,93 +156,40 @@ for p in participants
     end  
     will_items = items.length    
     puts "  #{will_items} #{ptext} items"
-    puts "  group:#{p.group_email} subgroup:#{p.subgroup_email} discussion:#{p.forum_email}" if testonly
     did_items = 0
     
     user_dialogs = {}
     
-    # The users subgroups are identified in p.group_subtags. It is an array of GroupSubtag objects
-    
     for item in items
       
-      puts "    ##{item.id}: #{item.created_at}: #{item.subject}" if testonly
+      puts "    ##{item.id}: #{item.created_at}: #{item.subject} : #{item.tag_list}" if testonly
       
       #-- Is it an item we need, or do we skip it?
       in_week = true
       in_day = (item.created_at > dstart)
-      in_group = (item.group_id.to_i > 0)
-      in_dialog = (item.dialog_id.to_i > 0)
-      
-      # This item might be in several subgroups. Is the user in any of them? If so, use the subgroup setting rather than the general forum setting
-      in_subgroup = false
-      subgroup_none = false
-      for subgroup_tag in item.subgroup_list
-        if subgroup_tag == 'none'
-          subgroup_none = true
-        else
-          for group_subtag in p.group_subtags
-            if group_subtag.tag.to_s != '' and subgroup_tag == group_subtag.tag
-              in_subgroup = true
-              break
-            end  
-          end
-        end  
-      end
 
-      puts "    in_week:#{in_week} in_day:#{in_day} in_group:#{in_group} in_subgroup:#{in_subgroup} in_dialog:#{in_dialog}" if testonly
+      # Does the user have any tags found in the message tags for that message?
+      hasmessmatch = ( p.tag_list.length > 0 and p.tag_list.all?{|t| item.tag_list.include?(t) } )
       
+      # Does the user have any tags found in the community tags of the author of that message
+      hascommatch = ( p.tag_list.length > 0 and p.tag_list.all?{|t| item.participant.tag_list } )
+
       send_it = false
-      if in_dialog
-        #-- Item is in a discussion, and the user has access to it (is in one of the groups). Send it to the user if they have the discussion (forum) setting on
-        if p.forum_email == 'daily' and in_day
-          puts "    item in discussion. user set for daily discussion mail" if testonly
-          send_it = true
-        elsif p.forum_email == 'weekly' and in_week
-          puts "    item in discussion. user set for weekly discussion mail" if testonly
-          send_it = true
-        end   
-      end  
-        
-      if in_subgroup
-        #-- Item is in one or more subgroups, which isn't 'none', and this user is in one of those subgroups
-        if p.subgroup_email == 'daily' and in_day
-          puts "    item in subgroup (#{item.show_subgroup}). user set for daily subgroup mail" if testonly
-          send_it = true
-        elsif p.subgroup_email == 'weekly' and in_week
-          puts "    item in subgroup (#{item.show_subgroup}). user set for weekly subgroup mail" if testonly
-          send_it = true
-        end     
-      end
-        
-      if in_group and (subgroup_none or item.show_subgroup.to_s == '')
-        #-- Item is in a group, and the user is allowed to see it, so they're probably in it. Include messages that started without subgroup and got one later.
-        if p.group_email == 'daily' and in_day
-          puts "    item in group. user set for daily group mail" if testonly
-          send_it = true
-        elsif p.group_email == 'weekly' and in_week
-          puts "    item in group. user set for weekly group mail" if testonly
-          send_it = true
-        end    
-      end  
+      is_mycom = (hasmessmatch and hascommatch)
       
-      #if in_group and not in_dialog
-      #  #-- Check the user's status in the group
-      #  group_participant = GroupParticipant.where(group_id: item.group_id, participant_id: p.id).first
-      #  if not group_participant or not group_participant.active or group_participant.status != 'active'
-      #    puts "    user is not an active member of the group"
-      #    send_it = false
-      #  end
-      #end
-      
-      if send_it and item.group and item.group.is_global and item.dialog_id.to_i == 0
-        # Only send Global Townhall Square gts group messages (GLOBAL_GROUP_ID) if they're from the admin
-        # is it posted by an admin?
-        group_participant = GroupParticipant.where(group_id: item.group_id, participant_id: item.posted_by).first
-        if group_participant.moderator
-        else
-          send_it = false
-        end
-      end
+      if is_mycom and p.mycom_email == 'daily' and in_day
+        puts "    community match. user set for daily my community mail" if testonly
+        send_it = true
+      elsif is_mycom and p.mycom_email == 'weekly' and in_week
+        puts "    community match. user set for weekly my community mail" if testonly
+        send_it = true
+      elsif not is_mycom and p.othercom_email == 'daily' and in_day
+        puts "    no community match. user set for daily other community mail" if testonly
+        send_it = true
+      elsif not is_mycom and p.othercom_email == 'weekly' and in_week
+        puts "    no community match. user set for weekly other community mail" if testonly
+        send_it = true
+      end   
    
       if not send_it
         puts "    no setting to send this" if testonly
@@ -249,45 +198,7 @@ for p in participants
       
       did_items += 1
       
-      #-- Figure out the best domain to use, with discussion and group
-      if item.dialog
-        #-- If it is in a discussion, this person possibly represents another group
-        group_prefix = ''
-        if user_dialogs[item.dialog_id]
-          group_prefix = user_dialogs[item.dialog_id]['group_prefix']
-        else
-          user_dialogs[item.dialog_id] = {'group_prefix'=>''}
-          group_participant = GroupParticipant.where(:participant_id => p.id, :group_id => item.group_id).first
-          if group_participant
-            #-- They're a member of the group, so that's the one to use
-            group_prefix = item.group.shortname if item.group
-            user_dialogs[item.dialog_id]['group_prefix'] = group_prefix
-          else
-            for g in item.dialog.active_groups
-              group_participant = GroupParticipant.where(:participant_id => p.id,:group_id => g.id).first
-              if group_participant and g.shortname.to_s != ''
-                group_prefix = g.shortname
-                user_dialogs[item.dialog_id]['group_prefix'] = group_prefix
-                break
-              end
-            end
-          end    
-        end
-        if item.dialog.shortname.to_s != '' and group_prefix != ''
-          domain = "#{item.dialog.shortname}.#{group_prefix}.#{ROOTDOMAIN}"
-        elsif group_prefix != ''
-          domain = "#{group_prefix}.#{ROOTDOMAIN}"
-        elsif item.dialog.shortname.to_s != ''
-          domain = "#{item.dialog.shortname}.#{ROOTDOMAIN}"
-        else
-          domain = BASEDOMAIN
-        end      
-      elsif item.group and item.group.shortname.to_s != ''
-        #-- If it is posted in a group, that's where we'll go, whether they're a member of it or not
-        domain = "#{item.group.shortname}.#{ROOTDOMAIN}"
-      else
-        domain = BASEDOMAIN
-      end 
+      domain = "voh.#{ROOTDOMAIN}"
       
       group_domain = (item.group and item.group.shortname.to_s != '') ? "#{item.group.shortname}.#{ROOTDOMAIN}" : ROOTDOMAIN
 
@@ -316,20 +227,12 @@ for p in participants
       
       itext += " <a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}#reply\">One Click reply</a>"
       
-      if false
-    		itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?auth_token=#{p.authentication_token}\">#{item.dialog.name}</a>" if item.dialog
-    		itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{item.dialog_id}/forum?period_id=#{item.period_id}&auth_token=#{p.authentication_token}\">#{item.period.name}</a>" if item.period  		
-    		itext += " Group: <a href=\"http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}\">#{item.group.name}</a>" if item.group
-    		subgrouplink = "http://#{group_domain}/groups/#{item.group_id}/forum?auth_token=#{p.authentication_token}&amp;subgroup="
-    		itext += " Subgroup: #{item.show_subgroup_with_link(subgrouplink)}" if item.subgroup_list.length > 0
-      end
-      
       itext += "</p>"
       itext += "<hr>"
       
-      if in_dialog and p.forum_email == 'weekly' and is_weekly
+      if is_mycom and p.mycom_email == 'weekly' and is_weekly
         tweekly += itext
-      elsif in_group and p.group_email == 'weekly' and is_weekly
+      elsif not is_mycom and p.othercom_email == 'weekly' and is_weekly
         tweekly += itext
       else
         tdaily += itext
