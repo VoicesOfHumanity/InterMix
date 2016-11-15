@@ -238,6 +238,8 @@ class ItemsController < ApplicationController
     @subgroup = params[:subgroup].to_s
     @comtag = params[:comtag].to_s
     @messtag = params[:messtag].to_s
+    @meta_3 = params[:meta_3].to_i    # gender
+    @meta_5 = params[:meta_5].to_i    # age
     
     if @item.reply_to.to_i > 0
       @olditem = Item.find_by_id(@item.reply_to)
@@ -300,7 +302,7 @@ class ItemsController < ApplicationController
         # Get the message tags from the previous message, if any
         xtxt = ActionView::Base.full_sanitizer.sanitize(@olditem.html_content)
         logger.info("items#itemprocess xtxt:#{xtxt}") 
-        tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$)/i).map{|s| s[0]}
+        tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$|,|;|:|-|\.|\?)/i).map{|s| s[0]}
         tags = []
         for tagmatch in tagmatches
           tagmatch.gsub!(/[^0-9A-za-z_]/,'')
@@ -397,17 +399,31 @@ class ItemsController < ApplicationController
       if @item.reply_to.to_i > 0 and @olditem
         tags.concat @olditem.tag_list
       end
-      if current_participant.gender == 'male'
-        tags << 'VoiceOfMen'
-      elsif current_participant.gender == 'female'
-        tags << 'VoiceOfWomen'
+      if false
+        if current_participant.gender == 'male'
+          tags << 'VoiceOfMen'
+        elsif current_participant.gender == 'female'
+          tags << 'VoiceOfWomen'
+        end
+        if current_participant.generation == 'young'
+          tags << 'VoiceOfYouth'
+        elsif current_participant.generation == 'middle-aged'
+          tags << 'VoiceOfExperience'
+        elsif current_participant.generation == 'senior'
+          tags << 'VoiceOfWisdom'
+        end
       end
-      if current_participant.generation == 'young'
-        tags << 'VoiceOfYouth'
-      elsif current_participant.generation == 'middle-aged'
-        tags << 'VoiceOfExperience'
-      elsif current_participant.generation == 'senior'
-        tags << 'VoiceOfWisdom'
+      if @meta_3 == 207
+          tags << 'VoiceOfMen'    
+      elsif @meta_3 == 208
+          tags << 'VoiceOfWomen'         
+      end
+      if @meta_5 == 405
+          tags << 'VoiceOfYouth'
+      elsif @meta_5 == 406
+          tags << 'VoiceOfExperience'
+      elsif @meta_5 == 407
+          tags << 'VoiceOfWisdom'        
       end
       if @item.geo_level == 'city' and current_participant.city.to_s != ''
         tags << current_participant.city
@@ -1654,7 +1670,7 @@ class ItemsController < ApplicationController
     end
     xtxt = ActionView::Base.full_sanitizer.sanitize(xtxt)
     logger.info("items#itemprocess xtxt:#{xtxt}") 
-    tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$)/i).map{|s| s[0]}
+    tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$|,|;|:|-|\.|\?)/i).map{|s| s[0]}
     tagmatches2 = []
     for tagmatch in tagmatches
       tagmatch.gsub!(/[^0-9A-za-z_]/,'')

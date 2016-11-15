@@ -250,6 +250,14 @@ function newitem(token) {
       var messtag = $("input[name='messtag_radio']:checked").val();
       pars += '&messtag='+messtag;
   }
+  if ($("input[name='meta_3']").length) {
+      var meta_3 = $("input[name='meta_3']:checked").val();
+      pars += '&meta_3='+meta_3;
+  }
+  if ($("input[name='meta_5']").length) {
+      var meta_5 = $("input[name='meta_5']:checked").val();
+      pars += '&meta_5='+meta_5;
+  }
   pars += "&authenticity_token="+token;
 	$.ajax({
 		type: "GET",
