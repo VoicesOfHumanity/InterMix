@@ -180,7 +180,8 @@ function addtag() {
         xfound = true;
       }
     });
-    if (!xfound) {
+    if ($.inArray(val, ['voiceofmen','voiceofwomen','voiceofyouth','voiceofexperience','voiceofexperie','voiceofwisdom']) > -1) {}
+    else if (!xfound) {
       $('#comtags').append($('<option>',{text: val}))
     }
     $('#tag2add').val('');
