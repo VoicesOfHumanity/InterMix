@@ -77,13 +77,13 @@
     <% end -%>
     
     <div style="margin: 20px 0 0 0;">
-      <input type="radio" name="comtag_radio" value="" onclick="per_reload()" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
+      <input type="radio" name="comtag_radio" value="" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
       <% if @comtag.to_s != '' and @comtag != '*my*' and not current_participant.tag_list.include?(@comtag) -%>
-      <input type="radio" name="comtag_radio" value="<%= @comtag %>" onclick="per_reload()" checked>@<%= @comtag %><br>
+      <input type="radio" name="comtag_radio" value="<%= @comtag %>" onclick="per_reload(false,1,'comtag')" checked>@<%= @comtag %><br>
       <% end -%>
-      <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload()" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br> 
+      <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br> 
       <% current_participant.tags.each do |tag| -%>
-        <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload()">@<%= tag.name %><br> 
+        <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
       <% end %>
     </div>
     
@@ -160,6 +160,7 @@ var cur_group_level = <%= @group_level > 0 ? @group_level : 3 %>;
 var cur_batch_level = <%= (@batch_level || 1).to_i %>;
 var cur_batch_size = <%= (@batch_size || 4).to_i %>;
 var showing_options = '<%= @showing_options %>';
+var user_comtags = <%=raw current_participant.tag_list.inspect %>;
 $(function() {
   if (false) {
     $( "#geoslider" ).slider({
@@ -211,9 +212,25 @@ function per_reload(first,num,whatchanged,page) {
   if (page === undefined) {
     page = 1;
   }
+
  	$('#per_main').css('opacity','0.5');
   cur_comtag = $("input[name='comtag_radio']:checked").val();
   cur_messtag = $("input[name='messtag_radio']:checked").val();
+  
+  if (whatchanged=='comtag' && $.inArray(cur_comtag, user_comtags) > -1) {
+    var xfound = false;
+    $("input[name=messtag_radio]").each(function(i) {
+      if ($(this).val()==cur_comtag) {
+        $(this).attr('checked', 'checked');
+        xfound = true;
+      }
+    });
+    if (!xfound) {
+      $('#messtag_other').val(cur_comtag);
+      $("input[name=messtag_radio][value='*other*']").attr('checked', 'checked');
+    }
+  }  
+  
   if (cur_messtag == '*other*') {
     cur_messtag = $('#messtag_other').val();
   }
@@ -286,6 +303,7 @@ function per_reload(first,num,whatchanged,page) {
 	  complete: function(t){ 
       $('#per_main').css('opacity','1.0');
 	    $('#per_main').html(t.responseText);
+      $('body').scrollTop(0);
 	  }
 	});	
 }
