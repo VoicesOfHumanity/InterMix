@@ -581,7 +581,7 @@ class ProfilesController < ApplicationController
     :first_name, :last_name, :title, :self_description, :address1, :address2, :city, :admin2uniq, :country_code, :country_name, :admin1uniq, :state_code, :state_name, :county_code, :county_name, :zip, :phone,
     :latitude, :longitude, :timezone, :timezone_offset, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :email, :visibility,
     :wall_visibility, :item_to_forum, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :forum_email, :group_email, :subgroup_email, :private_email, :system_email, :no_email, :handle,
-    :indigenous, :other_minority, :veteran, :interfaith, :refugee, :tag_list
+    :indigenous, :other_minority, :veteran, :interfaith, :refugee, :tag_list, :mycom_email, :othercom_email
     )
   end
 
