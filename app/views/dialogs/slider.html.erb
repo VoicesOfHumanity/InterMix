@@ -88,14 +88,14 @@
     </div>
     
     <div style="margin: 20px 0 0 0;">
-      <input type="radio" name="messtag_radio" value="" onclick="per_reload()" <%= @messtag.to_s=='' ? "checked" : "" %>>any hashtag<br>
+      <input type="radio" name="messtag_radio" value="" onclick="per_reload(false,1,'messtag')" <%= @messtag.to_s=='' ? "checked" : "" %>>any hashtag<br>
       <% if @messtag.to_s != '' and not current_participant.tag_list.include?(@messtag) -%>
-      <input type="radio" name="messtag_radio" value="<%= @messtag %>" onclick="per_reload()" checked>#<%= @messtag %><br>
+      <input type="radio" name="messtag_radio" value="<%= @messtag %>" onclick="per_reload(false,1,'messtag')" checked>#<%= @messtag %><br>
       <% end -%>
       <% current_participant.tags.each do |tag| -%>
-        <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload()">#<%= tag.name %><br> 
+        <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'messtag')">#<%= tag.name %><br> 
       <% end %>
-      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload()">#<input type="text" id="messtag_other" size="10" maxlength="14" onchange="per_reload()">
+      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload()">#<input type="text" id="messtag_other" size="10" maxlength="14" onchange="per_reload(false,1,'messtag')">
     </div>
 
     <div style="margin: 20px 0 0 0;">
@@ -191,6 +191,7 @@ $(function() {
     $( "#group_level" ).val( $( "#groupslider" ).slider( "value" ) );
   }
 });
+var messtag_changed = false;
 function per_reload(first,num,whatchanged,page) {
 	if (editingid>0) {
 	    alert("Please save or cancel the edit that is in progress");
@@ -216,17 +217,26 @@ function per_reload(first,num,whatchanged,page) {
  	$('#per_main').css('opacity','0.5');
   cur_comtag = $("input[name='comtag_radio']:checked").val();
   
-  if (whatchanged=='comtag' && $.inArray(cur_comtag, user_comtags) > -1) {
+  if (whatchanged=='messtag') {
+    cur_messtag = $("input[name='messtag_radio']:checked").val(); 
+    if (cur_messtag == '') {
+      messtag_changed = false;
+    } else {
+      messtag_changed = true;
+    }  
+  }
+  
+  if (whatchanged=='comtag' && !messtag_changed && $.inArray(cur_comtag, user_comtags) > -1) {
     var xfound = false;
     $("input[name=messtag_radio]").each(function(i) {
       if ($(this).val()==cur_comtag) {
-        $(this).attr('checked', 'checked');
+        $(this).prop('checked', true);
         xfound = true;
       }
     });
     if (!xfound) {
       $('#messtag_other').val(cur_comtag);
-      $("input[name=messtag_radio][value='*other*']").attr('checked', 'checked');
+      $("input[name=messtag_radio][value='*other*']").prop('checked', true);
     }
   }  
 
@@ -236,7 +246,7 @@ function per_reload(first,num,whatchanged,page) {
     cur_messtag = $('#messtag_other').val();
   }
   if (cur_messtag == '') {
-    $("input[name=messtag_radio][value='']").attr('checked', 'checked');
+    $("input[name=messtag_radio][value='']").prop('checked', true);
   }
   cur_geo_level = $("input[name='geo_level_radio']:checked").val();
   cur_group_level = $("input[name='group_level_radio']:checked").val();
