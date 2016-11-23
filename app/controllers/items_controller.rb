@@ -393,25 +393,11 @@ class ItemsController < ApplicationController
       end
     end
     
-    if @item.reply_to.to_i == 0
-      #-- Fill in some default message tags, if it is a root message
+    if true or @item.reply_to.to_i == 0
+      #-- Fill in some default message tags
       tags = []
       if @item.reply_to.to_i > 0 and @olditem
         tags.concat @olditem.tag_list
-      end
-      if false
-        if current_participant.gender == 'male'
-          tags << 'VoiceOfMen'
-        elsif current_participant.gender == 'female'
-          tags << 'VoiceOfWomen'
-        end
-        if current_participant.generation == 'young'
-          tags << 'VoiceOfYouth'
-        elsif current_participant.generation == 'middle-aged'
-          tags << 'VoiceOfExperience'
-        elsif current_participant.generation == 'senior'
-          tags << 'VoiceOfWisdom'
-        end
       end
       if @meta_3 == 207
           tags << 'VoiceOfMen'    
