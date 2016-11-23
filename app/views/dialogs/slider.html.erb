@@ -215,7 +215,6 @@ function per_reload(first,num,whatchanged,page) {
 
  	$('#per_main').css('opacity','0.5');
   cur_comtag = $("input[name='comtag_radio']:checked").val();
-  cur_messtag = $("input[name='messtag_radio']:checked").val();
   
   if (whatchanged=='comtag' && $.inArray(cur_comtag, user_comtags) > -1) {
     var xfound = false;
@@ -230,6 +229,8 @@ function per_reload(first,num,whatchanged,page) {
       $("input[name=messtag_radio][value='*other*']").attr('checked', 'checked');
     }
   }  
+
+  cur_messtag = $("input[name='messtag_radio']:checked").val();
   
   if (cur_messtag == '*other*') {
     cur_messtag = $('#messtag_other').val();
