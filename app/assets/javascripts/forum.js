@@ -343,11 +343,11 @@ function reply(item_id,to_reply) {
     }
     if ($("input[name='meta_3']").length) {
         var meta_3 = $("input[name='meta_3']:checked").val();
-        pars += '&meta_3='+meta_3;
+        params += '&meta_3='+meta_3;
     }
     if ($("input[name='meta_5']").length) {
         var meta_5 = $("input[name='meta_5']:checked").val();
-        pars += '&meta_5='+meta_5;
+        params += '&meta_5='+meta_5;
     }
 	$.ajax({
 		type: "GET",
