@@ -138,10 +138,18 @@ class Item < ActiveRecord::Base
     
     # mycom: will go to people who share any community with the author and who has any community tag matching a message tag
     
-    allpeople = Participant.where(status: 'active').where("mycom_email='daily' or othercom_email='daily'")
+    allpeople = Participant.where(status: 'active').where("mycom_email='instant' or othercom_email='instant'")
+    #logger.info("Item#emailit self.tag_list:#{self.tag_list}")
+    #logger.info("Item#emailit self.participant.tag_list:#{self.participant.tag_list}")
     for person in allpeople
-      hasmessmatch = ( person.tag_list.class == Array and person.tag_list.length > 0 and person.tag_list.any?{|t| self.tag_list.include?(t) } )
-      hascommatch = ( person.tag_list.class == Array and person.tag_list.length > 0 and person.tag_list.any?{|t| self.participant.tag_list?(t) } )
+      hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list.length > 0 and person.tag_list.any?{|t| self.tag_list.include?(t) } )
+      hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list.length > 0 and person.tag_list.any?{|t| self.participant.tag_list.include?(t) } )
+      #if person.id == 1867
+      #  logger.info("Item#emailit person.tag_list.class:#{person.tag_list.class}")
+      #  logger.info("Item#emailit person.tag_list.length:#{person.tag_list.length}")
+      #  logger.info("Item#emailit person.tag_list:#{person.tag_list}")
+      #  logger.info("Item#emailit hasmessmatch:#{hasmessmatch} hascommatch:#{hascommatch}")
+      #end
       if hasmessmatch and hascommatch and person.mycom_email == 'instant'
         participants << person
       elsif not (hasmessmatch and hascommatch) and person.othercom_email == 'instant'
