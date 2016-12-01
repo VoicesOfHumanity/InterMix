@@ -148,7 +148,7 @@ function list(whatchanged,gotopost) {
         //     window.location.hash = '#item_'+gotopost;
          //}
          removeHash();
-         $('body').scrollTop(0);
+         $(window).scrollTop(0);
      }
    });	
 }
@@ -546,7 +546,7 @@ function saveitem() {
             	}
                 editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
                 removeHash();
-                $('body,html').scrollTop(0);
+                $(window).scrollTop(0);
         		CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
         			this.document.on("keyup", editor_change);
         		});
@@ -594,7 +594,7 @@ function saveitem() {
     		        list();
 		        }
                 removeHash();
-                $('body,html').scrollTop(0);
+                $(window).scrollTop(0);
             	$('.reply_link').each(function(i,obj) {
             	    $(this).css('opacity','1.0');
             	});

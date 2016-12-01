@@ -314,7 +314,7 @@ function per_reload(first,num,whatchanged,page) {
 	  complete: function(t){ 
       $('#per_main').css('opacity','1.0');
 	    $('#per_main').html(t.responseText);
-      $('body').scrollTop(0);
+      $(window).scrollTop(0);
 	  }
 	});	
 }
