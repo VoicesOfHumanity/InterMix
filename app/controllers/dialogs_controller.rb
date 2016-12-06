@@ -83,6 +83,9 @@ class DialogsController < ApplicationController
     elsif params.has_key?(:messtag)
       @messtag = params[:messtag].to_s
       session[:messtag] = @messtag
+    elsif params.length == 4 and @comtag != ''
+      #-- If they clicked on a community tag link, select the message tag too
+      @messtag = @comtag
     else
       @messtag = session[:messtag].to_s
     end
