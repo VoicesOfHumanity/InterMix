@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161101192618) do
+ActiveRecord::Schema.define(version: 20161206172542) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -593,7 +593,7 @@ ActiveRecord::Schema.define(version: 20161101192618) do
     t.string   "private_email",          limit: 255,                            default: "instant"
     t.string   "system_email",           limit: 255,                            default: "instant"
     t.string   "mycom_email",            limit: 255,                            default: "daily"
-    t.string   "othercom_email",         limit: 255,                            default: "never"
+    t.string   "othercom_email",         limit: 255,                            default: "daily"
     t.boolean  "no_email",                                                      default: false
     t.string   "direct_email_code",      limit: 255
     t.boolean  "has_participated",                                              default: false
