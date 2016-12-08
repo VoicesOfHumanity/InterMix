@@ -41,7 +41,7 @@ class Participant < ActiveRecord::Base
   #has_many :gender_metamap_nodes, :class_name => "MetamapNode", :through=>:metamap_node_participants  
   #has_many :gender_metamap_node, :through=>:metamap_node_participants, :source=>'metamap_node', :conditions => "metamap_id=3"
   
-  serialize :forum_settings
+  serialize :forum_settings, :check_boxes
 
   has_attached_file :picture, :styles => { :medium => "300x300>", :thumb => "50x50#" }, :path => "#{DATADIR}/:class/:attachment/:id/:style_:basename.:extension", :url => "/images/data/:class/:attachment/:id/:style_:basename.:extension"
   validates_attachment_content_type :picture, :content_type => /\Aimage\/.*\Z/

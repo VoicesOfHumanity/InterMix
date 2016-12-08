@@ -77,6 +77,27 @@ GROUP_PARTICIPANT_STATUSES_TEXT = {'active'=>"Active group membership", 'pending
 CROSSTALK_OPTIONS = ['','gender','gender1','age','age1'] 
 CROSSTALK_OPTIONS_TEXT = {''=>'No Crosstalk','gender'=>'Gender Crosstalk','gender1'=>'Gender Crosstalk 1st round','age'=>'Age Crosstalk','age1'=>'Age Crosstalk 1st round'}
 
+DEFAULT_COMMUNITIES = {
+  'climate_action' => "Climate Action: combat climate change",
+  'commons' => "Commons movement",
+  'genderequalty' => "Gender equality: empower all women and girls",
+  'global_justice' => "Global Justice Movement",
+  'gr8transition' => "Great Transition: big systemic changes are needed",
+  'indigenous' => "Indigenous peoples",
+  'interfaith' => "Interfaith movement",
+  'labor' => "Labor movement",
+  'nonviolence' => "Nonviolence: a force more powerful",
+  'no_nukes' => "Nuclear Disarmament",
+  'minority' => "Other minority: disadvantaged minorities",
+  'peace' => "Peace with general and complete disarmament",
+  'refugees' => "Refugees, asylees, illegal immigrants",
+  'save_children' => "Save the children",
+  'un_goals' => "UN Goals",
+  'veterans' => "Veterans",
+  'voh' => "Voices of Humanity supporters"
+}
+
+
 EMAIL_PREFS = ['instant','daily','weekly','never']
 EMAIL_PREFS_TEXT = {'instant'=>'E-mail each one right away','daily'=>'E-mail in a daily batch','weekly'=>'E-mail in a weekly batch','never'=>'Never e-mail'}
 ITEM_TYPES = ['message']

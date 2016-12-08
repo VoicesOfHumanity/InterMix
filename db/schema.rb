@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161206172542) do
+ActiveRecord::Schema.define(version: 20161206224357) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -619,6 +619,7 @@ ActiveRecord::Schema.define(version: 20161206172542) do
     t.boolean  "veteran",                                                       default: false
     t.boolean  "interfaith",                                                    default: false
     t.boolean  "refugee",                                                       default: false
+    t.text     "check_boxes",            limit: 65535
   end
 
   add_index "participants", ["confirmation_token"], name: "index_participants_on_confirmation_token", unique: true, using: :btree
