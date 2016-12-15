@@ -210,7 +210,7 @@ class Item < ActiveRecord::Base
       # http://yekmer.posterous.com/single-access-token-using-devise
       recipient.ensure_authentication_token!
       
-      domain = 'voh.' + BASEDOMAIN 
+      domain = 'voh.' + ROOTDOMAIN 
       group_domain = domain
       
       cdata = {}
