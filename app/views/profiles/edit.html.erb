@@ -96,7 +96,10 @@
 	<br>
 	<%= f.inputs do %>	
 		
+    <% if false -%>
 		<h3 id="settings"><br>Settings</h3>
+    <% end -%>
+    <input type="submit" value="Save" onclick="savetags();return(true)">
 		
     <% if false -%>
 		<%= f.input :visibility, :label => 'Profile visibility', :as => :select, :collection =>PARTICIPANT_VISIBILITY_TEXT.invert %>
