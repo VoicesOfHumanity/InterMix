@@ -94,8 +94,42 @@ DEFAULT_COMMUNITIES = {
   'save_children' => "Save the children",
   'un_goals' => "UN Goals",
   'veterans' => "Veterans",
-  'voh' => "Voices of Humanity supporters"
+  'voh' => "Voices of Humanity supporters",
+  
+  'human_rights' => "Human Rights: UN Universal Declaration of Human Rights",
+  'cedaw' => "Convention on the Elimination of all Forms of Discrimination Against Women",
+  
+  'sdgs' => "UN Sustainable Development Goals",
+  'end_poverty' => "End poverty in all its forms everywhere",
+  'end_hunger' => "End hunger and promote sustainable agriculture",
+  'good_health' => "Good health for all at all ages",
+  'good_education' => "Good education: inclusive, equitable quality education for all",
+  'clean_water' => "Clean water: sustainable clean water and sanitation for all",
+  'renewablenergy' => "Renewable energy: affordable, reliable, sustainable energy for all",
+  'good_jobs' => "Good jobs and sustainable development for all",
+  'infrastructure' => "Better infrastructure: innovative and resilient economic underpinning",
+  'more_equality' => "More equality: reverse the trend toward economic inequality",
+  'better_cities' => "Better Cities: inclusive, safe, resilient and sustainable urban areas",
+  'simplifying' => "Simplifying: do more and better with less",
+  'climate_action' => "Climate Action: combat climate change",
+  'protect_oceans' => "Protecting the oceans",
+  'protect_lands' => "Protecting land resources, biodiversity",
+  'safe_for_all' => "Peace and justice: end violence and corruption",
+  'sdg_partners' => "SDG partnerships: organize across the silos"
 }
+GLOBAL_COMMUNITIES = [
+  'climate_action','commons','genderequalty','global_justice','gr8transition','indigenous',
+  'interfaith','labor','nonviolence','no_nukes','minority','peace','refugees',
+  'save_children','un_goals','veterans','voh' 
+]
+UNGOAL_COMMUNITIES = [
+  'un_goals','peace','no_nukes','human_rights','cedaw'
+]
+SUSTDEV_COMMUNITIES = [
+  'sdgs','end_poverty','end_hunger','good_health','good_education',
+  'genderequalty','clean_water','renewablenergy','good_jobs','infrastructure','more_equality','better_cities',
+  'simplifying','climate_action','protect_oceans','protect_lands','safe_for_all','sdg_partners'
+]
 
 
 EMAIL_PREFS = ['instant','daily','weekly','never']

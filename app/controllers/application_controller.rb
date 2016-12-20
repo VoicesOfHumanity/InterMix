@@ -306,11 +306,11 @@ class ApplicationController < ActionController::Base
     end
     logger.info("application#after_token_authentication cur_baseurl:#{session[:cur_baseurl]}")
     
-    if session[:cur_prefix] != '' and request.host != session[:cur_prefix] + "." + ROOTDOMAIN and BASEDOMAIN != 'intermix.dev'
-      #-- If this is not the dev system, and if the subdomain isn't already right, redirect
-      new_url = session[:cur_baseurl] . request.fullpath
-      redirect_to new_url
-    end  
+    #if session[:cur_prefix] != '' and request.host != session[:cur_prefix] + "." + ROOTDOMAIN and BASEDOMAIN != 'intermix.dev'
+    #  #-- If this is not the dev system, and if the subdomain isn't already right, redirect
+    #  new_url = session[:cur_baseurl] . request.fullpath
+    #  redirect_to new_url
+    #end  
     
   end
   
