@@ -197,6 +197,7 @@ console.log('_edit');
 	} else {
 		CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
 			this.document.on("keyup", editor_change);
+      CKEDITOR.instances['item_html_content'].focus();
 		});
 	}
 //});
