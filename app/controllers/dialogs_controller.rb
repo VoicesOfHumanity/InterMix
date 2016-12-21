@@ -2516,13 +2516,13 @@ class DialogsController < ApplicationController
   
   def redirect_subdom
     #-- If we're not using the right subdomain, redirect
-    if request.get? and session[:cur_prefix] != '' and Rails.env == 'production' and (request.host == BASEDOMAIN or request.host == ROOTDOMAIN)
-      host_should_be = "#{session[:cur_prefix]}.#{ROOTDOMAIN}"
-      if request.host != host_should_be
-        logger.info("dialogs#redirect_subdom cur_prefix:#{session[:cur_prefix]}<< redirecting from #{request.host} to #{host_should_be}")
-        redirect_to "http://#{host_should_be}#{request.fullpath}"
-      end
-    end
+    #if request.get? and session[:cur_prefix] != '' and Rails.env == 'production' and (request.host == BASEDOMAIN or request.host == ROOTDOMAIN)
+    #  host_should_be = "#{session[:cur_prefix]}.#{ROOTDOMAIN}"
+    #  if request.host != host_should_be
+    #    logger.info("dialogs#redirect_subdom cur_prefix:#{session[:cur_prefix]}<< redirecting from #{request.host} to #{host_should_be}")
+    #    redirect_to "http://#{host_should_be}#{request.fullpath}"
+    #  end
+    #end
   end
   
   def show_name_in_result(item,dialog,period)
