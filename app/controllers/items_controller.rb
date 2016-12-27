@@ -430,7 +430,7 @@ class ItemsController < ApplicationController
       tag.gsub!(/[^0-9A-za-z_]/i,'')
       tagtext += "##{tag}"
     end
-    @item.html_content += "<p><br>#{tagtext}</p>"
+    @item.html_content += "<p><br><br>#{tagtext}</p>"
     
     render :partial=>'edit', :layout=>false
   end  

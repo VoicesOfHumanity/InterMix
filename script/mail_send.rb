@@ -20,6 +20,10 @@ opts.on("-dARG","--day=ARG",String) {|val| whichday = val}
 opts.on("-tARG","--test=ARG",Integer) {|val| testonly = true}
 opts.parse(ARGV)
 
+if testonly
+  puts "Test Mode"
+end
+
 if whichday != ''
   #-- If a day is given, it should be the day on which (a little after midnight) the report is run for the day before
   now = Time.parse(whichday).gmtime
@@ -143,7 +147,8 @@ for p in participants
     pstart = need_weekly ? wstart : dstart
     
     #-- We want sort by descending regressed value, using total interest
-    items, itemsproc, extras = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p,true,p.id,pstart,pend)
+    #items, itemsproc, extras = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p,true,p.id,pstart,pend)
+    items, itemsproc, extras = Item.list_and_results(0,0,0,0,{},{},false,'*value*',p,true,0,pstart,pend)
     
     #-- Note that we might have gotten more items than we actually need
     

@@ -760,7 +760,7 @@ class Item < ActiveRecord::Base
       end
     end
     
-    if visible_by.to_i > 0
+    if false and visible_by.to_i > 0
       #-- Only items that a certain user has a right to see. I.e. mainly groups he's in
       gpin = GroupParticipant.where("participant_id=#{visible_by}")
       xgpin = '999999'
