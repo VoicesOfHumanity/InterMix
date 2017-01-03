@@ -1,4 +1,8 @@
 FactoryGirl.define do
+  factory :community do
+    tagname "MyString"
+    name "MyString"
+  end
   factory :participant do
     email 'ffunch234@newciv.org'
     password 'test'

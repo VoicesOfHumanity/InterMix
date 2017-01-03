@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161206224357) do
+ActiveRecord::Schema.define(version: 20161227221903) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -40,6 +40,22 @@ ActiveRecord::Schema.define(version: 20161206224357) do
   add_index "ckeditor_assets", ["assetable_type", "assetable_id"], name: "fk_assetable", using: :btree
   add_index "ckeditor_assets", ["assetable_type", "type", "assetable_id"], name: "idx_assetable_type", using: :btree
   add_index "ckeditor_assets", ["user_id"], name: "fk_user", using: :btree
+
+  create_table "communities", force: :cascade do |t|
+    t.string   "tagname",              limit: 255
+    t.string   "description",          limit: 255
+    t.boolean  "twitter_post",                     default: true
+    t.string   "twitter_username",     limit: 255
+    t.string   "twitter_oauth_token",  limit: 255
+    t.string   "twitter_oauth_secret", limit: 255
+    t.string   "twitter_hash_tag",     limit: 255
+    t.integer  "tweet_approval_min",   limit: 4,   default: 1
+    t.string   "tweet_what",           limit: 255, default: "roots"
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+  end
+
+  add_index "communities", ["tagname"], name: "index_communities_on_tagname", using: :btree
 
   create_table "dialog_admins", force: :cascade do |t|
     t.integer  "dialog_id",      limit: 4
