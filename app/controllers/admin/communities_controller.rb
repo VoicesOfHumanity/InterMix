@@ -71,7 +71,7 @@ class Admin::CommunitiesController < ApplicationController
     @community = Community.new(params[:community])
 
     respond_to do |format|
-      if @Community.save
+      if @community.save
         format.html { render :partial=>'show', :layout=>false, :notice => 'Community was successfully created.' }
         format.xml  { render :xml => @community, :status => :created, :location => @community }
       else
@@ -87,7 +87,7 @@ class Admin::CommunitiesController < ApplicationController
     @community = Community.find(params[:id])
 
     respond_to do |format|
-      if @Community.update_attributes(params[:community])
+      if @community.update_attributes(params[:community])
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -101,7 +101,7 @@ class Admin::CommunitiesController < ApplicationController
   # DELETE /communities/1.xml
   def destroy
     @community = Community.find(params[:id])
-    @Community.destroy
+    @community.destroy
 
     respond_to do |format|
       format.html { render :text=>"<p>Community ##{params[:id]} has been deleted</p>" }

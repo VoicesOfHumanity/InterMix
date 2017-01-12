@@ -1,0 +1,19 @@
+<%= semantic_form_for [:admin, @community] do |f| %>
+
+	<%= f.inputs do %>
+		<%= f.input :tagname, :required => true %>
+		<%= f.input :description, :required => true %>
+		<%= f.input :twitter_post, :label => "Post items to twitter?" %>
+		<%= f.input :tweet_what, :label => "Items to tweet", :as => :select, :collection =>[['* all *'],['root messages','roots']] %>
+		<%= f.input :tweet_approval_min, :label => "Min. pos. approvals before tweeting" %>		
+		<%= f.input :twitter_username, :label => "Twitter username" %>		
+		<%= f.input :twitter_hash_tag, :label => "Twitter #hashtag" %>
+    <li><label>Twitter access</label><%= @community.twitter_post and @community.twitter_username.to_s != '' ? ( @community.twitter_oauth_token.to_s != '' ? 'authorized' : raw("not yet authorized. click <a href=\"/me/twitauth\">this link</a> to authorize posting.")  ) : 'none' %></li>
+  <% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec1(<%= @community.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec1()" />
+</p>
