@@ -550,7 +550,7 @@ class ProfilesController < ApplicationController
         flash[:notice] += "\"#{email}\" doesn't look like a valid e-mail address<br>"  
       else
         @cdata['email'] = email
-        @cdata['joinlink'] = "http://#{@cdata['domain']}/join?&email=#{email}"
+        @cdata['joinlink'] = "http://#{@cdata['domain']}/join?email=#{email}"
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
