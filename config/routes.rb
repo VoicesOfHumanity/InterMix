@@ -285,6 +285,8 @@ Rails.application.routes.draw do
   get 'me/twitcallback' => 'profiles#twitcallback'
   get 'me/friends' => 'people#friends'
   get 'me/comtag' => 'profiles#comtag'
+  get 'me/invite' => 'profiles#invite'
+  post 'me/invitedo' => 'profiles#invitedo'
   
   get 'fbapp(/:action)', :controller=>:fbapp
   

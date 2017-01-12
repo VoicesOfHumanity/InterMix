@@ -98,7 +98,10 @@
 			<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Order out of Chaos</a></li>
       <% elsif session[:dialog_id].to_i > 0 -%>  
       <% vohdom = Rails.env!='development' ? "http://voh.#{ROOTDOMAIN}" : '' %>
-			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dialog_id and @dialog_id.to_i==VOH_DISCUSSION_ID.to_i) %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li>		
+			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dialog_id and @dialog_id.to_i==VOH_DISCUSSION_ID.to_i) %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li>
+      <% elsif true -%>
+      <% vohdom = Rails.env!='development' ? "http://voh.#{ROOTDOMAIN}" : '' %>
+      <li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li> 		
       <% elsif session[:dialog_id].to_i > 0 -%>
 			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dsection.to_s!='index') %>" href="/dialogs/<%= session[:dialog_id] %>/slider">Home</a></li>
 			<% elsif session[:group_id].to_i > 0 -%>

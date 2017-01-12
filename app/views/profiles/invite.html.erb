@@ -1,0 +1,17 @@
+<%= render(:partial => 'menu')%>
+
+<h3 style="clear:both">Invite new members to Voices of Humanity</h3>
+
+
+<form action="/me/invitedo" method="post">
+<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+	
+<p>Invite non-members to join (one e-mail per line):</p>
+
+<p><%= text_area_tag 'new_text', nil, :rows => 5, :cols => 30 %></p>
+
+<p><input type="submit" value="Submit"></p>
+
+<p>Optional e-mail message to send to prospective members:<br><%= text_area_tag 'messtext', @messtext, :rows => 3, :cols => 30 %></p>
+
+</form>

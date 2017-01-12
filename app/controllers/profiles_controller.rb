@@ -504,6 +504,81 @@ class ProfilesController < ApplicationController
     end
     current_participant.save
   end
+  
+  def invite
+    #-- Invite screen
+    @section = 'profile'
+    @psection = 'invite'
+    @messtext = ''
+    @participant = Participant.includes(:idols).find(current_participant.id)  
+    @members = Participant.order("first_name,last_name")  
+  end  
+  
+  def invitedo
+    #-- Invite more members
+    @section = 'profile'
+    @psection = 'invite'
+    logger.info("profiles#invitedo")  
+    flash[:notice] = ''
+    flash[:alert] = ''
+    
+    @group_id = GLOBAL_GROUP_ID
+    @group = Group.includes(:group_participants=>:participant).find(@group_id)
+
+    @new_text = params[:new_text].to_s
+    @messtext = params[:messtext].to_s    
+    @messtext += render_to_string :partial=>"invite_default", :layout=>false
+
+    @cdata = {}
+    @cdata['current_participant'] = current_participant
+    @cdata['group'] = @group if @group
+    @cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    @cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    @cdata['domain'] = Rails.env!='development' ? "http://voh.#{ROOTDOMAIN}" : BASEDOMAIN
+
+    #-- Some non-members, supposedly. But catch if some of them already are members.
+    lines = @new_text.split(/[\r\n]+/)
+    flash[:notice] += "#{lines.length} lines<br>"
+    x = 0
+    for line in lines do
+      email = line.strip
+
+      @recipient = Participant.find_by_email(email)
+      if @recipient
+        flash[:notice] += "#{email} is already a member<br>"
+      elsif not email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
+        flash[:notice] += "\"#{email}\" doesn't look like a valid e-mail address<br>"  
+      else
+        @cdata['email'] = email
+        @cdata['joinlink'] = "http://#{@cdata['domain']}/join?&email=#{email}"
+
+        if @messtext.to_s != ''
+          template = Liquid::Template.parse(@messtext)
+          html_content = template.render(@cdata)
+        else
+          html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join Voices of Humanity<br/>"
+          html_content += "Go <a href=\"http://#{@cdata['joinlink']}/join?email=#{email}\">here</a> to fill in your information and join.<br>"
+          html_content += "</p>"            
+        end
+      
+        subject = "#{current_participant.name} invites you to Voices of Humanity"
+
+        emailmess = SystemMailer.template("questions@intermix.org", email, subject, html_content, @cdata)
+
+        logger.info("profiles#invitedo delivering email to #{email}")
+        begin
+          emailmess.deliver
+          flash[:notice] += "An invitation message was sent to #{email}<br>"
+        rescue
+          logger.info("profiles#invitedo FAILED delivering email to #{email}")
+          flash[:notice] += "Failed to send an invitation to #{email}<br>"
+        end
+      end
+
+    end
+      
+    redirect_to :action => :invite
+  end
 
   protected
   
