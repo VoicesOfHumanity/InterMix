@@ -1698,6 +1698,7 @@ class FrontController < ApplicationController
   
   def prepare_join
     @section = 'join'
+    @email = params[:email]
     @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
     @meta = []
     @metamaps = Metamap.where(:global_default=>true)
