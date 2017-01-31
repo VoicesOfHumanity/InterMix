@@ -865,7 +865,57 @@ class ItemsController < ApplicationController
     item.save
     
     render :text=>vote, :layout=>false
-  end  
+  end 
+  
+  def thumbrate
+    #-- rate an item with up or down thumbs
+    @from = params[:from] || ''
+    item_id = params[:id].to_i
+    vote = params[:vote].to_i
+
+    item = Item.includes(:dialog,:group).find_by_id(item_id)
+
+    group_id = item.group_id.to_i
+    dialog_id = item.dialog_id.to_i
+    
+    #-- Check if they're allowed to rate it
+    if not item.voting_ok(current_participant.id)
+      render :text=>'', :layout=>false
+      return
+    end
+    
+    #-- See if that user already has rated that item, or create a new rating if they haven't
+    rating = Rating.where(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize
+    
+    rating.approval = vote    
+    rating.interest = vote.abs
+    rating.save!
+    
+    item_rating_summary = ItemRatingSummary.where(item_id: item_id).first_or_create
+    if current_participant.id == 6
+      item_rating_summary.recalculate(false,item.dialog)      
+    else
+      item_rating_summary.recalculate(false,item.dialog)
+    end
+    if (dialog_id > 0 and rating.dialog_id.to_i == 0) or (group_id > 0 and rating.group_id.to_i == 0)
+      rating.group_id = group_id
+      rating.dialog_id = dialog_id
+      if dialog_id > 0
+        dialog = Dialog.find_by_id(dialog_id)
+        rating.period_id = dialog.current_period if dialog
+      end
+      rating.save
+    end
+    
+    item.approval = item_rating_summary.app_average
+    item.interest = item_rating_summary.int_average
+    item.value = item_rating_summary.value
+    item.controversy = item_rating_summary.controversy
+    item.edit_locked = true if current_participant.id != item.posted_by
+    item.save
+    
+    render :text=>vote, :layout=>false
+  end   
   
   def get_summary
     @item_id = params[:id]

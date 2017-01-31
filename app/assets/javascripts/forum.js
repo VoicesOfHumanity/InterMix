@@ -740,6 +740,9 @@ function summaryswitch(id,top) {
 	}
 }
 function thumbhover(el,inout) {
+    if (thumbclicked) {
+        return;
+    }
     var id = $(el).data('item-id');
     var num = $(el).data('num'); // position, -3...3
     var value = $(el).data('value');  // Current value of vote
@@ -753,8 +756,21 @@ function thumbhover(el,inout) {
     var ondir, offdir, onstart, onend, offstart, offend, xel;
     if (inout=='in') {
         if (showing=='1' && onoff=='on') {
-            // Already on and showing, or within a range that is. Dim it a bit, to signal we're there
-            $(el).css('opacity','0.5');            
+            // Already on and showing, or within a range that is. Dim anything further out than it
+            //alert('num:'+num+' value:'+value);
+            if (num>0 && value>0 && num<value) {
+                for (var i=num+1;i<=value;i++) {
+                    var iabs = Math.abs(i);                
+                    xel = $('#thumb_'+id+'_up_'+iabs);
+                    $(xel).css('opacity','0.5');
+                }
+            } else if (num<0 && value<0 && num>value) {
+                for (var i=num-1;i>=value;i--) {
+                    var iabs = Math.abs(i);
+                    xel = $('#thumb_'+id+'_down_'+iabs);
+                    $(xel).css('opacity','0.5');
+                }
+            }
         } else {
             // Show it as being on, plus everything before/after
             // And everything in the other side off
@@ -820,7 +836,7 @@ function thumbhover(el,inout) {
                     $(xel).css('opacity','1.0');
                 } else if (i==1 && value<0) {
                     // Default 1 is off
-                    var imgsrc = "/images/thumbsi[off.jpg";                    
+                    var imgsrc = "/images/thumbsupoff.jpg";                    
                     $(xel).attr('src',imgsrc);
                     $(xel).css('opacity','1.0');                    
                 } else {
@@ -831,6 +847,80 @@ function thumbhover(el,inout) {
             
         }
     }
+}
+function clickthumb(id,num) {
+    // A click on an up or down thumb
+    thumbclicked = true;
+    var vote = num;
+    $.ajax({
+        type: "GET",
+        url: '/items/' + id + '/thumbrate',
+    	data: 'item_id='+id+'&vote='+num,
+        complete: function(t){	
+            $('#vote_app_rate_'+id).html(t.responseText);
+            var classname = 'radio_app_'+(vote+10);
+            $('.'+classname).attr('checked',true);
+            var classname = 'radio_int_'+vote;
+            $('.'+classname).attr('checked',true);            
+            get_summary(id);
+            thumbclicked = false;
+            updatethumbs(id,num);
+         }
+    });	
+}
+function updatethumbs(id,value) {
+    // Set all the thumbs for a certain id to have the right attributes, etc.
+    var showing, onoff;
+    for (var i=-3;i<=3;i++) {
+        var iabs = Math.abs(i);
+        showing = 1;
+        onoff = 'off';
+        if (i<0) {
+            var xel = $('#thumb_'+id+'_down_'+iabs);
+            if (value<0 && i>=value) {
+                // It is on
+                var imgsrc = "/images/thumbsdownon.jpg";                    
+                $(xel).attr('src',imgsrc);
+                $(xel).css('opacity','1.0');  
+                onoff = 'on';              
+            } else if (i==-1 && value>0) {
+                // Default 1 is off
+                var imgsrc = "/images/thumbsdownoff.jpg";                    
+                $(xel).attr('src',imgsrc);
+                $(xel).css('opacity','1.0');                    
+            } else {
+                // Don't show it
+                $(xel).css('opacity','0.0');
+                showing = 0;
+            }
+            $(xel).data('value',value);
+            $(xel).data('onoff',onoff);
+            $(xel).data('showing',showing);
+        } else if (i>0) {
+            var xel = $('#thumb_'+id+'_up_'+iabs);
+            if (value>0 && i<=value) {
+                // It is on
+                var imgsrc = "/images/thumbsupon.jpg";                    
+                $(xel).attr('src',imgsrc);
+                $(xel).css('opacity','1.0');
+                onoff = 'on';
+            } else if (i==1 && value<0) {
+                // Default 1 is off
+                var imgsrc = "/images/thumbsupoff.jpg";                    
+                $(xel).attr('src',imgsrc);
+                $(xel).css('opacity','1.0');                    
+            } else {
+                // Don't show it
+                $(xel).css('opacity','0.0');
+                showing = 0;
+            }
+            $(xel).data('value',value);
+            $(xel).data('onoff',onoff);
+            $(xel).data('showing',showing);
+        }
+        
+    }
+    
 }
 
 function html_to_short(htmlval,plainval) {
