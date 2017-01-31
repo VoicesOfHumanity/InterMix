@@ -32,6 +32,38 @@ class Item < ActiveRecord::Base
     #ApplicationController.helpers.my_helper_method
   end
   
+  def self.thumbs(iproc)
+    #-- Return one of -3, -2, -1, 0, 1, 2, 3, depending on number of thumbs
+    #logger.info("Item#thumbs #{iproc ? 'has iproc' : 'no iproc!'}")
+    #logger.info("Item#thumbs hasrating:#{iproc['hasrating'] ? iproc['hasrating'] : no}")
+    
+    #-- approval is between -3 and +3 already, so that will be the thumbs, if we have nothing else
+    if iproc and iproc['hasrating'].to_i > 0 and iproc['rateapproval']
+      approval = iproc['rateapproval'].to_i
+    else
+      approval = 0
+    end
+    #logger.info("Item#thumbs approval:#{approval}")
+    numthumbs = approval
+    
+    if numthumbs == 0
+      #-- Use interest as positive thumbs, if we don't have anything already
+      if iproc and iproc['hasrating'].to_i > 0 and iproc['rateinterest']
+        interest = iproc['rateinterest'].to_i
+      else
+        interest = 0
+      end
+      numthumbs = interest
+      if numthumbs > 3
+        numthumbs = 3
+      end
+    end
+
+    # Look at comments 
+
+    return numthumbs
+  end
+  
   def add_image(tempfilepath)
     #-- Handle an image that has been uploaded
     @picdir = "#{DATADIR}/items/#{self.id}"

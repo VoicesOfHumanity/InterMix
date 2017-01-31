@@ -20,6 +20,42 @@ module ApplicationHelper
     end    
   end
   
+  def thumbvote(iproc)
+    # Show the thumbs up/down pictures under an item
+    item_id = iproc['id']
+    out = ''
+    for num in [-3,-2,-1,0,1,2,3]
+      style = ''
+      if num == 0
+        out += "&nbsp;\n"
+      else
+        onoff = ''
+        showing = 0
+        if num < 0
+          onoff = Item.thumbs(iproc) <= num ? 'on' : 'off'          
+          imgsrc = "/images/thumbsdown#{Item.thumbs(iproc) <= num ? 'on' : 'off'}.jpg"
+          domid = "thumb_#{item_id}_down_#{num.abs}"
+          if num < -1 and Item.thumbs(iproc) > num
+            style = "opacity:0"
+          else
+            showing = 1  
+          end
+        else
+          onoff = Item.thumbs(iproc) >= num ? 'on' : 'off'
+          imgsrc = "/images/thumbsup#{Item.thumbs(iproc) >= num ? 'on' : 'off'}.jpg"
+          domid = "thumb_#{item_id}_up_#{num.abs}"
+          if num > 1 and Item.thumbs(iproc) < num
+            style = "opacity:0"
+          else
+            showing = 1
+          end          
+        end
+        out += "<img src=\"#{imgsrc}\" id=\"#{domid}\" style=\"#{style}\" class=\"thumbupdown\" data-item-id=\"#{item_id}\" data-num=\"#{num}\" data-value=\"#{Item.thumbs(iproc)}\" data-onoff=\"#{onoff}\" data-showing=\"#{showing}\">\n"
+      end
+    end
+    out
+  end
+  
   def domname(group,dialog)
     #-- Return an appropriate domain name with subdomains, depending on the group and discussion
     if group and group.shortname.to_s != ''

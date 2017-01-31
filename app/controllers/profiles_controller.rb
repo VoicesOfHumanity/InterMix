@@ -557,7 +557,7 @@ class ProfilesController < ApplicationController
           html_content = template.render(@cdata)
         else
           html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join Voices of Humanity<br/>"
-          html_content += "Go <a href=\"http://#{@cdata['joinlink']}/join?email=#{email}\">here</a> to fill in your information and join.<br>"
+          html_content += "Go <a href=\"#{@cdata['joinlink']}\">here</a> to fill in your information and join.<br>"
           html_content += "</p>"            
         end
       

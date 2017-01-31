@@ -111,7 +111,6 @@ DEFAULT_COMMUNITIES = {
   'more_equality' => "More equality: reverse the trend toward economic inequality",
   'better_cities' => "Better Cities: inclusive, safe, resilient and sustainable urban areas",
   'simplifying' => "Simplifying: do more and better with less",
-  'climate_action' => "Climate Action: combat climate change",
   'protect_oceans' => "Protecting the oceans",
   'protect_lands' => "Protecting land resources, biodiversity",
   'safe_for_all' => "Peace and justice: end violence and corruption",

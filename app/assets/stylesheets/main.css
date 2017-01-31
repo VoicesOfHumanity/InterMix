@@ -367,6 +367,25 @@ div.forumitem div.iteminfopic {
   background-color:#999;
 }
 
+div.itemthumbdiv {
+  clear: both;
+  float: left;
+  width: 100%;
+  margin-top: 5px;
+}
+div.itemthumbdiv hr {
+  margin-bottom: 5px;
+}
+div.itemthumbdiv img {
+  height: 30px;
+  width: 30px;
+}
+div.itemthumbdiv div.thumbtitle {
+  float: left;
+  margin-top: 5px;
+  margin-right: 7px;
+}
+
 div.forumitem div.itemvoting {
     position: absolute;
     top: -10px;
