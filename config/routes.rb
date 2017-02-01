@@ -213,7 +213,7 @@ Rails.application.routes.draw do
   
   resources :items do
     get :rate, :on => :member
-    get :thumbrate, :on => :member
+    post :thumbrate, :on => :member
     get :get_summary, :on => :member
     get :play, :on => :member
     get :view, :on => :member

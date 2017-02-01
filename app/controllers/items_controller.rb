@@ -887,8 +887,14 @@ class ItemsController < ApplicationController
     #-- See if that user already has rated that item, or create a new rating if they haven't
     rating = Rating.where(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize
     
-    rating.approval = vote    
-    rating.interest = vote.abs
+    if rating.approval == vote
+      #-- If they clicked on the existing rating, turn it off
+      rating.approval = 0    
+      rating.interest = 0
+    else
+      rating.approval = vote    
+      rating.interest = vote.abs
+    end
     rating.save!
     
     item_rating_summary = ItemRatingSummary.where(item_id: item_id).first_or_create

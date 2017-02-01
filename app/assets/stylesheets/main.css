@@ -9,7 +9,7 @@ input {
 	background-color: #E6E6E6;
 	border-bottom: 1px solid dimGray;
 	border-left: 1px solid dimGray;
-	border-right: 1px solid dimGray;
+	border-right: 1px solid dimGray; 
 	border-top: 1px solid dimGray;
 	font-family: Verdana, Helvetica, sans-serif;
 }
@@ -379,6 +379,7 @@ div.itemthumbdiv hr {
 div.itemthumbdiv img {
   height: 30px;
   width: 30px;
+  margin-right: -5px;
 }
 div.itemthumbdiv div.thumbtitle {
   float: left;
@@ -441,7 +442,8 @@ div.forumitem div.summary {
     border: 1px solid transparent;
 }
 div.forumitem div.votesection {
-	float: left;
+	/* float: left; */
+  float:right;
 	padding: 0 8px 0 8px;
 	color: #999;
 	height: 20px;

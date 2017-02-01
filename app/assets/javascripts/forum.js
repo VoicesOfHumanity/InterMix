@@ -739,6 +739,7 @@ function summaryswitch(id,top) {
     	sumshowing = true;	
 	}
 }
+var thumbclicked = false;
 function thumbhover(el,inout) {
     if (thumbclicked) {
         return;
@@ -818,7 +819,7 @@ function thumbhover(el,inout) {
                     var imgsrc = "/images/thumbsdownon.jpg";                    
                     $(xel).attr('src',imgsrc);
                     $(xel).css('opacity','1.0');
-                } else if (i==-1 && value>0) {
+                } else if (i==-1 && value>=0) {
                     // Default 1 is off
                     var imgsrc = "/images/thumbsdownoff.jpg";                    
                     $(xel).attr('src',imgsrc);
@@ -834,7 +835,7 @@ function thumbhover(el,inout) {
                     var imgsrc = "/images/thumbsupon.jpg";                    
                     $(xel).attr('src',imgsrc);
                     $(xel).css('opacity','1.0');
-                } else if (i==1 && value<0) {
+                } else if (i==1 && value<=0) {
                     // Default 1 is off
                     var imgsrc = "/images/thumbsupoff.jpg";                    
                     $(xel).attr('src',imgsrc);
@@ -852,8 +853,29 @@ function clickthumb(id,num) {
     // A click on an up or down thumb
     thumbclicked = true;
     var vote = num;
+    if (num>0) {
+        var updown = 'up';
+    } else {
+        var updown = 'down';
+    }
+    var iabs = Math.abs(num); 
+    var el = $('#thumb_'+id+'_'+updown+'_'+iabs);
+    var value = $(el).data('value');  // Current value of vote
+    var onoff = $(el).data('onoff');  // Is it on (red) or off (grey)
+    var showing = $(el).data('showing');  // Is it currently visible 1/0
+    if (num==value) {
+        // If we're clicking on the current value, turn it off
+        var imgsrc = "/images/thumbs"+updown+"off.jpg";                    
+        $(el).attr('src',imgsrc);
+        $(el).data('onoff','off');
+        if (num>0) {
+            num = value-1;
+        } else if (num<0) {
+            num = value+1;
+        }
+    }
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: '/items/' + id + '/thumbrate',
     	data: 'item_id='+id+'&vote='+num,
         complete: function(t){	
@@ -883,7 +905,7 @@ function updatethumbs(id,value) {
                 $(xel).attr('src',imgsrc);
                 $(xel).css('opacity','1.0');  
                 onoff = 'on';              
-            } else if (i==-1 && value>0) {
+            } else if (i==-1 && value>=0) {
                 // Default 1 is off
                 var imgsrc = "/images/thumbsdownoff.jpg";                    
                 $(xel).attr('src',imgsrc);
@@ -904,7 +926,7 @@ function updatethumbs(id,value) {
                 $(xel).attr('src',imgsrc);
                 $(xel).css('opacity','1.0');
                 onoff = 'on';
-            } else if (i==1 && value<0) {
+            } else if (i==1 && value<=0) {
                 // Default 1 is off
                 var imgsrc = "/images/thumbsupoff.jpg";                    
                 $(xel).attr('src',imgsrc);

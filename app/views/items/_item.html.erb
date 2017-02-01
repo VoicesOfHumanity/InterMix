@@ -21,7 +21,7 @@ end
 		
 	<div class="itemvoting">
 
-		<div id="vote_int_<%= item.id %>" class="votesection <%= intclass %>" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="intswitch(<%= item.id %>,<%= top %>)"<% else %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="vote_int_<%= item.id %>" class="votesection <%= intclass %>" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="intswitch(<%= item.id %>,<%= top %>)"<% else %>onmouseover="intshow(<%= item.id %>,<%= top %>)" onmouseout="inthide(<%= item.id %>,<%= top %>)"<% end %> style="display:none">
 			
 			<div id="intshort_<%= item.id %>" class="intshort">
 				<img src="/images/sface.gif" alt="face"/>
@@ -48,7 +48,7 @@ end
 			</div>				
 		</div>
 				
-		<div id="vote_app_<%= item.id %>" class="votesection <%= appclass %>" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="appswitch(<%= item.id %>,<%= top %>)"<% else %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %>>
+		<div id="vote_app_<%= item.id %>" class="votesection <%= appclass %>" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="appswitch(<%= item.id %>,<%= top %>)"<% else %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %> style="display:none">
 			<div id="appshort_<%= item.id %>" class="appshort">
 				<img src="/images/fface.gif" alt="face"/>				
 			<span id="vote_app_rate_<%= item.id %>"><%= (@itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0 and @itemsproc[item.id]['rateapproval']) ? @itemsproc[item.id]['rateapproval'].to_i : '-'%></span>
