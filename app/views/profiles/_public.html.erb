@@ -49,6 +49,13 @@
 <% if @participant.refugee -%>
 <tr><td class="label">Refugee:</td><td>yes</td></tr>	
 <% end -%>
+<tr><td class="label">Communities:</td><td>
+<% DEFAULT_COMMUNITIES.each do |tag,desc| -%>
+  <% if @participant.tag_list.include?(tag) -%>
+    <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= tag %>"><%= desc %></a><br>
+  <% end -%>
+<% end -%>
+</td></tr>
 
 <% if false -%>
 <tr><td class="label">Groups:</td><td>

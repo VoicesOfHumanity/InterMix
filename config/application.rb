@@ -78,57 +78,60 @@ CROSSTALK_OPTIONS = ['','gender','gender1','age','age1']
 CROSSTALK_OPTIONS_TEXT = {''=>'No Crosstalk','gender'=>'Gender Crosstalk','gender1'=>'Gender Crosstalk 1st round','age'=>'Age Crosstalk','age1'=>'Age Crosstalk 1st round'}
 
 DEFAULT_COMMUNITIES = {
-  'climate_action' => "Climate Action: combat climate change",
+  'advice' => "Advice",
+  'climateaction' => "Climate Action: combat climate change",
   'commons' => "Commons movement",
   'genderequalty' => "Gender equality: empower all women and girls",
-  'global_justice' => "Global Justice Movement",
+  'globaljustice' => "Global Justice Movement",
   'gr8transition' => "Great Transition: big systemic changes are needed",
   'indigenous' => "Indigenous peoples",
   'interfaith' => "Interfaith movement",
   'labor' => "Labor movement",
   'nonviolence' => "Nonviolence: a force more powerful",
-  'no_nukes' => "Nuclear Disarmament",
+  'nonukes' => "Nuclear Disarmament",
   'minority' => "Other minority: disadvantaged minorities",
   'peace' => "Peace with general and complete disarmament",
   'refugees' => "Refugees, asylees, illegal immigrants",
-  'save_children' => "Save the children",
+  'savechildren' => "Save the children",
+  'ourstory' => "Stories for all ages",
   'un_goals' => "UN Goals",
   'veterans' => "Veterans",
   'voh' => "Voices of Humanity supporters",
   
-  'human_rights' => "Human Rights: UN Universal Declaration of Human Rights",
+  'humanrights' => "Human Rights: UN Universal Declaration of Human Rights",
   'cedaw' => "Convention on the Elimination of all Forms of Discrimination Against Women",
   
   'sdgs' => "UN Sustainable Development Goals",
-  'end_poverty' => "End poverty in all its forms everywhere",
-  'end_hunger' => "End hunger and promote sustainable agriculture",
-  'good_health' => "Good health for all at all ages",
-  'good_education' => "Good education: inclusive, equitable quality education for all",
-  'clean_water' => "Clean water: sustainable clean water and sanitation for all",
+  'endpoverty' => "End poverty in all its forms everywhere",
+  'endhunger' => "End hunger and promote sustainable agriculture",
+  'goodhealth' => "Good health for all at all ages",
+  'goodeducation' => "Good education: inclusive, equitable quality education for all",
+  'cleanwater' => "Clean water: sustainable clean water and sanitation for all",
   'renewablenergy' => "Renewable energy: affordable, reliable, sustainable energy for all",
-  'good_jobs' => "Good jobs and sustainable development for all",
+  'goodjobs' => "Good jobs and sustainable development for all",
   'infrastructure' => "Better infrastructure: innovative and resilient economic underpinning",
-  'more_equality' => "More equality: reverse the trend toward economic inequality",
-  'better_cities' => "Better Cities: inclusive, safe, resilient and sustainable urban areas",
+  'moreequality' => "More equality: reverse the trend toward economic inequality",
+  'bettercities' => "Better Cities: inclusive, safe, resilient and sustainable urban areas",
   'simplifying' => "Simplifying: do more and better with less",
-  'protect_oceans' => "Protecting the oceans",
-  'protect_lands' => "Protecting land resources, biodiversity",
-  'safe_for_all' => "Peace and justice: end violence and corruption",
-  'sdg_partners' => "SDG partnerships: organize across the silos"
+  'protectoceans' => "Protecting the oceans",
+  'protecttheland' => "Protecting land resources, biodiversity",
+  'safeforall' => "Peace and justice: end violence and corruption",
+  'sdgpartners' => "SDG partnerships: organize across the silos"
 }
 GLOBAL_COMMUNITIES = [
-  'climate_action','commons','genderequalty','global_justice','gr8transition','indigenous',
-  'interfaith','labor','nonviolence','no_nukes','minority','peace','refugees',
-  'save_children','un_goals','veterans','voh' 
+  'advice','climateaction','commons','genderequalty','globaljustice','gr8transition','indigenous',
+  'interfaith','labor','nonviolence','nonukes','minority','peace','refugees',
+  'savechildren','ourstory','un_goals','veterans','voh' 
 ]
 UNGOAL_COMMUNITIES = [
-  'un_goals','peace','no_nukes','human_rights','cedaw'
+  'un_goals','peace','nonukes','humanrights','cedaw'
 ]
 SUSTDEV_COMMUNITIES = [
-  'sdgs','end_poverty','end_hunger','good_health','good_education',
-  'genderequalty','clean_water','renewablenergy','good_jobs','infrastructure','more_equality','better_cities',
-  'simplifying','climate_action','protect_oceans','protect_lands','safe_for_all','sdg_partners'
+  'sdgs','endpoverty','endhunger','goodhealth','goodeducation',
+  'genderequalty','cleanwater','renewablenergy','goodjobs','infrastructure','moreequality','bettercities',
+  'simplifying','climateaction','protectoceans','protecttheland','safeforall','sdgpartners'
 ]
+BOLD_COMMUNITIES = ['un_goals','sdgs']
 
 
 EMAIL_PREFS = ['instant','daily','weekly','never']

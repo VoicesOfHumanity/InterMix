@@ -92,6 +92,29 @@
     <div style="display:inline;position:relative;top:20px"><b>Refugee</b></div>
     <% ref_checked = {}; ref_checked[:checked] = 'checked' if @participant.refugee %>
 		<%= f.input :refugee, :as => :boolean, :label=>"check here if you identify as a refugee", :input_html => ref_checked %>		
+    
+    <li class="select required">
+      <div style="width:25%;float:left;font-weight:bold">Communities<br>check to join</div>
+      <div style="width:75%;float:left">
+        <% GLOBAL_COMMUNITIES.each do |tag| -%>
+          <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
+          <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" <%= checked %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
+        <% end -%>
+        [More Communities]<br>
+        <% UNGOAL_COMMUNITIES.each do |tag| -%>
+          <% b = BOLD_COMMUNITIES.include?(tag) %>
+          <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
+          <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
+        <% end -%>
+        <% SUSTDEV_COMMUNITIES.each do |tag| -%>
+          <% b = BOLD_COMMUNITIES.include?(tag) %>        
+          <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
+          <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
+        <% end -%>
+      </div>
+    </li>  
+    
+    
 	<% end %>
 	<br>
 	<%= f.inputs do %>	
