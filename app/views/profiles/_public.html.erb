@@ -25,7 +25,6 @@
 <tr><td class="label">Bio Region:</td><td><%= @participant.bioregion %></td></tr>	
 <tr><td class="label">Faith Tradition:</td><td><%= @participant.faith_tradition %></td></tr>	
 
-<tr><td class="label">Community Tags:</td><td><%=raw @participant.show_tag_list(true) %></td></tr>	
 
 <tr><td class="label">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %> GMT</td></tr>	
 <tr><td class="label">Member #:</td><td><%= @participant.id %></td></tr>	
@@ -34,6 +33,7 @@
 <% info = metamap_nodes[metamap.id] if metamap_nodes[metamap.id] %>
 <tr><td class="label"><%= metamap.name %></td><td><%= info ? (info[3].to_s!='' ? info[3] : info[2]) : '???' %></td></tr>
 <% end -%>
+<% if false -%>
 <% if @participant.indigenous -%>
 <tr><td class="label">Indigenous:</td><td>yes</td></tr>	
 <% end -%>
@@ -49,6 +49,7 @@
 <% if @participant.refugee -%>
 <tr><td class="label">Refugee:</td><td>yes</td></tr>	
 <% end -%>
+<% end -%>
 <tr><td class="label">Communities:</td><td>
 <% DEFAULT_COMMUNITIES.each do |tag,desc| -%>
   <% if @participant.tag_list.include?(tag) -%>
@@ -56,6 +57,9 @@
   <% end -%>
 <% end -%>
 </td></tr>
+
+<tr><td class="label">Custom Tags:</td><td><%=raw @participant.show_tag_list(true) %></td></tr>	
+
 
 <% if false -%>
 <tr><td class="label">Groups:</td><td>

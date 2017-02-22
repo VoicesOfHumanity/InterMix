@@ -53,19 +53,6 @@
 		<%= f.input :political, :required => false, :label => 'Political Affiliation' %>
 		<%= f.input :faith_tradition, :required => false %>
     
-    <li class="select required">
-      <label class="label">Community tags</label>
-      <select size="5" id="comtags" style="width: 150px;float:left">
-        <% for tag in @participant.tag_list -%>
-          <option><%= tag %></option>
-        <% end -%>
-      </select>
-      <div style="width: 160px;float:left;padding: 0 0 0 5px">
-        <input type="button" value="&lt; add" onclick="addtag()"> <input type="text" style="width: 100px" id="tag2add" maxlength="14"><br>
-        <input type="button" value="&gt; remove" onclick="remtag()">
-      </div>
-    </li>
-    
 		<% @participant.metamaps_h.each do |metamap_id,metamap_name,metamap| -%>
   		<% metamap_nodes = @participant.metamap_nodes_h %>
   		<% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
@@ -98,23 +85,39 @@
       <div style="width:75%;float:left">
         <% GLOBAL_COMMUNITIES.each do |tag| -%>
           <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
-          <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" <%= checked %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
+          <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
         <% end -%>
-        [More Communities]<br>
-        <% UNGOAL_COMMUNITIES.each do |tag| -%>
-          <% b = BOLD_COMMUNITIES.include?(tag) %>
-          <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
-          <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
-        <% end -%>
-        <% SUSTDEV_COMMUNITIES.each do |tag| -%>
-          <% b = BOLD_COMMUNITIES.include?(tag) %>        
-          <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
-          <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
-        <% end -%>
+        [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>
+        <div id="more_com" style="display:none">
+          <% UNGOAL_COMMUNITIES.each do |tag| -%>
+            <% b = BOLD_COMMUNITIES.include?(tag) %>
+            <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
+            <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
+          <% end -%>
+          <% SUSTDEV_COMMUNITIES.each do |tag| -%>
+            <% b = BOLD_COMMUNITIES.include?(tag) %>        
+            <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
+            <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
+          <% end -%>
+        </div>
       </div>
     </li>  
     
-    
+    <li class="select required">
+      <label class="label">My custom community tags</label>
+      <select size="5" id="comtags" style="width: 150px;float:left">
+        <% for tag in @participant.tag_list -%>
+          <% if not DEFAULT_COMMUNITIES.keys.include?(tag) -%>
+          <option><%= tag %></option>
+          <% end -%>
+        <% end -%>
+      </select>
+      <div style="width: 160px;float:left;padding: 0 0 0 5px">
+        <input type="button" value="&lt; add" onclick="addtag()"> <input type="text" style="width: 100px" id="tag2add" maxlength="14"><br>
+        <input type="button" value="&gt; remove" onclick="remtag()">
+      </div>
+    </li>    
+      
 	<% end %>
 	<br>
 	<%= f.inputs do %>	
@@ -230,6 +233,27 @@ function savetags() {
       xlist += tag;
     }
   });  
+  $('.com_check').each(function() {
+    if ($(this).prop('checked')) {
+      tag = $(this).data('tag');
+      if (xlist != '') {
+        xlist += ',';
+      }
+      xlist += tag;
+    }
+  })
   $('#tag_list').val(xlist);
+}
+var showing_more = false;
+function more_less() {
+  if (showing_more) {
+    $('#more_com').hide();
+    $('#more_less_com').html("More Communities");
+    showing_more = false;
+  } else {    
+    $('#more_com').show();
+    $('#more_less_com').html("Fewer Communities");
+    showing_more = true;
+  }
 }
 </script>

@@ -1003,10 +1003,24 @@ class ItemsController < ApplicationController
     crit[:gender] = params[:meta_3].to_i
     crit[:age] = params[:meta_5].to_i
     
-    crit[:comtag] = params[:comtag].to_s
+    crit[:comtag] = params[:comtag].to_s     # Might be blank, *my*, or a tag
     crit[:messtag] = params[:messtag].to_s
     session[:comtag] = crit[:comtag]
     session[:messtag] = crit[:messtag]
+    
+    #-- Checkboxes are also about comtags
+    #if params[:check] and params[:check].class == Hash
+    #  check = []
+    #  if crit[:comtag] != ''
+    #    check << crit[:comtag]
+    #  end
+    #  params[:check].each do |tag,val|
+    #    if val.to_i == 1
+    #      check << tag
+    #    end
+    #  end      
+    #  crit[:comtag] = check
+    #end
     
     @datetype = params[:datetype]
     @datefixed = params[:datefixed]

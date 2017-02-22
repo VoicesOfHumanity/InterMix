@@ -127,16 +127,15 @@
       <input type="checkbox" id="veteran" value="1" onclick="per_reload()"<% if @veteran %> checked<% end %>>Veteran<br>
       <input type="checkbox" id="interfaith" value="1" onclick="per_reload()"<% if @interfaith %> checked<% end %>>Interfaith<br>
       <input type="checkbox" id="refugee" value="1" onclick="per_reload()"<% if @refugee %> checked<% end %>>Refugee<br>
-    </div>
-    <% end %>
-    
+    </div>    
     <div style="margin: 20px 0 0 0;">
       <% DEFAULT_COMMUNITIES.each do |tag,desc| -%>
         <% if current_participant.tag_list.include?(tag) -%>
-          <input type="checkbox" id="<%= tag %>" value="1" onclick="per_reload()"<% if false %> checked<% end %>><%= desc %><br>
+          <input type="checkbox" id="check_<%= tag %>" data-tag="<%= tag %>" value="1" class="com_check" onclick="per_reload()"<% if false %> checked<% end %>><%= desc %><br>
         <% end -%>
       <% end -%>
     </div>
+    <% end %>
 
     <div style="display:none;margin: 20px 0 0 0;">
       <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Listing<br>
@@ -260,11 +259,13 @@ function per_reload(first,num,whatchanged,page) {
   }
   cur_geo_level = $("input[name='geo_level_radio']:checked").val();
   cur_group_level = $("input[name='group_level_radio']:checked").val();
+  
   var indigenous = $('#indigenous').is(':checked') ? 1 : 0;
   var other_minority = $('#other_minority').is(':checked') ? 1 : 0;
   var veteran = $('#veteran').is(':checked') ? 1 : 0;
   var interfaith = $('#interfaith').is(':checked') ? 1 : 0;
   var refugee = $('#refugee').is(':checked') ? 1 : 0;
+  
   var show_result = $('input[name=show_result]:checked').val();
   //checkbox
   //var meta_3 = $("input[name='meta_3[]']:checked").map(function(){
@@ -313,6 +314,15 @@ function per_reload(first,num,whatchanged,page) {
   //  $('#newthreadbutton').prop('disabled', true);   
   //}
   var data = {page: page, geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag}
+  
+  //var tag;
+  //$('.com_check').each(function(i) {
+  //  if ($(this).val()=='1') {
+  //    tag = $(this).data('tag');
+  //    data['check['+tag+']'] = 1
+  //  }
+  //});
+  
   if (whatchanged !== undefined) {
     data['whatchanged'] = whatchanged;
   }

@@ -674,7 +674,12 @@ class Item < ActiveRecord::Base
     
     num_items_total = items.length if regmean
     
-    items = items.tagged_with(tag, :on => :tags) if tag != ''
+    if tag.class == Array and tag.length > 0
+      items = items.tagged_with(tag, :on => :tags, :match_all => true)
+    elsif tag.class = String and tag != ''
+      items = items.tagged_with(tag, :on => :tags)
+    end
+    
     if subgroup == '*' or subgroup == ''
       #-- All messages, do nothing
     elsif subgroup == 'my'

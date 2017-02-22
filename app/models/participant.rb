@@ -300,13 +300,15 @@ class Participant < ActiveRecord::Base
   def show_tag_list(with_links=false)
     xlist = ''
     tags.each do |tag|
-      xlist += ', ' if xlist != ''
-      xlist += '@'
-      if with_links
-        xlist += "<a href=\"/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{tag.name}\">" + tag.name + "</a>"
-      else
-        xlist += tag.name
-      end 
+      if not DEFAULT_COMMUNITIES.keys.include?(tag.to_s)
+        xlist += ', ' if xlist != ''
+        xlist += '@'
+        if with_links
+          xlist += "<a href=\"/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{tag.name}\">" + tag.name + "</a>"
+        else
+          xlist += tag.name
+        end
+      end
     end
     xlist
   end
