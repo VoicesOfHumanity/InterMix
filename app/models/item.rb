@@ -676,7 +676,7 @@ class Item < ActiveRecord::Base
     
     if tag.class == Array and tag.length > 0
       items = items.tagged_with(tag, :on => :tags, :match_all => true)
-    elsif tag.class = String and tag != ''
+    elsif tag.class == String and tag != ''
       items = items.tagged_with(tag, :on => :tags)
     end
     
