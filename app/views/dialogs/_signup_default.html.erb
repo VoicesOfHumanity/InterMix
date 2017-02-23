@@ -33,14 +33,37 @@
 <tr><td>{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
 {% endfor %}
 
+<% if false -%>
 <tr><td>Indigenous</td><td><input type="checkbox" name="indigenous" value="1"<%= @indigenous.to_i==1 ? "checked" : "" %>> check here if you identify with an indigenous people or tribe</td></tr>
 <tr><td>Other Minority</td><td><input type="checkbox" name="other_minority" value="1"<%= @other_minority.to_i==1 ? "checked" : "" %>> check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country</td></tr>
 <tr><td>Veteran</td><td><input type="checkbox" name="veteran" value="1"<%= @veteran.to_i==1 ? "checked" : "" %>> check here if you are a veteran</td></tr>
 <tr><td>Interfaith</td><td><input type="checkbox" name="interfaith" value="1"<%= @interfaith.to_i==1 ? "checked" : "" %>> check here if you identify as interfaith</td></tr>
 <tr><td>Refugee</td><td><input type="checkbox" name="refugee" value="1"<%= @refugee.to_i==1 ? "checked" : "" %>> check here if you identify as a refugee</td></tr>
+<% end -%>
+
+<tr>
+  <td style="vertical-align:top">Communities<br>check to join</td>
+  <td>
+    <% GLOBAL_COMMUNITIES.each do |tag| -%>
+      <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"> <%= DEFAULT_COMMUNITIES[tag] %><br>
+    <% end -%>
+    [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>
+    <div id="more_com" style="display:none">
+      <% UNGOAL_COMMUNITIES.each do |tag| -%>
+        <% b = BOLD_COMMUNITIES.include?(tag) %>
+        <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
+      <% end -%>
+      <% SUSTDEV_COMMUNITIES.each do |tag| -%>
+        <% b = BOLD_COMMUNITIES.include?(tag) %>        
+        <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
+      <% end -%>
+    </div>
+  </td>
+</tr> 
 
 </table>
-<input type="submit" value="Register!">    
+<input type="submit" value="Register!" onclick="savetags();return(true)">  
+<input type="hidden" id="tag_list" name="participant[tag_list]" value="">
 </form>
 
 <p><b><br><span style="color: DarkRed;">A confirmation email will be sent. Be sure to respond to that email.</span></b> The confirmation link will take you online to the {{ dialog.name }} discussion where you can participate as a member of <i>{{ group.name }}</i>.</p>
@@ -48,3 +71,41 @@
 <p><b>Important: </b>If the confirmation email does not arrive within a few minutes, please check your spam folder.</p>
 
 </td></tr></table></div>
+
+<script>
+var showing_more = false;
+function more_less() {
+  if (showing_more) {
+    $('#more_com').hide();
+    $('#more_less_com').html("More Communities");
+    showing_more = false;
+  } else {    
+    $('#more_com').show();
+    $('#more_less_com').html("Fewer Communities");
+    showing_more = true;
+  }
+}
+function savetags() {
+  var xlist = '';
+  $('#comtags option').each(function() {
+    var tag = $(this).val();
+    tag = tag.replace(/[^0-9A-za-z_]/gi, '').toLowerCase();
+    if (tag != '') {
+      if (xlist != '') {
+        xlist += ',';
+      }
+      xlist += tag;
+    }
+  });  
+  $('.com_check').each(function() {
+    if ($(this).prop('checked')) {
+      tag = $(this).data('tag');
+      if (xlist != '') {
+        xlist += ',';
+      }
+      xlist += tag;
+    }
+  })
+  $('#tag_list').val(xlist);
+}
+</script>

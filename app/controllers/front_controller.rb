@@ -533,6 +533,7 @@ class FrontController < ApplicationController
       @participant.veteran = (params[:veteran].to_i == 1)
       @participant.interfaith = (params[:interfaith].to_i == 1)
       @participant.refugee = (params[:refugee].to_i == 1)
+      @participant.tag_list = params[:participant][:tag_list] if params[:participant].has_key?(:tag_list)
     end
 
     if flash[:alert] != ''
