@@ -240,7 +240,7 @@ end
     
     <div id="tags_<%= item.id %>" style="<% if false and showlong===false %>display:none<% end %>">
     <% if true and item.participant -%>
-      <% comtags = item.participant.show_tag_list(true) %>
+      <% comtags = item.participant.show_tag_list(true,true) %>
       <% if comtags.to_s != '' -%>
         <div class="iteminfotxt">
           Author's Communities: <%=raw comtags %>

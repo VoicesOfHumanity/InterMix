@@ -64,6 +64,7 @@
   		</li>		
 		<% end -%>
 		
+    <% if false -%>
 		<div style="display:inline;position:relative;top:20px"><b>Indigenous</b></div>
     <% ind_checked = {}; ind_checked[:checked] = 'checked' if @participant.indigenous %>
 		<%= f.input :indigenous, :as => :boolean, :label=>"check here if you identify with an indigenous people or tribe", :input_html => ind_checked %>
@@ -79,6 +80,9 @@
     <div style="display:inline;position:relative;top:20px"><b>Refugee</b></div>
     <% ref_checked = {}; ref_checked[:checked] = 'checked' if @participant.refugee %>
 		<%= f.input :refugee, :as => :boolean, :label=>"check here if you identify as a refugee", :input_html => ref_checked %>		
+    <% end -%>
+    
+    <p><input id="settings" type="submit" value="Save" onclick="savetags();return(true)"><br><br></p>
     
     <li class="select required">
       <div style="width:25%;float:left;font-weight:bold">Communities<br>check to join</div>

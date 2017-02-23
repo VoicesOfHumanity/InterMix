@@ -81,20 +81,20 @@ DEFAULT_COMMUNITIES = {
   'advice' => "Advice",
   'climateaction' => "Climate Action: combat climate change",
   'commons' => "Commons movement",
-  'genderequalty' => "Gender equality: empower all women and girls",
+  'genderequality' => "Gender equality: empower all women and girls",
   'globaljustice' => "Global Justice Movement",
   'gr8transition' => "Great Transition: big systemic changes are needed",
   'indigenous' => "Indigenous peoples",
   'interfaith' => "Interfaith movement",
   'labor' => "Labor movement",
   'nonviolence' => "Nonviolence: a force more powerful",
-  'nonukes' => "Nuclear Disarmament",
+  'nuclear_disarm' => "Nuclear Disarmament",
   'minority' => "Other disadvantaged minorities",
   'peace' => "Peace with general and complete disarmament",
   'refugees' => "Refugees, asylees, illegal immigrants",
   'savechildren' => "Save the children",
   'ourstory' => "Stories for all ages",
-  'un_goals' => "UN Goals",
+  'ungoals' => "UN Goals",
   'veterans' => "Veterans",
   'voh' => "Voices of Humanity supporters",
   
@@ -119,16 +119,16 @@ DEFAULT_COMMUNITIES = {
   'sdgpartners' => "SDG partnerships: organize across the silos"
 }
 GLOBAL_COMMUNITIES = [
-  'advice','climateaction','commons','genderequalty','globaljustice','gr8transition','indigenous',
-  'interfaith','labor','nonviolence','nonukes','minority','peace','refugees',
-  'savechildren','ourstory','un_goals','veterans','voh' 
+  'advice','climateaction','commons','genderequality','globaljustice','gr8transition','indigenous',
+  'interfaith','labor','nonviolence','nuclear_disarm','minority','peace','refugees',
+  'savechildren','ourstory','ungoals','veterans','voh' 
 ]
 UNGOAL_COMMUNITIES = [
-  'un_goals','peace','nonukes','humanrights','cedaw'
+  'ungoals','peace','nuclear_disarm','humanrights','cedaw'
 ]
 SUSTDEV_COMMUNITIES = [
   'sdgs','endpoverty','endhunger','goodhealth','goodeducation',
-  'genderequalty','cleanwater','renewablenergy','goodjobs','infrastructure','moreequality','bettercities',
+  'genderequality','cleanwater','renewablenergy','goodjobs','infrastructure','moreequality','bettercities',
   'simplifying','climateaction','protectoceans','protecttheland','safeforall','sdgpartners'
 ]
 BOLD_COMMUNITIES = ['un_goals','sdgs']

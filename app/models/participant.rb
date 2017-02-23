@@ -297,10 +297,10 @@ class Participant < ActiveRecord::Base
     ( self.followers + self.idols ).uniq
   end    
   
-  def show_tag_list(with_links=false)
+  def show_tag_list(with_links=false,include_check=false)
     xlist = ''
     tags.each do |tag|
-      if not DEFAULT_COMMUNITIES.keys.include?(tag.to_s)
+      if include_check or not DEFAULT_COMMUNITIES.keys.include?(tag.to_s)
         xlist += ', ' if xlist != ''
         xlist += '@'
         if with_links

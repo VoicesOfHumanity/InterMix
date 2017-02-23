@@ -51,15 +51,19 @@
 <% end -%>
 <% end -%>
 <tr><td class="label">Communities:</td><td>
-<% DEFAULT_COMMUNITIES.each do |tag,desc| -%>
-  <% if @participant.tag_list.include?(tag) -%>
-    <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= tag %>"><%= desc %></a><br>
+  <%=raw @participant.show_tag_list(true,true) %>
+  <% if false -%>
+    <% DEFAULT_COMMUNITIES.each do |tag,desc| -%>
+      <% if @participant.tag_list.include?(tag) -%>
+        <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= tag %>"><%= desc %></a><br>
+      <% end -%>
+    <% end -%>
   <% end -%>
-<% end -%>
 </td></tr>
 
+<% if false -%>
 <tr><td class="label">Custom Tags:</td><td><%=raw @participant.show_tag_list(true) %></td></tr>	
-
+<% end -%>
 
 <% if false -%>
 <tr><td class="label">Groups:</td><td>
