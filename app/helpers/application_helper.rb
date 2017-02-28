@@ -23,6 +23,7 @@ module ApplicationHelper
   def thumbvote(iproc)
     # Show the thumbs up/down pictures under an item
     item_id = iproc['id']
+    value = Item.thumbs(iproc)
     out = ''
     for num in [-3,-2,-1,0,1,2,3]
       style = ''
@@ -33,18 +34,18 @@ module ApplicationHelper
         showing = 0
         if num < 0
           onoff = Item.thumbs(iproc) <= num ? 'on' : 'off'          
-          imgsrc = "/images/thumbsdown#{Item.thumbs(iproc) <= num ? 'on' : 'off'}.jpg"
+          imgsrc = "/images/thumbsdown#{value <= num ? 'on' : 'off'}.jpg"
           domid = "thumb_#{item_id}_down_#{num.abs}"
-          if num < -1 and Item.thumbs(iproc) > num
+          if num < -1 and value > num + 1
             style = "opacity:0"
           else
             showing = 1  
           end
         else
           onoff = Item.thumbs(iproc) >= num ? 'on' : 'off'
-          imgsrc = "/images/thumbsup#{Item.thumbs(iproc) >= num ? 'on' : 'off'}.jpg"
+          imgsrc = "/images/thumbsup#{value >= num ? 'on' : 'off'}.jpg"
           domid = "thumb_#{item_id}_up_#{num.abs}"
-          if num > 1 and Item.thumbs(iproc) < num
+          if num > 1 and value < num - 1
             style = "opacity:0"
           else
             showing = 1

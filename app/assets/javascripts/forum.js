@@ -810,43 +810,7 @@ function thumbhover(el,inout) {
     } else {
         // Go back to what it should be, based on current value
         // Except for if they clicked??
-        for (var i=-3;i<=3;i++) {
-            var iabs = Math.abs(i);
-            if (i<0) {
-                var xel = $('#thumb_'+id+'_down_'+iabs);
-                if (value<0 && i>=value) {
-                    // It is on
-                    var imgsrc = "/images/thumbsdownon.jpg";                    
-                    $(xel).attr('src',imgsrc);
-                    $(xel).css('opacity','1.0');
-                } else if (i==-1 && value>=0) {
-                    // Default 1 is off
-                    var imgsrc = "/images/thumbsdownoff.jpg";                    
-                    $(xel).attr('src',imgsrc);
-                    $(xel).css('opacity','1.0');                    
-                } else {
-                    // Don't show it
-                    $(xel).css('opacity','0.0');
-                }
-            } else if (i>0) {
-                var xel = $('#thumb_'+id+'_up_'+iabs);
-                if (value>0 && i<=value) {
-                    // It is on
-                    var imgsrc = "/images/thumbsupon.jpg";                    
-                    $(xel).attr('src',imgsrc);
-                    $(xel).css('opacity','1.0');
-                } else if (i==1 && value<=0) {
-                    // Default 1 is off
-                    var imgsrc = "/images/thumbsupoff.jpg";                    
-                    $(xel).attr('src',imgsrc);
-                    $(xel).css('opacity','1.0');                    
-                } else {
-                    // Don't show it
-                    $(xel).css('opacity','0.0');
-                }
-            }
-            
-        }
+        updatethumbs(id,value)
     }
 }
 function clickthumb(id,num) {
@@ -910,6 +874,11 @@ function updatethumbs(id,value) {
                 var imgsrc = "/images/thumbsdownoff.jpg";                    
                 $(xel).attr('src',imgsrc);
                 $(xel).css('opacity','1.0');                    
+            } else if (i == value - 1) {
+                // If to the left of an on, show as off
+                var imgsrc = "/images/thumbsdownoff.jpg";                    
+                $(xel).attr('src',imgsrc);
+                $(xel).css('opacity','1.0');                    
             } else {
                 // Don't show it
                 $(xel).css('opacity','0.0');
@@ -930,7 +899,12 @@ function updatethumbs(id,value) {
                 // Default 1 is off
                 var imgsrc = "/images/thumbsupoff.jpg";                    
                 $(xel).attr('src',imgsrc);
-                $(xel).css('opacity','1.0');                    
+                $(xel).css('opacity','1.0');      
+            } else if (i == value + 1) {
+                // If to the right of an on, show as off
+                var imgsrc = "/images/thumbsupoff.jpg";                    
+                $(xel).attr('src',imgsrc);
+                $(xel).css('opacity','1.0');                         
             } else {
                 // Don't show it
                 $(xel).css('opacity','0.0');
