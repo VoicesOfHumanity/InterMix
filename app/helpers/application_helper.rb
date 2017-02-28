@@ -28,7 +28,7 @@ module ApplicationHelper
     for num in [-3,-2,-1,0,1,2,3]
       style = ''
       if num == 0
-        out += "&nbsp;\n"
+        #out += "&nbsp;\n"
       else
         onoff = ''
         showing = 0
@@ -40,6 +40,9 @@ module ApplicationHelper
             style = "opacity:0"
           else
             showing = 1  
+            if onoff == 'off'
+              style = "opacity:0.5"
+            end
           end
         else
           onoff = Item.thumbs(iproc) >= num ? 'on' : 'off'
@@ -49,7 +52,10 @@ module ApplicationHelper
             style = "opacity:0"
           else
             showing = 1
-          end          
+            if onoff == 'off'
+              style = "opacity:0.5"
+            end
+          end      
         end
         out += "<a href=\"#\" onclick=\"clickthumb(#{item_id},#{num});return(false)\"><img src=\"#{imgsrc}\" id=\"#{domid}\" style=\"#{style}\" class=\"thumbupdown\" data-item-id=\"#{item_id}\" data-num=\"#{num}\" data-value=\"#{Item.thumbs(iproc)}\" data-onoff=\"#{onoff}\" data-showing=\"#{showing}\"></a>\n"
       end
