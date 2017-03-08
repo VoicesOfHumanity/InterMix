@@ -33,26 +33,26 @@ module ApplicationHelper
         onoff = ''
         showing = 0
         if num < 0
-          onoff = Item.thumbs(iproc) <= num ? 'on' : 'off'          
-          imgsrc = "/images/thumbsdown#{value <= num ? 'on' : 'off'}.jpg"
+          onoff = (value <= num or (value != 0  and num == value - 1)) ? 'on' : 'off'          
+          imgsrc = "/images/thumbsdown#{onoff}.jpg"
           domid = "thumb_#{item_id}_down_#{num.abs}"
           if num < -1 and value > num + 1
             style = "opacity:0"
           else
             showing = 1  
-            if onoff == 'off'
+            if onoff == 'off' or num < value
               style = "opacity:0.5"
             end
           end
         else
-          onoff = Item.thumbs(iproc) >= num ? 'on' : 'off'
-          imgsrc = "/images/thumbsup#{value >= num ? 'on' : 'off'}.jpg"
+          onoff = (value >= num or (value != 0 and num == value + 1)) ? 'on' : 'off'
+          imgsrc = "/images/thumbsup#{onoff}.jpg"
           domid = "thumb_#{item_id}_up_#{num.abs}"
           if num > 1 and value < num - 1
             style = "opacity:0"
           else
             showing = 1
-            if onoff == 'off'
+            if onoff == 'off' or num > value
               style = "opacity:0.5"
             end
           end      

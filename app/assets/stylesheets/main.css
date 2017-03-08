@@ -312,7 +312,7 @@ div.forumitem .subject {
 	font-weight: bold;
 	background-color: transparent;
 	/* width: 420px; */
-    width: 305px;
+  width: 460px;
 	margin-bottom: -15px;
 	cursor: pointer;	
 }

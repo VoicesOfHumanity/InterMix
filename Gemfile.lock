@@ -142,7 +142,7 @@ GEM
       railties (>= 3.2.16)
     json (1.8.3)
     jwt (1.5.1)
-    libv8 (3.16.14.13)
+    libv8 (3.16.14.17)
     liquid (3.0.6)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)

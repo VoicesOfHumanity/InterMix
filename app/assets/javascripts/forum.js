@@ -869,10 +869,14 @@ function updatethumbs(id,value) {
                 $(xel).attr('src',imgsrc);
                 $(xel).css('opacity','1.0');  
                 onoff = 'on';              
-            } else if ((i==-1 && value>=0) || i == value - 1) {
+            } else if (i==-1 && value>=0) {
                 // Default 1 is off
-                // If to the left of an on, show as off
                 var imgsrc = "/images/thumbsdownoff.jpg";                    
+                $(xel).attr('src',imgsrc);
+                $(xel).css('opacity','0.5');                                    
+            } else if (i == value - 1) {
+                // If to the left of an on, show as faint on
+                var imgsrc = "/images/thumbsdownon.jpg";                    
                 $(xel).attr('src',imgsrc);
                 $(xel).css('opacity','0.5');                                    
             } else {
@@ -891,10 +895,14 @@ function updatethumbs(id,value) {
                 $(xel).attr('src',imgsrc);
                 $(xel).css('opacity','1.0');
                 onoff = 'on';
-            } else if ((i==1 && value<=0) || i == value + 1) {
+            } else if (i==1 && value<=0) {
                 // Default 1 is off
-                // If to the right of an on, show as off
                 var imgsrc = "/images/thumbsupoff.jpg";                    
+                $(xel).attr('src',imgsrc);
+                $(xel).css('opacity','0.5');                             
+            } else if (i == value + 1) {
+                // If to the right of an on, show as faint on
+                var imgsrc = "/images/thumbsupon.jpg";                    
                 $(xel).attr('src',imgsrc);
                 $(xel).css('opacity','0.5');                             
             } else {
