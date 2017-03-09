@@ -203,6 +203,7 @@ Rails.application.routes.draw do
       post :set_show_previous
       get :show_latest
       get :slider
+      get :moons
     end
   end 
   get 'voting_results' => 'dialogs#results'

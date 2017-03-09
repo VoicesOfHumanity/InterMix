@@ -1121,6 +1121,15 @@ class ItemsController < ApplicationController
     if show_result
       # Results will be for the previous period, if there's a current period
       
+      # New moons: http://rubyslipper.ca/ruby-slipper-astrology/2014/10/newfull-moons-eclipses-2015      
+      @moons = [
+        '2016-03-09 - 2017-03-27',
+        '2017-03-27 - 2017-04-26',
+        '2017-04-26 - 2017-05-25',
+        '2017-05-25 - 2017-06-23',
+        '2017-06-23 - 2017-07-23'
+      ]    
+      
       # If we're showing results, then add up results for the required gender and age combinations
       # We will go through the overall items and ratings we have, and put them in those several buckets
       # Then we will add up the results in each of those buckets

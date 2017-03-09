@@ -383,6 +383,16 @@ class DialogsController < ApplicationController
 
   end
   
+  def moons
+    #-- Show results from X moons ago
+    @section = 'dialogs'
+    @dsection = 'moons'
+    @dialog_id = params[:id].to_i
+    @dialog = Dialog.includes(:creator).find(@dialog_id)    
+    
+    
+  end
+  
   def show
     redirect_to :action=>:view
   end

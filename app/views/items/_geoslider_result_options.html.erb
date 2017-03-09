@@ -11,5 +11,10 @@
            <%= date_field_tag "datefrom#{num}", @datefrom, :onchange=>"per_reload(false,#{num},'datefrom')" %>
       </td>
     </tr>
+    <% if false -%>
+    <tr><td style="text-align:right;background-color:transparent">Current moon phase:</td><td style="background-color:transparent"><%= moonphase(Time.now.year,Time.now.month,Time.now.day) %></td></tr>
+    <% end -%>
   </table>  
+  
+  <% @moons.inspect %>
   
