@@ -972,8 +972,8 @@ function expand(id) {
 	} else {
 		$('#shortcontent_'+id).hide();
 		$('#htmlcontent_'+id).show();
-		$('#vote_int_'+id).show();
-		$('#vote_app_'+id).show();
+		//$('#vote_int_'+id).show();
+		//$('#vote_app_'+id).show();
         $('#tags_'+id).show();
         $('#expand_'+id).html("−")
 	}
