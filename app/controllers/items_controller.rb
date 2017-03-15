@@ -582,7 +582,24 @@ class ItemsController < ApplicationController
       if @item.is_first_in_thread
         @item.first_in_thread = @item.id    
         @item.save    
-      end  
+      end 
+      
+      if @item.reply_to.to_i > 0
+        #-- If it is a reply, they'll have interest rating 4 on whatever they replied to, and the top of the thread, if not the same  
+        rating = Rating.where(item_id: @item.reply_to.to_i, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize
+        if rating.interest != 4
+          rating.interest = 4
+          rating.save
+        end
+        if @item.first_in_thread.to_i != @item.reply_to.to_i
+          rating = Rating.where(item_id: @item.first_in_thread.to_i, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize
+          if rating.interest != 4
+            rating.interest = 4
+            rating.save
+          end
+        end
+      end
+       
       #if current_participant.twitter_post and current_participant.twitter_username.to_s !='' and current_participant.twitter_oauth_token.to_s != ''
       #  #-- Post to Twitter
       #  begin
@@ -884,6 +901,9 @@ class ItemsController < ApplicationController
       return
     end
     
+    # check for comments in that thread
+    com_count = Item.where(posted_by: current_participant.id, is_first_in_thread: false, first_in_thread: item.first_in_thread).count
+    
     #-- See if that user already has rated that item, or create a new rating if they haven't
     rating = Rating.where(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize
     
@@ -894,6 +914,9 @@ class ItemsController < ApplicationController
     else
       rating.approval = vote    
       rating.interest = vote.abs
+    end
+    if com_count > 0
+      rating.interest = 4
     end
     rating.save!
     
