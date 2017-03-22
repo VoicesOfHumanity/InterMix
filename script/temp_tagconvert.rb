@@ -3,7 +3,7 @@ require File.dirname(__FILE__)+'/cron_helper'
 # Convert some community tag names to new names
 
 conv = {
-  'nonukes' => 'nuclear_disarm', 'ungoals' => 'un_goals'
+  'nonukes' => 'nuclear_disarm', 'ungoals' => 'un_goals', 'nonviolence' => 'nvaction'
 }
 
 # Go through all users

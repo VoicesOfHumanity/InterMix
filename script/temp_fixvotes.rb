@@ -12,6 +12,9 @@ for rating in ratings
   
   next if approval === nil 
   
+  item = Item.find_by_id(item_id)
+  next if not item
+  
   # set the interest as the absolute value of approval (-3, -2, -1, 0, 1, 2, 3)
   rating.interest = rating.approval.abs
   
@@ -22,9 +25,12 @@ for rating in ratings
   
   if com_count > 0
     rating.interest = 4
+    rating.group_id = item.group_id
+    rating.dialog_id = item.dialog_id
+    rating.dialog_round_id = item.dialog_round_id
   end
   
-  if rating.interest != old_interest
+  if rating.interest != old_interest or com_count > 0
     puts " - approval:#{approval}"
     puts " - interest changed from #{old_interest} to #{rating.interest}"
     rating.save!
