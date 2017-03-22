@@ -136,8 +136,23 @@ if (CKEDITOR.instances['item_html_content']) {
 				</div>
 			</div>
 		</li>
+    
+    <li>
+  	<div style="width:50%;float:left">
+  	  <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
+  	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
+  	</div>
+  	<div style="width:50%;float:left;text-align:right">
+  	  <% if @is_moderator -%>
+       <input type="checkbox" id="item_censored" name="item[censored]" value="1"<%= " checked" if @item.censored %>> censored&nbsp;&nbsp;
+  	    <% if @item.id.to_i > 0 && Item.where("reply_to=#{@item.id}").count == 0 -%>
+  	      <input type="button" value="Delete" onclick="deleteitem()" />
+  	    <% end -%>  
+  	  <% end -%>
+  	</div>
+    </li>
 
-    <li class="text optional" id="item_short_content_input"><label for="item_short_content" style="width: 500px">Short summary / twitter version (<span id="charsused">0</span> of 106 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px"><%= @item.short_content %></textarea></li>
+    <li class="text optional" id="item_short_content_input"><label for="item_short_content" style="width: 500px">Short summary / twitter version (<span id="charsused">0</span> of 106 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px;font-size:15px"><%= @item.short_content %></textarea></li>
 
 		<% if false -%>
     <li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Tags</label><input id="item_tag_list" name="item[tag_list]" size="80" type="text" value="" /></li>
@@ -155,18 +170,7 @@ if (CKEDITOR.instances['item_html_content']) {
 
 </ol></fieldset>
 
-	<div style="width:50%;float:left">
-	  <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
-	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
-	</div>
-	<div style="width:50%;float:left;text-align:right">
-	  <% if @is_moderator -%>
-     <input type="checkbox" id="item_censored" name="item[censored]" value="1"<%= " checked" if @item.censored %>> censored&nbsp;&nbsp;
-	    <% if @item.id.to_i > 0 && Item.where("reply_to=#{@item.id}").count == 0 -%>
-	      <input type="button" value="Delete" onclick="deleteitem()" />
-	    <% end -%>  
-	  <% end -%>
-	</div>  
+ 
 	
 	<p style="clear:left"><a href="http://intermix.org/ccattribution4point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("/images/ccattribution4point0.png",:style=>"margin:8px 0 6px 0;") %></a></p>
 
