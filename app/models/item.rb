@@ -46,18 +46,18 @@ class Item < ActiveRecord::Base
     #logger.info("Item#thumbs approval:#{approval}")
     numthumbs = approval
     
-    if numthumbs == 0
-      #-- Use interest as positive thumbs, if we don't have anything already
-      if iproc and iproc['hasrating'].to_i > 0 and iproc['rateinterest']
-        interest = iproc['rateinterest'].to_i
-      else
-        interest = 0
-      end
-      numthumbs = interest
-      if numthumbs > 3
-        numthumbs = 3
-      end
-    end
+    #if numthumbs == 0
+    #  #-- Use interest as positive thumbs, if we don't have anything already
+    #  if iproc and iproc['hasrating'].to_i > 0 and iproc['rateinterest']
+    #    interest = iproc['rateinterest'].to_i
+    #  else
+    #    interest = 0
+    #  end
+    #  numthumbs = interest
+    #  if numthumbs > 3
+    #    numthumbs = 3
+    #  end
+    #end
 
     # Look at comments 
 

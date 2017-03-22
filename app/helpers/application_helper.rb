@@ -25,6 +25,9 @@ module ApplicationHelper
     item_id = iproc['id']
     value = Item.thumbs(iproc)
     out = ''
+    #out += "value:#{value} "
+    #out += "rateapproval:#{iproc['rateapproval']} "
+    #out += "iproc:#{iproc.inspect} "
     for num in [-3,-2,-1,0,1,2,3]
       style = ''
       if num == 0

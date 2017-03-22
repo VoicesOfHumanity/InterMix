@@ -586,16 +586,22 @@ class ItemsController < ApplicationController
       
       if @item.reply_to.to_i > 0
         #-- If it is a reply, they'll have interest rating 4 on whatever they replied to, and the top of the thread, if not the same  
-        rating = Rating.where(item_id: @item.reply_to.to_i, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize
-        if rating.interest != 4
-          rating.interest = 4
-          rating.save
-        end
-        if @item.first_in_thread.to_i != @item.reply_to.to_i
-          rating = Rating.where(item_id: @item.first_in_thread.to_i, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize
+        orig_item = Item.find_by_id(@item.reply_to)
+        if orig_item
+          rating = Rating.where(item_id: @item.reply_to.to_i, participant_id: current_participant.id, rating_type: 'AllRatings', group_id: orig_item.group_id, dialog_id: orig_item.dialog_id, dialog_round_id: orig_item.dialog_round_id).first_or_initialize
           if rating.interest != 4
             rating.interest = 4
             rating.save
+          end
+        end
+        if @item.first_in_thread.to_i != @item.reply_to.to_i
+          orig_item = Item.find_by_id(@item.first_in_thread)
+          if orig_item
+            rating = Rating.where(item_id: @item.first_in_thread.to_i, participant_id: current_participant.id, rating_type: 'AllRatings', group_id: orig_item.group_id, dialog_id: orig_item.dialog_id, dialog_round_id: orig_item.dialog_round_id).first_or_initialize
+            if rating.interest != 4
+              rating.interest = 4
+              rating.save
+            end
           end
         end
       end
