@@ -94,7 +94,7 @@ DEFAULT_COMMUNITIES = {
   'refugees' => "Refugees, asylees, illegal immigrants",
   'savechildren' => "Save the children",
   'ourstory' => "Stories for all ages",
-  'ungoals' => "UN Goals",
+  'un_goals' => "UN Goals",
   'veterans' => "Veterans",
   'voh' => "Voices of Humanity supporters",
   
@@ -121,10 +121,10 @@ DEFAULT_COMMUNITIES = {
 GLOBAL_COMMUNITIES = [
   'advice','climateaction','commons','genderequality','globaljustice','gr8transition','indigenous',
   'interfaith','labor','nonviolence','nuclear_disarm','minority','peace','refugees',
-  'savechildren','ourstory','ungoals','veterans','voh' 
+  'savechildren','ourstory','un_goals','veterans','voh' 
 ]
 UNGOAL_COMMUNITIES = [
-  'ungoals','peace','nuclear_disarm','humanrights','cedaw'
+  'un_goals','peace','nuclear_disarm','humanrights','cedaw'
 ]
 SUSTDEV_COMMUNITIES = [
   'sdgs','endpoverty','endhunger','goodhealth','goodeducation',
