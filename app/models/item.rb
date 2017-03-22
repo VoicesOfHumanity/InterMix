@@ -270,7 +270,7 @@ class Item < ActiveRecord::Base
       content = self.html_content != '' ? self.html_with_auth(recipient) : self.short_content
       
       itext = ""
-      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}#item_#{self.id}\">#{self.subject}</a></h3>"
+      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\">#{self.subject}</a></h3>"
       itext += "<div>"
       itext += content
       itext += "</div>"
