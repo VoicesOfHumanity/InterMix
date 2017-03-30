@@ -78,7 +78,6 @@ CROSSTALK_OPTIONS = ['','gender','gender1','age','age1']
 CROSSTALK_OPTIONS_TEXT = {''=>'No Crosstalk','gender'=>'Gender Crosstalk','gender1'=>'Gender Crosstalk 1st round','age'=>'Age Crosstalk','age1'=>'Age Crosstalk 1st round'}
 
 DEFAULT_COMMUNITIES = {
-  'advice' => "Advice",
   'climateaction' => "Climate Action: combat climate change",
   'commons' => "Commons movement",
   'genderequality' => "Gender equality: empower all women and girls",
@@ -93,7 +92,7 @@ DEFAULT_COMMUNITIES = {
   'peace' => "Peace with general and complete disarmament",
   'refugees' => "Refugees, asylees, illegal immigrants",
   'savechildren' => "Save the children",
-  'ourstory' => "Stories for all ages",
+  'the_poor' => "The Poor",
   'un_goals' => "UN Goals",
   'veterans' => "Veterans",
   'voh' => "Voices of Humanity supporters",
@@ -119,9 +118,9 @@ DEFAULT_COMMUNITIES = {
   'sdgpartners' => "SDG partnerships: organize across the silos"
 }
 GLOBAL_COMMUNITIES = [
-  'advice','climateaction','commons','genderequality','globaljustice','gr8transition','indigenous',
+  'climateaction','commons','genderequality','globaljustice','gr8transition','indigenous',
   'interfaith','labor','nonviolence','nuclear_disarm','minority','peace','refugees',
-  'savechildren','ourstory','un_goals','veterans','voh' 
+  'savechildren','the_poor','un_goals','veterans','voh' 
 ]
 UNGOAL_COMMUNITIES = [
   'un_goals','peace','nuclear_disarm','humanrights','cedaw'
