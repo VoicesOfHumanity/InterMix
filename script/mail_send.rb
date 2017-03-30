@@ -212,9 +212,14 @@ for p in participants
 
       puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject} | domain: #{domain}"
       
+      link_to = "http://#{domain}/items/#{item.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{item.id}"
+      if not item.is_first_in_thread
+        link_to += "#item_#{item.id}"
+      end
+      
       itext = ""
       #itext += "<h3><a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
-      itext += "<h3><a href=\"http://#{domain}/items/#{item.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{item.id}#item_#{item.id}\">#{item.subject}</a></h3>"
+      itext += "<h3><a href=\"#{link_to}\">#{item.subject}</a></h3>"
       itext += "<div>"
       itext += item.html_with_auth(p)
       itext += "</div>"
