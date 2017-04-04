@@ -3,6 +3,7 @@ require File.dirname(__FILE__)+'/cron_helper'
 # Convert the old type of ratings to the thumb kind
 
 ratings = Rating.all
+puts "#{ratings.length} ratings"
 
 for rating in ratings
   item_id = rating.item_id
@@ -37,3 +38,27 @@ for rating in ratings
   end
   
 end
+
+items = Item.where("reply_to>0")
+puts "#{items.length} reply items"
+
+for item in items
+  
+  # Check if the item replied to has a rating with a 4 interest
+  
+  orig_item = Item.find_by_id(item.reply_to.to_i)
+  
+  next if not orig_item
+  
+  rating = Rating.where(item_id: orig_item.id, participant_id: item.posted_by.to_i, rating_type: 'AllRatings', group_id: orig_item.group_id, dialog_id: orig_item.dialog_id, dialog_round_id: orig_item.dialog_round_id).first_or_initialize
+  
+  if rating.interest != 4
+    rating.interest = 4
+    rating.save
+    puts "item #{orig_item.id} commented by #{item.posted_by.to_i} in #{item.id}"
+    puts " - interest set to 4"
+  end
+  
+  
+end
+
