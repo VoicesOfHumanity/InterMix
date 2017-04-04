@@ -547,7 +547,7 @@ class ProfilesController < ApplicationController
     @cdata['group'] = @group if @group
     @cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
-    @cdata['domain'] = Rails.env!='development' ? "http://voh.#{ROOTDOMAIN}" : BASEDOMAIN
+    @cdata['domain'] = Rails.env!='development' ? "voh.#{ROOTDOMAIN}" : "#{BASEDOMAIN}"
 
     #-- Some non-members, supposedly. But catch if some of them already are members.
     lines = @new_text.split(/[\r\n]+/)
@@ -563,7 +563,7 @@ class ProfilesController < ApplicationController
         flash[:notice] += "\"#{email}\" doesn't look like a valid e-mail address<br>"  
       else
         @cdata['email'] = email
-        @cdata['joinlink'] = "http://#{@cdata['domain']}/join?email=#{email}"
+        @cdata['joinlink'] = "http://#{@cdata['domain']}/djoin?email=#{email}"
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)
