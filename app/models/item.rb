@@ -1120,6 +1120,10 @@ class Item < ActiveRecord::Base
     # Date period
     items = items.where("items.created_at >= ?", crit[:datefromuse])
     logger.info("item#get_items from date: #{crit[:datefromuse]}")
+    if crit.has_key?(:datefromto) and crit[:datefromto] != ''
+      items = items.where("items.created_at <= ?", crit[:datefromto])
+      logger.info("item#get_items to date: #{crit[:datefromto]}")
+    end
     # Don't look at date for ratings
 
     items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)

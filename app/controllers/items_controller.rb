@@ -1057,6 +1057,7 @@ class ItemsController < ApplicationController
     session[:datetype] = @datetype
     session[:datefixed] = @datefixed
     session[:datefrom] = @datefrom
+    @datefromto = ''
     if @datetype == 'fixed'
       if @datefixed == 'day'
         @datefromuse = Date.today - 1
@@ -1064,6 +1065,10 @@ class ItemsController < ApplicationController
         @datefromuse = Date.today - 7
       elsif @datefixed == 'month'
         @datefromuse = Date.today - 30
+      elsif /_/ =~ @datefixed   
+        xarr = @datefixed.split('_')
+        @datefromuse = xarr[0]
+        @datefromto = xarr[1]
       end
       logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype} datefixed:#{@datefixed}")
     else
@@ -1071,7 +1076,7 @@ class ItemsController < ApplicationController
       logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype}")
     end
     crit[:datefromuse] = @datefromuse
-    
+    crit[:datefromto] = @datefromto    
     
     @dialog_id = crit[:dialog_id]
     @period_id = crit[:period_id]

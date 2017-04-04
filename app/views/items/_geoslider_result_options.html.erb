@@ -5,7 +5,7 @@
       <td style="text-align:right;vertical-align:top;background-color:transparent">Date range:</td>
       <td style="background-color:transparent">
         <%= radio_button_tag "datetype#{num}", "fixed", (@datetype=='fixed'), :onclick=>"per_reload(false,#{num},'datetype')" %>
-          <%= select_tag "datefixed#{num}", options_for_select([["In last 24 hours",'day'],["In last week",'week'],["In last month",'month']],@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>
+          <%= select_tag "datefixed#{num}", options_for_select([["In last 24 hours",'day'],["In last week",'week'],["In last month",'month']]+MOONS.invert.to_a,@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>
           <br>
         <%= radio_button_tag "datetype#{num}", "range", (@datetype=='range'), :onclick=>"per_reload(false,#{num},'datetype')" %> Since
            <%= date_field_tag "datefrom#{num}", @datefrom, :onchange=>"per_reload(false,#{num},'datefrom')" %>
