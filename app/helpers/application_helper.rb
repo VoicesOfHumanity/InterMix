@@ -22,6 +22,7 @@ module ApplicationHelper
   
   def thumbvote(iproc)
     # Show the thumbs up/down pictures under an item
+    return '' if not iproc or not iproc.has_key?('id')
     item_id = iproc['id']
     value = Item.thumbs(iproc)
     out = ''

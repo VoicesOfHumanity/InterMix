@@ -13,7 +13,7 @@
     
   <% if info[:item] -%>
     <div class="forumitem forumitemplain forummain forum1">
-      <%= render :partial => "items/item_simple", :locals => { :item => info[:item], :itemproc=>info[:iproc], :from=>'result' } %>
+      <%= render :partial => "items/item", :locals => { :item => info[:item], :itemproc=>info[:iproc], :is_reply=>false, :from=>'result', :odd_or_even=>1, :top=>0, :exp_item_id=>0 } %>
         <div>
         <% if false -%>
         [<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result">see all in the forum list</a>]
@@ -35,4 +35,5 @@ var showing_period_id = <%= @period ? @period.id : 0 %>;
 if ($('#period_id').length && $('#period_id').val()!=showing_period_id) {
   $('#period_id').val(showing_period_id);
 }
+$('.thumbupdown').hover(function(){thumbhover(this,'in')},function(){thumbhover(this,'out')});
 </script>

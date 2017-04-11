@@ -3,9 +3,9 @@
 <%
 intclass = 'interest'
 appclass = 'approval'
-if item['is_first_in_thread'] and item.dialog and item.dialog.active_period and @itemsproc[item.id]
-  intclass = (@itemsproc[item.id]['hasrating'].to_i > 0 and @itemsproc[item.id]['rateinterest']) ? 'interest' : 'interestplus'
-  appclass = (@itemsproc[item.id]['hasrating'].to_i > 0 and @itemsproc[item.id]['rateapproval']) ? 'approval' : 'approvalplus'
+if item['is_first_in_thread'] and item.dialog and item.dialog.active_period and itemproc
+  intclass = (itemproc['hasrating'].to_i > 0 and itemproc['rateinterest']) ? 'interest' : 'interestplus'
+  appclass = (itemproc['hasrating'].to_i > 0 and itemproc['rateapproval']) ? 'approval' : 'approvalplus'
 end
 %>
 
@@ -25,7 +25,7 @@ end
 			
 			<div id="intshort_<%= item.id %>" class="intshort">
 				<img src="/images/sface.gif" alt="face"/>
-				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= @itemsproc[item.id]['hasrating'] if @itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i>0 %> current_participant:<%= participant_signed_in? ? current_participant.id : 0 %> interest:<%= item['interest'].to_i %> voting_ok:<%= item.voting_ok(participant_signed_in? ? current_participant.id : 0) %>"><%= (@itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0 and @itemsproc[item.id]['rateinterest']) ? @itemsproc[item.id]['rateinterest'].to_i : '-'%></span>
+				<span id="vote_int_rate_<%= item.id %>" title="hasrating:<%= itemproc['hasrating'] if itemproc and itemproc['hasrating'].to_i>0 %> current_participant:<%= participant_signed_in? ? current_participant.id : 0 %> interest:<%= item['interest'].to_i %> voting_ok:<%= item.voting_ok(participant_signed_in? ? current_participant.id : 0) %>"><%= (itemproc and itemproc['hasrating'].to_i > 0 and itemproc['rateinterest']) ? itemproc['rateinterest'].to_i : '-'%></span>
 				<img src="/images/aface.gif" alt="face"/>
 			</div>
 			
@@ -37,11 +37,11 @@ end
 					<div class="slot">&nbsp;</div><div class="slot">&nbsp;</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">4</div><div class="slot">&nbsp;</div><br/>
 					<div class="slot">&nbsp;</div>
 					<div class="slot"><img src="/images/sface.gif" alt="face"/></div>
-					<div class="slot"><%= radio_button_tag "int_#{item.id}", '0', is_interest?(@itemsproc[item.id],0), :onclick=>"rate('int',#{item.id},0)" %></div>
-					<div class="slot"><%= radio_button_tag "int_#{item.id}", '1', is_interest?(@itemsproc[item.id],1), :onclick=>"rate('int',#{item.id},1)" %></div>
-					<div class="slot"><%= radio_button_tag "int_#{item.id}", '2', is_interest?(@itemsproc[item.id],2), :onclick=>"rate('int',#{item.id},2)" %></div>
-					<div class="slot"><%= radio_button_tag "int_#{item.id}", '3', is_interest?(@itemsproc[item.id],3), :onclick=>"rate('int',#{item.id},3)" %></div>
-					<div class="slot"><%= radio_button_tag "int_#{item.id}", '4', is_interest?(@itemsproc[item.id],4), :onclick=>"rate('int',#{item.id},4)" %></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '0', is_interest?(itemproc,0), :onclick=>"rate('int',#{item.id},0)" %></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '1', is_interest?(itemproc,1), :onclick=>"rate('int',#{item.id},1)" %></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '2', is_interest?(itemproc,2), :onclick=>"rate('int',#{item.id},2)" %></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '3', is_interest?(itemproc,3), :onclick=>"rate('int',#{item.id},3)" %></div>
+					<div class="slot"><%= radio_button_tag "int_#{item.id}", '4', is_interest?(itemproc,4), :onclick=>"rate('int',#{item.id},4)" %></div>
 					<div class="slot"><img src="/images/aface.gif" alt="face"/></div><br/>
 					<div class="bigslot left">boring!</div><div class="bigslot right">must&nbsp;see!</div>
 				<% end -%>
@@ -51,7 +51,7 @@ end
 		<div id="vote_app_<%= item.id %>" class="votesection <%= appclass %>" <% if request.user_agent =~ /Mobile|webOS/ %>onclick="appswitch(<%= item.id %>,<%= top %>)"<% else %>onmouseover="appshow(<%= item.id %>,<%= top %>)" onmouseout="apphide(<%= item.id %>,<%= top %>)"<% end %> style="display:none">
 			<div id="appshort_<%= item.id %>" class="appshort">
 				<img src="/images/fface.gif" alt="face"/>				
-			<span id="vote_app_rate_<%= item.id %>"><%= (@itemsproc[item.id] and @itemsproc[item.id]['hasrating'].to_i > 0 and @itemsproc[item.id]['rateapproval']) ? @itemsproc[item.id]['rateapproval'].to_i : '-'%></span>
+			<span id="vote_app_rate_<%= item.id %>"><%= (itemproc and itemproc['hasrating'].to_i > 0 and itemproc['rateapproval']) ? itemproc['rateapproval'].to_i : '-'%></span>
 			<img src="/images/hface.gif" alt="face"/>
 			</div>
 			<div id="applong_<%= item.id %>" class="applong" style="display:none">
@@ -61,13 +61,13 @@ end
 				<% else -%>				
 					<div class="slot">&nbsp;</div><div class="slot">-3</div><div class="slot">-2</div><div class="slot">-1</div><div class="slot">0</div><div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">&nbsp;</div><br/>
 					<div class="slot"><img src="/images/fface.gif" alt="face"/></div>
-					<div class="slot"><%= radio_button_tag "app_#{item.id}", '-3', is_approval?(@itemsproc[item.id],-3), :onclick=>"rate('app',#{item.id},-3)" %></div>	
-					<div class="slot"><%= radio_button_tag "app_#{item.id}", '-2', is_approval?(@itemsproc[item.id],-2), :onclick=>"rate('app',#{item.id},-2)" %></div>	
-					<div class="slot"><%= radio_button_tag "app_#{item.id}", '-1', is_approval?(@itemsproc[item.id],-1), :onclick=>"rate('app',#{item.id},-1)" %></div>	
-					<div class="slot"><%= radio_button_tag "app_#{item.id}", '0', is_approval?(@itemsproc[item.id],0), :onclick=>"rate('app',#{item.id},0)" %></div>	
-					<div class="slot"><%= radio_button_tag "app_#{item.id}", '1', is_approval?(@itemsproc[item.id],1), :onclick=>"rate('app',#{item.id},1)" %></div>	
-					<div class="slot"><%= radio_button_tag "app_#{item.id}", '2', is_approval?(@itemsproc[item.id],2), :onclick=>"rate('app',#{item.id},2)" %></div>	
-					<div class="slot"><%= radio_button_tag "app_#{item.id}", '3', is_approval?(@itemsproc[item.id],3), :onclick=>"rate('app',#{item.id},3)" %></div>
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '-3', is_approval?(itemproc,-3), :onclick=>"rate('app',#{item.id},-3)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '-2', is_approval?(itemproc,-2), :onclick=>"rate('app',#{item.id},-2)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '-1', is_approval?(itemproc,-1), :onclick=>"rate('app',#{item.id},-1)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '0', is_approval?(itemproc,0), :onclick=>"rate('app',#{item.id},0)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '1', is_approval?(itemproc,1), :onclick=>"rate('app',#{item.id},1)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '2', is_approval?(itemproc,2), :onclick=>"rate('app',#{item.id},2)" %></div>	
+					<div class="slot"><%= radio_button_tag "app_#{item.id}", '3', is_approval?(itemproc,3), :onclick=>"rate('app',#{item.id},3)" %></div>
 					<div class="slot"><img src="/images/hface.gif" alt="face"/></div>
 					<br/>
 					<div class="bigslot left">disapprove</div><div class="bigslot right">approve</div>
@@ -272,7 +272,7 @@ end
     <div class="itemthumbdiv">
       <hr>
       <div class="thumbtitle">My Vote:</div> 
-      <%=raw thumbvote(@itemsproc[item.id]) %>
+      <%=raw thumbvote(itemproc) %>
     </div>
     
     

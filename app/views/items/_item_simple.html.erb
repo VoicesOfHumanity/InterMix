@@ -59,7 +59,6 @@ end
   <% end -%>
 <% end -%>  
 	
-
 </div>
 
 <div class="iteminfotxt">
@@ -76,31 +75,6 @@ end
 	<% if @group_id.to_i > 0 and item['group'] and item['group_id'] != @group_id %></span><% end %>
 </div>
 
-<% if false -%>
-<div class="iteminfotxt">
-  <% if item.class != Hash and item.dialog -%>
-	<%= "Discussion: " + item.dialog.name %>  
-  <% else -%>
-	<%= "Discussion: " + (item['dialog'] ? item['dialog']['name'] : item['dialog_id'].to_s) if item['dialog_id'].to_i > 0 %>
-  <% end -%>
-</div>
-<div class="iteminfotxt">
-  <% if item.class != Hash and item.period -%>
-	<%= "Decision Period: " + item.period.name %>  
-  <% else -%>
-	<%= "Decision Period: " + (item['period'] ? item['period']['name'] : item['period_id'].to_s) if item['period_id'].to_i > 0 %>
-  <% end -%>
-</div>
-<% end -%>
-
-<% if (@from == 'group' or @from == 'individual') and item['subgroup_list'].length > 0 -%>	
-<div class="iteminfotxt">	
-	Subgroup: <%= item['show_subgroup'] %>	
-	<% if item['reply_to'].to_i ==0 and @limit_group and @limit_group.group_subtags.length >= item['subgroup_list'].length -%>
-	<span class="item_subgroup_add" id="item_subgroup_add_<%= item['id'] %>" onclick="showsubgroupadd(<%= item['id'] %>)" title="Add to subgroup">+</span>
-	<% end -%>		
-</div>
-<% end -%>
 <div class="iteminfotxt">	
 	<%= "Tags: #{item['tag_list']}" if item['tag_list'].to_s!='' %>			
 </div>
@@ -109,6 +83,21 @@ end
 <div class="iteminfotxt">
   In reply to <a href="/items/<%= item['reply_to'] %>/view">this message</a>.
 </div>
+<% end -%>
+
+<% if item.participant -%>
+  <% comtags = item.participant.show_tag_list(true,true) %>
+  <% if comtags.to_s != '' -%>
+    <div class="iteminfotxt">
+      Author's Communities: <%=raw comtags %>
+    </div>
+  <% end -%>
+<% end -%>  
+<% messtags = item.show_tag_list(true) %>
+<% if messtags.to_s != '' -%>
+  <div class="iteminfotxt">
+    Message Tags: <%=raw messtags %>
+  </div>
 <% end -%>
 
  

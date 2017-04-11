@@ -1191,13 +1191,13 @@ class ItemsController < ApplicationController
         crit[:age] = age_id
         crit[:gender] = gender_id
         items,ratings,@title = Item.get_items(crit,current_participant)
-        itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
-        sortby = '*value*'
-        items = Item.get_sorted(items,itemsproc,sortby,false)
-        if items.length > 0 and ratings.length > 0
-          if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['votes'] > 0 and itemsproc[items[0].id]['value'] > 0
-            item = items[0]
-            iproc = itemsproc[item.id]
+        @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        @sortby = '*value*'
+        @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+        if @items.length > 0 and ratings.length > 0
+          if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['votes'] > 0 and @itemsproc[items[0].id]['value'] > 0
+            item = @items[0]
+            iproc = @itemsproc[item.id]
           end
         end
         
@@ -1209,13 +1209,13 @@ class ItemsController < ApplicationController
         item = nil
         iproc = nil        
         items,ratings,@title = Item.get_items(crit,current_participant)
-        itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
-        sortby = '*value*'
-        items = Item.get_sorted(items,itemsproc,sortby,false)
-        if items.length > 0 and ratings.length > 0
-          if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['value'] > 0
-            item = items[0]
-            iproc = itemsproc[item.id]
+        @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        @sortby = '*value*'
+        @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+        if @items.length > 0 and ratings.length > 0
+          if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+            item = @items[0]
+            iproc = @itemsproc[item.id]
           end
         end
         @data['all'] = {name: name, item: item, iproc: iproc}
@@ -1231,13 +1231,13 @@ class ItemsController < ApplicationController
             
             crit[:gender] = gender_id
             items,ratings,title = Item.get_items(crit,current_participant)
-            itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
-            sortby = '*value*'
-            items = Item.get_sorted(items,itemsproc,sortby,false)
-            if items.length > 0 and ratings.length > 0
-              if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['value'] > 0
-                item = items[0]
-                iproc = itemsproc[item.id]
+            @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+            @sortby = '*value*'
+            @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+            if @items.length > 0 and ratings.length > 0
+              if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+                item = @items[0]
+                iproc = @itemsproc[item.id]
               end
             end
             
@@ -1255,13 +1255,13 @@ class ItemsController < ApplicationController
             
             crit[:age] = age_id
             items,ratings,title = Item.get_items(crit,current_participant)
-            itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
-            sortby = '*value*'
-            items = Item.get_sorted(items,itemsproc,sortby,false)
-            if items.length > 0 and ratings.length > 0
-              if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['value'] > 0
-                item = items[0]
-                iproc = itemsproc[item.id]
+            @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+            @sortby = '*value*'
+            @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+            if @items.length > 0 and ratings.length > 0
+              if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
+                item = @items[0]
+                iproc = @itemsproc[item.id]
               end
             end
             
@@ -1279,13 +1279,13 @@ class ItemsController < ApplicationController
         iproc = nil        
         crit[:age] = age_id
         items,ratings,@title = Item.get_items(crit,current_participant)
-        itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
-        sortby = '*value*'
-        items = Item.get_sorted(items,itemsproc,sortby,false)
-        if items.length > 0 and ratings.length > 0
-          if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['value'] > 0
-            item = items[0]
-            iproc = itemsproc[item.id]
+        @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        @sortby = '*value*'
+        @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+        if @items.length > 0 and ratings.length > 0
+          if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
+            item = @items[0]
+            iproc = @itemsproc[item.id]
           end
         end
         @data['all'] = {name: name, item: item, iproc: iproc}
@@ -1303,13 +1303,13 @@ class ItemsController < ApplicationController
             crit[:age] = age_id
             crit[:gender] = gender_id
             items,ratings,title = Item.get_items(crit,current_participant)
-            itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
-            sortby = '*value*'
-            items = Item.get_sorted(items,itemsproc,sortby,false)
-            if items.length > 0 and ratings.length > 0
-              if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['value'] > 0
-                item = items[0]
-                iproc = itemsproc[item.id]
+            @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+            @sortby = '*value*'
+            @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+            if @items.length > 0 and ratings.length > 0
+              if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+                item = @items[0]
+                iproc = @itemsproc[item.id]
               end
             end
             
@@ -1328,13 +1328,13 @@ class ItemsController < ApplicationController
         iproc = nil        
         crit[:gender] = gender_id
         items,ratings,@title = Item.get_items(crit,current_participant)
-        itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
-        sortby = '*value*'
-        items = Item.get_sorted(items,itemsproc,sortby,false)
-        if items.length > 0 and ratings.length > 0
-          if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['value'] > 0
-            item = items[0]
-            iproc = itemsproc[item.id]
+        @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        @sortby = '*value*'
+        @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+        if @items.length > 0 and ratings.length > 0
+          if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+            item = @items[0]
+            iproc = @itemsproc[item.id]
           end
         end
         @data['all'] = {name: name, item: item, iproc: iproc}
@@ -1351,13 +1351,13 @@ class ItemsController < ApplicationController
             crit[:age] = age_id
             crit[:gender] = gender_id
             items,ratings,title = Item.get_items(crit,current_participant)
-            itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
-            sortby = '*value*'
-            items = Item.get_sorted(items,itemsproc,sortby,false)
-            if items.length > 0 and ratings.length > 0
-              if itemsproc.has_key?(items[0].id) and itemsproc[items[0].id]['value'] > 0
-                item = items[0]
-                iproc = itemsproc[item.id]
+            @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+            @sortby = '*value*'
+            @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+            if @items.length > 0 and ratings.length > 0
+              if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+                item = @items[0]
+                iproc = @itemsproc[item.id]
               end
             end
             
