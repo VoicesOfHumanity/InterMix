@@ -1,6 +1,6 @@
 <%= hidden_field_tag "from", "individual" %>
 <div class="forumitem forumitemplain forummain" id="item_<%= @item.id %>">
-<%= render :partial => "item", :locals => { :item => @item, :is_reply => false, :odd_or_even=>0, :from=>'individual', :top=>@item.id, :showlong=>true } %>
+<%= render :partial => "item", :locals => { :item => @item, :itemproc =>@itemsproc[@item.id], :is_reply => false, :odd_or_even=>0, :from=>'individual', :top=>@item.id, :showlong=>true } %>
 </div>
 
 <% if @item.is_first_in_thread -%>
