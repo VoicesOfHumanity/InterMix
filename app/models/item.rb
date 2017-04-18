@@ -2649,13 +2649,17 @@ class Item < ActiveRecord::Base
     ( self.subgroup_list - ['none'] ).collect{|tag| "<a href=\"#{link}#{tag}\">#{tag}</a>"}.join(', ')
   end   
 
-  def show_tag_list(with_links=false)
+  def show_tag_list(with_links=false,show_result=false)
     xlist = ''
     tags.each do |tag|
       xlist += ', ' if xlist != ''
       xlist += '#'
       if with_links
-        xlist += "<a href=\"/dialogs/#{VOH_DISCUSSION_ID}/slider?messtag=#{tag.name}\">" + tag.name + "</a>"
+        url = "/dialogs/#{VOH_DISCUSSION_ID}/slider?messtag=#{tag.name}"
+        if show_result
+          url += "&show_result=1"
+        end
+        xlist += "<a href=\"#{url}\">" + tag.name + "</a>"
       else
         xlist += tag.name
       end 
