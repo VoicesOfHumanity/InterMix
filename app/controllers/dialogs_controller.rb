@@ -2513,9 +2513,9 @@ class DialogsController < ApplicationController
       session[:cur_prefix] = session[:dialog_prefix]
     end
     if session[:cur_prefix] != ''
-      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+      session[:cur_baseurl] = "//" + session[:cur_prefix] + "." + ROOTDOMAIN    
     else
-      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+      session[:cur_baseurl] = "//" + BASEDOMAIN    
     end
     if participant_signed_in? and ( session[:group_id] != before_group_id or session[:dialog_id] != before_dialog_id )
        current_participant.last_group_id = session[:group_id] if session[:group_id]

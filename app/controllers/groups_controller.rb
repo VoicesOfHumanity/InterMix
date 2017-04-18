@@ -1382,9 +1382,9 @@ class GroupsController < ApplicationController
     session[:dialog_name] = ''
     session[:dialog_prefix] = ''
     if session[:cur_prefix] != ''
-      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+      session[:cur_baseurl] = "//" + session[:cur_prefix] + "." + ROOTDOMAIN    
     else
-      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+      session[:cur_baseurl] = "//" + BASEDOMAIN    
     end
     session.delete(:list_sortby) if session.include?(:list_sortby) 
     session.delete(:slider_period_id) if session.include?(:slider_period_id)
@@ -1400,7 +1400,7 @@ class GroupsController < ApplicationController
     if request.get? and session[:cur_prefix] != '' and Rails.env == 'production' and (request.host == BASEDOMAIN or request.host == ROOTDOMAIN)
       host_should_be = "#{session[:cur_prefix]}.#{ROOTDOMAIN}"
       if request.host != host_should_be
-        redirect_to "http://#{host_should_be}#{request.fullpath}"
+        redirect_to "//#{host_should_be}#{request.fullpath}"
       end
     end
   end

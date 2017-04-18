@@ -10,7 +10,7 @@
 	none
 <% else -%>
 	<% for group in @dialog.active_groups -%>
-		<br><a href="http://<%= domname(group,nil) %>/groups/<%= group.id %>/forum"><%= group.name %></a>
+		<br><a href="//<%= domname(group,nil) %>/groups/<%= group.id %>/forum"><%= group.name %></a>
 	<% end -%>
 <% end -%>		
 </p>

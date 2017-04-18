@@ -273,23 +273,23 @@ class FrontController < ApplicationController
 
     if not @group
       flash[:alert] = "No group was identified"
-      redirect_to "http://#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join" 
       return
     elsif not @dialog
       flash[:alert] = "No discussion was identified"
-      redirect_to "http://#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join" 
       return
     elsif @dialog and current_participant and participant_signed_in?
       flash[:alert] = "You were already logged in. No need to join again."
-      redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
+      redirect_to "//#{@dialog.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group and current_participant and participant_signed_in?
       flash[:alert] = "You were already logged in. No need to join again."
-      redirect_to "http://#{@group.shortname}.#{ROOTDOMAIN}/"
+      redirect_to "//#{@group.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group and not ( @group.openness == 'open' or @group.openness == 'open_to_apply' )
       flash[:alert] = "Sorry, you can not join that group by yourself"
-      redirect_to "http://#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join" 
       return      
     end
     
@@ -312,7 +312,7 @@ class FrontController < ApplicationController
 
     if request.get?
       flash[:alert] = "Not allowed"
-      redirect_to "http://#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join" 
       return
     end
     
@@ -324,15 +324,15 @@ class FrontController < ApplicationController
 
     if not @group
       flash[:alert] = "No group was identified"
-      redirect_to "http://#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join" 
       return
     elsif not @dialog
       flash[:alert] = "No discussion was identified"
-      redirect_to "http://#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join" 
       return
     elsif @group and not ( @group.openness == 'open' or @group.openness == 'open_to_apply' )
       flash[:alert] = "Sorry, you can not join that group by yourself"
-      redirect_to "http://#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join" 
       return   
     end     
     
@@ -714,15 +714,15 @@ class FrontController < ApplicationController
     
     if not @group
       flash[:alert] = "Group not found"
-      redirect_to "http://#{BASEDOMAIN}/join"
+      redirect_to "//#{BASEDOMAIN}/join"
       return  
     elsif @dialog and current_participant and participant_signed_in?
       flash[:alert] = "You were already logged in. No need to join again."
-      redirect_to "http://#{@dialog.shortname}.#{ROOTDOMAIN}/"
+      redirect_to "//#{@dialog.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group.shortname.to_s != '' and current_participant and participant_signed_in?
       flash[:alert] = "You were already logged in. No need to join again."
-      redirect_to "http://#{@group.shortname}.#{ROOTDOMAIN}/"
+      redirect_to "//#{@group.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group.openness == 'private'
       render :text=>"This is a private group", :layout => 'front'
@@ -1416,7 +1416,7 @@ class FrontController < ApplicationController
 
     if request.get?
       flash[:alert] = "Not allowed"
-      redirect_to "http://#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join" 
       return
     end
 

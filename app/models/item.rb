@@ -269,7 +269,7 @@ class Item < ActiveRecord::Base
       
       content = self.html_content != '' ? self.html_with_auth(recipient) : self.short_content
       
-      link_to = "http://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}"
+      link_to = "//#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}"
       if not self.is_first_in_thread
         link_to += "#item_#{self.id}"
       end
@@ -285,10 +285,10 @@ class Item < ActiveRecord::Base
       if dialog and not dialog.settings_with_period["profiles_visible"]
   		  itext += self.participant ? self.participant.name : self.posted_by
   		else
-  		  itext += "<a href=\"http://#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
+  		  itext += "<a href=\"//#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
   		end
   		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
-  		itext += " <a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
+  		itext += " <a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		
       itext += "</p>"
       
@@ -476,7 +476,7 @@ class Item < ActiveRecord::Base
       
       itext = ""
       #itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\">#{self.subject}</a></h3>"
-      itext += "<h3><a href=\"http://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}#item_#{self.id}\">#{self.subject}</a></h3>"
+      itext += "<h3><a href=\"//#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}#item_#{self.id}\">#{self.subject}</a></h3>"
       itext += "<div>"
       itext += content
       itext += "</div>"
@@ -491,10 +491,10 @@ class Item < ActiveRecord::Base
       if dialog and not dialog.settings_with_period["profiles_visible"]
   		  itext += self.participant ? self.participant.name : self.posted_by
   		else
-  		  itext += "<a href=\"http://#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
+  		  itext += "<a href=\"//#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
   		end
   		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
-  		itext += " <a href=\"http://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
+  		itext += " <a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		
   		#itext += " Discussion: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/slider?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\">#{dialog.name}</a>" if dialog
   		#itext += " Decision Period: <a href=\"http://#{domain}/dialogs/#{self.dialog_id}/slider?period_id=#{self.period_id}&auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}\">#{period.name}</a>" if period  		
@@ -538,7 +538,7 @@ class Item < ActiveRecord::Base
     
     txt = ''
     
-    permalink = "http://#{BASEDOMAIN}/items/#{self.id}/view"
+    permalink = "//#{BASEDOMAIN}/items/#{self.id}/view"
     
     #-- Get the shortened url from bitly
     bitlyurl = "https://api-ssl.bitly.com/v3/shorten?access_token=#{BITLY_TOKEN}&longUrl=" + Rack::Utils.escape(permalink)
@@ -599,7 +599,7 @@ class Item < ActiveRecord::Base
   
   def html_with_auth(participant)
     #-- For the purpose of emailing, return html_content with added authentication token for a particular user, so they'll be logged in
-    self.html_content.gsub(%r{http://.*?#{ROOTDOMAIN}/[^"')<,:;\s]+}) { |s|
+    self.html_content.gsub(%r{//.*?#{ROOTDOMAIN}/[^"')<,:;\s]+}) { |s|
       if s =~ /auth_token=/
         s
       else  

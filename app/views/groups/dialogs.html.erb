@@ -27,9 +27,9 @@
 	end
 	%>
 
-	<li><a href="http://<%= dom %>/dialogs/<%= dialog.id %>/slider"><%= dialog.name %></a>&nbsp;&nbsp;&nbsp;
-		<a href="http://<%= dom %>/dialogs/<%= dialog.id %>/view#participatinggroups">participating groups</a>&nbsp;&nbsp;&nbsp;
-		<a href="http://<%= dom %>/dialogs/<%= dialog.id %>/view">info</a>
+	<li><a href="//<%= dom %>/dialogs/<%= dialog.id %>/slider"><%= dialog.name %></a>&nbsp;&nbsp;&nbsp;
+		<a href="//<%= dom %>/dialogs/<%= dialog.id %>/view#participatinggroups">participating groups</a>&nbsp;&nbsp;&nbsp;
+		<a href="//<%= dom %>/dialogs/<%= dialog.id %>/view">info</a>
 		<% if @admin4.include?(dialog.id) then %><a href="http://<%= dom %>/dialogs/<%= dialog.id %>/edit">edit</a><% end -%>
 	</li>
 	<% end -%>
