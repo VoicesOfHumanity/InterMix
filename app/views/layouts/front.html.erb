@@ -97,10 +97,10 @@
 			<% if not participant_signed_in? %>
 			<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Order out of Chaos</a></li>
       <% elsif session[:dialog_id].to_i > 0 -%>  
-      <% vohdom = Rails.env!='development' ? "http://voh.#{ROOTDOMAIN}" : '' %>
+      <% vohdom = Rails.env!='development' ? "//voh.#{ROOTDOMAIN}" : '' %>
 			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dialog_id and @dialog_id.to_i==VOH_DISCUSSION_ID.to_i) %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li>
       <% elsif true -%>
-      <% vohdom = Rails.env!='development' ? "http://voh.#{ROOTDOMAIN}" : '' %>
+      <% vohdom = Rails.env!='development' ? "//voh.#{ROOTDOMAIN}" : '' %>
       <li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li> 		
       <% elsif session[:dialog_id].to_i > 0 -%>
 			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dsection.to_s!='index') %>" href="/dialogs/<%= session[:dialog_id] %>/slider">Home</a></li>
@@ -113,7 +113,7 @@
 			<% if participant_signed_in? -%>
         <% if false -%>
           <% if session[:group_id].to_i > 0 -%>
-            <% grpdom = Rails.env!='development' ? "http://#{session[:group_prefix]}.#{ROOTDOMAIN}" : '' %>
+            <% grpdom = Rails.env!='development' ? "//#{session[:group_prefix]}.#{ROOTDOMAIN}" : '' %>
   			    <li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='forum') %>" href="<%= grpdom %>/groups/<%= session[:group_id] %>/forum">Current Group</a></li>
           <% end -%>
   			  <li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='index') or (@section=='dialogs' and @dsection=='index') %>" href="/groups">Other Groups</a></li>	
@@ -200,7 +200,7 @@
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
 <input type="hidden" name="cmd" value="_s-xclick">
 <input type="hidden" name="hosted_button_id" value="2HZ3L3HJ8RBJG">
-<input type="image" src="http://www.intermix.org/voh/paypalbutton001.jpg" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" style="margin:-5px 0 0 -6px">
+<input type="image" src="//<%= BASEDOMAIN %>/voh/paypalbutton001.jpg" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" style="margin:-5px 0 0 -6px">
 <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 </form>
 
