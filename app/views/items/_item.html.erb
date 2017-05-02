@@ -79,7 +79,7 @@ end
 			sum
 		</div>
 		<div id="sum_<%= item.id %>" class="iteminfo_summary" style="display:none">
-<%= render :partial => "items/rating_summary", :locals => { :item => item} %>
+<%= render :partial => "items/rating_summary", :locals => { :item => item, :itemproc => itemproc} %>
 		</div>
 		
 	</div><!--itemvoting-->		

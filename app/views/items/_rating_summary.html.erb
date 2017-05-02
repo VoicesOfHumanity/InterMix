@@ -1,7 +1,6 @@
 <div class="title">rating summary</div>
 
 <% if defined?(itemproc) and itemproc.class == Hash -%>
-
 Average interest: <b><%= sprintf("%.1f", itemproc['avg_interest'] ? itemproc['avg_interest'] : 0.0) %></b><br/>
 Average approval: <b><%= sprintf("%.1f", itemproc['avg_approval'] ? itemproc['avg_approval'] : 0.0) %></b><br/>
 Value: <b><%= sprintf("%.1f", itemproc['value'] ? itemproc['value'] : 0.0) %></b> (value = interest x approval)<br/>
