@@ -1201,7 +1201,7 @@ class ItemsController < ApplicationController
           end
         end
         
-        @data['all'] = {name: name, item: item, iproc: iproc}
+        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
       elsif age == 0 and gender == 0
         # two genders, three ages, and voice of humanity
         # total
@@ -1213,12 +1213,17 @@ class ItemsController < ApplicationController
         @sortby = '*value*'
         @items = Item.get_sorted(items,@itemsproc,@sortby,false)
         if @items.length > 0 and ratings.length > 0
-          if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+          exp = ""
+          #exp = "@items[0].id:#{@items[0].id} @itemsproc[items[0].id]['value']:#{@itemsproc[items[0].id]['value']}"
+          #exp = @itemsproc[items[0].id].inspect
+          if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
             item = @items[0]
             iproc = @itemsproc[item.id]
+            #exp = iproc.inspect
+            #exp = "#{(@items[0]).id}/#{item.id}"
           end
         end
-        @data['all'] = {name: name, item: item, iproc: iproc}
+        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, exp: exp}
         
         for gender_rec in genders
           gender_id = gender_rec.id
@@ -1228,8 +1233,10 @@ class ItemsController < ApplicationController
           if not gender_rec.sumcat
             item = nil
             iproc = nil
+            exp = ""
             
             crit[:gender] = gender_id
+            crit[:age] = 0
             items,ratings,title = Item.get_items(crit,current_participant)
             @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             @sortby = '*value*'
@@ -1241,7 +1248,7 @@ class ItemsController < ApplicationController
               end
             end
             
-            @data[code] = {name: name, item: item, iproc: iproc}
+            @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, exp: exp}
           end
         end
         for age_rec in ages
@@ -1254,6 +1261,7 @@ class ItemsController < ApplicationController
             iproc = nil
             
             crit[:age] = age_id
+            crit[:gender] = 0
             items,ratings,title = Item.get_items(crit,current_participant)
             @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
             @sortby = '*value*'
@@ -1265,7 +1273,7 @@ class ItemsController < ApplicationController
               end
             end
             
-            @data[code] = {name: name, item: item, iproc: iproc}
+            @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, exp: exp}
           end
         end
       
@@ -1288,7 +1296,7 @@ class ItemsController < ApplicationController
             iproc = @itemsproc[item.id]
           end
         end
-        @data['all'] = {name: name, item: item, iproc: iproc}
+        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
         
         for gender_rec in genders
           gender_id = gender_rec.id
@@ -1313,7 +1321,7 @@ class ItemsController < ApplicationController
               end
             end
             
-            @data[code] = {name: name, item: item, iproc: iproc}
+            @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
           end
         end
       
@@ -1337,7 +1345,7 @@ class ItemsController < ApplicationController
             iproc = @itemsproc[item.id]
           end
         end
-        @data['all'] = {name: name, item: item, iproc: iproc}
+        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
         
         for age_rec in ages
           age_id = age_rec.id
@@ -1361,7 +1369,7 @@ class ItemsController < ApplicationController
               end
             end
             
-            @data[code] = {name: name, item: item, iproc: iproc}
+            @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
           end
         end
         
