@@ -1195,7 +1195,7 @@ class ItemsController < ApplicationController
         @sortby = '*value*'
         @items = Item.get_sorted(items,@itemsproc,@sortby,false)
         if @items.length > 0 and ratings.length > 0
-          if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['votes'] > 0 and @itemsproc[items[0].id]['value'] > 0
+          if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['votes'] > 0 and @itemsproc[@items[0].id]['value'] > 0
             item = @items[0]
             iproc = @itemsproc[item.id]
           end
@@ -1242,7 +1242,7 @@ class ItemsController < ApplicationController
             @sortby = '*value*'
             @items = Item.get_sorted(items,@itemsproc,@sortby,false)
             if @items.length > 0 and ratings.length > 0
-              if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+              if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
                 item = @items[0]
                 iproc = @itemsproc[item.id]
               end
@@ -1315,7 +1315,7 @@ class ItemsController < ApplicationController
             @sortby = '*value*'
             @items = Item.get_sorted(items,@itemsproc,@sortby,false)
             if @items.length > 0 and ratings.length > 0
-              if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+              if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
                 item = @items[0]
                 iproc = @itemsproc[item.id]
               end
@@ -1340,7 +1340,7 @@ class ItemsController < ApplicationController
         @sortby = '*value*'
         @items = Item.get_sorted(items,@itemsproc,@sortby,false)
         if @items.length > 0 and ratings.length > 0
-          if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+          if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
             item = @items[0]
             iproc = @itemsproc[item.id]
           end
@@ -1363,7 +1363,7 @@ class ItemsController < ApplicationController
             @sortby = '*value*'
             @items = Item.get_sorted(items,@itemsproc,@sortby,false)
             if @items.length > 0 and ratings.length > 0
-              if @itemsproc.has_key?(@items[0].id) and @itemsproc[items[0].id]['value'] > 0
+              if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
                 item = @items[0]
                 iproc = @itemsproc[item.id]
               end
