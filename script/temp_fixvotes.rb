@@ -50,15 +50,33 @@ for item in items
   
   next if not orig_item
   
-  rating = Rating.where(item_id: orig_item.id, participant_id: item.posted_by.to_i, rating_type: 'AllRatings', group_id: orig_item.group_id, dialog_id: orig_item.dialog_id, dialog_round_id: orig_item.dialog_round_id).first_or_initialize
-  
-  if rating.interest != 4
-    rating.interest = 4
-    rating.save
-    puts "item #{orig_item.id} commented by #{item.posted_by.to_i} in #{item.id}"
-    puts " - interest set to 4"
+  if item.first_in_thread.to_i > 0 and item.first_in_thread.to_i != item.reply_to.to_i
+    root_item = Item.find_by_id(item.first_in_thread.to_i)
+  else
+    root_item = orig_item
   end
   
+  next if not root_item
+  
+  # check and update rating for item we're replying to
+  rating = Rating.where(item_id: orig_item.id, participant_id: item.posted_by.to_i, rating_type: 'AllRatings', group_id: orig_item.group_id, dialog_id: orig_item.dialog_id, dialog_round_id: orig_item.dialog_round_id).first_or_initialize  
+  if rating.interest.to_i != 4
+    rating.interest = 4
+    rating.save
+    puts "item #{orig_item.id} commented by #{item.posted_by.to_i} in #{item.id}. Was:#{rating.interest}. Root:#{item.first_in_thread}"
+    puts " - reply interest set to 4"
+  end
+
+  if root_item.id !=  orig_item.id
+    # check and update rating for root item, if different
+    rating = Rating.where(item_id: root_item.id, participant_id: item.posted_by.to_i, rating_type: 'AllRatings', group_id: root_item.group_id, dialog_id: root_item.dialog_id, dialog_round_id: root_item.dialog_round_id).first_or_initialize  
+    if rating.interest != 4
+      rating.interest = 4
+      rating.save
+      #puts "item #{root_item.id} root commented by #{item.posted_by.to_i} in #{item.id}"
+      puts " - root #{root_item.id} interest set to 4"
+    end
+  end
   
 end
 
