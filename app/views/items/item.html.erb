@@ -3,6 +3,12 @@
 <%= render :partial => "item", :locals => { :item => @item, :itemproc =>@itemsproc[@item.id], :is_reply => false, :odd_or_even=>0, :from=>'individual', :top=>@item.id, :showlong=>true } %>
 </div>
 
+<% if params[:showratings].to_i == 1 and @extras and @extras.has_key?('regression') -%>
+<div>
+Regression: <%=raw @extras['regression'] -%><br>
+</div>
+<% end -%>
+
 <% if @item.is_first_in_thread -%>
 <p>
 <!-- AddThis Button BEGIN -->

@@ -1191,7 +1191,7 @@ class ItemsController < ApplicationController
         crit[:age] = age_id
         crit[:gender] = gender_id
         items,ratings,@title = Item.get_items(crit,current_participant)
-        @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        @itemsproc, @extras = Item.get_itemsproc(items,ratings,current_participant.id)
         @sortby = '*value*'
         @items = Item.get_sorted(items,@itemsproc,@sortby,false)
         if @items.length > 0 and ratings.length > 0
@@ -1209,7 +1209,7 @@ class ItemsController < ApplicationController
         item = nil
         iproc = nil        
         items,ratings,@title = Item.get_items(crit,current_participant)
-        @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
         @sortby = '*value*'
         @items = Item.get_sorted(items,@itemsproc,@sortby,false)
         if @items.length > 0 and ratings.length > 0
@@ -1238,7 +1238,7 @@ class ItemsController < ApplicationController
             crit[:gender] = gender_id
             crit[:age] = 0
             items,ratings,title = Item.get_items(crit,current_participant)
-            @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+            @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
             @sortby = '*value*'
             @items = Item.get_sorted(items,@itemsproc,@sortby,false)
             if @items.length > 0 and ratings.length > 0
@@ -1263,7 +1263,7 @@ class ItemsController < ApplicationController
             crit[:age] = age_id
             crit[:gender] = 0
             items,ratings,title = Item.get_items(crit,current_participant)
-            @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+            @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
             @sortby = '*value*'
             @items = Item.get_sorted(items,@itemsproc,@sortby,false)
             if @items.length > 0 and ratings.length > 0
@@ -1287,7 +1287,7 @@ class ItemsController < ApplicationController
         iproc = nil        
         crit[:age] = age_id
         items,ratings,@title = Item.get_items(crit,current_participant)
-        @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
         @sortby = '*value*'
         @items = Item.get_sorted(items,@itemsproc,@sortby,false)
         if @items.length > 0 and ratings.length > 0
@@ -1311,7 +1311,7 @@ class ItemsController < ApplicationController
             crit[:age] = age_id
             crit[:gender] = gender_id
             items,ratings,title = Item.get_items(crit,current_participant)
-            @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+            @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
             @sortby = '*value*'
             @items = Item.get_sorted(items,@itemsproc,@sortby,false)
             if @items.length > 0 and ratings.length > 0
@@ -1336,7 +1336,7 @@ class ItemsController < ApplicationController
         iproc = nil        
         crit[:gender] = gender_id
         items,ratings,@title = Item.get_items(crit,current_participant)
-        @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+        @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
         @sortby = '*value*'
         @items = Item.get_sorted(items,@itemsproc,@sortby,false)
         if @items.length > 0 and ratings.length > 0
@@ -1359,7 +1359,7 @@ class ItemsController < ApplicationController
             crit[:age] = age_id
             crit[:gender] = gender_id
             items,ratings,title = Item.get_items(crit,current_participant)
-            @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id)
+            @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
             @sortby = '*value*'
             @items = Item.get_sorted(items,@itemsproc,@sortby,false)
             if @items.length > 0 and ratings.length > 0
@@ -1384,7 +1384,7 @@ class ItemsController < ApplicationController
     
       # Add up results for those items and those ratings, to show in the item summaries in the listing
       # I.e. add up the number of interest/approval ratings for each item, do regression to the mean, calculate value, etc
-      @itemsproc = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
+      @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
   
       # Items probably need to be sorted, based on the results we calculated
       #sortby = '*value*'

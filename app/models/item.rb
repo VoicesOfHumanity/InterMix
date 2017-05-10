@@ -1508,7 +1508,8 @@ class Item < ActiveRecord::Base
       end
     end
 
-    return(itemsproc)
+    #return(itemsproc)
+    return [itemsproc, extras]
   end
   
   def self.get_sorted(items2,itemsproc,sortby,rootonly=false)

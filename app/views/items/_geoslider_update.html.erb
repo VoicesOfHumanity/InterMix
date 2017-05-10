@@ -32,6 +32,11 @@
   <% end %>
 <% end -%>
 
+<% if params[:showratings].to_i == 1 and @extras and @extras.has_key?('regression') -%>
+<div>
+Regression: <%=raw @extras['regression'] -%><br>
+</div>
+<% end -%>
 
 <div style="border:1px solid #000;padding:0px 0 0 0;margin-bottom:20px">
   <%= render partial: 'items/geoslider_options', locals: {num: 2} %>
