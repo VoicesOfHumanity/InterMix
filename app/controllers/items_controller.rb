@@ -1201,7 +1201,7 @@ class ItemsController < ApplicationController
           end
         end
         
-        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
+        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
       elsif age == 0 and gender == 0
         # two genders, three ages, and voice of humanity
         # total
@@ -1223,7 +1223,7 @@ class ItemsController < ApplicationController
             #exp = "#{(@items[0]).id}/#{item.id}"
           end
         end
-        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, exp: exp}
+        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
         
         for gender_rec in genders
           gender_id = gender_rec.id
@@ -1248,7 +1248,7 @@ class ItemsController < ApplicationController
               end
             end
             
-            @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, exp: exp}
+            @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
           end
         end
         for age_rec in ages
@@ -1273,7 +1273,7 @@ class ItemsController < ApplicationController
               end
             end
             
-            @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, exp: exp}
+            @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
           end
         end
       
@@ -1296,7 +1296,7 @@ class ItemsController < ApplicationController
             iproc = @itemsproc[item.id]
           end
         end
-        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
+        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
         
         for gender_rec in genders
           gender_id = gender_rec.id
@@ -1321,7 +1321,7 @@ class ItemsController < ApplicationController
               end
             end
             
-            @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
+            @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
           end
         end
       
@@ -1345,7 +1345,7 @@ class ItemsController < ApplicationController
             iproc = @itemsproc[item.id]
           end
         end
-        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
+        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
         
         for age_rec in ages
           age_id = age_rec.id
@@ -1369,7 +1369,7 @@ class ItemsController < ApplicationController
               end
             end
             
-            @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length}
+            @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
           end
         end
         

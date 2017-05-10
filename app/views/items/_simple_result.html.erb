@@ -23,6 +23,11 @@
         <% end -%>
       </div>
 		</div>
+    <% if params[:showratings].to_i == 1 and @extras and @extras.has_key?('regression') -%>
+    <div>
+    Regression: <%=raw info[:extras]['regression'] -%><br>
+    </div>
+    <% end -%>
   <% elsif params[:showratings].to_i == 1 -%>
     <p>[no winner out of <%= info[:itemcount] %> items and <%= info[:ratingcount]%> ratings]</p>   
   <% else -%>
