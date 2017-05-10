@@ -286,5 +286,6 @@ end
 	<% for rating in ratings -%>
 	<%= "#{rating.created_at.strftime('%Y-%m-%d %H:%M')}: #{rating.participant.name}: int:#{rating.interest ? rating.interest.to_i : 'none'} app:#{rating.approval ? rating.approval.to_i : 'none'} group:#{rating.group_id.to_i} disc:#{rating.dialog_id.to_i} period:#{rating.period_id.to_i}" %><br>
 	<% end -%>
+  <%=raw itemproc['ratingwithregmean'] %>
 	</div>		
 	<% end -%>
