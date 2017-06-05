@@ -1008,22 +1008,25 @@ class ItemsController < ApplicationController
     group_levels = {1 => 'current', 2 => 'user', 3 => 'all'}
     crit[:group_level] = group_levels[group_level]
   
-    crit[:indigenous] = (params[:indigenous].to_i == 1) ? true : false
-    crit[:other_minority] = (params[:other_minority].to_i == 1) ? true : false
-    crit[:veteran] = (params[:veteran].to_i == 1) ? true : false
-    crit[:interfaith] = (params[:interfaith].to_i == 1) ? true : false
-    crit[:refugee] = (params[:refugee].to_i == 1) ? true : false
+    #crit[:indigenous] = (params[:indigenous].to_i == 1) ? true : false
+    #crit[:other_minority] = (params[:other_minority].to_i == 1) ? true : false
+    #crit[:veteran] = (params[:veteran].to_i == 1) ? true : false
+    #crit[:interfaith] = (params[:interfaith].to_i == 1) ? true : false
+    #crit[:refugee] = (params[:refugee].to_i == 1) ? true : false
     
-    session[:indigenous] = crit[:indigenous]
-    session[:other_minority] = crit[:other_minority]
-    session[:veteran] = crit[:veteran]
-    session[:interfaith] = crit[:interfaith]
-    session[:refugee] = crit[:refugee]
+    #session[:indigenous] = crit[:indigenous]
+    #session[:other_minority] = crit[:other_minority]
+    #session[:veteran] = crit[:veteran]
+    #session[:interfaith] = crit[:interfaith]
+    #session[:refugee] = crit[:refugee]
   
-    crit[:dialog_id] = params[:dialog_id].to_i
+    #crit[:dialog_id] = params[:dialog_id].to_i
+    crit[:dialog_id] = 0
     
-    crit[:period_id] = params[:period_id].to_i
-    #session[:slider_period_id] = crit[:period_id]
+    #crit[:period_id] = params[:period_id].to_i
+    crit[:period_id] = 0
+    
+    session[:slider_period_id] = crit[:period_id]
     #logger.info("items#geoslider_update slider_period:#{session[:slider_period_id]}")
     
     #crit[:group_id] = session[:group_id].to_i
@@ -1155,27 +1158,18 @@ class ItemsController < ApplicationController
     if show_result
       # Results will be for the previous period, if there's a current period
       
-      # New moons: http://rubyslipper.ca/ruby-slipper-astrology/2014/10/newfull-moons-eclipses-2015      
-      @moons = [
-        '2016-03-09 - 2017-03-27',
-        '2017-03-27 - 2017-04-26',
-        '2017-04-26 - 2017-05-25',
-        '2017-05-25 - 2017-06-23',
-        '2017-06-23 - 2017-07-23'
-      ]    
-      
       # If we're showing results, then add up results for the required gender and age combinations
       # We will go through the overall items and ratings we have, and put them in those several buckets
       # Then we will add up the results in each of those buckets
     
       ages = MetamapNode.where(metamap_id: 5).order(:sortorder)
       genders = MetamapNode.where(metamap_id: 3).order(:sortorder)
-      
+
       age = crit[:age]
       gender = crit[:gender]
-      
+
       gender_pos = {207=>"Men's",208=>"Women's"}
-      gender_single = {207=>"Men",208=>"Women"}
+      gender_single = {207=>"Men",208=>"Women"} 
     
       if age > 0 and gender > 0
         # One particular result

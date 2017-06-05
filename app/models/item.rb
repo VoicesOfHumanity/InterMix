@@ -1299,8 +1299,10 @@ class Item < ActiveRecord::Base
     end
 
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
-    items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
-    items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation")
+    if current_participant
+      items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
+      items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation")
+    end
   
     logger.info("item#get_items #{items.length if items} items and #{ratings.length if ratings} ratings")
   
@@ -2481,6 +2483,10 @@ class Item < ActiveRecord::Base
     #-- Decide whether the current user is allowed to rate the current item
     #-- They need to be a member of the group or discussion
     #-- The main reason should either be that voting manually is turned off, or voting period is over, and they already rated it
+    
+    #-- Not sure if we need any of this any longer
+    return true
+    
     if self.v_p_id and v_p_id == participant_id
       #-- If we're called again for the same user, just return the stored result
       return self.v_ok

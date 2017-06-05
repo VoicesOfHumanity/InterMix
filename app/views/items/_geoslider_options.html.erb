@@ -22,7 +22,7 @@
         <%= select_tag "datefixed#{num}", options_for_select([["In last 24 hours",'day'],["In last week",'week'],["In last month",'month']],@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>
         <br>
       <%= radio_button_tag "datetype#{num}", "range", (@datetype=='range'), :onclick=>"per_reload(false,#{num},'datetype')" %> Since
-         <%= date_field_tag "datefrom#{num}", @datefrom, :onchange=>"per_reload(false,#{num},'datefrom')" %>
+         <%= date_field_tag "datefrom#{num}", @datefrom, :onblur=>"per_reload(false,#{num},'datefrom')" %>
     </td>
   </tr>
 </table>

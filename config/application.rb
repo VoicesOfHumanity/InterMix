@@ -164,6 +164,7 @@ EMBEDLY_API_KEY = '69a93eaedc814b13ad46aa4952e75107'
 
 VOH_DISCUSSION_ID = 4
 
+# New moons: http://rubyslipper.ca/ruby-slipper-astrology/2014/10/newfull-moons-eclipses-2015
 MOONS = {
   '2016-03-09_2017-04-26' => "March 9, 2016 - April 26, 2017",
   '2017-04-26_2017-05-25' => "April 26 - May 25, 2017",
