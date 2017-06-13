@@ -1,8 +1,9 @@
 #-- mail_moon.rb --- send winners when it's a new moon
 #-- Run this every day. Will decide if it is full moon, based on the hardcoded ranges in the settings
-#-- Should this be on the next day, or exactly on the day? Maybe at end of day
+#-- Should be on the next day, after the new moon.
 
 # ruby mail_moon.rb -d2017-06-24 -p6
+# ruby mail_moon.rb -d2017-05-26 -p6
 
 require File.dirname(__FILE__)+'/cron_helper'
 require 'optparse'
@@ -10,13 +11,13 @@ require 'optparse'
 current_participant = nil
 current_participant_id = 0
 participant_id = 0
-whichday = ''
+runday = ''
 testonly = false
 
 # testing: ruby mail_send.rb -p 6 -d 2013-11-10 -w 1 
 opts = OptionParser.new
 opts.on("-pARG","--participant=ARG",Integer) {|val| participant_id = val}
-opts.on("-dARG","--day=ARG",String) {|val| whichday = val}
+opts.on("-dARG","--day=ARG",String) {|val| runday = val}
 opts.on("-tARG","--test=ARG",Integer) {|val| testonly = true}
 opts.parse(ARGV)
 
@@ -24,15 +25,23 @@ if testonly
   puts "Test Mode"
 end
 
-if whichday != ''
+if runday != ''
   #-- If a day is given, it should be the day on which the mailing is expected to go out (beginning of the day following new moon)
-  now = Time.parse(whichday).gmtime
+  now = Time.parse(runday)
 else
-  now = Time.now.gmtime
-end    
-todaystr = now.strftime("%Y-%m-%d")
-puts "Now: #{now.strftime("%Y-%m-%d %H:%M:%S")} today: #{todaystr}"
-todayfull = now.strftime("%Y-%b-%d")
+  now = Time.now
+end 
+puts "Running this on localtime #{now.strftime("%Y-%m-%d %H:%M")}"
+
+#-- The target day (yesterday) is what we will pretend is today
+
+today = now.midnight - 1.day
+puts "Target: A day earlier, which is localtime #{today.strftime("%Y-%m-%d %H:%M")}"
+
+todaystr = today.strftime("%Y-%m-%d")
+whichday = todaystr
+puts "Today string: #{todaystr}"
+todayfull = today.strftime("%Y-%b-%d")
 
 crit = {}
 @data = {}
@@ -56,7 +65,7 @@ MOONS.each do |code,txt|
 end
 
 if is_new
-  puts "Today is a new moon. Continuing..."
+  puts "Today (#{todaystr}) is a new moon. Continuing..."
 else
   puts "It is not a new moon today. Quitting..."
   exit
@@ -223,7 +232,7 @@ for p in participants
         itext = ""
         #itext += "<h3><a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
         
-        itext += "<img src=\"https://voh.intermix.org/images/#{image}\" align=\"left\" style=\"float:left;padding-right:5px;width:100px\" /><h1>#{heading}</h1>"
+        itext += "<img src=\"https://voh.intermix.org/images/#{image}\" align=\"left\" style=\"float:left;padding-right:10px;width:100px\" /><h1>#{heading}</h1>"
         
         itext += "<h3><a href=\"#{link_to}\">#{item.subject}</a></h3>"
         itext += "<div>"
@@ -262,7 +271,7 @@ for p in participants
   
   subject = "[voicesofhumanity] New Moon, #{todayfull}"
 
-  email = ItemMailer.digest(subject, etext, p.email_address_with_name, cdata)
+  email = ItemMailer.moon(subject, etext, p.email_address_with_name, cdata)
 
   if testonly
     puts "  here we would have sent the email, if it weren't a test"

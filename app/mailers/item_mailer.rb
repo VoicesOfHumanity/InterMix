@@ -46,4 +46,14 @@ class ItemMailer < ActionMailer::Base
     )
   end
 
+  def moon(subject,message,email,cdata={})
+    #-- New moon message to everybody
+    @message = message
+    @cdata = cdata if cdata   
+    mail(
+      :to => email,
+      :subject => (subject ? subject : "[voicesofhumanity] New Moon")
+    )
+  end
+
 end
