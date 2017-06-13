@@ -1105,6 +1105,8 @@ class Item < ActiveRecord::Base
   def self.get_items(crit,current_participant,rootonly=true)
     #-- Get the items and records that match a certain criteria. Mainly for geoslider
   
+    logger.info("item#get_items crit:#{crit}")
+  
     # Start preparing the queries
     items = Item.where(nil)
     ratings = Rating.where(nil)
@@ -1118,10 +1120,24 @@ class Item < ActiveRecord::Base
     #ratings = ratings.where("ratings.period_id=#{crit[:period_id]}") if crit[:period_id].to_i >0  
 
     # Date period
-    items = items.where("items.created_at >= ?", crit[:datefromuse])
-    logger.info("item#get_items from date: #{crit[:datefromuse]}")
-    if crit.has_key?(:datefromto) and crit[:datefromto] != ''
-      items = items.where("items.created_at <= ?", crit[:datefromto])
+    if crit.has_key?(:datefromuse) and crit[:datefromuse].to_s != ''
+      if crit[:datefromuse].class == Date
+        datefromuse = crit[:datefromuse].strftime("Y-m-d")
+      else
+        datefromuse = crit[:datefromuse].to_s
+      end
+      datefromuse << ' 00:00:00'
+      items = items.where("items.created_at >= ?", datefromuse)
+      logger.info("item#get_items from date: #{crit[:datefromuse]}")
+    end
+    if crit.has_key?(:datefromto) and crit[:datefromto].to_s != ''
+      if crit[:datefromto].class == Date
+        datefromto = crit[:datefromto].strftime("Y-m-d")
+      else
+        datefromto = crit[:datefromto].to_s
+      end
+      datefromto << ' 23:59:59'
+      items = items.where("items.created_at <= ?", datefromto)
       logger.info("item#get_items to date: #{crit[:datefromto]}")
     end
     # Don't look at date for ratings
@@ -1198,24 +1214,24 @@ class Item < ActiveRecord::Base
       title += "All Perspectives"
     end  
     
-    if crit[:gender] != 0
+    if crit[:gender].to_i != 0
       items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
       ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
     end
-    if crit[:age] != 0
+    if crit[:age].to_i != 0
       items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
       ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
     end
 
-    if crit[:gender] > 0 and crit[:age] == 0
-      gender = MetamapNode.find_by_id(crit[:gender])
+    if crit[:gender].to_i > 0 and crit[:age].to_i == 0
+      gender = MetamapNode.find_by_id(crit[:gender].to_i)
       title += " | #{gender.name_as_group}"
-    elsif crit[:gender] == 0 and crit[:age] > 0
-      age = MetamapNode.find_by_id(crit[:age])
+    elsif crit[:gender].to_i == 0 and crit[:age].to_i > 0
+      age = MetamapNode.find_by_id(crit[:age].to_i)
       title += " | #{age.name_as_group}"
-    elsif crit[:gender] > 0 and crit[:age] > 0
-      gender = MetamapNode.find_by_id(crit[:gender])
-      age = MetamapNode.find_by_id(crit[:age])
+    elsif crit[:gender].to_i > 0 and crit[:age].to_i > 0
+      gender = MetamapNode.find_by_id(crit[:gender].to_i)
+      age = MetamapNode.find_by_id(crit[:age].to_i)
       xtit = gender.name_as_group
       xtit2 = xtit[0..8] + age.name.capitalize + ' ' + xtit[9..100]
       title += " | #{xtit2}"    

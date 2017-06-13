@@ -59,7 +59,8 @@ MOONS.each do |code,txt|
     @datefromuse = xarr[0]
     @datefromto = xarr[1]    
     crit[:datefromuse] = @datefromuse
-    crit[:datefromto] = @datefromto      
+    crit[:datefromto] = @datefromto   
+    puts "Using period #{@datefromuser} - #{@datefromto}"   
     break
   end
 end
