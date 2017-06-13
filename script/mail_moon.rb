@@ -53,14 +53,14 @@ crit = {}
 #}
 is_new = false
 MOONS.each do |code,txt|
-  if code[0..9] == todaystr
+  if code[11..20] == todaystr
     is_new = true
     xarr = code.split('_')
     @datefromuse = xarr[0]
     @datefromto = xarr[1]    
     crit[:datefromuse] = @datefromuse
     crit[:datefromto] = @datefromto   
-    puts "Using period #{@datefromuser} - #{@datefromto}"   
+    puts "Using period #{@datefromuse} - #{@datefromto}"   
     break
   end
 end
