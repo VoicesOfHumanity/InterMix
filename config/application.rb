@@ -166,9 +166,7 @@ VOH_DISCUSSION_ID = 4
 
 # New moons: http://rubyslipper.ca/ruby-slipper-astrology/2014/10/newfull-moons-eclipses-2015
 MOONS = {
-  '2016-03-09_2017-04-26' => "March 9, 2016 - April 26, 2017",
-  '2017-04-26_2017-05-25' => "April 26 - May 25, 2017",
-  '2017-05-25_2017-06-23' => "May 25 - June 23, 2017",
+  '2016-03-08_2017-06-23' => "March 8, 2016 - June 23, 2017",
   '2017-06-23_2017-07-23' => "June 23 - July 23, 2017",
   '2017-07-23_2017-08-21' => "July 23 - Aug 21, 2017",
   '2017-08-21_2017-09-20' => "Aug 21 - Sep 20, 2017",
