@@ -1054,20 +1054,20 @@ class ItemsController < ApplicationController
     #  crit[:comtag] = check
     #end
     
-    @datetype = params[:datetype]
-    @datefixed = params[:datefixed]
-    @datefrom = params[:datefrom]    
-    session[:datetype] = @datetype
-    session[:datefixed] = @datefixed
-    session[:datefrom] = @datefrom
+    @datetype = params[:datetype].to_s
+    @datefixed = params[:datefixed].to_s
+    @datefrom = params[:datefrom].to_s
+    session[:datetype] = @datetype.dup
+    session[:datefixed] = @datefixed.dup
+    session[:datefrom] = @datefrom.dup
     @datefromto = ''
     if @datetype == 'fixed'
       if @datefixed == 'day'
-        @datefromuse = Date.today - 1
+        @datefromuse = (Date.today - 1).to_s
       elsif @datefixed == 'week'
-        @datefromuse = Date.today - 7
+        @datefromuse = (Date.today - 7).to_s
       elsif @datefixed == 'month'
-        @datefromuse = Date.today - 30
+        @datefromuse = (Date.today - 30).to_s
       elsif /_/ =~ @datefixed   
         xarr = @datefixed.split('_')
         @datefromuse = xarr[0]
@@ -1075,11 +1075,17 @@ class ItemsController < ApplicationController
       end
       logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype} datefixed:#{@datefixed}")
     else
-      @datefromuse = @datefrom    
+      @datefromuse = @datefrom.dup    
       logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype}")
     end
-    crit[:datefromuse] = @datefromuse
-    crit[:datefromto] = @datefromto    
+    crit[:datefromuse] = @datefromuse.dup
+    crit[:datefromto] = @datefromto.dup
+    
+    # "datefixed"=>"month", "datefrom"=>""
+    # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
+    # item#get_items crit:{:geo_level=>"planet", :group_level=>"all", :dialog_id=>0, :period_id=>0, :group_id=>0, :gender=>0, :age=>0, :comtag=>"", :messtag=>"", :datefromuse=>Sun, 21 May 2017, :datefromto=>"", :show_result=>true}
+    
+    # NB try to avoid this: items.created_at >= 'Y-m-d 00:00:00'
     
     @dialog_id = crit[:dialog_id]
     @period_id = crit[:period_id]
@@ -1149,6 +1155,7 @@ class ItemsController < ApplicationController
     #all_posts = all_posts.where(period_id: crit[:period_id]) if crit[:period_id] > 0
     all_posts = all_posts.where("items.created_at >= ?", crit[:datefromuse])
     @num_all_posts = all_posts.count
+    # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
   
     @title = ""
     crit[:show_result] = show_result

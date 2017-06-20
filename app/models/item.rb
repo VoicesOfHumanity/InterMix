@@ -1122,9 +1122,9 @@ class Item < ActiveRecord::Base
     # Date period
     if crit.has_key?(:datefromuse) and crit[:datefromuse].to_s != ''
       if crit[:datefromuse].class == Date
-        datefromuse = crit[:datefromuse].strftime("Y-m-d")
+        datefromuse = crit[:datefromuse].dup.strftime("Y-m-d")
       else
-        datefromuse = crit[:datefromuse].to_s
+        datefromuse = crit[:datefromuse].dup.to_s
       end
       datefromuse << ' 00:00:00'
       items = items.where("items.created_at >= ?", datefromuse)
@@ -1132,9 +1132,9 @@ class Item < ActiveRecord::Base
     end
     if crit.has_key?(:datefromto) and crit[:datefromto].to_s != ''
       if crit[:datefromto].class == Date
-        datefromto = crit[:datefromto].strftime("Y-m-d")
+        datefromto = crit[:datefromto].dup.strftime("Y-m-d")
       else
-        datefromto = crit[:datefromto].to_s
+        datefromto = crit[:datefromto].dup.to_s
       end
       datefromto << ' 23:59:59'
       items = items.where("items.created_at <= ?", datefromto)
