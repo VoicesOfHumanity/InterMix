@@ -1439,6 +1439,8 @@ class ItemsController < ApplicationController
       session[:list_batch_size] = @batch_size
       @showmax = @batch_size
 
+      @suggestedtopic = session.has_key?(:suggestedtopic) ? session[:suggestedtopic] : ""
+
       render :partial => 'geoslider_update'
   
     end

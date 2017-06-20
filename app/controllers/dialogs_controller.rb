@@ -181,6 +181,17 @@ class DialogsController < ApplicationController
       @refugee = session.has_key?(:refugee) ? session[:refugee] : false
     end    
     
+    if is_new
+      @suggestedtopic = ""
+      help_text = HelpText.find_by_code("suggestedtopic")
+      if help_text
+        @suggestedtopic = help_text.text   
+      end
+      session[:suggestedtopic] = @suggestedtopic
+    else  
+      @suggestedtopic = session.has_key?(:suggestedtopic) ? session[:suggestedtopic] : ""
+    end
+    
     if @show_result == 1
       @dsection = 'meta'
     else

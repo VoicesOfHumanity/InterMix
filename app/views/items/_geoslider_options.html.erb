@@ -25,4 +25,12 @@
          <%= date_field_tag "datefrom#{num}", @datefrom, :onblur=>"per_reload(false,#{num},'datefrom')" %>
     </td>
   </tr>
+  
+  <% if @suggestedtopic.to_s != "" -%>
+  <tr>
+    <td style="text-align:right;vertical-align:top;background-color:transparent">Suggested topic:</td>
+    <td style="background-color:transparent"><%= @suggestedtopic %></td>
+  </tr>
+  <% end -%>
+  
 </table>
