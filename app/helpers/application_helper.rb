@@ -1,5 +1,17 @@
 module ApplicationHelper
   
+  def clean_links(oldhtml)
+    #-- Assume we're getting an item full html, possibly with some embedded images. 
+    #-- Turn http into https if they're our own. If foreign http hot links, remove them.
+    newhtml = oldhtml
+    
+    #voh.intermix
+    #intermix
+    
+    
+    return newhtml
+  end
+  
   def is_approval? (item, num)
     #-- Answer whether the current item has been rated by the current user with a certain approval rating
     #-- The user's rating is exected to be in item.approval if there is one

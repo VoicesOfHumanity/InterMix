@@ -165,7 +165,19 @@ CKEDITOR.editorConfig = function( config )
         upload.action = config.addQueryString(upload.action, upload.filebrowser['params']);
       }
     }
+
+    switch (dialogName) {  
+    case 'image': //Image Properties dialog      
+    dialogDefinition.removeContents('Link');
+    dialogDefinition.removeContents('advanced');
+    break;      
+    case 'link': //image Properties dialog          
+    dialogDefinition.removeContents('advanced');   
+    break;
+    }
+
   });
+    
 };
 
 
