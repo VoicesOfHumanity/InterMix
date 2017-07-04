@@ -908,7 +908,9 @@ class ItemsController < ApplicationController
     end
     
     # check for comments in that thread
-    com_count = Item.where(posted_by: current_participant.id, is_first_in_thread: false, first_in_thread: item.first_in_thread).count
+    #com_count = Item.where(posted_by: current_participant.id, is_first_in_thread: false, first_in_thread: item.first_in_thread).count
+    # check for comments on that message
+    com_count = Item.where(posted_by: current_participant.id, reply_to: item_id).count
     
     #-- See if that user already has rated that item, or create a new rating if they haven't
     rating = Rating.where(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize

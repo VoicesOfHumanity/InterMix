@@ -20,7 +20,8 @@ for rating in ratings
   rating.interest = rating.approval.abs
   
   # check for comments
-  com_count = Item.where(posted_by: participant_id, is_first_in_thread: false, first_in_thread: item_id).count
+  #com_count = Item.where(posted_by: participant_id, is_first_in_thread: false, first_in_thread: item_id).count
+  com_count = Item.where(posted_by: participant_id, reply_to: item_id).count
   
   puts "rating:#{rating.id} by participant:#{participant_id} on item:#{item_id} with #{com_count} comments"
   
