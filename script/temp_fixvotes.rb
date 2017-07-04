@@ -59,25 +59,48 @@ for item in items
   
   next if not root_item
   
+  puts "item #{item.id} is a reply to #{orig_item.id}. Root: #{root_item.id}"
+  
   # check and update rating for item we're replying to
   rating = Rating.where(item_id: orig_item.id, participant_id: item.posted_by.to_i, rating_type: 'AllRatings', group_id: orig_item.group_id, dialog_id: orig_item.dialog_id, dialog_round_id: orig_item.dialog_round_id).first_or_initialize  
   if rating.interest.to_i != 4
     rating.interest = 4
     rating.save
-    puts "item #{orig_item.id} commented by #{item.posted_by.to_i} in #{item.id}. Was:#{rating.interest}. Root:#{item.first_in_thread}"
-    puts " - reply interest set to 4"
+    #puts "item #{orig_item.id} commented by #{item.posted_by.to_i} in #{item.id}. Was:#{rating.interest}. Root:#{item.first_in_thread}"
+    puts " - original item (#{rating.item_id}) interest set to 4"
+  else
+    puts " - original item (#{rating.item_id}) already had 4 interest"
+    
+  end
+  
+  # if there's a 4 interest rating for the root, remove it, unless they commented directly
+  if root_item.id != orig_item.id
+    puts " - checking root (#{root_item.id})"
+    rating = Rating.where(item_id: root_item.id, participant_id: item.posted_by.to_i, rating_type: 'AllRatings', group_id: root_item.group_id, dialog_id: root_item.dialog_id, dialog_round_id: root_item.dialog_round_id).first  
+    if rating and rating.interest == 4
+      if rating.approval.to_i == 0
+        rating.destroy
+        puts " - root #{root_item.id} rating deleted"
+      else
+        rating.interest = rating.approval
+        rating.save
+        puts " - root #{root_item.id} interest adjusted to #{rating.interest}"
+      end
+    else
+      puts " - no problem"  
+    end    
   end
 
-  if root_item.id !=  orig_item.id
-    # check and update rating for root item, if different
-    rating = Rating.where(item_id: root_item.id, participant_id: item.posted_by.to_i, rating_type: 'AllRatings', group_id: root_item.group_id, dialog_id: root_item.dialog_id, dialog_round_id: root_item.dialog_round_id).first_or_initialize  
-    if rating.interest != 4
-      rating.interest = 4
-      rating.save
-      #puts "item #{root_item.id} root commented by #{item.posted_by.to_i} in #{item.id}"
-      puts " - root #{root_item.id} interest set to 4"
-    end
-  end
+  #if root_item.id !=  orig_item.id
+  #  # check and update rating for root item, if different
+  #  rating = Rating.where(item_id: root_item.id, participant_id: item.posted_by.to_i, rating_type: 'AllRatings', group_id: root_item.group_id, dialog_id: root_item.dialog_id, dialog_round_id: root_item.dialog_round_id).first_or_initialize  
+  #  if rating.interest != 4
+  #    rating.interest = 4
+  #    rating.save
+  #    #puts "item #{root_item.id} root commented by #{item.posted_by.to_i} in #{item.id}"
+  #    puts " - root #{root_item.id} interest set to 4"
+  #  end
+  #end
   
 end
 
