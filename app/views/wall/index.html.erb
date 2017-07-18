@@ -1,7 +1,11 @@
 <%= render(:partial => 'profiles/memenu')%>
 
-<% if @participant.fb_uid.to_i > 0 -%>
-<img src="http://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" />
+<% if @participant and @participant.picture.exists? -%>
+  <%= image_tag @participant.picture.url(:thumb) %>    
+<% elsif @participant.fb_uid.to_i > 0 -%>
+  <img src="http://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" />
+<% else -%>
+  <img src="/images/default_user_icon-50x50.png">
 <% end -%>
 
 <% if @dialog and not @dialog.settings_with_period["profiles_visible"] -%>
