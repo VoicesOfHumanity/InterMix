@@ -993,6 +993,7 @@ class ItemsController < ApplicationController
     @page = 1 if @page < 1
       
     show_result = (params[:show_result].to_i == 1)
+    @show_result = show_result
     whatchanged = params[:whatchanged].to_s
   
     crit = {}
