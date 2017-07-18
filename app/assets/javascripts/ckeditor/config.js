@@ -184,6 +184,10 @@ CKEDITOR.editorConfig = function( config )
         break;      
     case 'link': //Link dialog          
         dialogDefinition.removeContents('advanced');   
+        ev.data.definition.getContents('target').get('linkTargetType')['default']='_blank';
+        dialogDefinition.onLoad = function () {
+            this.getContentElement("target","linkTargetType").disable();
+        }
         break;
     }
 
