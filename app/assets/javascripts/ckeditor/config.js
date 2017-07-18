@@ -168,16 +168,26 @@ CKEDITOR.editorConfig = function( config )
 
     switch (dialogName) {  
     case 'image': //Image Properties dialog      
-    dialogDefinition.removeContents('Link');
-    dialogDefinition.removeContents('advanced');
-    break;      
-    case 'link': //image Properties dialog          
-    dialogDefinition.removeContents('advanced');   
-    break;
+        dialogDefinition.removeContents('Link');
+        dialogDefinition.removeContents('advanced');        
+        //https://stackoverflow.com/questions/12917918/ckeditor-make-dialog-element-readonly-or-disable
+        //var infoTab = dialogDefinition.getContents( 'info' );
+        //var urlField = infoTab.get( 'txtUrl' );
+        //urlField[ 'default' ] = 'www.example.com';
+        //this.getContentElement("info", "url").disable();
+        //urlField.disable();
+        //dialogDefinition.getContentElement("info", "url").disable();
+        dialogDefinition.onLoad = function () {
+            // info is the name of the tab and url is the id of the element inside the tab
+            this.getContentElement("info","txtUrl").disable(); 
+        }        
+        break;      
+    case 'link': //Link dialog          
+        dialogDefinition.removeContents('advanced');   
+        break;
     }
 
   });
     
 };
-
 
