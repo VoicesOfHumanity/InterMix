@@ -257,7 +257,7 @@ end
     <% end -%>  
     </div>
 
-		<% if (@show_result and itemproc['replies'].length > 0) or (@sortby == 'default' and itemproc['replies'].length > 0) or ((@threads=='root' or @threads=='flat') and item.num_replies > 0) %>
+		<% if (@show_result and item.num_replies > 0) or (@sortby == 'default' and itemproc['replies'].length > 0) or ((@threads=='root' or @threads=='flat') and item.num_replies > 0) %>
 		<div class="iteminfotxt">
       <% if @simple -%>
         <% if item.is_first_in_thread -%>
