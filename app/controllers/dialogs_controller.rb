@@ -66,7 +66,7 @@ class DialogsController < ApplicationController
     else
       is_new = false
     end
-    #logger.info("params.length:#{params.length} params:#{params.inspect}")
+    #logger.info("dialogs#slider is_new:#{is_new} params.length:#{params.length} params:#{params.inspect}")
     
     if is_new
       @comtag = ''
@@ -200,15 +200,16 @@ class DialogsController < ApplicationController
     
     @showing_options = 'less'
     if is_new
-      if @dialog.default_datetype.to_s != ''
-        @datetype = @dialog.default_datetype
-      else
-        @datetype = 'fixed'
-      end
+      #if @dialog.default_datetype.to_s != ''
+      #  @datetype = @dialog.default_datetype
+      #  logger.info("dialogs#slider getting datetype from default_date_type:#{@datetime}")
+      #else
+      @datetype = 'fixed'
+      #end
     elsif session.has_key?(:datetype)
       @datetype = session[:datetype]
-    elsif @dialog.default_datetype.to_s != ''
-      @datetype = @dialog.default_datetype
+    #elsif @dialog.default_datetype.to_s != ''
+    #  @datetype = @dialog.default_datetype
     else
       @datetype = 'fixed'
     end
@@ -216,15 +217,15 @@ class DialogsController < ApplicationController
       @showing_options = 'more'
     end  
     if is_new
-      if @dialog.default_datefixed.to_s != ''
-        @datefixed = @dialog.default_datefixed
-      else
-        @datefixed = 'month'
-      end
+      #if @dialog.default_datefixed.to_s != ''
+      #  @datefixed = @dialog.default_datefixed
+      #else
+      @datefixed = 'month'
+      #end
     elsif session.has_key?(:datefixed)
       @datefixed = session[:datefixed]
-    elsif @dialog.default_datefixed.to_s != ''
-      @datefixed = @dialog.default_datefixed
+    #elsif @dialog.default_datefixed.to_s != ''
+    #  @datefixed = @dialog.default_datefixed
     else
       @datefixed = 'month'
     end
