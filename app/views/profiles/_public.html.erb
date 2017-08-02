@@ -7,11 +7,17 @@
 <div style="clear:both;height:1px"></div>
 
 <table class="profiletable">
-<% if @participant.picture.exists? then -%>
-<div style="position:absolute;z-index:10;width:739px;">
+<% if false then -%>
+<div style="position:block;z-index:10;max-width:739px;">
   <div style="float:right;z-index:11;"><%= image_tag @participant.picture.url(:medium) %></div>
 </div>
 <% end -%>
+<% if @participant.picture.exists? then -%>
+<tr><td colspan="2">
+  <%= image_tag @participant.picture.url(:medium) %>
+</td></tr>
+<% end -%>
+
 <tr><td class="label">Title:</td><td><%= @participant.title %></td></tr>	
 <tr><td class="label">Description:</td><td><div style="width:260px"><%= @participant.self_description %></div></td></tr>	
 <tr><td class="label">Address1:</td><td><%= @participant.address1 %></td></tr>	
