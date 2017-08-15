@@ -976,6 +976,44 @@ class ItemsController < ApplicationController
     @items = Item.where("items.group_id=#{@group_id} and items.has_picture=1 and items.media_type='picture'").includes(:participant).order("items.id desc").limit(12)
   end  
   
+  def follow
+    #-- A user will follow a particular item, or rather the root of it
+    item_id = params[:id]
+    item = Item.find_by_id(item_id)
+    #-- Find the root, if it isn't
+    if item.is_first_in_thread
+      top = item
+    else
+      top = Item.find_by_id(item.first_in_thread) 
+    end
+    logger.info("items_controller#follow item:#{item.id} top:#{top.id}")
+    item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id:current_user.id).first_or_initialize
+    item_subscribe.followed = true
+    item_subscribe.save!
+    #current_user.subscriptions << top
+    #current_user.save!
+    render :text=>'ok', :layout=>false
+  end
+  
+  def unfollow
+    #-- Unfollow the root of a particular item
+    item_id = params[:id]
+    item = Item.find_by_id(item_id)
+    #-- Find the root, if it isn't
+    if item.is_first_in_thread
+      top = item
+    else
+      top = Item.find_by_id(item.first_in_thread) 
+    end
+    logger.info("items_controller#unfollow item:#{item.id} top:#{top.id}")
+    item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id:current_user.id).first_or_initialize
+    item_subscribe.followed = false
+    item_subscribe.save!
+    #current_user.subscriptions.delete(top)
+    #current_user.save!
+    render :text=>'ok', :layout=>false
+  end
+  
   def geoslider
     #-- The main screen or the geo slider
   end

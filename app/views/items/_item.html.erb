@@ -192,6 +192,14 @@ end
 		<div class="iteminfotxt">
 		<a href="/items/<%= item.id %>/view" title="permalink">#</a>	
 		</div>	
+    
+    <div class="iteminfotxt">
+      <% if item.is_followed_by(current_participant) -%>
+      <a href="/items/<%= item.id %>/unfollow" onclick="followthread('unfollow',<%= item.id %>);return(false);">Unfollow thread</a>
+      <% else -%>
+      <a href="/items/<%= item.id %>/follow" onclick="followthread('follow',<%= item.id %>);return(false);">Follow thread</a>
+      <% end -%>
+    </div>
 		
     <% if false -%>
 		<div class="iteminfotxt">

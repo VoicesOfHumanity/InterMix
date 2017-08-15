@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161227221903) do
+ActiveRecord::Schema.define(version: 20170808215236) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -406,6 +406,15 @@ ActiveRecord::Schema.define(version: 20161227221903) do
   add_index "item_rating_summaries", ["int_average"], name: "index_item_rating_summaries_on_int_average", using: :btree
   add_index "item_rating_summaries", ["item_id"], name: "index_item_rating_summaries_on_item_id", using: :btree
   add_index "item_rating_summaries", ["value"], name: "index_item_rating_summaries_on_value", using: :btree
+
+  create_table "item_subscribes", force: :cascade do |t|
+    t.integer "item_id",        limit: 4
+    t.integer "participant_id", limit: 4
+    t.boolean "followed",                 default: true
+  end
+
+  add_index "item_subscribes", ["item_id", "participant_id"], name: "index_item_subscribes_on_item_id_and_participant_id", using: :btree
+  add_index "item_subscribes", ["participant_id", "item_id"], name: "index_item_subscribes_on_participant_id_and_item_id", using: :btree
 
   create_table "items", force: :cascade do |t|
     t.string   "item_type",                limit: 255,                           default: "message"

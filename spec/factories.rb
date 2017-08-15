@@ -1,4 +1,7 @@
 FactoryGirl.define do
+  factory :item_subscribe do
+    
+  end
   factory :community do
     tagname "MyString"
     name "MyString"

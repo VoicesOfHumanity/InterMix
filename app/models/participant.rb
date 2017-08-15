@@ -35,7 +35,10 @@ class Participant < ActiveRecord::Base
   has_many :metamap_node_participants, :dependent => :destroy
   has_many :metamaps, :through=>:metamap_node_participants
   has_many :metamap_nodes, :through=>:metamap_node_participants
-
+  
+  has_many :item_subscribes
+  has_many :subscriptions, class_name: "Item", :through => :item_subscribes
+  
   #has_many :gender_metamap_node_participants, :class_name => "MetamapNodeParticipant", :conditions => "metamap_id=3"
   #has_many :gender_metamap_nodes, :source => :metamap_node_participants
   #has_many :gender_metamap_nodes, :class_name => "MetamapNode", :through=>:metamap_node_participants  

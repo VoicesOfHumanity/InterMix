@@ -6,6 +6,10 @@ class Item < ActiveRecord::Base
   belongs_to :period
   has_many :allratings, :class_name=>"Rating"
   has_one :item_rating_summary
+  
+  has_many :item_subscribes
+  has_many :subscribers, class_name: "Participant", :through => :item_subscribes
+    
   serialize :oembed_response
   
   #-- We store the result of the voting_ok check in attributes. Is it ok? Explanation? For what user?
@@ -62,6 +66,51 @@ class Item < ActiveRecord::Base
     # Look at comments 
 
     return numthumbs
+  end
+  
+  def is_followed_by(p)
+    #-- Is that user already being emailed this item, or already has chosen to follow it
+    if self.is_first_in_thread
+      top = self
+    else
+      top = Item.find_by_id(self.first_in_thread) 
+    end
+    item = top
+    
+    followed = false
+    
+    
+    item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id: p.id).first
+    if item_subscribe
+      # If there's a specific follow record, that overrides anything else
+      followed = item_subscribe.followed
+      
+    elsif top.posted_by.to_i == p.id  
+      # is this the author of the root?
+      followed = true
+      
+    else    
+      # See what the default behavior is
+    
+      # To find if they would get it as a default, check the community match and their settings
+
+      # Does the user have any tags found in the message tags for that message?
+      hasmessmatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list.length > 0 and p.tag_list.any?{|t| self.tag_list.include?(t) } )
+    
+      # Does the user have any tags found in the community tags of the author of that message
+      hascommatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list.length > 0 and p.tag_list.any?{|t| self.participant.tag_list.include?(t) } )
+    
+      is_mycom = (hasmessmatch and hascommatch)
+
+      if is_mycom and (p.mycom_email == 'daily' or p.mycom_email == 'weekly')
+        followed = true
+      elsif not is_mycom and (p.othercom_email == 'daily' or p.othercom_email == 'weekly')
+        followed = true
+      end   
+
+    end
+      
+    return followed
   end
   
   def add_image(tempfilepath)

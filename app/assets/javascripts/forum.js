@@ -1092,3 +1092,18 @@ function set_show_previous_results() {
     data: 'show_previous='+showing_previous
   });	
 }
+
+function followthread(folun, item_id) {
+    $.ajax({
+        type: "GET",
+        url: '/items/' + item_id + '/'+folun,
+    	data: 'item_id='+item_id+'&act='+folun,
+        complete: function(t){	
+            if (typeof show_result !== 'undefined') {
+                per_reload(false,1,'follow',page);
+            } else {
+                location.reload();
+            }
+        }
+    });	
+}
