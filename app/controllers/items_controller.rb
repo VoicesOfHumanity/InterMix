@@ -996,7 +996,7 @@ class ItemsController < ApplicationController
   end
   
   def unfollow
-    #-- Unfollow the root of a particular item
+    #-- Unfollow the root of a particular item. Called either by ajax or from an email
     item_id = params[:id]
     item = Item.find_by_id(item_id)
     #-- Find the root, if it isn't
@@ -1011,8 +1011,15 @@ class ItemsController < ApplicationController
     item_subscribe.save!
     #current_user.subscriptions.delete(top)
     #current_user.save!
-    render :text=>'ok', :layout=>false
+    if params.has_key? :email
+      # We were called from an email
+      redirect_to "/items/#{item_id}/view"
+    else
+      render :text=>'ok', :layout=>false
+    end
   end
+  
+  
   
   def geoslider
     #-- The main screen or the geo slider

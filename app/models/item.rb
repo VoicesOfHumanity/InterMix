@@ -339,6 +339,8 @@ class Item < ActiveRecord::Base
   		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
   		itext += " <a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		
+      itext += " <a href=\"#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
+      
       itext += "</p>"
       
       if group
