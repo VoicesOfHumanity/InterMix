@@ -98,7 +98,7 @@ class Item < ActiveRecord::Base
       hasmessmatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list.length > 0 and p.tag_list.any?{|t| self.tag_list.include?(t) } )
     
       # Does the user have any tags found in the community tags of the author of that message
-      hascommatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list.length > 0 and p.tag_list.any?{|t| self.participant.tag_list.include?(t) } )
+      hascommatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list.length > 0 and p.tag_list.any?{|t| self.participant and self.participant.tag_list.include?(t) } )
     
       is_mycom = (hasmessmatch and hascommatch)
 
