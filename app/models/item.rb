@@ -206,7 +206,182 @@ class Item < ActiveRecord::Base
     end
   end
 
+
   def emailit
+    #-- E-mail this item to everybody who's configured to receive it
+    #-- This might be either people who has an author tag found within this message's message or author tags 
+    #-- and who has My Communities set to instant
+    #-- or it might be people who don't have any matching tags, but who have Other Communities set to instant
+    #-- Each person might be configured to receive e-mails or not 
+    #-- It all gets overridden by their follow settings
+
+    participants = []   
+    got_participants = {}
+        
+    # mycom: will go to people who share any community with the author and who has any community tag matching a message tag
+    
+    allpeople = Participant.where(status: 'active').where("mycom_email='instant' or othercom_email='instant'")
+    for person in allpeople
+      hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list.length > 0 and person.tag_list.any?{|t| self.tag_list.include?(t) } )
+      hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list.length > 0 and person.tag_list.any?{|t| self.participant.tag_list.include?(t) } )
+      if hasmessmatch and hascommatch and person.mycom_email == 'instant'
+        participants << person
+        got_participants[person.id] = true
+      elsif not (hasmessmatch and hascommatch) and person.othercom_email == 'instant'
+        participants << person
+        got_participants[person.id] = true
+      end      
+    end
+    logger.info("Item#emailit #{participants.length} recipients based on community settings")
+    
+    if self.is_first_in_thread
+      top = self
+    else
+      top = Item.find_by_id(self.first_in_thread) 
+    end
+
+    # Check this against people who specifically follow or unfollow it
+    followers = top.subscribers
+    logger.info("Item#emailit checking #{followers.length} subscribers/unsubscribers")
+    for person in followers
+      xfollow = top.is_followed_by(person)
+      logger.info("Item#emailit user #{person.id} follows: #{xfollow}")
+      if xfollow and not got_participants.has_key?(person.id)
+        participants << person
+        got_participants[person.id] = true
+        logger.info("Item#emailit user #{person.id} specifically follows #{top.id}. Added to mailing.")
+      elsif not xfollow and got_participants.has_key?(person.id)
+        participants.delete(person)
+        got_participants.except!(person_id)
+        logger.info("Item#emailit user #{person.id} specifically unfollows #{top.id}. Removed from mailing.")
+      end
+    end
+          
+    logger.info("Item#emailit #{participants.length} people to distribute to")
+    
+    if self.dialog_id.to_i > 0
+      dialog = Dialog.find_by_id(self.dialog_id)
+    end
+    if self.period_id.to_i > 0
+      period = Period.find_by_id(self.period_id)
+    end
+    
+    group_mismatch = (self.group_id != self.root_item.group_id)		
+
+    for recipient in participants
+      p = recipient
+      if recipient.no_email
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} is blocking all email, so skipping")
+        next        
+      elsif recipient.status != 'active'
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} is not active, so skipping")
+        next
+      #elsif not group
+      #  next
+      end  
+
+      send_it = false
+        
+      if recipient.email.to_s == ''
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} has no e-mail, so skipping")
+        next
+      elsif self.dialog_id.to_i > 0 and recipient.forum_email=='instant'
+        #-- A discussion message
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} discussion item for discussion #{self.dialog_id}")
+        send_it = true
+      elsif self.dialog_id.to_i == 0 and in_subgroup and recipient.subgroup_email=='instant'
+        #-- A subgroup message
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} subgroup item (#{self.show_subgroup})")
+        send_it = true
+      elsif self.dialog_id.to_i == 0 and (subgroup_none or self.show_subgroup.to_s == '') and recipient.group_email=='instant'
+        #-- A pure group message
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} group item (#{self.group_id})")
+        send_it = true
+      end  
+
+      if send_it
+        logger.info("Item#emailit sending e-mail to #{recipient.id}:#{recipient.name}")        
+      else  
+        logger.info("Item#emailit not e-mail to #{recipient.id}:#{recipient.name}")
+        next
+      end
+      
+      # Make sure we have an authentication token for them to log in with
+      # http://yekmer.posterous.com/single-access-token-using-devise
+      recipient.ensure_authentication_token!
+      
+      domain = 'voh.' + ROOTDOMAIN 
+      group_domain = domain
+      
+      cdata = {}
+      cdata['item'] = self
+      cdata['recipient'] = recipient      
+      cdata['group'] = group if group
+      cdata['dialog'] = dialog if dialog
+      cdata['domain'] = domain
+      cdata['group_domain'] = group_domain
+      #@cdata['attachments'] = @attachments
+      
+      if dialog and dialog.logo.exists? then
+        cdata['logo'] = "#{BASEDOMAIN}#{dialog.logo.url}"
+      elsif group and group.logo.exists? then
+       cdata['logo'] = "#{BASEDOMAIN}#{group.logo.url}"
+      else
+        cdata['logo'] = nil
+      end
+      logger.info("Item#emailit logo: #{cdata['logo']}")
+      
+      email = recipient.email
+      
+      msubject = "[voicesofhumanity] #{self.subject}"
+      
+      content = self.html_content != '' ? self.html_with_auth(recipient) : self.short_content
+      
+      link_to = "//#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}"
+      if not self.is_first_in_thread
+        link_to += "#item_#{self.id}"
+      end
+      
+      itext = ""
+      itext += "<h3><a href=\"#{link_to}\">#{self.subject}</a></h3>"
+      itext += "<div>"
+      itext += content
+      itext += "</div>"
+      
+      itext += "<p>by "
+
+      if dialog and not dialog.settings_with_period["profiles_visible"]
+  		  itext += self.participant ? self.participant.name : self.posted_by
+  		else
+  		  itext += "<a href=\"//#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
+  		end
+  		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
+  		itext += " <a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
+  		
+      itext += " <a href=\"#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
+      
+      itext += "</p>"
+      
+      if group
+        #-- A group message  
+        email = ItemMailer.group_item(msubject, itext, recipient.email_address_with_name, cdata)
+      else    
+        email = ItemMailer.item(msubject, itext, recipient.email_address_with_name, cdata)
+      end
+
+      begin
+        logger.info("Item#emailit delivering email to #{recipient.id}:#{recipient.name}")
+        email.deliver_now
+        message_id = email.message_id
+      rescue Exception => e
+        logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
+      end
+      
+    end
+    
+  end
+
+  def emailit_old1
     #-- E-mail this item to everybody who's configured to receive it
     #-- This might be either people who has an author tag found within this message's message or author tags 
     #-- and who has My Communities set to instant
@@ -362,7 +537,7 @@ class Item < ActiveRecord::Base
     
   end
   
-  def emailit_old
+  def emailit_old2
     #-- E-mail this item to everybody who's allowed to see it, and who's configured to receive it
     #-- Group items are only available to group members. Other items are available to everybody
     #-- Each person might be configured to receive e-mails or not 
