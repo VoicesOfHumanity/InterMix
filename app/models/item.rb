@@ -68,6 +68,16 @@ class Item < ActiveRecord::Base
     return numthumbs
   end
   
+  def has_voted(p)
+    #-- Has that user already voted on this item?
+    rating = Rating.where(item_id: self.id, participant_id: p.id).first
+    if rating
+      return true
+    else
+      return false
+    end
+  end
+  
   def is_followed_by(p)
     #-- Is that user already being emailed this item, or already has chosen to follow it
     if self.is_first_in_thread
@@ -252,7 +262,7 @@ class Item < ActiveRecord::Base
         logger.info("Item#emailit user #{person.id} specifically follows #{top.id}. Added to mailing.")
       elsif not xfollow and got_participants.has_key?(person.id)
         participants.delete(person)
-        got_participants.except!(person_id)
+        got_participants.except!(person.id)
         logger.info("Item#emailit user #{person.id} specifically unfollows #{top.id}. Removed from mailing.")
       end
     end
@@ -358,9 +368,17 @@ class Item < ActiveRecord::Base
   		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
   		itext += " <a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		
-      itext += " <a href=\"#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
+      #itext += " <a href=\"#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
+      itext += " <a href=\"//#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
       
       itext += "</p>"
+      
+      if not self.has_voted(p)
+        itext += "<p>Vote here: "
+        itext += "<a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"//voh.intermix.org/images/thumbsdownoff.jpg\" alt=\"down\"></a> "
+        itext += "<a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"//voh.intermix.org/images/thumbsupoff.jpg\" alt=\"up\"></a>"
+        itext += "</p>"
+      end
       
       if group
         #-- A group message  

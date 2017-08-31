@@ -83,9 +83,9 @@ group :development, :test do
   gem 'capistrano-rails'
   gem 'web-console', '2.3.0'  
   gem 'rspec-rails'
-  gem 'capybara'
-  gem 'selenium-webdriver'
-  gem 'capybara-webkit'
+  #gem 'capybara'
+  #gem 'selenium-webdriver'
+  #gem 'capybara-webkit'
   gem 'factory_girl_rails'
 end
 

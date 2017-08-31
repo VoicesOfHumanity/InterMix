@@ -41,6 +41,9 @@ module ApplicationHelper
     return '' if not iproc or not iproc.has_key?('id')
     item_id = iproc['id']
     value = Item.thumbs(iproc)
+    if value == 0 and params and params.has_key?(:thumb)
+      value = params[:thumb].to_i
+    end
     out = ''
     #out += "value:#{value} "
     #out += "rateapproval:#{iproc['rateapproval']} "

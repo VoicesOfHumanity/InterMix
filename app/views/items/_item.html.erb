@@ -178,7 +178,8 @@ end
 		</div>
 		
 		<div class="iteminfotxt">
-			<% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
+		<% if false -%>
+		  <% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
         <% if @simple -%>
           <% if item.is_first_in_thread -%>
   		      <a href="/dialogs/<%= item.dialog_id %>/forum?item_id=<%= item.id %>&amp;xmode=single&amp;add_comment=1"><strong>Add Comment</strong></a>
@@ -187,6 +188,8 @@ end
 				  <strong><%= link_to_function "Add Comment", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %></strong>
         <% end -%>
 			<% end -%>
+			<% end -%>
+			<strong><%= link_to_function "Add Comment", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %></strong>
 		</div>
 		
 		<div class="iteminfotxt">
@@ -195,9 +198,9 @@ end
     
     <div class="iteminfotxt">
       <% if item.is_followed_by(current_participant) -%>
-      <a href="/items/<%= item.id %>/unfollow" onclick="followthread('unfollow',<%= item.id %>);return(false);">Unfollow thread</a>
+      <button onclick="followthread('unfollow',<%= item.id %>);return(false);">Unfollow thread</button>
       <% else -%>
-      <a href="/items/<%= item.id %>/follow" onclick="followthread('follow',<%= item.id %>);return(false);">Follow thread</a>
+      <button onclick="followthread('follow',<%= item.id %>);return(false);">Follow thread</button>
       <% end -%>
     </div>
 		
