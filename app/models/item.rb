@@ -78,7 +78,7 @@ class Item < ActiveRecord::Base
     end
   end
   
-  def is_followed_by(p)
+  def is_followed_by(p,returns='bool')
     #-- Is that user already being emailed this item, or already has chosen to follow it
     if self.is_first_in_thread
       top = self
@@ -88,16 +88,19 @@ class Item < ActiveRecord::Base
     item = top
     
     followed = false
+    exp = "root:#{top.id}, "
     
     
     item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id: p.id).first
     if item_subscribe
       # If there's a specific follow record, that overrides anything else
       followed = item_subscribe.followed
+      exp += "following because of a direct subscription"
       
     elsif top.posted_by.to_i == p.id  
       # is this the author of the root?
       followed = true
+      exp += "following because you're author of root"
       
     else    
       # See what the default behavior is
@@ -112,15 +115,29 @@ class Item < ActiveRecord::Base
     
       is_mycom = (hasmessmatch and hascommatch)
 
-      if is_mycom and (p.mycom_email == 'daily' or p.mycom_email == 'weekly')
+      if is_mycom and (p.mycom_email == 'instant')
         followed = true
-      elsif not is_mycom and (p.othercom_email == 'daily' or p.othercom_email == 'weekly')
+        exp += "following because it's in your communities and your setting for that is instant"
+        
+      elsif not is_mycom and (p.othercom_email == 'instant')
         followed = true
+        exp += "following because it's not in your communities and your setting for that is instant"
+
+      elsif is_mycom
+        exp += "not following, even though in your communities, because setting is not instant"
+        
+      elsif not is_mycom
+        exp += "not following, not in your communities, no instant setting"
+
       end   
 
     end
       
-    return followed
+    if returns = 'exp'
+      return exp
+    else  
+      return followed
+    end
   end
   
   def add_image(tempfilepath)

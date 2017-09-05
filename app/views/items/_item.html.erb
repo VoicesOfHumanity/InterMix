@@ -201,7 +201,10 @@ end
       <button onclick="followthread('unfollow',<%= item.id %>);return(false);">Unfollow thread</button>
       <% else -%>
       <button onclick="followthread('follow',<%= item.id %>);return(false);">Follow thread</button>
-      <% end -%>
+		<% end -%>
+		<% if params[:showfollow].to_i == 1 -%>
+		[<%= item.is_followed_by(current_participant,'exp') %>]
+		<% end -%>
     </div>
 		
     <% if false -%>
