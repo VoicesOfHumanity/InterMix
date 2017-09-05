@@ -95,7 +95,11 @@ class Item < ActiveRecord::Base
     if item_subscribe
       # If there's a specific follow record, that overrides anything else
       followed = item_subscribe.followed
-      exp += "following because of a direct subscription"
+      if followed
+        exp += "following because of a direct subscription"        
+      else
+        exp += "not following because of a direct unsubscription"
+      end
       
     elsif top.posted_by.to_i == p.id  
       # is this the author of the root?
@@ -124,16 +128,18 @@ class Item < ActiveRecord::Base
         exp += "following because it's not in your communities and your setting for that is instant"
 
       elsif is_mycom
+        followed = false
         exp += "not following, even though in your communities, because setting is not instant"
         
       elsif not is_mycom
+        followed = false
         exp += "not following, not in your communities, no instant setting"
 
       end   
 
     end
       
-    if returns = 'exp'
+    if returns == 'exp'
       return exp
     else  
       return followed
