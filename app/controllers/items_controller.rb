@@ -749,6 +749,12 @@ class ItemsController < ApplicationController
       end
     end
     
+    if params[:thumb].to_i != 0
+      # If a thumb vote is given, record it before showing the item
+      vote = params[:thumb].to_i
+      rateitem(@item, vote)
+    end
+    
     @period_id = 0
     @posted_by = 0
     @posted_meta={}
@@ -890,22 +896,16 @@ class ItemsController < ApplicationController
     render :text=>vote, :layout=>false
   end 
   
-  def thumbrate
-    #-- rate an item with up or down thumbs
-    @from = params[:from] || ''
-    item_id = params[:id].to_i
-    vote = params[:vote].to_i
-
-    item = Item.includes(:dialog,:group).find_by_id(item_id)
-
+  def rateitem(item, vote)
+    # Called by fx thumbrate or view to record a vote, without showing any screen
+    
+    if not item.voting_ok(current_participant.id)
+      return
+    end    
+    
+    item_id = item.id
     group_id = item.group_id.to_i
     dialog_id = item.dialog_id.to_i
-    
-    #-- Check if they're allowed to rate it
-    if not item.voting_ok(current_participant.id)
-      render :text=>'', :layout=>false
-      return
-    end
     
     # check for comments in that thread
     #com_count = Item.where(posted_by: current_participant.id, is_first_in_thread: false, first_in_thread: item.first_in_thread).count
@@ -950,6 +950,24 @@ class ItemsController < ApplicationController
     item.controversy = item_rating_summary.controversy
     item.edit_locked = true if current_participant.id != item.posted_by
     item.save
+      
+  end
+  
+  def thumbrate
+    #-- rate an item with up or down thumbs
+    @from = params[:from] || ''
+    item_id = params[:id].to_i
+    vote = params[:vote].to_i
+
+    item = Item.includes(:dialog,:group).find_by_id(item_id)
+
+    #-- Check if they're allowed to rate it
+    if not item.voting_ok(current_participant.id)
+      render :text=>'', :layout=>false
+      return
+    end
+    
+    rateitem(item, vote)
     
     render :text=>vote, :layout=>false
   end   
