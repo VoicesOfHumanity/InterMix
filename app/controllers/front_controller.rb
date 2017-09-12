@@ -28,9 +28,9 @@ class FrontController < ApplicationController
       @group = Group.find_by_id(@group_id) if @group_id.to_i > 0
       cdata['dialog'] = @dialog if @dialog
       cdata['domain'] = (@dialog and @dialog.shortname.to_s!='') ? "#{@dialog.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
-      cdata['logo'] = "http://#{cdata['domain']}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
-      cdata['dialog_logo'] = "http://#{cdata['domain']}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
-      cdata['group_logo'] = "http://#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
+      cdata['logo'] = "//#{cdata['domain']}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
+      cdata['dialog_logo'] = "//#{cdata['domain']}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
+      cdata['group_logo'] = "//#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
       cdata['group'] = @group if @group
       if participant_signed_in? and @dialog.member_template.to_s.strip != ''
         desc = Liquid::Template.parse(@dialog.member_template).render(cdata)
@@ -54,8 +54,8 @@ class FrontController < ApplicationController
       @group = Group.find_by_id(@group_id)
       cdata['group'] = @group if @group
       cdata['domain'] = (@group and @group.shortname.to_s!='') ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
-      cdata['logo'] = "http://#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
-      cdata['group_logo'] = "http://#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
+      cdata['logo'] = "//#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
+      cdata['group_logo'] = "//#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
       if participant_signed_in? and @group.member_template.to_s.strip != ''
         desc = Liquid::Template.parse(@group.member_template).render(cdata)
       elsif @group.front_template.to_s.strip != ''
@@ -470,7 +470,7 @@ class FrontController < ApplicationController
     if @participant and @participant.status=='active' and @has_message
       previous_messages = Item.where("posted_by=? and dialog_id=?",@participant.id,@dialog.id).count
       if @dialog.max_messages > 0 and @message.length > 0 and previous_messages >= @dialog.max_messages
-        flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: http://#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
+        flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: //#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
       elsif @message.length == 0
         flash[:alert] = "You already have an account<br>"
         redirect_to '/participants/sign_in'
@@ -612,15 +612,17 @@ class FrontController < ApplicationController
     
     # Pick an appropriate logo
     if @dialog.logo.exists?
-      @logo = "http://#{BASEDOMAIN}#{@dialog.logo.url}"
+      @logo = "//#{BASEDOMAIN}#{@dialog.logo.url}"
     elsif @group.logo.exists?
-      @logo = "http://#{BASEDOMAIN}#{@group.logo.url}"
+      @logo = "//#{BASEDOMAIN}#{@group.logo.url}"
     else
       @logo = nil
     end
     logger.info("front#dialogjoin @logo set to #{@logo}")
 
-    if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
+    if true
+      dom = BASEDOMAIN
+    elsif @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
       dom = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}"
     elsif @dialog.shortname.to_s != ""
       dom = "#{@dialog.shortname}.#{ROOTDOMAIN}"
@@ -640,7 +642,7 @@ class FrontController < ApplicationController
     cdata['dialog'] = @dialog if @dialog
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
-    cdata['confirmlink'] = "<a href=\"http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}\">http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}</a>"
+    cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}</a>"
     cdata['domain'] = dom
     
     if @dialog_group and @dialog_group.confirm_email_template.to_s.strip != ''
@@ -654,7 +656,7 @@ class FrontController < ApplicationController
       html_content += "password: #{@password}<br/>" if @password != '???'
       
       html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}<br/><br/>"
+      html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}<br/><br/>"
       
       #html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
       
@@ -756,7 +758,7 @@ class FrontController < ApplicationController
 
     if request.get?
       flash[:alert] = "Not allowed"
-      redirect_to "http://#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join" 
       return
     end
     
@@ -961,13 +963,15 @@ class FrontController < ApplicationController
     
     # Pick an appropriate logo
     if @group.logo.exists?
-      @logo = "http://#{BASEDOMAIN}#{@group.logo.url}"
+      @logo = "//#{BASEDOMAIN}#{@group.logo.url}"
     else
       @logo = nil
     end
     logger.info("front#groupjoin @logo set to #{@logo}")
 
-    if @group.shortname.to_s != ""
+    if true
+      dom = BASEDOMAIN
+    elsif @group.shortname.to_s != ""
       dom = "#{@group.shortname}.#{ROOTDOMAIN}"
     else
       dom = BASEDOMAIN
@@ -980,10 +984,10 @@ class FrontController < ApplicationController
     cdata['recipient'] = @participant     
     cdata['participant'] = @participant 
     cdata['group'] = @group if @group
-    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
-    cdata['confirmlink'] = "<a href=\"http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}</a>"
+    cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}</a>"
     cdata['domain'] = dom
     
     if @group.confirm_email_template.to_s.strip != ''
@@ -998,7 +1002,7 @@ class FrontController < ApplicationController
       html_content += "password: #{@password}<br/>" if @password != '???'
       
       html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
       
       #html_content += "<br/>Click <a href=\"http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
       
@@ -1083,8 +1087,8 @@ class FrontController < ApplicationController
       cdata['participant'] = @participant 
       cdata['group'] = @group if @group
       cdata['dialog'] = @dialog if @dialog
-      cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group and @group.logo.exists?
-      cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
+      cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group and @group.logo.exists?
+      cdata['dialog_logo'] = "//#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
       cdata['domain'] = BASEDOMAIN
       #if @dialog
       #  @content += "<p>Thank you for confirming!<br><br>You are already logged in.<br><br>Click on <a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/dialogs/#{@dialog.id}/forum\">Discussion</a> on the left to see the messages.<br><br>Bookmark this link so you can come back later:<br><br><a href=\"http://#{@dialog.shortname}.#{ROOTDOMAIN}/\">http://#{@dialog.shortname}.#{ROOTDOMAIN}/</a>.</p>"
@@ -1093,7 +1097,7 @@ class FrontController < ApplicationController
       #  return
       if @dialog and @group
         cdata['domain'] = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}" if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
-        cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+        cdata['logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
         if @dialog_group and @dialog_group.confirm_welcome_template.to_s != ''
           template = Liquid::Template.parse(@dialog_group.confirm_welcome_template)
           @content = template.render(cdata)
@@ -1105,11 +1109,11 @@ class FrontController < ApplicationController
           template = Liquid::Template.parse(confirm_welcome_template)
           @content += template.render(cdata)
         else    
-          @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider\">http://#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider</a> to see the messages. You are already logged in.</p>"
+          @content += "<p>Thank you for confirming! You can now go to: <a href=\"//#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider\">https://#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider</a> to see the messages. You are already logged in.</p>"
         end
       elsif @group  
         cdata['domain'] = "#{@group.shortname}.#{ROOTDOMAIN}" if @group.shortname.to_s != ""
-        cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+        cdata['logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
         if @group.confirm_welcome_template.to_s != ''
           template = Liquid::Template.parse(@group.confirm_welcome_template)
           @content += template.render(cdata)
@@ -1119,10 +1123,10 @@ class FrontController < ApplicationController
           @content += template.render(cdata)
         else    
           #@content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/forum\">http://#{BASEDOMAIN}/groups/#{@group.id}/forum</a> to see the messages. You are already logged in.</p>"
-          @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/forum\">http://#{BASEDOMAIN}/groups/#{@group.id}/forum</a> to see the messages. You are already logged in.</p>"
+          @content += "<p>Thank you for confirming! You can now go to: <a href=\"//#{BASEDOMAIN}/groups/#{@group.id}/forum\">https://#{BASEDOMAIN}/groups/#{@group.id}/forum</a> to see the messages. You are already logged in.</p>"
         end
       else
-        @content += "<p>Thank you for confirming! You can now go to: <a href=\"http://#{BASEDOMAIN}/\">http://#{BASEDOMAIN}/</a>. You are already logged in.</p>"
+        @content += "<p>Thank you for confirming! You can now go to: <a href=\"//#{BASEDOMAIN}/\">https://#{BASEDOMAIN}/</a>. You are already logged in.</p>"
       end
     else
       @content += "not recognized"
@@ -1307,12 +1311,14 @@ class FrontController < ApplicationController
     
     # Pick an appropriate logo
     if @group and @group.logo.exists?
-      @logo = "http://#{BASEDOMAIN}#{@group.logo.url}"
+      @logo = "//#{BASEDOMAIN}#{@group.logo.url}"
     else
       @logo = nil
     end
 
-    if @group and @group.shortname.to_s != ""
+    if true
+      dom = BASEDOMAIN
+    elsif @group and @group.shortname.to_s != ""
       dom = "#{@group.shortname}.#{ROOTDOMAIN}"
     else
       dom = BASEDOMAIN
@@ -1325,11 +1331,11 @@ class FrontController < ApplicationController
     cdata['recipient'] = @participant     
     cdata['participant'] = @participant 
     cdata['group'] = @group if @group
-    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
     cdata['domain'] = dom
-    cdata['forumurl'] = "http://#{dom}/groups/#{@group.id}/forum"
+    cdata['forumurl'] = "//#{dom}/groups/#{@group.id}/forum"
     
     #if @group.confirm_email_template.to_s.strip != ''
     #  template = Liquid::Template.parse(@group.confirm_email_template)
@@ -1345,7 +1351,7 @@ class FrontController < ApplicationController
       html_content += "password: #{@password}<br/>" if @password != '???'
       
       html_content += "<br/>Click here to log in the first time:<br/><br/>"
-      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
       
       html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
       html_content += "</p>"
@@ -1572,12 +1578,14 @@ class FrontController < ApplicationController
     
     # Pick an appropriate logo
     if @group.logo.exists?
-      @logo = "http://#{BASEDOMAIN}#{@group.logo.url}"
+      @logo = "//#{BASEDOMAIN}#{@group.logo.url}"
     else
       @logo = nil
     end
 
-    if @group.shortname.to_s != ""
+    if true
+      dom = BASEDOMAIN
+    elsif @group.shortname.to_s != ""
       dom = "#{@group.shortname}.#{ROOTDOMAIN}"
     else
       dom = BASEDOMAIN
@@ -1590,10 +1598,10 @@ class FrontController < ApplicationController
     cdata['recipient'] = @participant     
     cdata['participant'] = @participant 
     cdata['group'] = @group if @group
-    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
-    cdata['confirmlink'] = "<a href=\"http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}</a>"
+    cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}</a>"
     
     if @group.confirm_email_template.to_s != ''
       template = Liquid::Template.parse(@group.confirm_email_template)
@@ -1603,14 +1611,14 @@ class FrontController < ApplicationController
       html_content += "password: #{@password}<br/>" if @password != '???'
       
       html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      html_content += "http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
       
       #html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
       
       html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
       
       #html_content += "<br/>Then you'll be able to log in at any time at http://#{dom}/<br/>"
-      html_content += "If you have lost your password: http://#{dom}/participants/password/new<br/>"   
+      html_content += "If you have lost your password: https://#{dom}/participants/password/new<br/>"   
       html_content += "</p>"
     end
   
@@ -1725,7 +1733,7 @@ class FrontController < ApplicationController
     @section = 'join'
     @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
     @content = "<p>No discussion was recognized</p>"
-    @logo = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
+    @logo = "//#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
     @meta = []
     #if @participant.country_code.to_s != ''
     #  @metro_areas = MetroArea.where(:country_code=>'US').order(:name).collect{|r| [r.name,r.id]}
@@ -1762,8 +1770,8 @@ class FrontController < ApplicationController
       end
       
       cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
-      cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
-      cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
+      cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+      cdata['dialog_logo'] = "//#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
       cdata['indigenous'] = @indigenous.to_i
       cdata['other_minority'] = @other_minority.to_i
       cdata['veteran'] = @veteran.to_i
@@ -1788,7 +1796,7 @@ class FrontController < ApplicationController
     @section = 'join'
     @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
     @content = "<p>No group was recognized</p>"
-    @logo = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    @logo = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @meta = []
     @metro_areas = MetroArea.joins(:geocountry).order("geocountries.name,metro_areas.name").collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
     metamaps = @group.metamaps
@@ -1810,7 +1818,7 @@ class FrontController < ApplicationController
     end
         
     cdata = {'group'=>@group, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'countries'=>@countries, 'meta'=>@meta, 'email'=>@email, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
-    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     if @group and @group.signup_template.to_s != ''
       template_content = @group.signup_template
     else

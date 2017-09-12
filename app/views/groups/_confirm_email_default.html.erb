@@ -4,11 +4,9 @@
 
 {% if participant.fb_uid %}
 
-  <p>You have successfully signed up with "<b>{{ group.name }}</b>". Welcome!</p>
+  <p>You have successfully signed up with "<b>{{ group.name }}</b>" via Facebook. Welcome!</p>
   
-  <p>You will be able to <a href="{{ forumurl }}">log in</a> simply using your Facebook login. If you're already logged into Facebook, you get logged in automatically when you go to the <a href="{{ forumurl }}">message list</a>.</p>
-
-  <p>If at any point you should choose to not use your Facebook login, you can also log in with this information:</p>
+  <p>To sign-in at any time with Facebook, go to the VoH home page at <a href="https://voh.intermix.org">https://voh.intermix.org</a> and click the Facebook icon. Or you can sign-in with your user-id and password:</p>
 
 {% else %}
 
@@ -36,8 +34,6 @@
 
 <p>User-ID: {{ participant.email }}<br>
 Password: {{ password }}</p>
-
-<p>Be sure to set your email preferences in the "settings" section in your profile.</p>
 
 <p>If you have questions or comments, contact the system admin at <a href="mailto:questions@intermix.org">questions@intermix.org</a>.</p>
 
