@@ -201,7 +201,7 @@ $(function() {
   }
 });
 var messtag_changed = false;
-function per_reload(first,num,whatchanged,page) {
+function per_reload(first,num,whatchanged,page,go_item) {
   console.log('whatchanged:'+whatchanged);
 	if (editingid>0) {
 	    alert("Please save or cancel the edit that is in progress");
@@ -223,6 +223,10 @@ function per_reload(first,num,whatchanged,page) {
   if (page === undefined) {
     page = 1;
   }
+  if (go_item === undefined) {
+    go_item = 0;
+  }
+  
 
  	$('#per_main').css('opacity','0.5');
   cur_comtag = $("input[name='comtag_radio']:checked").val();
@@ -337,8 +341,12 @@ function per_reload(first,num,whatchanged,page) {
 	  data: data,
 	  complete: function(t){ 
       $('#per_main').css('opacity','1.0');
-	    $('#per_main').html(t.responseText);
-      $(window).scrollTop(0);
+	   $('#per_main').html(t.responseText);
+		if (go_item>0) {
+			location.href = "#"+go_item;
+		} else {
+      	$(window).scrollTop(0);
+		}
 	  }
 	});	
 }

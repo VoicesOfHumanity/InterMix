@@ -1100,7 +1100,7 @@ function followthread(folun, item_id) {
     	data: 'item_id='+item_id+'&act='+folun,
         complete: function(t){	
             if (typeof show_result !== 'undefined') {
-                per_reload(false,1,'follow',page);
+                per_reload(false,1,'follow',page, item_id);
             } else {
                 location.reload();
             }
