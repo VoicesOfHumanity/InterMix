@@ -1394,7 +1394,7 @@ class FrontController < ApplicationController
     #sign_in_and_redirect(:participant, @participant)
     sign_in(:participant, @participant)
     
-    redirect_to '/me/profile/meta'
+    redirect_to '/me/profile/edit'
     
     #render :action=>:confirm, :layout=>'front'
     
