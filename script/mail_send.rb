@@ -198,6 +198,25 @@ for p in participants
         puts "    no community match. user set for weekly other community mail" if testonly
         send_it = true
       end   
+      
+      if item.is_first_in_thread
+        top = item
+      else
+        top = Item.find_by_id(item.first_in_thread) 
+      end
+   
+      item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id: p.id).first
+      if item_subscribe
+        # If there's a specific follow record, that overrides anything else
+        followed = item_subscribe.followed
+        if followed
+          puts "    subscription says to follow this item" if testonly
+          send_it = true
+        else
+          puts "    subscription says to not follow this item" if testonly
+          send_it = false
+        end
+      end
    
       if not send_it
         puts "    no setting to send this" if testonly
@@ -239,8 +258,18 @@ for p in participants
   		itext += " <a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
       
       itext += " <a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}#reply\">One Click reply</a>"
+
+      itext += " <a href=\"//#{domain}/items/#{item.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
       
       itext += "</p>"
+      
+      if not item.has_voted(p)
+        itext += "<p>Vote here: "
+        itext += "<a href=\"//#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"//voh.intermix.org/images/thumbsdownoff.jpg\" alt=\"down\"></a> "
+        itext += "<a href=\"//#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"//voh.intermix.org/images/thumbsupoff.jpg\" alt=\"up\"></a>"
+        itext += "</p>"
+      end
+      
       itext += "<hr>"
       
       if is_mycom and p.mycom_email == 'weekly' and is_weekly
