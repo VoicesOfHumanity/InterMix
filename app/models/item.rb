@@ -119,21 +119,21 @@ class Item < ActiveRecord::Base
     
       is_mycom = (hasmessmatch and hascommatch)
 
-      if is_mycom and (p.mycom_email == 'instant')
+      if is_mycom and (p.mycom_email != 'never')
         followed = true
-        exp += "following because it's in your communities and your setting for that is instant"
+        exp += "following because it's in your communities and your setting for that is #{p.mycom_email}"
         
-      elsif not is_mycom and (p.othercom_email == 'instant')
+      elsif not is_mycom and (p.othercom_email != 'never')
         followed = true
-        exp += "following because it's not in your communities and your setting for that is instant"
+        exp += "following because it's not in your communities and your setting for that is #{p.othercom_email}"
 
       elsif is_mycom
         followed = false
-        exp += "not following, even though in your communities, because setting is not instant"
+        exp += "not following, even though in your communities, because setting is never"
         
       elsif not is_mycom
         followed = false
-        exp += "not following, not in your communities, no instant setting"
+        exp += "not following, not in your communities, set for never"
 
       end   
 
