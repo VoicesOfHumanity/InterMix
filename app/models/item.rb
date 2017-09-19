@@ -309,28 +309,28 @@ class Item < ActiveRecord::Base
       elsif recipient.status != 'active'
         logger.info("Item#emailit #{recipient.id}:#{recipient.name} is not active, so skipping")
         next
+      elsif recipient.email.to_s == ''
+        logger.info("Item#emailit #{recipient.id}:#{recipient.name} has no e-mail, so skipping")
+        next
       #elsif not group
       #  next
       end  
 
-      send_it = false
+      send_it = true
         
-      if recipient.email.to_s == ''
-        logger.info("Item#emailit #{recipient.id}:#{recipient.name} has no e-mail, so skipping")
-        next
-      elsif self.dialog_id.to_i > 0 and recipient.forum_email=='instant'
-        #-- A discussion message
-        logger.info("Item#emailit #{recipient.id}:#{recipient.name} discussion item for discussion #{self.dialog_id}")
-        send_it = true
-      elsif self.dialog_id.to_i == 0 and in_subgroup and recipient.subgroup_email=='instant'
-        #-- A subgroup message
-        logger.info("Item#emailit #{recipient.id}:#{recipient.name} subgroup item (#{self.show_subgroup})")
-        send_it = true
-      elsif self.dialog_id.to_i == 0 and (subgroup_none or self.show_subgroup.to_s == '') and recipient.group_email=='instant'
-        #-- A pure group message
-        logger.info("Item#emailit #{recipient.id}:#{recipient.name} group item (#{self.group_id})")
-        send_it = true
-      end  
+      #elsif self.dialog_id.to_i > 0 and recipient.forum_email=='instant'
+      #  #-- A discussion message
+      #  logger.info("Item#emailit #{recipient.id}:#{recipient.name} discussion item for discussion #{self.dialog_id}")
+      #  send_it = true
+      #elsif self.dialog_id.to_i == 0 and in_subgroup and recipient.subgroup_email=='instant'
+      #  #-- A subgroup message
+      #  logger.info("Item#emailit #{recipient.id}:#{recipient.name} subgroup item (#{self.show_subgroup})")
+      #  send_it = true
+      #elsif self.dialog_id.to_i == 0 and (subgroup_none or self.show_subgroup.to_s == '') and recipient.group_email=='instant'
+      #  #-- A pure group message
+      #  logger.info("Item#emailit #{recipient.id}:#{recipient.name} group item (#{self.group_id})")
+      #  send_it = true
+      #end  
 
       if send_it
         logger.info("Item#emailit sending e-mail to #{recipient.id}:#{recipient.name}")        
