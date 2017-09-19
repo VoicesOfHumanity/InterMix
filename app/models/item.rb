@@ -289,6 +289,14 @@ class Item < ActiveRecord::Base
         logger.info("Item#emailit user #{person.id} specifically unfollows #{top.id}. Removed from mailing.")
       end
     end
+    
+    # Root author should get anything in the thread, so make sure they're on the list
+    if top.posted_by.to_i > 0 and not got_participants.has_key?(top.posted_by.to_i)
+      author = Participant.find_by_id(top.posted_by)
+      if author
+        participants << author
+      end
+    end
           
     logger.info("Item#emailit #{participants.length} people to distribute to")
     
