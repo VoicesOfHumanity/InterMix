@@ -196,6 +196,7 @@ end
 		<a href="/items/<%= item.id %>/view" title="permalink">#</a>	
 		</div>	
     
+	 <% if participant_signed_in? -%>
     <div class="iteminfotxt">
       <% if item.is_followed_by(current_participant) -%>
       <button onclick="followthread('unfollow',<%= item.id %>);return(false);">Unfollow thread</button>
@@ -206,6 +207,7 @@ end
 		[<%= item.is_followed_by(current_participant,'exp') %>]
 		<% end -%>
     </div>
+	 <% end -%>
 		
     <% if false -%>
 		<div class="iteminfotxt">
@@ -283,12 +285,13 @@ end
 		</div>
 		<% end -%>
     
+	 <% if participant_signed_in? -%>
     <div class="itemthumbdiv">
       <hr>
       <div class="thumbtitle">My Vote:</div> 
       <%=raw thumbvote(itemproc) %>
     </div>
-    
+    <% end -%>
     
 				
 	</div><!--iteminfo-->
