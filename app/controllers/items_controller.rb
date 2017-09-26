@@ -1006,23 +1006,33 @@ class ItemsController < ApplicationController
     end
     logger.info("items_controller#follow item:#{item.id} top:#{top.id}")
     
-    # What's the default?
-    should_be_followed = top.is_followed_by(current_user)
-    
-    item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id:current_user.id).first
-    if item_subscribe and should_be_followed
-      # If there's already a record, no matter what it says, it shouldn't be necessary (as they naturally follow it), so delete it
-      item_subscribe.destroy
-    elsif item_subscribe
-      # There's a record, but not subscribed, so subscribe it
-      item_subscribe.followed = true
-      item_subscribe.save!      
+    if true
+      item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id:current_user.id).first
+      if item_subscribe
+        item_subscribe.destroy
+      else
+        item_subscribe = ItemSubscribe.new(item_id: top.id, participant_id:current_user.id)
+        item_subscribe.followed = true
+        item_subscribe.save! 
+      end
     else
-      # Create a record to subscribe
-      item_subscribe = ItemSubscribe.new(item_id: top.id, participant_id:current_user.id)
-      item_subscribe.followed = true
-      item_subscribe.save!      
-    end  
+      # What's the default?
+      should_be_followed = top.is_followed_by(current_user)    
+      item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id:current_user.id).first
+      if item_subscribe and should_be_followed
+        # If there's already a record, no matter what it says, it shouldn't be necessary (as they naturally follow it), so delete it
+        item_subscribe.destroy
+      elsif item_subscribe
+        # There's a record, but not subscribed, so subscribe it
+        item_subscribe.followed = true
+        item_subscribe.save!      
+      else
+        # Create a record to subscribe
+        item_subscribe = ItemSubscribe.new(item_id: top.id, participant_id:current_user.id)
+        item_subscribe.followed = true
+        item_subscribe.save!      
+      end
+    end
 
     render :text=>'ok', :layout=>false
   end
@@ -1039,32 +1049,42 @@ class ItemsController < ApplicationController
     end
     logger.info("items_controller#unfollow item:#{item.id} top:#{top.id}")
     
-    # What's the default?
-    should_be_followed = top.is_followed_by(current_user)
-
-    item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id:current_user.id).first
-    if top.posted_by == current_user.id
-      # It's the owner who doesn't want their own thread. Give them special treatment
-      if not item_subscribe
+    if true
+      item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id:current_user.id).first
+      if item_subscribe
+        item_subscribe.destroy
+      else
         item_subscribe = ItemSubscribe.new(item_id: top.id, participant_id:current_user.id)
-      end
-      item_subscribe.followed = false
-      item_subscribe.save!      
-    elsif item_subscribe and not should_be_followed
-      # If there's already a record, no matter what it says, it shouldn't be necessary (as they don't aturally follow it), so delete it
-      item_subscribe.destroy
-    elsif not should_be_followed
-      # There isn't a record, and there shouldn't be. Do nothing  
-    elsif item_subscribe
-      # There's a record, but not unsubscribed, so unsubscribe it
-      item_subscribe.followed = false
-      item_subscribe.save!      
+        item_subscribe.followed = false
+        item_subscribe.save! 
+      end      
     else
-      # Create a record to unsubscribe
-      item_subscribe = ItemSubscribe.new(item_id: top.id, participant_id:current_user.id)
-      item_subscribe.followed = false
-      item_subscribe.save!      
-    end  
+      # What's the default?
+      should_be_followed = top.is_followed_by(current_user)
+      item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id:current_user.id).first
+      if top.posted_by == current_user.id
+        # It's the owner who doesn't want their own thread. Give them special treatment
+        if not item_subscribe
+          item_subscribe = ItemSubscribe.new(item_id: top.id, participant_id:current_user.id)
+        end
+        item_subscribe.followed = false
+        item_subscribe.save!      
+      elsif item_subscribe and not should_be_followed
+        # If there's already a record, no matter what it says, it shouldn't be necessary (as they don't aturally follow it), so delete it
+        item_subscribe.destroy
+      elsif not should_be_followed
+        # There isn't a record, and there shouldn't be. Do nothing  
+      elsif item_subscribe
+        # There's a record, but not unsubscribed, so unsubscribe it
+        item_subscribe.followed = false
+        item_subscribe.save!      
+      else
+        # Create a record to unsubscribe
+        item_subscribe = ItemSubscribe.new(item_id: top.id, participant_id:current_user.id)
+        item_subscribe.followed = false
+        item_subscribe.save!      
+      end
+    end
 
     if params.has_key? :email
       # We were called from an email
