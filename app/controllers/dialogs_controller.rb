@@ -366,7 +366,7 @@ class DialogsController < ApplicationController
     if @threads
       #-- If we have a comment setting, use it
     else
-      @threads = 'root'
+      @threads = 'flat'
     end
 
     logger.info("dialogs#slider @sortby:#{@sortby} @threads:#{@threads}")
