@@ -406,7 +406,7 @@ class Item < ActiveRecord::Base
       
       if not self.has_voted(p)
         itext += "<p>Vote here: "
-        itext += "<a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"http://voh.intermix.org/images/thumbsdownoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a> &nbsp; "
+        itext += "<a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"http://voh.intermix.org/images/thumbsdownoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>&nbsp;"
         itext += "<a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"http://voh.intermix.org/images/thumbsupoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs up\"/></a>"
         itext += "</p>"
       end

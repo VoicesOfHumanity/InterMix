@@ -265,8 +265,8 @@ for p in participants
       
       if not item.has_voted(p)
         itext += "<p>Vote here: "
-        itext += "<a href=\"//#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"//voh.intermix.org/images/thumbsdownoff.jpg\" alt=\"down\"></a> "
-        itext += "<a href=\"//#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"//voh.intermix.org/images/thumbsupoff.jpg\" alt=\"up\"></a>"
+        itext += "<a href=\"//#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"//voh.intermix.org/images/thumbsdownoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>&nbsp;"
+        itext += "<a href=\"//#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"//voh.intermix.org/images/thumbsupoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>"
         itext += "</p>"
       end
       
