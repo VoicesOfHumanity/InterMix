@@ -378,7 +378,7 @@ class Item < ActiveRecord::Base
       
       content = self.html_content != '' ? self.html_with_auth(recipient) : self.short_content
       
-      link_to = "//#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}"
+      link_to = "https://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}"
       if not self.is_first_in_thread
         link_to += "#item_#{self.id}"
       end
@@ -394,20 +394,20 @@ class Item < ActiveRecord::Base
       if dialog and not dialog.settings_with_period["profiles_visible"]
   		  itext += self.participant ? self.participant.name : self.posted_by
   		else
-  		  itext += "<a href=\"//#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
+  		  itext += "<a href=\"https://#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
   		end
   		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
-  		itext += " <a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
+  		itext += " <a href=\"https://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		
       #itext += " <a href=\"#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
-      itext += " <a href=\"//#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
+      itext += " <a href=\"https://#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
       
       itext += "</p>"
       
       if not self.has_voted(p)
         itext += "<p>Vote here: "
-        itext += "<a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"http://voh.intermix.org/images/thumbsdownoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>&nbsp;"
-        itext += "<a href=\"//#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"http://voh.intermix.org/images/thumbsupoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs up\"/></a>"
+        itext += "<a href=\"https://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"https://voh.intermix.org/images/thumbsdownoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>&nbsp;"
+        itext += "<a href=\"https://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"https://voh.intermix.org/images/thumbsupoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs up\"/></a>"
         itext += "</p>"
       end
       

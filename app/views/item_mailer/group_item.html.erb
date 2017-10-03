@@ -49,16 +49,16 @@ end
 <% end -%>
 </div>
 
-<p><a href="http://intermix.org/ccattribution4point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("http://#{BASEDOMAIN}/images/ccattribution4point0.png",:style=>"margin:8px 0 6px 0;") %></a></p>
+<p><a href="https://intermix.org/ccattribution4point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("https://#{BASEDOMAIN}/images/ccattribution4point0.png",:style=>"margin:8px 0 6px 0;") %></a></p>
 
 <hr>
 
 <p id="footer">
-	<a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.
+	<a href="https://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.
 	<% if false -%>
-  <a href="http://<%= dom %>/groups/<%= @cdata['item'].group_id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Group Forum</a>. 	
+  <a href="https://<%= dom %>/groups/<%= @cdata['item'].group_id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Group Forum</a>. 	
   <% end -%>
-	<% if @cdata['item'].dialog_id.to_i > 0 %><a href="http://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id.to_i %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Forum</a>. <% end %>
+	<% if @cdata['item'].dialog_id.to_i > 0 %><a href="https://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id.to_i %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Forum</a>. <% end %>
 <% if false -%>  
 If you have problems, write to the moderator at <%= @cdata['group'].shortname %>-owner@<%= BASEDOMAIN %>.
 <% end -%>
@@ -73,7 +73,7 @@ For available e-mail commands, send a blank message to <%= @cdata['group'].short
 <% if @cdata and @cdata['logo'].to_s != '' -%>	
 <img src="<%= @cdata['logo'] %>"/>
 <% else -%>
-<img src="http://<%= BASEDOMAIN %>/images/logo.gif"/>
+<img src="https://<%= BASEDOMAIN %>/images/logo.gif"/>
 <% end -%><br/>
 <% if false -%>
 <%= @cdata['group'].name if @cdata['group'] %>
@@ -82,7 +82,7 @@ For available e-mail commands, send a blank message to <%= @cdata['group'].short
 <br/><br/>
 
 
-<img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['item'].id.to_i if @cdata['item'] %>_<%= @cdata['recipient'].id.to_i if @cdata['recipient'] %>.gif" width="0" height="0" border="0" style="display:none">
+<img src="https://<%= BASEDOMAIN %>/pixel/<%= @cdata['item'].id.to_i if @cdata['item'] %>_<%= @cdata['recipient'].id.to_i if @cdata['recipient'] %>.gif" width="0" height="0" border="0" style="display:none">
 
 </body>
 </html>

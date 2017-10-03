@@ -8,11 +8,11 @@
 <% if @cdata and @cdata['logo'].to_s != '' -%>	
 <img src="<%= @cdata['logo'] %>"/>
 <% else -%>
-<img src="http://<%= BASEDOMAIN %>/images/logo.gif"/>
+<img src="https://<%= BASEDOMAIN %>/images/logo.gif"/>
 <% end -%>
 <br/><br/>
 
-<p><a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a> to see this post, to access more features, or if you're having trouble seeing this.</p>
+<p><a href="https://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a> to see this post, to access more features, or if you're having trouble seeing this.</p>
 
 <hr/>
 
@@ -20,15 +20,15 @@
 <%=raw @message %>
 </div>
 
-<p><a href="http://intermix.org/ccattribution4point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("http://#{BASEDOMAIN}/images/ccattribution4point0.png",:style=>"margin:8px 0 6px 0;") %></a></p>
+<p><a href="https://intermix.org/ccattribution4point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("http://#{BASEDOMAIN}/images/ccattribution4point0.png",:style=>"margin:8px 0 6px 0;") %></a></p>
 
 <hr/>
 
 <p id="footer">
-	<a href="http://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.
-	<a href="http://<%= BASEDOMAIN %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Forum List</a>. To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
+	<a href="https://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.
+	<a href="https://<%= BASEDOMAIN %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Forum List</a>. To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
 
-<img src="http://<%= BASEDOMAIN %>/pixel/<%= @cdata['item'].id.to_i if @cdata['item'] %>_<%= @cdata['recipient'].id.to_i if @cdata['recipient'] %>.gif" width="0" height="0" border="0" style="display:none">
+<img src="https://<%= BASEDOMAIN %>/pixel/<%= @cdata['item'].id.to_i if @cdata['item'] %>_<%= @cdata['recipient'].id.to_i if @cdata['recipient'] %>.gif" width="0" height="0" border="0" style="display:none">
 
 </body>
 </html>

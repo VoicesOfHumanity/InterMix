@@ -231,7 +231,7 @@ for p in participants
 
       puts "    #{item.created_at.strftime("%Y-%m-%d %H:%M")}: #{item.subject} | domain: #{domain}"
       
-      link_to = "http://#{domain}/items/#{item.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{item.id}"
+      link_to = "https://#{domain}/items/#{item.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{item.id}"
       if not item.is_first_in_thread
         link_to += "#item_#{item.id}"
       end
@@ -252,21 +252,21 @@ for p in participants
   		elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"]
   		  itext += item.participant ? item.participant.name : item.posted_by
   		else
-  		  itext += "<a href=\"http://#{domain}/participant/#{item.posted_by}/wall?auth_token=#{p.authentication_token}\">#{item.participant ? item.participant.name : item.posted_by}</a>"
+  		  itext += "<a href=\"https://#{domain}/participant/#{item.posted_by}/wall?auth_token=#{p.authentication_token}\">#{item.participant ? item.participant.name : item.posted_by}</a>"
   		end
   		itext += " " + item.created_at.strftime("%Y-%m-%d %H:%M")
-  		itext += " <a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
+  		itext += " <a href=\"https://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
       
-      itext += " <a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}#reply\">One Click reply</a>"
+      itext += " <a href=\"https://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}#reply\">One Click reply</a>"
 
-      itext += " <a href=\"//#{domain}/items/#{item.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
+      itext += " <a href=\"https://#{domain}/items/#{item.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
       
       itext += "</p>"
       
       if not item.has_voted(p)
         itext += "<p>Vote here: "
-        itext += "<a href=\"//#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"//voh.intermix.org/images/thumbsdownoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>&nbsp;"
-        itext += "<a href=\"//#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"//voh.intermix.org/images/thumbsupoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>"
+        itext += "<a href=\"https://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"https://voh.intermix.org/images/thumbsdownoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>&nbsp;"
+        itext += "<a href=\"https://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"https://voh.intermix.org/images/thumbsupoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs up\"/></a>"
         itext += "</p>"
       end
       
