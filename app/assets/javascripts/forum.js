@@ -453,8 +453,13 @@ function deleteitem() {
 	   }
     });
 }
+var issaving = false;
 function saveitem() {
-    console.log('saveitem');
+   console.log('saveitem');
+	if (issaving) {
+		console.log('save button hit twice. Ignoring')
+	   return;
+	}
 	id = curid;
 	var media_type = $('#item_media_type').val();
 	if (media_type=='text') {
@@ -468,6 +473,7 @@ function saveitem() {
 			return;
 		}
 	}
+	issaving = true;
 	if (replyingid>0) {
 		var pars = $("#edit_item_").serialize();
 		var url = "/items";
@@ -494,7 +500,7 @@ function saveitem() {
 	   url: url,
 	   data: pars,
 	   complete: function(t){
-           console.log('saveitem complete');
+          console.log('saveitem complete');
 	       var was_error = true;
 	       if (t.responseText.substring(0,1)=='{') {
 	            // looks like json
@@ -614,6 +620,7 @@ function saveitem() {
     		    editingid = 0;
             	in_new_item = 0;
 		    }
+				issaving = false;
 		}
 	 });	
 }
