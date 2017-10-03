@@ -960,22 +960,23 @@ function update_characters() {
 	$('#charsused').html(count);
 	short_updated = true;
 }
-function expand(id) {
+function expand(id,force) {
 	var oldval = $('#expand_'+id).html();
-	if (oldval == '−') {
+	if (force && force == 'expand') {
+		$('#shortcontent_'+id).hide();
+		$('#htmlcontent_'+id).show();		
+	} else if (force && force == 'collapse') {
 		$('#htmlcontent_'+id).hide();
 		$('#shortcontent_'+id).show();
-		//$('#vote_int_'+id).hide();
-		//$('#vote_app_'+id).hide();
-        //$('#tags_'+id).hide();
+	} else if (oldval == '−') {
+		$('#htmlcontent_'+id).hide();
+		$('#shortcontent_'+id).show();
 		$('#expand_'+id).html("+");
 	} else {
 		$('#shortcontent_'+id).hide();
 		$('#htmlcontent_'+id).show();
-		//$('#vote_int_'+id).show();
-		//$('#vote_app_'+id).show();
-        $('#tags_'+id).show();
-        $('#expand_'+id).html("−")
+      $('#tags_'+id).show();
+      $('#expand_'+id).html("−")
 	}
 }
 function mediachange(media) {

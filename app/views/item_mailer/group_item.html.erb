@@ -18,16 +18,16 @@ end
 %>	
 	
 <% if @cdata['item'].dialog -%>
-<p id="following">The following message was posted in the <a href="http://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>"><%= @cdata['dialog'].name %></a> Forum</p>
+<p id="following">The following message was posted in the <a href="https://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>"><%= @cdata['dialog'].name %></a> Forum</p>
 <% else -%>  
-<p id="following">The following message was posted on <a href="http://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['group'].name %>' forum, where you are a member:</p>
+<p id="following">The following message was posted on <a href="https://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['group'].name %>' forum, where you are a member:</p>
 <% end -%>
 
 <hr/>
 
 <div>
 <% if @cdata['item'].media_type == 'picture' -%>
-	<img src="http://<%= dom %>/images/data/items/<%= @cdata['item'].id %>/big.jpg" alt="picture"><br>
+	<img src="https://<%= dom %>/images/data/items/<%= @cdata['item'].id %>/big.jpg" alt="picture"><br>
 	<%=raw @cdata['item'].short_content %>	
 <% elsif @cdata['item'].media_type == 'link' -%>	
 	<a href="<%=raw @cdata['item'].link %>" target="_blank"><%=raw @cdata['item'].link %></a><br>

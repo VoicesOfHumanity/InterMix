@@ -43,7 +43,7 @@ Regression: <%=raw @extras['regression'] -%><br>
 
 <script>
 if (window.location.hash=='#reply') {
-	expand(<%= @item.id %>)
+	expand(<%= @item.id %>,'expand')
 	reply(<%= @item.id %>,false);
 }
 $('.thumbupdown').hover(function(){thumbhover(this,'in')},function(){thumbhover(this,'out')});
