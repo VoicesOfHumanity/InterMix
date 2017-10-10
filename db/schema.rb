@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170808215236) do
+ActiveRecord::Schema.define(version: 20171010205412) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -459,6 +459,7 @@ ActiveRecord::Schema.define(version: 20170808215236) do
     t.datetime "tweeted_group_at"
     t.boolean  "censored",                                                       default: false
     t.string   "geo_level",                limit: 255
+    t.string   "intra_com",                limit: 255,                           default: "public"
   end
 
   add_index "items", ["created_at"], name: "index_items_on_created_at", using: :btree

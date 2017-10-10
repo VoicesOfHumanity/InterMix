@@ -142,13 +142,12 @@ if (CKEDITOR.instances['item_html_content']) {
   	  <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
   	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
 	  
-	  <% if false %>
-	  <select>
+	  <select name="item[intra_com]" id="item_intra_com">
+	  <% def_intra = @olditem ? @olditem.intra_com : 'public' %>		  
 	  <% intra_options = [['Public','public']] %>
 	  <% intra_options << ["Only @#{@comtag}","@#{@comtag}"] if @comtag.to_s != '' %>
-	  <%= options_for_select(intra_options) %>
+	  <%= options_for_select(intra_options,def_intra) %>
 	  </select>
-	  <% end %>
   	</div>
   	<div style="width:50%;float:left;text-align:right">
   	  <% if @is_moderator -%>

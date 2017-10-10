@@ -272,6 +272,10 @@ end
       <% end -%>
     <% end -%>  
     </div>
+	 
+	 <% if item.intra_com.to_s != '' and item.intra_com.to_s != 'public' %>
+	 <div class="iteminfotxt" style="font-weight:bold;color:#44a">This message: Only <%= item.intra_com %></div>
+	 <% end -%>
 
 		<% if (@show_result and item.num_replies > 0) or (@sortby == 'default' and itemproc['replies'].length > 0) or ((@threads=='root' or @threads=='flat') and item.num_replies > 0) %>
 		<div class="iteminfotxt">
