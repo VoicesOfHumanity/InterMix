@@ -1556,6 +1556,10 @@ class Item < ActiveRecord::Base
       else
         items = items.where("1=0")
       end      
+      
+      # show only public items
+      items = items.where("intra_com='public'")
+      
     elsif crit[:comtag].to_s != ''
       title += " | @#{crit[:comtag]}"
       # does the current user have that tag?
@@ -1576,6 +1580,15 @@ class Item < ActiveRecord::Base
       else
         items = items.where("1=0")
       end
+
+      # Show items that either are public, or specifically for this community
+      items = items.where("intra_com='public' or intra_com='@#{crit[:comtag]}'")
+
+    else
+      
+      # show only public items, if there's no community specified
+      items = items.where("intra_com='public'")
+      
     end
     if crit[:messtag].to_s != ''
       title += " | ##{crit[:messtag]}"
