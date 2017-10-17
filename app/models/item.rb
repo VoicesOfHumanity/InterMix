@@ -124,8 +124,14 @@ class Item < ActiveRecord::Base
         exp += "following because it's in your communities and your setting for that is #{p.mycom_email}"
         
       elsif not is_mycom and (p.othercom_email != 'never')
-        followed = true
-        exp += "following because it's not in your communities and your setting for that is #{p.othercom_email}"
+        
+        if self.intra_com.to_s != '' and self.intra_com != 'public'
+          followed = false
+          exp += "not following because it is for #{self.intra_com} only and you're not in it"          
+        else  
+          followed = true
+          exp += "following because it's not in your communities and your setting for that is #{p.othercom_email}"
+        end
 
       elsif is_mycom
         followed = false
