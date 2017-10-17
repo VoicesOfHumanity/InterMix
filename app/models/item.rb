@@ -272,6 +272,17 @@ class Item < ActiveRecord::Base
     else
       top = Item.find_by_id(self.first_in_thread) 
     end
+    
+    if self.intra_com == 'public'
+    elsif self.intra_com.to_s != ''
+      # It is for a particular community only. Remove anybody who's not a member
+      tagname = self.intra_com[1,50]
+      for person in allpeople
+        if not person.tag_list.include?(tagname)
+          participants.delete(person)
+        end
+      end  
+    end    
 
     # Check this against people who specifically follow or unfollow it
     followers = top.subscribers
