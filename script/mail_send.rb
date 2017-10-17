@@ -221,7 +221,7 @@ for p in participants
       if item.intra_com == 'public'
       elsif item.intra_com.to_s != ''
         # It is for a particular community only. Remove anybody who's not a member
-        tagname = item.intra_com[0,50]
+        tagname = item.intra_com[1,50]
         if not p.tag_list.include?(tagname)
           puts "    person is not in the specified community" if testonly
           send_it = false
