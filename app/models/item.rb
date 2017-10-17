@@ -1544,12 +1544,16 @@ class Item < ActiveRecord::Base
     if crit[:comtag].to_s == '*my*'
       title += " | My Communities"
       plist = ''
+      comtag_list = ''
+      comtags = {}
       ps = {}
       for tag in current_participant.tag_list
+        comtags[tag] = true
         for p in Participant.tagged_with(tag)
           ps[p.id] = true
         end
       end
+      comtag_list = comtags.collect{|k, v| "'@#{k}'"}.join(',')
       plist = ps.collect{|k, v| k}.join(',')
       if plist != ''
         items = items.where("participants.id in (#{plist})")
@@ -1557,8 +1561,8 @@ class Item < ActiveRecord::Base
         items = items.where("1=0")
       end      
       
-      # show only public items
-      items = items.where("intra_com='public'")
+      # show items from members of any of my groups
+      items = items.where("intra_com='public' or intra_com in (#{comtag_list})")
       
     elsif crit[:comtag].to_s != ''
       title += " | @#{crit[:comtag]}"
