@@ -312,6 +312,8 @@ class ItemsController < ApplicationController
           tags << tagmatch
         end
         
+        @comtag = @olditem.intra_com if @olditem.intra_com and @olditem.intra_com != 'public'
+        
       end
     else
       if @dialog and @dialog.settings_with_period["default_message"].to_s != ''
