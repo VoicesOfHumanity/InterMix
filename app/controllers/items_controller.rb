@@ -313,6 +313,7 @@ class ItemsController < ApplicationController
         end
         
         @comtag = @olditem.intra_com if @olditem.intra_com and @olditem.intra_com != 'public'
+        @item.intra_com = @comtag if @comtag
         
       end
     else
