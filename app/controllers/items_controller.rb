@@ -423,8 +423,8 @@ class ItemsController < ApplicationController
       elsif @item.geo_level == 'nation' and current_participant.geocountry
         tags << current_participant.geocountry.name
       end
-      tags << @messtag if @messtag != ''
-      tags << @comtag if @comtag != ''
+      tags << @messtag if @messtag != '' and @messtag != 'my' and @messtag != '*my*'
+      tags << @comtag if @comtag != '' and @comtag != 'my' and @comtag != '*my*'
     end
     
     tagtext = ''
