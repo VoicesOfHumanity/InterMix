@@ -252,6 +252,7 @@ class ItemsController < ApplicationController
     @subgroup = params[:subgroup].to_s
     @comtag = params[:comtag].to_s
     @messtag = params[:messtag].to_s
+    logger.info("items#new @comtag:#{@comtag} @messtag:#{@messtag}") 
     @meta_3 = params[:meta_3].to_i    # gender
     @meta_5 = params[:meta_5].to_i    # age
     
@@ -315,7 +316,7 @@ class ItemsController < ApplicationController
         
         # Get the message tags from the previous message, if any
         xtxt = ActionView::Base.full_sanitizer.sanitize(@olditem.html_content)
-        logger.info("items#itemprocess xtxt:#{xtxt}") 
+        #logger.info("items#new xtxt:#{xtxt}") 
         tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$|,|;|:|-|\.|\?)/i).map{|s| s[0]}
         tags = []
         for tagmatch in tagmatches
@@ -328,6 +329,7 @@ class ItemsController < ApplicationController
         
         @comtag = @olditem.intra_com if @olditem.intra_com and @olditem.intra_com != 'public'
         @item.intra_com = @comtag if @comtag
+        @comtag = @comtag.gsub!('@','') if @comtag
         
       end
     else
@@ -416,6 +418,7 @@ class ItemsController < ApplicationController
       if @item.reply_to.to_i > 0 and @olditem
         tags.concat @olditem.tag_list
       end
+      logger.info("items#new tags:#{tags.inspect}") 
       if @meta_3 == 207
           tags << 'VoiceOfMen'    
       elsif @meta_3 == 208
@@ -437,10 +440,11 @@ class ItemsController < ApplicationController
       elsif @item.geo_level == 'nation' and current_participant.geocountry
         tags << current_participant.geocountry.name
       end
-      tags << @messtag if @messtag != '' and @messtag != 'my' and @messtag != '*my*'
-      tags << @comtag if @comtag != '' and @comtag != 'my' and @comtag != '*my*'
+      tags << @messtag if @messtag != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*'
+      tags << @comtag if @comtag != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*'
     end
     
+    logger.info("items#new tags:#{tags.inspect}") 
     tagtext = ''
     tags.uniq.each do |tag|
       tagtext += ', ' if tagtext != ''
