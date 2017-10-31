@@ -23,8 +23,17 @@ class WallController < ApplicationController
     #@items = @items.paginate :page=>@page, :per_page => @per_page    
     
     
-    @items, @itemsproc = Item.list_and_results(nil,nil,nil,@participant_id,{},{},false,'items.id desc',current_participant.id)
+    #@items, @itemsproc = Item.list_and_results(nil,nil,nil,@participant_id,{},{},false,'items.id desc',current_participant.id)
     
+    
+    crit = {}
+    crit[:posted_by] = @participant_id
+    rootonly = false
+    
+    items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
+    @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
+    @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
+       
     update_last_url
   end  
 

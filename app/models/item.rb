@@ -85,10 +85,15 @@ class Item < ActiveRecord::Base
     else
       top = Item.find_by_id(self.first_in_thread) 
     end
-    item = top
+    if top
+      item = top
+    else
+      item = self
+      top = self
+    end
     
     followed = false
-    exp = "root:#{top.id}, "
+    exp = "root:#{top.id if top}, "
     
     
     item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id: p.id).first

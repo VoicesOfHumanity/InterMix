@@ -44,7 +44,7 @@
 					<% for reply in @itemsproc[item.id]['replies'] -%>
 						<% odd_or_even = 1-odd_or_even%>
 						<div class="forumitem forumitemplain forumreply forum<%= odd_or_even %>" id="item_<%= reply.id %>">
-							<%= render :partial => "items/item", :locals => { :item => reply, :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id, :exp_item_id=>@exp_item_id.to_i } %>
+							<%= render :partial => "items/item", :locals => { :item => reply, :itemproc=>@itemsproc[reply.id], :is_reply => true, :odd_or_even => odd_or_even, :from=>@from.to_s, :top=>item.id, :exp_item_id=>@exp_item_id.to_i } %>
 						</div>
 					<% end -%>
 		    <% end -%>	

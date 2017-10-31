@@ -65,6 +65,7 @@ class ItemsController < ApplicationController
     if @from == 'wall'
       @posted_by = ( params[:id] || current_participant.id ).to_i
       @participant = Participant.find(@posted_by)
+      @participant_id = @participant.id
     else
       @posted_by = 0  
     end   
@@ -99,16 +100,29 @@ class ItemsController < ApplicationController
         end
       end
     end
-            
-    if true
+    
+    crit = {}
+    crit[:dialog_id] = 0
+    crit[:period_id] = 0
+    crit[:group_id] = 0  
+    crit[:posted_by] = @posted_by 
+          
+    if true      
       #-- Get the records, while adding up the stats on the fly
+
+      items,ratings,@title = Item.get_items(crit,current_participant,@rootonly)
+      @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,@rootonly)
+      @items = Item.get_sorted(items,@itemsproc,@sortby,@rootonly)
+                  
+    elsif true
+      # old way
       
       @items, @itemsproc, @extras = Item.list_and_results(@limit_group,@dialog_id,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id,@tag,@subgroup,false,'','',@want_crosstalk,@posted_by_indigenous,@posted_by_other_minority,@posted_by_veteran,@posted_by_interfaith,@posted_by_refugee,@rated_by_indigenous,@rated_by_other_minority,@rated_by_veteran,@rated_by_interfaith,@rated_by_refugee)
       
       #logger.info("items_controller#list @items: #{@items.inspect}")
       
     else
-      # old way
+      # even older way
         
       @items = Item.where(nil)
       #@items = @items.tagged_with(params[:tags]) if params[:tags].to_s != ''

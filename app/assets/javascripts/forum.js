@@ -47,6 +47,7 @@ var in_new_item = 0;
 var had_default = false;
 var last_sort = '';
 function list(whatchanged,gotopost) {
+	console.log('list()');
   whatchanged = (typeof whatchanged === "undefined") ? "" : whatchanged;
   gotopost = (typeof gotopost === "undefined") ? "" : ""+gotopost;
   $('#itemlist').css('opacity','0.5');
@@ -455,10 +456,10 @@ function deleteitem() {
 }
 var issaving = false;
 function saveitem() {
-   console.log('saveitem');
+	console.log('saveitem');
 	if (issaving) {
 		console.log('save button hit twice. Ignoring')
-	   return;
+		return;
 	}
 	id = curid;
 	var media_type = $('#item_media_type').val();
@@ -478,7 +479,7 @@ function saveitem() {
 		var pars = $("#edit_item_").serialize();
 		var url = "/items";
 		var xtype = 'POST';
- 		$('#reply_'+replyingid).css('opacity','0.5');
+		$('#reply_'+replyingid).css('opacity','0.5');
 	} else if (id>0) {
 		var pars = $("#edit_item_"+id).serialize();
 		var url = "/items/"+id;
@@ -488,141 +489,140 @@ function saveitem() {
 		var pars = $("#edit_item_").serialize();
 		var url = "/items";
 		var xtype = 'POST';
-	 	$('#newforumitem').css('opacity','0.5');
+		$('#newforumitem').css('opacity','0.5');
 	}
-  if ($('#geo_level').length) {
-    var geo_level_num = $('#geo_level').val();
-    var geo_level_name = geo_levels[geo_level_num];
-    pars += '&geo_level=' + geo_level_name;
-  }
+	if ($('#geo_level').length) {
+		var geo_level_num = $('#geo_level').val();
+		var geo_level_name = geo_levels[geo_level_num];
+		pars += '&geo_level=' + geo_level_name;
+	}
 	$.ajax({
-	   type: xtype,
-	   url: url,
-	   data: pars,
-	   complete: function(t){
-          console.log('saveitem complete');
-	       var was_error = true;
-	       if (t.responseText.substring(0,1)=='{') {
-	            // looks like json
-	            var results = eval('(' + t.responseText + ')');
-	            var showmess = results['message'];
-	            if ($('#cur_item_id')) {
-	                $('#cur_item_id').val(results['item_id']);
-                }
-                was_error = results['error'];
-	        } else {
-	            var showmess = t.responseText;
-	        }    
-    	   if (replyingid>0) {
-    			  $('#reply_'+replyingid).html(showmess);	
-    		 	  $('#reply_'+replyingid).css('opacity','1.0');
-        		//window.setTimeout("$('#reply_'+replyingid).remove();list();", 3000);
-        		if ($('#sortby').val()=='default') {
-							// If we had default period sort, we'll switch to item order and to showing replies also, so we can see the message we posted
-        		    $('#sortby').val('items.id desc');
-        		    $('#sortby1').val('items.id desc');
-        		    $('#sortby2').val('items.id desc');
-        		    if ($('#active_period_id') && parseInt($('#active_period_id').val())>0) {
-                        $('#period_id').val($('#active_period_id').val());
-            		}
-        		}
-        		$('#threads').val('flat');
-        		$('#threads1').val('flat');
-        		$('#threads2').val('flat');
-    	  	} else if (id>0) {
-    	    	$('#htmlcontent_'+id).html(showmess);
-    			$('#htmlcontent_'+id).css('opacity','1.0');
-        		//window.setTimeout("list();", 3000);
-    		} else {
-    	    	$("#newforumitem").html(showmess);
-    	  		$('#newforumitem').css('opacity','1.0');
-    			//$('#newforumitem').html('');
-        		//window.setTimeout("list();$('#newforumitem').hide();", 3000);
-        		if ($('#max_messages') && $('#previous_messages')) {
-        		    var previous_messages = $('#previous_messages').val() + 1;
-    		        $('#previous_messages').val(previous_messages);
-        		    if (parseInt($('#previous_messages').val()) >= parseInt($('#max_messages').val())) {
-        		        if ($('#newthreadbutton')) {
-        		            $('#newthreadbutton').css("opacity","0.5");
-        		            $('#newthreadbutton').attr('disabled','disabled');
-    		            }
-        		    }
-        		}
-    		}
-    		//if (!$('#saveresult') || $('#saveresult').val() != 'error') {
-        	if (was_error) {
-        	    //if (replyingid>0) {
-        	    //    window.location.hash = '#reply_' + replyingid;
-        	    //} else if (id>0) {
-        	    //    window.location.hash = '#htmlcontent_' + id;
-        	    //} else {
-        	    //     window.location.hash = '#newforumitem';
-        	    //}
-                console.log('saveitem was_error');
-            	if (CKEDITOR.instances['item_html_content_editor']) { 
-            		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
-            	}
-                editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
-                removeHash();
-                $(window).scrollTop(0);
-        		CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
-        			this.document.on("keyup", editor_change);
-        		});
-        	} else {    
-                console.log('saveitem not was_error');
-                removeHash();
-        	    if ($('#from') && $('#from').val()=='individual') {
-        	        window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];
-    		    } else if ($('#from') && $('#from').val()=='thread') {
-    		        window.location.reload();
+		type: xtype,
+		url: url,
+		data: pars,
+		complete: function(t){
+			console.log('saveitem complete');
+			var was_error = true;
+			if (t.responseText.substring(0,1)=='{') {
+				// looks like json
+				var results = eval('(' + t.responseText + ')');
+				var showmess = results['message'];
+				if ($('#cur_item_id')) {
+					$('#cur_item_id').val(results['item_id']);
+				}
+				was_error = results['error'];
+			} else {
+				var showmess = t.responseText;
+			}    
+			if (replyingid>0) {
+				$('#reply_'+replyingid).html(showmess);	
+				$('#reply_'+replyingid).css('opacity','1.0');
+				//window.setTimeout("$('#reply_'+replyingid).remove();list();", 3000);
+				if ($('#sortby').val()=='default') {
+					// If we had default period sort, we'll switch to item order and to showing replies also, so we can see the message we posted
+					$('#sortby').val('items.id desc');
+					$('#sortby1').val('items.id desc');
+					$('#sortby2').val('items.id desc');
+					if ($('#active_period_id') && parseInt($('#active_period_id').val())>0) {
+						$('#period_id').val($('#active_period_id').val());
+					}
+				}
+				$('#threads').val('flat');
+				$('#threads1').val('flat');
+				$('#threads2').val('flat');
+			} else if (id>0) {
+				$('#htmlcontent_'+id).html(showmess);
+				$('#htmlcontent_'+id).css('opacity','1.0');
+				//window.setTimeout("list();", 3000);
+			} else {
+				$("#newforumitem").html(showmess);
+				$('#newforumitem').css('opacity','1.0');
+				//$('#newforumitem').html('');
+				//window.setTimeout("list();$('#newforumitem').hide();", 3000);
+				if ($('#max_messages') && $('#previous_messages')) {
+					var previous_messages = $('#previous_messages').val() + 1;
+					$('#previous_messages').val(previous_messages);
+					if (parseInt($('#previous_messages').val()) >= parseInt($('#max_messages').val())) {
+						if ($('#newthreadbutton')) {
+							$('#newthreadbutton').css("opacity","0.5");
+							$('#newthreadbutton').attr('disabled','disabled');
+						}
+					}
+				}
+			}
+			if (was_error) {
+				console.log('saveitem was_error');
+				if (CKEDITOR.instances['item_html_content_editor']) { 
+					CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
+				}
+				editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
+				removeHash();
+				$(window).scrollTop(0);
+				CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
+					this.document.on("keyup", editor_change);
+				});
+			} else {    
+				console.log('saveitem not was_error');
+				removeHash();
+				if ($('#from') && $('#from').val()=='individual') {
+					console.log('saveitem individual');
+					window.location.href = "/items/" + results['item_id'] + "/thread#" + results['item_id'];
+				} else if ($('#from') && $('#from').val()=='thread') {
+					console.log('saveitem thread');
+					window.location.reload();
 				} else if ($('#from') && $('#from').val()=='dsimple' && replyingid>0) {
-        		    replyingid = 0;
-        		    editingid = 0;
-                	in_new_item = 0;
+					console.log('saveitem dsimple reply');
+					replyingid = 0;
+					editingid = 0;
+					in_new_item = 0;
 					list_comments_simple();		
-                } else if ($('#from') && $('#from').val()=='dsimple') {
-                    document.location = '/dialogs/' + $('#in_dialog_id').val() + '/forum?item_id=' + results['item_id'];                
-                } else if ($('#from') && $('#from').val()=='geoslider') {
-                    $('#sortby').val('items.id desc');
-                    $('#sortby1').val('items.id desc');
-                    $('#sortby2').val('items.id desc');
-                    if (replyingid>0) {
-                        $('#threads').val('flat');
-                        $('#threads1').val('flat');
-                        $('#threads2').val('flat');
-                    } else {    
-                        $('#threads').val('root');
-                        $('#threads1').val('root');
-                        $('#threads2').val('root');
-                    }
-        		    replyingid = 0;
-        		    editingid = 0;
-                	in_new_item = 0;
-                    per_reload();
-                    //window.location.hash = '#item_' + results['item_id'];
-    		    } else if (results['item_id']) {
-        		    replyingid = 0;
-        		    editingid = 0;
-                	in_new_item = 0;
-    		        list(null,results['item_id']);
-    		    } else {
-        		    replyingid = 0;
-        		    editingid = 0;
-                	in_new_item = 0;
-    		        list();
-		        }
-                removeHash();
-                $(window).scrollTop(0);
-            	$('.reply_link').each(function(i,obj) {
-            	    $(this).css('opacity','1.0');
-            	});
-    		    replyingid = 0;
-    		    editingid = 0;
-            	in_new_item = 0;
-		    }
-				issaving = false;
+				} else if ($('#from') && $('#from').val()=='dsimple') {
+					console.log('saveitem dsimple');
+					document.location = '/dialogs/' + $('#in_dialog_id').val() + '/forum?item_id=' + results['item_id'];                
+				} else if ($('#from') && $('#from').val()=='geoslider') {
+					console.log('saveitem geoslider');
+					$('#sortby').val('items.id desc');
+					$('#sortby1').val('items.id desc');
+					$('#sortby2').val('items.id desc');
+					if (replyingid>0) {
+						$('#threads').val('flat');
+						$('#threads1').val('flat');
+						$('#threads2').val('flat');
+					} else {    
+						$('#threads').val('root');
+						$('#threads1').val('root');
+						$('#threads2').val('root');
+					}
+					replyingid = 0;
+					editingid = 0;
+					in_new_item = 0;
+					per_reload();
+					//window.location.hash = '#item_' + results['item_id'];
+				} else if (results['item_id']) {
+					console.log('saveitem results item_id');
+					replyingid = 0;
+					editingid = 0;
+					in_new_item = 0;
+					list(null,results['item_id']);
+				} else {
+					console.log('saveitem else');
+					replyingid = 0;
+					editingid = 0;
+					in_new_item = 0;
+					list();
+				}
+				removeHash();
+				$(window).scrollTop(0);
+				$('.reply_link').each(function(i,obj) {
+					$(this).css('opacity','1.0');
+				});
+				replyingid = 0;
+				editingid = 0;
+				in_new_item = 0;
+			}
+			issaving = false;
 		}
-	 });	
+	});	
 }
 var intshowing = false;
 var appshowing = false;
