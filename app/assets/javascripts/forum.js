@@ -555,6 +555,7 @@ function saveitem() {
 				if (CKEDITOR.instances['item_html_content_editor']) { 
 					CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
 				}
+				issaving = false;
 				editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
 				removeHash();
 				$(window).scrollTop(0);
