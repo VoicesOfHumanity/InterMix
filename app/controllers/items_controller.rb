@@ -16,7 +16,7 @@ class ItemsController < ApplicationController
     @ratings = (params[:ratings].to_i == 1)
     @sortby = params[:sortby] || "items.id desc"
     @perscr = params[:perscr].to_i || 25
-    @threads = params[:threads] || 'flat'
+    @threads = params[:threads] || ''
     @limit_group_id = (params[:limit_group_id] || 0).to_i
     @dialog_id = (params[:dialog_id] || 0).to_i
     @period_id = (params[:period_id] || 0).to_i

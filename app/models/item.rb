@@ -1628,6 +1628,11 @@ class Item < ActiveRecord::Base
       # That should hopefully not matter.
     end
 
+    if crit[:posted_by].to_i > 0
+      # Only posts for a particular user, like for their wall
+      items = items.where(posted_by: crit[:posted_by])
+    end
+
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
     if current_participant
       items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
