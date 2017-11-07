@@ -327,9 +327,12 @@ class ItemsController < ApplicationController
           tags << tagmatch
         end
         
+        #logger.info("items#new replying. Existing @comtag:#{@comtag}")
         @comtag = @olditem.intra_com if @olditem.intra_com and @olditem.intra_com != 'public'
+        #logger.info("items#new replying. Setting @comtag:#{@comtag} based on @olditem.intra_com:#{@olditem.intra_com}")
         @item.intra_com = @comtag if @comtag
-        @comtag = @comtag.gsub!('@','') if @comtag
+        @comtag = @comtag.gsub('@','') if @comtag
+        #logger.info("items#new replying. @comtag is now:#{@comtag}")
         
       end
     else
