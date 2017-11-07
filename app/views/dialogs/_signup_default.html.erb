@@ -45,7 +45,7 @@
   <td style="vertical-align:top">Communities<br>check to join</td>
   <td>
     <% GLOBAL_COMMUNITIES.each do |tag| -%>
-      <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"> <%= DEFAULT_COMMUNITIES[tag] %><br>
+      <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"<%= @comtag.to_s==tag ? ' checked' : '' %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
     <% end -%>
     [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>
     <div id="more_com" style="display:none">
