@@ -90,6 +90,20 @@ class DialogsController < ApplicationController
       @messtag = session[:messtag].to_s
     end
     
+    if @comtag != '' and params.has_key?(:joincom)
+      # They should be joined to the community, if they aren't alreayd a member ?comtag=love&joincom=1
+      comtag = @comtag
+      comtag.gsub!(/[^0-9A-za-z_]/,'')
+      comtag.downcase!
+      if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
+      elsif comtag != ''
+        current_participant.tag_list.add(comtag)
+      end
+      current_participant.save
+      @messtag = @comtag
+      session[:messtag] = @messtag
+    end
+    
     if is_new
       @group_id = 0
       session[:group_id] = @group_id
