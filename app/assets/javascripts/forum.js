@@ -934,7 +934,7 @@ function html_to_short(htmlval,plainval) {
     if (typeof plainval === "undefined") {
 	    plainval = $.trim(strip(htmlval));
     }
-	xtext = plainval.substring(0,106);
+	xtext = plainval.substring(0,240);
 	$('#item_short_content').val(xtext);
 	$('#charsused').html(xtext.length);
 }
@@ -959,11 +959,11 @@ function mess_characters(htmlval,plainval) {
 function update_characters() {
     // Count and display characters in the short summary
 	var count = $('#item_short_content').val().length;
-	if (count>106) {
+	if (count>240) {
 		var oldval = $('#item_short_content').val();
-		var newval = oldval.substring(0,106);
+		var newval = oldval.substring(0,240);
 		$('#item_short_content').val(newval);
-		count = 106;
+		count = 240;
 	}
 	$('#charsused').html(count);
 	short_updated = true;
