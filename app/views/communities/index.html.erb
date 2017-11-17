@@ -1,0 +1,16 @@
+<span style="font-size:20px;color:#000;">Communities</span></a><br>
+
+<ul class="horizmenu">
+<li><a class="menu<%= ' selected' if @psection=='profile' %>" href="/me/profile">My communities</a></li>
+<li><a class="menu<%= ' selected' if @psection=='wall' %>" href="/me/wall">All communities</a></li>
+</ul>
+
+<table>
+<tr><th>Name</th><th>Description</th><th>Members</th></tr>	
+<% for com in @communities -%>
+<tr>
+	<td><%= com.tagname %></td>
+	<td><%= com.description %></td>
+</tr>	
+<% end -%>
+</table>

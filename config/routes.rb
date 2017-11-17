@@ -137,6 +137,10 @@ Rails.application.routes.draw do
     get :search, :on => :collection
   end
 
+  resources :communities do
+    get :index, :on => :collection
+  end
+  
   resources :groups do
     member do
       get :view
