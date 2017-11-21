@@ -137,9 +137,13 @@ Rails.application.routes.draw do
     get :search, :on => :collection
   end
 
+  get 'communities/all', to: 'communities#index', action: :index, which: 'all'
+  get 'communities/my', to: 'communities#index', action: :index, which: 'my'
   resources :communities do
     get :index, :on => :collection
   end
+  #get 'all', on: :collection, to: "communities#index", as: :index
+  #get 'my', on: :collection, to: "communities#index", as: :index
   
   resources :groups do
     member do
