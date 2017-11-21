@@ -423,6 +423,10 @@ class Item < ActiveRecord::Base
   		
       #itext += " <a href=\"#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
       itext += " <a href=\"https://#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
+
+   	  if self.intra_com.to_s != '' and self.intra_com.to_s != 'public'
+        itext += " &nbsp;<span style=\"font-weight:bold;color:#44a\">This message: Only #{self.intra_com}</span>"
+      end
       
       itext += "</p>"
       

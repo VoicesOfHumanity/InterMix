@@ -271,6 +271,10 @@ for p in participants
 
       itext += " <a href=\"https://#{domain}/items/#{item.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
       
+   	  if item.intra_com.to_s != '' and item.intra_com.to_s != 'public'
+        itext += " &nbsp;<span style=\"font-weight:bold;color:#44a\">This message: Only #{item.intra_com}</span>"
+      end
+      
       itext += "</p>"
       
       if not item.has_voted(p)
