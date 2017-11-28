@@ -1136,6 +1136,17 @@ class FrontController < ApplicationController
     render :action=>:confirm, :layout=>'front'
   end  
   
+  def fbjoinlink
+    #-- Meant as a direct link to join with FB, keeping the comtag settings
+    if params[:comtag].to_s != ''
+      session[:comtag] = params[:comtag]
+      if params.has_key?(:joincom)
+        session[:joinocom] = 1
+      end
+    end
+    redirect_to "/participants/auth/facebook"
+  end
+  
   def fbjoinform
     #-- Show a signup form allowing people to join with facebook, not asking them anything other than the group they want
     #-- We'll assume they already have been authenticated by facebook

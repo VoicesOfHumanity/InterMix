@@ -8,6 +8,21 @@ class CommunitiesController < ApplicationController
     #-- Show an list of communities
     @section = 'communities'
     
+    
+    if params.has_key?(:sort)
+      sort = params[:sort]
+      if sort == 'tag'
+        @sort = 'tagname'
+      elsif sort == 'members'
+        @sort = 'members'  
+      elsif sort == 'id'
+        @sort = 'id desc'  
+      else
+        @sort = 'id desc'
+      end     
+    else
+      @sort = 'id desc'
+    end
 
     if params[:which].to_s == 'my'
       comtag_list = ''
@@ -16,12 +31,28 @@ class CommunitiesController < ApplicationController
         comtags[tag] = true
       end
       @comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
-      @communities = Community.where("tagname in (#{@comtag_list})").order('id')
+      communities = Community.where("tagname in (#{@comtag_list})")
       @csection = 'my'      
     else
-      @communities = Community.order('id')
+      communities = Community.all
       @csection = 'all'
     end
+
+    if ['id','tag'].include?(sort) or @sort == 'id desc'
+      communities = communities.order(@sort)      
+    end
+    
+    @communities = []
+    communities.each do |community|
+      community.members = community.member_count
+      @communities << community
+    end
+    
+    if ['id','tag'].include?(sort) or @sort == 'id desc'
+    else
+      @communities.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
+    end
+        
     
   end  
 

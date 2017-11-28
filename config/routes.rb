@@ -268,6 +268,7 @@ Rails.application.routes.draw do
   get 'front/fbjoin', :controller=>:front, :action=>:fbjoin
   post 'front/fbjoin', :controller=>:front, :action=>:fbjoin
   get 'youarehere', :controller=>:front, :action=>:youarehere
+  get 'fbjoinlink', controller: :front, action: :fbjoinlink
   
   get 'front/confirm', :controller=>:front, :action=>:confirm
   get 'autologin', :controller=>:front, :action=>:autologin

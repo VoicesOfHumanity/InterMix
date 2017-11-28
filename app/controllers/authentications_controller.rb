@@ -83,6 +83,17 @@ class AuthenticationsController < ApplicationController
           end  
           if session[:dialog_id].to_i > 0
             @forum_link = "/dialogs/#{session[:dialog_id]}/slider"
+            if params and params.has_key?(:comtag) and params[:comtag].to_s != ''
+              @forum_link += "?comtag=" + params[:comtag]
+              if params.has_key?(:joincom)
+                @forum_link += "&joincom=1"
+              end
+            elsif session.has_key?(:comtag) and session[:comtag].to_s != ''
+              @forum_link += "?comtag=" + session[:comtag]
+              if session.has_key?(:joincom)
+                @forum_link += "&joincom=1"
+              end
+            end
           elsif session[:group_id].to_i > 0
             @forum_link = "/groups/#{session[:group_id]}/forum"
           else
