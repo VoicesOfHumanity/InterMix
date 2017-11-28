@@ -6,14 +6,12 @@
 </ul>
 
 <table style="width:595px">
-<tr><th><a href="?sort=tag">Name</a></th><th>Description</th><th><a href="?sort=members">Members</a></th><th>Forum</th><th>Info</th><th>Join/Leave</th></tr>	
+<tr><th><a href="?sort=tag">Forum</a></th><th><a href="?sort=activity">Activity</a></th><th>More Information</th><th>&nbsp;</th></tr>	
 <% for com in @communities -%>
 <tr>
-	<td><%= com.tagname %></td>
+	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>	
+	<td><%= com.activity %></td>
 	<td><%= com.description %></td>
-	<td><%= com.members %></td>
-	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">forum</a></td>
-	<td>info</td>
 	<td><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></td>
 </tr>	
 <% end -%>

@@ -44,7 +44,8 @@ class CommunitiesController < ApplicationController
     
     @communities = []
     communities.each do |community|
-      community.members = community.member_count
+      #community.members = community.member_count
+      community.activity = community.activity_count
       @communities << community
     end
     
