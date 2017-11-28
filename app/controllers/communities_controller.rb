@@ -24,7 +24,10 @@ class CommunitiesController < ApplicationController
       @sort = 'id desc'
     end
 
-    if params[:which].to_s == 'my'
+    if params[:which].to_s == 'all' or current_participant.tag_list.length == 0
+      communities = Community.all
+      @csection = 'all'      
+    else
       comtag_list = ''
       comtags = {}
       for tag in current_participant.tag_list
@@ -33,9 +36,6 @@ class CommunitiesController < ApplicationController
       @comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
       communities = Community.where("tagname in (#{@comtag_list})")
       @csection = 'my'      
-    else
-      communities = Community.all
-      @csection = 'all'
     end
 
     if ['id','tag'].include?(sort) or @sort == 'id desc'

@@ -5,7 +5,7 @@
 <li><a class="menu<%= ' selected' if @csection=='all' %>" href="/communities/all">All communities</a></li>
 </ul>
 
-<table>
+<table style="width:595px">
 <tr><th><a href="?sort=tag">Name</a></th><th>Description</th><th><a href="?sort=members">Members</a></th><th>Forum</th><th>Info</th><th>Join/Leave</th></tr>	
 <% for com in @communities -%>
 <tr>
