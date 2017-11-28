@@ -516,6 +516,7 @@ class ProfilesController < ApplicationController
       current_participant.tag_list.remove(comtag)
     end
     current_participant.save
+    render :text=>'ok', :layout=>false
   end
   
   def invite

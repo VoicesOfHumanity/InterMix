@@ -13,15 +13,15 @@ class CommunitiesController < ApplicationController
       sort = params[:sort]
       if sort == 'tag'
         @sort = 'tagname'
-      elsif sort == 'members'
-        @sort = 'members'  
+      elsif sort == 'activity'
+        @sort = 'activity'  
       elsif sort == 'id'
         @sort = 'id desc'  
       else
         @sort = 'id desc'
       end     
     else
-      @sort = 'id desc'
+      @sort = 'activity'
     end
 
     if params[:which].to_s == 'all' or current_participant.tag_list.length == 0
