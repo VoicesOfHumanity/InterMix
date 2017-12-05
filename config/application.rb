@@ -86,6 +86,7 @@ DEFAULT_COMMUNITIES = {
   'indigenous' => "Indigenous peoples",
   'interfaith' => "Interfaith movement",
   'labor' => "Labor movement",
+  'lgbtq' => "Lesbian, Gay, Bi, Trans, Queer",
   'nonviolence' => "Nonviolent Action",
   'nuclear_disarm' => "Nuclear Disarmament",
   'minority' => "Other disadvantaged minorities",
@@ -119,7 +120,7 @@ DEFAULT_COMMUNITIES = {
 }
 GLOBAL_COMMUNITIES = [
   'climateaction','commons','genderequality','globaljustice','gr8transition','indigenous',
-  'interfaith','labor','nonviolence','nuclear_disarm','minority','peace','refugees',
+  'interfaith','labor','lgbtq','nonviolence','nuclear_disarm','minority','peace','refugees',
   'savechildren','the_poor','un_goals','veterans','voh' 
 ]
 UNGOAL_COMMUNITIES = [
