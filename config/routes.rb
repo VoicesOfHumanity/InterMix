@@ -141,6 +141,7 @@ Rails.application.routes.draw do
   get 'communities/my', to: 'communities#index', action: :index, which: 'my'
   resources :communities do
     get :index, :on => :collection
+    get :members, :on => :member
   end
   #get 'all', on: :collection, to: "communities#index", as: :index
   #get 'my', on: :collection, to: "communities#index", as: :index

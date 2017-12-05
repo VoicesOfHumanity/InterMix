@@ -1,0 +1,10 @@
+<span style="font-size:20px;color:#000;">Community Info</span></a><br>
+
+<ul class="horizmenu">
+<li><a class="menu<%= ' selected' if @csection=='info' %>" href="/communities/<%= @community.id %>">info</a></li>
+<li><a class="menu<%= ' selected' if @csection=='members' %>" href="/communities/<%= @community.id %>/members">members</a></li>
+<li><a class="menu<%= ' selected' if @csection=='forum' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= @comtag %>">forum</a></li>
+<% if current_participant.sysadmin -%>
+<li><a class="menu<%= ' selected' if @csection=='edit' %>" href="/communities/<%= @community.id %>">edit</a></li>
+<% end -%>
+</ul>

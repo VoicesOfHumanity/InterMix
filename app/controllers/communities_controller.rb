@@ -57,6 +57,24 @@ class CommunitiesController < ApplicationController
     
   end  
 
+  def show
+    #-- The info page
+    @community_id = params[:id].to_i
+    @community = Community.find(@community_id)
+    @comtag = @community.tagname    
+    @csection = 'info'
+    
+  end
+  
+  def members
+    @community_id = params[:id].to_i
+    @community = Community.find(@community_id)
+    @comtag = @community.tagname
+    @csection = 'members'
+    
+    @members = Participant.tagged_with(@comtag)
+    
+  end
 
 
 
