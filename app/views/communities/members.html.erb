@@ -1,5 +1,7 @@
 <%= render(:partial => 'infomenu')%>
 
+<h3>Membership List</h3>
+
 <% @members.each do |participant| %>
 		<b><a href="/participant/<%= participant.id %>/profile"><%= participant.name %></a></b><br/>
 		Items: <%= participant.items_count.to_i %> Tags:<%= participant.tag_list if participant.tag_list %></br>

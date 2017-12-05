@@ -15,3 +15,30 @@
 <tr><td>Metro areas:</td><td><%= @data['metro_count'] %></td></tr>
 <tr><td>Cities/towns:</td><td><%= @data['city_count'] %></td></tr>
 </table>
+
+<button onclick="joinleave();return(false)" id="comtagjoin"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
+
+
+<script>
+	function joinleave() {
+      var comtag = '<%= @comtag %>';
+      var id = <%= @community.id %>;
+	  var which = $('#comtagjoin').html();
+	  var data = {
+	    'comtag': comtag,
+	    'which': which,
+	  };
+		$.ajax({
+	    type: 'GET',
+		  url: '/me/comtag',
+		  data: data,
+		  complete: function(t){ 
+	      if (which=='join') {
+			$('#comtagjoin').html('leave')
+	      } else {
+			  $('#comtagjoin').html('join')
+	      }
+	      }
+		});
+	}	
+</script>	
