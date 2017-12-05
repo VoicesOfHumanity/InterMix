@@ -12,4 +12,8 @@ class Community < ActiveRecord::Base
     Item.where("intra_com='@#{self.tagname}'").where('created_at > ?', 31.days.ago).count
   end
   
+  def geo_counts
+    
+  end
+  
 end

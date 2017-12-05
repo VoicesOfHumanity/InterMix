@@ -64,6 +64,10 @@ class CommunitiesController < ApplicationController
     @comtag = @community.tagname    
     @csection = 'info'
     
+    @data = {}
+    @data['new_posts'] = @community.activity_count
+    @data['num_members'] = @community.member_count
+    
   end
   
   def members
