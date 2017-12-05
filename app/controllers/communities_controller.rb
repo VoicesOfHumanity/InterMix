@@ -67,7 +67,12 @@ class CommunitiesController < ApplicationController
     @data = {}
     @data['new_posts'] = @community.activity_count
     @data['num_members'] = @community.member_count
-    
+    geo = @community.geo_counts
+    logger.info("communities#show geo: #{geo.inspect}")
+    @data['nation_count'] = geo[:nations]
+    @data['state_count'] = geo[:states]
+    @data['metro_count'] = geo[:metros]
+    @data['city_count'] = geo[:cities]
   end
   
   def members
