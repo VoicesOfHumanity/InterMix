@@ -1141,7 +1141,7 @@ class FrontController < ApplicationController
     if params[:comtag].to_s != ''
       session[:comtag] = params[:comtag]
       if params.has_key?(:joincom)
-        session[:joinocom] = 1
+        session[:joincom] = 1
       end
     end
     redirect_to "/participants/auth/facebook"
