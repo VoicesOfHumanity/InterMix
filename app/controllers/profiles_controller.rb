@@ -511,6 +511,11 @@ class ProfilesController < ApplicationController
       if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
       elsif comtag != ''
         current_participant.tag_list.add(comtag)
+        com = Community.where(tagname: comtag).first
+        if not com
+          com = Community.create(tagname: comtag)
+          com.save
+        end
       end
     else
       current_participant.tag_list.remove(comtag)
