@@ -59,6 +59,8 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     
+    comtag_before = session.has_key?(:comtag) ? session[:comtag] : ''
+    
     if params.length <= 3
       # {"controller"=>"dialogs", "action"=>"slider", "id"=>"5"}
       # We come in from the order out of chaos button, rather than the tabs. Reset the session cookies
@@ -90,8 +92,11 @@ class DialogsController < ApplicationController
       @messtag = session[:messtag].to_s
     end
     
-    if @comtag != '' and params.has_key?(:joincom)
-      # They should be joined to the community, if they aren't alreayd a member ?comtag=love&joincom=1
+    if (@comtag != '' and params.has_key?(:joincom)) or (session.has_key?(:joincom))
+      # They should be joined to the community, if they aren't already a member ?comtag=love&joincom=1
+      if session.has_key?(:joincom)
+        @comtag = comtag_before
+      end
       comtag = @comtag
       comtag.gsub!(/[^0-9A-za-z_]/,'')
       comtag.downcase!
@@ -102,6 +107,8 @@ class DialogsController < ApplicationController
       current_participant.save
       @messtag = @comtag
       session[:messtag] = @messtag
+      session[:comtag] = @comtag
+      session.delete(:joincom)
     end
     
     if is_new
