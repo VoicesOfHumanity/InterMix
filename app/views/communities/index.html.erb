@@ -1,7 +1,7 @@
 <%= render(:partial => 'topmenu')%>
 
 <table style="width:595px">
-<tr><th><a href="?sort=tag">Forum</a></th><th><a href="?sort=activity">Activity</a></th><th>More Information</th><th>&nbsp;</th></tr>	
+<tr><th>Forum</th><th>Activity</th><th>More Information</th><th>&nbsp;</th></tr>	
 <% for com in @communities -%>
 <tr>
 	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>	
@@ -11,6 +11,14 @@
 </tr>	
 <% end -%>
 </table>
+
+<p>Sort: 
+<select name="sort" id="sortselect">
+<% {'activity'=>'Activity', 'tag'=>'Forum'}.each do |val,txt| -%>    
+<option value="<%= val %>"<%= ' selected' if val == @sort %>><%= txt %></option>    
+<% end -%>
+</select>
+</p>
 
 <script>
 	function joinleave(comtag,id) {
@@ -32,5 +40,9 @@
 	      }
 		});
 	}	
+    $('#sortselect').on('change', function() {
+      var xsort = $('#sortselect').val();
+      window.location.href = "?sort=" + xsort;
+    })
 </script>	
 	

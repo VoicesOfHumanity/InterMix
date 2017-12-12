@@ -57,7 +57,8 @@ class CommunitiesController < ApplicationController
     else
       @communities.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
     end
-        
+       
+    @sort = sort 
     
   end  
 
