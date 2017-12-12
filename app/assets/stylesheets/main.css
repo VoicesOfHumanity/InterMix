@@ -216,6 +216,10 @@ ul.horizmenu li a:hover {
   border-left-color: #a02424; 
 }
 
+p.linkmenu a.selected {
+    font-weight: bold;
+}
+
 
 #leftcolumn {
 	margin: 0 -10px 5px 0;

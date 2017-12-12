@@ -8,6 +8,10 @@ class CommunitiesController < ApplicationController
     #-- Show an list of communities
     @section = 'communities'
     
+    if not params.has_key?(:which)
+      session[:curcomtag] = ''
+      session[:curcomid] = 0
+    end
     
     if params.has_key?(:sort)
       sort = params[:sort]
@@ -61,7 +65,10 @@ class CommunitiesController < ApplicationController
     #-- The info page
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
-    @comtag = @community.tagname    
+    @comtag = @community.tagname   
+    session[:curcomtag] = @comtag 
+    session[:curcomid] = @community_id 
+    @section = 'communities'
     @csection = 'info'
     
     @data = {}
@@ -79,6 +86,9 @@ class CommunitiesController < ApplicationController
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
     @comtag = @community.tagname
+    session[:curcomtag] = @comtag 
+    session[:curcomid] = @community_id 
+    @section = 'communities'
     @csection = 'members'
     
     @members = Participant.tagged_with(@comtag)
