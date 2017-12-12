@@ -50,6 +50,8 @@ class Participant < ActiveRecord::Base
   has_attached_file :picture, :styles => { :medium => "300x300>", :thumb => "50x50#" }, :path => "#{DATADIR}/:class/:attachment/:id/:style_:basename.:extension", :url => "/images/data/:class/:attachment/:id/:style_:basename.:extension"
   validates_attachment_content_type :picture, :content_type => /\Aimage\/.*\Z/
   
+  attr_accessor :activity   # Used for fx activity in a group, to sort by
+  
   def name
     name = "#{first_name.to_s} #{last_name.to_s}".strip
     name = "???" if name == ''

@@ -91,8 +91,18 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'members'
     
-    @members = Participant.tagged_with(@comtag)
+    members = Participant.tagged_with(@comtag)
     
+    # Get activity in the past month, and sort by it
+    @members = []
+    for member in members
+      member.activity = Item.where("intra_com='@#{@comtag}'").where(posted_by: member.id).where('created_at > ?', 31.days.ago).count
+      @members << member
+    end
+
+    @sort = 'activity'
+    @members.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
+        
   end
 
 
