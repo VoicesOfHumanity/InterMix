@@ -1311,6 +1311,20 @@ class FrontController < ApplicationController
       # Also join Global Townhall Square, if not already done
       @group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
     end
+
+    if session.has_key?(:comtag) and session.has_key?(:joincom)
+      # They should be joined to a community, if they aren't already a member ?comtag=love&joincom=1
+      logger.info("front#fbjoinfinal joining to community #{session[:comtag]}")
+      comtag = session[:comtag]
+      comtag.gsub!(/[^0-9A-za-z_]/,'')
+      comtag.downcase!
+      if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
+      elsif comtag != ''
+        @participant.tag_list.add(comtag)
+      end
+      @participant.save
+      session.delete(:joincom)
+    end
         
     if @participant.fb_uid.to_i >0 and not @participant.picture.exists?
       #-- Use their facebook photo, if they don't already have one.
@@ -1406,7 +1420,8 @@ class FrontController < ApplicationController
     #sign_in_and_redirect(:participant, @participant)
     sign_in(:participant, @participant)
     
-    redirect_to '/me/profile/edit'
+    #redirect_to '/me/profile/edit'
+    redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider"
     
     #render :action=>:confirm, :layout=>'front'
     

@@ -60,7 +60,20 @@ class AuthenticationsController < ApplicationController
           end
           sign_in(:participant, @participant)
           flash[:notice] = "Authentication successful. Facebook login added to your existing account."
-          logger.info("authentications#create #{current_participant.id} authenticated")
+          logger.info("authentications#create #{current_participant.id} authenticated")          
+          if session.has_key?(:comtag) and session.has_key?(:joincom)
+            # They should be joined to a community, if they aren't already a member ?comtag=love&joincom=1
+            logger.info("authentications#create joining to community #{session[:comtag]}")
+            comtag = session[:comtag]
+            comtag.gsub!(/[^0-9A-za-z_]/,'')
+            comtag.downcase!
+            if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
+            elsif comtag != ''
+              @participant.tag_list.add(comtag)
+            end
+            @participant.save
+            session.delete(:joincom)
+          end
           if session[:group_id].to_i > 0
             @group_id = session[:group_id]
             @group_participant = GroupParticipant.where(:group_id=>@group_id,:participant_id=>@participant.id).first
