@@ -14,7 +14,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = false
 
   ### ActionMailer Config
-  config.action_mailer.default_url_options = { :host => 'intermix.dev' }
+  config.action_mailer.default_url_options = { :host => 'intermix.test' }
   if true
     config.action_mailer.delivery_method   = :postmark
     #config.action_mailer.postmark_settings = { :api_key => "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb" }
@@ -67,8 +67,8 @@ end
 #SYSTEM_SENDER = "noreply@intermix.cr8.com"
 
 if File.dirname(__FILE__) =~ /_websites/
-  BASEDOMAIN = 'intermix.dev:3002'
-  ROOTDOMAIN = 'intermix.dev'
+  BASEDOMAIN = 'intermix.test:3002'
+  ROOTDOMAIN = 'intermix.test'
   DATADIR = '/Users/ffunch/_websites/intermix/data'
   GLOBAL_GROUP_ID = 22
 else

@@ -1,4 +1,7 @@
 FactoryGirl.define do
+  factory :community_admin do
+    
+  end
   factory :item_subscribe do
     
   end

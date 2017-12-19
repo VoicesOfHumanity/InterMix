@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171010205412) do
+ActiveRecord::Schema.define(version: 20171219212557) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -56,6 +56,18 @@ ActiveRecord::Schema.define(version: 20171010205412) do
   end
 
   add_index "communities", ["tagname"], name: "index_communities_on_tagname", using: :btree
+
+  create_table "community_admins", force: :cascade do |t|
+    t.integer  "community_id",   limit: 4
+    t.integer  "participant_id", limit: 4
+    t.boolean  "active",                   default: true
+    t.boolean  "admin",                    default: false
+    t.boolean  "moderator",                default: true
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+  end
+
+  add_index "community_admins", ["community_id", "participant_id"], name: "index_community_admins_on_community_id_and_participant_id", using: :btree
 
   create_table "dialog_admins", force: :cascade do |t|
     t.integer  "dialog_id",      limit: 4

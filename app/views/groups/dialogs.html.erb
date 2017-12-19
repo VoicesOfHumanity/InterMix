@@ -17,7 +17,7 @@
 
 	<% 
   if Rails.env == 'development'
-    dom = "intermix.dev:3002"
+    dom = "intermix.test:3002"
 	elsif dialog.shortname.to_s != "" and session[:group_prefix].to_s != ""
 		dom =  "#{dialog.shortname}.#{session[:group_prefix]}.#{ROOTDOMAIN}"
 	elsif dialog.shortname.to_s != ""

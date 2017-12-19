@@ -1,5 +1,5 @@
-BASEDOMAIN = 'intermix.dev'
-ROOTDOMAIN = 'intermix.dev'
+BASEDOMAIN = 'intermix.test'
+ROOTDOMAIN = 'intermix.test'
 DATADIR = '/Users/ffunch/_websites/intermix/data'
 
 Rails.application.configure do
