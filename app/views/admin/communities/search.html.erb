@@ -7,7 +7,7 @@
 
 <tr></tr>
 <tr><td class="left">Sort</td><td>
-<% xsort = [['',''],['name','name'],["created",'created_at desc'],['ID','id desc']] %>
+<% xsort = [['',''],['name','tagname'],["created",'created_at desc'],['ID','id desc']] %>
 <% for x in (1..2).to_a -%>
 <%= select_tag "sort#{x}", options_for_select(xsort,@sort[x-1]) %>
 <% end -%>
@@ -46,6 +46,14 @@ Per Page <%= select_tag(:per_page, options_for_select([10,20,30,50,100,200,500,1
 <div id="rec1boxcontent"></div>
 </div>
 
+<div id="list2box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('list2')" title="Close" /></div>
+<div class="nav_icon" id="maxlist1im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('list2')" title="Maximize" /></div>
+<div class="nav_icon" id="minlist2im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('list2')" title="Minimize" /></div>
+<a name="list2"></a>
+<h3 id="list2title">Community Admins</h3>
+<div id="list2boxcontent"></div>
+</div>
 
 <script type="text/javascript">
 var curid1 = 0;
@@ -142,6 +150,69 @@ function saverec1() {
       $("#rec1boxcontent").html(t.responseText);
 		  $('#rec1box').css('opacity','1.0');
 			search();
+     }
+   });	
+}
+
+function list2() {
+	$('#list2box').show();
+    $('#list2box').css('opacity','0.5');
+	showworking();
+	$.ajax({
+     type: "GET",
+     url: "/admin/communities/" + curid1 + "/admins",
+     complete: function(t){	
+       $("#list2boxcontent").html(t.responseText);
+		   $('#list2box').show();
+		   $('#list2boxcontent').show();
+		   hideworking();
+		   $('#list2box').css('opacity','1.0');
+		   boxmax('list2');
+     }
+   });	
+}
+function add_admin() {
+	var id = $('#new_admin').val();
+  $('#list2box').css('opacity','0.5');
+	$.ajax({
+    type: 'POST',
+    url: "/admin/communities/" + curid1 + "/admin_add",
+    data: "participant_id="+id,
+    complete: function(t){	
+      $("#list2boxcontent").html(t.responseText);
+		  $('#list2box').css('opacity','1.0');
+     }
+   });		
+}
+function del_admin() {
+	var pars = "communities_id="+curid1;
+	var marks = $('input.admmark');
+  var xcount = 0;
+  for (var x=0;x<marks.length;x++) {
+    var mark = marks[x];
+    if (mark.checked) {
+      var participant_id = mark.value;
+      pars += "&participant_ids[]=" + participant_id;
+      xcount++;
+    }
+  }
+  if (xcount==0) {
+    alert("You didn't select any admins");
+    return;
+  } else if (xcount>0) {
+    if (!confirm("Delete "+xcount+" community admins?")) {
+      return;
+    }
+  }
+  $('#list2box').css('opacity','0.5');
+  pars += "&authenticity_token=<%= form_authenticity_token %>";
+	$.ajax({
+    type: 'DELETE',
+    url: "/admin/communities/" + curid1 + "/admin_del",
+    data: pars,
+    complete: function(t){	
+      $("#list2boxcontent").html(t.responseText);
+		  $('#list2box').css('opacity','1.0');
      }
    });	
 }

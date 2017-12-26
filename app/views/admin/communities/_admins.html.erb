@@ -1,0 +1,35 @@
+<% if !@community.community_admins or !@community.community_admins.class==Array or @community.community_admins.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<table class="listtable">
+  <tr>
+    <th></th>
+		<th>ID</th>
+		<th>Name</th>
+		<th>E-mail</th>
+        <th>Status</th>
+		<th>Admin</th>
+		<th>Moderator</th>
+  </tr>
+
+<% odd_or_even = 0 %>
+<% @community.community_admins.each do |admin| %>
+	<% odd_or_even = 1-odd_or_even%>
+	<tr class="line<%= odd_or_even %>">
+		<td><input type="checkbox" name="mark[]" class="admmark" title="mark" value="<%= admin.participant.id %>" /></td>
+		<td><%= admin.participant.id %></td>
+		<td><%= admin.participant.name %></td>
+		<td><%= admin.participant.email %></td>	
+		<td><%= admin.active ? 'active' : 'inactive' %></td>	
+		<td><%= admin.admin ? 'yes' : 'no' %></td>	
+		<td><%= admin.moderator ? 'yes' : 'no' %></td>
+  </tr>
+<% end %>
+</table>
+
+<% end -%>
+
+<p><a href="javascript:add_admin()">Add</a>: <%= select_tag :new_admin, options_from_collection_for_select(@participants, "id", "name") %> | <a href="javascript:del_admin()">Delete marked</a></p>

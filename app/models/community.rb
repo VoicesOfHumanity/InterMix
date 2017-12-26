@@ -1,5 +1,13 @@
 class Community < ActiveRecord::Base
-  
+
+  has_many :community_admins
+  has_many :participants, :through => :community_admins
+  has_many :admins, -> { where "admin=1 and active=1"}, source: :participant, through: :community_admins
+  has_many :moderators, -> { where "moderator=1 and active=1"}, source: :participant, through: :community_admins
+
+  has_attached_file :logo, :styles => { :medium => "300x300>", :thumb => "100x100>" }, :path => "#{DATADIR}/:class/:attachment/:id/:style_:basename.:extension", :url => "/images/data/:class/:attachment/:id/:style_:basename.:extension"
+  validates_attachment_content_type :logo, :content_type => /\Aimage\/.*\Z/
+
   attr_accessor :members
   attr_accessor :activity
   

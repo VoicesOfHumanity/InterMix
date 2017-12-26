@@ -106,6 +106,30 @@ class CommunitiesController < ApplicationController
         
   end
 
+  def edit
+    #-- Edit page
+    @community_id = params[:id].to_i
+    @community = Community.find(@community_id)
+    @comtag = @community.tagname   
+    session[:curcomtag] = @comtag 
+    session[:curcomid] = @community_id 
+    @section = 'communities'
+    @csection = 'edit'
+    
+  end
+  
+  def update
+    @community_id = params[:id].to_i
+    @community = Community.find(@community_id)
+    @community.update_attributes(community_params)
+    @community.save
+    redirect_to :action=>:show, :notice => 'Community was successfully updated.'
+  end
 
+  protected
+
+  def community_params
+    params.require(:community).permit(:description, :logo, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :tweet_approval_min, :tweet_what)
+  end
 
 end

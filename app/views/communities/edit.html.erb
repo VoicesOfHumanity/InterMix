@@ -1,0 +1,21 @@
+<%= render(:partial => 'topmenu')%>
+<%= render(:partial => 'infomenu')%>
+
+<h3>Edit Community Info</h3>
+
+<%= semantic_form_for( @community, :html => { :multipart => true } ) do |f| %>
+
+	<%= f.inputs do %>
+		<%= f.input :description, :as => :text, :input_html => {:rows => 2} %>
+
+		<%= f.input :logo, :as=>:file %>			
+
+
+	<% end %>
+
+	<p>
+	  <input type="button" value="Cancel" onclick="window.location='/communities/<%= @community.id %>/'" />
+	  <input type="submit" value="Save" />
+	</p>
+
+<% end %>

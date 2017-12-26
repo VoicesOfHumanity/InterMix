@@ -29,6 +29,11 @@ DEFAULT_COMMUNITIES.each do |comtag,description|
     com.save
   else
     puts "#{comtag} exists"  
+    if com.description.to_s == ''
+      puts "updating description for #{comtag}"
+      com.description = description
+      com.save
+    end
   end
 end
 

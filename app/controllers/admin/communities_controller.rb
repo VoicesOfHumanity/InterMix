@@ -108,5 +108,41 @@ class Admin::CommunitiesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  def admins
+    #-- Return a list of the admins for this community
+    @community_id = params[:id].to_i
+
+    @community = Community.includes(:participants).find(@community_id)
+    
+    @participants = Participant.where(nil)
+    
+    render :partial=>"admins", :layout=>false
+  end  
+  
+  def admin_add
+    #-- Add a community admin
+    @community_id = params[:id].to_i
+    @participant_id = params[:participant_id]
+    community_admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, @participant_id]).first
+    if not community_admin
+      community_admin = CommunityAdmin.create(:community_id => @community_id, :participant_id => @participant_id)
+    end
+    admins    
+  end 
+  
+  def admin_del 
+    #-- Delete a community admin
+    @community_id = params[:id].to_i
+    participant_ids = params[:participant_ids]
+    for participant_id in participant_ids
+      community_admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, participant_id]).first
+      if community_admin
+        community_admin.destroy
+      end
+    end
+    admins
+  end
+
     
 end

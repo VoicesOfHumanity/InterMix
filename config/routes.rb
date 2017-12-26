@@ -74,6 +74,9 @@ Rails.application.routes.draw do
 
     resources :communities do
       get :search, :on => :collection
+      get :admins, :on => :member
+      post :admin_add, :on => :member
+      delete :admin_del, :on => :member
     end
     
     resources :hubs do

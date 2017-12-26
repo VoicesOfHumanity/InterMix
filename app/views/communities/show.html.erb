@@ -5,9 +5,24 @@
 
 <p><b>Tag:</b> <%= @community.tagname %></p>
 
+<% if @community.logo.exists? then -%>
+<p><%= image_tag @community.logo.url %></p>
+<% else %>
+<p>[no logo]</p>
+<% end -%>
+
+
 <p><b>Description:</b> <%=raw @community.description %></p>
 
-
+<p><b>Moderators:</b><br>
+<% if @community.moderators.length > 0 -%>
+    <% for mod in @community.moderators -%>
+    <%= mod.name %><br>
+    <% end -%>
+<% else -%>
+    none
+<% end -%>
+</p>
 
 
 <table>

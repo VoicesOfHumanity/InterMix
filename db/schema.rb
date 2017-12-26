@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171219212557) do
+ActiveRecord::Schema.define(version: 20171226220214) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -53,6 +53,10 @@ ActiveRecord::Schema.define(version: 20171219212557) do
     t.string   "tweet_what",           limit: 255, default: "roots"
     t.datetime "created_at",                                         null: false
     t.datetime "updated_at",                                         null: false
+    t.string   "logo_file_name",       limit: 255
+    t.string   "logo_content_type",    limit: 255
+    t.integer  "logo_file_size",       limit: 4
+    t.datetime "logo_updated_at"
   end
 
   add_index "communities", ["tagname"], name: "index_communities_on_tagname", using: :btree
