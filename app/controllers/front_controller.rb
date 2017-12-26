@@ -1141,7 +1141,19 @@ class FrontController < ApplicationController
     if params[:comtag].to_s != ''
       session[:comtag] = params[:comtag]
       if params.has_key?(:joincom)
-        session[:joincom] = 1
+        if participant_signed_in?
+          #-- Join them right away if logged in
+          comtag = session[:comtag]
+          comtag.gsub!(/[^0-9A-za-z_]/,'')
+          comtag.downcase!
+          if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
+          elsif comtag != ''
+            current_participant.tag_list.add(comtag)
+          end
+          current_participant.save
+        else
+          session[:joincom] = 1
+        end
       end
     end
     redirect_to "/participants/auth/facebook"

@@ -81,6 +81,7 @@ DEFAULT_COMMUNITIES = {
   'climateaction' => "Climate Action: combat climate change",
   'commons' => "Commons movement",
   'coops' => "Cooperatives",
+  'disabled' => "Disabled",
   'genderequality' => "Gender equality: empower all women and girls",
   'globaljustice' => "Global Justice Movement",
   'gr8transition' => "Great Transition: big systemic changes are needed",
@@ -120,7 +121,7 @@ DEFAULT_COMMUNITIES = {
   'sdgpartners' => "SDG partnerships: organize across the silos"
 }
 GLOBAL_COMMUNITIES = [
-  'climateaction','commons','coops','genderequality','globaljustice','gr8transition','indigenous',
+  'climateaction','commons','coops','disabled','genderequality','globaljustice','gr8transition','indigenous',
   'interfaith','labor','lgbtq','nonviolence','nuclear_disarm','minority','peace','refugees',
   'savechildren','the_poor','un_goals','veterans','voh' 
 ]
