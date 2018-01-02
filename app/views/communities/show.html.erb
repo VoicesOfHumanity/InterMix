@@ -3,7 +3,7 @@
 
 <h3>Community Info</h3>
 
-<p><b>Tag:</b> <%= @community.tagname %></p>
+<p><b>Short Name:</b> <%= @community.tagname %></p>
 
 <% if @community.logo.exists? then -%>
 <p><%= image_tag @community.logo.url %></p>
@@ -11,6 +11,7 @@
 <p>[no logo]</p>
 <% end -%>
 
+<p><b>Full Name:</b> <%=raw @community.fullname %></p>
 
 <p><b>Description:</b> <%=raw @community.description %></p>
 

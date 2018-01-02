@@ -6,6 +6,7 @@
 <%= semantic_form_for( @community, :html => { :multipart => true } ) do |f| %>
 
 	<%= f.inputs do %>
+		<%= f.input :fullname, :as => :string %>
 		<%= f.input :description, :as => :text, :input_html => {:rows => 2} %>
 
 		<%= f.input :logo, :as=>:file %>			
