@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171226220214) do
+ActiveRecord::Schema.define(version: 20180102221515) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -43,20 +43,25 @@ ActiveRecord::Schema.define(version: 20171226220214) do
 
   create_table "communities", force: :cascade do |t|
     t.string   "tagname",              limit: 255
-    t.string   "description",          limit: 255
-    t.boolean  "twitter_post",                     default: true
+    t.text     "description",          limit: 65535
+    t.boolean  "twitter_post",                       default: true
     t.string   "twitter_username",     limit: 255
     t.string   "twitter_oauth_token",  limit: 255
     t.string   "twitter_oauth_secret", limit: 255
     t.string   "twitter_hash_tag",     limit: 255
-    t.integer  "tweet_approval_min",   limit: 4,   default: 1
-    t.string   "tweet_what",           limit: 255, default: "roots"
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
+    t.integer  "tweet_approval_min",   limit: 4,     default: 1
+    t.string   "tweet_what",           limit: 255,   default: "roots"
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
     t.string   "logo_file_name",       limit: 255
     t.string   "logo_content_type",    limit: 255
     t.integer  "logo_file_size",       limit: 4
     t.datetime "logo_updated_at"
+    t.boolean  "major",                              default: false
+    t.boolean  "ungoals",                            default: false
+    t.boolean  "sustdev",                            default: false
+    t.boolean  "bold",                               default: false
+    t.string   "fullname",             limit: 255,   default: ""
   end
 
   add_index "communities", ["tagname"], name: "index_communities_on_tagname", using: :btree

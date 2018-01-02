@@ -1808,6 +1808,10 @@ class FrontController < ApplicationController
         @dialog_group = nil 
       end
       
+      @major_communities = Community.where(major: true).order(:tagname)
+      @ungoals_communities = Community.where(ungoals: true).order(:tagname)
+      @sustdev_communities = Community.where(sustdev: true).order(:tagname)
+      
       cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
       cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
       cdata['dialog_logo'] = "//#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?

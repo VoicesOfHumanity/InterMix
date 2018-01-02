@@ -2,7 +2,12 @@
 
 	<%= f.inputs do %>
 		<%= f.input :tagname, :required => true %>
-		<%= f.input :description, :required => true %>
+		<%= f.input :fullname, :required => true %>
+		<%= f.input :description %>
+        <%= f.input :major, :label => "Major checkbox?" %>
+        <%= f.input :bold, :label => "Bold text?" %>
+        <%= f.input :ungoals, :label => "UN Goal?" %>
+        <%= f.input :sustdev, :label => "Sustainable Development Goal?" %>        
 		<%= f.input :twitter_post, :label => "Post items to twitter?" %>
 		<%= f.input :tweet_what, :label => "Items to tweet", :as => :select, :collection =>[['* all *'],['root messages','roots']] %>
 		<%= f.input :tweet_approval_min, :label => "Min. pos. approvals before tweeting" %>		

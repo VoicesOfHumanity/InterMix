@@ -44,6 +44,20 @@
 <tr>
   <td style="vertical-align:top">Communities<br>check to join</td>
   <td>
+    <% for com in @major_communities -%>  
+    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= @comtag.to_s==com.tagname ? ' checked' : '' %>> <%= com.fullname %><br>
+    <% end -%>  
+    [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>  
+    <div id="more_com" style="display:none">  
+    <% for com in @ungoals_communities -%>  
+    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+    <% end -%>  
+    <% for com in @sustdev_communities -%>  
+    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+    <% end -%>  
+    </div>  
+      
+    <% if false -%>  
     <% GLOBAL_COMMUNITIES.each do |tag| -%>
       <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"<%= @comtag.to_s==tag ? ' checked' : '' %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
     <% end -%>
@@ -58,6 +72,8 @@
         <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
       <% end -%>
     </div>
+    <% end -%>
+    
   </td>
 </tr> 
 

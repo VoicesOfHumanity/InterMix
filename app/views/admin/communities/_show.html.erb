@@ -1,7 +1,12 @@
 <table class="edittable">
 <tr><td class="left">ID:</td><td><%= @community.id %></td></tr>	
-<tr><td class="left">Name:</td><td><%= @community.tagname %></td></tr>	
+<tr><td class="left">Short Name:</td><td><%= @community.tagname %></td></tr>	
+<tr><td class="left">Full Name:</td><td><%= @community.fullname %></td></tr>	
 <tr><td class="left">Description:</td><td><%= @community.description %></td></tr>	
+<tr><td class="left">Major?</td><td><%= @community.major ? 'yes' : 'no' %></td></tr>	
+<tr><td class="left">Bold?</td><td><%= @community.bold ? 'yes' : 'no' %></td></tr>	
+<tr><td class="left">UN Goal?</td><td><%= @community.ungoals ? 'yes' : 'no' %></td></tr>	
+<tr><td class="left">Sust.Dev?</td><td><%= @community.sustdev ? 'yes' : 'no' %></td></tr>	
 <tr><td class="left">Items to Tweet:</td><td><%= @community.tweet_what %></td></tr>	
 <tr><td class="left">Min. Approvals:</td><td><%= @community.tweet_approval_min %></td></tr>
 <tr><td class="left">Twitter username:</td><td><%= @community.twitter_username %></td></tr>	
