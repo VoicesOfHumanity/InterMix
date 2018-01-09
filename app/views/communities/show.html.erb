@@ -6,7 +6,8 @@
 <p><b>Short Name:</b> <%= @community.tagname %></p>
 
 <% if @community.logo.exists? then -%>
-<p><%= image_tag @community.logo.url %></p>
+<p><img src="<%= @community.logo.url %>" style="max-width:600px;max-height:300px"></p>
+
 <% else %>
 <p>[no logo]</p>
 <% end -%>
