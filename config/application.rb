@@ -78,11 +78,11 @@ CROSSTALK_OPTIONS = ['','gender','gender1','age','age1']
 CROSSTALK_OPTIONS_TEXT = {''=>'No Crosstalk','gender'=>'Gender Crosstalk','gender1'=>'Gender Crosstalk 1st round','age'=>'Age Crosstalk','age1'=>'Age Crosstalk 1st round'}
 
 DEFAULT_COMMUNITIES = {
-  'climateaction' => "Climate Action: combat climate change SDG13",
+  'climateaction' => "SDG13: Climate Action: combat climate change",
   'commons' => "Commons movement",
   'coops' => "Cooperatives",
   'disabled' => "Disabled",
-  'genderequality' => "Gender equality: empower all women and girls SDG5",
+  'genderequality' => "SDG05: Gender equality: empower all women and girls",
   'globaljustice' => "Global Justice Movement",
   'gr8transition' => "Great Transition: big systemic changes are needed",
   'indigenous' => "Indigenous peoples",
@@ -104,21 +104,21 @@ DEFAULT_COMMUNITIES = {
   'cedaw' => "Convention on the Elimination of all Forms of Discrimination Against Women",
   
   'sdgs' => "UN Sustainable Development Goals",
-  'endpoverty' => "End poverty in all its forms everywhere SDG1",
-  'endhunger' => "End hunger and promote sustainable agriculture SDG2",
-  'goodhealth' => "Good health for all at all ages SDG3",
-  'goodeducation' => "Good education: inclusive, equitable quality education for all SDG4",
-  'cleanwater' => "Clean water: sustainable clean water and sanitation for all SDG6",
-  'renewablenergy' => "Renewable energy: affordable, reliable, sustainable energy for all SDG7",
-  'goodjobs' => "Good jobs and sustainable development for all SDG8",
-  'infrastructure' => "Better infrastructure: innovative and resilient economic underpinning SDG9",
-  'moreequality' => "More equality: reverse the trend toward economic inequality SDG10",
-  'bettercities' => "Better Cities: inclusive, safe, resilient and sustainable urban areas SDG11",
-  'simplifying' => "Simplifying: do more and better with less SDG12",
-  'protectoceans' => "Protecting the oceans SDG14",
-  'protecttheland' => "Protecting land resources, biodiversity SDG15",
-  'safeforall' => "Peace and justice: end violence and corruption SDG16",
-  'sdgpartners' => "SDG partnerships: organize across the silos SDG17"
+  'endpoverty' => "SDG01: End poverty in all its forms everywhere",
+  'endhunger' => "SDG02: End hunger and promote sustainable agriculture",
+  'goodhealth' => "SDG03: Good health for all at all ages",
+  'goodeducation' => "SDG04: Good education: inclusive, equitable quality education for all",
+  'cleanwater' => " SDG06: Clean water: sustainable clean water and sanitation for all",
+  'renewablenergy' => "SDG07: Renewable energy: affordable, reliable, sustainable energy for all",
+  'goodjobs' => "SDG08: Good jobs and sustainable development for all",
+  'infrastructure' => "SDG09: Better infrastructure: innovative and resilient economic underpinning",
+  'moreequality' => "SDG10: More equality: reverse the trend toward economic inequality",
+  'bettercities' => "SDG11: Better Cities: inclusive, safe, resilient and sustainable urban areas",
+  'simplifying' => "SDG12: Simplifying: do more and better with less",
+  'protectoceans' => "SDG14: Protecting the oceans",
+  'protecttheland' => "SDG15: Protecting land resources, biodiversity",
+  'safeforall' => "SDG16: Peace and justice: end violence and corruption",
+  'sdgpartners' => "SDG17: SDG partnerships: organize across the silos"
 }
 GLOBAL_COMMUNITIES = [
   'climateaction','commons','coops','disabled','genderequality','globaljustice','gr8transition','indigenous',
