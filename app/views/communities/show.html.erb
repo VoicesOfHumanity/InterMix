@@ -1,7 +1,7 @@
 <%= render(:partial => 'topmenu')%>
 <%= render(:partial => 'infomenu')%>
 
-<h3>Community Info</h3>
+<h3><%=raw @community.fullname %></h3>
 
 <p><b>Short Name:</b> <%= @community.tagname %></p>
 
@@ -10,8 +10,6 @@
 <% else %>
 <p>[no logo]</p>
 <% end -%>
-
-<p><b>Full Name:</b> <%=raw @community.fullname %></p>
 
 <p><b>Description:</b> <%=raw @community.description %></p>
 
