@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180102221515) do
+ActiveRecord::Schema.define(version: 20180109020307) do
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "participant_id", limit: 4
@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(version: 20180102221515) do
     t.integer  "logo_file_size",       limit: 4
     t.datetime "logo_updated_at"
     t.boolean  "major",                              default: false
+    t.boolean  "more",                               default: false
     t.boolean  "ungoals",                            default: false
     t.boolean  "sustdev",                            default: false
     t.boolean  "bold",                               default: false

@@ -34,9 +34,9 @@ DEFAULT_COMMUNITIES.each do |comtag,description|
       com.description = description
       com.save
     end
-    if com.fullname.to_s == ''
+    if true or com.fullname.to_s == ''
       puts "updating fullname for #{com.description}"
-      com.fullname = com.description
+      com.fullname = description
       com.save
     end
   end
@@ -55,6 +55,7 @@ UNGOAL_COMMUNITIES.each do |comtag,description|
   com = Community.where(tagname: comtag).first
   if com
     puts "setting #{comtag} to ungoals"
+    com.more = true
     com.ungoals = true
     com.save
   end
@@ -64,6 +65,7 @@ SUSTDEV_COMMUNITIES.each do |comtag,description|
   com = Community.where(tagname: comtag).first
   if com
     puts "setting #{comtag} to sustdev"
+    com.more = true
     com.sustdev = true
     com.save
   end
