@@ -16,9 +16,15 @@ class Community < ActiveRecord::Base
   end
   
   def activity_count
-    #-- Count the number of messages in the past month, based on hashtag   
+    #-- Count the number of messages for that tag in the past month, based on hashtag and author  
     #Item.where("intra_com='@#{self.tagname}'").where('created_at > ?', 31.days.ago).count
-    Item.tagged_with(self.tagname).where('items.created_at > ?', 31.days.ago).count
+    plist = Participant.tagged_with(self.tagname).collect {|p| p.id}.join(',')
+    if plist != ''
+      items = Item.includes(:participant).references(:participant).where("participants.id in (#{plist})")
+      items = items.tagged_with(self.tagname).where('items.created_at > ?', 31.days.ago).count
+    else
+      return 0
+    end
   end
   
   def geo_counts
