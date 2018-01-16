@@ -6,9 +6,10 @@
 
 <table class="listtable">
   <tr>
-		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
+	<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
     <th>ID</th>
-    <th>Tag</th>
+    <th>Short name</th>
+    <th>Full name</th>
   </tr>
 
 <% odd_or_even = 0 %>
@@ -18,6 +19,7 @@
 		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= community.id %>" /></td>
 		<td><a href="#" onclick="viewrec1(<%= community.id %>)"><%= community.id %></a></td>
     <td><a href="#" onclick="viewrec1(<%= community.id %>)"><%= community.tagname %></a></td>
+    <td><%= community.fullname %></td>
   </tr>
 <% end %>
 </table>

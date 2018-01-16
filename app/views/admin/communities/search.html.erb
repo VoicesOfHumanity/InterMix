@@ -7,7 +7,7 @@
 
 <tr></tr>
 <tr><td class="left">Sort</td><td>
-<% xsort = [['',''],['name','tagname'],["created",'created_at desc'],['ID','id desc']] %>
+<% xsort = [['',''],['short name','tagname'],['full name','fullname'],["created",'created_at desc'],['ID','id desc']] %>
 <% for x in (1..2).to_a -%>
 <%= select_tag "sort#{x}", options_for_select(xsort,@sort[x-1]) %>
 <% end -%>

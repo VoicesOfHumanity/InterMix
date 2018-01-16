@@ -3,6 +3,7 @@ class CommunitiesController < ApplicationController
 	layout "front"
   append_before_action :authenticate_user_from_token!
   append_before_action :authenticate_participant!
+  append_before_action :check_is_admin, except: :index
 
   def index
     #-- Show an list of communities
@@ -116,6 +117,8 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'edit'
     
+    @participants = Participant.where(nil)
+    
   end
   
   def update
@@ -126,10 +129,54 @@ class CommunitiesController < ApplicationController
     redirect_to :action=>:show, :notice => 'Community was successfully updated.'
   end
 
+  def admins
+    #-- Return a list of the admins for this community, as part of the edit page
+    @community_id = params[:id].to_i
+    @community = Community.includes(:moderators).find(@community_id)
+    render :partial=>"adminsedit", :layout=>false
+  end  
+  
+  def admin_add
+    #-- Add a community admin
+    @community_id = params[:id].to_i
+    @participant_id = params[:participant_id]
+    community_admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, @participant_id]).first
+    if @is_admin and not community_admin
+      community_admin = CommunityAdmin.create(:community_id => @community_id, :participant_id => @participant_id)
+    end
+    admins    
+  end 
+  
+  def admin_del 
+    #-- Delete a community admin
+    @community_id = params[:id].to_i
+    participant_ids = params[:participant_ids]
+    for participant_id in participant_ids
+      community_admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, participant_id]).first
+      if @is_admin and community_admin
+        community_admin.destroy
+      end
+    end
+    admins
+  end
+
   protected
 
   def community_params
     params.require(:community).permit(:description, :logo, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :tweet_approval_min, :tweet_what)
+  end
+  
+  def check_is_admin
+    @community_id = params[:id].to_i
+    @is_admin = false
+    if current_participant.sysadmin
+      @is_admin = true
+    else
+      admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, current_participant.id]).first
+      if admin
+        @is_admin = true
+      end
+    end
   end
 
 end

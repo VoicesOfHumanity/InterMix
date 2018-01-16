@@ -1,0 +1,7 @@
+<% if @community.moderators.length > 0 -%>
+    <% for mod in @community.moderators -%>
+        <input type="checkbox" name="markall" class="admmark" title="mark all" value="<%= mod.id %>" /> <%= mod.name %><br>
+    <% end -%>
+<% else -%>
+    none
+<% end -%>

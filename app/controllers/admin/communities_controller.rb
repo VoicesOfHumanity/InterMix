@@ -5,7 +5,7 @@ class Admin::CommunitiesController < ApplicationController
 
   def search
     @heading = 'Communities'
-    @sort = ['id desc','']
+    @sort = ['tagname','']
   end  
   
   # GET /communities
@@ -16,7 +16,7 @@ class Admin::CommunitiesController < ApplicationController
     @per_page = (params[:per_page] || 30).to_i
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
-    sort1 = (params[:sort1] || 'id desc').to_s
+    sort1 = (params[:sort1] || 'tagname').to_s
     sort2 = params[:sort2].to_s    
     xorder = sort1
     xorder += "," if xorder!="" and sort2!=""
