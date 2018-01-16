@@ -139,10 +139,16 @@ class CommunitiesController < ApplicationController
   def admin_add
     #-- Add a community admin
     @community_id = params[:id].to_i
+    @community = Community.find_by_id(@community_id)
     @participant_id = params[:participant_id]
+    participant = Participant.find_by_id(@participant_id)
     community_admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, @participant_id]).first
     if @is_admin and not community_admin
       community_admin = CommunityAdmin.create(:community_id => @community_id, :participant_id => @participant_id)
+      if participant
+        participant.tag_list.add(@community.tagname)
+        participant.save
+      end
     end
     admins    
   end 
@@ -152,6 +158,7 @@ class CommunitiesController < ApplicationController
     @community_id = params[:id].to_i
     participant_ids = params[:participant_ids]
     for participant_id in participant_ids
+      participant = Participant.find_by_id(participant_id)
       community_admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, participant_id]).first
       if @is_admin and community_admin
         community_admin.destroy
