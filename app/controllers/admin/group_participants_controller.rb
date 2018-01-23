@@ -3,7 +3,7 @@
 class Admin::GroupParticipantsController < ApplicationController
   
 	layout "admin"
-  before_filter :authenticate_participant!
+  before_action :authenticate_participant!
   
   def index
     @from = params[:from] || ''

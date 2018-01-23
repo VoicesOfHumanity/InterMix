@@ -3,8 +3,8 @@ require 'will_paginate/array'
 class ItemsController < ApplicationController
 
   layout "front"
-  before_filter :authenticate_user_from_token!, :except=>[:pubgallery]
-  before_filter :authenticate_participant!, :except=>[:pubgallery,:view]
+  before_action :authenticate_user_from_token!, :except=>[:pubgallery]
+  before_action :authenticate_participant!, :except=>[:pubgallery,:view]
 
   def index
     list  
@@ -289,7 +289,7 @@ class ItemsController < ApplicationController
     
     if current_participant.status != 'active'
       #-- Make sure this is an active member
-      render :text=>"<p>Your membership is not active</p>", :layout=>false
+      render plain: "<p>Your membership is not active</p>"
       return
     end    
     
@@ -367,7 +367,7 @@ class ItemsController < ApplicationController
       if not ingroup
         @item.group_id = 0 
         if @item.reply_to.to_i == 0
-          render :text=>"<p>You're not a member of that group</p>", :layout=>false
+          render plain: "<p>You're not a member of that group</p>"
           return
         end
       end
@@ -402,14 +402,14 @@ class ItemsController < ApplicationController
       if @dialog.active_period and @dialog.active_period.max_messages.to_i > 0
         @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
         if @previous_messages_period >= @dialog.active_period.max_messages.to_i
-          render :text=>"<p>You've already reached your maximum number of threads for this period</p>", :layout=>false
+          render plain: "<p>You've already reached your maximum number of threads for this period</p>"
           return
         end
       end  
       if @dialog.max_messages.to_i > 0
         @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
         if @previous_messages >= @dialog.max_messages.to_i
-          render :text=>"<p>You've already reached your maximum number of threads for this discussion</p>", :layout=>false
+          render plain: "<p>You've already reached your maximum number of threads for this discussion</p>"
           return
         end
       end
@@ -877,7 +877,7 @@ class ItemsController < ApplicationController
     
     #-- Check if they're allowed to rate it
     if not item.voting_ok(current_participant.id)
-      render :text=>'', :layout=>false
+      render plain: ''
       return
     end
     
@@ -917,7 +917,7 @@ class ItemsController < ApplicationController
     item.edit_locked = true if current_participant.id != item.posted_by
     item.save
     
-    render :text=>vote, :layout=>false
+    render plain: vote
   end 
   
   def rateitem(item, vote)
@@ -987,13 +987,13 @@ class ItemsController < ApplicationController
 
     #-- Check if they're allowed to rate it
     if not item.voting_ok(current_participant.id)
-      render :text=>'', :layout=>false
+      render plain: ''
       return
     end
     
     rateitem(item, vote)
     
-    render :text=>vote, :layout=>false
+    render plain: vote
   end   
   
   def get_summary
@@ -1009,7 +1009,7 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     @item_id = params[:id]
     @item = Item.find(@item_id)
-    render :text=>@item.embed_code, :layout=>false
+    render plain: @item.embed_code
   end  
   
   def pubgallery
@@ -1058,7 +1058,7 @@ class ItemsController < ApplicationController
       end
     end
 
-    render :text=>'ok', :layout=>false
+    render plain: 'ok'
   end
   
   def unfollow
@@ -1114,7 +1114,7 @@ class ItemsController < ApplicationController
       # We were called from an email
       redirect_to "/items/#{item_id}/view"
     else
-      render :text=>'ok', :layout=>false
+      render plain: 'ok'
     end
   end
   

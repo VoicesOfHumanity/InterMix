@@ -1,8 +1,8 @@
 class PeopleController < ApplicationController
 
   layout "front"
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_participant!, :check_group_and_dialog
+  before_action :authenticate_user_from_token!
+  before_action :authenticate_participant!, :check_group_and_dialog
 
   def index
     #-- Show people who're visible to whoever's logged in

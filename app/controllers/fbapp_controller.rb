@@ -147,9 +147,9 @@ class FbappController < ApplicationController
       item_flag = ItemFlag.create(:item_id=>item_id, :participant_id=>current_participant.id)
       item.is_flagged = true
       item.save
-      render :text=>'ok', :layout=>false
+      render plain: 'ok'
     else
-      render :text=>'notok', :layout=>false        
+      render plain: 'notok'        
     end
   end
   

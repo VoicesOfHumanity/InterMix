@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
         end
       end
     end
-    render :layout=>false, :text => "ok"
+    render plain: "ok"
   end
     
   protected

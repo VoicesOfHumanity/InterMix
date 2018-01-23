@@ -1,3 +1,6 @@
+# FactoryGirl relplaced with factory_bot
+
+=begin
 FactoryGirl.define do
   factory :community_admin do
     
@@ -23,3 +26,4 @@ FactoryGirl.define do
     visibility 'public'
   end
 end
+=end

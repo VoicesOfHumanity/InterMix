@@ -354,7 +354,7 @@ class GroupsController < ApplicationController
         subitem.save
       end
     end  
-    render :text=>'ok', :layout=>false
+    render plain: 'ok'
   end     
   
   def subgroup_add_to
@@ -1208,7 +1208,7 @@ class GroupsController < ApplicationController
     @group = Group.find_by_id(@dialog_group.group_id)
     @dialog = Dialog.find_by_id(@dialog_group.dialog_id)
     if @dialog.send("#{which}_template").to_s != ''
-      render :text=>@dialog.send("#{which}_template"), :layout=>false
+      render plain: @dialog.send("#{which}_template")
     else  
       render :partial=>"dialogs/#{which}_default", :layout=>false
     end  

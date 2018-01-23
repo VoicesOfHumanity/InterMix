@@ -1,7 +1,8 @@
 source 'http://rubygems.org'
 
 #gem 'rails', '~> 3.2'
-gem 'rails', '~> 4.2'
+#gem 'rails', '~> 4.2'
+gem 'rails', '~> 5.1'
 
 gem 'rake'
 
@@ -48,7 +49,7 @@ gem 'acts-as-taggable-on'
 gem 'ckeditor'
 #gem 'carrierwave'
 #gem 'mini_magick'
-gem 'cancancan', '~> 1.8'
+gem 'cancancan'
 gem 'paperclip'
 gem 'sanitize'
 #gem 'formtastic', '~> 1.2.4'
@@ -68,7 +69,7 @@ gem 'embedly'
 # tmail conflicts with formtastic. Should be required only where used. app/mailers/receive_mailer
 #gem 'tmail', :require => false
 #gem 'exception_notification', :require => 'exception_notifier'
-gem 'exception_notification', '4.0.0'
+gem 'exception_notification'
 
 gem 'postmark'
 gem 'postmark-rails'
@@ -81,19 +82,20 @@ group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
   gem 'capistrano-rails'
-  gem 'web-console', '2.3.0'  
+  gem 'web-console'  
   gem 'rspec-rails'
   #gem 'capybara'
   #gem 'selenium-webdriver'
   #gem 'capybara-webkit'
-  gem 'factory_girl_rails'
+  #gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
 end
 
 # Gems used only for assets and not required
 # in production environments by default.
 #group :assets do
-  gem 'sass-rails',   '>= 3.2.3'
-  gem 'coffee-rails', '>= 3.2.1'
+  gem 'sass-rails'
+  gem 'coffee-rails'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'therubyracer', :platforms => :ruby

@@ -1,5 +1,6 @@
 require "rails_helper"
 
+=begin
 #describe "the signin process", :type => :feature, :js => true do
 describe "the signin process", :type => :feature do
   before :each do
@@ -30,3 +31,4 @@ describe "the signin process", :type => :feature do
     expect(page).to have_content 'Signed in successfully'
   end
 end
+=end

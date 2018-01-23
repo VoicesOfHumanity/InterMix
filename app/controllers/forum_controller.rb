@@ -3,8 +3,8 @@
 class ForumController < ApplicationController
  
   layout "front"
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_participant!
+  before_action :authenticate_user_from_token!
+  before_action :authenticate_participant!
   
   def index
     #-- Show most recent items that this user is allowed to see

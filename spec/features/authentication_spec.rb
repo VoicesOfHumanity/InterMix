@@ -1,5 +1,6 @@
 require "rails_helper"
 
+=begin
 describe "Authentication" do
 
     subject { page }
@@ -82,3 +83,4 @@ describe "Authentication" do
         it { should have_content('Sign in') }
     end
 end
+=end

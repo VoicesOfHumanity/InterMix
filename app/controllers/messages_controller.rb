@@ -1,8 +1,8 @@
 class MessagesController < ApplicationController
   
   layout "front"
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_participant!, :check_group_and_dialog
+  before_action :authenticate_user_from_token!
+  before_action :authenticate_participant!, :check_group_and_dialog
   
   def index
     @section = 'messages'
@@ -102,7 +102,7 @@ class MessagesController < ApplicationController
           logger.info("messages#create Couldn't save message")  
         end
       end
-      render :text=>"#{messsent} of #{tosend} messages sent. #{emailsent} sent by e-mail", :layout=>false
+      render plain: "#{messsent} of #{tosend} messages sent. #{emailsent} sent by e-mail"
     else
       @message = Message.new(message_params)
       @message.from_participant_id = current_participant.id
@@ -115,10 +115,10 @@ class MessagesController < ApplicationController
           @message.sendmethod = 'email'
           @message.emailit
         end  
-        render :text=>'Message was successfully sent.', :layout=>false
+        render plain: 'Message was successfully sent.'
       else
         logger.info("messages#create Couldn't save message")  
-        render :text=>'There was a problem creating the message.', :layout=>false          
+        render plain: 'There was a problem creating the message.'         
       end
     end  
 

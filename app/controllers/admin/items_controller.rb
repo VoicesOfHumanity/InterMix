@@ -4,7 +4,7 @@ class Admin::ItemsController < ApplicationController
 
   layout "admin"
 	#layout current_participant.sysadmin? ? "admin" : "application"
-  before_filter :authenticate_participant!
+  before_action :authenticate_participant!
 
   def search
     @heading = 'Items'

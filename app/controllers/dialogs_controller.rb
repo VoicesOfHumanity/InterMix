@@ -61,7 +61,7 @@ class DialogsController < ApplicationController
     
     comtag_before = session.has_key?(:comtag) ? session[:comtag] : ''
     
-    if params.length <= 3
+    if params.values.length <= 3
       # {"controller"=>"dialogs", "action"=>"slider", "id"=>"5"}
       # We come in from the order out of chaos button, rather than the tabs. Reset the session cookies
       is_new = true 
@@ -85,7 +85,7 @@ class DialogsController < ApplicationController
     elsif params.has_key?(:messtag)
       @messtag = params[:messtag].to_s
       session[:messtag] = @messtag
-    elsif params.length == 4 and @comtag != ''
+    elsif params.values.length == 4 and @comtag != ''
       #-- If they clicked on a community tag link, select the message tag too
       @messtag = @comtag
     else

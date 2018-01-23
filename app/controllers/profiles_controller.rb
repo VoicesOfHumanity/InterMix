@@ -1,8 +1,8 @@
 class ProfilesController < ApplicationController
   
   layout "front"
-  before_filter :authenticate_user_from_token!
-  before_filter :authenticate_participant!, :check_group_and_dialog
+  before_action :authenticate_user_from_token!
+  before_action :authenticate_participant!, :check_group_and_dialog
   
   def index
     @section = 'profile'
@@ -403,7 +403,7 @@ class ProfilesController < ApplicationController
     #    page << %(uploadpicturedone();)
     #  end
     #end  
-    render :text=>%s(<script>window.parent.uploadpicturedone();</script>),:layout=>false  
+    render plain: %s(<script>window.parent.uploadpicturedone();</script>)  
   end  
   
   def picdelete
@@ -424,7 +424,7 @@ class ProfilesController < ApplicationController
       result += "No file list received. pix:#{pix.class.to_s}"  
     end
     result = "ok" if result==""
-    render :text=>result, :layout=>false
+    render plain: result
   end  
 
   def twitauth
@@ -521,7 +521,7 @@ class ProfilesController < ApplicationController
       current_participant.tag_list.remove(comtag)
     end
     current_participant.save
-    render :text=>'ok', :layout=>false
+    render plain: 'ok'
   end
   
   def invite
