@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,786 +10,751 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180109020307) do
+ActiveRecord::Schema.define(version: 20180130155452) do
 
-  create_table "authentications", force: :cascade do |t|
-    t.integer  "participant_id", limit: 4
-    t.string   "provider",       limit: 255
-    t.string   "uid",            limit: 255
+  create_table "authentications", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "participant_id"
+    t.string "provider"
+    t.string "uid"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "ckeditor_assets", force: :cascade do |t|
-    t.string   "data_file_name",    limit: 255,             null: false
-    t.string   "data_content_type", limit: 255
-    t.integer  "data_file_size",    limit: 4
-    t.integer  "assetable_id",      limit: 4
-    t.string   "assetable_type",    limit: 30
-    t.string   "type",              limit: 25
-    t.string   "guid",              limit: 10
-    t.integer  "locale",            limit: 1,   default: 0
-    t.integer  "user_id",           limit: 4
+  create_table "ckeditor_assets", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "data_file_name", null: false
+    t.string "data_content_type"
+    t.integer "data_file_size"
+    t.integer "assetable_id"
+    t.string "assetable_type", limit: 30
+    t.string "type", limit: 25
+    t.string "guid", limit: 10
+    t.integer "locale", limit: 1, default: 0
+    t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "width",             limit: 4
-    t.integer  "height",            limit: 4
+    t.integer "width"
+    t.integer "height"
+    t.index ["assetable_type", "assetable_id"], name: "fk_assetable"
+    t.index ["assetable_type", "type", "assetable_id"], name: "idx_assetable_type"
+    t.index ["user_id"], name: "fk_user"
   end
 
-  add_index "ckeditor_assets", ["assetable_type", "assetable_id"], name: "fk_assetable", using: :btree
-  add_index "ckeditor_assets", ["assetable_type", "type", "assetable_id"], name: "idx_assetable_type", using: :btree
-  add_index "ckeditor_assets", ["user_id"], name: "fk_user", using: :btree
-
-  create_table "communities", force: :cascade do |t|
-    t.string   "tagname",              limit: 255
-    t.text     "description",          limit: 65535
-    t.boolean  "twitter_post",                       default: true
-    t.string   "twitter_username",     limit: 255
-    t.string   "twitter_oauth_token",  limit: 255
-    t.string   "twitter_oauth_secret", limit: 255
-    t.string   "twitter_hash_tag",     limit: 255
-    t.integer  "tweet_approval_min",   limit: 4,     default: 1
-    t.string   "tweet_what",           limit: 255,   default: "roots"
-    t.datetime "created_at",                                           null: false
-    t.datetime "updated_at",                                           null: false
-    t.string   "logo_file_name",       limit: 255
-    t.string   "logo_content_type",    limit: 255
-    t.integer  "logo_file_size",       limit: 4
+  create_table "communities", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "tagname"
+    t.text "description"
+    t.boolean "twitter_post", default: true
+    t.string "twitter_username"
+    t.string "twitter_oauth_token"
+    t.string "twitter_oauth_secret"
+    t.string "twitter_hash_tag"
+    t.integer "tweet_approval_min", default: 1
+    t.string "tweet_what", default: "roots"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "logo_file_name"
+    t.string "logo_content_type"
+    t.integer "logo_file_size"
     t.datetime "logo_updated_at"
-    t.boolean  "major",                              default: false
-    t.boolean  "more",                               default: false
-    t.boolean  "ungoals",                            default: false
-    t.boolean  "sustdev",                            default: false
-    t.boolean  "bold",                               default: false
-    t.string   "fullname",             limit: 255,   default: ""
+    t.boolean "major", default: false
+    t.boolean "more", default: false
+    t.boolean "ungoals", default: false
+    t.boolean "sustdev", default: false
+    t.boolean "bold", default: false
+    t.string "fullname", default: ""
+    t.index ["tagname"], name: "index_communities_on_tagname"
   end
 
-  add_index "communities", ["tagname"], name: "index_communities_on_tagname", using: :btree
-
-  create_table "community_admins", force: :cascade do |t|
-    t.integer  "community_id",   limit: 4
-    t.integer  "participant_id", limit: 4
-    t.boolean  "active",                   default: true
-    t.boolean  "admin",                    default: false
-    t.boolean  "moderator",                default: true
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+  create_table "community_admins", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "community_id"
+    t.integer "participant_id"
+    t.boolean "active", default: true
+    t.boolean "admin", default: false
+    t.boolean "moderator", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id", "participant_id"], name: "index_community_admins_on_community_id_and_participant_id"
   end
 
-  add_index "community_admins", ["community_id", "participant_id"], name: "index_community_admins_on_community_id_and_participant_id", using: :btree
-
-  create_table "dialog_admins", force: :cascade do |t|
-    t.integer  "dialog_id",      limit: 4
-    t.integer  "participant_id", limit: 4
-    t.boolean  "active",                   default: true
+  create_table "dialog_admins", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "dialog_id"
+    t.integer "participant_id"
+    t.boolean "active", default: true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["dialog_id", "participant_id"], name: "index_dialog_admins_on_dialog_id_and_participant_id"
   end
 
-  add_index "dialog_admins", ["dialog_id", "participant_id"], name: "index_dialog_admins_on_dialog_id_and_participant_id", using: :btree
-
-  create_table "dialog_groups", force: :cascade do |t|
-    t.integer  "dialog_id",                limit: 4
-    t.integer  "group_id",                 limit: 4
-    t.boolean  "active",                                 default: true
+  create_table "dialog_groups", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "dialog_id"
+    t.integer "group_id"
+    t.boolean "active", default: true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "signup_template",          limit: 65535
-    t.text     "confirm_template",         limit: 65535
-    t.text     "confirm_email_template",   limit: 65535
-    t.text     "confirm_welcome_template", limit: 65535
+    t.text "signup_template"
+    t.text "confirm_template"
+    t.text "confirm_email_template"
+    t.text "confirm_welcome_template"
     t.datetime "apply_at"
-    t.integer  "apply_by",                 limit: 4,     default: 0
-    t.string   "apply_status",             limit: 255,   default: ""
-    t.integer  "processed_by",             limit: 4,     default: 0
+    t.integer "apply_by", default: 0
+    t.string "apply_status", default: ""
+    t.integer "processed_by", default: 0
+    t.index ["dialog_id", "group_id"], name: "index_dialog_groups_on_dialog_id_and_group_id"
+    t.index ["group_id", "dialog_id"], name: "index_dialog_groups_on_group_id_and_dialog_id"
   end
 
-  add_index "dialog_groups", ["dialog_id", "group_id"], name: "index_dialog_groups_on_dialog_id_and_group_id", using: :btree
-  add_index "dialog_groups", ["group_id", "dialog_id"], name: "index_dialog_groups_on_group_id_and_dialog_id", using: :btree
-
-  create_table "dialog_metamaps", force: :cascade do |t|
-    t.integer  "dialog_id",  limit: 4
-    t.integer  "metamap_id", limit: 4
-    t.integer  "sortorder",  limit: 4
+  create_table "dialog_metamaps", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "dialog_id"
+    t.integer "metamap_id"
+    t.integer "sortorder"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["dialog_id", "metamap_id"], name: "index_dialog_metamaps_on_dialog_id_and_metamap_id"
+    t.index ["metamap_id", "dialog_id"], name: "index_dialog_metamaps_on_metamap_id_and_dialog_id"
   end
 
-  add_index "dialog_metamaps", ["dialog_id", "metamap_id"], name: "index_dialog_metamaps_on_dialog_id_and_metamap_id", using: :btree
-  add_index "dialog_metamaps", ["metamap_id", "dialog_id"], name: "index_dialog_metamaps_on_metamap_id_and_dialog_id", using: :btree
-
-  create_table "dialog_participants", force: :cascade do |t|
-    t.integer  "dialog_id",         limit: 4
-    t.integer  "participant_id",    limit: 4
-    t.boolean  "moderator",                     default: false
-    t.boolean  "active",                        default: true
-    t.string   "direct_email_code", limit: 255
+  create_table "dialog_participants", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "dialog_id"
+    t.integer "participant_id"
+    t.boolean "moderator", default: false
+    t.boolean "active", default: true
+    t.string "direct_email_code"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["dialog_id", "participant_id"], name: "index_dialog_participants_on_dialog_id_and_participant_id"
+    t.index ["direct_email_code"], name: "index_dialog_participants_on_direct_email_code", length: { direct_email_code: 20 }
+    t.index ["participant_id", "dialog_id"], name: "index_dialog_participants_on_participant_id_and_dialog_id"
   end
 
-  add_index "dialog_participants", ["dialog_id", "participant_id"], name: "index_dialog_participants_on_dialog_id_and_participant_id", using: :btree
-  add_index "dialog_participants", ["direct_email_code"], name: "index_dialog_participants_on_direct_email_code", length: {"direct_email_code"=>20}, using: :btree
-  add_index "dialog_participants", ["participant_id", "dialog_id"], name: "index_dialog_participants_on_participant_id_and_dialog_id", using: :btree
-
-  create_table "dialogs", force: :cascade do |t|
-    t.string   "name",                     limit: 255
-    t.text     "description",              limit: 65535
-    t.text     "shortdesc",                limit: 65535
-    t.text     "instructions",             limit: 65535
-    t.text     "coordinators",             limit: 65535
-    t.string   "visibility",               limit: 255
-    t.string   "publishing",               limit: 255
-    t.integer  "max_voting_distribution",  limit: 4
-    t.integer  "max_characters",           limit: 4
-    t.integer  "max_words",                limit: 4
+  create_table "dialogs", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.text "description"
+    t.text "shortdesc"
+    t.text "instructions"
+    t.text "coordinators"
+    t.string "visibility"
+    t.string "publishing"
+    t.integer "max_voting_distribution"
+    t.integer "max_characters"
+    t.integer "max_words"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "shortname",                limit: 255
-    t.integer  "created_by",               limit: 4
-    t.boolean  "multigroup",                             default: false
-    t.integer  "group_id",                 limit: 4
-    t.string   "openness",                 limit: 255
-    t.integer  "max_mess_length",          limit: 4
-    t.text     "signup_template",          limit: 65535
-    t.text     "front_template",           limit: 65535
-    t.text     "confirm_template",         limit: 65535
-    t.text     "confirm_email_template",   limit: 65535
-    t.text     "confirm_welcome_template", limit: 65535
-    t.text     "member_template",          limit: 65535
-    t.text     "list_template",            limit: 65535
-    t.string   "metamap_vote_own",         limit: 255
-    t.string   "logo_file_name",           limit: 255
-    t.string   "logo_content_type",        limit: 255
-    t.integer  "logo_file_size",           limit: 4
+    t.string "shortname"
+    t.integer "created_by"
+    t.boolean "multigroup", default: false
+    t.integer "group_id"
+    t.string "openness"
+    t.integer "max_mess_length"
+    t.text "signup_template"
+    t.text "front_template"
+    t.text "confirm_template"
+    t.text "confirm_email_template"
+    t.text "confirm_welcome_template"
+    t.text "member_template"
+    t.text "list_template"
+    t.string "metamap_vote_own"
+    t.string "logo_file_name"
+    t.string "logo_content_type"
+    t.integer "logo_file_size"
     t.datetime "logo_updated_at"
-    t.text     "default_message",          limit: 65535
-    t.boolean  "required_message",                       default: true
-    t.boolean  "required_subject",                       default: true
-    t.boolean  "alt_logins",                             default: true
-    t.integer  "max_messages",             limit: 4,     default: 0
-    t.string   "new_message_title",        limit: 255
-    t.boolean  "allow_replies",                          default: true
-    t.boolean  "required_meta",                          default: true
-    t.string   "value_calc",               limit: 255,   default: "total"
-    t.boolean  "profiles_visible",                       default: true
-    t.boolean  "names_visible_voting",                   default: true
-    t.boolean  "names_visible_general",                  default: true
-    t.boolean  "in_voting_round",                        default: false
-    t.boolean  "posting_open",                           default: true
-    t.boolean  "voting_open",                            default: true
-    t.integer  "current_period",           limit: 4
-    t.string   "twitter_hash_tag",         limit: 255
-    t.string   "default_datetype",         limit: 255,   default: "fixed"
-    t.string   "default_datefixed",        limit: 255,   default: "month"
-    t.date     "default_datefrom"
+    t.text "default_message"
+    t.boolean "required_message", default: true
+    t.boolean "required_subject", default: true
+    t.boolean "alt_logins", default: true
+    t.integer "max_messages", default: 0
+    t.string "new_message_title"
+    t.boolean "allow_replies", default: true
+    t.boolean "required_meta", default: true
+    t.string "value_calc", default: "total"
+    t.boolean "profiles_visible", default: true
+    t.boolean "names_visible_voting", default: true
+    t.boolean "names_visible_general", default: true
+    t.boolean "in_voting_round", default: false
+    t.boolean "posting_open", default: true
+    t.boolean "voting_open", default: true
+    t.integer "current_period"
+    t.string "twitter_hash_tag"
+    t.string "default_datetype", default: "fixed"
+    t.string "default_datefixed", default: "month"
+    t.date "default_datefrom"
+    t.index ["name"], name: "index_dialogs_on_name", length: { name: 30 }
+    t.index ["shortname"], name: "index_dialogs_on_shortname", length: { shortname: 20 }
   end
 
-  add_index "dialogs", ["name"], name: "index_dialogs_on_name", length: {"name"=>30}, using: :btree
-  add_index "dialogs", ["shortname"], name: "index_dialogs_on_shortname", length: {"shortname"=>20}, using: :btree
-
-  create_table "follows", force: :cascade do |t|
-    t.integer  "following_id", limit: 4
-    t.integer  "followed_id",  limit: 4
-    t.boolean  "mutual",                 default: false
+  create_table "follows", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "following_id"
+    t.integer "followed_id"
+    t.boolean "mutual", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["followed_id", "following_id"], name: "index_follows_on_followed_id_and_following_id"
+    t.index ["following_id", "followed_id"], name: "index_follows_on_following_id_and_followed_id"
   end
 
-  add_index "follows", ["followed_id", "following_id"], name: "index_follows_on_followed_id_and_following_id", using: :btree
-  add_index "follows", ["following_id", "followed_id"], name: "index_follows_on_following_id_and_followed_id", using: :btree
-
-  create_table "geoadmin1s", force: :cascade do |t|
-    t.string  "admin1uniq",   limit: 15
-    t.string  "country_code", limit: 2
-    t.string  "admin1_code",  limit: 10
-    t.string  "name",         limit: 255
+  create_table "geoadmin1s", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "admin1uniq", limit: 15
+    t.string "country_code", limit: 2
+    t.string "admin1_code", limit: 10
+    t.string "name"
     t.boolean "has_admin2s"
+    t.index ["country_code", "admin1_code"], name: "admin1_code"
+    t.index ["country_code", "name"], name: "geoadmin1s_name_index", length: { name: 20 }
   end
 
-  add_index "geoadmin1s", ["country_code", "admin1_code"], name: "admin1_code", using: :btree
-  add_index "geoadmin1s", ["country_code", "name"], name: "geoadmin1s_name_index", length: {"country_code"=>nil, "name"=>20}, using: :btree
-
-  create_table "geoadmin2s", force: :cascade do |t|
-    t.string  "admin2uniq",   limit: 30
-    t.string  "country_code", limit: 2
-    t.string  "admin1_code",  limit: 10
-    t.string  "admin2_code",  limit: 15
-    t.string  "name",         limit: 255
-    t.string  "name_ascii",   limit: 255
-    t.integer "geoname_id",   limit: 4
-    t.string  "admin1uniq",   limit: 15
+  create_table "geoadmin2s", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "admin2uniq", limit: 30
+    t.string "country_code", limit: 2
+    t.string "admin1_code", limit: 10
+    t.string "admin2_code", limit: 15
+    t.string "name"
+    t.string "name_ascii"
+    t.integer "geoname_id"
+    t.string "admin1uniq", limit: 15
+    t.index ["admin1uniq"], name: "admin1uniq"
+    t.index ["country_code", "admin1_code", "admin2_code"], name: "admin2_code"
+    t.index ["country_code", "name"], name: "geoadmin2s_name_index", length: { name: 20 }
+    t.index ["geoname_id"], name: "geoname_id"
   end
 
-  add_index "geoadmin2s", ["admin1uniq"], name: "admin1uniq", using: :btree
-  add_index "geoadmin2s", ["country_code", "admin1_code", "admin2_code"], name: "admin2_code", using: :btree
-  add_index "geoadmin2s", ["country_code", "name"], name: "geoadmin2s_name_index", length: {"country_code"=>nil, "name"=>20}, using: :btree
-  add_index "geoadmin2s", ["geoname_id"], name: "geoname_id", using: :btree
-
-  create_table "geocountries", force: :cascade do |t|
-    t.string   "iso",           limit: 2
-    t.string   "iso3",          limit: 3
-    t.integer  "isonum",        limit: 4
-    t.string   "fips",          limit: 2
-    t.string   "name",          limit: 255
-    t.string   "capital",       limit: 255
-    t.string   "area",          limit: 255
-    t.integer  "population",    limit: 4
-    t.string   "continent",     limit: 2
-    t.string   "tld",           limit: 3
-    t.string   "currency_code", limit: 3
-    t.string   "currency_name", limit: 255
-    t.integer  "phone",         limit: 4
-    t.string   "zip_format",    limit: 255
-    t.string   "zip_regex",     limit: 255
-    t.string   "languages",     limit: 255
-    t.integer  "geoname_id",    limit: 4
-    t.string   "neighbors",     limit: 255
-    t.string   "fips_equiv",    limit: 255
+  create_table "geocountries", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "iso", limit: 2
+    t.string "iso3", limit: 3
+    t.integer "isonum"
+    t.string "fips", limit: 2
+    t.string "name"
+    t.string "capital"
+    t.string "area"
+    t.integer "population"
+    t.string "continent", limit: 2
+    t.string "tld", limit: 3
+    t.string "currency_code", limit: 3
+    t.string "currency_name"
+    t.integer "phone"
+    t.string "zip_format"
+    t.string "zip_regex"
+    t.string "languages"
+    t.integer "geoname_id"
+    t.string "neighbors"
+    t.string "fips_equiv"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "extrasort",     limit: 3
+    t.string "extrasort", limit: 3
+    t.index ["extrasort", "name"], name: "sortname"
+    t.index ["iso"], name: "iso"
+    t.index ["name"], name: "name"
   end
 
-  add_index "geocountries", ["extrasort", "name"], name: "sortname", using: :btree
-  add_index "geocountries", ["iso"], name: "iso", using: :btree
-  add_index "geocountries", ["name"], name: "name", using: :btree
-
-  create_table "group_metamaps", force: :cascade do |t|
-    t.integer  "group_id",   limit: 4
-    t.integer  "metamap_id", limit: 4
-    t.integer  "sortorder",  limit: 4
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+  create_table "group_metamaps", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "group_id"
+    t.integer "metamap_id"
+    t.integer "sortorder"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id", "metamap_id"], name: "index_group_metamaps_on_dialog_id_and_metamap_id"
+    t.index ["metamap_id", "group_id"], name: "index_group_metamaps_on_metamap_id_and_group_id"
   end
 
-  add_index "group_metamaps", ["group_id", "metamap_id"], name: "index_group_metamaps_on_dialog_id_and_metamap_id", using: :btree
-  add_index "group_metamaps", ["metamap_id", "group_id"], name: "index_group_metamaps_on_metamap_id_and_group_id", using: :btree
-
-  create_table "group_participants", force: :cascade do |t|
-    t.integer  "group_id",          limit: 4
-    t.integer  "participant_id",    limit: 4
-    t.boolean  "moderator",                     default: false
-    t.boolean  "active",                        default: true
-    t.string   "status",            limit: 255, default: "active"
-    t.string   "direct_email_code", limit: 255
+  create_table "group_participants", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "group_id"
+    t.integer "participant_id"
+    t.boolean "moderator", default: false
+    t.boolean "active", default: true
+    t.string "status", default: "active"
+    t.string "direct_email_code"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["direct_email_code"], name: "index_group_participants_on_direct_email_code", length: { direct_email_code: 20 }
+    t.index ["group_id", "participant_id"], name: "index_group_participants_on_group_id_and_participant_id"
+    t.index ["participant_id", "group_id"], name: "index_group_participants_on_participant_id_and_group_id"
   end
 
-  add_index "group_participants", ["direct_email_code"], name: "index_group_participants_on_direct_email_code", length: {"direct_email_code"=>20}, using: :btree
-  add_index "group_participants", ["group_id", "participant_id"], name: "index_group_participants_on_group_id_and_participant_id", using: :btree
-  add_index "group_participants", ["participant_id", "group_id"], name: "index_group_participants_on_participant_id_and_group_id", using: :btree
-
-  create_table "group_subtag_participants", force: :cascade do |t|
-    t.integer  "group_subtag_id", limit: 4
-    t.integer  "group_id",        limit: 4
-    t.integer  "participant_id",  limit: 4
+  create_table "group_subtag_participants", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "group_subtag_id"
+    t.integer "group_id"
+    t.integer "participant_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["group_subtag_id"], name: "index_group_subtag_participants_on_group_subtag_id"
+    t.index ["participant_id"], name: "index_group_subtag_participants_on_participant_id"
   end
 
-  add_index "group_subtag_participants", ["group_subtag_id"], name: "index_group_subtag_participants_on_group_subtag_id", using: :btree
-  add_index "group_subtag_participants", ["participant_id"], name: "index_group_subtag_participants_on_participant_id", using: :btree
-
-  create_table "group_subtags", force: :cascade do |t|
-    t.integer  "group_id",    limit: 4
-    t.string   "tag",         limit: 30
+  create_table "group_subtags", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "group_id"
+    t.string "tag", limit: 30
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "selfadd",                   default: true
-    t.text     "description", limit: 65535
+    t.boolean "selfadd", default: true
+    t.text "description"
+    t.index ["group_id", "tag"], name: "index_group_subtags_on_group_id_and_tag"
   end
 
-  add_index "group_subtags", ["group_id", "tag"], name: "index_group_subtags_on_group_id_and_tag", using: :btree
-
-  create_table "groups", force: :cascade do |t|
-    t.string   "name",                     limit: 255
-    t.string   "shortname",                limit: 255
-    t.text     "description",              limit: 65535
-    t.text     "shortdesc",                limit: 65535
-    t.string   "instructions",             limit: 255
-    t.string   "visibility",               limit: 255,   default: "public"
-    t.string   "openness",                 limit: 255
-    t.string   "message_visibility",       limit: 255,   default: "public"
-    t.boolean  "moderation",                             default: false
-    t.boolean  "is_network",                             default: false
-    t.boolean  "is_global",                              default: false
-    t.integer  "owner",                    limit: 4
-    t.integer  "group_participants_count", limit: 4,     default: 0
-    t.integer  "items_count",              limit: 4,     default: 0
+  create_table "groups", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "shortname"
+    t.text "description"
+    t.text "shortdesc"
+    t.string "instructions"
+    t.string "visibility", default: "public"
+    t.string "openness"
+    t.string "message_visibility", default: "public"
+    t.boolean "moderation", default: false
+    t.boolean "is_network", default: false
+    t.boolean "is_global", default: false
+    t.integer "owner"
+    t.integer "group_participants_count", default: 0
+    t.integer "items_count", default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "twitter_post",                           default: true
-    t.string   "twitter_username",         limit: 255
-    t.string   "twitter_oauth_token",      limit: 255
-    t.string   "twitter_oauth_secret",     limit: 255
-    t.string   "twitter_hash_tag",         limit: 255
-    t.boolean  "has_mail_list",                          default: true
-    t.string   "logo_file_name",           limit: 255
-    t.string   "logo_content_type",        limit: 255
-    t.integer  "logo_file_size",           limit: 4
+    t.boolean "twitter_post", default: true
+    t.string "twitter_username"
+    t.string "twitter_oauth_token"
+    t.string "twitter_oauth_secret"
+    t.string "twitter_hash_tag"
+    t.boolean "has_mail_list", default: true
+    t.string "logo_file_name"
+    t.string "logo_content_type"
+    t.integer "logo_file_size"
     t.datetime "logo_updated_at"
-    t.text     "front_template",           limit: 65535
-    t.text     "member_template",          limit: 65535
-    t.text     "invite_template",          limit: 65535
-    t.text     "import_template",          limit: 65535
-    t.text     "signup_template",          limit: 65535
-    t.text     "confirm_template",         limit: 65535
-    t.text     "confirm_email_template",   limit: 65535
-    t.text     "confirm_welcome_template", limit: 65535
-    t.boolean  "alt_logins",                             default: true
-    t.boolean  "required_meta",                          default: true
-    t.integer  "tweet_approval_min",       limit: 4,     default: 1
-    t.string   "tweet_what",               limit: 255,   default: "roots"
-    t.boolean  "tweet_subgroups",                        default: false
+    t.text "front_template"
+    t.text "member_template"
+    t.text "invite_template"
+    t.text "import_template"
+    t.text "signup_template"
+    t.text "confirm_template"
+    t.text "confirm_email_template"
+    t.text "confirm_welcome_template"
+    t.boolean "alt_logins", default: true
+    t.boolean "required_meta", default: true
+    t.integer "tweet_approval_min", default: 1
+    t.string "tweet_what", default: "roots"
+    t.boolean "tweet_subgroups", default: false
+    t.index ["name"], name: "index_groups_on_name"
+    t.index ["shortname"], name: "index_groups_on_shortname", length: { shortname: 20 }
   end
 
-  add_index "groups", ["name"], name: "index_groups_on_name", using: :btree
-  add_index "groups", ["shortname"], name: "index_groups_on_shortname", length: {"shortname"=>20}, using: :btree
-
-  create_table "help_texts", force: :cascade do |t|
-    t.string   "code",        limit: 255
-    t.string   "description", limit: 255
-    t.text     "text",        limit: 65535
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+  create_table "help_texts", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "code"
+    t.string "description"
+    t.text "text"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_help_texts_on_code", length: { code: 30 }
   end
 
-  add_index "help_texts", ["code"], name: "index_help_texts_on_code", length: {"code"=>30}, using: :btree
+  create_table "hub_admins", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "hub_id"
+    t.integer "participant_id"
+    t.boolean "active", default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["hub_id", "participant_id"], name: "index_hub_admins_on_hub_id_and_participant_id"
+  end
 
-  create_table "hub_admins", force: :cascade do |t|
-    t.integer  "hub_id",         limit: 4
-    t.integer  "participant_id", limit: 4
-    t.boolean  "active",                   default: true
+  create_table "hubs", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["name"], name: "index_hubs_on_name"
+  end
+
+  create_table "item_deliveries", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "hub_admins", ["hub_id", "participant_id"], name: "index_hub_admins_on_hub_id_and_participant_id", using: :btree
-
-  create_table "hubs", force: :cascade do |t|
-    t.string   "name",       limit: 255
+  create_table "item_flags", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "item_id"
+    t.integer "participant_id"
+    t.text "comment"
+    t.boolean "cleared", default: false
+    t.integer "moderator_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["item_id", "participant_id"], name: "index_item_flags_on_item_id_and_participant_id"
+    t.index ["moderator_id", "item_id"], name: "index_item_flags_on_moderator_id_and_item_id"
+    t.index ["participant_id", "item_id"], name: "index_item_flags_on_participant_id_and_item_id"
   end
 
-  add_index "hubs", ["name"], name: "index_hubs_on_name", using: :btree
-
-  create_table "item_deliveries", force: :cascade do |t|
+  create_table "item_rating_summaries", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "item_id"
+    t.string "summary_type", limit: 15
+    t.integer "int_0_count", default: 0
+    t.integer "int_1_count", default: 0
+    t.integer "int_2_count", default: 0
+    t.integer "int_3_count", default: 0
+    t.integer "int_4_count", default: 0
+    t.integer "int_count", default: 0
+    t.integer "int_total", default: 0
+    t.decimal "int_average", precision: 6, scale: 2, default: "0.0"
+    t.integer "app_n3_count", default: 0
+    t.integer "app_n2_count", default: 0
+    t.integer "app_n1_count", default: 0
+    t.integer "app_0_count", default: 0
+    t.integer "app_p1_count", default: 0
+    t.integer "app_p2_count", default: 0
+    t.integer "app_p3_count", default: 0
+    t.integer "app_count", default: 0
+    t.integer "app_total", default: 0
+    t.decimal "app_average", precision: 6, scale: 2, default: "0.0"
+    t.decimal "value", precision: 6, scale: 2
+    t.decimal "controversy", precision: 6, scale: 2
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["app_average"], name: "index_item_rating_summaries_on_app_average"
+    t.index ["controversy"], name: "index_item_rating_summaries_on_controversy"
+    t.index ["int_average"], name: "index_item_rating_summaries_on_int_average"
+    t.index ["item_id"], name: "index_item_rating_summaries_on_item_id"
+    t.index ["value"], name: "index_item_rating_summaries_on_value"
   end
 
-  create_table "item_flags", force: :cascade do |t|
-    t.integer  "item_id",        limit: 4
-    t.integer  "participant_id", limit: 4
-    t.text     "comment",        limit: 65535
-    t.boolean  "cleared",                      default: false
-    t.integer  "moderator_id",   limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "item_subscribes", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "item_id"
+    t.integer "participant_id"
+    t.boolean "followed", default: true
+    t.index ["item_id", "participant_id"], name: "index_item_subscribes_on_item_id_and_participant_id"
+    t.index ["participant_id", "item_id"], name: "index_item_subscribes_on_participant_id_and_item_id"
   end
 
-  add_index "item_flags", ["item_id", "participant_id"], name: "index_item_flags_on_item_id_and_participant_id", using: :btree
-  add_index "item_flags", ["moderator_id", "item_id"], name: "index_item_flags_on_moderator_id_and_item_id", using: :btree
-  add_index "item_flags", ["participant_id", "item_id"], name: "index_item_flags_on_participant_id_and_item_id", using: :btree
-
-  create_table "item_rating_summaries", force: :cascade do |t|
-    t.integer  "item_id",      limit: 4
-    t.string   "summary_type", limit: 15
-    t.integer  "int_0_count",  limit: 4,                          default: 0
-    t.integer  "int_1_count",  limit: 4,                          default: 0
-    t.integer  "int_2_count",  limit: 4,                          default: 0
-    t.integer  "int_3_count",  limit: 4,                          default: 0
-    t.integer  "int_4_count",  limit: 4,                          default: 0
-    t.integer  "int_count",    limit: 4,                          default: 0
-    t.integer  "int_total",    limit: 4,                          default: 0
-    t.decimal  "int_average",             precision: 6, scale: 2, default: 0.0
-    t.integer  "app_n3_count", limit: 4,                          default: 0
-    t.integer  "app_n2_count", limit: 4,                          default: 0
-    t.integer  "app_n1_count", limit: 4,                          default: 0
-    t.integer  "app_0_count",  limit: 4,                          default: 0
-    t.integer  "app_p1_count", limit: 4,                          default: 0
-    t.integer  "app_p2_count", limit: 4,                          default: 0
-    t.integer  "app_p3_count", limit: 4,                          default: 0
-    t.integer  "app_count",    limit: 4,                          default: 0
-    t.integer  "app_total",    limit: 4,                          default: 0
-    t.decimal  "app_average",             precision: 6, scale: 2, default: 0.0
-    t.decimal  "value",                   precision: 6, scale: 2
-    t.decimal  "controversy",             precision: 6, scale: 2
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "item_rating_summaries", ["app_average"], name: "index_item_rating_summaries_on_app_average", using: :btree
-  add_index "item_rating_summaries", ["controversy"], name: "index_item_rating_summaries_on_controversy", using: :btree
-  add_index "item_rating_summaries", ["int_average"], name: "index_item_rating_summaries_on_int_average", using: :btree
-  add_index "item_rating_summaries", ["item_id"], name: "index_item_rating_summaries_on_item_id", using: :btree
-  add_index "item_rating_summaries", ["value"], name: "index_item_rating_summaries_on_value", using: :btree
-
-  create_table "item_subscribes", force: :cascade do |t|
-    t.integer "item_id",        limit: 4
-    t.integer "participant_id", limit: 4
-    t.boolean "followed",                 default: true
-  end
-
-  add_index "item_subscribes", ["item_id", "participant_id"], name: "index_item_subscribes_on_item_id_and_participant_id", using: :btree
-  add_index "item_subscribes", ["participant_id", "item_id"], name: "index_item_subscribes_on_participant_id_and_item_id", using: :btree
-
-  create_table "items", force: :cascade do |t|
-    t.string   "item_type",                limit: 255,                           default: "message"
-    t.string   "media_type",               limit: 255,                           default: "text"
-    t.integer  "posted_by",                limit: 4
-    t.integer  "group_id",                 limit: 4
-    t.integer  "dialog_id",                limit: 4
-    t.integer  "dialog_round_id",          limit: 4
-    t.string   "subject",                  limit: 255
-    t.integer  "subject_id",               limit: 4
-    t.boolean  "promoted_to_forum"
-    t.boolean  "posted_to_forum",                                                default: true
-    t.string   "election_area_type",       limit: 255
-    t.string   "moderation_status",        limit: 255
+  create_table "items", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "item_type", default: "message"
+    t.string "media_type", default: "text"
+    t.integer "posted_by"
+    t.integer "group_id"
+    t.integer "dialog_id"
+    t.integer "dialog_round_id"
+    t.string "subject"
+    t.integer "subject_id"
+    t.boolean "promoted_to_forum"
+    t.boolean "posted_to_forum", default: true
+    t.string "election_area_type"
+    t.string "moderation_status"
     t.datetime "moderated_at"
-    t.string   "moderated_by",             limit: 255
-    t.text     "short_content",            limit: 65535
-    t.text     "html_content",             limit: 65535
-    t.text     "xml_content",              limit: 65535
-    t.string   "link",                     limit: 255
+    t.string "moderated_by"
+    t.text "short_content"
+    t.text "html_content"
+    t.text "xml_content"
+    t.string "link"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "approval",                               precision: 6, scale: 2, default: 0.0
-    t.decimal  "interest",                               precision: 6, scale: 2, default: 0.0
-    t.decimal  "value",                                  precision: 6, scale: 2, default: 0.0
-    t.decimal  "controversy",                            precision: 6, scale: 2, default: 0.0
-    t.text     "oembed_response",          limit: 65535
-    t.text     "embed_code",               limit: 65535
-    t.boolean  "has_picture",                                                    default: false
-    t.string   "posted_via",               limit: 255,                           default: "web"
-    t.integer  "reply_to",                 limit: 4
-    t.boolean  "is_first_in_thread"
-    t.integer  "first_in_thread",          limit: 4
-    t.integer  "old_message_id",           limit: 4
-    t.boolean  "is_flagged",                                                     default: false
-    t.boolean  "edit_locked",                                                    default: false
-    t.integer  "period_id",                limit: 4
-    t.integer  "first_in_thread_group_id", limit: 4
-    t.boolean  "tweeted_user",                                                   default: false
+    t.decimal "approval", precision: 6, scale: 2, default: "0.0"
+    t.decimal "interest", precision: 6, scale: 2, default: "0.0"
+    t.decimal "value", precision: 6, scale: 2, default: "0.0"
+    t.decimal "controversy", precision: 6, scale: 2, default: "0.0"
+    t.text "oembed_response"
+    t.text "embed_code"
+    t.boolean "has_picture", default: false
+    t.string "posted_via", default: "web"
+    t.integer "reply_to"
+    t.boolean "is_first_in_thread"
+    t.integer "first_in_thread"
+    t.integer "old_message_id"
+    t.boolean "is_flagged", default: false
+    t.boolean "edit_locked", default: false
+    t.integer "period_id"
+    t.integer "first_in_thread_group_id"
+    t.boolean "tweeted_user", default: false
     t.datetime "tweeted_user_at"
-    t.boolean  "tweeted_group",                                                  default: false
+    t.boolean "tweeted_group", default: false
     t.datetime "tweeted_group_at"
-    t.boolean  "censored",                                                       default: false
-    t.string   "geo_level",                limit: 255
-    t.string   "intra_com",                limit: 255,                           default: "public"
+    t.boolean "censored", default: false
+    t.string "geo_level"
+    t.string "intra_com", default: "public"
+    t.index ["created_at"], name: "index_items_on_created_at"
+    t.index ["dialog_id", "created_at"], name: "index_items_on_dialog_id_and_created_at"
+    t.index ["first_in_thread", "id"], name: "index_items_on_first_in_thread_and_id"
+    t.index ["geo_level", "id"], name: "index_items_on_geo_level_and_id", length: { geo_level: 10 }
+    t.index ["group_id", "created_at"], name: "index_items_on_group_id_and_created_at"
+    t.index ["old_message_id"], name: "index_items_on_old_message_id"
+    t.index ["period_id", "id"], name: "index_items_on_period_id_and_id"
+    t.index ["posted_by", "created_at"], name: "index_items_on_posted_by_and_created_at"
   end
 
-  add_index "items", ["created_at"], name: "index_items_on_created_at", using: :btree
-  add_index "items", ["dialog_id", "created_at"], name: "index_items_on_dialog_id_and_created_at", using: :btree
-  add_index "items", ["first_in_thread", "id"], name: "index_items_on_first_in_thread_and_id", using: :btree
-  add_index "items", ["geo_level", "id"], name: "index_items_on_geo_level_and_id", length: {"geo_level"=>10, "id"=>nil}, using: :btree
-  add_index "items", ["group_id", "created_at"], name: "index_items_on_group_id_and_created_at", using: :btree
-  add_index "items", ["old_message_id"], name: "index_items_on_old_message_id", using: :btree
-  add_index "items", ["period_id", "id"], name: "index_items_on_period_id_and_id", using: :btree
-  add_index "items", ["posted_by", "created_at"], name: "index_items_on_posted_by_and_created_at", using: :btree
-
-  create_table "messages", force: :cascade do |t|
-    t.integer  "from_participant_id", limit: 4
-    t.integer  "to_participant_id",   limit: 4
-    t.integer  "to_group_id",         limit: 4
-    t.integer  "template_id",         limit: 4
-    t.string   "subject",             limit: 255
-    t.text     "message",             limit: 65535
-    t.string   "sendmethod",          limit: 255
-    t.boolean  "sent"
+  create_table "messages", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "from_participant_id"
+    t.integer "to_participant_id"
+    t.integer "to_group_id"
+    t.integer "template_id"
+    t.string "subject"
+    t.text "message"
+    t.string "sendmethod"
+    t.boolean "sent"
     t.datetime "sent_at"
-    t.integer  "response_to_id",      limit: 4
-    t.boolean  "read_email"
-    t.boolean  "read_web"
+    t.integer "response_to_id"
+    t.boolean "read_email"
+    t.boolean "read_web"
     t.datetime "read_at"
-    t.boolean  "sender_delete"
-    t.boolean  "recipient_delete"
+    t.boolean "sender_delete"
+    t.boolean "recipient_delete"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "message_id",          limit: 255
-    t.string   "mail_template",       limit: 255
-    t.integer  "group_id",            limit: 4
-    t.integer  "dialog_id",           limit: 4
-    t.boolean  "email_sent",                        default: false
+    t.string "message_id"
+    t.string "mail_template"
+    t.integer "group_id"
+    t.integer "dialog_id"
+    t.boolean "email_sent", default: false
     t.datetime "email_sent_at"
+    t.index ["from_participant_id", "id"], name: "index_messages_on_from_participant_id_and_id"
+    t.index ["message_id"], name: "index_messages_on_message_id", length: { message_id: 30 }
+    t.index ["to_participant_id", "id"], name: "index_messages_on_to_participant_id_and_id"
   end
 
-  add_index "messages", ["from_participant_id", "id"], name: "index_messages_on_from_participant_id_and_id", using: :btree
-  add_index "messages", ["message_id"], name: "index_messages_on_message_id", length: {"message_id"=>30}, using: :btree
-  add_index "messages", ["to_participant_id", "id"], name: "index_messages_on_to_participant_id_and_id", using: :btree
-
-  create_table "metamap_node_participants", force: :cascade do |t|
-    t.integer  "metamap_id",      limit: 4
-    t.integer  "metamap_node_id", limit: 4
-    t.integer  "participant_id",  limit: 4
+  create_table "metamap_node_participants", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "metamap_id"
+    t.integer "metamap_node_id"
+    t.integer "participant_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["metamap_id", "metamap_node_id"], name: "metamap_node"
+    t.index ["metamap_node_id", "participant_id"], name: "node_particip"
+    t.index ["participant_id", "metamap_node_id"], name: "particip_node"
   end
 
-  add_index "metamap_node_participants", ["metamap_id", "metamap_node_id"], name: "metamap_node", using: :btree
-  add_index "metamap_node_participants", ["metamap_node_id", "participant_id"], name: "node_particip", using: :btree
-  add_index "metamap_node_participants", ["participant_id", "metamap_node_id"], name: "particip_node", using: :btree
-
-  create_table "metamap_nodes", force: :cascade do |t|
-    t.integer  "metamap_id",    limit: 4
-    t.string   "name",          limit: 255
-    t.string   "name_as_group", limit: 255
-    t.integer  "parent_id",     limit: 4
-    t.text     "description",   limit: 65535
-    t.string   "sortorder",     limit: 255
-    t.boolean  "sumcat",                      default: false
+  create_table "metamap_nodes", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "metamap_id"
+    t.string "name"
+    t.string "name_as_group"
+    t.integer "parent_id"
+    t.text "description"
+    t.string "sortorder"
+    t.boolean "sumcat", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "binary_on",                   default: false
+    t.boolean "binary_on", default: false
+    t.index ["metamap_id", "sortorder"], name: "index_metamap_nodes_on_metamap_id_and_sortorder", length: { sortorder: 10 }
+    t.index ["parent_id"], name: "index_metamap_nodes_on_parent_id"
   end
 
-  add_index "metamap_nodes", ["metamap_id", "sortorder"], name: "index_metamap_nodes_on_metamap_id_and_sortorder", length: {"metamap_id"=>nil, "sortorder"=>10}, using: :btree
-  add_index "metamap_nodes", ["parent_id"], name: "index_metamap_nodes_on_parent_id", using: :btree
-
-  create_table "metamaps", force: :cascade do |t|
-    t.string   "name",           limit: 255
-    t.integer  "created_by",     limit: 4
+  create_table "metamaps", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.integer "created_by"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "global_default",             default: false
-    t.boolean  "binary",                     default: false
+    t.boolean "global_default", default: false
+    t.boolean "binary", default: false
+    t.index ["created_at"], name: "index_metamaps_on_created_at"
+    t.index ["created_by"], name: "index_metamaps_on_created_by"
+    t.index ["name"], name: "index_metamaps_on_name", length: { name: 20 }
   end
 
-  add_index "metamaps", ["created_at"], name: "index_metamaps_on_created_at", using: :btree
-  add_index "metamaps", ["created_by"], name: "index_metamaps_on_created_by", using: :btree
-  add_index "metamaps", ["name"], name: "index_metamaps_on_name", length: {"name"=>20}, using: :btree
-
-  create_table "metro_areas", force: :cascade do |t|
-    t.string   "name",            limit: 255
-    t.string   "country_code",    limit: 255
-    t.integer  "population",      limit: 4
-    t.integer  "population_year", limit: 4
+  create_table "metro_areas", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "country_code"
+    t.integer "population"
+    t.integer "population_year"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["country_code", "name"], name: "index_metro_areas_on_country_code_and_name", length: { country_code: 1, name: 20 }
   end
 
-  add_index "metro_areas", ["country_code", "name"], name: "index_metro_areas_on_country_code_and_name", length: {"country_code"=>1, "name"=>20}, using: :btree
-
-  create_table "participants", force: :cascade do |t|
-    t.string   "first_name",             limit: 255
-    t.string   "last_name",              limit: 255
-    t.string   "title",                  limit: 255
-    t.text     "self_description",       limit: 65535
-    t.string   "address1",               limit: 255
-    t.string   "address2",               limit: 255
-    t.string   "city",                   limit: 255
-    t.string   "admin2uniq",             limit: 30
-    t.string   "county_code",            limit: 15
-    t.string   "county_name",            limit: 255
-    t.string   "admin1uniq",             limit: 15
-    t.string   "state_code",             limit: 10
-    t.string   "state_name",             limit: 255
-    t.string   "country_code",           limit: 2
-    t.string   "country_name",           limit: 255
-    t.string   "zip",                    limit: 255
-    t.string   "phone",                  limit: 255
-    t.decimal  "latitude",                             precision: 11, scale: 6
-    t.decimal  "longitude",                            precision: 11, scale: 6
-    t.string   "timezone",               limit: 255
-    t.decimal  "timezone_offset",                      precision: 5,  scale: 1
-    t.string   "metropolitan_area",      limit: 255
-    t.integer  "metro_area_id",          limit: 4
-    t.string   "bioregion",              limit: 255
-    t.integer  "bioregion_id",           limit: 4
-    t.string   "faith_tradition",        limit: 255
-    t.integer  "faith_tradition_id",     limit: 4
-    t.string   "political",              limit: 255
-    t.integer  "political_id",           limit: 4
-    t.string   "status",                 limit: 255
-    t.string   "email",                  limit: 255,                            default: "",               null: false
-    t.string   "old_email",              limit: 255
-    t.string   "encrypted_password",     limit: 128,                            default: "",               null: false
-    t.string   "password_salt",          limit: 255,                            default: "",               null: false
-    t.string   "reset_password_token",   limit: 255
+  create_table "participants", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "title"
+    t.text "self_description"
+    t.string "address1"
+    t.string "address2"
+    t.string "city"
+    t.string "admin2uniq", limit: 30
+    t.string "county_code", limit: 15
+    t.string "county_name"
+    t.string "admin1uniq", limit: 15
+    t.string "state_code", limit: 10
+    t.string "state_name"
+    t.string "country_code", limit: 2
+    t.string "country_name"
+    t.string "zip"
+    t.string "phone"
+    t.decimal "latitude", precision: 11, scale: 6
+    t.decimal "longitude", precision: 11, scale: 6
+    t.string "timezone"
+    t.decimal "timezone_offset", precision: 5, scale: 1
+    t.string "metropolitan_area"
+    t.integer "metro_area_id"
+    t.string "bioregion"
+    t.integer "bioregion_id"
+    t.string "faith_tradition"
+    t.integer "faith_tradition_id"
+    t.string "political"
+    t.integer "political_id"
+    t.string "status"
+    t.string "email", default: "", null: false
+    t.string "old_email"
+    t.string "encrypted_password", limit: 128, default: "", null: false
+    t.string "password_salt", default: "", null: false
+    t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
-    t.string   "remember_token",         limit: 255
+    t.string "remember_token"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          limit: 4,                              default: 0
+    t.integer "sign_in_count", default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",     limit: 255
-    t.string   "last_sign_in_ip",        limit: 255
-    t.string   "confirmation_token",     limit: 255
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.boolean  "sysadmin",                                                      default: false
-    t.integer  "items_count",            limit: 4,                              default: 0
+    t.boolean "sysadmin", default: false
+    t.integer "items_count", default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "fb_uid",                 limit: 255
-    t.string   "fb_link",                limit: 255
-    t.string   "visibility",             limit: 255,                            default: "visible_to_all"
-    t.string   "wall_visibility",        limit: 255,                            default: "all"
-    t.boolean  "item_to_forum",                                                 default: true
-    t.boolean  "twitter_post",                                                  default: true
-    t.string   "twitter_username",       limit: 255
-    t.string   "twitter_oauth_token",    limit: 255
-    t.string   "twitter_oauth_secret",   limit: 255
-    t.string   "forum_email",            limit: 255,                            default: "never"
-    t.string   "group_email",            limit: 255,                            default: "instant"
-    t.string   "subgroup_email",         limit: 255,                            default: "instant"
-    t.string   "private_email",          limit: 255,                            default: "instant"
-    t.string   "system_email",           limit: 255,                            default: "instant"
-    t.string   "mycom_email",            limit: 255,                            default: "daily"
-    t.string   "othercom_email",         limit: 255,                            default: "daily"
-    t.boolean  "no_email",                                                      default: false
-    t.string   "direct_email_code",      limit: 255
-    t.boolean  "has_participated",                                              default: false
-    t.integer  "old_user_id",            limit: 4
-    t.text     "forum_settings",         limit: 65535
-    t.string   "last_url",               limit: 255
-    t.string   "handle",                 limit: 255
-    t.string   "authentication_token",   limit: 255
-    t.boolean  "new_signup",                                                    default: true
-    t.boolean  "dialog_pop_shown",                                              default: false
-    t.boolean  "required_entered",                                              default: false
-    t.integer  "last_group_id",          limit: 4
-    t.integer  "last_dialog_id",         limit: 4
-    t.string   "provider",               limit: 255
-    t.string   "uid",                    limit: 255
-    t.string   "disc_interface",         limit: 255,                            default: "simple"
-    t.string   "picture_file_name",      limit: 255
-    t.string   "picture_content_type",   limit: 255
-    t.integer  "picture_file_size",      limit: 4
+    t.string "fb_uid"
+    t.string "fb_link"
+    t.string "visibility", default: "visible_to_all"
+    t.string "wall_visibility", default: "all"
+    t.boolean "item_to_forum", default: true
+    t.boolean "twitter_post", default: true
+    t.string "twitter_username"
+    t.string "twitter_oauth_token"
+    t.string "twitter_oauth_secret"
+    t.string "forum_email", default: "never"
+    t.string "group_email", default: "instant"
+    t.string "subgroup_email", default: "instant"
+    t.string "private_email", default: "instant"
+    t.string "system_email", default: "instant"
+    t.string "mycom_email", default: "daily"
+    t.string "othercom_email", default: "daily"
+    t.boolean "no_email", default: false
+    t.string "direct_email_code"
+    t.boolean "has_participated", default: false
+    t.integer "old_user_id"
+    t.text "forum_settings"
+    t.string "last_url"
+    t.string "handle"
+    t.string "authentication_token"
+    t.boolean "new_signup", default: true
+    t.boolean "dialog_pop_shown", default: false
+    t.boolean "required_entered", default: false
+    t.integer "last_group_id"
+    t.integer "last_dialog_id"
+    t.string "provider"
+    t.string "uid"
+    t.string "disc_interface", default: "simple"
+    t.string "picture_file_name"
+    t.string "picture_content_type"
+    t.integer "picture_file_size"
     t.datetime "picture_updated_at"
-    t.boolean  "indigenous",                                                    default: false
-    t.boolean  "other_minority",                                                default: false
-    t.boolean  "veteran",                                                       default: false
-    t.boolean  "interfaith",                                                    default: false
-    t.boolean  "refugee",                                                       default: false
-    t.text     "check_boxes",            limit: 65535
+    t.boolean "indigenous", default: false
+    t.boolean "other_minority", default: false
+    t.boolean "veteran", default: false
+    t.boolean "interfaith", default: false
+    t.boolean "refugee", default: false
+    t.text "check_boxes"
+    t.text "explanation"
+    t.index ["confirmation_token"], name: "index_participants_on_confirmation_token", unique: true
+    t.index ["country_code", "state_code", "city"], name: "index_participants_on_country_code_and_state_code_and_city", length: { city: 20 }
+    t.index ["direct_email_code"], name: "index_participants_on_direct_email_code", length: { direct_email_code: 20 }
+    t.index ["email"], name: "index_participants_on_email", unique: true
+    t.index ["last_name", "first_name"], name: "index_participants_on_last_name_and_first_name", length: { last_name: 20, first_name: 20 }
+    t.index ["old_user_id"], name: "index_participants_on_old_user_id"
+    t.index ["reset_password_token"], name: "index_participants_on_reset_password_token", unique: true
   end
 
-  add_index "participants", ["confirmation_token"], name: "index_participants_on_confirmation_token", unique: true, using: :btree
-  add_index "participants", ["country_code", "state_code", "city"], name: "index_participants_on_country_code_and_state_code_and_city", length: {"country_code"=>nil, "state_code"=>nil, "city"=>20}, using: :btree
-  add_index "participants", ["direct_email_code"], name: "index_participants_on_direct_email_code", length: {"direct_email_code"=>20}, using: :btree
-  add_index "participants", ["email"], name: "index_participants_on_email", unique: true, using: :btree
-  add_index "participants", ["last_name", "first_name"], name: "index_participants_on_last_name_and_first_name", length: {"last_name"=>20, "first_name"=>20}, using: :btree
-  add_index "participants", ["old_user_id"], name: "index_participants_on_old_user_id", using: :btree
-  add_index "participants", ["reset_password_token"], name: "index_participants_on_reset_password_token", unique: true, using: :btree
-
-  create_table "periods", force: :cascade do |t|
-    t.date     "startdate"
-    t.date     "enddate"
-    t.date     "endposting"
-    t.date     "endrating"
-    t.string   "name",                  limit: 255
-    t.string   "shortname",             limit: 255
-    t.string   "group_dialog",          limit: 255,      default: "dialog"
-    t.integer  "group_id",              limit: 4
-    t.integer  "dialog_id",             limit: 4
+  create_table "periods", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.date "startdate"
+    t.date "enddate"
+    t.date "endposting"
+    t.date "endrating"
+    t.string "name"
+    t.string "shortname"
+    t.string "group_dialog", default: "dialog"
+    t.integer "group_id"
+    t.integer "dialog_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "description",           limit: 65535
-    t.text     "shortdesc",             limit: 65535
-    t.text     "instructions",          limit: 65535
-    t.text     "metamaps",              limit: 65535
-    t.boolean  "metamaps_frozen",                        default: false
-    t.integer  "max_characters",        limit: 4
-    t.integer  "max_words",             limit: 4
-    t.string   "metamap_vote_own",      limit: 255
-    t.text     "default_message",       limit: 65535
-    t.boolean  "required_message",                       default: true
-    t.boolean  "required_subject",                       default: true
-    t.integer  "max_messages",          limit: 4,        default: 0
-    t.string   "new_message_title",     limit: 255
-    t.boolean  "allow_replies",                          default: true
-    t.boolean  "required_meta",                          default: true
-    t.string   "value_calc",            limit: 255,      default: "total"
-    t.boolean  "profiles_visible",                       default: true
-    t.boolean  "names_visible_voting",                   default: true
-    t.boolean  "names_visible_general",                  default: true
-    t.boolean  "in_voting_round",                        default: false
-    t.boolean  "posting_open",                           default: true
-    t.boolean  "voting_open",                            default: true
-    t.integer  "sort_metamap_id",       limit: 4
-    t.string   "sort_order",            limit: 255,      default: "date"
-    t.string   "crosstalk",             limit: 255,      default: "none"
-    t.integer  "period_number",         limit: 4,        default: 0
-    t.text     "result",                limit: 16777215
+    t.text "description"
+    t.text "shortdesc"
+    t.text "instructions"
+    t.text "metamaps"
+    t.boolean "metamaps_frozen", default: false
+    t.integer "max_characters"
+    t.integer "max_words"
+    t.string "metamap_vote_own"
+    t.text "default_message"
+    t.boolean "required_message", default: true
+    t.boolean "required_subject", default: true
+    t.integer "max_messages", default: 0
+    t.string "new_message_title"
+    t.boolean "allow_replies", default: true
+    t.boolean "required_meta", default: true
+    t.string "value_calc", default: "total"
+    t.boolean "profiles_visible", default: true
+    t.boolean "names_visible_voting", default: true
+    t.boolean "names_visible_general", default: true
+    t.boolean "in_voting_round", default: false
+    t.boolean "posting_open", default: true
+    t.boolean "voting_open", default: true
+    t.integer "sort_metamap_id"
+    t.string "sort_order", default: "date"
+    t.string "crosstalk", default: "none"
+    t.integer "period_number", default: 0
+    t.text "result", limit: 16777215
+    t.index ["dialog_id", "startdate"], name: "index_periods_on_dialog_id_and_startdate"
+    t.index ["group_id", "startdate"], name: "index_periods_on_group_id_and_startdate"
   end
 
-  add_index "periods", ["dialog_id", "startdate"], name: "index_periods_on_dialog_id_and_startdate", using: :btree
-  add_index "periods", ["group_id", "startdate"], name: "index_periods_on_group_id_and_startdate", using: :btree
-
-  create_table "photos", force: :cascade do |t|
-    t.integer  "participant_id", limit: 4
-    t.text     "caption",        limit: 65535
-    t.string   "filename",       limit: 255
-    t.integer  "filesize",       limit: 4
-    t.integer  "width",          limit: 4
-    t.integer  "height",         limit: 4
-    t.string   "filetype",       limit: 3
+  create_table "photos", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "participant_id"
+    t.text "caption"
+    t.string "filename"
+    t.integer "filesize"
+    t.integer "width"
+    t.integer "height"
+    t.string "filetype", limit: 3
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["participant_id"], name: "index_photos_on_participant_id"
   end
 
-  add_index "photos", ["participant_id"], name: "index_photos_on_participant_id", using: :btree
-
-  create_table "ratings", force: :cascade do |t|
-    t.integer  "item_id",         limit: 4
-    t.integer  "participant_id",  limit: 4
-    t.string   "rating_type",     limit: 15
-    t.integer  "group_id",        limit: 4
-    t.integer  "dialog_id",       limit: 4
-    t.integer  "dialog_round_id", limit: 4
-    t.integer  "approval",        limit: 4
-    t.integer  "interest",        limit: 4
+  create_table "ratings", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "item_id"
+    t.integer "participant_id"
+    t.string "rating_type", limit: 15
+    t.integer "group_id"
+    t.integer "dialog_id"
+    t.integer "dialog_round_id"
+    t.integer "approval"
+    t.integer "interest"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "period_id",       limit: 4
+    t.integer "period_id"
+    t.index ["group_id", "id"], name: "index_ratings_on_group_id_and_id"
+    t.index ["item_id", "id"], name: "index_ratings_on_item_id_and_id"
+    t.index ["participant_id", "id"], name: "index_ratings_on_participant_id_and_id"
   end
 
-  add_index "ratings", ["group_id", "id"], name: "index_ratings_on_group_id_and_id", using: :btree
-  add_index "ratings", ["item_id", "id"], name: "index_ratings_on_item_id_and_id", using: :btree
-  add_index "ratings", ["participant_id", "id"], name: "index_ratings_on_participant_id_and_id", using: :btree
-
-  create_table "taggings", force: :cascade do |t|
-    t.integer  "tag_id",        limit: 4
-    t.integer  "taggable_id",   limit: 4
-    t.string   "taggable_type", limit: 255
-    t.integer  "tagger_id",     limit: 4
-    t.string   "tagger_type",   limit: 255
-    t.string   "context",       limit: 255
+  create_table "taggings", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.integer "tag_id"
+    t.integer "taggable_id"
+    t.string "taggable_type"
+    t.integer "tagger_id"
+    t.string "tagger_type"
+    t.string "context"
     t.datetime "created_at"
+    t.index ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true, length: { taggable_type: 15, context: 15, tagger_type: 15 }
+    t.index ["taggable_id", "taggable_type", "context"], name: "index_taggings_on_taggable_id_and_taggable_type_and_context", length: { taggable_type: 15, context: 15 }
   end
 
-  add_index "taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true, length: {"tag_id"=>nil, "taggable_id"=>nil, "taggable_type"=>15, "context"=>15, "tagger_id"=>nil, "tagger_type"=>15}, using: :btree
-  add_index "taggings", ["taggable_id", "taggable_type", "context"], name: "index_taggings_on_taggable_id_and_taggable_type_and_context", length: {"taggable_id"=>nil, "taggable_type"=>15, "context"=>15}, using: :btree
-
-  create_table "tags", force: :cascade do |t|
-    t.string  "name",           limit: 255
-    t.integer "taggings_count", limit: 4,   default: 0
+  create_table "tags", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.integer "taggings_count", default: 0
+    t.index ["name"], name: "index_tags_on_name", unique: true
   end
 
-  add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
-
-  create_table "templates", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.string   "section",    limit: 20
-    t.string   "mail_web",   limit: 4
-    t.string   "title",      limit: 255
-    t.text     "html_body",  limit: 65535
-    t.text     "footer",     limit: 65535
-    t.integer  "dialog_id",  limit: 4
-    t.integer  "group_id",   limit: 4
-    t.integer  "round_id",   limit: 4
+  create_table "templates", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "section", limit: 20
+    t.string "mail_web", limit: 4
+    t.string "title"
+    t.text "html_body"
+    t.text "footer"
+    t.integer "dialog_id"
+    t.integer "group_id"
+    t.integer "round_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["dialog_id"], name: "index_templates_on_dialog_id"
+    t.index ["group_id"], name: "index_templates_on_group_id"
+    t.index ["round_id"], name: "index_templates_on_round_id"
+    t.index ["section"], name: "index_templates_on_section"
   end
-
-  add_index "templates", ["dialog_id"], name: "index_templates_on_dialog_id", using: :btree
-  add_index "templates", ["group_id"], name: "index_templates_on_group_id", using: :btree
-  add_index "templates", ["round_id"], name: "index_templates_on_round_id", using: :btree
-  add_index "templates", ["section"], name: "index_templates_on_section", using: :btree
 
 end

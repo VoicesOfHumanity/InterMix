@@ -268,10 +268,17 @@ class Item < ActiveRecord::Base
     for person in allpeople
       hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list.length > 0 and person.tag_list.any?{|t| self.tag_list.include?(t) } )
       hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list.length > 0 and person.tag_list.any?{|t| self.participant.tag_list.include?(t) } )
+      if person.id == 6 or person.id == 1867
+        logger.info("Item#emailit person #{person.id}: hasmessmatch:#{hasmessmatch} with item #{self.id}")
+        logger.info("Item#emailit person #{person.id}: hascommatch:#{hascommatch} with person #{self.participant.id}")
+      end
+      person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with person #{self.participant.id}. "
       if hasmessmatch and hascommatch and person.mycom_email == 'instant'
+        person.explanation += "Match, and person.mycom_email is instant. "
         participants << person
         got_participants[person.id] = true
       elsif not (hasmessmatch and hascommatch) and person.othercom_email == 'instant'
+        person.explanation += "Mismatch, and person.othercom_email is instant. "
         participants << person
         got_participants[person.id] = true
       end      
@@ -302,6 +309,7 @@ class Item < ActiveRecord::Base
       xfollow = top.is_followed_by(person)
       logger.info("Item#emailit user #{person.id} follows: #{xfollow}")
       if xfollow and not got_participants.has_key?(person.id)
+        person.explanation += "Specifically follows this thread. "
         participants << person
         got_participants[person.id] = true
         logger.info("Item#emailit user #{person.id} specifically follows #{top.id}. Added to mailing.")
@@ -316,6 +324,7 @@ class Item < ActiveRecord::Base
     if top.posted_by.to_i > 0 and not got_participants.has_key?(top.posted_by.to_i)
       author = Participant.find_by_id(top.posted_by)
       if author
+        author.explanation = "This is the thread author. "
         participants << author
       end
     end
@@ -333,6 +342,7 @@ class Item < ActiveRecord::Base
 
     for recipient in participants
       p = recipient
+      logger.info("Item#emailit person #{p.id} explanation for mailing: #{p.explanation}")
       if recipient.no_email
         logger.info("Item#emailit #{recipient.id}:#{recipient.name} is blocking all email, so skipping")
         next        
@@ -923,7 +933,7 @@ class Item < ActiveRecord::Base
     
     lstart = Time.now
     
-    if group.class == Fixnum or group.class == Bignum
+    if group.class == Integer
       group_id = group
       if group_id > 0
         group = Group.find_by_id(group_id)
@@ -938,7 +948,7 @@ class Item < ActiveRecord::Base
     else
       group_id = 0
     end    
-    if dialog.class == Fixnum or dialog.class == Bignum
+    if dialog.class == Integer
       dialog_id = dialog
       if dialog_id > 0
         dialog = Dialog.find_by_id(dialog_id)
@@ -950,7 +960,7 @@ class Item < ActiveRecord::Base
     else
       dialog_id = 0
     end    
-    if participant.class == Fixnum or participant.class == Bignum
+    if participant.class == Integer
       participant_id = participant
     elsif participant.class == Participant
       participant_id = participant.id
