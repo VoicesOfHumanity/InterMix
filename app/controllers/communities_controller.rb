@@ -104,6 +104,8 @@ class CommunitiesController < ApplicationController
 
     @sort = 'activity'
     @members.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
+
+    @participants = Participant.where(nil)
         
   end
 

@@ -302,6 +302,16 @@ class Item < ActiveRecord::Base
       end  
     end    
 
+    # Root author should get anything in the thread, so make sure they're on the list
+    if top.posted_by.to_i > 0 and not got_participants.has_key?(top.posted_by.to_i)
+      author = Participant.find_by_id(top.posted_by)
+      if author
+        author.explanation = "This is the thread author. "
+        participants << author
+        got_participants[author.id] = true
+      end
+    end
+    
     # Check this against people who specifically follow or unfollow it
     followers = top.subscribers
     logger.info("Item#emailit checking #{followers.length} subscribers/unsubscribers")
@@ -317,15 +327,6 @@ class Item < ActiveRecord::Base
         participants.delete(person)
         got_participants.except!(person.id)
         logger.info("Item#emailit user #{person.id} specifically unfollows #{top.id}. Removed from mailing.")
-      end
-    end
-    
-    # Root author should get anything in the thread, so make sure they're on the list
-    if top.posted_by.to_i > 0 and not got_participants.has_key?(top.posted_by.to_i)
-      author = Participant.find_by_id(top.posted_by)
-      if author
-        author.explanation = "This is the thread author. "
-        participants << author
       end
     end
           

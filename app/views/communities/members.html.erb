@@ -3,8 +3,45 @@
 
 <h3>Membership List</h3>
 
+<div id="memlist">
 <% @members.each do |participant| %>
 		<b><a href="/participant/<%= participant.id %>/profile"><%= participant.name %></a></b><br>
         Recent Activity: <%= participant.activity %> messages<br>
-		Communities: <%= participant.items_count.to_i %> Tags:<%= participant.show_tag_list(false,true) %><br>
+<% if false -%>Communities: <%= participant.items_count.to_i %> Tags:<%= participant.show_tag_list(false,true) %><br><% end -%>
 <% end %>
+</div>
+
+
+<% if @is_admin -%>
+<p><br><a href="#" click="javascript:add_member();return false">Add</a>: <%= select_tag :new_member, options_from_collection_for_select(@participants, "id", "name") %> </p>
+<% end -%>
+
+<script>
+var curid1 = <%= @community.id %>;
+function list2() {
+  $('#memlist').css('opacity','0.5');
+	showworking();
+	$.ajax({
+     type: "GET",
+     url: "/communities/" + curid1 + "/members",
+     complete: function(t){	
+       $("#memlist").html(t.responseText);
+       hideworking();
+       $('#memlist').css('opacity','1.0');
+     }
+   });	
+}
+function add_member() {
+	var id = $('#new_admin').val();
+  $('#memlist').css('opacity','0.5');
+	$.ajax({
+    type: 'POST',
+    url: "/communities/" + curid1 + "/member_add",
+    data: "participant_id="+id,
+    complete: function(t){	
+      $("#modbox").html(t.responseText);
+      $('#modbox').css('opacity','1.0');
+     }
+   });		
+}
+</script>
