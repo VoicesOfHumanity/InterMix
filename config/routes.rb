@@ -145,9 +145,12 @@ Rails.application.routes.draw do
   resources :communities do
     get :index, :on => :collection
     get :members, :on => :member
+    get :memlist, :on => :member
     get :admins, :on => :member
     post :admin_add, :on => :member
     delete :admin_del, :on => :member
+    post :member_add, :on => :member
+    delete :member_del, :on => :member
   end
   #get 'all', on: :collection, to: "communities#index", as: :index
   #get 'my', on: :collection, to: "communities#index", as: :index

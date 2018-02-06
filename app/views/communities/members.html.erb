@@ -4,16 +4,11 @@
 <h3>Membership List</h3>
 
 <div id="memlist">
-<% @members.each do |participant| %>
-		<b><a href="/participant/<%= participant.id %>/profile"><%= participant.name %></a></b><br>
-        Recent Activity: <%= participant.activity %> messages<br>
-<% if false -%>Communities: <%= participant.items_count.to_i %> Tags:<%= participant.show_tag_list(false,true) %><br><% end -%>
-<% end %>
 </div>
 
 
 <% if @is_admin -%>
-<p><br><a href="#" click="javascript:add_member();return false">Add</a>: <%= select_tag :new_member, options_from_collection_for_select(@participants, "id", "name") %> </p>
+<p><br><a href="#" onclick="add_member();return false">Add</a>: <%= select_tag :new_member, options_from_collection_for_select(@participants, "id", "name") %> </p>
 <% end -%>
 
 <script>
@@ -23,7 +18,7 @@ function list2() {
 	showworking();
 	$.ajax({
      type: "GET",
-     url: "/communities/" + curid1 + "/members",
+     url: "/communities/" + curid1 + "/memlist",
      complete: function(t){	
        $("#memlist").html(t.responseText);
        hideworking();
@@ -32,16 +27,18 @@ function list2() {
    });	
 }
 function add_member() {
-	var id = $('#new_admin').val();
+	var id = $('#new_member').val();
+  alert(id);
   $('#memlist').css('opacity','0.5');
 	$.ajax({
     type: 'POST',
     url: "/communities/" + curid1 + "/member_add",
     data: "participant_id="+id,
     complete: function(t){	
-      $("#modbox").html(t.responseText);
-      $('#modbox').css('opacity','1.0');
+      $("#memlist").html(t.responseText);
+      $('#memlist').css('opacity','1.0');
      }
    });		
 }
+list2();
 </script>

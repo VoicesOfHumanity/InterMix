@@ -92,7 +92,15 @@ class CommunitiesController < ApplicationController
     session[:curcomid] = @community_id 
     @section = 'communities'
     @csection = 'members'
-    
+
+    @participants = Participant.where(nil)        
+  end
+  
+  def memlist
+    @community_id = params[:id].to_i
+    @community = Community.find(@community_id)
+    @comtag = @community.tagname
+
     members = Participant.tagged_with(@comtag)
     
     # Get activity in the past month, and sort by it
@@ -105,8 +113,8 @@ class CommunitiesController < ApplicationController
     @sort = 'activity'
     @members.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
 
-    @participants = Participant.where(nil)
-        
+    render :partial=>"memlist", :layout=>false
+    
   end
 
   def edit
@@ -167,6 +175,33 @@ class CommunitiesController < ApplicationController
       end
     end
     admins
+  end
+
+  def member_add
+    #-- Add a member. I.e. join them to that community
+    @community_id = params[:id].to_i
+    @community = Community.find_by_id(@community_id)
+    @participant_id = params[:participant_id]
+    participant = Participant.find_by_id(@participant_id)    
+    if participant
+      participant.tag_list.add(@community.tagname)
+      participant.save
+    end    
+    memlist   
+  end 
+  
+  def member_del 
+    #-- Delete a member
+    @community_id = params[:id].to_i
+    participant_ids = params[:participant_ids]
+    for participant_id in participant_ids
+      participant = Participant.find_by_id(participant_id)      
+      if participant
+        participant.tag_list.remove(comtag)
+        participant.save
+      end      
+    end
+    memlist
   end
 
   protected
