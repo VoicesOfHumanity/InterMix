@@ -1,5 +1,5 @@
 <% @members.each do |participant| %>
 		<b><a href="/participant/<%= participant.id %>/profile"><%= participant.name %></a></b><br>
-        Recent Activity: <%= participant.activity %> messages<br>
-<% if false -%>Communities: <%= participant.items_count.to_i %> Tags:<%= participant.show_tag_list(false,true) %><br><% end -%>
+        Recent Activity: <%= participant.activity %> messages Communities: <%= participant.items_count.to_i %><br>
+<% if false -%>Tags:<%= participant.show_tag_list(false,true) %><br><% end -%>
 <% end %>
