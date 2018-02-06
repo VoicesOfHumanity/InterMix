@@ -106,7 +106,7 @@ class CommunitiesController < ApplicationController
     # Get activity in the past month, and sort by it
     @members = []
     for member in members
-      member.activity = Item.where("intra_com='@#{@comtag}'").where(posted_by: member.id).where('created_at > ?', 31.days.ago).count
+      member.activity = Item.where(posted_by: member.id).tagged_with(@comtag).where('items.created_at > ?', 31.days.ago).count
       @members << member
     end
 
