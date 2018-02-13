@@ -1,0 +1,12 @@
+<img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;">
+
+<p>Public front page for the community "{{ community.fullname }}"</p>
+
+<p>Description: {{ community.description }}</p>
+
+<p>Short name: {{ community.tagname }}</p>
+
+<p>
+<a href="/participants/auth/facebook"><%= image_tag "/images/login/facebook_64.png", :size => "64x64", :alt => "Facebook", :style => "vertical-align:middle" %></a> 
+Facebook Sign-in
+</p>

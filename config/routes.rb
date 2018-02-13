@@ -151,6 +151,11 @@ Rails.application.routes.draw do
     delete :admin_del, :on => :member
     post :member_add, :on => :member
     delete :member_del, :on => :member
+    get :invite, :on => :member
+    post :invitedo, :on => :member
+    get :invitejoin, :on => :member
+    get :test_template, :on => :member
+    get :get_default, :on => :member
   end
   #get 'all', on: :collection, to: "communities#index", as: :index
   #get 'my', on: :collection, to: "communities#index", as: :index

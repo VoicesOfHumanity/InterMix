@@ -11,6 +11,24 @@
 
 		<%= f.input :logo, :as=>:file %>	
 
+		<% f.input :front_template, :label => "Front Page template" %>
+		<li class="text optional" id="community_front_template_input">
+			<label for="community_front_template">Front Page template<br>
+			<%= button_to_function "get default", "get_default('front')" %><br>
+			<%= button_to_function "test", "test_template('front')" %>
+			</label>
+			<textarea id="community_front_template" name="community[front_template]" rows="5"><%= @community.front_template %></textarea>
+		</li>
+
+		<% f.input :invite_template, :label => "Invitation e-mail template" %>
+		<li class="text optional" id="community_invite_template_input">
+			<label for="community_invite_template">Invitation e-mail template<br>
+			<%= button_to_function "get default", "get_default('invite')" %><br>
+					<%= button_to_function "test", "test_template('invite')" %>
+			</label>
+			<textarea id="community_invite_template" name="community[invite_template]" rows="5"><%= @community.invite_template %></textarea>
+		</li>
+
 	<% end %>
 
 	<p>
@@ -105,5 +123,30 @@ function markall() {
 	} else {
 		allmarked = true;
 	}
+}
+function get_default(which) {
+	if (!$('#community_'+which+'_template')) {
+		alert("That doesn't seem to exist");
+		return;
+	} else if ($('#community_'+which+'_template').val()!='') {
+		alert("Please empty the template field first, if you wish to overwrite it with the default");
+		return;
+	}
+	var pars = "which="+which;
+	$.ajax({
+     type: "GET",
+     url: "/communities/<%= @community.id %>/get_default",
+     data: pars,
+     complete: function(t){	
+       $('#community_'+which+'_template').val(t.responseText);
+     }
+   });	
+}
+function test_template(which) {
+	//if ($('#group_'+which+'_template').val()=='') {
+	//	alert("There's no template to test");
+	//	return;
+	//}	
+	window.open("/communities/<%= @community.id %>/test_template?which="+which, '_blank');
 }
 </script>

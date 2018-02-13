@@ -42,4 +42,9 @@ class Community < ActiveRecord::Base
     return {nations: nations.length, states: states.length, metros: metros.length, cities: cities.length}
   end
   
+  def to_liquid
+      {'id'=>id,'tagname'=>tagname,'description'=>description,'fullname'=>fullname}
+  end
+  
+  
 end
