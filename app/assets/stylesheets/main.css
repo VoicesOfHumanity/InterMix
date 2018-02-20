@@ -233,7 +233,8 @@ p.linkmenu a.selected {
 	border-left-width: 1px;
 	margin: 0 0 5px 0;
 	padding: 5px;
-	min-height: 500px;
+	min-height: 900px;
+    /* display: flex; */
 }
 
 div.sidebarbox {

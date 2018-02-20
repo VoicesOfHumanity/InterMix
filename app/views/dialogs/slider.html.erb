@@ -340,8 +340,9 @@ function per_reload(first,num,whatchanged,page,go_item) {
     //group_level: cur_group_level, 
 	  data: data,
 	  complete: function(t){ 
-      $('#per_main').css('opacity','1.0');
-	   $('#per_main').html(t.responseText);
+    $('#per_main').css('opacity','1.0');
+	  $('#per_main').html(t.responseText);
+    $('#maincontent').height( $('#per_main').height()+95 );
 		if (go_item>0) {
 			location.href = "#"+go_item;
 		} else {
