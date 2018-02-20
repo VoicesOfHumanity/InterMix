@@ -226,7 +226,7 @@ class CommunitiesController < ApplicationController
     @messtext = params[:messtext].to_s
     if @community.invite_template.to_s != ''
       @messtext += "<br><hr style=\"clear:both;\">\n" if @messtext != ''
-      @messtext += @group.invite_template
+      @messtext += @community.invite_template
     else       
       @messtext += render_to_string :partial=>"invite_default", :layout=>false
     end  
@@ -237,18 +237,8 @@ class CommunitiesController < ApplicationController
     @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
     @cdata['logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
 
-    if not ( @is_member and (@group.openness=='open' or @is_moderator) )
+    if not ( @is_admin )
       flash[:alert] += "You're not allowed to invite new members<br>"
-    elsif @member_id > 0
-      #-- An existing member
-      @recipient = Participant.find_by_id(@member_id)
-      #@messtext += "<hr><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@recipient.authentication_token}\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view?auth_token=#{@recipient.authentication_token}\">#{@group.name}</a>"
-      if @recipient
-        invite1member
-      else
-        flash[:alert] += 'Recipient not found<br>'
-      end  
-      
     else
       #-- Some non-members, supposedly. But catch if some of them already are members.
       lines = @new_text.split(/[\r\n]+/)
@@ -259,32 +249,32 @@ class CommunitiesController < ApplicationController
 
         @recipient = Participant.find_by_email(email)
         if @recipient
-          invite1member
+          flash[:alert] += "\"#{email}\" is already a Voices of Humanity member<br>"  
         elsif not email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
           flash[:alert] += "\"#{email}\" doesn't look like a valid e-mail address<br>"  
         else
           @cdata['email'] = email
-          @cdata['joinlink'] = "http://#{@cdata['domain']}/gjoin?group_id=#{@group.id}&amp;email=#{email}"
+          @cdata['joinlink'] = "http://#{BASEDOMAIN}/fbjoinlink?comtag=#{@community.tagname}&amp;joincom=1&amp;email=#{email}"
 
           if @messtext.to_s != ''
             template = Liquid::Template.parse(@messtext)
             html_content = template.render(@cdata)
           else
-            html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join the group: #{@group.name}<br/>"
-            html_content += "Go <a href=\"http://#{@group.shortname}.#{ROOTDOMAIN}/gjoin?group_id=#{@group.id}&email=#{email}\">here</a> to fill in your information and join.<br>"
+            html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join the community: #{@community.fullname}<br/>"
+            html_content += "Go <a href=\"#{@cdata['joinlink']}\">here</a> to join.<br>"
             html_content += "</p>"            
           end
         
-          subject = "#{current_participant.name} invites you to the #{@group.name} on InterMix"
+          subject = "#{current_participant.name} invites you to #{@community.fullname} on InterMix"
 
           emailmess = SystemMailer.template("do-not-reply@intermix.org", email, subject, html_content, @cdata)
 
-          logger.info("groups#invitedo delivering email to #{email}")
+          logger.info("communities#invitedo delivering email to #{email}")
           begin
             emailmess.deliver
             flash[:notice] += "An invitation message was sent to #{email}<br>"
           rescue
-            logger.info("groups#invitedo FAILED delivering email to #{email}")
+            logger.info("communities#invitedo FAILED delivering email to #{email}")
             flash[:notice] += "Failed to send an invitation to #{email}<br>"
           end
         end
@@ -293,56 +283,6 @@ class CommunitiesController < ApplicationController
       
     end
     redirect_to :action => :invite
-  end
-  
-  def invite1member
-    #-- Called from invitedo
-    #-- Sending an invitation to one member
-    group_participant = GroupParticipant.where("group_id=#{@group.id} and participant_id=#{@recipient.id}").first
-    if not group_participant
-      #-- Add them to the group as inactive if they aren't already there
-      group_participant = GroupParticipant.create(:group_id=>@group.id, :participant_id=>@recipient.id,:active=>false,:status=>'invited')
-    end
-    if group_participant.active
-      #-- If they're already there, and already active, no point in sending them an invite
-      flash[:notice] += "#{@recipient.name} (#{@recipient.email}) is already a member of the group<br>"
-    else      
-      @recipient.ensure_authentication_token!
-      @message = Message.new
-      @message.to_participant_id = @recipient.id 
-      @message.from_participant_id = current_participant.id
-      @message.subject = "#{current_participant.name} invites you to the #{@group.name} on InterMix"
-    
-      @cdata['item'] = @item
-      @cdata['recipient'] = @recipient     
-      @cdata['participant'] = @recipient 
-      @cdata['joinlink'] = "http://#{@cdata['domain']}/groups/#{@group.id}/invitejoin?auth_token=#{@recipient.authentication_token}"
-
-      xmesstext = @messtext + "<hr><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@recipient.authentication_token}\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view?auth_token=#{@recipient.authentication_token}\">#{@group.name}</a>"
-
-      if xmesstext.to_s != ''
-        template = Liquid::Template.parse(xmesstext)
-        html_content = template.render(@cdata)
-      else  
-        html_content = "<p>You have been invited to join the group: #{@group.name}<br/>"
-        html_content += "</p>"
-      end        
-            
-      @message.message = html_content
-      @message.sendmethod = 'web'
-      @message.sent_at = Time.now
-      if @message.save
-        if @recipient.private_email == 'instant'
-          #-- Send as an e-mail. 
-          @message.sendmethod = 'email'
-          @message.emailit
-        end  
-        flash[:notice] += "An invitation message was sent to #{@recipient.name} (#{@recipient.email})"
-      else
-        logger.info("groups#invitedo Couldn't save message")  
-        flash[:alert] += "There was a problem creating the invitation message for #{@recipient.name}."         
-      end    
-    end
   end
 
   def test_template
