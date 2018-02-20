@@ -1,7 +1,7 @@
 <%= render(:partial => 'topmenu')%>
 <%= render(:partial => 'infomenu')%>
 
-<h3>Edit Community Info</h3>
+<h3><%=raw @community.fullname %> - Edit Community Info</h3>
 
 <%= semantic_form_for( @community, :html => { :multipart => true } ) do |f| %>
 
