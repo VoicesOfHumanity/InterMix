@@ -1151,6 +1151,9 @@ class FrontController < ApplicationController
             current_participant.tag_list.add(comtag)
           end
           current_participant.save
+          #-- Send them there
+          redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{comtag}"
+          return
         else
           session[:joincom] = 1
         end
