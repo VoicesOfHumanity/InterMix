@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180213150921) do
+ActiveRecord::Schema.define(version: 20180227220130) do
 
   create_table "authentications", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
     t.integer "participant_id"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20180213150921) do
     t.text "confirm_template"
     t.text "confirm_email_template"
     t.text "confirm_welcome_template"
+    t.text "autotags"
     t.index ["tagname"], name: "index_communities_on_tagname"
   end
 
