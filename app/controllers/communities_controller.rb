@@ -159,6 +159,29 @@ class CommunitiesController < ApplicationController
         participant.tag_list.add(@community.tagname)
         participant.save
       end
+      # Send an email
+      @recipient = participant
+      email = participant.email
+      @cdata = {}
+      @cdata['current_participant'] = current_participant
+      @cdata['community'] = @community if @community
+      @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+      @cdata['logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+      @cdata['email'] = participant.email
+      @cdata['comlink'] = "http://#{BASEDOMAIN}/communities/#{@community.id}"
+      html_content = "<p>You have been added by #{current_participant.email_address_with_name} as a moderator of the community: #{@community.fullname}<br/>"
+      html_content += "You will find it <a href=\"#{@cdata['comlink']}\">here</a>.<br>"
+      html_content += "</p>"              
+      subject = "#{current_participant.name} added you as a moderator"
+      emailmess = SystemMailer.template("do-not-reply@intermix.org", email, subject, html_content, @cdata)
+      logger.info("communities#admin_add delivering email to #{email}")
+      begin
+        emailmess.deliver
+        #flash[:notice] = "A notice email was sent to #{email}<br>"
+      rescue
+        logger.info("communities#admin_add FAILED delivering email to #{email}")
+        #flash[:notice] = "Failed to send an email to #{email}<br>"
+      end
     end
     admins    
   end 
