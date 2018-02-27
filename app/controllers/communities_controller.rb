@@ -1,9 +1,9 @@
 class CommunitiesController < ApplicationController
  
 	layout "front"
-  append_before_action :authenticate_user_from_token!
-  append_before_action :authenticate_participant!
-  append_before_action :check_is_admin, except: :index
+  append_before_action :authenticate_user_from_token!, except: [:join, :front]
+  append_before_action :authenticate_participant!, except: [:join, :front]
+  append_before_action :check_is_admin, except: [:index, :join, :front]
 
   def index
     #-- Show an list of communities
@@ -345,6 +345,44 @@ class CommunitiesController < ApplicationController
     which = params[:which]
     render :partial=>"#{which}_default", :layout=>false
   end
+  
+  def front
+    #-- Show the public front page
+    @community_id = params[:id].to_i
+    @community = Community.find_by_id(@community_id)    
+    if participant_signed_in?
+      redirect_to "/communities/#{@community_id}"
+      return
+    end
+    @cdata = {}
+    @cdata['community'] = @community
+    @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    @cdata['logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    if @community.front_template.to_s.strip != ''
+      desc = Liquid::Template.parse(@community.front_template).render(@cdata)
+    else   
+      tcontent = render_to_string :partial=>"communities/front_default", :layout=>false
+      desc = Liquid::Template.parse(tcontent).render(@cdata)
+    end
+    @content = "<div>#{desc}</div>"        
+  end
+
+  def join
+    #-- Public form for joining and joining the community NB: Oops, started, but not finished
+    @community_id = params[:id].to_i
+    @community = Community.find_by_id(@community_id)    
+    if not @community
+      flash[:alert] = "Community not found"
+      redirect_to "//#{BASEDOMAIN}/join"
+      return  
+    elsif @community and current_participant and participant_signed_in?
+      flash[:alert] = "You are already logged in"
+      redirect_to "//#{BASEDOMAIN}/communities/#{@community.id}"
+      return
+    end
+    #prepare_gjoin    
+    render action: :join, :layout => 'front'
+  end  
 
   protected
 

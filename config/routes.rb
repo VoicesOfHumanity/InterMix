@@ -156,6 +156,8 @@ Rails.application.routes.draw do
     get :invitejoin, :on => :member
     get :test_template, :on => :member
     get :get_default, :on => :member
+    get :join, on: :member
+    get :front, on: :member
   end
   #get 'all', on: :collection, to: "communities#index", as: :index
   #get 'my', on: :collection, to: "communities#index", as: :index

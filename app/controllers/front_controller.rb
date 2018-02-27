@@ -701,7 +701,7 @@ class FrontController < ApplicationController
     
     render :action=>:confirm, :layout=>'front'
   end  
-    
+        
   def groupjoinform
     #-- Form for submitting to join a group
     @group_id,@dialog_id = get_group_dialog_from_subdomain    
