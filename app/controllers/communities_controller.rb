@@ -1,9 +1,9 @@
 class CommunitiesController < ApplicationController
  
 	layout "front"
-  append_before_action :authenticate_user_from_token!, except: [:join, :front]
-  append_before_action :authenticate_participant!, except: [:join, :front]
-  append_before_action :check_is_admin, except: [:index, :join, :front]
+  append_before_action :authenticate_user_from_token!, except: [:join, :front, :fronttag]
+  append_before_action :authenticate_participant!, except: [:join, :front, :fronttag]
+  append_before_action :check_is_admin, except: [:index, :join, :front, :fronttag]
 
   def index
     #-- Show an list of communities
@@ -367,6 +367,7 @@ class CommunitiesController < ApplicationController
   
   def front
     #-- Show the public front page
+    #-- http://voh.intermix.cr8.com/communities/30/front
     @community_id = params[:id].to_i
     @community = Community.find_by_id(@community_id)    
     if participant_signed_in?
@@ -384,6 +385,34 @@ class CommunitiesController < ApplicationController
       desc = Liquid::Template.parse(tcontent).render(@cdata)
     end
     @content = "<div>#{desc}</div>"        
+  end
+
+  def fronttag
+    #-- Show the public front page
+    #-- http://voh.intermix.cr8.com/nuclear_disarm
+    tagname = params[:tagname].to_s
+    @community = Community.find_by_tagname(tagname)
+    if not @community
+      redirect_to "/"
+      return
+    end    
+    @community_id = @community.id        
+    if participant_signed_in?
+      redirect_to "/communities/#{@community_id}"
+      return
+    end
+    @cdata = {}
+    @cdata['community'] = @community
+    @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    @cdata['logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    if @community.front_template.to_s.strip != ''
+      desc = Liquid::Template.parse(@community.front_template).render(@cdata)
+    else   
+      tcontent = render_to_string :partial=>"communities/front_default", :layout=>false
+      desc = Liquid::Template.parse(tcontent).render(@cdata)
+    end
+    @content = "<div>#{desc}</div>"    
+    render action: :front    
   end
 
   def join

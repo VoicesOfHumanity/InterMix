@@ -327,5 +327,6 @@ Rails.application.routes.draw do
     
   root 'front#index'
   
+  get '/:tagname', to: 'communities#fronttag'
   
 end
