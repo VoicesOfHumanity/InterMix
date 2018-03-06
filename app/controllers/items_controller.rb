@@ -293,6 +293,10 @@ class ItemsController < ApplicationController
       return
     end    
     
+    if @comtag != ''
+      @community = Community.where(tagname: @comtag).first
+    end
+    
     tags = []
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
@@ -336,6 +340,7 @@ class ItemsController < ApplicationController
         
       end
     else
+      @item.is_first_in_thread = true
       if @dialog and @dialog.settings_with_period["default_message"].to_s != ''
         @item.html_content = @dialog.settings_with_period["default_message"]
         #@item.short_content = @item.html_content
@@ -446,6 +451,13 @@ class ItemsController < ApplicationController
       end
       tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*'
       tags << @comtag if @comtag.to_s != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*'
+      
+      if @item.is_first_in_thread and @community and @community.autotags.to_s != ''
+        autotags = @community.autotags.gsub('#','').split(/\W+/)
+        for autotag in autotags
+          tags << autotag
+        end
+      end
     end
     
     logger.info("items#new tags:#{tags.inspect}") 

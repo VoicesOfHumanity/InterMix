@@ -136,6 +136,25 @@ class CommunitiesController < ApplicationController
     @community = Community.find(@community_id)
     @community.update_attributes(community_params)
     @community.save
+    # fix autotags
+    if @community.autotags.to_s != ''
+      autotags = @community.autotags.gsub('#','')
+      newautotags = ''
+      tags = autotags.split(/\W+/)
+      tagsdone = {}
+      for tag in tags
+        tag.downcase!
+        if tag != @community.tagname.downcase and not tagsdone[tag]
+          if newautotags != ''
+            newautotags += ', '
+          end
+          newautotags += "##{tag}"
+          tagsdone[tag] = true
+        end
+      end
+      @community.autotags = newautotags
+      @community.save
+    end
     redirect_to :action=>:show, :notice => 'Community was successfully updated.'
   end
 
