@@ -166,9 +166,9 @@ class CommunitiesController < ApplicationController
       @cdata['current_participant'] = current_participant
       @cdata['community'] = @community if @community
       @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
-      @cdata['logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+      @cdata['logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
       @cdata['email'] = participant.email
-      @cdata['comlink'] = "http://#{BASEDOMAIN}/communities/#{@community.id}"
+      @cdata['comlink'] = "https://#{BASEDOMAIN}/communities/#{@community.id}?auth_token=#{participant.authentication_token}"
       html_content = "<p>You have been added by #{current_participant.email_address_with_name} as a moderator of the community: #{@community.fullname}<br/>"
       html_content += "You will find it <a href=\"#{@cdata['comlink']}\">here</a>.<br>"
       html_content += "</p>"              
