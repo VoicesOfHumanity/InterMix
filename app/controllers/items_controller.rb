@@ -340,6 +340,7 @@ class ItemsController < ApplicationController
         @item.html_content = @dialog.settings_with_period["default_message"]
         #@item.short_content = @item.html_content
       end 
+      @item.intra_com = "@#{@comtag}" if @comtag
       #@item.subgroup_list = @subgroup if @subgroup.to_s != ''   
       @subgroup_add = @subgroup
     end   
