@@ -1714,6 +1714,18 @@ class FrontController < ApplicationController
   def test
   end  
   
+  def testajaxjson
+    #-- Return some json, without needing login
+    id = params[:somedata].to_i
+    p = Participant.find_by_id(id)
+    if p
+      ret = {'name': p.name,'dummy': 'something'}
+      render json: ret     
+    else
+      render json: {}   
+    end
+  end
+  
   def helptext
     #-- Return a piece of helptext for a tooltip
     @code = params[:code]

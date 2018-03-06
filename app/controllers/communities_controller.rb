@@ -93,7 +93,7 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'members'
 
-    @participants = Participant.where(nil)        
+    @participants = Participant.where(status: 'active')       
   end
   
   def memlist
@@ -101,7 +101,7 @@ class CommunitiesController < ApplicationController
     @community = Community.find(@community_id)
     @comtag = @community.tagname
 
-    members = Participant.tagged_with(@comtag)
+    members = Participant.where(status: 'active').tagged_with(@comtag)
     
     # Get activity in the past month, and sort by it
     @members = []
@@ -127,7 +127,7 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'edit'
     
-    @participants = Participant.where(nil)
+    @participants = Participant.where(status: 'active')
     
   end
   
