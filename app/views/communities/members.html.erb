@@ -3,9 +3,22 @@
 
 <h3><%=raw @community.fullname %> - Membership List</h3>
 
-<div id="memlist">
+<div id="member_container" style="overflow:none;width:740px;min-height:600px">
+
+<div style="float:left;width:595px;min-height:600px">
+  <div id="memlist">
+  </div>
+</div>  
+
+<div style="float:left;width:139px;padding-left:5px;">
+    <div style="margin: 20px 0 0 0;">
+    <% @geo_levels.each do |geo_level,geo_desc| -%>
+      <input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> onclick="per_reload()"><%=raw geo_desc %><br>    
+    <% end -%>
+    </div>
 </div>
 
+</div>
 
 <% if @is_admin -%>
 <p><br><a href="#" onclick="add_member();return false">Add existing member</a>: <%= select_tag :new_member, options_from_collection_for_select(@participants, "id", "name") %> </p>

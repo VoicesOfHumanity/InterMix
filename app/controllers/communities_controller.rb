@@ -93,7 +93,15 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'members'
 
-    @participants = Participant.where(status: 'active')       
+    @participants = Participant.where(status: 'active')     
+    
+    @geo_levels = [
+      [5,'Planet&nbsp;Earth'],
+      [4,'My&nbsp;Nation'],
+      [3,'State/Province'],
+      [2,'My&nbsp;Metro&nbsp;region'],
+      [1,'My&nbsp;City/Town']
+    ]  
   end
   
   def memlist
@@ -261,26 +269,26 @@ class CommunitiesController < ApplicationController
     @nation = params[:nation].to_i
     @city = params[:city].to_s
     flash[:notice] = ''
-    flash[:alert] = ""
+    flash.now[:alert] = ""
     if @email == ""
-      flash[:alert] += 'email missing<br>'
+      flash.now[:alert] += 'email missing<br>'
     end
     if @first_name == '' and @last_name == ''
-      flash[:alert] += 'name missing<br>'      
+      flash.now[:alert] += 'name missing<br>'      
     end
     if @gender == 0
-      flash[:alert] += 'gender missing<br>'
+      flash.now[:alert] += 'gender missing<br>'
     end
     if @age == 0
-      flash[:alert] += 'age missing<br>'
+      flash.now[:alert] += 'age missing<br>'
     end
     if @nation == 0
-      flash[:alert] += 'nation missing<br>'
+      flash.now[:alert] += 'nation missing<br>'
     end
     if @city == ""
-      flash[:alert] += 'city missing<br>'
+      flash.now[:alert] += 'city missing<br>'
     end
-    if flash[:alert] != ''
+    if flash.now[:alert] != ''
       #redirect_to action: :members
       render action: :members
       return
@@ -291,14 +299,14 @@ class CommunitiesController < ApplicationController
     if participant
       # 'unconfirmed','active','inactive','never-contact','disallowed'
       if participant.status == 'active'
-        flash[:alert] += "#{@email} is already a member<br>"
+        flash.now[:alert] += "#{@email} is already a member<br>"
       elsif participant.status == 'disallowed' or participant.status == 'never-contact' or participant.status == 'blocked'
-        flash[:alert] += "#{@email} is already a member, but blocked<br>"
+        flash.now[:alert] += "#{@email} is already a member, but blocked<br>"
       else    
-        flash[:alert] += "#{@email} is already a member, but unconfirmed<br>"
+        flash.now[:alert] += "#{@email} is already a member, but unconfirmed<br>"
       end
     end
-    if flash[:alert] != ''
+    if flash.now[:alert] != ''
       #redirect_to action: :members
       render action: :members
       return
@@ -365,7 +373,7 @@ class CommunitiesController < ApplicationController
       @nation = 0
       @city = ''
     else
-      flash[:alert] += "problem adding #{email} as member<br>"
+      flash.now[:alert] += "problem adding #{email} as member<br>"
       render action: :members
       exit
     end
