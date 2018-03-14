@@ -246,6 +246,133 @@ class CommunitiesController < ApplicationController
     memlist
   end
   
+  def import_member
+    #-- Add a user who isn't member as member of this community
+    @section = 'communities'
+    @csection = 'members'
+    @participants = Participant.where(status: 'active')       
+    @community_id = params[:id].to_i
+    @community = Community.find_by_id(@community_id)
+    @email = params[:email].to_s
+    @first_name = params[:first_name].to_s
+    @last_name = params[:last_name].to_s
+    @gender = params[:gender].to_i
+    @age = params[:age].to_i
+    @nation = params[:nation].to_i
+    @city = params[:city].to_s
+    flash[:notice] = ''
+    flash[:alert] = ""
+    if @email == ""
+      flash[:alert] += 'email missing<br>'
+    end
+    if @first_name == '' and @last_name == ''
+      flash[:alert] += 'name missing<br>'      
+    end
+    if @gender == 0
+      flash[:alert] += 'gender missing<br>'
+    end
+    if @age == 0
+      flash[:alert] += 'age missing<br>'
+    end
+    if @nation == 0
+      flash[:alert] += 'nation missing<br>'
+    end
+    if @city == ""
+      flash[:alert] += 'city missing<br>'
+    end
+    if flash[:alert] != ''
+      #redirect_to action: :members
+      render action: :members
+      return
+    end
+      
+    email = @email  
+    participant = Participant.find_by_email(@email)
+    if participant
+      # 'unconfirmed','active','inactive','never-contact','disallowed'
+      if participant.status == 'active'
+        flash[:alert] += "#{@email} is already a member<br>"
+      elsif participant.status == 'disallowed' or participant.status == 'never-contact' or participant.status == 'blocked'
+        flash[:alert] += "#{@email} is already a member, but blocked<br>"
+      else    
+        flash[:alert] += "#{@email} is already a member, but unconfirmed<br>"
+      end
+    end
+    if flash[:alert] != ''
+      #redirect_to action: :members
+      render action: :members
+      return
+    end
+
+    participant = Participant.new
+    participant.first_name = @first_name
+    participant.last_name = @last_name
+    participant.email = @email
+    if @nation == 395
+      participant.country_code = 'US'
+      participant.country_name = 'United States'
+    end
+    password = ''
+    3.times do
+      conso = 'bcdfghkmnprstvw'[rand(15)]
+      vowel = 'aeiouy'[rand(6)]
+      password += conso +  vowel
+      password += (1+rand(9)).to_s if rand(3) == 2
+    end
+    participant.password = password
+    participant.forum_email = 'daily'
+    participant.group_email = 'daily'
+    participant.private_email = 'instant'  
+    participant.status = 'active'
+    participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + participant.email)
+    if participant.save
+      flash[:notice] += "#{@email} added as member<br>"
+      MetamapNodeParticipant.create(:metamap_id=>3,:metamap_node_id=>@gender,:participant_id=>participant.id)
+      MetamapNodeParticipant.create(:metamap_id=>5,:metamap_node_id=>@age,:participant_id=>participant.id)
+      MetamapNodeParticipant.create(:metamap_id=>4,:metamap_node_id=>@nation,:participant_id=>participant.id)
+      # Add them to the community
+      participant.tag_list.add(@community.tagname)
+      participant.save
+      # Send an email
+      @recipient = participant
+      email = participant.email
+      @cdata = {}
+      @cdata['current_participant'] = current_participant
+      @cdata['community'] = @community if @community
+      @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+      @cdata['logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+      @cdata['email'] = participant.email
+      @cdata['comlink'] = "https://#{BASEDOMAIN}/communities/#{@community.id}?auth_token=#{participant.authentication_token}"
+      html_content = "<p>You have been added by #{current_participant.email_address_with_name} as a member of the community: #{@community.fullname}<br/>"
+      html_content += "You will find it <a href=\"#{@cdata['comlink']}\">here</a>.</p>"      
+      html_content += "<p>username: #{participant.email}<br/>"
+      html_content += "password: #{password}</p>"
+      subject = "#{current_participant.name} added you to the community #{@community.fullname}"
+      emailmess = SystemMailer.template("do-not-reply@intermix.org", email, subject, html_content, @cdata)
+      logger.info("communities#import_member delivering email to #{email}")
+      begin
+        emailmess.deliver
+        #flash[:notice] = "A notice email was sent to #{email}<br>"
+      rescue
+        logger.info("communities#admin_add FAILED delivering email to #{email}")
+        #flash[:notice] = "Failed to send an email to #{email}<br>"
+      end
+      @email = ''
+      @first_name = ''
+      @last_name = ''
+      @gender = 0
+      @age = 0
+      @nation = 0
+      @city = ''
+    else
+      flash[:alert] += "problem adding #{email} as member<br>"
+      render action: :members
+      exit
+    end
+
+    redirect_to action: :members
+  end
+  
   def invite
     #-- Invite screen
     @section = 'communities'

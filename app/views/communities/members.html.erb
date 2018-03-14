@@ -8,7 +8,35 @@
 
 
 <% if @is_admin -%>
-<p><br><a href="#" onclick="add_member();return false">Add</a>: <%= select_tag :new_member, options_from_collection_for_select(@participants, "id", "name") %> </p>
+<p><br><a href="#" onclick="add_member();return false">Add existing member</a>: <%= select_tag :new_member, options_from_collection_for_select(@participants, "id", "name") %> </p>
+<form action="/communities/<%= @community.id %>/import_member" method="post">
+<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+<p id="new_member">
+Add new member:<br>
+email: <input type="text" name="email" value="<%= @email %>">&nbsp; &nbsp;
+name: <input type="text" name="first_name" value="<%= @first_name %>" title="First name"> <input type="text" name="last_name" value="<%= @last_name %>" title="Last name"><br>
+gender: <select name="gender"><option value="0">* select *</option>
+<% MetamapNode.where(metamap_id: 3).order(:sortorder).each do |rec| %>
+<% xselected = rec.id == @gender.to_i ? ' selected': '' %>
+<option value="<%= rec.id %>"<%= xselected %>><%= rec.name %></option>
+<% end %>
+</select>&nbsp; &nbsp;
+age: <select name="age"><option value="0">* select *</option>
+<% MetamapNode.where(metamap_id: 5).order(:sortorder).each do |rec| %>
+<% xselected = rec.id == @age.to_i ? ' selected': '' %>
+<option value="<%= rec.id %>"<%= xselected %>><%= rec.name %></option>
+<% end %>
+</select><br>
+nation: <select name="nation"><option value="0">* select *</option>
+<% MetamapNode.where(metamap_id: 4).order(:sortorder).each do |rec| %>
+<% xselected = rec.id == @nation.to_i ? ' selected': '' %>
+<option value="<%= rec.id %>"<%= xselected %>><%= rec.name %></option>
+<% end %>
+</select>&nbsp; &nbsp;
+city: <input type="text" name="city" value="<%= @city %>"><br>
+<input type="submit" value="Add">
+</p>
+</form>
 <% end -%>
 
 <script>

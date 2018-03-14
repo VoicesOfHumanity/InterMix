@@ -154,6 +154,7 @@ Rails.application.routes.draw do
     get :invite, :on => :member
     post :invitedo, :on => :member
     get :invitejoin, :on => :member
+    post :import_member, on: :member
     get :test_template, :on => :member
     get :get_default, :on => :member
     get :join, on: :member
