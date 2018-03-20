@@ -1726,6 +1726,17 @@ class FrontController < ApplicationController
     end
   end
   
+  def api_fb_login_join
+    #-- Ajax call from some external app
+    #-- Assuming they've already logged into FB on the app
+    #-- We get FB ID, name, email, and access token
+    #-- If it matches an existing user with FB activated, we return InterMix ID and name and authentication_token
+    #-- If existing user, but no FB authentication, add it, I suppose
+    #-- If user doesn't exist, add them
+    
+    
+  end
+  
   def helptext
     #-- Return a piece of helptext for a tooltip
     @code = params[:code]
