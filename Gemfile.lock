@@ -81,10 +81,10 @@ GEM
     crass (1.0.3)
     deep_cloneable (2.3.1)
       activerecord (>= 3.1.0, < 5.2.0)
-    devise (4.4.0)
+    devise (4.4.3)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 5.2)
+      railties (>= 4.1.0, < 6.0)
       responders
       warden (~> 1.2.3)
     diff-lcs (1.3)
@@ -95,7 +95,7 @@ GEM
       oauth
       querystring
     equalizer (0.0.11)
-    erubi (1.7.0)
+    erubi (1.7.1)
     exception_notification (4.2.2)
       actionmailer (>= 4.0, < 6)
       activesupport (>= 4.0, < 6)
@@ -122,7 +122,7 @@ GEM
       domain_name (~> 0.5)
     http-form_data (2.0.0)
     http_parser.rb (0.6.0)
-    i18n (0.9.3)
+    i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     image_size (1.5.0)
     jquery-rails (4.3.1)
@@ -135,7 +135,7 @@ GEM
     jwt (1.5.6)
     libv8 (3.16.14.19)
     liquid (4.0.0)
-    loofah (2.1.1)
+    loofah (2.2.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.0)
@@ -149,7 +149,7 @@ GEM
     mimemagic (0.3.2)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
-    minitest (5.11.1)
+    minitest (5.11.3)
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
@@ -160,7 +160,7 @@ GEM
     net-ssh (4.2.0)
     nifty-generators (0.4.6)
     nio4r (2.2.0)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     nokogumbo (1.4.13)
       nokogiri
@@ -203,11 +203,12 @@ GEM
       postmark (~> 1.10.0)
     public_suffix (3.0.1)
     querystring (0.1.0)
-    rack (2.0.3)
+    rack (2.0.4)
+    rack-cors (1.0.2)
     rack-openid (1.3.1)
       rack (>= 1.1.0)
       ruby-openid (>= 2.1.8)
-    rack-test (0.8.2)
+    rack-test (0.8.3)
       rack (>= 1.0, < 3)
     rails (5.1.4)
       actioncable (= 5.1.4)
@@ -305,7 +306,7 @@ GEM
       multipart-post (~> 2.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
-    tzinfo (1.2.4)
+    tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uglifier (4.1.4)
       execjs (>= 0.3.0, < 3)
@@ -357,6 +358,7 @@ DEPENDENCIES
   paperclip
   postmark
   postmark-rails
+  rack-cors
   rails (~> 5.1)
   rake
   responds_to_parent
