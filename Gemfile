@@ -9,7 +9,7 @@ gem 'rake'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'rack-cors', :require => 'rack/cors'
+#gem 'rack-cors', :require => 'rack/cors'
 
 gem 'mysql2'
 #gem 'mysql2', '~> 0.3.18'
