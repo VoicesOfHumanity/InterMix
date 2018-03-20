@@ -1734,7 +1734,41 @@ class FrontController < ApplicationController
     #-- If existing user, but no FB authentication, add it, I suppose
     #-- If user doesn't exist, add them
     
+    sign_out :participant if participant_signed_in?
     
+    fb_uid = params[:fb_uid].to_i
+    name = params[:name]
+    email = params[:email]
+    fb_access_token = params[:access_token]
+    
+    ret = {'status': ''}
+    
+    auth = Authentication.where(uid: fb_uid)
+    if auth
+      participant_id = auth.participant_id
+      participant = Participant.find_by_id(participant_id)
+      if participant
+        if participant.email.downcase == email.downcase
+          ret['id'] = participant.id
+          ret['status'] = "Found"
+          sign_in(:participant, participant)          
+        else
+          ret['status'] = "Email doesn't match"    
+        end
+      else
+        ret['status'] = "User not found"  
+      end
+    else
+      ret['status'] = "No authentication found"  
+    end
+
+    narr = name.split(' ')
+    last_name = narr[narr.length-1]
+    first_name = ''
+    first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
+
+    
+    return ret
   end
   
   def helptext

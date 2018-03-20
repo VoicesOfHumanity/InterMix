@@ -398,6 +398,7 @@ class CommunitiesController < ApplicationController
     participant.private_email = 'instant'  
     participant.status = 'active'
     participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + participant.email)
+    participant.ensure_authentication_token!
     if participant.save
       flash[:notice] += "#{@email} added as member<br>"
       MetamapNodeParticipant.create(:metamap_id=>3,:metamap_node_id=>@gender,:participant_id=>participant.id)
@@ -420,7 +421,7 @@ class CommunitiesController < ApplicationController
       html_content += "You will find it <a href=\"#{@cdata['comlink']}\">here</a>.</p>"      
       html_content += "<p>username: #{participant.email}<br/>"
       html_content += "password: #{password}</p>"
-      subject = "#{current_participant.name} added you to the community #{@community.fullname}"
+      subject = "Welcome to Voices of Humanity"
       emailmess = SystemMailer.template("do-not-reply@intermix.org", email, subject, html_content, @cdata)
       logger.info("communities#import_member delivering email to #{email}")
       begin
