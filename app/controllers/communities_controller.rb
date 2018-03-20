@@ -102,14 +102,79 @@ class CommunitiesController < ApplicationController
       [2,'My&nbsp;Metro&nbsp;region'],
       [1,'My&nbsp;City/Town']
     ]  
+    @geo_level = 5
+    
   end
   
   def memlist
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
     @comtag = @community.tagname
+    
+    title = ''
 
     members = Participant.where(status: 'active').tagged_with(@comtag)
+    
+    geo_level_num = params[:geo_level].to_i
+    @geo = GEO_LEVELS[geo_level_num] # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}
+    if @geo == 'city'
+      if current_participant.city.to_s != ''
+        members = members.where("participants.city=?",current_participant.city)
+        title += "#{current_participant.city}"
+      else
+        members = members.where("1=0")
+        title += "Unknown City"
+      end  
+    elsif @geo == 'metro'
+      if current_participant.metro_area_id.to_i > 0
+        members = members.where("participants.metro_area_id=?",current_participant.metro_area_id)
+        title += "#{current_participant.metro_area.name}"
+      else
+        members = members.where("1=0")
+        title += "Unknown Metro Area"
+      end  
+    elsif @geo == 'state'  
+      if current_participant.admin1uniq.to_s != ''
+        members = members.where("participants.admin1uniq=?",current_participant.admin1uniq)
+        title += "#{current_participant.geoadmin1.name}"
+      else
+        members = members.where("1=0")
+        title += "Unknown State"
+      end  
+    elsif @geo == 'nation'
+      members = members.where("participants.country_code=?",current_participant.country_code)
+      title += "#{current_participant.geocountry.name}"
+    elsif @geo == 'planet'
+      title += "Planet Earth"  
+    elsif crit[:geo_level] == 'all'
+      title += "All Perspectives"
+    end  
+
+    @gender = params[:meta_3].to_i
+    @age = params[:meta_5].to_i
+
+    if @gender != 0
+      members = members.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=participants.id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{@gender})")   
+    end
+    if @age != 0
+      members = members.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=participants.id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{@age})")   
+    end
+    if @gender > 0 and @age == 0
+      gender = MetamapNode.find_by_id(@gender)
+      title += " | #{gender.name_as_group}"
+    elsif @gender == 0 and @age > 0
+      age = MetamapNode.find_by_id(@age)
+      title += " | #{age.name_as_group}"
+    elsif @gender > 0 and @age > 0
+      gender = MetamapNode.find_by_id(@gender)
+      age = MetamapNode.find_by_id(@age)
+      xtit = gender.name_as_group
+      xtit2 = xtit[0..8] + age.name.capitalize + ' ' + xtit[9..100]
+      title += " | #{xtit2}"    
+    else
+      title += " | Voice of Humanity"
+    end
+    @title = title
     
     # Get activity in the past month, and sort by it
     @members = []

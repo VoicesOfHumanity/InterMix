@@ -13,9 +13,28 @@
 <div style="float:left;width:139px;padding-left:5px;">
     <div style="margin: 20px 0 0 0;">
     <% @geo_levels.each do |geo_level,geo_desc| -%>
-      <input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> onclick="per_reload()"><%=raw geo_desc %><br>    
+      <input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> onclick="per_reload()"><%=raw geo_desc %><br> 
     <% end -%>
     </div>
+    
+    <div style="margin: 20px 0 0 0;">
+      <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
+      <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
+        <% if not metamap_node.sumcat -%>
+          <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div style="margin: 20px 0 0 0;">
+      <input type="radio" name="meta_5" id="meta_5_0" value="0" checked onclick="per_reload()">all<br>
+      <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
+        <% if not metamap_node.sumcat -%>
+          <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
+        <% end %>
+      <% end %>
+    </div>
+    
 </div>
 
 </div>
@@ -54,12 +73,22 @@ city: <input type="text" name="city" value="<%= @city %>"><br>
 
 <script>
 var curid1 = <%= @community.id %>;
+var geo_levels = {1: 'city', 2: 'metro', 3: 'state', 4: 'nation', 5: 'planet'};
+var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 5 %>;
+function per_reload() {
+  list2();
+}
 function list2() {
   $('#memlist').css('opacity','0.5');
 	showworking();
+  cur_geo_level = $("input[name='geo_level_radio']:checked").val();
+  var meta_3 = $("input[name='meta_3']:checked").val()
+  var meta_5 = $("input[name='meta_5']:checked").val()
+  var data = {geo_level: cur_geo_level, meta_3: meta_3, meta_5: meta_5}
 	$.ajax({
      type: "GET",
      url: "/communities/" + curid1 + "/memlist",
+	   data: data,
      complete: function(t){	
        $("#memlist").html(t.responseText);
        hideworking();

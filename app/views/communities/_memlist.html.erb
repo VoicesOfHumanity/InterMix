@@ -1,3 +1,5 @@
+<h3><%=raw @title %></h3>
+
 <% @members.each do |participant| %>
 		<b><a href="/participant/<%= participant.id %>/profile"><%= participant.name %></a></b><br>
         Recent Activity: <%= participant.activity %> messages<br>
