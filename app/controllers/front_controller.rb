@@ -1741,17 +1741,24 @@ class FrontController < ApplicationController
     email = params[:email]
     fb_access_token = params[:access_token]
     
-    ret = {'status': ''}
+    user_exists = false
+    create_user = false
     
-    auth = Authentication.where(uid: fb_uid)
+    ret = {'status': '', 'user_id': 0, 'username': '', 'name': '', 'auth_token': ''}
+    
+    auth = Authentication.where(uid: fb_uid).first
     if auth
       participant_id = auth.participant_id
       participant = Participant.find_by_id(participant_id)
       if participant
         if participant.email.downcase == email.downcase
-          ret['id'] = participant.id
           ret['status'] = "Found"
-          sign_in(:participant, participant)          
+          ret['user_id'] = participant.id
+          ret['username'] = participant.email
+          ret['name'] = participant.name
+          ret['auth_token'] = participant.authentication_token
+          sign_in(:participant, participant)  
+          user_exists = true   
         else
           ret['status'] = "Email doesn't match"    
         end
@@ -1760,15 +1767,19 @@ class FrontController < ApplicationController
       end
     else
       ret['status'] = "No authentication found"  
+      create_user = true
     end
 
-    narr = name.split(' ')
-    last_name = narr[narr.length-1]
-    first_name = ''
-    first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
-
+    if create_user
+      narr = name.split(' ')
+      last_name = narr[narr.length-1]
+      first_name = ''
+      first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
+      
+      
+    end
     
-    return ret
+    render json: ret 
   end
   
   def helptext

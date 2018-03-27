@@ -128,7 +128,7 @@ class ParticipantsController < ApplicationController
     @participant.destroy
 
     respond_to do |format|
-      format.html { render :text=>"<p>Participant ##{params[:id]} has been deleted</p>" }
+      format.html { render plain: "<p>Participant ##{params[:id]} has been deleted</p>" }
       format.xml  { head :ok }
     end
   end
