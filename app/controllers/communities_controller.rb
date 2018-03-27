@@ -400,6 +400,7 @@ class CommunitiesController < ApplicationController
       email = participant.email
       @cdata = {}
       @cdata['current_participant'] = current_participant
+      @cdata['recipient'] = @recipient
       @cdata['community'] = @community if @community
       @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
       @cdata['logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?

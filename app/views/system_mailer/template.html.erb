@@ -11,7 +11,14 @@
 
 <hr/>
 
-<p>This message sent through <a href="http://<%= BASEDOMAIN %>/">InterMix</a>. <% if @cdata['recipient'] and @cdata['recipient'].authentication_token.to_s != '' %>To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.<% end %></p>
+<p>
+<% if @cdata and @cdata.has_key?('recipient') and @cdata['recipient'].authentication_token.to_s != '' -%>    
+To block emails from the Voices of Humanity social media, <a href="https://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>   
+<% else -%>
+This message sent through <a href="http://<%= BASEDOMAIN %>/">Voices of Humanity</a>. 
+<% end -%>    
+</p>
+
 
 </body>
 </html>
