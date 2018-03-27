@@ -105,7 +105,7 @@ class CommunitiesController < ApplicationController
     
     title = ''
 
-    members = Participant.where(status: 'active').tagged_with(@comtag)
+    members = Participant.where(status: 'active', no_email: false).tagged_with(@comtag)
     
     geo_level_num = params.has_key?(:geo_level) ? params[:geo_level].to_i : 5
     @geo = GEO_LEVELS[geo_level_num] # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}
