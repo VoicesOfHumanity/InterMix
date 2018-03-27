@@ -93,21 +93,13 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'members'
 
-    @participants = Participant.where(status: 'active')     
-    
-    @geo_levels = [
-      [5,'Planet&nbsp;Earth'],
-      [4,'My&nbsp;Nation'],
-      [3,'State/Province'],
-      [2,'My&nbsp;Metro&nbsp;region'],
-      [1,'My&nbsp;City/Town']
-    ]  
-    @geo_level = 5
+
+    prepare_members
     
   end
   
   def memlist
-    @community_id = params[:id].to_i
+    @community_id = params[:id].to_i if not @community_id
     @community = Community.find(@community_id)
     @comtag = @community.tagname
     
@@ -115,7 +107,7 @@ class CommunitiesController < ApplicationController
 
     members = Participant.where(status: 'active').tagged_with(@comtag)
     
-    geo_level_num = params[:geo_level].to_i
+    geo_level_num = params.has_key?(:geo_level) ? params[:geo_level].to_i : 5
     @geo = GEO_LEVELS[geo_level_num] # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}
     if @geo == 'city'
       if current_participant.city.to_s != ''
@@ -146,12 +138,12 @@ class CommunitiesController < ApplicationController
       title += "#{current_participant.geocountry.name}"
     elsif @geo == 'planet'
       title += "Planet Earth"  
-    elsif crit[:geo_level] == 'all'
-      title += "All Perspectives"
+    #elsif crit[:geo_level] == 'all'
+      #title += "All Perspectives"
     end  
 
-    @gender = params[:meta_3].to_i
-    @age = params[:meta_5].to_i
+    @gender = params.has_key?(:meta_3) ? params[:meta_3].to_i : 0
+    @age = params.has_key?(:meta_5) ? params[:meta_5].to_i : 0
 
     if @gender != 0
       members = members.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=participants.id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{@gender})")   
@@ -321,11 +313,7 @@ class CommunitiesController < ApplicationController
   
   def import_member
     #-- Add a user who isn't member as member of this community
-    @section = 'communities'
-    @csection = 'members'
-    @participants = Participant.where(status: 'active')       
-    @community_id = params[:id].to_i
-    @community = Community.find_by_id(@community_id)
+    prepare_members
     @email = params[:email].to_s
     @first_name = params[:first_name].to_s
     @last_name = params[:last_name].to_s
@@ -650,6 +638,29 @@ class CommunitiesController < ApplicationController
         @is_admin = true
       end
     end
+  end
+  
+  def prepare_members
+    if not @community
+      @community_id = params[:id].to_i
+      @community = Community.find(@community_id)
+      @comtag = @community.tagname
+    end
+
+    @section = 'communities'
+    @csection = 'members'
+
+    @participants = Participant.where(status: 'active')     
+    
+    @geo_levels = [
+      [5,'Planet&nbsp;Earth'],
+      [4,'My&nbsp;Nation'],
+      [3,'State/Province'],
+      [2,'My&nbsp;Metro&nbsp;region'],
+      [1,'My&nbsp;City/Town']
+    ]  
+    @geo_level = 5 if not @geo_level
+    
   end
 
 end
