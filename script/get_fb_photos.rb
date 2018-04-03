@@ -13,7 +13,7 @@ for participant in participants
       url = "https://graph.facebook.com/#{fb_uid}/picture?type=large"
       puts " - downloading #{url}"
     
-      participant.picture = URI.parse(url)
+      participant.picture = URI.parse(url).open
       participant.save!
       
       if participant.picture.exists?

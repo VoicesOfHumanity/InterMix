@@ -1344,7 +1344,7 @@ class FrontController < ApplicationController
     if @participant.fb_uid.to_i >0 and not @participant.picture.exists?
       #-- Use their facebook photo, if they don't already have one.
       url = "https://graph.facebook.com/#{@participant.fb_uid}/picture?type=large"
-      @participant.picture = URI.parse(url)
+      @participant.picture = URI.parse(url).open
       @participant.save!
     end
         

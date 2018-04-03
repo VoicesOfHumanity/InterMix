@@ -242,6 +242,14 @@ class ItemsController < ApplicationController
     render :partial=>'item_dsimple_comments', :locals => { :item => item, :replies => @replies, :odd_or_even => 1, :from => 'dsimple'}, :layout=>false       
   end  
   
+  def list_api
+    #-- Get some items in a simplified manner, over the API, for apps
+    
+    @items = Item.order("id desc").limit(5)
+    
+    render json: @items
+  end
+  
   def new
     #-- screen for a new item, either new thread or a reply
     @from = params[:from] || ''

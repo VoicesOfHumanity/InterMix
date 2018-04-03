@@ -227,7 +227,7 @@ class ApplicationController < ActionController::Base
     if current_participant.fb_uid.to_i >0 and not current_participant.picture.exists?
       #-- If they don't have a picture set, and they have a facebook account, get it from there
       url = "https://graph.facebook.com/#{current_participant.fb_uid}/picture?type=large"
-      current_participant.picture = URI.parse(url)
+      current_participant.picture = URI.parse(url).open
       current_participant.save!
     end
   

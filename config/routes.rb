@@ -251,6 +251,7 @@ Rails.application.routes.draw do
     get :geoslider_update, :on => :collection
     get :follow, on: :member
     get :unfollow, on: :member
+    get :list_api, on: :collection
   end  
   
   resources :messages do
