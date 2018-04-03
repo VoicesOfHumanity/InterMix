@@ -44,6 +44,9 @@ class ProfilesController < ApplicationController
     else  
       @metro_areas = MetroArea.joins(:geocountry).order("geocountries.name,metro_areas.name").collect{|r| ["#{r.geocountry.name}: #{r.name}",r.id]}
     end
+    @major_communities = Community.where(major: true).order(:fullname)
+    @ungoals_communities = Community.where(ungoals: true).order(:fullname)
+    @sustdev_communities = Community.where(sustdev: true).order(:fullname)
     flash.now[:alert] = "Some required fields need to be entered" if not session[:has_required]
     @group = Group.find_by_id(session[:group_id]) if not @group and session[:group_id].to_i > 0
     if session[:dialog_id].to_i > 0
