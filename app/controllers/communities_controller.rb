@@ -192,7 +192,7 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'edit'
     
-    @participants = Participant.where(status: 'active')
+    @participants = Participant.where(status: 'active', no_email: false).order("last_name,first_name,id")
     
   end
   
@@ -651,7 +651,7 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'members'
 
-    @participants = Participant.where(status: 'active')     
+    @participants = Participant.where(status: 'active', no_email: false).order("last_name,first_name,id")     
     
     @geo_levels = [
       [5,'Planet&nbsp;Earth'],
