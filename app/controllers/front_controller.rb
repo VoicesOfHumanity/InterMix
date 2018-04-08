@@ -1843,7 +1843,11 @@ class FrontController < ApplicationController
     @section = 'join'
     @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
     @content = "<p>No discussion was recognized</p>"
-    @logo = "//#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
+    if @dialog.logo.exists?
+      @logo = "//#{BASEDOMAIN}#{@dialog.logo.url}"
+    else
+      @logo = "https://voh.intermix.org/images/data/photos/7/67.jpg"
+    end
     @meta = []
     #if @participant.country_code.to_s != ''
     #  @metro_areas = MetroArea.where(:country_code=>'US').order(:name).collect{|r| [r.name,r.id]}
