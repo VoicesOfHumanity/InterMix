@@ -25,7 +25,7 @@
 <tr><td>*E-mail</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>    
 <tr><td>*Password</td><td><input type="password" name="password" value="" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="" size="30" style="width:200px"></td></tr>
 
-<tr><td>*Country of Residence</td><td><select name="country_code"><option value="">* choose *</option>{% for country in countries %}<option value="{{ country.iso }}"{% if country.iso == country_code %} selected="selected"{% endif %}>{{ country.name }}</option>{% endfor %}</select></td></tr>
+<tr><td>*Country of Residence</td><td><select name="country_code"><option value="">* choose *</option><% for country in @countries %><option value="<%= country.iso %>"<% if country.iso == @country_code %> selected="selected"<% end %>><%= country.name %></option><% end %></select></td></tr>
 <tr><td>Metro Area</td><td><select name="metro_area_id"><option value="">* choose *</option>{% for m in metro_areas %}<option value="{{ m[1] }}">{{ m[0] }}</option>{% endfor %}</select></td></tr>
 <tr><td>City</td><td><input type="text" name="city" value="" size="30" style="width:200px"></td></tr>    
 
