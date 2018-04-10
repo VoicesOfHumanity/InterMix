@@ -62,6 +62,8 @@ Rails.application.configure do
   
   #config.web_console.automount = true
   
+  config.force_ssl = true
+  
 end
 
 #SYSTEM_SENDER = "noreply@intermix.cr8.com"

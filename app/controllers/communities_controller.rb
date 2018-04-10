@@ -192,7 +192,7 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'edit'
     
-    @participants = Participant.where(status: 'active', no_email: false).order("last_name,first_name,id")
+    @members = Participant.where(status: 'active', no_email: false).tagged_with(@comtag)
     
   end
   

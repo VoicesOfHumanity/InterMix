@@ -91,6 +91,7 @@ group :development, :test do
   #gem 'capybara-webkit'
   #gem 'factory_girl_rails'
   gem 'factory_bot_rails'
+  gem 'thin'
 end
 
 # Gems used only for assets and not required

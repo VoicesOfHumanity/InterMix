@@ -46,7 +46,7 @@
 <%= render(partial: 'adminsedit')%>
 </div>
 
-<p><a href="javascript:add_admin()">Add</a>: <%= select_tag :new_admin, options_from_collection_for_select(@participants, "id", "name") %> | <a href="javascript:del_admin()">Delete marked</a></p>
+<p><a href="javascript:add_admin()">Add</a>: <%= select_tag :new_admin, options_from_collection_for_select(@members, "id", "name") %> | <a href="javascript:del_admin()">Delete marked</a></p>
 
 <script>
 var curid1 = <%= @community.id %>;

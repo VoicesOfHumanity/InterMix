@@ -57,7 +57,7 @@ module Intermix
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         #origins '*'
-        origins 'http://intermix.test:3000','http://intermix.test:3002','http://intermix.cr8.com','http://voh.intermix.cr8.com','https://intermix.org','https://voh.intermix.org'
+        origins 'http://intermix.test:3000','http://intermix.test:3002','https://intermix.test:3000', 'https://localhost:3000', 'http://intermix.cr8.com','http://voh.intermix.cr8.com','https://intermix.org','https://voh.intermix.org'
         resource '*', :headers => :any, :methods => [:get, :post, :put, :patch, :delete, :options, :head]
       end
     end
