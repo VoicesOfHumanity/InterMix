@@ -14,6 +14,22 @@
 
 <p><b>Description:</b> <%=raw @community.description %></p>
 
+<p><b>Sub-communities:</b></p>
+
+<% if @subcommunities.length > 0 -%>
+  <table style="width:595px">
+  <tr><th>Forum</th><th>Activity</th><th>More Information</th><th>&nbsp;</th></tr>	
+  <% for sub in @subcommunities -%>
+    <tr>
+    	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= sub.tagname %>">@<%= sub.tagname %></a></td>	
+    	<td><%= sub.activity_count %></td>
+    	<td><a href="/communities/<%= sub.id %>"><%= sub.fullname.to_s != '' ?  sub.fullname : sub.tagname %></a></td>
+    	<td><a href="#" onclick="joinleave('<%= sub.tagname %>',<%= sub.id %>);return(false)" id="comtagjoin_<%= sub.id %>"><%= current_participant.tag_list.include?(sub.tagname) ? "leave" : "join" %></a></td>
+    </tr>
+  <% end -%>
+  </table>
+<% end -%>
+
 <p><b>Moderators:</b><br>
 <% if @community.moderators.length > 0 -%>
     <% for mod in @community.moderators -%>
@@ -34,14 +50,12 @@
 <tr><td>Cities/towns:</td><td><%= @data['city_count'] %></td></tr>
 </table>
 
-<button onclick="joinleave();return(false)" id="comtagjoin"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
+<button onclick="joinleave(<%= @comtag %>,<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
 
 
 <script>
-	function joinleave() {
-      var comtag = '<%= @comtag %>';
-      var id = <%= @community.id %>;
-	  var which = $('#comtagjoin').html();
+	function joinleave(comtag, id) {
+	  var which = $('#comtagjoin_'+id).html();
 	  var data = {
 	    'comtag': comtag,
 	    'which': which,
@@ -52,11 +66,11 @@
 		  data: data,
 		  complete: function(t){ 
 	      if (which=='join') {
-			$('#comtagjoin').html('leave')
+			    $('#comtagjoin_'+id).html('leave')
 	      } else {
-			  $('#comtagjoin').html('join')
+			    $('#comtagjoin_'+id).html('join')
 	      }
-	      }
-		});
+	    }
+	  });
 	}	
 </script>	

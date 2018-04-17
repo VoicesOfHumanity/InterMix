@@ -1,7 +1,10 @@
 <%= render(:partial => 'topmenu')%>
 <%= render(:partial => 'infomenu')%>
 
-<h3><%=raw @community.fullname %> - Membership List</h3>
+<h3><%=raw @focus.fullname %> - Membership List</h3>
+<% if @sub and @sub_id.to_i > 0 -%>
+<p>(sub-community of <a href="/communities/<%= @community.id %>"><%= @community.fullname %></a>)</p>
+<% end -%>
 
 <div id="member_container" style="overflow:none;width:740px;min-height:600px">
 
@@ -41,7 +44,7 @@
 
 <% if @is_admin -%>
 <p><br><a href="#" onclick="add_member();return false">Add existing member</a>: <%= select_tag :new_member, options_from_collection_for_select(@participants, "id", "name") %> </p>
-<form action="/communities/<%= @community.id %>/import_member" method="post">
+<form action="/communities/<%= @focus.id %>/import_member" method="post">
 <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 <p id="new_member">
 Add new member:<br>
@@ -72,7 +75,7 @@ city: <input type="text" name="city" value="<%= @city %>"><br>
 <% end -%>
 
 <script>
-var curid1 = <%= @community.id %>;
+var curid1 = <%= @focus.id %>;
 var geo_levels = {1: 'city', 2: 'metro', 3: 'state', 4: 'nation', 5: 'planet'};
 var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 5 %>;
 function per_reload() {

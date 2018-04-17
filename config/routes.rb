@@ -149,6 +149,9 @@ Rails.application.routes.draw do
     get :admins, :on => :member
     post :admin_add, :on => :member
     delete :admin_del, :on => :member
+    get :sublist, :on => :member
+    post :sub_add, :on => :member
+    delete :sub_del, :on => :member
     post :member_add, :on => :member
     delete :member_del, :on => :member
     get :invite, :on => :member

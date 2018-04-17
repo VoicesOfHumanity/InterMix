@@ -1,0 +1,53 @@
+<%= render(:partial => 'topmenu')%>
+<%= render(:partial => 'infomenu')%>
+
+<h3><%=raw @sub.fullname %></h3>
+
+<p><b>Short Name:</b> <%= @sub.tagname %></p>
+
+<p>Subcommunity of <a href="/communities/<%= @community.id %>"><%= @community.fullname %></a></p>
+
+<% if @sub.logo.exists? then -%>
+<p><img src="<%= @sub.logo.url %>" style="max-width:600px;max-height:300px"></p>
+<% else %>
+<p>[no logo]</p>
+<% end -%>
+
+<p><b>Description:</b> <%=raw @sub.description %></p>
+
+
+<table style="width:260px">
+<tr><td>New posts last 30 days:</td><td><%= @data['new_posts'] %></td></tr>
+<tr><td>Community membership:</td><td><%= @data['num_members'] %></td></tr>
+<tr><td>Nations represented:</td><td><%= @data['nation_count'] %></td></tr>
+<tr><td>States/provinces:</td><td><%= @data['state_count'] %></td></tr>
+<tr><td>Metro areas:</td><td><%= @data['metro_count'] %></td></tr>
+<tr><td>Cities/towns:</td><td><%= @data['city_count'] %></td></tr>
+</table>
+
+<button onclick="joinleave();return(false)" id="comtagjoin"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
+
+
+<script>
+	function joinleave() {
+      var comtag = '<%= @comtag %>';
+      var id = <%= @community.id %>;
+	  var which = $('#comtagjoin').html();
+	  var data = {
+	    'comtag': comtag,
+	    'which': which,
+	  };
+		$.ajax({
+	    type: 'GET',
+		  url: '/me/comtag',
+		  data: data,
+		  complete: function(t){ 
+	      if (which=='join') {
+			$('#comtagjoin').html('leave')
+	      } else {
+			  $('#comtagjoin').html('join')
+	      }
+	      }
+		});
+	}	
+</script>	

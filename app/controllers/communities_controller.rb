@@ -30,7 +30,7 @@ class CommunitiesController < ApplicationController
     end
 
     if params[:which].to_s == 'all' or current_participant.tag_list.length == 0
-      communities = Community.all
+      communities = Community.where(is_sub: false)
       @csection = 'all'      
     else
       comtag_list = ''
@@ -39,7 +39,7 @@ class CommunitiesController < ApplicationController
         comtags[tag] = true
       end
       @comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
-      communities = Community.where("tagname in (#{@comtag_list})")
+      communities = Community.where(is_sub: false).where("tagname in (#{@comtag_list})")
       @csection = 'my'      
     end
 
@@ -67,6 +67,20 @@ class CommunitiesController < ApplicationController
     #-- The info page
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
+    if @community.is_sub
+      @sub_id = params[:id].to_i
+      @sub = Community.find(@sub_id)
+      @subtag = @sub.tagname
+      @community_id = @sub.sub_of
+      @community = Community.find(@community_id)
+      focus = @sub
+      is_sub = true
+    else
+      focus = @community
+      @subcommunities = Community.where(sub_of: @community_id)
+      is_sub = false
+    end
+    
     @comtag = @community.tagname   
     session[:curcomtag] = @comtag 
     session[:curcomid] = @community_id 
@@ -74,25 +88,43 @@ class CommunitiesController < ApplicationController
     @csection = 'info'
     
     @data = {}
-    @data['new_posts'] = @community.activity_count
-    @data['num_members'] = @community.member_count
-    geo = @community.geo_counts
+    @data['new_posts'] = focus.activity_count
+    @data['num_members'] = focus.member_count
+    geo = focus.geo_counts
     logger.info("communities#show geo: #{geo.inspect}")
     @data['nation_count'] = geo[:nations]
     @data['state_count'] = geo[:states]
     @data['metro_count'] = geo[:metros]
     @data['city_count'] = geo[:cities]
+    
+    if is_sub
+      render action: :sub_show
+    else
+      render action: :show
+    end
   end
   
   def members
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
+    if @community.is_sub
+      @sub_id = params[:id].to_i
+      @sub = Community.find(@sub_id)
+      @subtag = @sub.tagname
+      @community_id = @sub.sub_of
+      @community = Community.find(@community_id)
+      @focus = @sub
+      is_sub = true
+    else
+      @focus = @community
+      @subcommunities = Community.where(sub_of: @community_id)
+      is_sub = false
+    end
     @comtag = @community.tagname
     session[:curcomtag] = @comtag 
     session[:curcomid] = @community_id 
     @section = 'communities'
     @csection = 'members'
-
 
     prepare_members
     
@@ -194,6 +226,8 @@ class CommunitiesController < ApplicationController
     
     @members = Participant.where(status: 'active', no_email: false).tagged_with(@comtag)
     
+    @subcommunities = Community.where(sub_of: @community_id)
+    
   end
   
   def update
@@ -283,6 +317,51 @@ class CommunitiesController < ApplicationController
     end
     admins
   end
+
+  def sublist
+    #-- Return a list of the sub-communities for this community, as part of the edit page
+    @community_id = params[:id].to_i
+    @community = Community.find(@community_id)
+    @comtag = @community.tagname   
+    @subcommunities = Community.where(sub_of: @community_id)
+    render :partial=>"sublist", :layout=>false
+  end  
+  
+  def sub_add
+    #-- Add a sub-community
+    @community_id = params[:id].to_i
+    @community = Community.find_by_id(@community_id)
+    @tagname = params[:tagname].strip.gsub(/[^0-9A-za-z_]/,'').downcase
+    
+    scommunity = Community.where(tagname: @tagname).first
+    if not @is_admin
+      @submessage = "You're not allowed to do that"
+    elsif @tagname == ''
+      @submessage = "That's not a valid short name"
+    elsif scommunity
+      @submessage = "There's already a @#{@tagname} community"
+    else
+      scommunity = Community.create(tagname: @tagname, fullname: @tagname, is_sub: true, sub_of: @community_id)      
+    end
+
+    sublist    
+  end 
+  
+  def sub_del 
+    #-- Remove a sub-community
+    @community_id = params[:id].to_i
+    sub_ids = params[:sub_ids]
+    for sub_id in sub_ids
+      scommunity = Community.where(id: sub_id, is_sub: true, sub_of: @community_id).first
+      if @is_admin and scommunity
+        scommunity.destroy
+      else  
+        @submessage = "You're not allowed to do that"
+      end
+    end
+    sublist
+  end
+  
 
   def member_add
     #-- Add a member. I.e. join them to that community

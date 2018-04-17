@@ -1,0 +1,10 @@
+<% if @submessage.to_s !='' -%>
+<p><%= @submessage %></p>
+<% end -%>
+<% if @subcommunities.length > 0 -%>
+    <% for sub in @subcommunities -%>
+        <input type="checkbox" name="markall" class="submark" title="select" value="<%= sub.id %>" /> @<%= sub.tagname %>: <%= sub.fullname %><br>
+    <% end -%>
+<% else -%>
+    none
+<% end -%>

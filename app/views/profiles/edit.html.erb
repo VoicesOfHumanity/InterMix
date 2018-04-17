@@ -101,7 +101,7 @@
         <% checked = @participant.tag_list.include?(com.tagname) ? 'checked' : '' %>
         <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
         <% end -%>  
-        </div>  
+      </div>  
         
         <% if false -%>
           <% GLOBAL_COMMUNITIES.each do |tag| -%>
@@ -120,8 +120,7 @@
               <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
               <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
             <% end -%>
-            <% end -%>
-        </div>
+          <% end -%>
       </div>
     </li>  
     
