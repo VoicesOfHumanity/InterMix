@@ -234,6 +234,7 @@ class CommunitiesController < ApplicationController
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
     @community.update_attributes(community_params)
+    @community.description = sanitizethis(@community.description).strip
     @community.save
     # fix autotags
     if @community.autotags.to_s != ''
