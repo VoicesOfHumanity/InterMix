@@ -33,7 +33,7 @@
 <p><b>Moderators:</b><br>
 <% if @community.moderators.length > 0 -%>
     <% for mod in @community.moderators -%>
-    <%= mod.name %><br>
+    <a href="/participant/<%= mod.id %>/profile"><%= mod.name %></a><br>
     <% end -%>
 <% else -%>
     none
