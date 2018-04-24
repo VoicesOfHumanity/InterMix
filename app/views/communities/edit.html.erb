@@ -7,7 +7,9 @@
 
 	<%= f.inputs do %>
 		<%= f.input :fullname, :as => :string %>
-		<%= f.input :description, :as => :text, :input_html => {:rows => 2} %>
+    
+    <li class="text input optional" id="community_description_input"><label for="community_description" class="label">Description</label><textarea rows="2" id="community_description" name="community[description]"><%= @community.description %></textarea><br><label>&nbsp;</label>(basic HTML ok)
+    </li>
 
 		<%= f.input :logo, :as=>:file %>	
 

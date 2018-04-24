@@ -100,7 +100,7 @@ class Admin::MetamapsController < ApplicationController
     @metamap.destroy
 
     respond_to do |format|
-      format.html { render :text=>"<p>Metamap ##{params[:id]} has been deleted</p>" }
+      format.html { render plain: "<p>Metamap ##{params[:id]} has been deleted</p>" }
       format.xml  { head :ok }
     end
   end

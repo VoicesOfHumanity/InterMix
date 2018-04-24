@@ -716,11 +716,11 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
     if Item.where("is_first_in_thread=0 and first_in_thread=#{@item.id}").count > 0
       #-- It has replies, we can't delete
-      render :text => "Can't delete this item. It has replies", :layout => false
+      render plain: "Can't delete this item. It has replies"
       return
     end  
     @item.destroy
-    render :text => "The item has been deleted", :layout => false    
+    render plain: "The item has been deleted"    
   end  
   
   def view

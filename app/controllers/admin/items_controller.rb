@@ -120,7 +120,7 @@ class Admin::ItemsController < ApplicationController
     @item.destroy
 
     respond_to do |format|
-      format.html { render :text=>"<p>Item ##{params[:id]} has been deleted</p>" }
+      format.html { render plain: "<p>Item ##{params[:id]} has been deleted</p>" }
       format.xml  { head :ok }
     end
   end

@@ -850,7 +850,7 @@ class DialogsController < ApplicationController
     
     else
     
-      render :text => ''
+      render plain: ''
     
     end
     
@@ -2434,7 +2434,7 @@ class DialogsController < ApplicationController
       template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
     end      
     template = Liquid::Template.parse(template_content)
-    render :text => template.render(cdata), :layout=>'front'
+    render inline: template.render(cdata), :layout=>'front'
   end
 
   def get_period_default
@@ -2485,7 +2485,7 @@ class DialogsController < ApplicationController
       template_content = render_to_string(:partial=>"period_#{which}_default",:layout=>false)
     end      
     template = Liquid::Template.parse(template_content)
-    render :text => template.render(cdata), :layout=>'front'
+    render inline: template.render(cdata), layout: 'front'
   end
   
   def set_show_previous
@@ -2496,7 +2496,7 @@ class DialogsController < ApplicationController
       @showing_previous = false
     end
     session[:showing_previous] = @showing_previous
-    render :text => (@showing_previous ? "1" : "0")
+    render plain: (@showing_previous ? "1" : "0")
   end
   
   protected 

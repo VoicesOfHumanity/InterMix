@@ -109,7 +109,7 @@ class Admin::GroupsController < ApplicationController
     @group.destroy
 
     respond_to do |format|
-      format.html { render :text=>"<p>Group ##{params[:id]} has been deleted</p>" }
+      format.html { render plain: "<p>Group ##{params[:id]} has been deleted</p>" }
       format.xml  { head :ok }
     end
   end

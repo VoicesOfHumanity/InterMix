@@ -8,7 +8,7 @@ module DialogsHelper
     end      
     cdata = {'dialog'=>dialog,'period'=>period}
     template = Liquid::Template.parse(template_content)
-    render :text => template.render(cdata)    
+    render plain: template.render(cdata)    
   end
   
 end

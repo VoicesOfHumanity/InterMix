@@ -728,16 +728,16 @@ class FrontController < ApplicationController
       redirect_to "//#{@group.shortname}.#{ROOTDOMAIN}/"
       return
     elsif @group.openness == 'private'
-      render :text=>"This is a private group", :layout => 'front'
+      render inline: "This is a private group", :layout => 'front'
       return
     elsif @group.openness == 'by_invitation_only'
-      render :text=>"You have to be invited to join this group", :layout => 'front'
+      render inline: "You have to be invited to join this group", :layout => 'front'
       return
     elsif @group.openness == 'open_to_apply'
       #render :text=>"You can apply to join this group", :layout => 'front'
       #return
     elsif @group.openness != 'open'
-      render :text=>"This group is not open to join directly", :layout => 'front'
+      render inline: "This group is not open to join directly", :layout => 'front'
       return
     end
     
@@ -1787,9 +1787,9 @@ class FrontController < ApplicationController
     @code = params[:code]
     help_text = HelpText.find_by_code(@code)
     if help_text
-      render :text => help_text.text, :layout=>false
+      render plain: help_text.text
     else
-      render :text => "not found", :layout=>false
+      render plain: "not found"
     end
   end 
   
@@ -1802,7 +1802,7 @@ class FrontController < ApplicationController
     else
       showtext = "Help page not found"
     end
-    render :text => showtext, :layout => 'front'
+    render inline: showtext, layout: 'front'
   end  
   
   def youarehere

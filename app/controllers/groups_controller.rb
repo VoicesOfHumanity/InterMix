@@ -1268,7 +1268,7 @@ class GroupsController < ApplicationController
       template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
     end      
     template = Liquid::Template.parse(template_content)
-    render :text => template.render(cdata), :layout=>'front'
+    render inline: template.render(cdata), :layout=>'front'
   end
   
   def twitauth

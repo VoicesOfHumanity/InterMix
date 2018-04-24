@@ -104,7 +104,7 @@ class Admin::CommunitiesController < ApplicationController
     @community.destroy
 
     respond_to do |format|
-      format.html { render :text=>"<p>Community ##{params[:id]} has been deleted</p>" }
+      format.html { render plain: "<p>Community ##{params[:id]} has been deleted</p>" }
       format.xml  { head :ok }
     end
   end

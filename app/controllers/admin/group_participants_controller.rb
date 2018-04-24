@@ -92,7 +92,7 @@ class Admin::GroupParticipantsController < ApplicationController
     @group_participant.destroy
 
     respond_to do |format|
-      format.html { render :text=>"<p>Participant has been removed from group</p>" }
+      format.html { render plain: "<p>Participant has been removed from group</p>" }
       format.xml  { head :ok }
     end
   end

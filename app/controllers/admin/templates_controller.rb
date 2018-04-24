@@ -107,7 +107,7 @@ class Admin::TemplatesController < ApplicationController
     @template.destroy
 
     respond_to do |format|
-      format.html { render :text=>"<p>Template ##{params[:id]} has been deleted</p>" }
+      format.html { render plain: "<p>Template ##{params[:id]} has been deleted</p>" }
       format.xml  { head :ok }
     end
   end

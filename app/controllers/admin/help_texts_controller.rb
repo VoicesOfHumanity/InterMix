@@ -79,7 +79,7 @@ class Admin::HelpTextsController < ApplicationController
 
       respond_to do |format|
         if @help_text.save
-          format.html { render :partial=>'show', :layout=>false, :notice => 'Hub was successfully created.' }
+          format.html { render :partial=>'show', :layout=>false, :notice => 'Help was successfully created.' }
           format.xml  { render :xml => @help_text, :status => :created, :location => @help_text }
         else
           format.html { render :partial=>'edit', :layout=>false }
@@ -95,7 +95,7 @@ class Admin::HelpTextsController < ApplicationController
 
       respond_to do |format|
         if @help_text.update_attributes(params[:help_text])
-          format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
+          format.html { render :partial=>'show', :layout=>false, :notice => 'Help was successfully updated.' }
           format.xml  { head :ok }
         else
           format.html { render :partial => "edit", :layout=>false }
@@ -111,7 +111,7 @@ class Admin::HelpTextsController < ApplicationController
       @help_text.destroy
 
       respond_to do |format|
-        format.html { render :text=>"<p>Hub ##{params[:id]} has been deleted</p>" }
+        format.html { render plain: "<p>Help ##{params[:id]} has been deleted</p>" }
         format.xml  { head :ok }
       end
     end
