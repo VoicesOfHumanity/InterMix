@@ -2,7 +2,7 @@
 
 <h3>Discussions</h3>
 
-<p>InterMix discussions may have multiple participating groups. This capability to exchange messages across group lines distinguishes InterMix from other forms of social media. Please read the <a href="http://www.intermix.org/intermixhelp.htm" target="/blank">HELP!</a></p>
+<p>InterMix discussions may have multiple participating groups. This capability to exchange messages across group lines distinguishes InterMix from other forms of social media. Please read the <a href="https://www.intermix.org/intermixhelp.htm" target="/blank">HELP!</a></p>
 
 <% if @group -%>
 
@@ -30,7 +30,7 @@
 	<li><a href="//<%= dom %>/dialogs/<%= dialog.id %>/slider"><%= dialog.name %></a>&nbsp;&nbsp;&nbsp;
 		<a href="//<%= dom %>/dialogs/<%= dialog.id %>/view#participatinggroups">participating groups</a>&nbsp;&nbsp;&nbsp;
 		<a href="//<%= dom %>/dialogs/<%= dialog.id %>/view">info</a>
-		<% if @admin4.include?(dialog.id) then %><a href="http://<%= dom %>/dialogs/<%= dialog.id %>/edit">edit</a><% end -%>
+		<% if @admin4.include?(dialog.id) then %><a href="https://<%= dom %>/dialogs/<%= dialog.id %>/edit">edit</a><% end -%>
 	</li>
 	<% end -%>
 	</ul>

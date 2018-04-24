@@ -284,7 +284,7 @@ class CommunitiesController < ApplicationController
       @cdata = {}
       @cdata['current_participant'] = current_participant
       @cdata['community'] = @community if @community
-      @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+      @cdata['community_logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
       @cdata['logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
       @cdata['email'] = participant.email
       @cdata['comlink'] = "https://#{BASEDOMAIN}/communities/#{@community.id}?auth_token=#{participant.authentication_token}"
@@ -482,7 +482,7 @@ class CommunitiesController < ApplicationController
       @cdata['current_participant'] = current_participant
       @cdata['recipient'] = @recipient
       @cdata['community'] = @community if @community
-      @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+      @cdata['community_logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
       @cdata['logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
       @cdata['email'] = participant.email
       @cdata['comlink'] = "https://#{BASEDOMAIN}/communities/#{@community.id}?auth_token=#{participant.authentication_token}"
@@ -546,8 +546,8 @@ class CommunitiesController < ApplicationController
     @cdata = {}
     @cdata['current_participant'] = current_participant
     @cdata['community'] = @community if @community
-    @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
-    @cdata['logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    @cdata['community_logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    @cdata['logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
 
     if not ( @is_admin )
       flash[:alert] += "You're not allowed to invite new members<br>"
@@ -566,7 +566,7 @@ class CommunitiesController < ApplicationController
           flash[:alert] += "\"#{email}\" doesn't look like a valid e-mail address<br>"  
         else
           @cdata['email'] = email
-          @cdata['joinlink'] = "http://#{BASEDOMAIN}/fbjoinlink?comtag=#{@community.tagname}&amp;joincom=1&amp;email=#{email}"
+          @cdata['joinlink'] = "https://#{BASEDOMAIN}/fbjoinlink?comtag=#{@community.tagname}&amp;joincom=1&amp;email=#{email}"
 
           if @messtext.to_s != ''
             template = Liquid::Template.parse(@messtext)
@@ -602,7 +602,7 @@ class CommunitiesController < ApplicationController
     which = params[:which]
     @community_id = params[:id].to_i
     @community = Community.find_by_id(@community_id)
-    @logo = @community.logo.exists? ? "http://#{BASEDOMAIN}#{@community.logo.url}" : "" 
+    @logo = @community.logo.exists? ? "https://#{BASEDOMAIN}#{@community.logo.url}" : "" 
     @participant = current_participant
     @email = @participant.email
     @name = @participant.name
@@ -615,7 +615,7 @@ class CommunitiesController < ApplicationController
     cdata['current_participant'] = @current_participant
     cdata['recipient'] = @participant
     cdata['password'] = '[#@$#$%$^]'
-    cdata['confirmlink'] = "http://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
+    cdata['confirmlink'] = "https://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
     cdata['logo'] = @logo
     cdata['message'] = '[Custom message]'    
     cdata['subject'] = '[Subject line]'
@@ -673,8 +673,8 @@ class CommunitiesController < ApplicationController
     end
     @cdata = {}
     @cdata['community'] = @community
-    @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
-    @cdata['logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    @cdata['community_logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    @cdata['logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
     if @community.front_template.to_s.strip != ''
       desc = Liquid::Template.parse(@community.front_template).render(@cdata)
     else   

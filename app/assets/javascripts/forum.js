@@ -1005,7 +1005,7 @@ function mediachange(media) {
 		$('#mediatitle2').html("<b>or grab from URL</b>");
 		$('#item_media_type').val('picture');
 		if ($('#item_link').val()=='') {
-			$('#item_link').val("http://");
+			$('#item_link').val("https://");
 		}
 	} else {
 		$('#mediatitle2').html("<b>Message</b>");

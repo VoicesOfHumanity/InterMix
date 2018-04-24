@@ -421,8 +421,8 @@ class GroupsController < ApplicationController
     @cdata = {}
     @cdata['current_participant'] = current_participant
     @cdata['group'] = @group if @group
-    @cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
-    @cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    @cdata['group_logo'] = "https://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    @cdata['logo'] = "https://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
 
     @member_id = @follow_id if @follow_id > 0
@@ -454,14 +454,14 @@ class GroupsController < ApplicationController
           flash[:alert] += "\"#{email}\" doesn't look like a valid e-mail address<br>"  
         else
           @cdata['email'] = email
-          @cdata['joinlink'] = "http://#{@cdata['domain']}/gjoin?group_id=#{@group.id}&amp;email=#{email}"
+          @cdata['joinlink'] = "https://#{@cdata['domain']}/gjoin?group_id=#{@group.id}&amp;email=#{email}"
 
           if @messtext.to_s != ''
             template = Liquid::Template.parse(@messtext)
             html_content = template.render(@cdata)
           else
             html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join the group: #{@group.name}<br/>"
-            html_content += "Go <a href=\"http://#{@group.shortname}.#{ROOTDOMAIN}/gjoin?group_id=#{@group.id}&email=#{email}\">here</a> to fill in your information and join.<br>"
+            html_content += "Go <a href=\"https://#{@group.shortname}.#{ROOTDOMAIN}/gjoin?group_id=#{@group.id}&email=#{email}\">here</a> to fill in your information and join.<br>"
             html_content += "</p>"            
           end
         
@@ -506,9 +506,9 @@ class GroupsController < ApplicationController
       @cdata['item'] = @item
       @cdata['recipient'] = @recipient     
       @cdata['participant'] = @recipient 
-      @cdata['joinlink'] = "http://#{@cdata['domain']}/groups/#{@group.id}/invitejoin?auth_token=#{@recipient.authentication_token}"
+      @cdata['joinlink'] = "https://#{@cdata['domain']}/groups/#{@group.id}/invitejoin?auth_token=#{@recipient.authentication_token}"
 
-      xmesstext = @messtext + "<hr><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@recipient.authentication_token}\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view?auth_token=#{@recipient.authentication_token}\">#{@group.name}</a>"
+      xmesstext = @messtext + "<hr><a href=\"https://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@recipient.authentication_token}\">#{current_participant.name}</a> has invited you to join the group <a href=\"http://#{BASEDOMAIN}/groups/#{@group.id}/view?auth_token=#{@recipient.authentication_token}\">#{@group.name}</a>"
 
       if xmesstext.to_s != ''
         template = Liquid::Template.parse(xmesstext)
@@ -655,7 +655,7 @@ class GroupsController < ApplicationController
           flash[:notice] += "- unconfirmed member. Now set to confirmed<br>"
         end
         #password = "[as entered]"
-        password = "<a href=\"http://#{@group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN}/participants/password/new\">Forgot your password?</a>"
+        password = "<a href=\"https://#{@group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN}/participants/password/new\">Forgot your password?</a>"
       else
         participant = Participant.new
         participant.first_name = first_name
@@ -784,7 +784,7 @@ class GroupsController < ApplicationController
         cdata['participant'] = participant 
         cdata['current_participant'] = current_participant
         cdata['group'] = @group if @group
-        cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+        cdata['group_logo'] = "https://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
         cdata['domain'] = @group.shortname.to_s!='' ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
         if @group.logo.exists? then
          cdata['logo'] = "#{BASEDOMAIN}#{@group.logo.url}"

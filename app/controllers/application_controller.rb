@@ -191,9 +191,9 @@ class ApplicationController < ActionController::Base
     end
     
     if session[:cur_prefix] != ''
-      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+      session[:cur_baseurl] = "https://" + session[:cur_prefix] + "." + ROOTDOMAIN    
     else
-      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+      session[:cur_baseurl] = "https://" + BASEDOMAIN    
     end
     logger.info("application#after_sign_in_path_for cur_baseurl:#{session[:cur_baseurl]}")
 
@@ -295,9 +295,9 @@ class ApplicationController < ActionController::Base
     end
     
     if session[:cur_prefix] != ''
-      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+      session[:cur_baseurl] = "https://" + session[:cur_prefix] + "." + ROOTDOMAIN    
     else
-      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+      session[:cur_baseurl] = "https://" + BASEDOMAIN    
     end
     logger.info("application#after_token_authentication cur_baseurl:#{session[:cur_baseurl]}")
     
@@ -320,7 +320,7 @@ class ApplicationController < ActionController::Base
         end
       end
       if xsub != 'voh'
-        new_url =  "http://voh.#{ROOTDOMAIN}#{request.fullpath}"
+        new_url =  "https://voh.#{ROOTDOMAIN}#{request.fullpath}"
         redirect_to new_url
         return true
       end
@@ -391,7 +391,7 @@ class ApplicationController < ActionController::Base
     logger.info("application#get_group_dialog_from_subdomain group:#{session[:group_id]}/#{session[:group_prefix]} dialog:#{session[:dialog_id]}/#{session[:dialog_prefix]}")    
     if session[:dialog_prefix].to_s != '' and session[:group_prefix].to_s != ''
       session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
-      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+      session[:cur_baseurl] = "https://" + session[:cur_prefix] + "." + ROOTDOMAIN    
     end
     
     return @group_id, @dialog_id
@@ -455,9 +455,9 @@ class ApplicationController < ActionController::Base
       session[:cur_prefix] = session[:dialog_prefix]
     end
     if session[:cur_prefix].to_s != ''
-      session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+      session[:cur_baseurl] = "https://" + session[:cur_prefix] + "." + ROOTDOMAIN    
     else
-      session[:cur_baseurl] = "http://" + BASEDOMAIN    
+      session[:cur_baseurl] = "https://" + BASEDOMAIN    
     end
     if was_missing and session[:group_id].to_i > 0
       #-- We set something

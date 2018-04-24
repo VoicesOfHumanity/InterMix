@@ -23,7 +23,7 @@
 		  <% if gp.group.dialogs.length > 0 -%>
     	  <% for dialog in gp.group.dialogs -%>
     	    <% ddom = Rails.env == 'development' ? 'intermix.dev:3002' : (dialog.shortname + '.' + dom) %>
-    		  <br>&nbsp;&nbsp;&nbsp;&nbsp;Group Discussion: <a href="http://<%= ddom %>/dialogs/<%= dialog.id %>/slider?group_id=<%= gp.group.id %>"><%= dialog.name %></a>
+    		  <br>&nbsp;&nbsp;&nbsp;&nbsp;Group Discussion: <a href="https://<%= ddom %>/dialogs/<%= dialog.id %>/slider?group_id=<%= gp.group.id %>"><%= dialog.name %></a>
     	  <% end -%>
     	<% end -%>
 		</li>

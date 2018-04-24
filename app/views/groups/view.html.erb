@@ -52,7 +52,7 @@
 <p><b>Has mailing list:</b> <%= @group.has_mail_list ? 'yes' : 'no' %></p>
 
 <% if @group.twitter_post and @group.twitter_username.to_s != '' and @group.twitter_oauth_token.to_s != '' -%>
-<p><b>Twitter:</b> <%= @group.tweet_what == 'roots' ? 'Root' : 'All' %> posts with a minumum of <%= @group.tweet_approval_min.to_i %> positive approval ratings will be posted on <a href="http://twitter.com/<%= @group.twitter_username %>" target="_blank">twitter.com/<%= @group.twitter_username %></a><%= " with the hashtag ##{@group.twitter_hash_tag}" if @group.twitter_hash_tag %></p> 
+<p><b>Twitter:</b> <%= @group.tweet_what == 'roots' ? 'Root' : 'All' %> posts with a minumum of <%= @group.tweet_approval_min.to_i %> positive approval ratings will be posted on <a href="https://twitter.com/<%= @group.twitter_username %>" target="_blank">twitter.com/<%= @group.twitter_username %></a><%= " with the hashtag ##{@group.twitter_hash_tag}" if @group.twitter_hash_tag %></p> 
 <% end -%> 
 
 <p><b>Discussions:</b>
