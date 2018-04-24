@@ -30,7 +30,7 @@ class RegistrationsController < Devise::RegistrationsController
     if @participant 
       previous_messages = Item.where("posted_by=? and dialog_id=?",@participant.id,@dialog.id).count
       if @dialog.max_messages > 0 and @message.length > 0 and previous_messages >= @dialog.max_messages
-        flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: http://#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
+        flash[:alert] = "You have already posted a message to this discussion before.<br>You can see the messages when you log in at: https://#{@dialog.shortname}.#{ROOTDOMAIN}/<br>"
       elsif @message.length == 0
         flash[:notice] = "You already have an account<br>"
       else

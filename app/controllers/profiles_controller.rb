@@ -441,7 +441,7 @@ class ProfilesController < ApplicationController
     #-- http://blog.brijeshshah.com/integrate-twitter-oauth-in-your-rails-application/comment-page-1/
      
     #-- Acquire a request token
-    @request_token = ProfilesController.twitconsumer.get_request_token(:oauth_callback => "http://#{BASEDOMAIN}/me/twitcallback")
+    @request_token = ProfilesController.twitconsumer.get_request_token(:oauth_callback => "https://#{BASEDOMAIN}/me/twitcallback")
     session[:rtoken] = @request_token.token
     session[:rsecret] = @request_token.secret
     authorize_url = @request_token.authorize_url    # "http://api.twitter.com/oauth/authorize?oauth_token=your_request_token"
@@ -554,8 +554,8 @@ class ProfilesController < ApplicationController
     @cdata = {}
     @cdata['current_participant'] = current_participant
     @cdata['group'] = @group if @group
-    @cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
-    @cdata['logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    @cdata['group_logo'] = "https://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    @cdata['logo'] = "https://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @cdata['domain'] = Rails.env!='development' ? "voh.#{ROOTDOMAIN}" : "#{BASEDOMAIN}"
 
     #-- Some non-members, supposedly. But catch if some of them already are members.
@@ -572,7 +572,7 @@ class ProfilesController < ApplicationController
         flash[:notice] += "\"#{email}\" doesn't look like a valid e-mail address<br>"  
       else
         @cdata['email'] = email
-        @cdata['joinlink'] = "http://#{@cdata['domain']}/djoin?email=#{email}"
+        @cdata['joinlink'] = "https://#{@cdata['domain']}/djoin?email=#{email}"
 
         if @messtext.to_s != ''
           template = Liquid::Template.parse(@messtext)

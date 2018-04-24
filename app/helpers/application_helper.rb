@@ -10,8 +10,8 @@ module ApplicationHelper
     
     # <img alt="" src="http://intermix.dev:3002/ckeditor_assets/pictures/14/content_jjetu1x.jpg" style="height:218px; width:300px">
     
-    newhtml.gsub!(/http:\/\/intermix\./im,'//intermix.')
-    newhtml.gsub!(/http:\/\/voh\.intermix\./im,'//voh.intermix.')
+    newhtml.gsub!(/https:\/\/intermix\./im,'//intermix.')
+    newhtml.gsub!(/https:\/\/voh\.intermix\./im,'//voh.intermix.')
         
     return newhtml
   end

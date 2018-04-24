@@ -254,7 +254,7 @@ class ItemsController < ApplicationController
     #-- screen for a new item, either new thread or a reply
     @from = params[:from] || ''
     @reply_to = params[:reply_to].to_i
-    @item = Item.new(:media_type=>'text',:link=>'http://',:reply_to=>@reply_to,html_content: '')
+    @item = Item.new(:media_type=>'text',:link=>'https://',:reply_to=>@reply_to,html_content: '')
     @item.geo_level = params[:geo_level] if params[:geo_level].to_s != ''
     @items_length = params[:items_length].to_i
     @subgroup = params[:subgroup].to_s
@@ -536,7 +536,7 @@ class ItemsController < ApplicationController
   def create
     @from = params[:from] || ''
     @item = Item.new(item_params)
-    @item.link = '' if @item.link == 'http://'
+    @item.link = '' if @item.link == 'https://'
     @item.item_type = 'message'
     @item.posted_by = current_participant.id
     @item.geo_level = params[:geo_level] if params[:geo_level]
@@ -679,7 +679,7 @@ class ItemsController < ApplicationController
   def update
     @from = params[:from] || ''
     @item = Item.find(params[:id])
-    @item.link = '' if @item.link == 'http://'
+    @item.link = '' if @item.link == 'https://'
     
     @item.assign_attributes(item_params)
     
@@ -2109,9 +2109,9 @@ class ItemsController < ApplicationController
       session[:dialog_name] = ''
       session[:dialog_prefix] = ''
       if session[:cur_prefix] != ''
-        session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+        session[:cur_baseurl] = "https://" + session[:cur_prefix] + "." + ROOTDOMAIN    
       else
-        session[:cur_baseurl] = "http://" + BASEDOMAIN    
+        session[:cur_baseurl] = "https://" + BASEDOMAIN    
       end
     end
     if @dialog
@@ -2126,9 +2126,9 @@ class ItemsController < ApplicationController
         session[:cur_prefix] = session[:dialog_prefix]
       end
       if session[:cur_prefix] != ''
-        session[:cur_baseurl] = "http://" + session[:cur_prefix] + "." + ROOTDOMAIN    
+        session[:cur_baseurl] = "https://" + session[:cur_prefix] + "." + ROOTDOMAIN    
       else
-        session[:cur_baseurl] = "http://" + BASEDOMAIN    
+        session[:cur_baseurl] = "https://" + BASEDOMAIN    
       end
     end 
   end

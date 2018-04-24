@@ -90,11 +90,11 @@ class PeopleController < ApplicationController
         #-- Send as an e-mail. emailit is found in the application controller 
         @message = Message.new
         @message.subject = "#{current_participant.name} is now following you"
-        @message.message = "<p><a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@participant.authentication_token}\">#{current_participant.name}</a> is now following you</p>"
+        @message.message = "<p><a href=\"https://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@participant.authentication_token}\">#{current_participant.name}</a> is now following you</p>"
         if @they_following
           @message.message += "<p>You are already following #{current_participant.them}.</p>"
         else  
-          @message.message += "<p>You can <a href=\"http://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@participant.authentication_token}\">follow #{current_participant.them} back</a>, if you want.</p>"
+          @message.message += "<p>You can <a href=\"https://#{BASEDOMAIN}/participant/#{current_participant.id}/profile?auth_token=#{@participant.authentication_token}\">follow #{current_participant.them} back</a>, if you want.</p>"
         end
         @message.to_participant_id = @participant.id
         @message.from_participant_id = 0

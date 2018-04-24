@@ -646,8 +646,8 @@ class CommunitiesController < ApplicationController
     end
     @cdata = {}
     @cdata['community'] = @community
-    @cdata['community_logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
-    @cdata['logo'] = "http://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    @cdata['community_logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
+    @cdata['logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
     if @community.front_template.to_s.strip != ''
       desc = Liquid::Template.parse(@community.front_template).render(@cdata)
     else   

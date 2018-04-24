@@ -1159,7 +1159,7 @@ class GroupsController < ApplicationController
     
     if status_before == 'applied' and @group_participant.status == 'active'
       #-- They've been accepted to the group. Let them know.
-      html_content = "<p>Your membership of #{@group.name} has been accepted! You can now go to: <a href=\"http://#{domain}/groups/#{@group.id}/forum?auth_token=#{@participant.authentication_token}\">http://#{domain}/groups/#{@group.id}/forum</a> to see the messages.</p>"
+      html_content = "<p>Your membership of #{@group.name} has been accepted! You can now go to: <a href=\"https://#{domain}/groups/#{@group.id}/forum?auth_token=#{@participant.authentication_token}\">http://#{domain}/groups/#{@group.id}/forum</a> to see the messages.</p>"
       email = @participant.email
       msubject = "[#{@group.shortname}] You're now a member of #{@group.name}"
       email = SystemMailer.generic(SYSTEM_SENDER, @participant.email_address_with_name, msubject, html_content, {})
@@ -1220,7 +1220,7 @@ class GroupsController < ApplicationController
     @group_id = params[:id]
     @group = Group.find_by_id(@group_id)
     @domain = (@group and @group.shortname.to_s!='') ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
-    @logo = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    @logo = "https://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @participant = current_participant
     @email = @participant.email
     @name = @participant.name
@@ -1247,15 +1247,15 @@ class GroupsController < ApplicationController
     cdata = {}
     cdata['group'] = @group
     cdata['dialog'] = @dialog if @dialog
-    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group and @group.logo.exists?
-    cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
+    cdata['group_logo'] = "https://#{BASEDOMAIN}#{@group.logo.url}" if @group and @group.logo.exists?
+    cdata['dialog_logo'] = "https://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
     cdata['dialog_group'] = @dialog_group if @dialog_group
     cdata['participant'] = @participant
     cdata['current_participant'] = @current_participant
     cdata['recipient'] = @participant
     cdata['domain'] = @domain
     cdata['password'] = '[#@$#$%$^]'
-    cdata['confirmlink'] = "http://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
+    cdata['confirmlink'] = "https://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
     cdata['logo'] = @logo if @logo
     cdata['countries'] = @countries
     cdata['meta'] = @meta

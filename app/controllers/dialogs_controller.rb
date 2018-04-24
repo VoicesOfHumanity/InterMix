@@ -2460,7 +2460,7 @@ class DialogsController < ApplicationController
   	else
   		@domain = "#{BASEDOMAIN}"
   	end
-    @logo = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
+    @logo = "https://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
     @participant = current_participant
     @email = @participant.email
     @name = @participant.name
@@ -2469,14 +2469,14 @@ class DialogsController < ApplicationController
     cdata['group'] = @group if @group
     cdata['period'] = @period if @period
     cdata['dialog'] = @dialog if @dialog
-    cdata['group_logo'] = "http://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
-    cdata['dialog_logo'] = "http://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
+    cdata['group_logo'] = "https://#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    cdata['dialog_logo'] = "https://#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
     cdata['dialog_group'] = @dialog_group if @dialog_group
     cdata['participant'] = @participant
     cdata['recipient'] = @participant
     cdata['domain'] = @domain
     cdata['password'] = '[#@$#$%$^]'
-    cdata['confirmlink'] = "http://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
+    cdata['confirmlink'] = "https://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
     cdata['logo'] = @logo if @logo
       
     if @period.send("#{which}").to_s != ""
