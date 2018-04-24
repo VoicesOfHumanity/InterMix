@@ -67,19 +67,12 @@ class CommunitiesController < ApplicationController
     #-- The info page
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
+    
     if @community.is_sub
-      @sub_id = params[:id].to_i
-      @sub = Community.find(@sub_id)
-      @subtag = @sub.tagname
-      @community_id = @sub.sub_of
-      @community = Community.find(@community_id)
-      focus = @sub
-      is_sub = true
-    else
-      focus = @community
-      @subcommunities = Community.where(sub_of: @community_id)
-      is_sub = false
+      @parent = Community.find(@community.sub_of)
     end
+    
+    @subcommunities = Community.where(sub_of: @community_id)
     
     @comtag = @community.tagname   
     session[:curcomtag] = @comtag 
@@ -88,38 +81,25 @@ class CommunitiesController < ApplicationController
     @csection = 'info'
     
     @data = {}
-    @data['new_posts'] = focus.activity_count
-    @data['num_members'] = focus.member_count
-    geo = focus.geo_counts
+    @data['new_posts'] = @community.activity_count
+    @data['num_members'] = @community.member_count
+    geo = @community.geo_counts
     logger.info("communities#show geo: #{geo.inspect}")
     @data['nation_count'] = geo[:nations]
     @data['state_count'] = geo[:states]
     @data['metro_count'] = geo[:metros]
     @data['city_count'] = geo[:cities]
     
-    if is_sub
-      render action: :sub_show
-    else
+    #if is_sub
+    #  render action: :sub_show
+    #else
       render action: :show
-    end
+    #end
   end
   
   def members
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
-    if @community.is_sub
-      @sub_id = params[:id].to_i
-      @sub = Community.find(@sub_id)
-      @subtag = @sub.tagname
-      @community_id = @sub.sub_of
-      @community = Community.find(@community_id)
-      @focus = @sub
-      is_sub = true
-    else
-      @focus = @community
-      @subcommunities = Community.where(sub_of: @community_id)
-      is_sub = false
-    end
     @comtag = @community.tagname
     session[:curcomtag] = @comtag 
     session[:curcomid] = @community_id 
@@ -726,6 +706,10 @@ class CommunitiesController < ApplicationController
       @community_id = params[:id].to_i
       @community = Community.find(@community_id)
       @comtag = @community.tagname
+    end
+    
+    if @community.is_sub
+      @parent = Community.find(@community.sub_of)
     end
 
     @section = 'communities'

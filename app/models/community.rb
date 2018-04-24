@@ -12,7 +12,7 @@ class Community < ActiveRecord::Base
   attr_accessor :activity
   
   def member_count
-    Participant.tagged_with(self.tagname).count
+    Participant.tagged_with(self.tagname).where(status: 'active', no_email: false).count
   end
   
   def activity_count

@@ -5,6 +5,10 @@
 
 <p><b>Short Name:</b> <%= @community.tagname %></p>
 
+<% if @community.is_sub -%>
+<p>Subcommunity of <a href="/communities/<%= @parent.id %>"><%= @parent.fullname %></a></p>
+<% end -%>
+
 <% if @community.logo.exists? then -%>
 <p><img src="<%= @community.logo.url %>" style="max-width:600px;max-height:300px"></p>
 
