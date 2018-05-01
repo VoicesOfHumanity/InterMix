@@ -3,7 +3,9 @@
 
 <h3><%=raw @community.fullname %></h3>
 
-<p><b>Short Name:</b> <%= @community.tagname %></p>
+<p><b>Short Name:</b> <%= @community.tagname %>&nbsp;&nbsp;
+<button onclick="joinleave(<%= @comtag %>,<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
+</p>
 
 <% if @community.is_sub -%>
 <p>Subcommunity of <a href="/communities/<%= @parent.id %>"><%= @parent.fullname %></a></p>
@@ -16,7 +18,9 @@
 <p>[no logo]</p>
 <% end -%>
 
-<p><b>Description:</b> <%=raw @community.description %></p>
+<% if @community.description.to_s != '' -%>
+<p><%=raw @community.description %></p>
+<% end -%>
 
 <p><b>Sub-communities:</b></p>
 
@@ -53,8 +57,6 @@
 <tr><td>Metro areas:</td><td><%= @data['metro_count'] %></td></tr>
 <tr><td>Cities/towns:</td><td><%= @data['city_count'] %></td></tr>
 </table>
-
-<button onclick="joinleave(<%= @comtag %>,<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
 
 
 <script>
