@@ -519,6 +519,12 @@ class ProfilesController < ApplicationController
           com = Community.create(tagname: comtag)
           com.save
         end
+        while com.is_sub do
+          #-- Join all further up communities
+          parent = Community.find_by_id(com.sub_of)
+          current_participant.tag_list.add(parent.tagname)
+          com = parent
+        end
       end
     else
       current_participant.tag_list.remove(comtag)

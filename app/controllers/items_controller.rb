@@ -460,10 +460,24 @@ class ItemsController < ApplicationController
       tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*'
       tags << @comtag if @comtag.to_s != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*'
       
-      if @item.is_first_in_thread and @community and @community.autotags.to_s != ''
-        autotags = @community.autotags.gsub('#','').split(/\W+/)
-        for autotag in autotags
-          tags << autotag
+      if @item.is_first_in_thread and @community 
+        #-- Add tags for this and any parent communities
+        if @community.autotags.to_s != ''
+          autotags = @community.autotags.gsub('#','').split(/\W+/)
+          for autotag in autotags
+            tags << autotag
+          end        
+        end
+        com = @community
+        while com.is_sub do
+          parent = Community.find_by_id(com.sub_of)        
+          if parent.autotags.to_s != ''
+            autotags = parent.autotags.gsub('#','').split(/\W+/)
+            for autotag in autotags
+              tags << autotag
+            end
+          end
+          com = parent
         end
       end
     end

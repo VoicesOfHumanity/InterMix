@@ -33,13 +33,14 @@ class CommunitiesController < ApplicationController
       communities = Community.where(is_sub: false)
       @csection = 'all'      
     else
+      #-- My communities
       comtag_list = ''
       comtags = {}
       for tag in current_participant.tag_list
         comtags[tag] = true
       end
       @comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
-      communities = Community.where(is_sub: false).where("tagname in (#{@comtag_list})")
+      communities = Community.where("tagname in (#{@comtag_list})")
       @csection = 'my'      
     end
 
