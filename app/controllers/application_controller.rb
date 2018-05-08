@@ -105,22 +105,22 @@ class ApplicationController < ActionController::Base
     
   end  
 
-  def get_embedly(url)
-    #-- Look up a media link in embed.ly and return the fields:
+  def get_oembed(url)
+    #-- Look up a media link and return the fields:
     return {} if not url or url.to_s == ''
+    return {}
 
-    embedly_api = Embedly::API.new key: EMBEDLY_API_KEY, user_agent: 'Mozilla/5.0 (compatible; mytestapp/1.0; my@email.com)'
-
-    begin
-      results = embedly_api.oembed :url => url
-      if results.length > 0
-        results[0]
-      else
-        {}
-      end  
-    rescue
-      {}
-    end    
+    #embedly_api = Embedly::API.new key: EMBEDLY_API_KEY, user_agent: 'Mozilla/5.0 (compatible; mytestapp/1.0; my@email.com)'
+    #begin
+    #  results = embedly_api.oembed :url => url
+    #  if results.length > 0
+    #    results[0]
+    #  else
+    #    {}
+    #  end  
+    #rescue
+    #  {}
+    #end    
   end
   
   def sanitizethis(sometext)

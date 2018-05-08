@@ -1983,9 +1983,9 @@ class ItemsController < ApplicationController
     
     if @item.media_type == 'video' or @item.media_type == 'audio'
       if @item.link.to_s != ''
-        response = get_embedly(@item.link)
+        response = get_oembed(@item.link)
         if response
-          logger.info("items#itemprocess embedly response: #{response}")
+          logger.info("items#itemprocess oembed response: #{response}")
           @item.oembed_response = response
           if response['html'] and response['html'].to_s != ''
             @item.embed_code = response['html']
