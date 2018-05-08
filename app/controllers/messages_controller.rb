@@ -19,7 +19,12 @@ class MessagesController < ApplicationController
     @messages = Message.where(nil)
     @messages = @messages.where(:to_group_id => params[:to_group_id]) if params[:to_group_id].to_i > 0
       
-    if @inout == 'out'  
+    if @inout == 'conv'
+      @participant_id = ( params[:participant_id] || current_participant.id ).to_i
+      @participant = Participant.find(@participant_id)
+      @messages = @messages.where("(from_participant_id=#{current_participant.id} and to_participant_id=#{@participant_id}) or (from_participant_id=#{@participant_id} and to_participant_id=#{current_participant.id})")        
+      @messages = @messages.includes([:sender,:recipient])
+    elsif @inout == 'out'  
       @messages = @messages.where(:from_participant_id => current_participant.id) 
       @messages = @messages.includes([:group,:recipient])
     else
@@ -40,11 +45,36 @@ class MessagesController < ApplicationController
       render :partial=>'list', :layout=>false  
     end
   end  
+  
+  def conversation
+    # Could have been in the people controller
+    @section = 'messages'
+    @psection = 'messages'
+    @from = 'messages'
+    @participant_id = ( params[:id] || current_participant.id ).to_i
+    @participant = Participant.find(@participant_id)
+
+    @inout = params[:inout] || 'conv'
+
+    @sortby = params[:sortby] || "messages.id desc"
+    @perscr = params[:perscr].to_i || 25
+    @page = ( params[:page] || 1 ).to_i
+    @page = 1 if @page < 1
+
+    @messages = Message.where(nil)
+    
+    @messages = @messages.where("(from_participant_id=#{current_participant.id} and to_participant_id=#{@participant_id}) or (from_participant_id=#{@participant_id} and to_participant_id=#{current_participant.id})")
+    
+    @messages = @messages.order(@sortby)
+    @messages = @messages.paginate :page=>@page, :per_page => @per_page    
+    update_last_url
+  end
 
   def new
     #-- New message
     @from = params[:from] || ''
     @response_to_id = params[:response_to_id].to_i
+    @to_participant_id = params[:to_participant_id].to_i
     @message = Message.new
     @message.to_participant_id = 0
     @to_participant_name = '???'
@@ -56,8 +86,14 @@ class MessagesController < ApplicationController
         @to_participant = Participant.find_by_id(@message.to_participant_id)
         @to_participant_name = @to_participant.name if @to_participant
         @message.subject = "Re: " + @oldmessage.subject if @oldmessage.subject[0,3] != 'Re:'
-      end
+      end  
     end
+    if not @to_participant and @to_participant_id.to_i > 0
+      @to_participant = Participant.find_by_id(@to_participant_id)
+      @to_participant_name = @to_participant.name if @to_participant
+      @message.to_participant_id = @to_participant_id    
+    end
+    
     @participant = Participant.includes(:idols).find(current_participant.id)      
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)   
     @groupsadminin = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").includes(:group)          
@@ -115,6 +151,11 @@ class MessagesController < ApplicationController
           @message.sendmethod = 'email'
           @message.emailit
         end  
+        follow = Follow.where("followed_id=#{@recipient.id} and following_id=#{current_participant.id}").first
+        if not follow
+          follow = Follow.create(:followed_id => @recipient.id, :following_id => current_participant.id)
+        end
+        current_participant.update_attribute(:has_participated,true) if not current_participant.has_participated
         render plain: 'Message was successfully sent.'
       else
         logger.info("messages#create Couldn't save message")  

@@ -1,4 +1,13 @@
-<h1><%= @inout == 'out' ? "Sent personal messages" : "Received personal messages" %></h1>
+<h1>
+<% if @inout == 'conv' -%>
+Conversation
+<% elsif @inout == 'out' -%>
+Sent personal messages
+<% else -%>
+Received personal messages
+<% end -%>
+
+</h1>
 <table class="listtable">
 <tr>
 <th>Date</th>
@@ -10,12 +19,12 @@
 	<tr id="tr_<%= message.id %>">
 		<td><%= link_to_function message.created_at.strftime("%m/%d/%Y %H:%M"), "showmess(#{message.id})" %></td>
 		<% if @inout == 'out' -%>
-			<td><a href="participant/<%= message.to_participant_id %>/profile"><%= message.recipient ? message.recipient.name : message.to_participant_id %></a></td>
+			<td><a href="/participant/<%= message.to_participant_id %>/profile"><%= message.recipient ? message.recipient.name : message.to_participant_id %></a></td>
 		<% else -%>
 			<% if message.from_participant_id == 0 -%>
 				<td>System</td>
 			<% else -%>
-				<td><a href="participant/<%= message.from_participant_id %>/profile"><%= message.sender ? message.sender.name : message.from_participant_id %></a></td>	
+				<td><a href="/participant/<%= message.from_participant_id %>/profile"><%= message.sender ? message.sender.name : message.from_participant_id %></a></td>	
 			<% end -%>
 		<% end -%>
 		<td><%= message.subject %></td>

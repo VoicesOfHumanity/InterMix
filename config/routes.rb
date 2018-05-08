@@ -304,6 +304,7 @@ Rails.application.routes.draw do
   get 'participant/:id/profile', :controller=>:people, :action=>:profile
   get 'participant/:id/wall', :controller=>:people, :action=>:wall
   get 'participant/:id/photos', :controller=>:front, :action=>:photos
+  get 'participant/:id/messages', :controller=>:messages, :action=>:conversation
   
   get 'profile', :controller=>:people, :action=>:profile
   get 'photos', :controller=>:front, :action=>:photos

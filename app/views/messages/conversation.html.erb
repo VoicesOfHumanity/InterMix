@@ -1,0 +1,154 @@
+<%= render(:partial => 'people/menu')%>
+
+<div id="messagelist"><%= render(:partial => 'list') %></div>
+<div id="messageedit" style="display:none;border:1px dotted #666;padding:10px"></div>
+
+<p><%= link_to_function 'New Message', "newmess()" %></p>
+
+<script>
+var curid = 0;
+var curinout = 'conv';
+function showinout(inout) {
+	if (showingedit) {
+		$('#messageedit').hide();
+		showingedit = false;
+	}
+	if (showingview) {
+		$('#messageview').hide();
+		showingedit = false;
+	}
+  $('#messagelist').css('opacity','0.5');
+	curinout = inout;
+	$.ajax({
+    type: 'GET',
+    url: '/messages/list',
+    data: 'inout='+inout,
+    complete: function(t){	
+      $("#messagelist").html(t.responseText);
+		  $('#messagelist').css('opacity','1.0');
+     }
+   });	
+}
+var showingedit = false;
+var showingview = false;
+var showingsent = false;
+var replying_to = 0;
+function showmess(id) {
+	$('#messageview_tr').insertAfter('#tr_'+id);
+	$("#messageview_td").html("Just a moment...");
+  $('#messageview_tr').show();	
+  $.ajax({
+    type: 'GET',
+    url: '/messages/'+id,
+	  data: 'inout='+curinout,
+    complete: function(t){	
+      $("#messageview_td").html(t.responseText);
+		  $('#messageview_tr').show();
+			showingview = true;
+			window.location.hash = '#messageview_tr';
+			if (showingedit) {
+				$('#messageedit').hide();
+				showingedit = false;
+			}
+     }
+   });	
+}
+function newmess() {
+	if (showingview) {
+		$('#messageview').hide();
+		showingview = false;
+	}
+	if (showingedit && !showingsent) {
+		$('#messageedit').hide();
+		$('#reply_tr').hide();
+		showingedit = false;
+		replying_to = 0;
+		return;
+	}
+	showingsent = false;
+	$.ajax({
+    type: 'GET',
+    url: '/messages/new?from=conv&to_participant_id=<%= @participant.id %>',
+    complete: function(t){	
+      $("#messageedit").html(t.responseText);
+		  $('#messageedit').show();
+			showingedit = true;
+			window.location.hash = '';
+			window.location.hash = 'messageedit';
+     }
+   });	
+}
+function replymess(id) {
+	//if (showingview) {
+	//	$('#messageview').hide();
+	//	showingview = false;
+	//}
+	$('#reply_tr').insertAfter('#messageview_tr');
+	$("#reply_td").html("Just a moment...");
+  $('#reply_tr').show();	
+	replying_to = id;
+	var pars = {
+		response_to_id: id,
+    from: 'conv'
+	}
+	showingsent = false;
+	$.ajax({
+    type: 'GET',
+    url: '/messages/new',
+		data: pars,
+    complete: function(t){	
+      $("#reply_td").html(t.responseText);
+		  $('#reply_tr').show();
+			showingedit = true;
+			window.location.hash = '#reply_tr';
+     }
+   });	
+}
+function savemess() {
+	id = curid;
+	if (id>0) {
+		var pars = $("#edit_message_"+id).serialize();
+		var url = "/messages/"+id;
+		var xtype = 'PUT';
+	} else {
+		var pars = $("#new_message").serialize();
+		var url = "/messages";
+		var xtype = 'POST';
+	}
+ 	$('#messageedit').css('opacity','0.5');
+	$.ajax({
+	  type: xtype,
+	  url: url,
+	  data: pars,
+	  complete: function(t){	
+			$('#messageedit').html(t.responseText);
+			$('#messageedit').css('opacity','1.0');
+			/* $('#messageview').hide(); */
+			showingsent = true;
+			messlist();
+		}
+	 });	
+}
+function messlist() {
+	$.ajax({
+    type: 'GET',
+    url: '/messages/list',
+    data: 'inout=conv&participant_id=<%= @participant.id %>',
+    complete: function(t){	
+      $("#messagelist").html(t.responseText);
+		  $('#messagelist').css('opacity','1.0');
+     }
+   });	
+}
+function grouporcontact(which) {
+	if (which=='contact') {
+		if ($('#message_to_participant_id').val()>0) {
+			$('#message_to_group_id').val('');
+		}
+	} else {
+		if ($('#message_to_group_id').val()>0) {
+			$('#message_to_participant_id').val('');
+		}
+	}
+}
+</script>
