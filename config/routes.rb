@@ -302,7 +302,7 @@ Rails.application.routes.draw do
   get 'people(/:action(/:id(.:format)))', :controller=>:people
   
   get 'participant/:id/profile', :controller=>:people, :action=>:profile
-  get 'participant/:id/wall', :controller=>:wall, :action=>:index
+  get 'participant/:id/wall', :controller=>:people, :action=>:wall
   get 'participant/:id/photos', :controller=>:front, :action=>:photos
   
   get 'profile', :controller=>:people, :action=>:profile

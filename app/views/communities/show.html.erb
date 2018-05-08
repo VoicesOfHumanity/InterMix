@@ -4,7 +4,7 @@
 <h3><%=raw @community.fullname %></h3>
 
 <p><b>Short Name:</b> <%= @community.tagname %>&nbsp;&nbsp;
-<button onclick="joinleave(<%= @comtag %>,<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
+<button onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
 </p>
 
 <% if @community.is_sub -%>

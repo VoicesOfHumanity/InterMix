@@ -1,0 +1,7 @@
+<span style="font-size:20px;color:#000;"><%= @participant.name %>'s Profile</span></a><br>
+
+<ul class="horizmenu">
+<li><a class="menu<%= ' selected' if @psection=='profile' %>" href="/participant/<%= @participant.id %>/profile">Profile</a></li>
+<li><a class="menu<%= ' selected' if @psection=='wall' %>" href="/participant/<%= @participant.id %>/wall">Wall</a></li>
+<li><a class="menu<%= ' selected' if @psection=='mail' %>" href="/messages">Mail</a></li>
+</ul>

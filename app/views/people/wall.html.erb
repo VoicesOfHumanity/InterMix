@@ -1,0 +1,16 @@
+<%= render(:partial => 'menu')%>
+
+<% if @participant and @participant.picture.exists? -%>
+  <%= image_tag @participant.picture.url(:thumb) %>    
+<% elsif @participant.fb_uid.to_i > 0 -%>
+  <img src="https://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" />
+<% else -%>
+  <img src="/images/default_user_icon-50x50.png">
+<% end -%>
+
+<h3>Posted by <a href="/participant/<%= @participant.id %>/profile"><%= @participant.name %></a>:</h3>
+
+
+<div id="itemlist">
+<%= render(:partial => 'items/list')%>
+</div>

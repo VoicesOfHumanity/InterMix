@@ -71,6 +71,27 @@ class PeopleController < ApplicationController
     update_last_url
   end    
   
+  def wall
+    #-- Show somebody's wall
+    @section = 'wall'
+    @psection = 'wall'
+    @from = 'wall'
+    @participant_id = ( params[:id] || current_participant.id ).to_i
+    @participant = Participant.find(@participant_id)
+    @sortby = params[:sortby] || "items.id desc"
+    @perscr = params[:perscr].to_i || 25
+    
+    crit = {}
+    crit[:posted_by] = @participant_id
+    rootonly = false
+    
+    items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
+    @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
+    @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
+       
+    update_last_url  
+  end
+  
   def follow
     #-- Follow or unfollow somebody. current_participant wants to follow/unfollow @participant
     onoff = (params[:onoff].to_i == 1)  # Want to follow
