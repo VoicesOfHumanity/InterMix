@@ -107,16 +107,20 @@ end
 		<div id="shortcontent_<%= item.id %>" class="htmlcontent""><%=raw item.short_content %></div>
 
 	<% elsif item.media_type == 'video' -%>
+  
+    <% if false -%>
+    <%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\" alt=\"play\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\" alt=\"thumbnail\">" : 'video' %>
+    <% end -%>
 
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
-		<div id="shortcontent_<%= item.id %>"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm_w\" alt=\"thumbnail\">" : 'video' %><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
-		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"/images/play.png\" class=\"playicon\" onclick=\"playvideo(#{ item.id})\" alt=\"play\"><img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_lr\" alt=\"thumbnail\">" : 'video' %><br><%=raw item.short_content %></div>
+		<div id="shortcontent_<%= item.id %>">[video]<br><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
+		<div id="htmlcontent_<%= item.id %>" style="display:none"><a href="<%= item.link %>" target="_blank">video</a><br><%=raw item.short_content.to_s %></div>
 		
 	<% elsif item.media_type == 'audio' -%>
 			
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
 		<div id="shortcontent_<%= item.id %>"><a href="<%= item.link %>" target="_blank">audio</a><br><%=raw item.short_content %></div>
-		<div id="htmlcontent_<%= item.id %>" style="display:none"><%=raw (item.oembed_response and item.oembed_response['thumbnail_url'].to_s!='') ? "<img src=\"#{item.oembed_response['thumbnail_url']}\" class=\"item_img_sm_w\" alt=\"thumbnail\">" : "<a href=\"#{item.link}\" target=\"_blank\">audio</a>" %><br><%=raw item.short_content %></div>
+		<div id="htmlcontent_<%= item.id %>" style="display:none"><a href="<%= item.link %>" target="_blank">audio</a><br><%=raw item.short_content %></div>
 		
 	<% else -%>
 		
