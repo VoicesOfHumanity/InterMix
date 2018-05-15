@@ -324,6 +324,23 @@ class CommunitiesController < ApplicationController
       @submessage = "There's already a @#{@tagname} community"
     else
       scommunity = Community.create(tagname: @tagname, fullname: @tagname, is_sub: true, sub_of: @community_id)      
+      #-- The sub-community should have tags of parents up the line as auto-tags
+      tags = []
+      tags << @community.tagname
+      com = @community
+      while com.is_sub do
+        parent = Community.find_by_id(com.sub_of)  
+        tags << parent.tagname      
+        com = parent
+      end
+      tagtext = ''
+      tags.uniq.each do |tag|
+        tagtext += ', ' if tagtext != ''
+        tag.gsub!(/[^0-9A-za-z_]/i,'')
+        tagtext += "##{tag}"
+      end      
+      scommunity.autotags = tagtext
+      scommunity.save
     end
 
     sublist    

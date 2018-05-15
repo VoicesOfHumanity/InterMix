@@ -22,6 +22,8 @@
 <p><%=raw @community.description %></p>
 <% end -%>
 
+<p><b>Auto-tags:</b> <%= @community.autotags %></p>
+
 <p><b>Sub-communities:</b></p>
 
 <% if @subcommunities.length > 0 -%>
