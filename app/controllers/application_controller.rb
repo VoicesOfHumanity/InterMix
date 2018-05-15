@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
 	layout "front"
 
-  helper_method :sanitizethis, :get_group_dialog_from_subdomain
+  helper_method :sanitizethis, :get_group_dialog_from_subdomain, :get_oembed
   
   #after_filter :store_location
 
@@ -71,7 +71,7 @@ class ApplicationController < ActionController::Base
     end
     render plain: "ok"
   end
-    
+      
   protected
 
 	def set_headers
@@ -84,6 +84,68 @@ class ApplicationController < ActionController::Base
 	  #-- i.e. a space is %20 rather than a +
 	  # http://www.elctech.com/articles/will-the-real-urlencode-please-stand-uphttp://www.elctech.com/articles/will-the-real-urlencode-please-stand-up
     str.gsub(/[^a-zA-Z0-9_\.\-]/n) {|s| sprintf('%%%02x', s[0]) }
+  end
+  
+  def get_oembed(url)
+    #-- Look up a media link and return the fields
+    #-- https://oembed.com/#section7
+    
+    return {} if not url or url.to_s == ''
+    
+    host = URI.parse(url).host
+    domain = host.split('.').last(2).join('.')
+    
+    url_enc = CGI.escape(url)
+    
+    
+    results = {}
+    
+    if domain == 'youtube.com'
+      api_url = "http://www.youtube.com/oembed?url=#{url_enc}&format=json"
+    elsif domain == 'dailymotion.com'
+      api_url = "http://www.dailymotion.com/services/oembed?url=#{url_enc}"
+    elsif domain == "hulu.com"  
+      api_url = "http://www.hulu.com/api/oembed.xml?url=#{url_enc}"
+    elsif domain == 'ted.com'
+      api_url = "http://www.ted.com/talks/oembed.xml?url=#{url_enc}"
+    elsif domain == 'ustream.com'
+      api_url = "http://www.ustream.tv/oembed?url=#{url_enc}"
+    elsif domain == 'vevo.com'
+      api_url = "https://www.vevo.com/oembed?url=#{url_enc}"
+    elsif domain == 'vimeo.com'
+      api_url = "https://vimeo.com/api/oembed.json?url=#{url_enc}"
+    elsif domain == 'giphy.com'
+      api_url = "http://giphy.com/services/oembed?url=#{url_enc}"
+    elsif domain == 'soundcloud.com'
+      api_url = "https://soundcloud.com/oembed?url=#{url_enc}&format=json"
+    elsif domain == 'spotify.com'
+      api_url = "https://embed.spotify.com/oembed/?url=#{url_enc}"
+    end  
+
+    logger.info("application#get_oembed domain:#{domain} url:#{api_url}")
+
+    begin
+      results = JSON.load(open(api_url))
+    rescue
+      results = {}
+    end
+    
+    logger.info("application#get_oembed "+results.inspect)
+    #{"version"=>"1.0", "provider_name"=>"YouTube", "author_url"=>"https://www.youtube.com/channel/UCLIMHPyCkK36zrFlphKV8-Q", "thumbnail_url"=>"https://i.ytimg.com/vi/zwl-PpuIxWo/hqdefault.jpg", "author_name"=>"JohnStax", "provider_url"=>"https://www.youtube.com/", "type"=>"video", "height"=>270, "width"=>480, "title"=>"Checking out the worlds cheapest Supercars at Copart Auto Auction. lamborghini  samcrac", "thumbnail_width"=>480, "html"=>"<iframe width=\"480\" height=\"270\" src=\"https://www.youtube.com/embed/zwl-PpuIxWo?feature=oembed\" frameborder=\"0\" allow=\"autoplay; encrypted-media\" allowfullscreen></iframe>", "thumbnail_height"=>360}
+
+    return results
+
+    #embedly_api = Embedly::API.new key: EMBEDLY_API_KEY, user_agent: 'Mozilla/5.0 (compatible; mytestapp/1.0; my@email.com)'
+    #begin
+    #  results = embedly_api.oembed :url => url
+    #  if results.length > 0
+    #    results[0]
+    #  else
+    #    {}
+    #  end  
+    #rescue
+    #  {}
+    #end    
   end
   
   def emailit(toemail, subject, message)
@@ -104,24 +166,6 @@ class ApplicationController < ActionController::Base
     return true
     
   end  
-
-  def get_oembed(url)
-    #-- Look up a media link and return the fields:
-    return {} if not url or url.to_s == ''
-    return {}
-
-    #embedly_api = Embedly::API.new key: EMBEDLY_API_KEY, user_agent: 'Mozilla/5.0 (compatible; mytestapp/1.0; my@email.com)'
-    #begin
-    #  results = embedly_api.oembed :url => url
-    #  if results.length > 0
-    #    results[0]
-    #  else
-    #    {}
-    #  end  
-    #rescue
-    #  {}
-    #end    
-  end
   
   def sanitizethis(sometext)
     Sanitize.clean(sometext.force_encoding("UTF-8"), 
