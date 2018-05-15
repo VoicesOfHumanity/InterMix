@@ -43,6 +43,7 @@
 </div>
 
 <% if @is_admin -%>
+<div style="clear:both">
 <p><br><a href="#" onclick="add_member();return false">Add existing member</a>: <%= select_tag :new_member, options_from_collection_for_select(@participants, "id", "name") %> </p>
 <form action="/communities/<%= @community.id %>/import_member" method="post">
 <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
@@ -72,6 +73,7 @@ city: <input type="text" name="city" value="<%= @city %>"><br>
 <input type="submit" value="Add">
 </p>
 </form>
+</div>
 <% end -%>
 
 <script>

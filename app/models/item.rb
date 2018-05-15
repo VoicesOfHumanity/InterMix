@@ -1625,9 +1625,10 @@ class Item < ActiveRecord::Base
       # Show items that either are public, or specifically for this community
       items = items.where("intra_com='public' or intra_com='@#{crit[:comtag]}'")
 
-    else
+
+    elsif crit[:posted_by].to_i == 0
       
-      # show only public items, if there's no community specified
+      # show only public items, if there's no community specified, unless we're seeing somebody's wall
       items = items.where("intra_com='public'")
       
     end
