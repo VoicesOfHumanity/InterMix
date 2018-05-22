@@ -1,5 +1,7 @@
 <%= render(:partial => 'topmenu')%>
 
+<p><input type="button" value="Add community" onclick="addcom()"></p>
+
 <table style="width:595px">
 <tr><th>Forum</th><th>Activity</th><th>More Information</th><th>&nbsp;</th></tr>	
 <% for com in @communities -%>
@@ -21,28 +23,31 @@
 </p>
 
 <script>
-	function joinleave(comtag,id) {
-	  var which = $('#comtagjoin_'+id).html();
-	  var data = {
-	    'comtag': comtag,
-	    'which': which,
-	  };
-		$.ajax({
-	    type: 'GET',
-		  url: '/me/comtag',
-		  data: data,
-		  complete: function(t){ 
-	      if (which=='join') {
-			$('#comtagjoin_'+id).html('leave')
-	      } else {
-			  $('#comtagjoin_'+id).html('join')
-	      }
-	      }
-		});
-	}	
-    $('#sortselect').on('change', function() {
-      var xsort = $('#sortselect').val();
-      window.location.href = "?sort=" + xsort;
-    })
+function addcom() {
+  window.location.href = "/communities/new";
+}
+function joinleave(comtag,id) {
+  var which = $('#comtagjoin_'+id).html();
+  var data = {
+    'comtag': comtag,
+    'which': which,
+  };
+	$.ajax({
+    type: 'GET',
+	  url: '/me/comtag',
+	  data: data,
+	  complete: function(t){ 
+      if (which=='join') {
+		$('#comtagjoin_'+id).html('leave')
+      } else {
+		  $('#comtagjoin_'+id).html('join')
+      }
+      }
+	});
+}	
+$('#sortselect').on('change', function() {
+  var xsort = $('#sortselect').val();
+  window.location.href = "?sort=" + xsort;
+})
 </script>	
 	

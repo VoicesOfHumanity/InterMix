@@ -195,6 +195,43 @@ class CommunitiesController < ApplicationController
     
   end
 
+  def new
+    #-- Add a new forum
+    @section = 'communities'
+    @csection = 'edit'
+    @community = Community.new    
+    render action: :edit
+  end
+  
+  def create
+    #-- Create a community, the first time
+    @section = 'communities'
+    @csection = 'edit'
+    @community = Community.new(params[:community])
+    flash.now[:alert] = ''
+    if params[:community][:tagname].to_s == ''
+      flash.now[:alert] += "The community needs a short name<br/>"
+    elsif params[:community][:fullname].to_s == ''
+      flash.now[:alert] += "The community needs a long name<br/>"
+    end
+    if params[:community][:tagname].to_s != ''
+      tagname = params[:community][:tagname].strip.gsub(/[^0-9A-za-z_]/,'').downcase
+      community = Community.where(tagname: tagname).first
+      if community
+        flash.now[:alert] += "There's already a @#{tagname} community"
+      end
+    end
+    if flash.now[:alert] != ''  
+      render action: :edit
+    else  
+      @community.save!
+      community_admin = CommunityAdmin.create(community_id: @community.id, participant_id: current_participant.id)
+      current_participant.tag_list.add(@community.tagname)
+      current_participant.save
+      redirect_to @community, notice: 'Community was successfully created.'
+    end
+  end
+
   def edit
     #-- Edit page
     @community_id = params[:id].to_i
