@@ -100,7 +100,7 @@ class ApplicationController < ActionController::Base
     
     results = {}
     
-    if domain == 'youtube.com'
+    if domain == 'youtube.com' or domain == 'youtu.be'
       api_url = "http://www.youtube.com/oembed?url=#{url_enc}&format=json"
     elsif domain == 'dailymotion.com'
       api_url = "http://www.dailymotion.com/services/oembed?url=#{url_enc}"
