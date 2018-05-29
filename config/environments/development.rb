@@ -74,7 +74,7 @@ if File.dirname(__FILE__) =~ /_websites/
   DATADIR = '/Users/ffunch/_websites/intermix/data'
   GLOBAL_GROUP_ID = 22
 else
-  BASEDOMAIN = 'intermix.cr8.com'
+  BASEDOMAIN = 'voh.intermix.cr8.com'
   ROOTDOMAIN = 'intermix.cr8.com'
   DATADIR = '/home/apps/intermix/shared/data'
   GLOBAL_GROUP_ID = 20
