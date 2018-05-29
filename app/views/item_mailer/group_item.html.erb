@@ -15,7 +15,14 @@ elsif @cdata['group'].shortname.to_s != ""
 else
 	dom = "#{BASEDOMAIN}"
 end
-%>	
+%>
+
+<% if @cdata and @cdata['is_instant'] -%>
+<p>To go to the Order out of Chaos Voices of Humanity forum, <a href="<%= @cdata['forum_link'] %>">click here</a>.<br>
+To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
+</p>
+<% end -%>
+	
 	
 <% if @cdata['item'].dialog -%>
 <p id="following">The following message was posted in the <a href="https://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>"><%= @cdata['dialog'].name %></a> Forum</p>

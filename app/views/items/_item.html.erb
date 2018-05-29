@@ -115,10 +115,14 @@ end
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
 		<div id="shortcontent_<%= item.id %>">[video]<br><%=raw item.short_content %><div style="clear:both;height:0px"></div></div>
 		<div id="htmlcontent_<%= item.id %>" style="display:none">
-      <% if item.oembed_response and item.oembed_response['html'] -%>
-      <%=raw item.oembed_response['html'] %>
-      <% else -%>
-      <a href="<%= item.link %>" target="_blank">video</a>
+      <% begin -%>
+        <% if item.oembed_response and item.oembed_response['html'] -%>
+        <%=raw item.oembed_response['html'] %>
+        <% else -%>
+        <a href="<%= item.link %>" target="_blank">video</a>
+        <% end -%>
+      <% rescue -%>
+        <a href="<%= item.link %>" target="_blank">video</a>
       <% end -%>
       <br><%=raw item.short_content.to_s %></div>
 		

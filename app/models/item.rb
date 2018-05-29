@@ -455,12 +455,12 @@ class Item < ActiveRecord::Base
         itext += "</p>"
       end
       
-      #if group
-      #  #-- A group message  
-      #  email = ItemMailer.group_item(msubject, itext, recipient.email_address_with_name, cdata)
-      #else    
+      if group
+        #-- A group message  
+        email = ItemMailer.group_item(msubject, itext, recipient.email_address_with_name, cdata)
+      else    
         email = ItemMailer.item(msubject, itext, recipient.email_address_with_name, cdata)
-      #end
+      end
 
       begin
         logger.info("Item#emailit delivering email to #{recipient.id}:#{recipient.name}")
