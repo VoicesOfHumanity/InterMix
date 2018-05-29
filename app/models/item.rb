@@ -409,7 +409,12 @@ class Item < ActiveRecord::Base
       
       msubject = "[voicesofhumanity] #{self.subject}"
       
-      content = self.html_content != '' ? self.html_with_auth(recipient) : self.short_content
+      if self.media_type == 'video' or self.media_type == 'audio'
+        content = "<a href=\"#{self.link}\" target=\"_blank\">#{self.media_type}</a>"
+        content += "<br>#{self.short_content.to_s}</div>"
+      else
+        content = self.html_content.to_s != '' ? self.html_with_auth(recipient) : self.short_content
+      end
       
       link_to = "https://#{domain}/items/#{self.id}/thread?auth_token=#{p.authentication_token}&amp;exp_item_id=#{self.id}"
       if not self.is_first_in_thread

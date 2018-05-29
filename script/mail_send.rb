@@ -250,7 +250,12 @@ for p in participants
       #itext += "<h3><a href=\"http://#{domain}/items/#{item.id}/view?auth_token=#{p.authentication_token}\">#{item.subject}</a></h3>"
       itext += "<h3><a href=\"#{link_to}\">#{item.subject}</a></h3>"
       itext += "<div>"
-      itext += item.html_with_auth(p)
+      if item.media_type == 'video' or item.media_type == 'audio'
+        itext += "<a href=\"#{item.link}\" target=\"_blank\">#{item.media_type}</a>"
+        itext += "<br>#{item.short_content.to_s}</div>"
+      else
+        itext += item.html_with_auth(p)
+      end
       itext += "</div>"
       
       itext += "<p>by "
