@@ -62,14 +62,7 @@ To block emails from the Voices of Humanity social media, <a href="http://<%= BA
 
 <p id="footer">
 	<a href="https://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.
-	<% if false -%>
-  <a href="https://<%= dom %>/groups/<%= @cdata['item'].group_id.to_i %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Group Forum</a>. 	
-  <% end -%>
-	<% if @cdata['item'].dialog_id.to_i > 0 %><a href="https://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id.to_i %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Forum</a>. <% end %>
-<% if false -%>  
-If you have problems, write to the moderator at <%= @cdata['group'].shortname %>-owner@<%= BASEDOMAIN %>.
-<% end -%>
-To block emails from the Voices of Humanity social media, <a href="https://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
+</p>
 
 <% if false -%>
 For available e-mail commands, send a blank message to <%= @cdata['group'].shortname %>-admin@<%= BASEDOMAIN %> for an automated answer.

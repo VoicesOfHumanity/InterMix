@@ -12,12 +12,11 @@
 <% end -%>
 <br/><br/>
 
-<p><a href="https://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a> to see this post, to access more features, or if you're having trouble seeing this.
 <% if @cdata and @cdata['is_instant'] -%>
-<br>To go to the Order out of Chaos Voices of Humanity forum, <a href="<%= @cdata['forum_link'] %>">click here</a>.<br>
+<p>To go to the Order out of Chaos Voices of Humanity forum, <a href="<%= @cdata['forum_link'] %>">click here</a>.<br>
 To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
-<% end -%>
 </p>
+<% end -%>
 
 <hr/>
 
@@ -30,8 +29,7 @@ To block emails from the Voices of Humanity social media, <a href="http://<%= BA
 <hr/>
 
 <p id="footer">
-	<a href="https://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.
-	<a href="https://<%= BASEDOMAIN %>/forum?auth_token=<%= @cdata['recipient'].authentication_token %>&amp;exp_item_id=<%= @cdata['item'].id.to_i %>">Forum List</a>. To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
+	<a href="https://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.</p>
 
 <img src="https://<%= BASEDOMAIN %>/pixel/<%= @cdata['item'].id.to_i if @cdata['item'] %>_<%= @cdata['recipient'].id.to_i if @cdata['recipient'] %>.gif" width="0" height="0" border="0" style="display:none">
 
