@@ -365,16 +365,29 @@ class CommunitiesController < ApplicationController
       tags = []
       tags << @community.tagname
       com = @community
+      autotags = @community.autotags.gsub('#','').split(/\W+/)
+      for autotag in autotags
+        tags << autotag
+      end              
       while com.is_sub do
         parent = Community.find_by_id(com.sub_of)  
-        tags << parent.tagname      
+        tags << parent.tagname
+        autotags = parent.autotags.gsub('#','').split(/\W+/)
+        for autotag in autotags
+          tags << autotag
+        end                
         com = parent
       end
+
       tagtext = ''
       tags.uniq.each do |tag|
-        tagtext += ', ' if tagtext != ''
-        tag.gsub!(/[^0-9A-za-z_]/i,'')
-        tagtext += "##{tag}"
+        tcom = Community.where(tagname: tag).first
+        if tcom
+          # only include community tags as autotags
+          tagtext += ', ' if tagtext != ''
+          tag.gsub!(/[^0-9A-za-z_]/i,'')
+          tagtext += "##{tag}"
+        end
       end      
       scommunity.autotags = tagtext
       scommunity.save
