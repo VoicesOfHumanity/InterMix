@@ -23,13 +23,6 @@ To block emails from the Voices of Humanity social media, <a href="http://<%= BA
 </p>
 <% end -%>
 	
-	
-<% if @cdata['item'].dialog -%>
-<p id="following">The following message was posted in the <a href="https://<%= dom %>/dialogs/<%= @cdata['item'].dialog_id %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>"><%= @cdata['dialog'].name %></a> Forum</p>
-<% else -%>  
-<p id="following">The following message was posted on <a href="https://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>">InterMix</a> in the '<%= @cdata['group'].name %>' forum, where you are a member:</p>
-<% end -%>
-
 <hr/>
 
 <div>
@@ -63,10 +56,6 @@ To block emails from the Voices of Humanity social media, <a href="http://<%= BA
 <p id="footer">
 	<a href="https://<%= dom %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.
 </p>
-
-<% if false -%>
-For available e-mail commands, send a blank message to <%= @cdata['group'].shortname %>-admin@<%= BASEDOMAIN %> for an automated answer.
-<% end -%>
 
 <hr/>
 
