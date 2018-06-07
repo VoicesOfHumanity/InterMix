@@ -16,6 +16,7 @@ class FrontController < ApplicationController
   def index
     @section = 'home'
     return if redirect_if_not_voh
+    session[:sawfront] = 'yes'
     @group_id,@dialog_id = get_group_dialog_from_subdomain
     @content = ""
     cdata = {'cookies'=>cookies}
