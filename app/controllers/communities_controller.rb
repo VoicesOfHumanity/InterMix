@@ -746,12 +746,16 @@ class CommunitiesController < ApplicationController
   def check_is_admin
     @community_id = params[:id].to_i
     @is_admin = false
+    @is_super = false
+    @is_moderator = false
     if current_participant.sysadmin
       @is_admin = true
+      @is_super = true
     else
       admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, current_participant.id]).first
       if admin
         @is_admin = true
+        @is_moderator = true
       end
     end
   end
