@@ -1884,11 +1884,20 @@ class FrontController < ApplicationController
         @dialog_group = nil 
       end
       
+      if @comtag
+        @community = Community.find_by_tagname(@comtag)
+        if @community
+          @comname = @community.fullname
+        end
+      else
+        @community = nil  
+      end
+      
       @major_communities = Community.where(major: true).order(:fullname)
       @ungoals_communities = Community.where(ungoals: true).order(:fullname)
       @sustdev_communities = Community.where(sustdev: true).order(:fullname)
       
-      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
+      cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'community'=>@community, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
       cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
       cdata['dialog_logo'] = "//#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
       cdata['indigenous'] = @indigenous.to_i

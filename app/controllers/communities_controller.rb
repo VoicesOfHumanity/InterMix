@@ -692,6 +692,7 @@ class CommunitiesController < ApplicationController
       redirect_to "/communities/#{@community_id}"
       return
     end
+    @dialog_id = VOH_DISCUSSION_ID
     @cdata = {}
     @cdata['community'] = @community
     @cdata['community_logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?
@@ -714,11 +715,13 @@ class CommunitiesController < ApplicationController
       redirect_to "/"
       return
     end    
+    @comtag = tagname
     @community_id = @community.id        
     if participant_signed_in?
       redirect_to "/communities/#{@community_id}"
       return
     end
+    @dialog_id = VOH_DISCUSSION_ID
     @cdata = {}
     @cdata['community'] = @community
     @cdata['community_logo'] = "https://#{BASEDOMAIN}#{@community.logo.url}" if @community.logo.exists?

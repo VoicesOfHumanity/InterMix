@@ -2,7 +2,11 @@
 <table><tr><td>
 <img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;">
 <p>&nbsp;</p>
+<% if @community %>
+<p style="align:center;"><big>Welcome to <b>{{ dialog.name }}</b> discussion where you will be participating as a member of <b>{{ @community.fullname }}!</b></big></p>
+<% else -%>
 <p style="align:center;"><big>Welcome to <b>{{ dialog.name }}</b> discussion where you will be participating as a member of <b>{{ group.name }}!</b></big></p>
+<% end %>
 
 <p><big>Please provide the information requested and then click "Register".</big></p>
 

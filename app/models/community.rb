@@ -11,6 +11,14 @@ class Community < ActiveRecord::Base
   attr_accessor :members
   attr_accessor :activity
   
+  def name
+    if self.fullname
+      self.fullname
+    else
+      self.tagname
+    end
+  end
+  
   def member_count
     Participant.tagged_with(self.tagname).where(status: 'active', no_email: false).count
   end
