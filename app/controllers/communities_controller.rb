@@ -497,6 +497,7 @@ class CommunitiesController < ApplicationController
     participant.first_name = @first_name
     participant.last_name = @last_name
     participant.email = @email
+    participant.city = @city
     if @nation == 395
       participant.country_code = 'US'
       participant.country_name = 'United States'
