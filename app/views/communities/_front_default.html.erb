@@ -1,6 +1,6 @@
 <img src="{{ logo }}" width="150" style="float:right;width:150px;margin:0 10px 10px 0;">
 
-<p><center><big><b><br>{{ community.fullname }}<br>Voices of Humanity - Order out of Chaos</b></big><br><i>finding our common humanity across<br>all national, religious and cultural boundaries</i></center></p>
+<p><center><big><b><br><% if @community.fullname.to_s != '' %>{{ community.fullname }}<% else %>{{ community.tagname }}<% end %><br>Voices of Humanity - Order out of Chaos</b></big><br><i>finding our common humanity across<br>all national, religious and cultural boundaries</i></center></p>
 
 <p><b><big>A Platform for Community Action</big></b></p>
 

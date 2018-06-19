@@ -693,6 +693,7 @@ class CommunitiesController < ApplicationController
       redirect_to "/communities/#{@community_id}"
       return
     end
+    session[:sawfront] = 'yes'
     @dialog_id = VOH_DISCUSSION_ID
     @cdata = {}
     @cdata['community'] = @community

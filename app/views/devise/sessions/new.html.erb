@@ -1,5 +1,11 @@
 <% @group_id,@dialog_id = get_group_dialog_from_subdomain if @group_id.to_i == 0 or @dialog_id.to_i == 0 %>
 
+<% @comtag = params[:comtag] if not @compag and params.has_key?(:comtag) %>
+<% if @comtag.to_s != '' -%>
+  <% @community = Community.find_by_tagname(@comtag) if not @community %>
+  <p><big><b><%= @community.fullname.to_s != '' ? @community.fullname : @comtag %></b></big></p>
+<% end -%>
+
 <h2>Sign in</h2>
 
 <% if not session.has_key?(:sawfront) -%>
