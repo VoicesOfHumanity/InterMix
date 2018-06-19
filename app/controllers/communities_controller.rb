@@ -694,6 +694,7 @@ class CommunitiesController < ApplicationController
       return
     end
     session[:sawfront] = 'yes'
+    session[:previous_comtag] = @community.tagname
     @dialog_id = VOH_DISCUSSION_ID
     @cdata = {}
     @cdata['community'] = @community
@@ -717,6 +718,8 @@ class CommunitiesController < ApplicationController
       redirect_to "/"
       return
     end    
+    session[:sawfront] = 'yes'
+    session[:previous_comtag] = tagname
     @comtag = tagname
     @community_id = @community.id        
     if participant_signed_in?

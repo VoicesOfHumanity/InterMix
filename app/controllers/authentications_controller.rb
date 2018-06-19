@@ -107,6 +107,8 @@ class AuthenticationsController < ApplicationController
                 @forum_link += "&joincom=1"
               end
             end
+          elsif session.has_key?(:previous_comtag) and session[:previous_comtag].to_s != ''
+            @forum_link = "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{session[:previous_comtag]}"         
           elsif session[:group_id].to_i > 0
             @forum_link = "/groups/#{session[:group_id]}/forum"
           else

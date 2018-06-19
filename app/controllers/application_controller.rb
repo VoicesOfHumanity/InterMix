@@ -281,7 +281,7 @@ class ApplicationController < ActionController::Base
     elsif not session[:has_required]
       #session[:cur_baseurl] + '/me/profile/edit#settings'
       session[:cur_baseurl] + '/me/profile/meta'
-    elsif true
+    elsif true and not session.has_key?(:previous_comtag)
       stored_location_for(resource_or_scope) || super  
     elsif true
       # Send everybody to Order out of Chaos  
