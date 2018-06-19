@@ -297,6 +297,7 @@ class FrontController < ApplicationController
     
     session[:join_group_id] = @group_id
     session[:join_dialog_id] = @dialog_id
+    session[:sawfront] = 'yes'
     
     prepare_djoin
     
@@ -317,6 +318,8 @@ class FrontController < ApplicationController
       redirect_to "//#{BASEDOMAIN}/join" 
       return
     end
+
+    @comtag = params[:comtag].to_s
     
     @dialog = Dialog.find_by_id(@dialog_id)
     if @dialog and @group_id == 0
@@ -644,7 +647,11 @@ class FrontController < ApplicationController
     cdata['dialog'] = @dialog if @dialog
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
-    cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}</a>"
+    if @comtag and @comtag.to_s != ''
+      cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}</a>"      
+    else
+      cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}</a>"
+    end
     cdata['domain'] = dom
     
     if @dialog_group and @dialog_group.confirm_email_template.to_s.strip != ''
@@ -658,7 +665,7 @@ class FrontController < ApplicationController
       html_content += "password: #{@password}<br/>" if @password != '???'
       
       html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}<br/><br/>"
+      html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}<br/><br/>"
       
       #html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
       
@@ -1050,6 +1057,7 @@ class FrontController < ApplicationController
   def confirm
     #-- End point of the confirmation link in e-mail, when signing up
     @participant = Participant.find_by_confirmation_token(params[:code])
+    @comtag = params[:comtag].to_s
     @content = ""
     @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
     if @participant
@@ -1097,7 +1105,10 @@ class FrontController < ApplicationController
       #  session[:new_signup] = 1
       #  redirect_to "/dialogs/#{@dialog.id}/forum"
       #  return
-      if @dialog and @group
+      if @comtag and @comtag.to_s != ''
+          redirect_to "//#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider?comtag=#{@comtag}"
+          return
+      elsif @dialog and @group
         cdata['domain'] = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}" if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
         cdata['logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
         if @dialog_group and @dialog_group.confirm_welcome_template.to_s != ''
@@ -1110,6 +1121,8 @@ class FrontController < ApplicationController
           confirm_welcome_template = render_to_string :partial=>"dialogs/confirm_welcome_default", :layout=>false
           template = Liquid::Template.parse(confirm_welcome_template)
           @content += template.render(cdata)
+        elsif @comtag and @comtag.to_s != ''
+          @content += "<p>Thank you for confirming! You can now go to: <a href=\"//#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider?comtag=#{@comtag}\">https://#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider?comtag=#{@comtag}</a> to see the messages. You are already logged in.</p>"
         else    
           @content += "<p>Thank you for confirming! You can now go to: <a href=\"//#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider\">https://#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider</a> to see the messages. You are already logged in.</p>"
         end
@@ -1883,19 +1896,41 @@ class FrontController < ApplicationController
       else
         @dialog_group = nil 
       end
+
+      @major_communities = Community.where(major: true).order(:fullname)
+      @ungoals_communities = Community.where(ungoals: true).order(:fullname)
+      @sustdev_communities = Community.where(sustdev: true).order(:fullname)
       
       if @comtag
+        @comname = @comtag
         @community = Community.find_by_tagname(@comtag)
         if @community
-          @comname = @community.fullname
+          @comname = @community.fullname if @community.fullname.to_s != ''
+          @comfound = false
+          @cominmore = false
+          for com in @major_communities
+            @comfound = true if com.tagname == @comtag 
+          end
+          for com in @ungoals_communities
+            if com.tagname == @comtag
+              @comfound = true  
+              @cominmore = true
+            end
+          end
+          for com in @sustdev_communities
+            if com.tagname == @comtag
+              @comfound = true  
+              @cominmore = true
+            end
+          end          
         end
       else
         @community = nil  
       end
       
-      @major_communities = Community.where(major: true).order(:fullname)
-      @ungoals_communities = Community.where(ungoals: true).order(:fullname)
-      @sustdev_communities = Community.where(sustdev: true).order(:fullname)
+              
+        
+      
       
       cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'community'=>@community, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
       cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?

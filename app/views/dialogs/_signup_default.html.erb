@@ -48,16 +48,19 @@
 <tr>
   <td style="vertical-align:top">Communities<br>check to join</td>
   <td>
+    <% if not @comfound -%>
+    <input type="checkbox" id="check_<%= @comtag %>" name="check[<%= @comtag %>]" value="1" data-tag="<%= @comtag %>" class="com_check" checked> <%= @comname %><br>    
+    <% end -%>
     <% for com in @major_communities -%>  
     <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= @comtag.to_s==com.tagname ? ' checked' : '' %>> <%= com.fullname %><br>
     <% end -%>  
     [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>  
     <div id="more_com" style="display:none">  
     <% for com in @ungoals_communities -%>  
-    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"<%= @comtag.to_s==com.tagname ? ' checked' : '' %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
     <% end -%>  
     <% for com in @sustdev_communities -%>  
-    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"<%= @comtag.to_s==com.tagname ? ' checked' : '' %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
     <% end -%>  
     </div>  
       
@@ -84,6 +87,7 @@
 </table>
 <input type="submit" value="Register!" onclick="savetags();return(true)">  
 <input type="hidden" id="tag_list" name="participant[tag_list]" value="">
+<input type="hidden" id="comtag" name="comtag" value="<%= @comtag %>">
 </form>
 
 <p><b><br><span style="color: DarkRed;">A confirmation email will be sent. Be sure to respond to that email.</span></b> The confirmation link will take you online to the {{ dialog.name }} discussion where you can participate as a member of <i>{{ group.name }}</i>.</p>
