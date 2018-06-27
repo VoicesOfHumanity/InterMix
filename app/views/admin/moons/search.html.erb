@@ -1,0 +1,244 @@
+
+<form id="searchform" name="searchform" action="">
+<input type="hidden" name="page" id="page" value="<%= @page || 1 %>"/>
+<table class="edittable">
+<tr><td class="left">ID</td><td><%= text_field_tag :moon_id, "", "size"=>6 %></td></tr>
+<tr><td class="left">Topic</td><td><%= text_field_tag :topic, "", "size"=>52 %></td></tr>
+
+<tr></tr>
+<tr><td class="left">Sort</td><td>
+<% xsort = [['',''],['type','new_or_full, id'],['topic','topic'],["created",'created_at desc'],['ID','id desc']] %>
+<% for x in (1..2).to_a -%>
+<%= select_tag "sort#{x}", options_for_select(xsort,@sort[x-1]) %>
+<% end -%>
+&nbsp;&nbsp;
+Per Page <%= select_tag(:per_page, options_for_select([10,20,30,50,100,200,500,1000,['* all *','9999']],30)) %>
+</td></tr>
+
+</table>
+
+<table width="100%"><tr><td>
+<input type="button" value="Search/List" onclick="search()"/>
+</td><td align="right">
+<%= link_to_function 'Add new moon', "newrec1('new')" %>&nbsp;&nbsp;&nbsp;<%= link_to_function 'Add full moon', "newrec1('full')" %>&nbsp;&nbsp;&nbsp;
+</td></tr>	
+</table>	
+
+</form>
+
+
+
+<div id="list1box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('list1')" title="Close" /></div>
+<div class="nav_icon" id="maxlist1im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('list1')" title="Maximize" /></div>
+<div class="nav_icon" id="minlist1im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('list1')" title="Minimize" /></div>
+<a name="list1"></a>
+<h3 id="list1title">List of Moons</h3>
+<div id="list1boxcontent"></div>
+</div>
+
+<div id="rec1box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('rec1')" title="Close" /></div>
+<div class="nav_icon" id="maxrec1im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('rec1')" title="Maximize" /></div>
+<div class="nav_icon" id="minrec1im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('rec1')" title="Minimize" /></div>
+<a name="cam"></a>
+<h3 id="rec1title">Moon Record</h3>
+<div id="rec1boxcontent"></div>
+</div>
+
+<% if false -%>
+<div id="list2box" class="mainbox">
+<div class="nav_icon"><img src="/images/sanscons/close.gif" class="icon" onclick="boxclose('list2')" title="Close" /></div>
+<div class="nav_icon" id="maxlist1im" style="display:none"><img src="/images/sanscons/add.gif" class="icon" onclick="boxmax('list2')" title="Maximize" /></div>
+<div class="nav_icon" id="minlist2im" style="display:"><img src="/images/sanscons/subtract.gif" class="icon" onclick="boxmin('list2')" title="Minimize" /></div>
+<a name="list2"></a>
+<h3 id="list2title">Moon Administrators</h3>
+<div id="list2boxcontent"></div>
+</div>
+<% end -%>
+
+<script type="text/javascript">
+var curid1 = 0;
+var curid2 = 0;
+function search() {
+	$('#list1box').show();
+  $('#list1box').css('opacity','0.5');
+	showworking();
+	var pars = $("#searchform").serialize();
+	$.ajax({
+     type: "GET",
+     url: "/admin/moons",
+     data: pars,
+     complete: function(t){	
+       $("#list1boxcontent").html(t.responseText);
+		   searchdone();
+     }
+   });	
+}
+var searchdone = function(t) {
+  $('#list1box').show();
+  $('#list1boxcontent').show();
+  hideworking();
+  $('#list1box').css('opacity','1.0');
+  boxmax('list1');
+}
+function viewrec1(id) {
+  curid1 = id;
+  $("#rec1boxcontent").html("<br/><br/>working...<br/>");
+	$.ajax({
+    type: "GET",
+    url: "/admin/moons/"+id,
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+    }
+  });	
+}
+function editrec1() {
+  id = curid1;
+  $('#rec1box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/moons/"+id+'/edit',
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+     }
+   });	
+}
+function newrec1(mtype) {
+	curid1 = 0;
+  $('#rec1box').css('opacity','0.5');
+	$.ajax({
+    type: "GET",
+    url: "/admin/moons/new?mtype="+mtype,
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+     }
+   });	
+}
+function delrec1() {
+	if (confirm("Are you sure you want to delete moon #" + curid1 + "?")) {
+    $('rec1box').css('opacity','0.5');
+		$.ajax({
+	    type: 'DELETE',
+	    url: '/admin/moons/'+curid1,
+	    complete: function(t){	
+	      $("#rec1boxcontent").html(t.responseText);
+			  $('#rec1box').css('opacity','1.0');
+				search();
+	     }
+	   });			
+	}
+}
+function saverec1() {
+  id = curid1;
+  if (id>0) {
+		var pars = $("#edit_moon_"+id).serialize();
+    var url = "/admin/moons/"+id;
+		var xtype = 'PUT';
+  } else {
+		var pars = $("#new_moon").serialize();
+    var url = "/admin/moons";
+		var xtype = 'POST';
+  }
+  $('#rec1box').css('opacity','0.5');
+	$.ajax({
+    type: xtype,
+    url: url,
+    data: pars,
+    complete: function(t){	
+      $("#rec1boxcontent").html(t.responseText);
+		  $('#rec1box').css('opacity','1.0');
+			search();
+     }
+   });	
+}
+
+function list2() {
+	$('#list2box').show();
+  $('#list2box').css('opacity','0.5');
+	showworking();
+	$.ajax({
+     type: "GET",
+     url: "/admin/moons/" + curid1 + "/admins",
+     complete: function(t){	
+       $("#list2boxcontent").html(t.responseText);
+		   $('#list2box').show();
+		   $('#list2boxcontent').show();
+		   hideworking();
+		   $('#list2box').css('opacity','1.0');
+		   boxmax('list2');
+     }
+   });	
+}
+function add_admin() {
+	var id = $('#new_admin').val();
+  $('#list2box').css('opacity','0.5');
+	$.ajax({
+    type: 'POST',
+    url: "/admin/moons/" + curid1 + "/admin_add",
+    data: "participant_id="+id,
+    complete: function(t){	
+      $("#list2boxcontent").html(t.responseText);
+		  $('#list2box').css('opacity','1.0');
+     }
+   });		
+}
+function del_admin() {
+	var pars = "moon_id="+curid1;
+	var marks = $('input.admmark');
+  var xcount = 0;
+  for (var x=0;x<marks.length;x++) {
+    var mark = marks[x];
+    if (mark.checked) {
+      var participant_id = mark.value;
+      pars += "&participant_ids[]=" + participant_id;
+      xcount++;
+    }
+  }
+  if (xcount==0) {
+    alert("You didn't select any admins");
+    return;
+  } else if (xcount>0) {
+    if (!confirm("Delete "+xcount+" moon admins?")) {
+      return;
+    }
+  }
+  $('#list2box').css('opacity','0.5');
+  pars += "&authenticity_token=<%= form_authenticity_token %>";
+	$.ajax({
+    type: 'DELETE',
+    url: "/admin/moons/" + curid1 + "/admin_del",
+    data: pars,
+    complete: function(t){	
+      $("#list2boxcontent").html(t.responseText);
+		  $('#list2box').css('opacity','1.0');
+     }
+   });	
+}
+
+var allmarked = false;
+function markall() {
+	var marks = $('input.cammark');
+	for (var x=0;x<marks.length;x++) {
+		var mark = marks[x];
+		if (allmarked) {
+			mark.checked = false;
+		} else {
+			mark.checked = true;
+		}	
+	}
+	if (allmarked) {
+		allmarked = false;
+	} else {
+		allmarked = true;
+	}
+}
+search();
+</script>
+
+
+
+

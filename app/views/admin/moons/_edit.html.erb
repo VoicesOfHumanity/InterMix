@@ -1,0 +1,16 @@
+<%= semantic_form_for [:admin, @moon] do |f| %>
+
+	<%= f.inputs do %>
+	  <%= f.input :mdate, :required => true %> 
+		<%= f.input :topic, :required => true %>    
+		<%= f.input :new_or_full, :as => :select, :collection =>['new','full'] %>	
+		<%= f.input :top_text %>
+		<%= f.input :bottom_text %>
+	<% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec1(<%= @moon.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec1()" />
+</p>

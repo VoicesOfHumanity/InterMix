@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Mdate:</strong>
+  <%= @moon.mdate %>
+</p>
+
+<p>
+  <strong>Top text:</strong>
+  <%= @moon.top_text %>
+</p>
+
+<%= link_to 'Edit', edit_moon_path(@moon) %> |
+<%= link_to 'Back', moons_path %>

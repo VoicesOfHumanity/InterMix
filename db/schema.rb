@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180403150619) do
+ActiveRecord::Schema.define(version: 20180627185331) do
 
   create_table "authentications", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
     t.integer "participant_id"
@@ -554,6 +554,17 @@ ActiveRecord::Schema.define(version: 20180403150619) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["country_code", "name"], name: "index_metro_areas_on_country_code_and_name", length: { country_code: 1, name: 20 }
+  end
+
+  create_table "moons", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.date "mdate"
+    t.string "topic"
+    t.text "top_text"
+    t.text "bottom_text"
+    t.string "new_or_full", default: "new"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mdate"], name: "index_moons_on_mdate"
   end
 
   create_table "participants", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|

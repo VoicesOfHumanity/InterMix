@@ -1,0 +1,27 @@
+<%= form_with(model: moon, local: true) do |form| %>
+  <% if moon.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(moon.errors.count, "error") %> prohibited this moon from being saved:</h2>
+
+      <ul>
+      <% moon.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :mdate %>
+    <%= form.date_select :mdate, id: :moon_mdate %>
+  </div>
+
+  <div class="field">
+    <%= form.label :top_text %>
+    <%= form.text_area :top_text, id: :moon_top_text %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

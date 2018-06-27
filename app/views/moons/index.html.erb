@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Moons</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Mdate</th>
+      <th>Top text</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @moons.each do |moon| %>
+      <tr>
+        <td><%= moon.mdate %></td>
+        <td><%= moon.top_text %></td>
+        <td><%= link_to 'Show', moon %></td>
+        <td><%= link_to 'Edit', edit_moon_path(moon) %></td>
+        <td><%= link_to 'Destroy', moon, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Moon', new_moon_path %>
