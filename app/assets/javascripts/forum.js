@@ -190,7 +190,7 @@ var gotopage = function(page) {
 	});	
 }
 function newitem(token) {
-    console.log('newitem');
+  console.log('newitem');
 	if (editingid>0) {
 	    alert("Please save or cancel the edit that is in progress");
 	    return;
@@ -259,6 +259,7 @@ function newitem(token) {
       var meta_5 = $("input[name='meta_5']:checked").val();
       pars += '&meta_5='+meta_5;
   }
+  pars += "&nvaction="+(nvaction_on ? 1 : 0);
   pars += "&authenticity_token="+token;
 	$.ajax({
 		type: "GET",

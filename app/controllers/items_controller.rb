@@ -260,6 +260,7 @@ class ItemsController < ApplicationController
     @subgroup = params[:subgroup].to_s
     @comtag = params[:comtag].to_s
     @messtag = params[:messtag].to_s
+    @nvaction = (params[:nvaction].to_i == 1) ? true : false
     logger.info("items#new @comtag:#{@comtag} @messtag:#{@messtag}") 
     @meta_3 = params[:meta_3].to_i    # gender
     @meta_5 = params[:meta_5].to_i    # age
@@ -357,6 +358,8 @@ class ItemsController < ApplicationController
       #@item.subgroup_list = @subgroup if @subgroup.to_s != ''   
       @subgroup_add = @subgroup
     end   
+    
+    tags << 'nvaction' if @nvaction
 
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)       
     @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog)  
@@ -432,6 +435,7 @@ class ItemsController < ApplicationController
     if true or @item.reply_to.to_i == 0
       #-- Fill in some default message tags
       tags = []
+      tags << 'nvaction' if @nvaction
       if @item.reply_to.to_i > 0 and @olditem
         tags.concat @olditem.tag_list
       end
