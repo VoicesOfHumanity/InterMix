@@ -1,6 +1,6 @@
 <p style="clear:both;padding:0 19px 0 0">
   
-<a href="/dialogs/<%= @dialog.id %>/slider" style="text-decoration:none;"><span style="font-size:20px;color:#000;"><%= @dialog.name %><%= " - Highest Rated Messages" if @dsection=='meta' %><%= " - Forum" if @dsection=='list'%><%= " - About" if @dsection=='info' %></span></a><br>  
+<a href="/dialogs/<%= @dialog.id %>/slider" style="text-decoration:none;"><span style="font-size:20px;color:#000;"><%= @dialog.name %><%= " - Highest Rated Messages" if @dsection=='meta' %><%=raw " - <span id=\"top_forum_header\">Forum</span>" if @dsection=='list'%><%= " - About" if @dsection=='info' %></span></a><br>  
   
 <% if false and @dsection == 'meta' -%>
   <% @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id.to_i > 0 %>

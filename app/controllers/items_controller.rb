@@ -1222,6 +1222,8 @@ class ItemsController < ApplicationController
     session[:comtag] = crit[:comtag]
     session[:messtag] = crit[:messtag]
     
+    crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
+    
     #-- Checkboxes are also about comtags
     #if params[:check] and params[:check].class == Hash
     #  check = []

@@ -1643,6 +1643,10 @@ class Item < ActiveRecord::Base
       title += " | ##{crit[:messtag]}"
       items = items.tagged_with(crit[:messtag])      
     end    
+    
+    if crit.has_key?(:nvaction) and crit[:nvaction]
+      items = items.tagged_with('nvaction')      
+    end
       
     if rootonly
       # Leaving non-roots in there. Will be sorted out in get_itemsproc
