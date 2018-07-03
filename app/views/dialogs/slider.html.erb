@@ -40,27 +40,10 @@
           <input type="button" value="Options" style="margin-top:10px" id="options_button" onclick="chg_options()">
         <% end -%>
       </p>
-  
-    <% if false -%>
-      <div style="height:220px">
-        <div id="geoslider" style="height:172px;margin:15px 0 0 0;float:left"></div>
-        <div style="float:left;width:119px;padding:0 0 0 5px;line-height:40px;">
-        Planet&nbsp;Earth<br>
-        My&nbsp;Nation<br>
-        My&nbsp;State/Province<br>
-        My&nbsp;Metro&nbsp;region<br>
-        My&nbsp;City/Town<br>
-        </div>
-      </div> 
-      <div style="height:130px;clear:left">  
-        <div id="groupslider" style="height:88px;margin:17px 0 0 0;float:left"></div>  
-        <div style="float:left;width:105px;padding:0 0 0 5px;line-height:40px;">
-        All groups<br>
-        My groups<br>
-        Current group<br>
-        </div>  
-      </div> 
-    <% end -%>
+
+    <div style="margin: 20px 0 0 0;">
+      <img src="/images/nvaction.jpg" id="actionbutton" onclick="actionclick()">
+    </div>
     
     <div style="margin: 20px 0 0 0;">
     <% @geo_levels.each do |geo_level,geo_desc| -%>
@@ -385,5 +368,15 @@ function joinleave(comtag) {
       window.location.href = '?comtag='+comtag;
 	  }
 	});
+}
+var nvaction_on = false;
+function actionclick() {
+  if (nvaction_on) {
+    nvaction_on = false;
+    $('#actionbutton').attr('src','/images/nvaction.jpg');
+  } else {
+    nvaction_on = true;
+    $('#actionbutton').attr('src','/images/exitaction.jpg');
+  }
 }
 </script>
