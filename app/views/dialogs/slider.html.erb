@@ -42,7 +42,7 @@
       </p>
 
     <div style="margin: 20px 0 0 0;">
-      <img src="/images/nvaction.jpg" id="actionbutton" onclick="actionclick()">
+      <img src="/images/<%= @nvaction ? 'exitaction' : 'nvaction' %>.jpg" id="actionbutton" onclick="actionclick()">
     </div>
     
     <div style="margin: 20px 0 0 0;">
@@ -370,16 +370,18 @@ function joinleave(comtag) {
 	  }
 	});
 }
-var nvaction_on = false;
+var nvaction_on = <%= @nvaction ? 'true' : 'false' %>;
 function actionclick() {
   if (nvaction_on) {
     nvaction_on = false;
     $('#actionbutton').attr('src','/images/nvaction.jpg');
     $('#top_forum_header').html('Forum');
+    $('#top_result_header').html('Highest Rated Messages');
   } else {
     nvaction_on = true;
     $('#actionbutton').attr('src','/images/exitaction.jpg');
     $('#top_forum_header').html('Nonviolent Action Forum');
+    $('#top_result_header').html('Highest Rated Nonviolent Action Items');
   }
   per_reload();
 }

@@ -1227,6 +1227,7 @@ class ItemsController < ApplicationController
     session[:messtag] = crit[:messtag]
     
     crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
+    session[:nvaction] = crit[:nvaction]
     
     #-- Checkboxes are also about comtags
     #if params[:check] and params[:check].class == Hash
@@ -1344,6 +1345,27 @@ class ItemsController < ApplicationController
     all_posts = all_posts.where("items.created_at >= ?", crit[:datefromuse])
     @num_all_posts = all_posts.count
     # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
+
+    #MOONS = {
+    #  '2016-03-08_2017-06-23' => "March 8, 2016 - June 23, 2017",
+    #  '2017-06-23_2017-07-23' => "June 23 - July 23, 2017",      
+    #MOONS.select{|d| d<Time.now.to_s[0..10]}.invert.to_a,@datefixed)   
+    today = Time.now.strftime("%Y-%m-%d")
+    cutoff = 1.month.from_now
+    @moons = [] 
+    xstart = '2016-03-08'
+    moon_recs = Moon.where(new_or_full: 'full').where("mdate<='#{cutoff}'").order(:mdate)
+    for moon_rec in moon_recs
+      xend = moon_rec['mdate'].strftime('%Y-%m-%d')
+      dend = moon_rec['mdate'].strftime('%B %-d, %Y')
+      dstart = xstart.to_date.strftime('%B %-d, %Y')
+      xrange = "#{xstart}_#{xend}"
+      drange = "#{dstart} - #{dend}"
+      if xstart <= today
+        @moons << [drange,xrange]
+      end
+      xstart = xend
+    end
   
     @title = ""
     crit[:show_result] = show_result

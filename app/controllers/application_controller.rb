@@ -611,7 +611,6 @@ class ApplicationController < ActionController::Base
   #print "#{phase(2010,2,10)}\n"
   #print "#{phase(1987,5,10)}\n"
 
-
   private
   
     def storable_location?
