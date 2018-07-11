@@ -8,7 +8,10 @@
   <tr>
 		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
     <th>ID</th>
-    <th>Name</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Type</th>
+    <th>Topic</th>
   </tr>
 
 <% odd_or_even = 0 %>
@@ -18,6 +21,7 @@
 		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= moon.id %>" /></td>
 		<td><a href="#" onclick="viewrec1(<%= moon.id %>)"><%= moon.id %></a></td>
     <td><a href="#" onclick="viewrec1(<%= moon.id %>)"><%= moon.mdate %></a></td>
+    <td><%= moon.mtime %></td>
     <td><%= moon.new_or_full %>:</td>
     <td><%= moon.topic %></td>
   </tr>

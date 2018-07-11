@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180711201850) do
+ActiveRecord::Schema.define(version: 20180711205418) do
 
   create_table "authentications", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
     t.integer "participant_id"
@@ -564,6 +564,7 @@ ActiveRecord::Schema.define(version: 20180711201850) do
     t.string "new_or_full", default: "new"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "mtime", limit: 5, default: "12:00"
     t.index ["mdate"], name: "index_moons_on_mdate"
   end
 

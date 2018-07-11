@@ -2,6 +2,7 @@
 
 	<%= f.inputs do %>
 	  <%= f.input :mdate, :required => true %> 
+	  <%= f.input :mtime, :required => true %> 
 		<%= f.input :topic, :required => true %>    
 		<%= f.input :new_or_full, :as => :select, :collection =>['new','full'] %>	
 		<%= f.input :top_text %>
