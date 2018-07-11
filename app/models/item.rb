@@ -395,13 +395,13 @@ class Item < ActiveRecord::Base
       cdata['domain'] = domain
       cdata['group_domain'] = group_domain
       cdata['is_instant'] = true
-      cdata['forum_link'] = "/dialogs/#{VOH_DISCUSSION_ID}/slider?auth_token=#{p.authentication_token}"
+      cdata['forum_link'] = "https://#{BASEDOMAIN}/dialogs/#{VOH_DISCUSSION_ID}/slider?auth_token=#{p.authentication_token}"
       #@cdata['attachments'] = @attachments
       
       if dialog and dialog.logo.exists? then
-        cdata['logo'] = "#{BASEDOMAIN}#{dialog.logo.url}"
+        cdata['logo'] = "https://#{BASEDOMAIN}#{dialog.logo.url}"
       elsif group and group.logo.exists? then
-       cdata['logo'] = "#{BASEDOMAIN}#{group.logo.url}"
+       cdata['logo'] = "https://#{BASEDOMAIN}#{group.logo.url}"
       else
         cdata['logo'] = nil
       end

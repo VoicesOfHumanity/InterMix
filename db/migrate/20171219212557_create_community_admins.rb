@@ -1,4 +1,4 @@
-class CreateCommunityAdmins < ActiveRecord::Migration
+class CreateCommunityAdmins < ActiveRecord::Migration[4.2]
   def change
     create_table :community_admins do |t|
       t.integer  :community_id, limit: 4
