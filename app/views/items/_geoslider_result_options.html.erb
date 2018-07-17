@@ -16,6 +16,15 @@
     <% if false -%>
     <tr><td style="text-align:right;background-color:transparent">Current moon phase:</td><td style="background-color:transparent"><%= moonphase(Time.now.year,Time.now.month,Time.now.day) %></td></tr>
     <% end -%>
+    <% if num == 2 -%>
+    <tr><td colspan=2 style="background-color:transparent">
+      <% if @moon and @moon.new_or_full == 'new' -%>
+      Next New Moon is <%= @moontime %> GMT. Highest rated messages will go out at that date/time.
+      <% elsif @moon and @moon.new_or_full == 'full' -%>
+      Next Full Moon is <%= @moontime %>  GMT. Highest rated nonviolent action oriented messages will go out at that date/time.
+      <% end -%>
+    </td></tr>
+    <% end -%>
   </table>  
   
   <% @moons.inspect %>

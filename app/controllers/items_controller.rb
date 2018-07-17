@@ -1585,6 +1585,26 @@ class ItemsController < ApplicationController
         end
         
       end
+      
+      # Figure out which new or full moon is next
+      now = Time.now.strftime("%Y-%m-%d %H:%M")
+      nowdate = Time.now.strftime("%Y-%m-%d")
+      nowtime = Time.now.strftime("%H:%M")
+      @moon = Moon.where("mdate>='#{nowdate}'").where(mailing_sent: false).order(:mdate).first
+      if @moon
+        # We want dd-mmm-yyyy at hh:mm am/pm
+        moondate = @moon.mdate.strftime("%d-%b-%Y")
+        if @moon.mtime.to_s == ""
+          moontime = '12:00 pm'
+        elsif @moon.mtime == '12:00'
+          moontime = "12:00 pm"
+        elsif @moon.mtime < '12:00'
+          moontime = "#{@moon.mtime} am"
+        elsif 
+          moontime = ("%02d" % (@moon.mtime[0..1].to_i - 12)) + @moon.mtime[2..4] + 'pm'
+        end
+        @moontime = moondate + ' ' + moontime
+      end
     
       render :partial=>'simple_result'
     
