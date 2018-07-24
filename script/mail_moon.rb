@@ -14,10 +14,10 @@ participant_id = 0
 runday = ''
 testonly = false
 
-# testing: ruby mail_send.rb -p 6 -d 2013-11-10 -w 1 
+# testing: ruby mail_send.rb -p 6 -d "2013-11-10 15:45" -w 1 
 opts = OptionParser.new
 opts.on("-pARG","--participant=ARG",Integer) {|val| participant_id = val}
-opts.on("-dARG","--day=ARG",String) {|val| runday = val}
+opts.on("-dARG","--day=ARG",String) {|val| runday = val}        # Include time
 opts.on("-tARG","--test=ARG",Integer) {|val| testonly = true}
 opts.parse(ARGV)
 
@@ -26,51 +26,69 @@ if testonly
 end
 
 if runday != ''
-  #-- If a day is given, it should be the day on which the mailing is expected to go out (beginning of the day following new moon)
+  #-- If a day is given, it should be the day on which the mailing is expected to go out
   now = Time.parse(runday)
 else
   now = Time.now
 end 
 puts "Running this on localtime #{now.strftime("%Y-%m-%d %H:%M")}"
 
-#-- The target day (yesterday) is what we will pretend is today
 
-today = now.midnight - 1.day
-puts "Target: A day earlier, which is localtime #{today.strftime("%Y-%m-%d %H:%M")}"
+do_it = false
 
-todaystr = today.strftime("%Y-%m-%d")
-whichday = todaystr
-puts "Today string: #{todaystr}"
-todayfull = today.strftime("%Y-%b-%d")
+# Did we pass any time for new or full moon, which hasn't been sent yet?
+
+nowdate = now.strftime("%Y-%m-%d")
+nowtime = now.strftime("%H:%M")
+@moon = Moon.where("mdate<='#{nowdate}'").order(mdate: :desc).first
+if @moon and @moon.mailing_sent
+  puts "Day #{@moon.mdate.strftime("%Y-%m-%d")} mailing was already sent"
+elsif @moon and @moon.mdate.strftime("%Y-%m-%d") < nowdate and @moon.mdate < (now - 1)
+  puts "Day #{@moon.mdate.strftime("%Y-%m-%d")} has already passed, but it was too long ago"
+elsif @moon and @moon.mdate.strftime("%Y-%m-%d") < nowdate
+  # The time doesn't matter, the day is already passed
+  puts "Day #{@moon.mdate.strftime("%Y-%m-%d")} has just passed"
+  do_it = true
+elsif @moon
+  # It's the right day. Have we passed the hour yet?
+  puts "It's the right day"
+  if nowtime >= @moon.mtime
+    puts "and the right time"
+    do_it = true
+  else
+    puts "It is not yet the right time"
+  end
+else
+  puts "There is no moon that hasn't been processed"
+end
+
+if do_it
+  puts "OK, let's do it"
+else
+  puts "stopping"
+  exit
+end
+
+puts "It's a #{@moon.new_or_full} moon"
 
 crit = {}
 @data = {}
 
-# Is today a new moon?
-#MOONS = {
-#  '2017-05-25_2017-06-23' => "May 25 - June 23, 2017",
-#  '2017-06-23_2017-07-23' => "June 23 - July 23, 2017",
-#}
-is_new = false
-MOONS.each do |code,txt|
-  if code[11..20] == todaystr
-    is_new = true
-    xarr = code.split('_')
-    @datefromuse = xarr[0]
-    @datefromto = xarr[1]    
-    crit[:datefromuse] = @datefromuse
-    crit[:datefromto] = @datefromto   
-    puts "Using period #{@datefromuse} - #{@datefromto}"   
-    break
-  end
-end
+# Get the period
+@datefrom = @moon.previous_date
+@dateto = @moon.mdate
 
-if is_new
-  puts "Today (#{todaystr}) is a new moon. Continuing..."
-else
-  puts "It is not a new moon today. Quitting..."
-  exit
-end
+crit[:datefromuse] = @datefrom
+crit[:datefromto] = @dateto
+puts "Using period #{@datefrom} - #{@dateto}" 
+
+#-- Whichever day (today or yesterday) is the new/full moon, use that
+
+today = @moon.mdate
+todaystr = today.strftime("%Y-%m-%d")
+whichday = todaystr
+puts "Today string: #{todaystr}"
+todayfull = today.strftime("%Y-%b-%d")
 
 # NB: Just for testing
 #crit[:datefromuse] = '2012-04-05'
@@ -270,7 +288,7 @@ for p in participants
   cdata = {}
   cdata['recipient'] = p      
   
-  subject = "[voicesofhumanity] New Moon, #{todayfull}"
+  subject = "[voicesofhumanity] #{@moon.new_or_full.capitalize} Moon, #{todayfull}"
 
   email = ItemMailer.moon(subject, etext, p.email_address_with_name, cdata)
 
@@ -291,6 +309,14 @@ for p in participants
   end
 
 
+end
+
+if not testonly
+  puts "Moon set as mailing having been sent"
+  @moon.mailing_sent = true
+  @moon.save
+else
+  puts "Not setting moon as sent, because we're only testing"
 end
 
 puts "#{numsent} daily messages sent. #{numerror} errors"
