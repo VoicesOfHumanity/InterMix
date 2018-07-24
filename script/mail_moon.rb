@@ -94,6 +94,14 @@ todayfull = today.strftime("%Y-%b-%d")
 #crit[:datefromuse] = '2012-04-05'
 #crit[:datefromto] = '2017-06-01'    
 
+if @moon.new_or_full == 'full'
+  # must have #nvaction
+  crit[:nvaction] = true
+else
+  # exclude #nvaction
+  crit[:nvaction] = false
+end
+
 ages = MetamapNode.where(metamap_id: 5).order(:sortorder)
 genders = MetamapNode.where(metamap_id: 3).order(:sortorder)
 
