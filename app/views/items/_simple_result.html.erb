@@ -8,6 +8,10 @@
   <%= render partial: 'items/geoslider_result_options', locals: {num: 1} %>
 </div>
 
+<% if params[:showratings].to_i == 1 -%>
+<p>crit: <%= @crit.inspect %></p>
+<% end -%>
+
 <% @data.each do |name,info| -%>
   <h3><%= info[:name ]%></h3>
     

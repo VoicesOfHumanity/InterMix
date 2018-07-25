@@ -153,6 +153,7 @@ var cur_batch_level = <%= (@batch_level || 1).to_i %>;
 var cur_batch_size = <%= (@batch_size || 4).to_i %>;
 var showing_options = '<%= @showing_options %>';
 var user_comtags = <%=raw current_participant.tag_list.inspect %>;
+var nvaction_on = <%= @nvaction ? 'true' : 'false' %>;
 $(function() {
   if (false) {
     $( "#geoslider" ).slider({
@@ -370,7 +371,6 @@ function joinleave(comtag) {
 	  }
 	});
 }
-var nvaction_on = <%= @nvaction ? 'true' : 'false' %>;
 function actionclick() {
   if (nvaction_on) {
     nvaction_on = false;

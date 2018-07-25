@@ -1226,8 +1226,10 @@ class ItemsController < ApplicationController
     session[:comtag] = crit[:comtag]
     session[:messtag] = crit[:messtag]
     
-    crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
-    session[:nvaction] = crit[:nvaction]
+    if params.has_key?(:nvaction) 
+      crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
+      session[:nvaction] = crit[:nvaction]
+    end
     
     #-- Checkboxes are also about comtags
     #if params[:check] and params[:check].class == Hash
@@ -1605,6 +1607,8 @@ class ItemsController < ApplicationController
         end
         @moontime = moondate + ' ' + moontime
       end
+
+      @crit = crit
     
       render :partial=>'simple_result'
     
@@ -1670,6 +1674,8 @@ class ItemsController < ApplicationController
       @showmax = @batch_size
 
       @suggestedtopic = session.has_key?(:suggestedtopic) ? session[:suggestedtopic] : ""
+
+      @crit = crit
 
       render :partial => 'geoslider_update'
   

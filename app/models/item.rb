@@ -1441,7 +1441,7 @@ class Item < ActiveRecord::Base
     # Date period
     if crit.has_key?(:datefromuse) and crit[:datefromuse].to_s != ''
       if crit[:datefromuse].class == Date
-        datefromuse = crit[:datefromuse].dup.strftime("Y-m-d")
+        datefromuse = crit[:datefromuse].dup.strftime("%Y-%m-%d")
       else
         datefromuse = crit[:datefromuse].dup.to_s
       end
@@ -1451,7 +1451,7 @@ class Item < ActiveRecord::Base
     end
     if crit.has_key?(:datefromto) and crit[:datefromto].to_s != ''
       if crit[:datefromto].class == Date
-        datefromto = crit[:datefromto].dup.strftime("Y-m-d")
+        datefromto = crit[:datefromto].dup.strftime("%Y-%m-%d")
       else
         datefromto = crit[:datefromto].dup.to_s
       end
@@ -1633,9 +1633,9 @@ class Item < ActiveRecord::Base
       items = items.where("intra_com='public' or intra_com='@#{crit[:comtag]}'")
 
 
-    elsif crit[:posted_by].to_i == 0
+    elsif crit[:posted_by].to_i == 0 and not (crit.has_key?(:from) and crit[:from] == 'mail')
       
-      # show only public items, if there's no community specified, unless we're seeing somebody's wall
+      # show only public items, if there's no community specified, unless we're seeing somebody's wall, or it is a bulk mailing
       items = items.where("intra_com='public'")
       
     end
@@ -1644,8 +1644,10 @@ class Item < ActiveRecord::Base
       items = items.tagged_with(crit[:messtag])      
     end    
     
-    if crit.has_key?(:nvaction) and crit[:nvaction]
+    if crit.has_key?(:nvaction) and crit[:nvaction] === true
       items = items.tagged_with('nvaction')      
+    elsif crit.has_key?(:nvaction) and crit[:nvaction] === false
+      items = items.tagged_with('nvaction', exclude: true)            
     end
       
     if rootonly
@@ -1665,6 +1667,8 @@ class Item < ActiveRecord::Base
       items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
       items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation")
     end
+    
+    #puts("sql: #{items.to_sql}")
   
     logger.info("item#get_items #{items.length if items} items and #{ratings.length if ratings} ratings")
   

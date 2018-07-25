@@ -74,6 +74,8 @@ puts "It's a #{@moon.new_or_full} moon"
 crit = {}
 @data = {}
 
+crit[:from] = 'mail'
+
 # Get the period
 @datefrom = @moon.previous_date
 @dateto = @moon.mdate
@@ -108,6 +110,8 @@ genders = MetamapNode.where(metamap_id: 3).order(:sortorder)
 gender_pos = {207=>"Men's",208=>"Women's"}
 gender_single = {207=>"Men",208=>"Women"}
 
+puts("crit: #{crit.inspect}")
+
 #-- Get the winners for the period
 puts("Calculating results...")
 
@@ -119,9 +123,11 @@ name = "Voice of Humanity-as-One"
 item = nil
 iproc = nil        
 items,ratings,@title = Item.get_items(crit,current_participant)
+puts "gender:all age:all items:#{items.length}"
 @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant_id)
 @sortby = '*value*'
 @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+#puts "extras:#{@extras}"
 if @items.length > 0 and ratings.length > 0
   exp = ""
   #exp = "@items[0].id:#{@items[0].id} @itemsproc[items[0].id]['value']:#{@itemsproc[items[0].id]['value']}"
@@ -151,6 +157,7 @@ for gender_rec in genders
     @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant_id)
     @sortby = '*value*'
     @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+    puts "gender:#{name} age:all items:#{@items.length}"
     if @items.length > 0 and ratings.length > 0
       if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
         item = @items[0]
@@ -184,6 +191,7 @@ for age_rec in ages
     @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant_id)
     @sortby = '*value*'
     @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+    puts "gender:all age:#{name} items:#{@items.length}"
     if @items.length > 0 and ratings.length > 0
       if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
         item = @items[0]
@@ -220,6 +228,11 @@ puts("Results:")
   end
 
 end
+
+#if testonly
+#  puts "Test Mode. Not going through participants"
+#  exit
+#end
 
 if participant_id.to_i > 0
   participants = Participant.where(:id=>participant_id)
