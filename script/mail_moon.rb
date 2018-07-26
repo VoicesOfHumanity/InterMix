@@ -26,12 +26,12 @@ if testonly
 end
 
 if runday != ''
-  #-- If a day is given, it should be the day on which the mailing is expected to go out
+  #-- If a day is given, it should be the day/time on which the mailing is expected to go out
   now = Time.parse(runday)
 else
-  now = Time.now
+  now = Time.now.utc
 end 
-puts "Running this on localtime #{now.strftime("%Y-%m-%d %H:%M")}"
+puts "Running this on utc time #{now.strftime("%Y-%m-%d %H:%M")}"
 
 
 do_it = false
