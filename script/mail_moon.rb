@@ -252,7 +252,9 @@ for p in participants
 
   participant = p
   
-  etext = ""
+  etext = ""  
+  etext += "<p>" + @moon.top_text + "</p>" if @moon.top_text.to_s != ''
+  etext += "<hr/>"
 
   @data.each do |name,info|
     heading = info[:name ]
@@ -305,6 +307,8 @@ for p in participants
     end
 
   end
+  
+  etext += "<p>" + @moon.bottom_text + "</p>" if @moon.bottom_text.to_s != ''
   
   cdata = {}
   cdata['recipient'] = p      
