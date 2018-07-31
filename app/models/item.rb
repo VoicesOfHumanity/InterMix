@@ -1647,7 +1647,10 @@ class Item < ActiveRecord::Base
     if crit.has_key?(:nvaction) and crit[:nvaction] === true
       items = items.tagged_with('nvaction')      
     elsif crit.has_key?(:nvaction) and crit[:nvaction] === false
-      items = items.tagged_with('nvaction', exclude: true)            
+      if crit.has_key?(:nvaction_included) and crit[:nvaction_included] === false
+        items = items.tagged_with('nvaction', exclude: true)  
+      end          
+      logger.info("item#get_items nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
     end
       
     if rootonly

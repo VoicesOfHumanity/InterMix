@@ -1229,6 +1229,11 @@ class ItemsController < ApplicationController
     if params.has_key?(:nvaction) 
       crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
       session[:nvaction] = crit[:nvaction]
+      if params.has_key?(:nvaction_included)
+        crit[:nvaction_included] = (params[:nvaction_included].to_i == 1) ? true : false
+        session[:nvaction_included] = crit[:nvaction_included]
+        logger.info("items#geoslider_update nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
+      end
     end
     
     #-- Checkboxes are also about comtags
