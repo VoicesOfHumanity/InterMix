@@ -91,14 +91,17 @@ class DialogsController < ApplicationController
     else
       @messtag = session[:messtag].to_s
     end
-    if is_new
-      @nvaction = false
-      session[:nvaction] = @nvaction
+    #if is_new
+    #  @nvaction = false
+    #  session[:nvaction] = @nvaction
+    if session.has_key?(:nvaction)
+      @nvaction = session[:nvaction]        
     elsif params.has_key?(:nvaction)
       @nvaction = (params[:nvaction].to_i == 1) ? true : false
       session[:nvaction] = @nvaction
     else
-      @nvaction = session[:nvaction]  
+      @nvaction = false
+      session[:nvaction] = @nvaction  
     end
     
     if (@comtag != '' and params.has_key?(:joincom)) or (session.has_key?(:joincom))
