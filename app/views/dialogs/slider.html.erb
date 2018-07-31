@@ -45,11 +45,11 @@
       <img src="/images/<%= @nvaction ? 'exitaction' : 'nvaction' %>.jpg" id="actionbutton" onclick="actionclick()">
     </div>
     
-    <% if not @nvaction and @show_result.to_i == 1 -%>
+    <% if @show_result.to_i == 1 -%>
       <% if @include_nvaction -%>
-        <input type="button" value="Exclude NV Action items" style="margin-top:10px" id="nvaction_include_button" onclick="chg_nvaction_include()">   
+        <input type="button" value="Exclude NV Action items" style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">   
       <% else -%>
-        <input type="button" value="Include NV Action items" style="margin-top:10px" id="nvaction_include_button" onclick="chg_nvaction_include()">
+        <input type="button" value="Include NV Action items" style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">
       <% end -%>
     <% end -%>  
     
@@ -396,11 +396,14 @@ function actionclick() {
     $('#actionbutton').attr('src','/images/nvaction.jpg');
     $('#top_forum_header').html('Forum');
     $('#top_result_header').html('Highest Rated Messages');
+    $('#nvaction_include_button').show();
   } else {
     nvaction_on = true;
     $('#actionbutton').attr('src','/images/exitaction.jpg');
     $('#top_forum_header').html('Nonviolent Action Forum');
     $('#top_result_header').html('Highest Rated Nonviolent Action Items');
+    $('#nvaction_include_button').hide();
+    nvaction_included = false;
   }
   per_reload();
 }
