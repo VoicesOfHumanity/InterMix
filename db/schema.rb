@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180717190733) do
+ActiveRecord::Schema.define(version: 20180805005632) do
 
   create_table "authentications", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
     t.integer "participant_id"
@@ -370,6 +370,13 @@ ActiveRecord::Schema.define(version: 20180717190733) do
   create_table "item_deliveries", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer "item_id"
+    t.integer "participant_id"
+    t.string "context"
+    t.datetime "sent_at"
+    t.datetime "seen_at"
+    t.index ["item_id", "participant_id"], name: "index_item_deliveries_on_item_id_and_participant_id"
+    t.index ["participant_id", "item_id"], name: "index_item_deliveries_on_participant_id_and_item_id"
   end
 
   create_table "item_flags", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|

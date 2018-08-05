@@ -1654,6 +1654,7 @@ class Item < ActiveRecord::Base
       end          
       logger.info("item#get_items nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
     end
+    logger.info("item#get_items crit:#{crit.inspect}")
       
     if rootonly
       # Leaving non-roots in there. Will be sorted out in get_itemsproc
