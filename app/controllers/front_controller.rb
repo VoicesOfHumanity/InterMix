@@ -94,13 +94,26 @@ class FrontController < ApplicationController
   end  
   
   def pixel
-    #-- Fake pixel, to notice that somebody opened an e-mail (message)
-    message_id = params[:id].to_i 
-    message = Message.find_by_id(message_id)
-    if message
-      message.read_email = true
-      message.read_at = Time.now
-      message.save
+    #-- Fake pixel, to notice that somebody opened an e-mail (message or item)
+    got_id = params[:id]
+    logger.info("front#pixel #{got_id}")
+    if got_id.split(/_/).length > 1
+      parts = got_id.split(/_/)
+      item_id = parts[0].to_i
+      participant_id = parts[1].to_i
+      item_delivery = ItemDelivery.where(item_id:item_id,participant_id:participant_id).last
+      if item_delivery
+        item_delivery.seen_at = Time.now
+        item_delivery.save
+      end
+    elsif got_id.to_i > 0
+      message_id = params[:id].to_i 
+      message = Message.find_by_id(message_id)
+      if message
+        message.read_email = true
+        message.read_at = Time.now
+        message.save
+      end
     end
     send_file("#{Rails.root}/public/images/pixel.gif", :type => 'image/gif', :filename => "#{message_id}.gif", :disposition => 'inline' )
   end  

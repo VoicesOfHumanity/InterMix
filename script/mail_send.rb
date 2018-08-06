@@ -291,13 +291,22 @@ for p in participants
       
       itext += "<hr>"
       
+      xcontext = "mail_send"
       if is_mycom and p.mycom_email == 'weekly' and is_weekly
         tweekly += itext
+        xcontext = "weekly"
       elsif not is_mycom and p.othercom_email == 'weekly' and is_weekly
         tweekly += itext
+        xcontext = "weekly"
       else
         tdaily += itext
+        xcontext = "daily"
       end  
+      
+      begin
+        ItemDelivery.create(item_id:item.id, participant_id:p.id, context:xcontext, sent_at: Time.now)
+      rescue
+      end
       
     end
     

@@ -326,13 +326,13 @@ for p in participants
       message_id = email.message_id
       puts "  moon e-mail sent: #{email.message_id}"
       numsent += 1
+      ItemDelivery.create(item_id:item.id, participant_id:p.id, context:'moon', sent_at: Time.now)
     rescue Exception => e
       puts "  moon e-mail delivery problem"
       Rails.logger.info("mail_moon problem delivering daily email to #{p.id}:#{p.name}: #{e}")
       numerror += 1
     end
   end
-
 
 end
 

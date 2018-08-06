@@ -462,13 +462,18 @@ class Item < ActiveRecord::Base
         email = ItemMailer.item(msubject, itext, recipient.email_address_with_name, cdata)
       end
 
+      was_sent = false
+      
       begin
         logger.info("Item#emailit delivering email to #{recipient.id}:#{recipient.name}")
         email.deliver_now
         message_id = email.message_id
+        was_sent = true
       rescue Exception => e
         logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
       end
+      
+      ItemDelivery.create(item_id:self.id, participant_id:recipient.id, context:'instant', sent_at: Time.now)
       
     end
     
