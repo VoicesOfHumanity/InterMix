@@ -303,11 +303,6 @@ for p in participants
         xcontext = "daily"
       end  
       
-      begin
-        ItemDelivery.create(item_id:item.id, participant_id:p.id, context:xcontext, sent_at: Time.now)
-      rescue
-      end
-      
     end
     
     if will_items > 0 and did_items == 0
@@ -324,23 +319,36 @@ for p in participants
   
     #subject = "InterMix Daily Digest, #{dstart.strftime("%Y-%m-%d")}"
     subject = "[voicesofhumanity] Daily Digest, #{dstart.strftime("%Y-%b-%d")}"
+
+    if not testonly
+      email_log = Email.create(participant_id:p.id, context:'daily')
+      cdata['email_id'] = email_log.id
+    end    
+    was_sent = false
   
     email = ItemMailer.digest(subject, tdaily, p.email_address_with_name, cdata)
   
     if testonly
       puts "  here we would have sent the email, if it weren't a test"
-    else  
+    else        
       begin
         Rails.logger.info("mail_send delivering daily email to #{p.id}:#{p.name}")
         email.deliver
         message_id = email.message_id
         puts "  daily e-mail sent: #{email.message_id}"
         numdailysent += 1
+        was_sent = true
       rescue Exception => e
         puts "  daily e-mail delivery problem"
         Rails.logger.info("mail_send problem delivering daily email to #{p.id}:#{p.name}: #{e}")
         numdailyerror += 1
       end
+    end
+    
+    if was_sent
+      email_log.sent = true
+      email_log.sent_at = Time.now
+      email_log.save
     end
   
   end
@@ -350,6 +358,12 @@ for p in participants
   
     #subject = "InterMix Weekly Digest, #{wstart.strftime("%Y-%m-%d")} - #{pend.strftime("%Y-%m-%d")}"
     subject = "[voicesofhumanity] Weekly Digest, #{wstart.strftime("%Y-%b-%d")} - #{pend.strftime("%Y-%b-%d")}"
+
+    if not testonly
+      email_log = Email.create(participant_id:p.id, context:'weekly')
+      cdata['email_id'] = email_log.id
+    end
+    was_sent = false
   
     email = ItemMailer.digest(subject, tweekly, p.email_address_with_name, cdata)
   
@@ -362,12 +376,19 @@ for p in participants
         message_id = email.message_id
         puts "  weekly e-mail sent: #{email.message_id}"
         numweeklysent += 1
+        was_sent = true
       rescue Exception => e
         puts "  weekly e-mail delivery problem"
         Rails.logger.info("mail_send problem delivering weekly email to #{p.id}:#{p.name}: #{e}")
         numweeklyerror += 1
       end
     end  
+
+    if was_sent
+      email_log.sent = true
+      email_log.sent_at = Time.now
+      email_log.save
+    end
   
   end
   

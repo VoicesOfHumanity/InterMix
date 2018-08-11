@@ -26,9 +26,7 @@ To block emails from the Voices of Humanity social media, <a href="https://<%= B
 
 <hr style="clear:both">
 
-<% if false %>
-<img src="https://<%= BASEDOMAIN %>/pixel/<%= @cdata['item'].id.to_i if @cdata['item'] %>_<%= @cdata['recipient'].id.to_i if @cdata['recipient'] %>.gif" width="0" height="0" border="0" style="display:none">
-<% end %>
+<img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none">
 
 </body>
 </html>

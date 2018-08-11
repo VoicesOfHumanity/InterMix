@@ -99,14 +99,17 @@ class FrontController < ApplicationController
     logger.info("front#pixel #{got_id}")
     if got_id.split(/_/).length > 1
       parts = got_id.split(/_/)
-      item_id = parts[0].to_i
-      participant_id = parts[1].to_i
-      item_delivery = ItemDelivery.where(item_id:item_id,participant_id:participant_id).last
-      if item_delivery
-        item_delivery.seen_at = Time.now
-        item_delivery.save
+      if parts[0] == 'e'
+        email_id = parts[1].to_i
+        email_log = Email.find_by_id(email_id)
+        if email_log
+          email_log.seen = true
+          email_log.seen_at = Time.now
+          email_log.save
+        end
       end
     elsif got_id.to_i > 0
+      # A message
       message_id = params[:id].to_i 
       message = Message.find_by_id(message_id)
       if message

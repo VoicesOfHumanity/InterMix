@@ -315,6 +315,12 @@ for p in participants
   
   subject = "[voicesofhumanity] #{@moon.new_or_full.capitalize} Moon, #{todayfull}"
 
+  if not testonly
+    email_log = Email.create(participant_id:p.id, context:'weekly')
+    cdata['email_id'] = email_log.id
+  end
+  was_sent = false
+
   email = ItemMailer.moon(subject, etext, p.email_address_with_name, cdata)
 
   if testonly
@@ -326,13 +332,20 @@ for p in participants
       message_id = email.message_id
       puts "  moon e-mail sent: #{email.message_id}"
       numsent += 1
-      ItemDelivery.create(item_id:item.id, participant_id:p.id, context:'moon', sent_at: Time.now)
+      was_sent = true
     rescue Exception => e
       puts "  moon e-mail delivery problem"
       Rails.logger.info("mail_moon problem delivering daily email to #{p.id}:#{p.name}: #{e}")
       numerror += 1
     end
   end
+  
+  if was_sent
+    email_log.sent = true
+    email_log.sent_at = Time.now
+    email_log.save
+  end
+  
 
 end
 

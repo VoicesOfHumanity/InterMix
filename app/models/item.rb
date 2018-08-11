@@ -454,6 +454,10 @@ class Item < ActiveRecord::Base
         itext += "<a href=\"https://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"https://voh.intermix.org/images/thumbsupoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs up\"/></a>"
         itext += "</p>"
       end
+
+      was_sent = false
+      email_log = Email.create(participant_id:recipient.id, context:'instant')
+      cdata['email_id'] = email_log.id
       
       if group
         #-- A group message  
@@ -461,8 +465,6 @@ class Item < ActiveRecord::Base
       else    
         email = ItemMailer.item(msubject, itext, recipient.email_address_with_name, cdata)
       end
-
-      was_sent = false
       
       begin
         logger.info("Item#emailit delivering email to #{recipient.id}:#{recipient.name}")
@@ -473,7 +475,13 @@ class Item < ActiveRecord::Base
         logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
       end
       
-      ItemDelivery.create(item_id:self.id, participant_id:recipient.id, context:'instant', sent_at: Time.now)
+      if was_sent
+        email_log.sent = true
+        email_log.sent_at = Time.now
+        email_log.save
+      end
+      
+      #ItemDelivery.create(item_id:self.id, participant_id:recipient.id, context:'instant', sent_at: Time.now)
       
     end
     

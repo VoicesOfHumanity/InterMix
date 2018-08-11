@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180805005632) do
+ActiveRecord::Schema.define(version: 20180809111052) do
 
   create_table "authentications", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
     t.integer "participant_id"
@@ -189,6 +189,21 @@ ActiveRecord::Schema.define(version: 20180805005632) do
     t.date "default_datefrom"
     t.index ["name"], name: "index_dialogs_on_name", length: { name: 30 }
     t.index ["shortname"], name: "index_dialogs_on_shortname", length: { shortname: 20 }
+  end
+
+  create_table "emails", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "participant_id"
+    t.integer "integer"
+    t.string "context"
+    t.string "string"
+    t.boolean "sent", default: false
+    t.datetime "sent_at"
+    t.datetime "datetime"
+    t.boolean "seen", default: false
+    t.datetime "seen_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["participant_id", "id"], name: "index_emails_on_participant_id_and_id"
   end
 
   create_table "follows", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
