@@ -14,14 +14,22 @@ for comtag in comtags
     puts "  more" if com.more
     puts "  ungoals" if com.ungoals
     puts "  sustdev" if com.sustdev
-    # See who has it
-    members = Participant.where(status: 'active', no_email: false).tagged_with(comtag)
-    puts "  #{members.length} members"
     # admins
     admins = CommunityAdmin.where(community_id: com.id)
     puts "  #{admins.length} moderators:"
     for admin in admins
       puts "    #{admin.participant_id}: #{admin.participant.email}"
+    end
+    # See who has it
+    members = Participant.where(status: 'active', no_email: false).tagged_with(comtag)
+    puts "  #{members.length} members"
+    if members.length == 1 and admins.length == 0
+      puts "  We should make the one member a moderator:"
+      for member in members
+        puts "    #{member.id}: #{member.email}"
+        CommunityAdmin.create(community_id: com.id, participant_id: member.id, active: true, admin: true, moderator: true)
+        puts "    added"
+      end
     end
   end
 end
