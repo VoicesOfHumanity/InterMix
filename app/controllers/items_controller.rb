@@ -1169,7 +1169,7 @@ class ItemsController < ApplicationController
     # geo_level: city, metro, state, nation, earth
     # group_level: current, my, all groups. 
   
-    # indigenous, other minority, veteran, interfaith, refugee
+    # indigenous, other minority, veteran, *interfaith*, refugee
 
     @per_page = (params[:per_page] || 11).to_i
     @page = ( params[:page] || 1 ).to_i
@@ -1226,14 +1226,47 @@ class ItemsController < ApplicationController
     session[:comtag] = crit[:comtag]
     session[:messtag] = crit[:messtag]
     
+    nvaction_changed = false
     if params.has_key?(:nvaction) 
       crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
+      if session.has_key?(:nvaction) and session[:nvaction] != crit[:nvaction]
+        nvaction_changed = true
+      end
       session[:nvaction] = crit[:nvaction]
       if params.has_key?(:nvaction_included)
         crit[:nvaction_included] = (params[:nvaction_included].to_i == 1) ? true : false
         session[:nvaction_included] = crit[:nvaction_included]
         logger.info("items#geoslider_update nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
       end
+    end
+    
+    @datetype = params[:datetype].to_s
+    @datefixed = params[:datefixed].to_s
+    @datefrom = params[:datefrom].to_s
+
+    #MOONS = {
+    #  '2016-03-08_2017-06-23' => "March 8, 2016 - June 23, 2017",
+    #  '2017-06-23_2017-07-23' => "June 23 - July 23, 2017",      
+    #MOONS.select{|d| d<Time.now.to_s[0..10]}.invert.to_a,@datefixed)   
+    today = Time.now.strftime("%Y-%m-%d")
+    cutoff = 1.month.from_now
+    @moons = [] 
+    xstart = '2016-03-08'
+    xmoon = crit[:nvaction] ? 'full' : 'new' 
+    moon_recs = Moon.where(new_or_full: xmoon).where("mdate<='#{cutoff}'").order(:mdate)
+    for moon_rec in moon_recs
+      xend = moon_rec['mdate'].strftime('%Y-%m-%d')
+      dend = moon_rec['mdate'].strftime('%B %-d, %Y')
+      dstart = xstart.to_date.strftime('%B %-d, %Y')
+      xrange = "#{xstart}_#{xend}"
+      drange = "#{dstart} - #{dend}"
+      if xstart <= today
+        @moons << [drange,xrange]
+      end
+      xstart = xend
+    end    
+    if @datetype == 'fixed' and nvaction_changed
+      @datefixed = 'month'
     end
     
     #-- Checkboxes are also about comtags
@@ -1250,9 +1283,6 @@ class ItemsController < ApplicationController
     #  crit[:comtag] = check
     #end
     
-    @datetype = params[:datetype].to_s
-    @datefixed = params[:datefixed].to_s
-    @datefrom = params[:datefrom].to_s
     session[:datetype] = @datetype.dup
     session[:datefixed] = @datefixed.dup
     session[:datefrom] = @datefrom.dup
@@ -1352,27 +1382,6 @@ class ItemsController < ApplicationController
     all_posts = all_posts.where("items.created_at >= ?", crit[:datefromuse])
     @num_all_posts = all_posts.count
     # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
-
-    #MOONS = {
-    #  '2016-03-08_2017-06-23' => "March 8, 2016 - June 23, 2017",
-    #  '2017-06-23_2017-07-23' => "June 23 - July 23, 2017",      
-    #MOONS.select{|d| d<Time.now.to_s[0..10]}.invert.to_a,@datefixed)   
-    today = Time.now.strftime("%Y-%m-%d")
-    cutoff = 1.month.from_now
-    @moons = [] 
-    xstart = '2016-03-08'
-    moon_recs = Moon.where(new_or_full: 'full').where("mdate<='#{cutoff}'").order(:mdate)
-    for moon_rec in moon_recs
-      xend = moon_rec['mdate'].strftime('%Y-%m-%d')
-      dend = moon_rec['mdate'].strftime('%B %-d, %Y')
-      dstart = xstart.to_date.strftime('%B %-d, %Y')
-      xrange = "#{xstart}_#{xend}"
-      drange = "#{dstart} - #{dend}"
-      if xstart <= today
-        @moons << [drange,xrange]
-      end
-      xstart = xend
-    end
   
     @title = ""
     crit[:show_result] = show_result
