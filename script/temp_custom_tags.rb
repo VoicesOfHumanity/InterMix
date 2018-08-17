@@ -18,7 +18,11 @@ for comtag in comtags
     admins = CommunityAdmin.where(community_id: com.id)
     puts "  #{admins.length} moderators:"
     for admin in admins
-      puts "    #{admin.participant_id}: #{admin.participant.email}"
+      if admin.participant
+        puts "    #{admin.participant_id}: #{admin.participant.email}"
+      else
+        puts "    #{admin.participant_id}: No longer exists"        
+      end
     end
     # See who has it
     members = Participant.where(status: 'active', no_email: false).tagged_with(comtag)

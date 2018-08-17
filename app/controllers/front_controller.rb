@@ -1767,9 +1767,13 @@ class FrontController < ApplicationController
     sign_out :participant if participant_signed_in?
     
     fb_uid = params[:fb_uid].to_i
-    name = params[:name]
-    email = params[:email]
+    name = params[:name].to_s
+    email = params[:email].to_s
     fb_access_token = params[:access_token]
+    country = params[:country].to_s
+    comtag = params[:comtag].to_s
+    
+    # NB! Need a country, and what tag does this go into?
     
     user_exists = false
     create_user = false
@@ -1795,9 +1799,11 @@ class FrontController < ApplicationController
       else
         ret['status'] = "User not found"  
       end
+    elsif email != ''
+      ret['status'] = "User not found. Creating new user."  
+      create_user = true
     else
       ret['status'] = "No authentication found"  
-      create_user = true
     end
 
     if create_user
@@ -1805,7 +1811,141 @@ class FrontController < ApplicationController
       last_name = narr[narr.length-1]
       first_name = ''
       first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
+
+      @participant = Participant.new
       
+      @participant.fb_uid = fb_uid
+      @participant.first_name = first_name
+      @participant.last_name = last_name
+      @participant.email = email
+ 
+      if country != ''
+        country = Geocountry.find_by_name(country)
+        if country
+          @participant.country_code = country.iso
+          @participant.country_name = country.name
+        else
+          #-- Isn't a country. Probably a US state
+          @participant.country_code = 'US'
+          @participant.country_name = 'United States'
+        end
+      else
+        @participant.country_code = 'US'
+        @participant.country_name = 'United States'  
+      end  
+
+      #-- Create a password automatically
+      @password = ''
+      3.times do
+        conso = 'bcdfghkmnprstvw'[rand(15)]
+        vowel = 'aeiouy'[rand(6)]
+        @password += conso +  vowel
+        @password += (1+rand(9)).to_s if rand(3) == 2
+      end
+
+      @participant.password = @password
+      @participant.forum_email = 'daily'
+      @participant.group_email = 'instant'
+      @participant.subgroup_email = 'instant'
+      @participant.private_email = 'instant'  
+      @participant.status = 'unconfirmed'   # we will change that a little later
+      @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @participant.email)
+
+      @participant.save!  
+      
+      Authentication.create(participant_id: @participant.id, provider: 'facebook', uid: fb_uid) 
+    
+      @group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
+
+      if comtag.to_s != ''
+        # They should be joined to a community
+        logger.info("front#fbjoinfinal joining to community #{session[:comtag]}")
+        xcomtag = comtag
+        xcomtag.gsub!(/[^0-9A-za-z_]/,'')
+        xcomtag.downcase!
+        if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
+        elsif xcomtag != ''
+          @participant.tag_list.add(xcomtag)
+        end
+        @participant.save
+      end
+        
+      if @participant.fb_uid.to_i >0 and not @participant.picture.exists?
+        #-- Use their facebook photo, if they don't already have one.
+        url = "https://graph.facebook.com/#{@participant.fb_uid}/picture?type=large"
+        @participant.picture = URI.parse(url).open
+        @participant.save
+      end
+        
+      @participant.ensure_authentication_token!
+    
+      # Pick an appropriate logo
+      if @group and @group.logo.exists?
+        @logo = "//#{BASEDOMAIN}#{@group.logo.url}"
+      else
+        @logo = nil
+      end
+
+      if true
+        dom = BASEDOMAIN
+      elsif @group and @group.shortname.to_s != ""
+        dom = "#{@group.shortname}.#{ROOTDOMAIN}"
+      else
+        dom = BASEDOMAIN
+      end
+    
+      #-- Send an e-mail to the member
+      recipient = @participant
+      cdata = {}
+      cdata['item'] = @item
+      cdata['recipient'] = @participant     
+      cdata['participant'] = @participant 
+      cdata['group'] = @group if @group
+      cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+      cdata['logo'] = @logo if @logo
+      cdata['password'] = @password
+      cdata['domain'] = dom
+      cdata['forumurl'] = "//#{dom}/groups/#{@group.id}/forum"
+    
+      if true
+        confirm_email_template = render_to_string :partial=>"groups/confirm_email_default", :layout=>false
+        template = Liquid::Template.parse(confirm_email_template)
+        html_content = template.render(cdata)
+      else    
+        html_content = "<p>Welcome! You have signed up through Facebook. In case you should need it, you can also use this login info:</p>"
+      
+        html_content = "<p>username: #{@participant.email}<br/>"
+        html_content += "password: #{@password}<br/>" if @password != '???'
+      
+        html_content += "<br/>Click here to log in the first time:<br/><br/>"
+        html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      
+        html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"
+        html_content += "</p>"
+      end
+  
+      email = @participant.email
+      msubject = "[#{@group.shortname}] Signup"
+      email = SystemMailer.generic(SYSTEM_SENDER, @participant.email_address_with_name, msubject, html_content, cdata)
+
+      begin
+        logger.info("front#api_fb_login_join delivering email to #{recipient.id}:#{recipient.name}")
+        email.deliver
+        message_id = email.message_id
+      rescue Exception => e
+        logger.info("front#api_fb_login_join problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
+      end
+      
+      @participant.status = 'active'
+      @participant.new_signup = true
+      @participant.save
+    
+      #sign_in(:participant, @participant)
+
+      ret['user_id'] = @participant.id
+      ret['username'] = @participant.email
+      ret['name'] = @participant.name
+      ret['auth_token'] = @participant.authentication_token
       
     end
     
