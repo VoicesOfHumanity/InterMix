@@ -1786,7 +1786,7 @@ class FrontController < ApplicationController
       participant = Participant.find_by_id(participant_id)
       if participant
         if participant.email.downcase == email.downcase
-          ret['status'] = "Found"
+          ret['status'] = "Found by auth"
           ret['user_id'] = participant.id
           ret['username'] = participant.email
           ret['name'] = participant.name
@@ -1800,10 +1800,22 @@ class FrontController < ApplicationController
         ret['status'] = "User not found"  
       end
     elsif email != ''
-      ret['status'] = "User not found. Creating new user."  
-      create_user = true
+      #-- If there's a user with that email, use that
+      participant = Participant.find_by_email(email)
+      if participant
+        ret['status'] = "Found by email"
+        ret['user_id'] = participant.id
+        ret['username'] = participant.email
+        ret['name'] = participant.name
+        ret['auth_token'] = participant.authentication_token
+        sign_in(:participant, participant)  
+        user_exists = true   
+      else
+        ret['status'] = "User not found. Creating new user."  
+        create_user = true
+      end
     else
-      ret['status'] = "No authentication found"  
+      ret['status'] = "No authentication found. No email."  
     end
 
     if create_user
