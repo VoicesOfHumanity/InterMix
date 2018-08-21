@@ -65,6 +65,7 @@ gem "liquid"
 gem 'image_size'
 gem 'twitter'
 gem "json"
+gem 'link_thumbnailer'
 #gem 'ruby-oembed', :require => 'oembed'
 #gem 'ruby-oembed'
 #gem 'embedly'
