@@ -173,18 +173,18 @@ class ProfilesController < ApplicationController
       flash.now[:alert] += 'Forum posting e-mail preference is required<br>' if params[:participant].has_key?(:forum_email) and @participant.forum_email.to_s == ''
     end
 
-    # Save any tags from checkboxes. NB: Taken care of in js, adding directly to tag_list
-    #if params[:check]
-    #  DEFAULT_COMMUNITIES.each do |tag,desc|
-    #    if params[:check].has_key?(tag)
-    #      if params[:check][tag].to_i == 1
-    #        @participant.tag_list.add(tag)
-    #      else
-    #        @participant.tag_list.remove(tag)
-    #      end
-    #    end
-    #  end
-    #end
+    # Save any tags from checkboxes. NB: Taken care of in js, adding directly to tag_list. No longer!
+    if params[:check]
+      DEFAULT_COMMUNITIES.each do |tag,desc|
+        #if params[:check].has_key?(tag)
+          if params[:check][tag].to_i == 1
+            @participant.tag_list.add(tag)
+          else
+            @participant.tag_list.remove(tag)
+          end
+        #end
+      end
+    end
 
     # Save any metamap assignments
     if params[:meta]

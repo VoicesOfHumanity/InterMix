@@ -8,8 +8,9 @@
 
 	<input type="hidden" id="forum_link" name="forum_link" value="<%= @forum_link %>">
 	<input type="hidden" id="goto" name="goto" value="">
+  <% if false -%>
   <input type="hidden" id="tag_list" name="participant[tag_list]" value="<%= @participant.tag_list %>">
-		
+	<% end -%>	
 
 	<%= f.inputs do %>
 
@@ -124,6 +125,7 @@
       </div>
     </li>  
     
+    <% if false -%>
     <li class="select required">
       <label class="label">My custom community tags</label>
       <select size="5" id="comtags" style="width: 150px;float:left">
@@ -137,7 +139,8 @@
         <input type="button" value="&lt; add" onclick="addtag()"> <input type="text" style="width: 100px" id="tag2add" maxlength="14"><br>
         <input type="button" value="&gt; remove" onclick="remtag()">
       </div>
-    </li>    
+    </li>
+    <% end -%>   
       
 	<% end %>
 	<br>
@@ -187,7 +190,7 @@
 
 	<p><br>
 	  <input type="button" value="Cancel" onclick="document.location.href='/me/profile'">
-	  <input type="submit" value="Save" onclick="savetags();return(true)">
+	  <input type="submit" value="Save">
 		<% if false and @forum_link.to_s != '' -%>
 	  <input type="button" value="Save and go to Forum" onclick="$('#goto').val($('#forum_link').val());$('#profile_edit').submit();" />
 		<% end -%>
@@ -245,6 +248,7 @@ function remtag() {
   $('#comtags option:selected').remove();
 }
 function savetags() {
+  return;
   var xlist = '';
   $('#comtags option').each(function() {
     var tag = $(this).val();
