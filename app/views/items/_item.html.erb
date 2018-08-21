@@ -131,10 +131,14 @@ end
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
 		<div id="shortcontent_<%= item.id %>"><a href="<%= item.link %>" target="_blank">audio</a><br><%=raw item.short_content %></div>
 		<div id="htmlcontent_<%= item.id %>" style="display:none">
-      <% if item.oembed_response and item.oembed_response['html'] -%>
-      <%=raw item.oembed_response['html'] %>
-      <% else -%>
-      <a href="<%= item.link %>" target="_blank">audio</a>
+      <% begin -%>
+        <% if item.oembed_response and item.oembed_response['html'] -%>
+        <%=raw item.oembed_response['html'] %>
+        <% else -%>
+        <a href="<%= item.link %>" target="_blank">audio</a>
+        <% end -%>
+      <% rescue -%>
+        <a href="<%= item.link %>" target="_blank">audio</a>
       <% end -%>
       <br><%=raw item.short_content %></div>
 		
@@ -276,6 +280,13 @@ end
     
     <div id="tags_<%= item.id %>" style="<% if false and showlong===false %>display:none<% end %>">
     <% if true and item.participant -%>
+      <% comtags = item.participant.show_tag_list(true,true,(params[:show_result].to_i == 1)) %>
+      <% if comtags.to_s != '' -%>
+        <div class="iteminfotxt">
+          <a href="/participant/<%= item.participant.id %>/profile#communities">Author's Communities</a>
+        </div>
+      <% end -%>
+    <% elsif true and item.participant -%>
       <% comtags = item.participant.show_tag_list(true,true,(params[:show_result].to_i == 1)) %>
       <% if comtags.to_s != '' -%>
         <div class="iteminfotxt">
