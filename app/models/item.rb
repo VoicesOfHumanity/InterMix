@@ -1646,7 +1646,8 @@ class Item < ActiveRecord::Base
       items = items.where("intra_com='public' or intra_com='@#{crit[:comtag]}'")
 
 
-    elsif crit[:posted_by].to_i == 0 and not (crit.has_key?(:from) and crit[:from] == 'mail')
+    #elsif crit[:posted_by].to_i == 0 and not (crit.has_key?(:from) and crit[:from] == 'mail')
+    elsif crit[:posted_by].to_i == 0
       
       # show only public items, if there's no community specified, unless we're seeing somebody's wall, or it is a bulk mailing
       items = items.where("intra_com='public'")

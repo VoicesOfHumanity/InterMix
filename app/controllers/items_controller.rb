@@ -1687,7 +1687,13 @@ class ItemsController < ApplicationController
       session[:list_batch_size] = @batch_size
       @showmax = @batch_size
 
-      @suggestedtopic = session.has_key?(:suggestedtopic) ? session[:suggestedtopic] : ""
+      if crit[:nvaction]
+        @suggestedtopic = "Nonviolent Action for Human Unity"
+      elsif true
+        @suggestedtopic = "Human Unity and Diversity"
+      else
+        @suggestedtopic = session.has_key?(:suggestedtopic) ? session[:suggestedtopic] : ""
+      end
 
       @crit = crit
 
