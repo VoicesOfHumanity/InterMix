@@ -2082,6 +2082,30 @@ class ItemsController < ApplicationController
       logger.info("items#itemprocess before regex:#{@item.html_content.inspect}") 
       @item.html_content.gsub!(/a href/im,'a target="_blank" href')
       logger.info("items#itemprocess after regex:#{@item.html_content.inspect}") 
+      
+      #-- Check for the first link, if any, and try to get a preview
+      #urls = @item.html_content.scan(URI.regexp)
+      urls = URI.extract(@item.html_content)
+      if urls.length > 0
+        url = urls[0]
+        logger.info("items#itemprocess found url: #{url}")
+        linkobj = LinkThumbnailer.generate(url)
+        if linkobj
+          linkurl = linkobj.url.to_s
+          linkimg = linkobj.images.first.src.to_s
+          linktitle = linkobj.title.to_s
+          if linkurl != ''
+            @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"200\" title=\"#{linktitle}\"></a>"
+            @item.oembed_response = {
+              'url': linkurl,
+              'img': linkimg,
+              'title': linktitle,
+              'description': linkobj.description,
+              'favicon': linkobj.favicon              
+            }
+          end
+        end
+      end
     end
   end  
   
