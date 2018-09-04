@@ -7,3 +7,5 @@
 .filetree div.folder { background: url(/images/treeview/folder.gif) 0 0 no-repeat; }
 .filetree li.expandable div.folder { background: url(/images/treeview/folder-closed.gif) 0 0 no-repeat; }
 .filetree div.file { background: url(/images/treeview/file.gif) 0 0 no-repeat; }
+
+#cke_bottom_detail,.cke_bottom{display:none}

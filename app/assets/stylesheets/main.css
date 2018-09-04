@@ -870,3 +870,6 @@ td.dotted {
 .ui-slider .ui-slider-handle {
     background: #ccc !important;
 }
+
+/* ckeditor */
+#cke_bottom_detail,.cke_bottom{display:none}

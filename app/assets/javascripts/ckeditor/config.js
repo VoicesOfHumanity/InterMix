@@ -10,6 +10,8 @@ CKEDITOR.editorConfig = function( config )
   config.language = 'en';
   // config.uiColor = '#AADC6E';
 
+  config.removePlugins = 'elementspath';
+
   //config.ContextMenu = ['Generic','Anchor','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form'] ; 
   
   config.height = 400;
