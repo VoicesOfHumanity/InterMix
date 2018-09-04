@@ -3059,5 +3059,20 @@ class Item < ActiveRecord::Base
     end
     xlist
   end
+  
+  def get_preview
+    #-- If there's any info from link_thumbnailer, or similar, construct a preview to show as a thumbnail
+    if self.oembed_response and self.oembed_response.has_key?(:img)
+      linkurl = self.oembed_response[:url]
+      linkimg = self.oembed_response[:img]
+      linktitle = self.oembed_response[:title]
+      description = self.oembed_response[:description]
+      ximg = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"140\" style=\"width:150px\" title=\"#{description}\"></a>"
+      xhtml = "<div style=\"text-align:center;font-size:10px\">#{ximg}<br>#{linktitle}</div>"
+      return xhtml
+    else
+      return('')
+    end  
+  end
       
 end

@@ -2092,7 +2092,11 @@ class ItemsController < ApplicationController
       if urls.length > 0
         url = urls[0]
         logger.info("items#itemprocess found url: #{url}")
-        linkobj = LinkThumbnailer.generate(url)
+        begin
+          linkobj = LinkThumbnailer.generate(url)
+        rescue
+          # didn't work
+        end
         if linkobj
           linkurl = linkobj.url.to_s
           linkimg = linkobj.images.first.src.to_s
