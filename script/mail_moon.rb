@@ -100,8 +100,9 @@ if @moon.new_or_full == 'full'
   # must have #nvaction
   crit[:nvaction] = true
 else
-  # exclude #nvaction
+  # both #nvaction and everything else
   crit[:nvaction] = false
+  crit[:nvaction_included] = true
 end
 
 ages = MetamapNode.where(metamap_id: 5).order(:sortorder)
