@@ -692,7 +692,48 @@ class ItemsController < ApplicationController
       render :json=>results, :layout=>false
       
     end  
-  end  
+  end
+  
+  def create_api
+    #-- Create an item, called remotely by json, which should be turned into params automatically
+    #-- We should be receiving an auth_token, loggin in the user
+    
+    #auth_token = params[:auth_token].presence
+    #participant       = auth_token && Participant.find_by_authentication_token(auth_token.to_s)
+    #if participant
+    #  sign_in participant
+    #end
+    
+    posted_by = params[:posted_by].to_i
+    subject = params[:subject].to_s
+    short_content = params[:short_content].to_s
+    
+    if not participant_signed_in? or current_participant.id != posted_by
+      render json: {'result': 'error: invalid user'}
+      return
+    end
+    
+    @item = Item.new()
+    @item.item_type = 'message'
+    @item.posted_by = current_participant.id
+    @item.subject = subject
+    @item.short_content = short_content
+    @item.comtag = comtag
+    
+    itemprocess
+    
+    @item.save
+    @item.first_in_thread = @item.id    
+    if @item.save
+      render json: {'result': 'success', 'item_id': @item.id}
+      return
+      
+    else
+      render json: {'result': 'error: something went wrong'}
+      return
+    end
+    
+  end
   
   def update
     @from = params[:from] || ''
