@@ -718,6 +718,7 @@ class ItemsController < ApplicationController
     @item.posted_by = current_participant.id
     @item.subject = subject
     @item.short_content = short_content
+    @item.html_content = ''
     
     itemprocess
     
