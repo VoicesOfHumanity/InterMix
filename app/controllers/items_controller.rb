@@ -718,7 +718,7 @@ class ItemsController < ApplicationController
     @item.posted_by = current_participant.id
     @item.subject = subject
     @item.short_content = short_content
-    @item.html_content = ''
+    @item.html_content = @item.short_content
     
     itemprocess
     
@@ -727,7 +727,6 @@ class ItemsController < ApplicationController
     if @item.save
       render json: {'result': 'success', 'item_id': @item.id}
       return
-      
     else
       render json: {'result': 'error: something went wrong'}
       return
