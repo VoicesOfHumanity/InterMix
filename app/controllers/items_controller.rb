@@ -719,6 +719,7 @@ class ItemsController < ApplicationController
     @item.subject = subject
     @item.short_content = short_content
     @item.html_content = @item.short_content
+    @item.is_first_in_thread = true
     
     itemprocess
     
