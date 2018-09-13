@@ -2164,7 +2164,7 @@ class ItemsController < ApplicationController
     `rm -f #{tempfilepath}`    
     logger.info("items#itempicupload tempfilepath:#{tempfilepath}")
     
-    if params[:uploadfile_base64]
+    if params[:uploadfile_base64] and params[:uploadfile_base64].to_s != ''
       logger.info("items#itempicupload uploaded base64 file")      
       f = File.new(tempfilepath, "wb")      
       f.write(Base64.decode64(params[:uploadfile_base64]))

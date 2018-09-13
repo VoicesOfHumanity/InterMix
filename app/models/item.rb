@@ -303,7 +303,7 @@ class Item < ActiveRecord::Base
     end    
 
     # Root author should get anything in the thread, so make sure they're on the list
-    if top.posted_by.to_i > 0 and not got_participants.has_key?(top.posted_by.to_i)
+    if top and top.posted_by.to_i > 0 and not got_participants.has_key?(top.posted_by.to_i)
       author = Participant.find_by_id(top.posted_by)
       if author
         author.explanation = "This is the thread author. "
