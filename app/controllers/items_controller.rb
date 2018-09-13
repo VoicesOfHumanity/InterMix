@@ -1212,538 +1212,554 @@ class ItemsController < ApplicationController
   
     # indigenous, other minority, veteran, *interfaith*, refugee
 
-    @per_page = (params[:per_page] || 11).to_i
-    @page = ( params[:page] || 1 ).to_i
-    @page = 1 if @page < 1
-      
-    show_result = (params[:show_result].to_i == 1)
-    @show_result = show_result
-    whatchanged = params[:whatchanged].to_s
-  
     crit = {}
+    show_result = nil
+    rootonly = nil
+
+    1.times do
+      
+      @per_page = (params[:per_page] || 11).to_i
+      @page = ( params[:page] || 1 ).to_i
+      @page = 1 if @page < 1
+      
+      show_result = (params[:show_result].to_i == 1)
+      @show_result = show_result
+      whatchanged = params[:whatchanged].to_s
+    
+      geo_level = params[:geo_level].to_i
+      session[:geo_level] = geo_level
+      @geo_level = geo_level
+      geo_levels = GEO_LEVELS               # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}    
+      crit[:geo_level] = geo_levels[geo_level]
   
-    geo_level = params[:geo_level].to_i
-    session[:geo_level] = geo_level
-    @geo_level = geo_level
-    geo_levels = GEO_LEVELS               # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}    
-    crit[:geo_level] = geo_levels[geo_level]
+      #group_level = params[:group_level].to_i
+      group_level = 3
+      session[:group_level] = group_level
+      @group_level = group_level
+      group_levels = {1 => 'current', 2 => 'user', 3 => 'all'}
+      crit[:group_level] = group_levels[group_level]
   
-    #group_level = params[:group_level].to_i
-    group_level = 3
-    session[:group_level] = group_level
-    @group_level = group_level
-    group_levels = {1 => 'current', 2 => 'user', 3 => 'all'}
-    crit[:group_level] = group_levels[group_level]
+      #crit[:indigenous] = (params[:indigenous].to_i == 1) ? true : false
+      #crit[:other_minority] = (params[:other_minority].to_i == 1) ? true : false
+      #crit[:veteran] = (params[:veteran].to_i == 1) ? true : false
+      #crit[:interfaith] = (params[:interfaith].to_i == 1) ? true : false
+      #crit[:refugee] = (params[:refugee].to_i == 1) ? true : false
+    
+      #session[:indigenous] = crit[:indigenous]
+      #session[:other_minority] = crit[:other_minority]
+      #session[:veteran] = crit[:veteran]
+      #session[:interfaith] = crit[:interfaith]
+      #session[:refugee] = crit[:refugee]
   
-    #crit[:indigenous] = (params[:indigenous].to_i == 1) ? true : false
-    #crit[:other_minority] = (params[:other_minority].to_i == 1) ? true : false
-    #crit[:veteran] = (params[:veteran].to_i == 1) ? true : false
-    #crit[:interfaith] = (params[:interfaith].to_i == 1) ? true : false
-    #crit[:refugee] = (params[:refugee].to_i == 1) ? true : false
+      #crit[:dialog_id] = params[:dialog_id].to_i
+      crit[:dialog_id] = 0
     
-    #session[:indigenous] = crit[:indigenous]
-    #session[:other_minority] = crit[:other_minority]
-    #session[:veteran] = crit[:veteran]
-    #session[:interfaith] = crit[:interfaith]
-    #session[:refugee] = crit[:refugee]
+      #crit[:period_id] = params[:period_id].to_i
+      crit[:period_id] = 0
+    
+      session[:slider_period_id] = crit[:period_id]
+      #logger.info("items#geoslider_update slider_period:#{session[:slider_period_id]}")
+    
+      #crit[:group_id] = session[:group_id].to_i
+      crit[:group_id] = 0
   
-    #crit[:dialog_id] = params[:dialog_id].to_i
-    crit[:dialog_id] = 0
+      crit[:gender] = params[:meta_3].to_i
+      crit[:age] = params[:meta_5].to_i
     
-    #crit[:period_id] = params[:period_id].to_i
-    crit[:period_id] = 0
+      crit[:comtag] = params[:comtag].to_s     # Might be blank, *my*, or a tag
+      crit[:messtag] = params[:messtag].to_s
+      session[:comtag] = crit[:comtag]
+      session[:messtag] = crit[:messtag]
     
-    session[:slider_period_id] = crit[:period_id]
-    #logger.info("items#geoslider_update slider_period:#{session[:slider_period_id]}")
-    
-    #crit[:group_id] = session[:group_id].to_i
-    crit[:group_id] = 0
-  
-    crit[:gender] = params[:meta_3].to_i
-    crit[:age] = params[:meta_5].to_i
-    
-    crit[:comtag] = params[:comtag].to_s     # Might be blank, *my*, or a tag
-    crit[:messtag] = params[:messtag].to_s
-    session[:comtag] = crit[:comtag]
-    session[:messtag] = crit[:messtag]
-    
-    nvaction_changed = false
-    if params.has_key?(:nvaction) 
-      crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
-      if session.has_key?(:nvaction) and session[:nvaction] != crit[:nvaction]
-        nvaction_changed = true
+      nvaction_changed = false
+      if params.has_key?(:nvaction) 
+        crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
+        if session.has_key?(:nvaction) and session[:nvaction] != crit[:nvaction]
+          nvaction_changed = true
+        end
+        session[:nvaction] = crit[:nvaction]
+        if not @show_result
+          #-- Forum page will include nvaction
+          crit[:nvaction_included] = true
+        elsif params.has_key?(:nvaction_included)
+          crit[:nvaction_included] = (params[:nvaction_included].to_i == 1) ? true : false
+          session[:nvaction_included] = crit[:nvaction_included]
+          logger.info("items#geoslider_update nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
+        end
       end
-      session[:nvaction] = crit[:nvaction]
-      if not @show_result
-        #-- Forum page will include nvaction
-        crit[:nvaction_included] = true
-      elsif params.has_key?(:nvaction_included)
-        crit[:nvaction_included] = (params[:nvaction_included].to_i == 1) ? true : false
-        session[:nvaction_included] = crit[:nvaction_included]
-        logger.info("items#geoslider_update nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
+    
+      @datetype = params[:datetype].to_s    # fixed or range
+      @datefixed = params[:datefixed].to_s  # day, week, month, [moon ranges, like 2016-03-08_2017-06-23]
+      @datefrom = params[:datefrom].to_s    # [date]
+
+      #MOONS = {
+      #  '2016-03-08_2017-06-23' => "March 8, 2016 - June 23, 2017",
+      #  '2017-06-23_2017-07-23' => "June 23 - July 23, 2017",      
+      #MOONS.select{|d| d<Time.now.to_s[0..10]}.invert.to_a,@datefixed)   
+      today = Time.now.strftime("%Y-%m-%d")
+      cutoff = 1.month.from_now
+      @moons = [] 
+      xstart = '2016-03-08'
+      xmoon = crit[:nvaction] ? 'full' : 'new' 
+      moon_recs = Moon.where(new_or_full: xmoon).where("mdate<='#{cutoff}'").order(:mdate)
+      for moon_rec in moon_recs
+        xend = moon_rec['mdate'].strftime('%Y-%m-%d')
+        dend = moon_rec['mdate'].strftime('%B %-d, %Y')
+        dstart = xstart.to_date.strftime('%B %-d, %Y')
+        xrange = "#{xstart}_#{xend}"
+        drange = "#{dstart} - #{dend}"
+        if xstart <= today
+          @moons << [drange,xrange]
+        end
+        xstart = xend
+      end    
+      if @datetype == 'fixed' and nvaction_changed
+        @datefixed = 'month'
       end
-    end
     
-    @datetype = params[:datetype].to_s
-    @datefixed = params[:datefixed].to_s
-    @datefrom = params[:datefrom].to_s
-
-    #MOONS = {
-    #  '2016-03-08_2017-06-23' => "March 8, 2016 - June 23, 2017",
-    #  '2017-06-23_2017-07-23' => "June 23 - July 23, 2017",      
-    #MOONS.select{|d| d<Time.now.to_s[0..10]}.invert.to_a,@datefixed)   
-    today = Time.now.strftime("%Y-%m-%d")
-    cutoff = 1.month.from_now
-    @moons = [] 
-    xstart = '2016-03-08'
-    xmoon = crit[:nvaction] ? 'full' : 'new' 
-    moon_recs = Moon.where(new_or_full: xmoon).where("mdate<='#{cutoff}'").order(:mdate)
-    for moon_rec in moon_recs
-      xend = moon_rec['mdate'].strftime('%Y-%m-%d')
-      dend = moon_rec['mdate'].strftime('%B %-d, %Y')
-      dstart = xstart.to_date.strftime('%B %-d, %Y')
-      xrange = "#{xstart}_#{xend}"
-      drange = "#{dstart} - #{dend}"
-      if xstart <= today
-        @moons << [drange,xrange]
-      end
-      xstart = xend
-    end    
-    if @datetype == 'fixed' and nvaction_changed
-      @datefixed = 'month'
-    end
+      #-- Checkboxes are also about comtags
+      #if params[:check] and params[:check].class == Hash
+      #  check = []
+      #  if crit[:comtag] != ''
+      #    check << crit[:comtag]
+      #  end
+      #  params[:check].each do |tag,val|
+      #    if val.to_i == 1
+      #      check << tag
+      #    end
+      #  end      
+      #  crit[:comtag] = check
+      #end
     
-    #-- Checkboxes are also about comtags
-    #if params[:check] and params[:check].class == Hash
-    #  check = []
-    #  if crit[:comtag] != ''
-    #    check << crit[:comtag]
-    #  end
-    #  params[:check].each do |tag,val|
-    #    if val.to_i == 1
-    #      check << tag
-    #    end
-    #  end      
-    #  crit[:comtag] = check
-    #end
-    
-    session[:datetype] = @datetype.dup
-    session[:datefixed] = @datefixed.dup
-    session[:datefrom] = @datefrom.dup
-    @datefromto = ''
-    if @datetype == 'fixed'
-      if @datefixed == 'day'
-        @datefromuse = (Date.today - 1).to_s
-      elsif @datefixed == 'week'
-        @datefromuse = (Date.today - 7).to_s
-      elsif @datefixed == 'month'
-        @datefromuse = (Date.today - 30).to_s
-      elsif /_/ =~ @datefixed   
-        xarr = @datefixed.split('_')
-        @datefromuse = xarr[0]
-        @datefromto = xarr[1]
-      end
-      logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype} datefixed:#{@datefixed}")
-    else
-      @datefromuse = @datefrom.dup    
-      logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype}")
-    end
-    crit[:datefromuse] = @datefromuse.dup
-    crit[:datefromto] = @datefromto.dup
-    
-    # "datefixed"=>"month", "datefrom"=>""
-    # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
-    # item#get_items crit:{:geo_level=>"planet", :group_level=>"all", :dialog_id=>0, :period_id=>0, :group_id=>0, :gender=>0, :age=>0, :comtag=>"", :messtag=>"", :datefromuse=>Sun, 21 May 2017, :datefromto=>"", :show_result=>true}
-    
-    # NB try to avoid this: items.created_at >= 'Y-m-d 00:00:00'
-    
-    @dialog_id = crit[:dialog_id]
-    @period_id = crit[:period_id]
-    
-    @dialog = Dialog.find_by_id(crit[:dialog_id]) if crit[:dialog_id] > 0
-    @period = Period.find_by_id(crit[:period_id]) if crit[:period_id] > 0
-    
-    @first = params[:first].to_i    # 1 if we got here when the page loads, rather than when parameters changed
-    
-    @showing_options = params[:showing_options] # less or more
-    
-    #if show_result and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
-    #  # If this is an active period and there's a previous period, use that instead
-    #  @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
-    #  if @period
-    #    @period_id = @period.id
-    #    crit[:period_id] = @period.id
-    #    #session[:slider_period_id] = @period.id
-    #  else
-    #     @period = Period.find_by_id(crit[:period_id])
-    #  end
-    #end
-    #if show_result and @first==1 and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
-    #  # If this is an active period and there's a previous period, use that instead
-    #  @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
-    #  if @period
-    #    @period_id = @period.id
-    #    crit[:period_id] = @period.id
-    #    #session[:slider_period_id] = @period.id
-    #  else
-    #     @period = Period.find_by_id(crit[:period_id])
-    #  end
-    #elsif not show_result and @first==1
-    #  # List should always be active/latest period  
-    #  if @dialog.active_period
-    #    @period = @dialog.active_period
-    #  elsif @dialog.recent_period
-    #    @period = @dialog.recent_period        
-    #  end
-    #  @period_id = @period.id
-    #end
-    @period_id = @period_id
-    
-    session[:slider_dialog_id] = @dialog_id
-    session[:slider_group_id] = @group_id
-    
-    if show_result
-      session[:result_period_id] = @period_id
-      logger.info("items#geoslider_update set result_period_id to #{@period_id}")
-    else
-      session[:list_period_id] = @period_id
-      logger.info("items#geoslider_update set list_period_id to #{@period_id}")
-    end
-
-    @threads = params[:threads]
-    session[:list_threads] = @threads
-    if @threads == '' or @threads == 'tree' or @threads == 'root'
-      rootonly = true
-    else
-      rootonly = false
-    end
-
-    #-- See how many total posts there are in the selected period, to be able to do a graphic
-    all_posts = Item.where(nil)
-    all_posts = all_posts.where(:is_first_in_thread => true) if rootonly
-    all_posts = all_posts.where(dialog_id: crit[:dialog_id]) if crit[:dialog_id] > 0
-    #all_posts = all_posts.where(period_id: crit[:period_id]) if crit[:period_id] > 0
-    all_posts = all_posts.where("items.created_at >= ?", crit[:datefromuse])
-    @num_all_posts = all_posts.count
-    # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
-  
-    @title = ""
-    crit[:show_result] = show_result
-
-    @data = {}  
-  
-    if show_result
-      # Results will be for the previous period, if there's a current period
-      
-      # If we're showing results, then add up results for the required gender and age combinations
-      # We will go through the overall items and ratings we have, and put them in those several buckets
-      # Then we will add up the results in each of those buckets
-    
-      ages = MetamapNode.where(metamap_id: 5).order(:sortorder)
-      genders = MetamapNode.where(metamap_id: 3).order(:sortorder)
-
-      age = crit[:age]
-      gender = crit[:gender]
-
-      gender_pos = {207=>"Men's",208=>"Women's"}
-      gender_single = {207=>"Men",208=>"Women"} 
-    
-      if age > 0 and gender > 0
-        # One particular result
-        age_id = age
-        age_name = MetamapNode.where(id: age).first.name_as_group
-        gender_id = gender
-        #gender_name = MetamapNode.where(id: gender).first.name
-        gender_name = gender_pos[gender_id]
-        name = "#{gender_name} #{age_name}"
-        item = nil
-        iproc = nil
-        
-        crit[:age] = age_id
-        crit[:gender] = gender_id
-        items,ratings,@title = Item.get_items(crit,current_participant)
-        @itemsproc, @extras = Item.get_itemsproc(items,ratings,current_participant.id)
-        @sortby = '*value*'
-        @items = Item.get_sorted(items,@itemsproc,@sortby,false)
-        if @items.length > 0 and ratings.length > 0
-          if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['votes'] > 0 and @itemsproc[@items[0].id]['value'] > 0
-            item = @items[0]
-            iproc = @itemsproc[item.id]
-          end
+      session[:datetype] = @datetype.dup
+      session[:datefixed] = @datefixed.dup
+      session[:datefrom] = @datefrom.dup
+      @datefromto = ''
+      if @datetype == 'fixed'
+        if @datefixed == 'day'
+          @datefromuse = (Date.today - 1).to_s
+        elsif @datefixed == 'week'
+          @datefromuse = (Date.today - 7).to_s
+        elsif @datefixed == 'month'
+          @datefromuse = (Date.today - 30).to_s
+        elsif /_/ =~ @datefixed   
+          xarr = @datefixed.split('_')
+          @datefromuse = xarr[0]
+          @datefromto = xarr[1]
         end
-        
-        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
-      elsif age == 0 and gender == 0
-        # two genders, three ages, and voice of humanity
-        # total
-        name = "Voice of Humanity-as-One"
-        item = nil
-        iproc = nil        
-        items,ratings,@title = Item.get_items(crit,current_participant)
-        @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
-        @sortby = '*value*'
-        @items = Item.get_sorted(items,@itemsproc,@sortby,false)
-        if @items.length > 0 and ratings.length > 0
-          exp = ""
-          #exp = "@items[0].id:#{@items[0].id} @itemsproc[items[0].id]['value']:#{@itemsproc[items[0].id]['value']}"
-          #exp = @itemsproc[items[0].id].inspect
-          if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
-            item = @items[0]
-            iproc = @itemsproc[item.id]
-            #exp = iproc.inspect
-            #exp = "#{(@items[0]).id}/#{item.id}"
-          end
-        end
-        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
-        
-        for gender_rec in genders
-          gender_id = gender_rec.id
-          gender_name = gender_rec.name_as_group
-          code = "#{gender_id}"
-          name = "#{gender_name}"
-          if not gender_rec.sumcat
-            item = nil
-            iproc = nil
-            exp = ""
-            
-            crit[:gender] = gender_id
-            crit[:age] = 0
-            items,ratings,title = Item.get_items(crit,current_participant)
-            @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
-            @sortby = '*value*'
-            @items = Item.get_sorted(items,@itemsproc,@sortby,false)
-            if @items.length > 0 and ratings.length > 0
-              if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
-                item = @items[0]
-                iproc = @itemsproc[item.id]
-              end
-            end
-            
-            @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
-          end
-        end
-        for age_rec in ages
-          age_id = age_rec.id
-          age_name = age_rec.name_as_group
-          code = "#{age_id}"
-          name = "#{age_name}"
-          if not age_rec.sumcat
-            item = nil
-            iproc = nil
-            
-            crit[:age] = age_id
-            crit[:gender] = 0
-            items,ratings,title = Item.get_items(crit,current_participant)
-            @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
-            @sortby = '*value*'
-            @items = Item.get_sorted(items,@itemsproc,@sortby,false)
-            if @items.length > 0 and ratings.length > 0
-              if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
-                item = @items[0]
-                iproc = @itemsproc[item.id]
-              end
-            end
-            
-            @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
-          end
-        end
-      
-      elsif age > 0 and gender == 0
-        # two genders with a particular age
-        age_id = age
-        age_name = MetamapNode.where(id: age).first.name_as_group
-        
-        name = "#{age_name}"
-        item = nil
-        iproc = nil        
-        crit[:age] = age_id
-        items,ratings,@title = Item.get_items(crit,current_participant)
-        @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
-        @sortby = '*value*'
-        @items = Item.get_sorted(items,@itemsproc,@sortby,false)
-        if @items.length > 0 and ratings.length > 0
-          if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
-            item = @items[0]
-            iproc = @itemsproc[item.id]
-          end
-        end
-        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
-        
-        for gender_rec in genders
-          gender_id = gender_rec.id
-          #gender_name = gender_rec.name
-          gender_name = gender_pos[gender_id]
-          code = "#{age_id}_#{gender_id}"
-          name = "#{gender_name} #{age_name}"
-          if not gender_rec.sumcat
-            item = nil
-            iproc = nil
-            
-            crit[:age] = age_id
-            crit[:gender] = gender_id
-            items,ratings,title = Item.get_items(crit,current_participant)
-            @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
-            @sortby = '*value*'
-            @items = Item.get_sorted(items,@itemsproc,@sortby,false)
-            if @items.length > 0 and ratings.length > 0
-              if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
-                item = @items[0]
-                iproc = @itemsproc[item.id]
-              end
-            end
-            
-            @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
-          end
-        end
-      
-      elsif age == 0 and gender > 0
-        # three ages with a particular gender
-        gender_id = gender
-        #gender_name = MetamapNode.where(id: gender).first.name
-        gender_name = gender_pos[gender_id]
-        
-        name = "Voice of #{gender_single[gender_id]}"
-        item = nil
-        iproc = nil        
-        crit[:gender] = gender_id
-        items,ratings,@title = Item.get_items(crit,current_participant)
-        @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
-        @sortby = '*value*'
-        @items = Item.get_sorted(items,@itemsproc,@sortby,false)
-        if @items.length > 0 and ratings.length > 0
-          if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
-            item = @items[0]
-            iproc = @itemsproc[item.id]
-          end
-        end
-        @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
-        
-        for age_rec in ages
-          age_id = age_rec.id
-          age_name = age_rec.name_as_group
-          code = "#{age_id}_#{gender_id}"
-          name = "#{gender_name} #{age_name}"
-          if not age_rec.sumcat
-            item = nil
-            iproc = nil
-            
-            crit[:age] = age_id
-            crit[:gender] = gender_id
-            items,ratings,title = Item.get_items(crit,current_participant)
-            @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
-            @sortby = '*value*'
-            @items = Item.get_sorted(items,@itemsproc,@sortby,false)
-            if @items.length > 0 and ratings.length > 0
-              if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
-                item = @items[0]
-                iproc = @itemsproc[item.id]
-              end
-            end
-            
-            @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
-          end
-        end
-        
-      end
-      
-      # Figure out which new or full moon is next
-      now = Time.now.strftime("%Y-%m-%d %H:%M")
-      nowdate = Time.now.strftime("%Y-%m-%d")
-      nowtime = Time.now.strftime("%H:%M")
-      @moon = Moon.where("mdate>='#{nowdate}'").where(mailing_sent: false).order(:mdate).first
-      if @moon
-        # We want dd-mmm-yyyy at hh:mm am/pm
-        moondate = @moon.mdate.strftime("%d-%b-%Y")
-        if @moon.mtime.to_s == ""
-          moontime = '12:00 pm'
-        elsif @moon.mtime == '12:00'
-          moontime = "12:00 pm"
-        elsif @moon.mtime < '12:00'
-          moontime = "#{@moon.mtime} am"
-        elsif 
-          moontime = ("%02d" % (@moon.mtime[0..1].to_i - 12)) + @moon.mtime[2..4] + 'pm'
-        end
-        @moontime = moondate + ' ' + moontime
-      end
-
-      @crit = crit
-    
-      render :partial=>'simple_result'
-    
-    else
-      #-- Listing
-          
-      items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
-    
-      # Add up results for those items and those ratings, to show in the item summaries in the listing
-      # I.e. add up the number of interest/approval ratings for each item, do regression to the mean, calculate value, etc
-      @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
-  
-      # Items probably need to be sorted, based on the results we calculated
-      #sortby = '*value*'
-      @sortby = params[:sortby]
-      session[:list_sortby] = @sortby
-      @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
-
-      @batch_size = params[:batch_size].to_i
-            
-      @batch_level = 1
-      @batches = []
-      if @items.length > 4
-        if @items.length < 13
-          @numbatches = 2
-        elsif @items.length <= 30   
-          @numbatches = 3
-        elsif @items.length <= 40
-          @numbatches = 4  
-        else
-          @numbatches = 5  
-        end
-        @batches << 4
-        step = @items.length / (@numbatches - 1)
-        pos = 4
-        (@numbatches-2).times do
-          pos += step
-          @batches << pos
-        end  
-        @batches << @items.length   
-        
-        if @batches.include?(@batch_size) and @whatchanged != 'threads' and @whatchanged != 'sortby'
-          @batch_level = @batches.index(@batch_size) + 1
-        elsif params[:batch_level].to_i <= @numbatches and @whatchanged != 'threads' and @whatchanged != 'sortby'
-          @batch_level = params[:batch_level].to_i
-          @batch_size = @batches[@batch_level-1]
-        else  
-          @batch_size = 4
-        end  
-        if @whatchanged == 'threads' and @whatchanged == 'sortby'
-          @batch_level = 1
-        end
-      elsif @batch_size == 0
-        @batch_size = @items.length
-      end  
-      
-      @items_length = @items.length
-      
-      @items = @items.paginate :page=>@page, :per_page => @per_page   
-      
-      session[:list_batch_level] = @batch_level
-      session[:list_batch_size] = @batch_size
-      @showmax = @batch_size
-
-      if crit[:nvaction]
-        @suggestedtopic = "Nonviolent Action for Human Unity"
-      elsif true
-        @suggestedtopic = "Human Unity and Diversity"
+        logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype} datefixed:#{@datefixed}")
       else
-        @suggestedtopic = session.has_key?(:suggestedtopic) ? session[:suggestedtopic] : ""
+        @datefromuse = @datefrom.dup    
+        logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype}")
+      end
+      crit[:datefromuse] = @datefromuse.dup
+      crit[:datefromto] = @datefromto.dup
+    
+      # "datefixed"=>"month", "datefrom"=>""
+      # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
+      # item#get_items crit:{:geo_level=>"planet", :group_level=>"all", :dialog_id=>0, :period_id=>0, :group_id=>0, :gender=>0, :age=>0, :comtag=>"", :messtag=>"", :datefromuse=>Sun, 21 May 2017, :datefromto=>"", :show_result=>true}
+    
+      # NB try to avoid this: items.created_at >= 'Y-m-d 00:00:00'
+    
+      @dialog_id = crit[:dialog_id]
+      @period_id = crit[:period_id]
+    
+      @dialog = Dialog.find_by_id(crit[:dialog_id]) if crit[:dialog_id] > 0
+      @period = Period.find_by_id(crit[:period_id]) if crit[:period_id] > 0
+    
+      @first = params[:first].to_i    # 1 if we got here when the page loads, rather than when parameters changed
+    
+      @showing_options = params[:showing_options] # less or more
+    
+      #if show_result and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
+      #  # If this is an active period and there's a previous period, use that instead
+      #  @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
+      #  if @period
+      #    @period_id = @period.id
+      #    crit[:period_id] = @period.id
+      #    #session[:slider_period_id] = @period.id
+      #  else
+      #     @period = Period.find_by_id(crit[:period_id])
+      #  end
+      #end
+      #if show_result and @first==1 and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
+      #  # If this is an active period and there's a previous period, use that instead
+      #  @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
+      #  if @period
+      #    @period_id = @period.id
+      #    crit[:period_id] = @period.id
+      #    #session[:slider_period_id] = @period.id
+      #  else
+      #     @period = Period.find_by_id(crit[:period_id])
+      #  end
+      #elsif not show_result and @first==1
+      #  # List should always be active/latest period  
+      #  if @dialog.active_period
+      #    @period = @dialog.active_period
+      #  elsif @dialog.recent_period
+      #    @period = @dialog.recent_period        
+      #  end
+      #  @period_id = @period.id
+      #end
+      @period_id = @period_id
+    
+      session[:slider_dialog_id] = @dialog_id
+      session[:slider_group_id] = @group_id
+    
+      if show_result
+        session[:result_period_id] = @period_id
+        logger.info("items#geoslider_update set result_period_id to #{@period_id}")
+      else
+        session[:list_period_id] = @period_id
+        logger.info("items#geoslider_update set list_period_id to #{@period_id}")
       end
 
-      @crit = crit
+      @threads = params[:threads]
+      session[:list_threads] = @threads
+      if @threads == '' or @threads == 'tree' or @threads == 'root'
+        rootonly = true
+      else
+        rootonly = false
+      end
 
-      render :partial => 'geoslider_update'
+      #-- See how many total posts there are in the selected period, to be able to do a graphic
+      all_posts = Item.where(nil)
+      all_posts = all_posts.where(:is_first_in_thread => true) if rootonly
+      all_posts = all_posts.where(dialog_id: crit[:dialog_id]) if crit[:dialog_id] > 0
+      #all_posts = all_posts.where(period_id: crit[:period_id]) if crit[:period_id] > 0
+      all_posts = all_posts.where("items.created_at >= ?", crit[:datefromuse])
+      @num_all_posts = all_posts.count
+      # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
+      
+      @title = ""
+      crit[:show_result] = show_result
+
+      @data = {}  
   
-    end
+      if show_result
+        # Results will be for the previous period, if there's a current period
+      
+        # If we're showing results, then add up results for the required gender and age combinations
+        # We will go through the overall items and ratings we have, and put them in those several buckets
+        # Then we will add up the results in each of those buckets
+    
+        ages = MetamapNode.where(metamap_id: 5).order(:sortorder)
+        genders = MetamapNode.where(metamap_id: 3).order(:sortorder)
+
+        age = crit[:age]
+        gender = crit[:gender]
+
+        gender_pos = {207=>"Men's",208=>"Women's"}
+        gender_single = {207=>"Men",208=>"Women"} 
+    
+        if age > 0 and gender > 0
+          # One particular result
+          age_id = age
+          age_name = MetamapNode.where(id: age).first.name_as_group
+          gender_id = gender
+          #gender_name = MetamapNode.where(id: gender).first.name
+          gender_name = gender_pos[gender_id]
+          name = "#{gender_name} #{age_name}"
+          item = nil
+          iproc = nil
+        
+          crit[:age] = age_id
+          crit[:gender] = gender_id
+          items,ratings,@title = Item.get_items(crit,current_participant)
+          @itemsproc, @extras = Item.get_itemsproc(items,ratings,current_participant.id)
+          @sortby = '*value*'
+          @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+          if @items.length > 0 and ratings.length > 0
+            if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['votes'] > 0 and @itemsproc[@items[0].id]['value'] > 0
+              item = @items[0]
+              iproc = @itemsproc[item.id]
+            end
+          end
+        
+          @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
+        elsif age == 0 and gender == 0
+          # two genders, three ages, and voice of humanity
+          # total
+          name = "Voice of Humanity-as-One"
+          item = nil
+          iproc = nil        
+          items,ratings,@title = Item.get_items(crit,current_participant)
+          @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
+          @sortby = '*value*'
+          @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+          if @items.length > 0 and ratings.length > 0
+            exp = ""
+            #exp = "@items[0].id:#{@items[0].id} @itemsproc[items[0].id]['value']:#{@itemsproc[items[0].id]['value']}"
+            #exp = @itemsproc[items[0].id].inspect
+            if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
+              item = @items[0]
+              iproc = @itemsproc[item.id]
+              #exp = iproc.inspect
+              #exp = "#{(@items[0]).id}/#{item.id}"
+            end
+          end
+          @data['all'] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
+        
+          for gender_rec in genders
+            gender_id = gender_rec.id
+            gender_name = gender_rec.name_as_group
+            code = "#{gender_id}"
+            name = "#{gender_name}"
+            if not gender_rec.sumcat
+              item = nil
+              iproc = nil
+              exp = ""
+            
+              crit[:gender] = gender_id
+              crit[:age] = 0
+              items,ratings,title = Item.get_items(crit,current_participant)
+              @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
+              @sortby = '*value*'
+              @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+              if @items.length > 0 and ratings.length > 0
+                if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
+                  item = @items[0]
+                  iproc = @itemsproc[item.id]
+                end
+              end
+            
+              @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
+            end
+          end
+          for age_rec in ages
+            age_id = age_rec.id
+            age_name = age_rec.name_as_group
+            code = "#{age_id}"
+            name = "#{age_name}"
+            if not age_rec.sumcat
+              item = nil
+              iproc = nil
+            
+              crit[:age] = age_id
+              crit[:gender] = 0
+              items,ratings,title = Item.get_items(crit,current_participant)
+              @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
+              @sortby = '*value*'
+              @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+              if @items.length > 0 and ratings.length > 0
+                if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
+                  item = @items[0]
+                  iproc = @itemsproc[item.id]
+                end
+              end
+            
+              @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
+            end
+          end
+      
+        elsif age > 0 and gender == 0
+          # two genders with a particular age
+          age_id = age
+          age_name = MetamapNode.where(id: age).first.name_as_group
+        
+          name = "#{age_name}"
+          item = nil
+          iproc = nil        
+          crit[:age] = age_id
+          items,ratings,@title = Item.get_items(crit,current_participant)
+          @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
+          @sortby = '*value*'
+          @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+          if @items.length > 0 and ratings.length > 0
+            if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
+              item = @items[0]
+              iproc = @itemsproc[item.id]
+            end
+          end
+          @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
+        
+          for gender_rec in genders
+            gender_id = gender_rec.id
+            #gender_name = gender_rec.name
+            gender_name = gender_pos[gender_id]
+            code = "#{age_id}_#{gender_id}"
+            name = "#{gender_name} #{age_name}"
+            if not gender_rec.sumcat
+              item = nil
+              iproc = nil
+            
+              crit[:age] = age_id
+              crit[:gender] = gender_id
+              items,ratings,title = Item.get_items(crit,current_participant)
+              @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
+              @sortby = '*value*'
+              @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+              if @items.length > 0 and ratings.length > 0
+                if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
+                  item = @items[0]
+                  iproc = @itemsproc[item.id]
+                end
+              end
+            
+              @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
+            end
+          end
+      
+        elsif age == 0 and gender > 0
+          # three ages with a particular gender
+          gender_id = gender
+          #gender_name = MetamapNode.where(id: gender).first.name
+          gender_name = gender_pos[gender_id]
+        
+          name = "Voice of #{gender_single[gender_id]}"
+          item = nil
+          iproc = nil        
+          crit[:gender] = gender_id
+          items,ratings,@title = Item.get_items(crit,current_participant)
+          @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
+          @sortby = '*value*'
+          @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+          if @items.length > 0 and ratings.length > 0
+            if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
+              item = @items[0]
+              iproc = @itemsproc[item.id]
+            end
+          end
+          @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
+        
+          for age_rec in ages
+            age_id = age_rec.id
+            age_name = age_rec.name_as_group
+            code = "#{age_id}_#{gender_id}"
+            name = "#{gender_name} #{age_name}"
+            if not age_rec.sumcat
+              item = nil
+              iproc = nil
+            
+              crit[:age] = age_id
+              crit[:gender] = gender_id
+              items,ratings,title = Item.get_items(crit,current_participant)
+              @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
+              @sortby = '*value*'
+              @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+              if @items.length > 0 and ratings.length > 0
+                if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
+                  item = @items[0]
+                  iproc = @itemsproc[item.id]
+                end
+              end
+            
+              @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
+            end
+          end
+        
+        end
+      
+        # Figure out which new or full moon is next
+        now = Time.now.strftime("%Y-%m-%d %H:%M")
+        nowdate = Time.now.strftime("%Y-%m-%d")
+        nowtime = Time.now.strftime("%H:%M")
+        @moon = Moon.where("mdate>='#{nowdate}'").where(mailing_sent: false).order(:mdate).first
+        if @moon
+          # We want dd-mmm-yyyy at hh:mm am/pm
+          moondate = @moon.mdate.strftime("%d-%b-%Y")
+          if @moon.mtime.to_s == ""
+            moontime = '12:00 pm'
+          elsif @moon.mtime == '12:00'
+            moontime = "12:00 pm"
+          elsif @moon.mtime < '12:00'
+            moontime = "#{@moon.mtime} am"
+          elsif 
+            moontime = ("%02d" % (@moon.mtime[0..1].to_i - 12)) + @moon.mtime[2..4] + 'pm'
+          end
+          @moontime = moondate + ' ' + moontime
+        end
+
+        @crit = crit
+    
+        render :partial=>'simple_result'
+    
+      else
+        #-- Listing
+          
+        items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
+
+        #if @num_all_posts == 0 and @first == 1 and @datetype == 'fixed' and @datefixed == 'month'
+        if items.length == 0 and @datetype == 'fixed' and @datefixed == 'month'
+          #-- If there are no posts in the last month, change to since the beginning
+          params[:datetype] = 'range'
+          params[:datefrom] = '2016-03-08'
+          logger.info("items#geoslider_update no posts in last month, set date to range from 2016-03-08")
+          redo
+        end
+    
+        # Add up results for those items and those ratings, to show in the item summaries in the listing
+        # I.e. add up the number of interest/approval ratings for each item, do regression to the mean, calculate value, etc
+        @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
+  
+        # Items probably need to be sorted, based on the results we calculated
+        #sortby = '*value*'
+        @sortby = params[:sortby]
+        session[:list_sortby] = @sortby
+        @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
+
+        @batch_size = params[:batch_size].to_i
+            
+        @batch_level = 1
+        @batches = []
+        if @items.length > 4
+          if @items.length < 13
+            @numbatches = 2
+          elsif @items.length <= 30   
+            @numbatches = 3
+          elsif @items.length <= 40
+            @numbatches = 4  
+          else
+            @numbatches = 5  
+          end
+          @batches << 4
+          step = @items.length / (@numbatches - 1)
+          pos = 4
+          (@numbatches-2).times do
+            pos += step
+            @batches << pos
+          end  
+          @batches << @items.length   
+        
+          if @batches.include?(@batch_size) and @whatchanged != 'threads' and @whatchanged != 'sortby'
+            @batch_level = @batches.index(@batch_size) + 1
+          elsif params[:batch_level].to_i <= @numbatches and @whatchanged != 'threads' and @whatchanged != 'sortby'
+            @batch_level = params[:batch_level].to_i
+            @batch_size = @batches[@batch_level-1]
+          else  
+            @batch_size = 4
+          end  
+          if @whatchanged == 'threads' and @whatchanged == 'sortby'
+            @batch_level = 1
+          end
+        elsif @batch_size == 0
+          @batch_size = @items.length
+        end  
+      
+        @items_length = @items.length
+      
+        @items = @items.paginate :page=>@page, :per_page => @per_page   
+      
+        session[:list_batch_level] = @batch_level
+        session[:list_batch_size] = @batch_size
+        @showmax = @batch_size
+
+        if crit[:nvaction]
+          @suggestedtopic = "Nonviolent Action for Human Unity"
+        elsif true
+          @suggestedtopic = "Human Unity and Diversity"
+        else
+          @suggestedtopic = session.has_key?(:suggestedtopic) ? session[:suggestedtopic] : ""
+        end
+
+        @crit = crit
+
+        render :partial => 'geoslider_update'
+  
+      end
+
+  
+    end  # The one-time loop, for the sake of redo
 
   end
     
