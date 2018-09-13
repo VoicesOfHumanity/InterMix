@@ -714,12 +714,12 @@ class ItemsController < ApplicationController
     end
     
     @item = Item.new()
-    @item.item_type = 'message'
+    @item.item_type = 'picture'
     @item.posted_by = current_participant.id
     @item.subject = subject
     @item.short_content = short_content
     @item.html_content = @item.short_content
-    @item.is_first_in_thread = true
+    @item.is_first_in_thread = true 
     
     itemprocess
     
