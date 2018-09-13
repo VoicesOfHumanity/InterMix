@@ -2025,9 +2025,9 @@ class ItemsController < ApplicationController
     #  @item.dialog_id = params[:item][:dialog_id].to_i
     #end  
     
-    @item.group_id = params[:item][:group_id].to_i
+    @item.group_id = params[:item] ? params[:item][:group_id].to_i : 0
     @item.group_id = 0 if @item.group_id.to_i < 0
-    @item.dialog_id = params[:item][:dialog_id].to_i
+    @item.dialog_id = params[:item] ? params[:item][:dialog_id].to_i : 0
     @item.dialog_id = 0 if @item.dialog_id.to_i < 0
     if @item.dialog_id > 0
       @dialog = Dialog.find_by_id(@item.dialog_id)
