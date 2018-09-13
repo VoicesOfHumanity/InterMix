@@ -489,7 +489,7 @@ class ItemsController < ApplicationController
     logger.info("items#new tags:#{tags.inspect}") 
     tagtext = ''
     tags.uniq.each do |tag|
-      tagtext += ', ' if tagtext != ''
+      tagtext += ' ' if tagtext != ''
       tag.gsub!(/[^0-9A-za-z_]/i,'')
       tagtext += "##{tag}"
     end
