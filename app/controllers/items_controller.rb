@@ -723,7 +723,7 @@ class ItemsController < ApplicationController
     
     itemprocess
     
-    @item.save
+    @item.save!
     @item.first_in_thread = @item.id    
     if @item.save
       render json: {'result': 'success', 'item_id': @item.id}
