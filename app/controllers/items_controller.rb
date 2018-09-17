@@ -2145,10 +2145,11 @@ class ItemsController < ApplicationController
       
       #-- Check for the first link, if any, and try to get a preview
       #urls = @item.html_content.scan(URI.regexp)
-      urls = URI.extract(@item.html_content)
+      urls = URI.extract(@item.html_content,['http','https'])
+      logger.info("items#itemprocess found #{urls.length} links")
       if urls.length > 0
         url = urls[0]
-        logger.info("items#itemprocess found url: #{url}")
+        #logger.info("items#itemprocess found url: &gt;&gt;#{url}&lt;&lt;")
         begin
           linkobj = LinkThumbnailer.generate(url)
         rescue
