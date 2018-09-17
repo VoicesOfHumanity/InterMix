@@ -714,7 +714,8 @@ class ItemsController < ApplicationController
     end
     
     @item = Item.new()
-    @item.item_type = 'picture'
+    @item.item_type = 'message'
+    @item.media_type = 'picture'
     @item.posted_by = current_participant.id
     @item.subject = subject
     @item.short_content = short_content
