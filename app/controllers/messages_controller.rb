@@ -15,6 +15,7 @@ class MessagesController < ApplicationController
     @page = 1 if @page < 1
     
     @inout = params[:inout] || 'in'
+    @newmess = (params[:newmess].to_i == 1) 
     
     @messages = Message.where(nil)
     @messages = @messages.where(:to_group_id => params[:to_group_id]) if params[:to_group_id].to_i > 0

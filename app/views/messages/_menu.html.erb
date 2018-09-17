@@ -1,4 +1,4 @@
 <%= render(:partial => 'profiles/memenu')%>
 
-<div id="menudiv"><%= link_to_function 'Inbox', "showinout('in')" %> | <%= link_to_function 'Sent', "showinout('out')" %> | <%= link_to_function 'New Message', "newmess()" %></div>
+<div id="menudiv"><a href="/messages?inout=in">Inbox</a> | <a href="/messages?inout=out">Sent</a> | <a href="/messages?inout=out&amp;newmess=1">New Message</a> | <a href="/me/friends">Friends</a> | <a href="/me/invite">Invite</a><br><br></div>
 
