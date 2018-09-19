@@ -1271,6 +1271,10 @@ class ItemsController < ApplicationController
       crit[:messtag] = params[:messtag].to_s
       session[:comtag] = crit[:comtag]
       session[:messtag] = crit[:messtag]
+      
+      if crit[:comtag].to_s != '' and crit[:comtag] != '*my*'
+        @community = Community.find_by_tagname(crit[:comtag])
+      end
     
       nvaction_changed = false
       if params.has_key?(:nvaction) 

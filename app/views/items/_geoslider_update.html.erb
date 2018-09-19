@@ -94,4 +94,6 @@ if ($('#period_id').length && $('#period_id').val()!=showing_period_id) {
 $('.thumbupdown').hover(function(){thumbhover(this,'in')},function(){thumbhover(this,'out')});
 var page = <%= @items.current_page.to_i %>;
 var show_result = <%= @show_result ? 1 : 0 %>;
+var about_link = '<%= @community ? "/communities/#{@community.id}" : "/dialogs/#{VOH_DISCUSSION_ID}/view" %>';
+$('#about_a').attr('href',about_link);
 </script>
