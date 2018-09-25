@@ -856,8 +856,9 @@ class ItemsController < ApplicationController
     
     if params[:thumb].to_i != 0
       # If a thumb vote is given, record it before showing the item
+      # If we already had a vote, only record if it changes direction, positive/negative
       vote = params[:thumb].to_i
-      rateitem(@item, vote)
+      rateitem(@item, vote, true)
     end
     
     @period_id = 0
@@ -1001,7 +1002,7 @@ class ItemsController < ApplicationController
     render plain: vote
   end 
   
-  def rateitem(item, vote)
+  def rateitem(item, vote, from_mail=false)
     # Called by fx thumbrate or view to record a vote, without showing any screen
     
     if not item.voting_ok(current_participant.id)
@@ -1020,7 +1021,19 @@ class ItemsController < ApplicationController
     #-- See if that user already has rated that item, or create a new rating if they haven't
     rating = Rating.where(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings').first_or_initialize
     
-    if rating.approval == vote
+    if rating and from_mail
+      #-- If it was from an email, there's only -1 and +1 choice. If we already had a rating, only do something if it changed direction
+      # https://intermix.test:3002/items/2111/view?auth_token=Y8fCCBYWx8-ETHcyWGC4&thumb=-1
+      if rating.approval and rating.approval.to_i > 0 and vote < 0
+        rating.approval = vote    
+        rating.interest = vote.abs
+      elsif rating.approval and rating.approval.to_i < 0 and vote > 0
+        rating.approval = vote    
+        rating.interest = vote.abs
+      elsif rating.approval
+        return       
+      end
+    elsif rating.approval == vote
       #-- If they clicked on the existing rating, turn it off
       rating.approval = 0    
       rating.interest = 0
