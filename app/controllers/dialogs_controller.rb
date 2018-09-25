@@ -78,6 +78,7 @@ class DialogsController < ApplicationController
       session[:comtag] = @comtag
     else
       @comtag = session[:comtag].to_s
+      logger.info("dialogs#slider @comtag set based on session")
     end
     if is_new
       @messtag = ''
@@ -85,11 +86,14 @@ class DialogsController < ApplicationController
     elsif params.has_key?(:messtag)
       @messtag = params[:messtag].to_s
       session[:messtag] = @messtag
-    elsif params.values.length == 4 and @comtag != ''
+    elsif params.values.length == 4 and @comtag != '' and not params.has_key?(:show_result)
+    #elsif params.has_key?(:comtag) and @comtag != '' and not params.has_key?(:messtag)
       #-- If they clicked on a community tag link, select the message tag too
       @messtag = @comtag
+      logger.info("dialogs#slider @messtag set to the same as @comtag")
     else
       @messtag = session[:messtag].to_s
+      logger.info("dialogs#slider @messtag set based on session")
     end
     #if is_new
     #  @nvaction = false
