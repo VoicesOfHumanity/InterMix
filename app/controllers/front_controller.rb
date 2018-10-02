@@ -336,6 +336,9 @@ class FrontController < ApplicationController
     end
 
     @comtag = params[:comtag].to_s
+    if @comtag.to_s != ''
+      @community = Community.find_by_tagname(@comtag)
+    end
     
     @dialog = Dialog.find_by_id(@dialog_id)
     if @dialog and @group_id == 0
@@ -663,6 +666,7 @@ class FrontController < ApplicationController
     cdata['dialog'] = @dialog if @dialog
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
+    cdata['community'] = @community if @community
     if @comtag and @comtag.to_s != ''
       cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}</a>"      
     else
@@ -670,12 +674,19 @@ class FrontController < ApplicationController
     end
     cdata['domain'] = dom
     
-    if @dialog_group and @dialog_group.confirm_email_template.to_s.strip != ''
+    if false and @dialog_group and @dialog_group.confirm_email_template.to_s.strip != ''
       template = Liquid::Template.parse(@dialog_group.confirm_email_template)
       html_content = template.render(cdata)
-    elsif @dialog.confirm_email_template.to_s.strip != ''
+    elsif false and @dialog.confirm_email_template.to_s.strip != ''
       template = Liquid::Template.parse(@dialog.confirm_email_template)
       html_content = template.render(cdata)
+    elsif @community
+      html_content = "<p>Welcome to the #{@community.name} community on Voices of Humanity!</p><p>username: #{@participant.email}<br/>"
+      html_content += "password: #{@password}<br/>" if @password != '???'      
+      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}<br/><br/>"      
+      html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"      
+      html_content += "</p>"      
     else    
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
       html_content += "password: #{@password}<br/>" if @password != '???'
@@ -703,10 +714,10 @@ class FrontController < ApplicationController
       logger.info("Item#emailit problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
     end
 
-    if @dialog_group and @dialog_group.confirm_template.to_s != ''
+    if false and @dialog_group and @dialog_group.confirm_template.to_s != ''
       template = Liquid::Template.parse(@dialog_group.confirm_template)
       @content = template.render(cdata)
-    elsif @dialog.confirm_template.to_s != ''
+    elsif false and @dialog.confirm_template.to_s != ''
       template = Liquid::Template.parse(@dialog.confirm_template)
       @content = template.render(cdata)
     elsif true
