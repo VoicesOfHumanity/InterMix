@@ -30,7 +30,8 @@ class ApplicationController < ActionController::Base
     else
       res = [{:val=>0, :txt=>''}] + Geoadmin1.where("country_code='#{@country_code}' and admin1_code!='00'").order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
     end          
-    render :layout=>false, :text => res.to_json
+    #render :layout=>false, :text => res.to_json
+    render json: res
   end  
 
   def getadmin2s
@@ -45,7 +46,8 @@ class ApplicationController < ActionController::Base
     elsif @country_code != ""
       res = [{:val=>0, :txt=>''}] + Geoadmin2.where("country_code='#{@country_code}'").order("name").collect {|r| {:val=>r.admin2uniq,:txt=>r.name}}
     end
-    render :layout=>false, :text => res.to_json
+    #render :layout=>false, :text => res.to_json
+    render json: res
   end  
   
   def getmetro
@@ -56,7 +58,8 @@ class ApplicationController < ActionController::Base
     else
       res = [{:val=>0, :txt=>''}] + MetroArea.where(:country_code=>@country_code).order("population desc").collect {|r| {:val=>r.id,:txt=>r.name}}
     end          
-    render :layout=>false, :text => res.to_json
+    #render :layout=>false, :text => res.to_json
+    render json: res
   end  
   
   def setsess
