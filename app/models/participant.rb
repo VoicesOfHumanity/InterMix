@@ -209,20 +209,22 @@ class Participant < ActiveRecord::Base
     #-- [[2, "Nationality"], [3, "Gender"]]
     #-- NB: This was colliding with the metamaps association, so it had to be renamed
     metamaps = []
-    dialogsin = dialogs_in
-    logger.info("participant#metamaps_h is in #{dialogs_in.length} discussions")
-    for d in dialogsin
-      Metamap.joins(:dialogs).where("dialogs.id=?",d[0]).order("sortorder,metamaps.name").each do |m|
-        val = [m.id,m.name,m]
-        metamaps << val if not metamaps.include?(val)
-      end
-    end   
-    groupsin = groups_in
-    logger.info("participant#metamaps_h is in #{groups_in.length} groups")
-    for g in groupsin
-      Metamap.joins(:groups).where("groups.id=?",g[0]).order("sortorder,metamaps.name").each do |m|
-        val = [m.id,m.name,m]
-        metamaps << val if not metamaps.include?(val)
+    if false
+      dialogsin = dialogs_in
+      logger.info("participant#metamaps_h is in #{dialogs_in.length} discussions")
+      for d in dialogsin
+        Metamap.joins(:dialogs).where("dialogs.id=?",d[0]).order("sortorder,metamaps.name").each do |m|
+          val = [m.id,m.name,m]
+          metamaps << val if not metamaps.include?(val)
+        end
+      end   
+      groupsin = groups_in
+      logger.info("participant#metamaps_h is in #{groups_in.length} groups")
+      for g in groupsin
+        Metamap.joins(:groups).where("groups.id=?",g[0]).order("sortorder,metamaps.name").each do |m|
+          val = [m.id,m.name,m]
+          metamaps << val if not metamaps.include?(val)
+        end
       end
     end
     rmetamaps = Metamap.where(global_default: true)
