@@ -46,8 +46,9 @@
 		<%= f.input :address2, :required => false %>
 		<%= f.input :city, :required => false %>
 		<%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
-		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]} %>
-		<%= f.input :zip, :required => false %>
+		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]}, :input_html =>{:onchange=>"chgstate()"} %>  
+    <%= f.input :admin2uniq, :label => "County", :as => :select, :required => false, :collection =>Geoadmin2.where(:admin1uniq=>@participant.admin1uniq).order(:name).select([:name,:admin2uniq]).collect {|r| [r.name,r.admin2uniq]} %>  
+  	<%= f.input :zip, :required => false %>
 		<%= f.input :phone, :required => false %>
 		<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false %>
 		<%= f.input :bioregion, :required => false %>
@@ -83,43 +84,43 @@
 		<%= f.input :refugee, :as => :boolean, :label=>"check here if you identify as a refugee", :input_html => ref_checked %>		
     <% end -%>
     
-    <p><input id="settings" type="submit" value="Save" onclick="savetags();return(true)"><br><br></p>
+    <p><input id="settings_submit" type="submit" value="Save" onclick="savetags();return(true)"><br><br></p>
     
     <li class="select required">
       <div style="width:25%;float:left;font-weight:bold">Communities<br>check to join</div>
       <div style="width:75%;float:left">
         <% for com in @major_communities -%>  
         <% checked = @participant.tag_list.include?(com.tagname) ? 'checked' : '' %>
-        <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <%= com.fullname %><br>
+        <input type="checkbox" id="check_<%= com.tagname %>_mc" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <%= com.fullname %><br>
         <% end -%>  
         [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>  
         <div id="more_com" style="display:none">  
         <% for com in @ungoals_communities -%>  
         <% checked = @participant.tag_list.include?(com.tagname) ? 'checked' : '' %>
-        <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+        <input type="checkbox" id="check_<%= com.tagname %>_ug" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
         <% end -%>  
         <% for com in @sustdev_communities -%>  
         <% checked = @participant.tag_list.include?(com.tagname) ? 'checked' : '' %>
-        <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+        <input type="checkbox" id="check_<%= com.tagname %>_sd" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
         <% end -%>  
       </div>  
         
         <% if false -%>
           <% GLOBAL_COMMUNITIES.each do |tag| -%>
             <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
-            <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
+            <input type="checkbox" id="check_<%= tag %>_gc" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
           <% end -%>
           [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>
           <div id="more_com" style="display:none">
             <% UNGOAL_COMMUNITIES.each do |tag| -%>
               <% b = BOLD_COMMUNITIES.include?(tag) %>
               <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
-              <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
+              <input type="checkbox" id="check_<%= tag %>_ug" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
             <% end -%>
             <% SUSTDEV_COMMUNITIES.each do |tag| -%>
               <% b = BOLD_COMMUNITIES.include?(tag) %>        
               <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
-              <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
+              <input type="checkbox" id="check_<%= tag %>_sd" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
             <% end -%>
           <% end -%>
       </div>
@@ -212,6 +213,8 @@ function chgcountry() {
 	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
 	  }
 	  $("select#participant_admin1uniq").html(options);
+    
+    $("select#participant_admin2uniq").html('');
 
 		$.getJSON("/front/getmetro",{country_code: $("#participant_country_code").val()}, function(j){
 	    var options = '';
@@ -224,6 +227,19 @@ function chgcountry() {
 		$('#profile_edit').css('opacity','1.0');
 	})
 }
+
+function chgstate() {
+	$('#profile_edit').css('opacity','0.5');
+	$.getJSON("/front/getadmin2s",{country_code: $("#participant_country_code").val(), admin1uniq: $("#participant_admin1uniq").val()}, function(j){
+	  var options = '';
+	  for (var i = 0; i < j.length; i++) {
+	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	  }
+	  $("select#participant_admin2uniq").html(options);
+		$('#profile_edit').css('opacity','1.0');
+	})
+}
+
 function addtag() {
   var val = $('#tag2add').val();
   if (val.charAt(0)=='#') {
