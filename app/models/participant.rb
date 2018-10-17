@@ -19,6 +19,7 @@ class Participant < ActiveRecord::Base
   has_many :dialog_admins, :dependent => :destroy
   belongs_to :geocountry, :foreign_key => :country_code, :primary_key => :iso
   belongs_to :geoadmin1, :foreign_key => :admin1uniq, :primary_key => :admin1uniq
+  belongs_to :geoadmin2, :foreign_key => :admin2uniq, :primary_key => :admin2uniq
   belongs_to :metro_area
   has_many :group_subtag_participants
   has_many :group_subtags, :through => :group_subtag_participants

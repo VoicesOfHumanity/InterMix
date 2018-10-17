@@ -696,7 +696,7 @@ class ItemsController < ApplicationController
   
   def create_api
     #-- Create an item, called remotely by json, which should be turned into params automatically
-    #-- We should be receiving an auth_token, loggin in the user
+    #-- We should be receiving an auth_token, login in the user
     
     #auth_token = params[:auth_token].presence
     #participant       = auth_token && Participant.find_by_authentication_token(auth_token.to_s)
@@ -1251,7 +1251,7 @@ class ItemsController < ApplicationController
       geo_level = params[:geo_level].to_i
       session[:geo_level] = geo_level
       @geo_level = geo_level
-      geo_levels = GEO_LEVELS               # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}    
+      geo_levels = GEO_LEVELS               # {1 => 'city', 2 => 'county', 3 => 'metro', 4 => 'state', 5 => 'nation', 6 => 'planet'}    
       crit[:geo_level] = geo_levels[geo_level]
   
       #group_level = params[:group_level].to_i

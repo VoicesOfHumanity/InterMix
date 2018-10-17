@@ -80,8 +80,8 @@
 
 <script>
 var curid1 = <%= @community.id %>;
-var geo_levels = {1: 'city', 2: 'metro', 3: 'state', 4: 'nation', 5: 'planet'};
-var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 5 %>;
+var geo_levels = {1: 'city', 2: 'county', 3: 'metro', 4: 'state', 5: 'nation', 6: 'planet'};
+var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 6 %>;
 function per_reload() {
   list2();
 }

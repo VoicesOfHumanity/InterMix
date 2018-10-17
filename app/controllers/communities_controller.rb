@@ -120,8 +120,8 @@ class CommunitiesController < ApplicationController
 
     members = Participant.where(status: 'active', no_email: false).tagged_with(@comtag)
     
-    geo_level_num = params.has_key?(:geo_level) ? params[:geo_level].to_i : 5
-    @geo = GEO_LEVELS[geo_level_num] # {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}
+    geo_level_num = params.has_key?(:geo_level) ? params[:geo_level].to_i : 6
+    @geo = GEO_LEVELS[geo_level_num] # {1: 'city', 2: 'county', 3: 'metro', 4: 'state', 5: 'nation', 6: 'planet'}
     if @geo == 'city'
       if current_participant.city.to_s != ''
         members = members.where("participants.city=?",current_participant.city)
@@ -129,6 +129,14 @@ class CommunitiesController < ApplicationController
       else
         members = members.where("1=0")
         title += "Unknown City"
+      end  
+    elsif @geo == 'county'  
+      if current_participant.admin2uniq.to_s != ''
+        members = members.where("participants.admin2uniq=?",current_participant.admin2uniq)
+        title += "#{current_participant.geoadmin2.name}"
+      else
+        members = members.where("1=0")
+        title += "Unknown County"
       end  
     elsif @geo == 'metro'
       if current_participant.metro_area_id.to_i > 0
@@ -798,13 +806,14 @@ class CommunitiesController < ApplicationController
     @participants = Participant.where(status: 'active', no_email: false).order("last_name,first_name,id")     
     
     @geo_levels = [
-      [5,'Planet&nbsp;Earth'],
-      [4,'My&nbsp;Nation'],
-      [3,'State/Province'],
-      [2,'My&nbsp;Metro&nbsp;region'],
+      [6,'Planet&nbsp;Earth'],
+      [5,'My&nbsp;Nation'],
+      [4,'State/Province'],
+      [3,'My&nbsp;Metro&nbsp;region'],
+      [2,'My&nbsp;County'],
       [1,'My&nbsp;City/Town']
-    ]  
-    @geo_level = 5 if not @geo_level
+    ]
+    @geo_level = 6 if not @geo_level
     
   end
 

@@ -159,8 +159,8 @@ SYSTEM_SENDER = 'questions@intermix.org'
 
 MAIL_SYSTEM = 'postmark'   # postmark or system
 
-GEO_LEVELS = {1 => 'city', 2 => 'metro', 3 => 'state', 4 => 'nation', 5 => 'planet'}
-GEO_LEVEL_DESC = {'city' => "My city/town", 'metro' => "My metro region", "state" => "State/province", "nation" => "My nation", "earth" => "Planet Earth"}
+GEO_LEVELS = {1 => 'city', 2 => 'county', 3 => 'metro', 4 => 'state', 5 => 'nation', 6 => 'planet'}
+GEO_LEVEL_DESC = {'city' => "My city/town", 'county' => 'My county', 'metro' => "My metro region", "state" => "State/province", "nation" => "My nation", "earth" => "Planet Earth"}
 
 # These are in localsettings.rb
 #TWITTER_CONSUMER_KEY = 'xxxxxx'   # = API key. And this is for the Posting app, not the Login app

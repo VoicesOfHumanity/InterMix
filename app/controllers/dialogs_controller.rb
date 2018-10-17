@@ -145,19 +145,20 @@ class DialogsController < ApplicationController
     end
     
     @geo_levels = [
-      [5,'Planet&nbsp;Earth'],
-      [4,'My&nbsp;Nation'],
-      [3,'State/Province'],
-      [2,'My&nbsp;Metro&nbsp;region'],
+      [6,'Planet&nbsp;Earth'],
+      [5,'My&nbsp;Nation'],
+      [4,'State/Province'],
+      [3,'My&nbsp;Metro&nbsp;region'],
+      [2,'My&nbsp;County'],
       [1,'My&nbsp;City/Town']
     ]
     # geo level defaults to Planet Earth, but a different choice is remembered in the current session
     if is_new
-      @geo_level = 5
+      @geo_level = 6
     elsif session[:geo_level].to_i > 0
       @geo_level = session[:geo_level]
     else
-      @geo_level = 5
+      @geo_level = 6
     end
     @group_levels = [
       [3,'All groups'],
