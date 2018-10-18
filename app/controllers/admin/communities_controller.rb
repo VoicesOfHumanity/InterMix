@@ -13,6 +13,7 @@ class Admin::CommunitiesController < ApplicationController
   def index
     community_id = params[:community_id].to_i
 
+    @context = params[:context].to_s
     @per_page = (params[:per_page] || 30).to_i
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
@@ -23,6 +24,9 @@ class Admin::CommunitiesController < ApplicationController
     xorder += sort2 if sort2!=""
 
     xcond = "1=1"
+    if @context != '*'
+      xcond = "context='#{@context}'"
+    end
 
     if community_id>0
       @communities = [Community.find(community_id)]

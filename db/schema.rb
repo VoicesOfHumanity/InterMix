@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180809111052) do
+ActiveRecord::Schema.define(version: 20181018180641) do
 
   create_table "authentications", id: :integer, force: :cascade, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8" do |t|
     t.integer "participant_id"
@@ -72,6 +72,8 @@ ActiveRecord::Schema.define(version: 20180809111052) do
     t.text "autotags"
     t.boolean "is_sub", default: false
     t.integer "sub_of"
+    t.string "context", default: ""
+    t.string "context_code", default: ""
     t.index ["tagname"], name: "index_communities_on_tagname"
   end
 

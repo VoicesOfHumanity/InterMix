@@ -454,6 +454,8 @@ class ItemsController < ApplicationController
       end
       if @item.geo_level == 'city' and current_participant.city.to_s != ''
         tags << current_participant.city
+      elsif @item.geo_level == 'county' and current_participant.admin2uniq.to_s != ''
+        tags << current_participant.geoadmin2.name
       elsif @item.geo_level == 'metro' and current_participant.metro_area_id.to_i > 0
         tags << current_participant.metro_area.name
       elsif @item.geo_level == 'state' and current_participant.admin1uniq.to_s != ''
@@ -1229,7 +1231,7 @@ class ItemsController < ApplicationController
   def geoslider_update
     # Getting listings and results tailored to the slider in discussions
     # Variables are:
-    # geo_level: city, metro, state, nation, earth
+    # geo_level: city, county, metro, state, nation, earth
     # group_level: current, my, all groups. 
   
     # indigenous, other minority, veteran, *interfaith*, refugee

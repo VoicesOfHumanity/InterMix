@@ -11,6 +11,8 @@
 <tr><td class="left">Min. Approvals:</td><td><%= @community.tweet_approval_min %></td></tr>
 <tr><td class="left">Twitter username:</td><td><%= @community.twitter_username %></td></tr>	
 <tr><td class="left">Twitter #hashtag:</td><td><%= @community.twitter_hash_tag %></td></tr>	
+<tr><td class="left">Type/context:</td><td><%= @community.context %></td></tr>	
+<tr><td class="left">Reference ID:</td><td><%= @community.context_code %></td></tr>	
 <tr><td class="left">Created:</td><td><%= @community.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 <tr><td class="left">Updated:</td><td><%= @community.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 </table>
