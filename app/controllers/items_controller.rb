@@ -245,7 +245,25 @@ class ItemsController < ApplicationController
   def list_api
     #-- Get some items in a simplified manner, over the API, for apps
     
-    @items = Item.order("id desc").limit(5)
+    @items = []
+    
+    items = Item.order("id desc").limit(5)
+    for item in items
+      @items << {
+        'id': item.id,
+        'created_at': item.created_at,
+        'posted_by': item.posted_by,
+        'subject': item.subject,
+        'short_content': item.short_content,
+        'html_content': item.html_content,
+        'approval': item.approval,
+        'interest': item.interest,
+        'media_type': item.media_type,
+        'has_picture': item.has_picture,
+        'link': item.link,
+        'reply_to': item.reply_to,
+      }
+    end
     
     render json: @items
   end
