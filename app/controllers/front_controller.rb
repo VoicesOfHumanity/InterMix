@@ -377,6 +377,9 @@ class FrontController < ApplicationController
     end
     @email = params[:email].to_s
     @country_code = params[:country_code].to_s
+    @admin1uniq = params[:admin1uniq].to_s
+    @admin2uniq = params[:admin2uniq].to_s
+    @metro_area_id = params[:metro_area_id].to_i
     @indigenous = params[:indigenous].to_i
     @other_minority = params[:other_minority].to_i
     @veteran = params[:veteran].to_i
@@ -525,6 +528,9 @@ class FrontController < ApplicationController
         @participant.last_name = @last_name.strip
         @participant.password = @password
         @participant.country_code = @country_code
+        @participant.admin1uniq = @admin1uniq
+        @participant.admin2uniq = @admin2uniq
+        @participant.metro_area_id = @metro_area_id
         @participant.forum_email = 'daily'
         @participant.group_email = 'daily'
         @participant.subgroup_email = 'instant'
@@ -550,6 +556,8 @@ class FrontController < ApplicationController
       @participant.private_email = 'instant'  
       @participant.status = 'unconfirmed'
       @participant.confirmation_token = Digest::MD5.hexdigest(Time.now.to_f.to_s + @email)
+      @participant.admin1uniq = @admin1uniq
+      @participant.admin2uniq = @admin2uniq
       @participant.metro_area_id = params[:metro_area_id].to_i
       @participant.city = params[:city].to_s
       @participant.indigenous = (params[:indigenous].to_i == 1)

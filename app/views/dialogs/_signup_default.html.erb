@@ -13,7 +13,7 @@
 </td></tr>
 <tr><td>
 	
-<form action="/front/dialogjoin" method="post">
+<form action="/front/dialogjoin" method="post" id="profile_edit">
 <input type="hidden" name="group_id" value="{{ group.id }}">      
 <input type="hidden" name="dialog_id" value="{{ dialog.id }}">
 <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />	
@@ -29,8 +29,14 @@
 <tr><td>*E-mail</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>    
 <tr><td>*Password</td><td><input type="password" name="password" value="" size="30" style="width:200px"> Confirm: <input type="password" name="password_confirmation" value="" size="30" style="width:200px"></td></tr>
 
-<tr><td>*Country of Residence</td><td><select name="country_code"><option value="">* choose *</option><% for country in @countries %><option value="<%= country.iso %>"<% if country.iso == @country_code %> selected="selected"<% end %>><%= country.name %></option><% end %></select></td></tr>
-<tr><td>Metro Area</td><td><select name="metro_area_id"><option value="">* choose *</option>{% for m in metro_areas %}<option value="{{ m[1] }}">{{ m[0] }}</option>{% endfor %}</select></td></tr>
+<tr><td>*Country of Residence</td><td><select name="country_code" id="country_code" onchange="chgcountry()"><option value="">* choose *</option><% for country in @countries %><option value="<%= country.iso %>"<% if country.iso == @country_code %> selected="selected"<% end %>><%= country.name %></option><% end %></select></td></tr>
+
+<tr><td>State/Region</td><td><select name="admin1uniq" id="admin1uniq" onchange="chgstate()"></select></td></tr>
+    
+<tr><td>Metro Area</td><td><select name="metro_area_id" id="metro_area_id"></select></td></tr>
+
+<tr><td>County</td><td><select name="admin2uniq" id="admin2uniq"></select></td></tr>
+
 <tr><td>City</td><td><input type="text" name="city" value="" size="30" style="width:200px"></td></tr>    
 
 {% for m in meta %}
@@ -131,5 +137,36 @@ function savetags() {
     }
   })
   $('#tag_list').val(xlist);
+}
+function chgcountry() {
+	$('#profile_edit').css('opacity','0.5');
+	$.getJSON("/front/getadmin1s",{country_code: $("#country_code").val()}, function(j){
+	  var options = '<option>* choose *</option>';
+	  for (var i = 0; i < j.length; i++) {
+	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	  }
+	  $("select#admin1uniq").html(options);    
+    $("select#admin2uniq").html('');
+		$.getJSON("/front/getmetro",{country_code: $("#country_code").val()}, function(j){
+	    var options = '<option>* choose *</option>';
+	    for (var i = 0; i < j.length; i++) {
+	      options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	    }
+	    $("select#metro_area_id").html(options);
+		})
+			
+		$('#profile_edit').css('opacity','1.0');
+	})
+}
+function chgstate() {
+	$('#profile_edit').css('opacity','0.5');
+	$.getJSON("/front/getadmin2s",{country_code: $("#country_code").val(), admin1uniq: $("#admin1uniq").val()}, function(j){
+	  var options = '<option>* choose *</option>';
+	  for (var i = 0; i < j.length; i++) {
+	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	  }
+	  $("select#admin2uniq").html(options);
+		$('#profile_edit').css('opacity','1.0');
+	})
 }
 </script>
