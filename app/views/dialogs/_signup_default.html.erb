@@ -54,7 +54,7 @@
 <tr>
   <td style="vertical-align:top">Communities<br>check to join</td>
   <td>
-    <% if not @comfound -%>
+    <% if not @comfound and @comname != '' -%>
     <input type="checkbox" id="check_<%= @comtag %>" name="check[<%= @comtag %>]" value="1" data-tag="<%= @comtag %>" class="com_check" checked> <%= @comname %><br>    
     <% end -%>
     <% for com in @major_communities -%>  
@@ -115,6 +115,9 @@ function more_less() {
     showing_more = true;
   }
 }
+<% if @cominmore %>
+more_less();
+<% end %>
 function savetags() {
   var xlist = '';
   $('#comtags option').each(function() {
