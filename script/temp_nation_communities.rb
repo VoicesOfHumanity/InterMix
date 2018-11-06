@@ -32,9 +32,9 @@ for p in participants
   if country
     community = Community.where(context: 'nation', context_code: country.iso3).first
     if community
-      puts "#{p.email} in community #{community.tagname}"
-      #p.tag_list.add(community.tagname)
-      #p.save
+      puts "#{p.id}:#{p.email} in community #{community.tagname}"
+      p.tag_list.add(community.tagname)
+      p.save!
     end
   end
 
@@ -59,9 +59,9 @@ for p in participants
   if country
     community = Community.where(context: 'nation', context_code: country.iso3).first
     if community
-      puts "#{p.email} in community #{community.tagname}"
+      puts "#{p.id}:#{p.email} is in community #{community.tagname}"
       p.tag_list.add(community.tagname)
-      p.save
+      p.save!
     end
   end
 
