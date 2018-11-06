@@ -3077,8 +3077,12 @@ class Item < ActiveRecord::Base
       linkimg = self.oembed_response[:img]
       linktitle = self.oembed_response[:title]
       description = self.oembed_response[:description]
-      ximg = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"140\" style=\"width:150px\" title=\"#{description}\"></a>"
-      xhtml = "<div style=\"text-align:center;font-size:10px\">#{ximg}<br>#{linktitle}</div>"
+      if linkimg.to_s == ''
+        return ''
+      else
+        ximg = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"140\" style=\"width:150px\" title=\"#{description}\"></a>"
+        xhtml = "<div style=\"text-align:center;font-size:10px\">#{ximg}<br>#{linktitle}</div>"
+      end
       return xhtml
     else
       return('')

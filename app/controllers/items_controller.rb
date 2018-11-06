@@ -2203,10 +2203,14 @@ class ItemsController < ApplicationController
         end
         if linkobj
           linkurl = linkobj.url.to_s
-          linkimg = linkobj.images.first.src.to_s
+          linkimg = linkobj.images.first ? linkobj.images.first.src.to_s : ''
           linktitle = linkobj.title.to_s
           if linkurl != ''
-            @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"200\" title=\"#{linktitle}\"></a>"
+            if linkimg != ''
+              @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"200\" title=\"#{linktitle}\"></a>"
+            else
+              @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\">#{linktitle}</a>"
+            end
             @item.oembed_response = {
               'url': linkurl,
               'img': linkimg,

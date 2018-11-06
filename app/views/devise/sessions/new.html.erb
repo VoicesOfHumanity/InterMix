@@ -3,7 +3,7 @@
 <% @comtag = params[:comtag] if not @compag and params.has_key?(:comtag) %>
 <% if @comtag.to_s != '' -%>
   <% @community = Community.find_by_tagname(@comtag) if not @community %>
-  <p><big><b><%= @community.fullname.to_s != '' ? @community.fullname : @comtag %></b></big></p>
+  <p><big><b><%= (@community and @community.fullname.to_s) != '' ? @community.fullname : @comtag %></b></big></p>
 <% end -%>
 
 <h2>Sign in</h2>

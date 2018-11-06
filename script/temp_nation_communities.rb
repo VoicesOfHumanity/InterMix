@@ -60,8 +60,8 @@ for p in participants
     community = Community.where(context: 'nation', context_code: country.iso3).first
     if community
       puts "#{p.email} in community #{community.tagname}"
-      #p.tag_list.add(community.tagname)
-      #p.save
+      p.tag_list.add(community.tagname)
+      p.save
     end
   end
 
