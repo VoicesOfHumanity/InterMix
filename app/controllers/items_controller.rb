@@ -1505,6 +1505,11 @@ class ItemsController < ApplicationController
           gender_id = gender
           #gender_name = MetamapNode.where(id: gender).first.name
           gender_name = gender_pos[gender_id]
+          if gender_id==208 and @community and @community.voice_of_women.to_s != ''
+            gender_name = @community.voice_of_women
+          elsif gender_id==207 and @community and @community.voice_of_men.to_s != ''
+            gender_name = @community.voice_of_men
+          end
           name = "#{gender_name} #{age_name}"
           item = nil
           iproc = nil
@@ -1527,6 +1532,7 @@ class ItemsController < ApplicationController
           # two genders, three ages, and voice of humanity
           # total
           name = "Voice of Humanity-as-One"
+          name = @community.voice_of_humanity if @community and @community.voice_of_humanity.to_s != ''          
           item = nil
           iproc = nil        
           items,ratings,@title = Item.get_items(crit,current_participant)
@@ -1551,6 +1557,11 @@ class ItemsController < ApplicationController
             gender_name = gender_rec.name_as_group
             code = "#{gender_id}"
             name = "#{gender_name}"
+            if gender_id==208 and @community and @community.voice_of_women.to_s != ''
+              name = @community.voice_of_women
+            elsif gender_id==207 and @community and @community.voice_of_men.to_s != ''
+              name = @community.voice_of_men
+            end
             if not gender_rec.sumcat
               item = nil
               iproc = nil
@@ -1577,6 +1588,13 @@ class ItemsController < ApplicationController
             age_name = age_rec.name_as_group
             code = "#{age_id}"
             name = "#{age_name}"
+            if age_id==405 and @community and @community.voice_of_young.to_s != ''
+              name = @community.voice_of_young
+            elsif gender_id==406 and @community and @community.voice_of_middleage.to_s != ''
+              name = @community.voice_of_middleage
+            elsif gender_id==407 and @community and @community.voice_of_old.to_s != ''
+              name = @community.voice_of_old
+            end
             if not age_rec.sumcat
               item = nil
               iproc = nil
@@ -1604,6 +1622,13 @@ class ItemsController < ApplicationController
           age_name = MetamapNode.where(id: age).first.name_as_group
         
           name = "#{age_name}"
+          if age_id==405 and @community and @community.voice_of_young.to_s != ''
+            name = @community.voice_of_young
+          elsif gender_id==406 and @community and @community.voice_of_middleage.to_s != ''
+            name = @community.voice_of_middleage
+          elsif gender_id==407 and @community and @community.voice_of_old.to_s != ''
+            name = @community.voice_of_old
+          end
           item = nil
           iproc = nil        
           crit[:age] = age_id
@@ -1623,6 +1648,11 @@ class ItemsController < ApplicationController
             gender_id = gender_rec.id
             #gender_name = gender_rec.name
             gender_name = gender_pos[gender_id]
+            if gender_id==208 and @community and @community.voice_of_women.to_s != ''
+              gender_name = @community.voice_of_women
+            elsif gender_id==207 and @community and @community.voice_of_men.to_s != ''
+              gender_name = @community.voice_of_men
+            end
             code = "#{age_id}_#{gender_id}"
             name = "#{gender_name} #{age_name}"
             if not gender_rec.sumcat
@@ -1651,6 +1681,11 @@ class ItemsController < ApplicationController
           gender_id = gender
           #gender_name = MetamapNode.where(id: gender).first.name
           gender_name = gender_pos[gender_id]
+          if gender_id==208 and @community and @community.voice_of_women.to_s != ''
+            gender_name = @community.voice_of_women
+          elsif gender_id==207 and @community and @community.voice_of_men.to_s != ''
+            gender_name = @community.voice_of_men
+          end
         
           name = "Voice of #{gender_single[gender_id]}"
           item = nil
