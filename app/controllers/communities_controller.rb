@@ -31,7 +31,19 @@ class CommunitiesController < ApplicationController
 
     if params[:which].to_s == 'all' or current_participant.tag_list.length == 0
       communities = Community.where(is_sub: false)
-      @csection = 'all'      
+      @csection = 'all' 
+    elsif params[:which].to_s == 'human'  
+      communities = Community.where(is_sub: false, major: true)
+      @csection = 'human' 
+    elsif params[:which].to_s == 'un'  
+      communities = Community.where(is_sub: false, ungoals: true)
+      @csection = 'un' 
+    elsif params[:which].to_s == 'nations'  
+      communities = Community.where(is_sub: false, context: 'nation')
+      @csection = 'nations' 
+    elsif params[:which].to_s == 'other'  
+      communities = Community.where(is_sub: false, more: true)
+      @csection = 'other'            
     else
       #-- My communities
       comtag_list = ''
