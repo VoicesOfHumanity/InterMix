@@ -174,6 +174,9 @@ class Item < ActiveRecord::Base
     
     p = Magick::Image.read("#{tempfilepath}").first
     if p
+      p.auto_orient
+      iwidth = p.columns
+      iheight = p.rows
       if iwidth > 640 or iheight > 640
         p.change_geometry('640x640') { |cols, rows, img| img.resize!(cols, rows) }
       end
