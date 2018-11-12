@@ -245,9 +245,16 @@ class ItemsController < ApplicationController
   def list_api
     #-- Get some items in a simplified manner, over the API, for apps
     
+    @messtag = params[:messtag].to_s
+    
+    items = Item.where(nil)
+    if @tag != ''
+      items = items.tagged_with(@messtag)
+    end
+    items = items.order("id desc").limit(5)    
+    
     @items = []
     
-    items = Item.order("id desc").limit(5)
     for item in items
       @items << {
         'id': item.id,
