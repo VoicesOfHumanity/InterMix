@@ -267,7 +267,7 @@ class ItemsController < ApplicationController
         'interest': item.interest,
         'media_type': item.media_type,
         'has_picture': item.has_picture,
-        'link': item.link,
+        'link': "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg",
         'reply_to': item.reply_to,
       }
     end
