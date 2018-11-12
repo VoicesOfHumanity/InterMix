@@ -2342,6 +2342,8 @@ class ItemsController < ApplicationController
       logger.info("items#itempicupload no picture found at #{tempfilepath}")
       return
     end  
+
+    `/bin/cp #{tempfilepath} /tmp/itempicupload_last`
       
     if not (flash[:alert] or flash.now[:alert])
       if not @item.id  
