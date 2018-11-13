@@ -6,8 +6,9 @@
 <% if session.has_key?(:curcomtag) and session[:curcomtag].to_s != '' -%>
 <li><a class="menu<%= ' selected' if (@csection!='all' and @csection!='my') %>" href="/communities/<%= session[:curcomid] %>">@<%= session[:curcomtag] %></a></li>
 <% end -%>
-
-<li><a class="menu<%= ' selected' if @csection=='human' %>" href="/communities/human">Human Unity</a></li>
+</ul>
+<ul class="horizmenu">
+<li><a class="menu<%= ' selected' if @csection=='human' %>" href="/communities/human">Recommended</a></li>
 <li><a class="menu<%= ' selected' if @csection=='ungoals' %>" href="/communities/un">UN Goals</a></li>
 <li><a class="menu<%= ' selected' if @csection=='nations' %>" href="/communities/nations">Nations</a></li>
 <li><a class="menu<%= ' selected' if @csection=='other' %>" href="/communities/other">Other</a></li>
