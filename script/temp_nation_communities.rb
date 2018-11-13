@@ -1,18 +1,63 @@
 require File.dirname(__FILE__)+'/cron_helper'
 
-# Item.tag_counts_on(:tags).collect{|t| t.name}
+# Item.tag_counts_on(:tags).collect{|t't.name}
 # Item.tags
+
+fix = {
+'ATG' => 'antiguabarbuda',
+'BIH' => 'bosniaherzgvna',
+'IOT' => 'britindiaocean',
+'VGB' => 'britvrginisles',
+'CAF' => 'car',
+'CXR' => 'christmasisland',
+'COG' => 'congorepublic',
+'DOM' => 'dominicanrepub',
+'COD' => 'drcongo',
+'ANT' => 'dutchantilles',
+'GNQ' => 'equatorguinea',
+'FLK' => 'falklandislands',
+'PYF' => 'frenchpolynesia',
+'ATF' => 'frenchsouthter',
+'HMD' => 'heardmcdonald',
+'MHL' => 'marshallisles',
+'MNP' => 'northmarianas',
+'PNG' => 'papuanewguinea',
+'SPM' => 'saintpierre',
+'VCT' => 'saintvincent',
+'STP' => 'saotome',
+'SCG' => 'serbiamonte',
+'SGS' => 'sgeorgiaisles',
+'SLB' => 'solomonislands',
+'BLM' => 'stbarthelemy',
+'KNA' => 'stkittsnevis',
+'SJM' => 'svalbardandjan',
+'TTO' => 'trinidadtobago',
+'TCA' => 'turksandcaicos',
+'ARE' => 'uaemirates',
+'UMI' => 'usminorisles',
+'VIR' => 'usvirginisles',
+'WLF' => 'wallisfutuna',
+}
 
 puts "Create communities from countries *****************"
 
 countries = Geocountry.order(:name)
 
 for country in countries
+  puts "#{country.name}"
   
   community = Community.where(context: 'nation', context_code: country.iso3).first
-  if not community
+  
+  if fix.has_key?(country.iso3)
+    shortname = fix[country.iso3]
+    puts "  manual: #{shortname}"
+  else
     shortname = country.name.gsub(' ','').downcase
-    puts "creating #{shortname} for #{country.iso3}:#{country.name}"
+    puts "  automatic: #{shortname}"  
+  end
+  
+  if not community
+    puts "  creating #{shortname} for #{country.iso3}:#{country.name}"
     community = Community.create(tagname: shortname, context: 'nation', context_code: country.iso3, fullname: country.name)
   end
 
