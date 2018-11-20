@@ -1597,9 +1597,9 @@ class ItemsController < ApplicationController
             name = "#{age_name}"
             if age_id==405 and @community and @community.voice_of_young.to_s != ''
               name = @community.voice_of_young
-            elsif gender_id==406 and @community and @community.voice_of_middleage.to_s != ''
+            elsif age_id==406 and @community and @community.voice_of_middleage.to_s != ''
               name = @community.voice_of_middleage
-            elsif gender_id==407 and @community and @community.voice_of_old.to_s != ''
+            elsif age_id==407 and @community and @community.voice_of_old.to_s != ''
               name = @community.voice_of_old
             end
             if not age_rec.sumcat
@@ -1631,9 +1631,9 @@ class ItemsController < ApplicationController
           name = "#{age_name}"
           if age_id==405 and @community and @community.voice_of_young.to_s != ''
             name = @community.voice_of_young
-          elsif gender_id==406 and @community and @community.voice_of_middleage.to_s != ''
+          elsif age_id==406 and @community and @community.voice_of_middleage.to_s != ''
             name = @community.voice_of_middleage
-          elsif gender_id==407 and @community and @community.voice_of_old.to_s != ''
+          elsif age_id==407 and @community and @community.voice_of_old.to_s != ''
             name = @community.voice_of_old
           end
           item = nil

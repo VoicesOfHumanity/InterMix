@@ -11,6 +11,7 @@ CKEDITOR.editorConfig = function( config )
   // config.uiColor = '#AADC6E';
 
   config.removePlugins = 'elementspath';
+  config.extraPlugins = 'blockimagepaste';
 
   //config.ContextMenu = ['Generic','Anchor','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form'] ; 
   
