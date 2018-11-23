@@ -17,7 +17,7 @@
 //= require forum
 //= require ckeditor_fix
 //= require ckeditor/init
-//= require ckeditor/plugins/blockimagepaste
+//= require ckeditor/plugins/blockimagepaste/plugin
 
 //= require jquery-ui
 // require jquery.ui.core
