@@ -80,7 +80,7 @@ class Admin::CommunitiesController < ApplicationController
         format.xml  { render :xml => @community, :status => :created, :location => @community }
       else
         format.html { render :partial=>'edit', :layout=>false }
-        format.xml  { render :xml => @Community.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @community.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -92,7 +92,7 @@ class Admin::CommunitiesController < ApplicationController
 
     respond_to do |format|
       if @community.update_attributes(params[:community])
-        format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
+        format.html { render :partial=>'show', :layout=>false, :notice => 'Community was successfully updated.' }
         format.xml  { head :ok }
       else
         format.html { render :partial => "edit", :layout=>false }

@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Conversations</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Shortname</th>
+      <th>Description</th>
+      <th>Front template</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @conversations.each do |conversation| %>
+      <tr>
+        <td><%= conversation.name %></td>
+        <td><%= conversation.shortname %></td>
+        <td><%= conversation.description %></td>
+        <td><%= conversation.front_template %></td>
+        <td><%= link_to 'Show', conversation %></td>
+        <td><%= link_to 'Edit', edit_conversation_path(conversation) %></td>
+        <td><%= link_to 'Destroy', conversation, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Conversation', new_conversation_path %>

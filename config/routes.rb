@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :conversations
   resources :moons
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -78,6 +79,13 @@ Rails.application.routes.draw do
       get :admins, :on => :member
       post :admin_add, :on => :member
       delete :admin_del, :on => :member
+    end
+
+    resources :conversations do
+      get :search, on: :collection
+      get :communities, on: :member
+      post :community_add, :on => :member
+      delete :community_del, :on => :member
     end
     
     resources :hubs do
