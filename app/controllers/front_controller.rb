@@ -1932,7 +1932,7 @@ class FrontController < ApplicationController
       cdata['recipient'] = @participant     
       cdata['participant'] = @participant 
       cdata['group'] = @group if @group
-      cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+      cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group and @group.logo.exists?
       cdata['logo'] = @logo if @logo
       cdata['password'] = @password
       cdata['domain'] = dom
