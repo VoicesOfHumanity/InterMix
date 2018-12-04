@@ -286,6 +286,7 @@ class ItemsController < ApplicationController
     @comtag = params[:comtag].to_s
     @messtag = params[:messtag].to_s
     @nvaction = (params[:nvaction].to_i == 1) ? true : false
+    @conversation_id = params[:conversation_id].to_i
     logger.info("items#new @comtag:#{@comtag} @messtag:#{@messtag}") 
     @meta_3 = params[:meta_3].to_i    # gender
     @meta_5 = params[:meta_5].to_i    # age
@@ -294,6 +295,7 @@ class ItemsController < ApplicationController
       @olditem = Item.find_by_id(@item.reply_to)
     end
        
+    @item.conversation_id = @conversation_id   
     if params[:group_id].to_i > 0
       @item.group_id = params[:group_id] 
     elsif @olditem and @olditem.group_id.to_i > 0
@@ -2412,7 +2414,7 @@ class ItemsController < ApplicationController
   end
   
   def item_params
-    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com)
+    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id)
   end
     
 end

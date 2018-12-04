@@ -164,6 +164,7 @@ var showing_options = '<%= @showing_options %>';
 var user_comtags = <%=raw current_participant.tag_list.inspect %>;
 var nvaction_on = <%= @nvaction ? 'true' : 'false' %>;
 var nvaction_included = false;
+var conversation_id = <%= @conversation_id.to_i %>;
 $(function() {
   if (false) {
     $( "#geoslider" ).slider({
