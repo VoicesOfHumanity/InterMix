@@ -4,7 +4,7 @@
 <tr><th>Forum</th><th>Activity</th><th>More Information</th></tr>	
 <% for conv in @conversations -%>
 <tr>
-	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider">forum</a></td>	
+	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>">forum</a></td>	
 	<td>???</td>
 	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
 </tr>	
