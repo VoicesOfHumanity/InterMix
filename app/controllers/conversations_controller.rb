@@ -1,13 +1,21 @@
 class ConversationsController < ApplicationController
+
+	layout "front"
   before_action :set_conversation, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user_from_token!, except: [:join, :front, :fronttag]
+  before_action :authenticate_participant!, except: [:join, :front, :fronttag]
+  before_action :check_is_admin, except: [:index, :join, :front, :fronttag]
 
   # GET /conversations
   def index
+    # Show a list of conversations
+    @section = 'conversations'
     @conversations = Conversation.all
   end
 
   # GET /conversations/1
   def show
+    @communities = @conversation.communities
   end
 
   # GET /conversations/new
@@ -55,4 +63,22 @@ class ConversationsController < ApplicationController
     def conversation_params
       params.require(:conversation).permit(:name, :shortname, :description, :front_template)
     end
+    
+    def check_is_admin
+      @conversation_id = params[:id].to_i
+      @is_admin = false
+      @is_super = false
+      @is_moderator = false
+      if current_participant.sysadmin
+        @is_admin = true
+        @is_super = true
+      else
+        #admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, current_participant.id]).first
+        #if admin
+        #  @is_admin = true
+        #  @is_moderator = true
+        #end
+      end
+    end
+    
 end

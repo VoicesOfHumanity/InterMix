@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  resources :conversations
   resources :moons
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -185,6 +184,12 @@ Rails.application.routes.draw do
   end
   #get 'all', on: :collection, to: "communities#index", as: :index
   #get 'my', on: :collection, to: "communities#index", as: :index
+
+
+  get 'conversations/all', to: 'conversations#index', action: :index, which: 'all'
+  get 'conversations/my', to: 'conversations#index', action: :index, which: 'my'
+  resources :conversations do
+  end
   
   resources :groups do
     member do
