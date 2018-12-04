@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_27_211445) do
+ActiveRecord::Schema.define(version: 2018_12_04_182335) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -485,6 +485,7 @@ ActiveRecord::Schema.define(version: 2018_11_27_211445) do
     t.integer "group_id"
     t.integer "dialog_id"
     t.integer "dialog_round_id"
+    t.integer "conversation_id"
     t.string "subject"
     t.integer "subject_id"
     t.boolean "promoted_to_forum"
@@ -522,6 +523,8 @@ ActiveRecord::Schema.define(version: 2018_11_27_211445) do
     t.boolean "censored", default: false
     t.string "geo_level"
     t.string "intra_com", default: "public"
+    t.string "intra_conv", default: "public"
+    t.index ["conversation_id"], name: "index_items_on_conversation_id"
     t.index ["created_at"], name: "index_items_on_created_at"
     t.index ["dialog_id", "created_at"], name: "index_items_on_dialog_id_and_created_at"
     t.index ["first_in_thread", "id"], name: "index_items_on_first_in_thread_and_id"

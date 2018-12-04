@@ -1557,7 +1557,14 @@ class Item < ActiveRecord::Base
       title += "Planet Earth"  
     elsif crit[:geo_level] == 'all'
       title += "All Perspectives"
-    end  
+    end
+    
+    if crit[:conversation_id].to_i > 0
+      items = items.where("conversation_id=#{crit[:conversation_id]}")
+      #ratings = ratings.where("participants.indigenous=1")
+      @conversation = Conversation.find_by_id(crit[:conversation_id])
+      title += " | #{@conversation.name}" if @conversation
+    end
     
     if crit[:gender].to_i != 0
       items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   

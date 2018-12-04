@@ -127,6 +127,13 @@ class DialogsController < ApplicationController
       session.delete(:joincom)
     end
     
+    if params.has_key?(:conv)
+      @conv = params[:conv]
+      session[:conv] = @conv
+      @conversation = Conversation.find_by_shortname(@conv)
+      @conversation_id = @conversation ? @conversation.id : 0
+    end
+    
     if is_new
       @group_id = 0
       session[:group_id] = @group_id

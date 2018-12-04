@@ -1311,6 +1311,8 @@ class ItemsController < ApplicationController
     
       #crit[:group_id] = session[:group_id].to_i
       crit[:group_id] = 0
+      
+      crit[:conversation_id] = params[:conversation_id].to_i
   
       crit[:gender] = params[:meta_3].to_i
       crit[:age] = params[:meta_5].to_i
