@@ -296,6 +296,7 @@ class ItemsController < ApplicationController
     end
        
     @item.conversation_id = @conversation_id   
+    
     if params[:group_id].to_i > 0
       @item.group_id = params[:group_id] 
     elsif @olditem and @olditem.group_id.to_i > 0
@@ -345,6 +346,8 @@ class ItemsController < ApplicationController
         elsif @olditem.subject != ''
           @item.subject = @olditem.subject 
         end
+        @item.conversation_id = @olditem.conversation_id if @item.conversation_id.to_i == 0 and @olditem.conversation_id.to_i > 0
+        @item.intra_conv = @olditem.intra_conv if @item.intra_conv.to_s == '' and @olditem.intra_conv.to_s != ''
         @item.group_id = @olditem.group_id if @item.group_id.to_i == 0 and @olditem.group_id.to_i > 0
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
         if @item.dialog_id.to_i > 0
@@ -384,7 +387,15 @@ class ItemsController < ApplicationController
       @item.intra_com = "@#{@comtag}" if @comtag
       #@item.subgroup_list = @subgroup if @subgroup.to_s != ''   
       @subgroup_add = @subgroup
-    end   
+    end
+    
+    if @item.conversation_id > 0
+      @conversation = Conversation.find_by_id(@item.conversation_id)
+      if @conversation
+        @conv = @conversation.shortname
+        @item.intra_conv = @conv
+      end
+    end
     
     tags << 'nvaction' if @nvaction
 
@@ -2414,7 +2425,7 @@ class ItemsController < ApplicationController
   end
   
   def item_params
-    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id)
+    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv)
   end
     
 end

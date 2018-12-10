@@ -40,6 +40,21 @@
   </table>
 <% end -%>
 
+<p><b>Conversations:</b></p>
+
+<% if @community.conversations and @community.conversations.length > 0 -%>
+  <table style="width:595px">
+  <tr><th>Forum</th><th>More Information</th></tr>	
+  <% for conv in @community.conversations -%>
+    <tr>
+    	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>"><%= conv.shortname %></a></td>	
+    	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
+    </tr>
+  <% end -%>
+  </table>
+<% end -%>
+
+
 <p><b>Moderators:</b><br>
 <% if @community.moderators.length > 0 -%>
     <% for mod in @community.moderators -%>

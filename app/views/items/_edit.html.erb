@@ -143,14 +143,24 @@ if (CKEDITOR.instances['item_html_content']) {
   	  <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
   	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
 	  
-	  <% intra_options = [['Public','public']] %>
-	  <% intra_options << ["Only @#{@comtag}","@#{@comtag}"] if (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*') %>
-	  <% if intra_options.length > 1 -%>
-	  <select name="item[intra_com]" id="item_intra_com">
-	  <% def_intra = @item.intra_com ? @item.intra_com : 'public' %>		  
-	  <%= options_for_select(intra_options,def_intra) %>
-	  </select>
-	  <% end -%>
+  	  <% intra_options = [['Public','public']] %>
+  	  <% intra_options << ["Only @#{@comtag}","@#{@comtag}"] if (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*') %>
+  	  <% if intra_options.length > 1 -%>
+  	  <select name="item[intra_com]" id="item_intra_com">
+  	  <% def_intra = @item.intra_com ? @item.intra_com : 'public' %>		  
+  	  <%= options_for_select(intra_options,def_intra) %>
+  	  </select>
+  	  <% end -%>
+      
+  	  <% intra_conv_options = [['Public','public']] %>
+  	  <% intra_conv_options << ["This Conversation Only","#{@conv}"] if (@conv.to_s != '' and @conv != 'my' and @conv != '@my' and @conv != '*my*') %>
+  	  <% if intra_conv_options.length > 1 -%>
+  	  <select name="item[intra_conv]" id="item_intra_conv">
+  	  <% def_intra_conv = @item.intra_conv ? @item.intra_conv : 'public' %>		  
+  	  <%= options_for_select(intra_conv_options,def_intra_conv) %>
+  	  </select>
+  	  <% end -%>
+            
   	</div>
   	<div style="width:30%;float:left;text-align:right">
   	  <% if @is_moderator -%>
