@@ -7,6 +7,7 @@
 		<%= f.input :front_template %>
 		<%= f.input :context, :label => "Type/context" %>		
 		<%= f.input :context_code, :label => "Reference ID" %>
+		<%= f.input :together_apart, :label => "Mode", :as => :select, :collection =>['together','apart'] %>
   <% end %>
 
 <% end %>

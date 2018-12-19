@@ -3,6 +3,7 @@
 <tr><td class="left">Short Name:</td><td><%= @conversation.shortname %></td></tr>	
 <tr><td class="left">Full Name:</td><td><%= @conversation.name %></td></tr>	
 <tr><td class="left">Description:</td><td><%= @conversation.description %></td></tr>	
+<tr><td class="left">Mode:</td><td><%= @conversation.together_apart %></td></tr>	
 <tr><td class="left">Created:</td><td><%= @conversation.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 <tr><td class="left">Updated:</td><td><%= @conversation.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 </table>

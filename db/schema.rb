@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_04_182335) do
+ActiveRecord::Schema.define(version: 2018_12_19_023918) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 2018_12_04_182335) do
     t.string "context_code", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "together_apart", default: "apart"
     t.index ["context_code", "context"], name: "index_conversations_on_context_code_and_context"
     t.index ["name"], name: "index_conversations_on_name"
     t.index ["shortname"], name: "index_conversations_on_shortname"
