@@ -2893,7 +2893,7 @@ class Item < ActiveRecord::Base
     #-- They need to be a member of the group or discussion
     #-- The main reason should either be that voting manually is turned off, or voting period is over, and they already rated it
     
-    #-- Not sure if we need any of this any longer
+    #-- Not sure if we need any of this any longer. Currently using reply_ok to serve the same function in most places
     return true
     
     if self.v_p_id and v_p_id == participant_id
@@ -3024,16 +3024,26 @@ class Item < ActiveRecord::Base
       
     elsif self.intra_conv != 'public' and self.conversation_id.to_i > 0
       # A conversation-only post can only be commented on by members of the communities in the conversation
-      if defined? @in_conversation
+      # In the apart phase, furthermore only members of one of the communities of the poster can reply/vote
+      if @conversation and @conversation.together_apart != 'apart' and defined? @in_conversation 
         return @in_converation
       end
 
       participant = Participant.find_by_id(participant_id)
       conversation = Conversation.find_by_id(self.conversation_id)
       if conversation
-        for com in conversation.communities
-          if participant.tag_list.include?(com.tagname)
-            return true
+        if conversation.together_apart == 'apart'
+          # One must be in the community of the poster
+          for com in conversation.communities
+            if participant.tag_list.include?(com.tagname) and self.participant.tag_list.include?(com.tagname)
+              return true
+            end
+          end
+        else
+          for com in conversation.communities
+            if participant.tag_list.include?(com.tagname)
+              return true
+            end
           end
         end
       end

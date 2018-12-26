@@ -1436,7 +1436,7 @@ class ItemsController < ApplicationController
         if @conversation
           # Check if the user is in any community in the conversation
           for com in @conversation.communities
-            if current_user.tag_list.include?(com.tagname)
+            if current_participant.tag_list.include?(com.tagname)
               @in_conversation = true
             end
           end
