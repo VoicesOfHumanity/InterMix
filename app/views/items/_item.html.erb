@@ -315,6 +315,12 @@ end
 	 <% if item.intra_conv.to_s != '' and item.intra_conv.to_s != 'public' %>
 	 <div class="iteminfotxt" style="font-weight:bold;color:#44a">This message: Only <%= item.intra_conv %></div>
 	 <% end -%>
+   
+   <% if item.outside_conv_reply -%>
+   <div class="iteminfotxt" style="font-weight:bold;color:#44a">
+   This comment is from outside the conversation
+   </div>
+   <% end -%>
 
 		<% if (@show_result and item.num_replies > 0) or (@sortby == 'default' and itemproc['replies'].length > 0) or ((@threads=='root' or @threads=='flat') and item.num_replies > 0) %>
 		<div class="iteminfotxt">

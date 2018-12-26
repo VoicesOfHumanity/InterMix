@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_19_023918) do
+ActiveRecord::Schema.define(version: 2018_12_26_222543) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -525,6 +525,7 @@ ActiveRecord::Schema.define(version: 2018_12_19_023918) do
     t.string "geo_level"
     t.string "intra_com", default: "public"
     t.string "intra_conv", default: "public"
+    t.boolean "outside_conv_reply", default: false
     t.index ["conversation_id"], name: "index_items_on_conversation_id"
     t.index ["created_at"], name: "index_items_on_created_at"
     t.index ["dialog_id", "created_at"], name: "index_items_on_dialog_id_and_created_at"

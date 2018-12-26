@@ -347,7 +347,7 @@ class ItemsController < ApplicationController
           @item.subject = @olditem.subject 
         end
         @item.conversation_id = @olditem.conversation_id if @item.conversation_id.to_i == 0 and @olditem.conversation_id.to_i > 0
-        @item.intra_conv = @olditem.intra_conv if @item.intra_conv.to_s == '' and @olditem.intra_conv.to_s != ''
+        @item.intra_conv = @olditem.intra_conv
         @item.group_id = @olditem.group_id if @item.group_id.to_i == 0 and @olditem.group_id.to_i > 0
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
         if @item.dialog_id.to_i > 0
@@ -393,7 +393,7 @@ class ItemsController < ApplicationController
       @conversation = Conversation.find_by_id(@item.conversation_id)
       if @conversation
         @conv = @conversation.shortname
-        @item.intra_conv = @conv
+        @item.intra_conv = @conv if @item.reply_to.to_i == 0
       end
     end
     
@@ -604,7 +604,11 @@ class ItemsController < ApplicationController
       results = {'error'=>true,'message'=>"Your membership is not active",'item_id'=>0}        
       render :json=>results, :layout=>false
       return
-    end    
+    end
+    
+    if @item.conversation_id.to_i > 0
+      @conversation = Conversation.find_by_id(@item.conversation_id)      
+    end
     
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
@@ -625,6 +629,16 @@ class ItemsController < ApplicationController
           @olditem.edit_locked = true
           @olditem.save
         end
+      end
+      if @conversation
+        # If reply is from somebody outside the conversation, flag it
+        @in_conversation = false
+        for com in @conversation.communities
+          if current_participant.tag_list.include?(com.tagname)
+            @in_conversation = true
+          end
+        end
+        @item.outside_conv_reply = (not @in_conversation)
       end
     else
       @item.is_first_in_thread = true 
@@ -2439,7 +2453,7 @@ class ItemsController < ApplicationController
   end
   
   def item_params
-    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv)
+    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply)
   end
     
 end
