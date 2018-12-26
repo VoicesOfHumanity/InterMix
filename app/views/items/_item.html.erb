@@ -216,18 +216,9 @@ end
 		</div>
 		
 		<div class="iteminfotxt">
-		<% if false -%>
-		  <% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
-        <% if @simple -%>
-          <% if item.is_first_in_thread -%>
-  		      <a href="/dialogs/<%= item.dialog_id %>/forum?item_id=<%= item.id %>&amp;xmode=single&amp;add_comment=1"><strong>Add Comment</strong></a>
-          <% end -%>
-        <% else -%>
-				  <strong><%= link_to_function "Add Comment", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %></strong>
-        <% end -%>
-			<% end -%>
-			<% end -%>
-			<strong><%= link_to_function "Add Comment", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %></strong>
+  		  <% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
+  				  <strong><%= link_to_function "Add Comment", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %></strong>
+  			<% end -%>
 		</div>
 		
 		<div class="iteminfotxt">
@@ -337,7 +328,7 @@ end
 		</div>
 		<% end -%>
     
-	 <% if participant_signed_in? -%>
+   <% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
     <div class="itemthumbdiv">
       <hr>
       <div class="thumbtitle">My Vote:</div> 

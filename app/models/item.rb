@@ -3017,7 +3017,29 @@ class Item < ActiveRecord::Base
 
     if participant_id.to_i == 0
       return false
-    elsif self.dialog_id.to_i > 0
+      
+    elsif participant_id == self.posted_by
+      # It's the author
+      return true  
+      
+    elsif self.intra_conv != 'public' and self.conversation_id.to_i > 0
+      # A conversation-only post can only be commented on by members of the communities in the conversation
+      if defined? @in_conversation
+        return @in_converation
+      end
+
+      participant = Participant.find_by_id(participant_id)
+      conversation = Conversation.find_by_id(self.conversation_id)
+      if conversation
+        for com in conversation.communities
+          if participant.tag_list.include?(com.tagname)
+            return true
+          end
+        end
+      end
+      return false
+      
+    elsif false and self.dialog_id.to_i > 0
       #-- This item belongs to a discussion
       
       dialog = Dialog.includes(:groups).find_by_id(self.dialog_id)

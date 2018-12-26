@@ -1338,7 +1338,7 @@ class ItemsController < ApplicationController
       if crit[:comtag].to_s != '' and crit[:comtag] != '*my*'
         @community = Community.find_by_tagname(crit[:comtag])
       end
-    
+          
       nvaction_changed = false
       if params.has_key?(:nvaction) 
         crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
@@ -1428,6 +1428,20 @@ class ItemsController < ApplicationController
       # item#get_items crit:{:geo_level=>"planet", :group_level=>"all", :dialog_id=>0, :period_id=>0, :group_id=>0, :gender=>0, :age=>0, :comtag=>"", :messtag=>"", :datefromuse=>Sun, 21 May 2017, :datefromto=>"", :show_result=>true}
     
       # NB try to avoid this: items.created_at >= 'Y-m-d 00:00:00'
+      
+      @conversation_id = crit[:conversation_id].to_i
+      @in_conversation = false
+      if @conversation_id.to_i > 0
+        @conversation = Conversation.find_by_id(@conversation_id)
+        if @conversation
+          # Check if the user is in any community in the conversation
+          for com in @conversation.communities
+            if current_user.tag_list.include?(com.tagname)
+              @in_conversation = true
+            end
+          end
+        end
+      end
     
       @dialog_id = crit[:dialog_id]
       @period_id = crit[:period_id]
