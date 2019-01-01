@@ -10,7 +10,13 @@ class ConversationsController < ApplicationController
   def index
     # Show a list of conversations
     @section = 'conversations'
-    @conversations = Conversation.all
+    conversations = Conversation.all
+    
+    @conversations = []
+    conversations.each do |conversation|
+      conversation.activity = conversation.activity_count
+      @conversations << conversation
+    end
   end
 
   # GET /conversations/1

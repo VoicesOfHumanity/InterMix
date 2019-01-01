@@ -5,7 +5,7 @@
 <% for conv in @conversations -%>
 <tr>
 	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>"><%= conv.shortname %></a></td>	
-	<td>???</td>
+	<td><%= conv.activity %></td>
 	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
 </tr>	
 <% end -%>
