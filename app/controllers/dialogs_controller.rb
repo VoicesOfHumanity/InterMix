@@ -127,11 +127,19 @@ class DialogsController < ApplicationController
       session.delete(:joincom)
     end
     
+    @is_conv_member = false
     if params.has_key?(:conv)
       @conv = params[:conv]
       session[:conv] = @conv
       @conversation = Conversation.find_by_shortname(@conv)
       @conversation_id = @conversation ? @conversation.id : 0
+      # Is this user a member of any of the communities?
+      for com in @conversation.communities
+        if current_participant.tag_list.include?(com.tagname)
+          @is_conv_member = true
+          break
+        end
+      end
     end
     
     if is_new
