@@ -295,6 +295,8 @@ class ItemsController < ApplicationController
       @olditem = Item.find_by_id(@item.reply_to)
     end
     
+    @in_conversation =  (@conversation_id > 0)
+      
     if @conversation_id == 0
       # Check if the user is in a community that is in a conversation. If so, count it for that conversation
       # Eh, but which one if there are several?
@@ -353,7 +355,10 @@ class ItemsController < ApplicationController
       @conversation = Conversation.find_by_id(@item.conversation_id)
       if @conversation
         @conv = @conversation.shortname
-        tags << @conv
+        if @in_conversation
+          # Add conversation tag only if we're currently in the conversation
+          tags << @conv
+        end
         # Which community or communities in the conversation is the current user in?
         @conv_own_coms = {}
         for com in @conversation.communities
