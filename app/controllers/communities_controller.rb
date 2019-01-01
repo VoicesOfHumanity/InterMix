@@ -46,7 +46,7 @@ class CommunitiesController < ApplicationController
       @csection = 'other'            
     else
       #-- My communities
-      comtag_list = ''
+      comtag_list = ''.dup
       comtags = {}
       for tag in current_participant.tag_list
         comtags[tag] = true
@@ -128,7 +128,7 @@ class CommunitiesController < ApplicationController
     @community = Community.find(@community_id)
     @comtag = @community.tagname
     
-    title = ''
+    title = ''.dup
 
     members = Participant.where(status: 'active', no_email: false).tagged_with(@comtag)
     
@@ -277,7 +277,7 @@ class CommunitiesController < ApplicationController
     # fix autotags
     if @community.autotags.to_s != ''
       autotags = @community.autotags.gsub('#','')
-      newautotags = ''
+      newautotags = ''.dup
       tags = autotags.split(/\W+/)
       tagsdone = {}
       for tag in tags
@@ -399,7 +399,7 @@ class CommunitiesController < ApplicationController
         com = parent
       end
 
-      tagtext = ''
+      tagtext = ''.dup
       tags.uniq.each do |tag|
         tcom = Community.where(tagname: tag).first
         if tcom
@@ -522,7 +522,7 @@ class CommunitiesController < ApplicationController
       participant.country_code = 'US'
       participant.country_name = 'United States'
     end
-    password = ''
+    password = ''.dup
     3.times do
       conso = 'bcdfghkmnprstvw'[rand(15)]
       vowel = 'aeiouy'[rand(6)]

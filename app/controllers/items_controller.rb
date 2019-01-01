@@ -302,7 +302,7 @@ class ItemsController < ApplicationController
       # Eh, but which one if there are several?
       for com_tag in current_participant.tag_list
         community = Community.find_by_tagname(com_tag)
-        if community.conversations.length > 0
+        if community.conversations and community.conversations.length > 0
           @conversation_id = community.conversations[0].id
           break
         end
@@ -559,7 +559,7 @@ class ItemsController < ApplicationController
     end
     
     logger.info("items#new tags:#{tags.inspect}") 
-    tagtext = ''
+    tagtext = ''.dup
     tags.uniq.each do |tag|
       tagtext += ' ' if tagtext != ''
       tag.gsub!(/[^0-9A-za-z_]/i,'')
