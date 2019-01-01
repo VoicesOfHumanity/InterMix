@@ -294,6 +294,18 @@ class ItemsController < ApplicationController
     if @item.reply_to.to_i > 0
       @olditem = Item.find_by_id(@item.reply_to)
     end
+    
+    if @conversation_id == 0
+      # Check if the user is in a community that is in a conversation. If so, count it for that conversation
+      # Eh, but which one if there are several?
+      for com_tag in current_participant.tag_list
+        community = Community.find_by_tagname(com_tag)
+        if community.conversations.length > 0
+          @conversation_id = community.conversations[0].id
+          break
+        end
+      end
+    end
        
     @item.conversation_id = @conversation_id   
     
