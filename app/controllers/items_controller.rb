@@ -330,11 +330,31 @@ class ItemsController < ApplicationController
       return
     end    
     
+    tags = []
+    
     if @comtag != ''
       @community = Community.where(tagname: @comtag).first
     end
     
-    tags = []
+    if @item.conversation_id > 0
+      # We're in a conversation
+      @conversation = Conversation.find_by_id(@item.conversation_id)
+      if @conversation
+        @conv = @conversation.shortname
+        tags << @conv
+        # Which community or communities in the conversation is the current user in?
+        @conv_own_coms = {}
+        for com in @conversation.communities
+          if current_participant.tag_list.include?(com.tagname)
+            @conv_own_coms[com.tagname] = com.fullname
+          end
+        end
+        if @conv_own_coms.length == 1 and @conversation.together_apart == 'apart'
+          tags << @conv_own_coms.keys[0]
+        end
+      end
+    end
+    
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
       #@olditem = Item.find_by_id(@item.reply_to)
@@ -389,12 +409,8 @@ class ItemsController < ApplicationController
       @subgroup_add = @subgroup
     end
     
-    if @item.conversation_id > 0
-      @conversation = Conversation.find_by_id(@item.conversation_id)
-      if @conversation
-        @conv = @conversation.shortname
-        @item.intra_conv = @conv if @item.reply_to.to_i == 0
-      end
+    if @conversation
+      @item.intra_conv = @conv if @item.reply_to.to_i == 0    # A reply will keep same setting, conversation only, or not
     end
     
     tags << 'nvaction' if @nvaction
@@ -472,7 +488,6 @@ class ItemsController < ApplicationController
     
     if true or @item.reply_to.to_i == 0
       #-- Fill in some default message tags
-      tags = []
       tags << 'nvaction' if @nvaction
       if @item.reply_to.to_i > 0 and @olditem
         tags.concat @olditem.tag_list
@@ -608,6 +623,25 @@ class ItemsController < ApplicationController
     
     if @item.conversation_id.to_i > 0
       @conversation = Conversation.find_by_id(@item.conversation_id)      
+      # If there's a represent community, include the hash tag, if not there, if it is in the apart period
+      if @conversation.together_apart == 'apart' and @item.representing_com.to_s != ''
+        tag = '#' + @item.representing_com
+        if not @item.html_content.include? tag
+          # If it is not already there. It would be if there was only one community they were a member of
+          logger.info("items#create representing_com tag not already there")
+          if @item.html_content.include? "##{@conversation.shortname}"
+            # The conversation tag is there. Put it right after that
+            @item.html_content.gsub!("##{@conversation.shortname}", "##{@conversation.shortname} #{tag}")
+            logger.info("items#create representing_com tag added after conversation tag")
+          else
+            # Put it before the last </p>
+            array_of_pieces = @item.html_content.rpartition '</p>'
+            ( array_of_pieces[(array_of_pieces.find_index '</p>')] = "#{tag}</p>" ) rescue nil
+            @item.html_content = array_of_pieces.join  
+            logger.info("items#create representing_com tag added at the end")
+          end
+        end
+      end
     end
     
     if @item.reply_to.to_i > 0
@@ -2453,7 +2487,7 @@ class ItemsController < ApplicationController
   end
   
   def item_params
-    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply)
+    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply, :representing_com)
   end
     
 end
