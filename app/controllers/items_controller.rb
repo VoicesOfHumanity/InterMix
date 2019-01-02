@@ -562,7 +562,7 @@ class ItemsController < ApplicationController
     tagtext = ''.dup
     tags.uniq.each do |tag|
       tagtext += ' ' if tagtext != ''
-      tag.gsub!(/[^0-9A-za-z_]/i,'')
+      tag = tag.gsub(/[^0-9A-za-z_]/i,'')
       tagtext += "##{tag}"
     end
     @item.html_content += "<p><br><br>#{tagtext}</p>"
