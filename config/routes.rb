@@ -186,8 +186,8 @@ Rails.application.routes.draw do
   #get 'my', on: :collection, to: "communities#index", as: :index
 
 
-  get 'conversations/all', to: 'conversations#index', action: :index, which: 'all'
-  get 'conversations/my', to: 'conversations#index', action: :index, which: 'my'
+  get 'conversations/all', to: 'conversations#index', action: :index, csection: 'all'
+  get 'conversations/my', to: 'conversations#index', action: :index, csection: 'my'
   resources :conversations do
   end
   

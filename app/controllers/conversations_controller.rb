@@ -10,10 +10,26 @@ class ConversationsController < ApplicationController
   def index
     # Show a list of conversations
     @section = 'conversations'
-    conversations = Conversation.all
+    @csection = params[:csection].to_s
+    @csection = 'my' if @csection == ''
+    
+    if @csection == 'my'
+      conversations = []
+      conversations2 = Conversation.all
+      for conversation in conversations2
+        for com in conversation.communities
+          if current_participant.tag_list.include?(com.tagname)
+            conversations << conversation
+          end
+        end
+      end
+    else
+      @csection = 'all'
+      conversations = Conversation.all
+    end
     
     @conversations = []
-    conversations.each do |conversation|
+    conversations.uniq.each do |conversation|
       conversation.activity = conversation.activity_count
       @conversations << conversation
     end
