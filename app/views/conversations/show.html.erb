@@ -2,7 +2,6 @@
 
 <h3><%=raw @conversation.name %></h3>
 
-<p><b>Short Name:</b> <%= @conversation.shortname %></p>
 
 <% if @conversation.description.to_s != '' -%>
 <p><%=raw @conversation.description %></p>
@@ -23,6 +22,9 @@
   <% end -%>
   </table>
 <% end -%>
+
+<p><b>Short Name:</b> <%= @conversation.shortname %></p>
+
 
 
 
