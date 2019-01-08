@@ -13,13 +13,14 @@ class ConversationsController < ApplicationController
     @csection = params[:csection].to_s
     @csection = 'my' if @csection == ''
     
+    conversations = []
     if @csection == 'my'
-      conversations = []
       conversations2 = Conversation.all
       for conversation in conversations2
         for com in conversation.communities
           if current_participant.tag_list.include?(com.tagname)
             conversations << conversation
+            break
           end
         end
       end
@@ -30,7 +31,13 @@ class ConversationsController < ApplicationController
     
     @conversations = []
     conversations.uniq.each do |conversation|
-      conversation.activity = conversation.activity_count
+      conversation.activity = conversation.activity_count      
+      for com in conversation.communities
+        if current_participant.tag_list.include?(com.tagname)
+          conversation.perspective = com.tagname
+          break
+        end
+      end
       @conversations << conversation
     end
   end

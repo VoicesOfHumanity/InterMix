@@ -1,12 +1,13 @@
 <%= render(:partial => 'topmenu')%>
 
 <table style="width:595px">
-<tr><th>Forum</th><th>Activity</th><th>More Information</th></tr>	
+<tr><th>Forum</th><th>Activity</th><th>More Information</th><th>Perspective</th></tr>	
 <% for conv in @conversations -%>
 <tr>
 	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>"><%= conv.shortname %></a></td>	
 	<td><%= conv.activity %></td>
 	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
+  <td><%= conv.perspective if conv.perspective %></td>
 </tr>	
 <% end -%>
 </table>
