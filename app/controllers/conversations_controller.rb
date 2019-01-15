@@ -44,7 +44,32 @@ class ConversationsController < ApplicationController
 
   # GET /conversations/1
   def show
+    
+    @perspectives = {}
+    if params[:perspective].to_s != ''
+      @cur_perspective = params[:perspective]
+    elsif session.has_key?("cur_perspective_#{@conversation_id}")
+      @cur_perspective = session["cur_perspective_#{@conversation_id}"]
+    else
+      @cur_perspective = ''
+    end
+    
     @communities = @conversation.communities
+    for com in @communities
+      if current_participant.tag_list.include?(com.tagname)
+        @perspectives[com.tagname] = com.fullname
+      end
+    end
+    
+    if @perspectives.length == 0
+      @cur_perspective = 'outside'
+    elsif @cur_perspective != ''
+    elsif @perspectives.length == 1
+      @cur_perspective = @perspectives.keys[0]
+    else
+      @cur_perspective = @perspectives.keys[0]
+    end    
+    session["cur_perspective_#{@conversation_id}"] = @cur_perspective
   end
 
   # GET /conversations/new
@@ -85,7 +110,8 @@ class ConversationsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_conversation
-      @conversation = Conversation.find(params[:id])
+      @conversation_id = params[:id]
+      @conversation = Conversation.find(@conversation_id)
     end
 
     # Only allow a trusted parameter "white list" through.

@@ -7,6 +7,19 @@
 <p><%=raw @conversation.description %></p>
 <% end -%>
 
+<p><b>Current Perspective:</b> 
+<% if @perspectives.length > 1 -%>
+  <select id="perspective_select" onchange="select_perspective()">
+    <% @perspectives.each do |ptab,pname| %>
+      <% xselect = (ptab == @cur_perspective ? ' selected' : '') %>
+      <option value="<%= ptab %>"<%= xselect %>><%= ptab %></option>
+    <% end -%>
+  </select>  
+<% else -%>
+  <%= @cur_perspective %>
+<% end -%>
+</p>
+
 <p><b>Communities:</b></p>
 
 <% if @communities.length > 0 -%>
@@ -24,6 +37,13 @@
 <% end -%>
 
 <p><b>Short Name:</b> <%= @conversation.shortname %></p>
+
+<script>
+  function select_perspective() {
+    var perspective = $('#perspective_select').children("option:selected").val();
+    window.location.href = '?perspective='+perspective;
+  }
+</script>
 
 
 
