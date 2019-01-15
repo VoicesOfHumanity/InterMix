@@ -1,7 +1,12 @@
 <p style="clear:both;padding:0 19px 0 0">
   
 <a href="/dialogs/<%= @dialog.id %>/slider" style="text-decoration:none;"><span style="font-size:20px;color:#000;">
-<%= @dialog.name %>
+  
+<% if @conversation -%>  
+  Conversation
+<% else -%>  
+  <%= @dialog.name %>
+<% end -%>  
 <% if @dsection == 'meta' -%>
   - <span id="top_result_header">Highest Rated <%= @nvaction ? 'Nonviolent Action Items' : 'Messages' %></span>
 <% elsif @dsection == 'info' -%>

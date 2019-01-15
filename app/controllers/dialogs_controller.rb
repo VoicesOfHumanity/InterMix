@@ -140,6 +140,7 @@ class DialogsController < ApplicationController
           break
         end
       end
+      @section = 'conversations'
     end
     
     if is_new
