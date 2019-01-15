@@ -51,7 +51,8 @@ class ConversationsController < ApplicationController
       session["cur_perspective_#{conversation.id}"] = conversation.perspective 
       
       @conversations << conversation
-    end
+    end    
+    
   end
 
   # GET /conversations/1
@@ -82,6 +83,23 @@ class ConversationsController < ApplicationController
       @cur_perspective = @perspectives.keys[0]
     end    
     session["cur_perspective_#{@conversation_id}"] = @cur_perspective
+    
+    # sort communities
+    @communities = @communities.to_a
+    @communities.sort! do |a, b|
+      if b.tagname == @cur_perspective
+        1
+      elsif b.tagname != @cur_perspective and @perspectives.has_key?(a.tagname)
+        -1
+      elsif @perspectives.has_key?(b.tagname) and !@perspectives.has_key?(a.tagname)
+        1
+      elsif @perspectives.has_key?(a.tagname) and !@perspectives.has_key?(b.tagname)
+        -1
+      else
+        a.tagname <=> b.tagname
+      end
+    end
+    
   end
 
   # GET /conversations/new
