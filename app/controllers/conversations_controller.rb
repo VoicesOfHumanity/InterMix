@@ -31,13 +31,25 @@ class ConversationsController < ApplicationController
     
     @conversations = []
     conversations.uniq.each do |conversation|
-      conversation.activity = conversation.activity_count      
+      conversation.activity = conversation.activity_count
+      # Pick an appropriate perspective
+      perspectives = {}    
       for com in conversation.communities
         if current_participant.tag_list.include?(com.tagname)
-          conversation.perspective = com.tagname
-          break
+          perspectives[com.tagname] = com.fullname
         end
       end
+      if perspectives.length == 0
+        conversation.perspective = 'outsider'
+      elsif session.has_key?("cur_perspective_#{conversation.id}") != ''
+        conversation.perspective = session["cur_perspective_#{conversation.id}"]
+      elsif perspectives.length == 1
+        conversation.perspective = perspectives.keys[0]
+      else
+        conversation.perspective = perspectives.keys[0]
+      end
+      session["cur_perspective_#{conversation.id}"] = conversation.perspective 
+      
       @conversations << conversation
     end
   end
