@@ -297,7 +297,7 @@ class ItemsController < ApplicationController
     
     @in_conversation =  (@conversation_id > 0)
       
-    if @conversation_id == 0
+    if false and @conversation_id == 0
       # Check if the user is in a community that is in a conversation. If so, count it for that conversation
       # Eh, but which one if there are several?
       for com_tag in current_participant.tag_list
