@@ -51,6 +51,7 @@
   	<%= f.input :zip, :required => false %>
 		<%= f.input :phone, :required => false %>
 		<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false %>
+    <%= f.input :country_code2, :label => "2nd Country", :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]} %>
 		<%= f.input :bioregion, :required => false %>
 		<%= f.input :political, :required => false, :label => 'Political Affiliation' %>
 		<%= f.input :faith_tradition, :required => false %>
@@ -207,13 +208,13 @@ var cur_admin2uniq = '';
 var cur_metroarea = '<%= @participant.metro_area_id %>'
 function chgcountry() {
 	$('#profile_edit').css('opacity','0.5');
-	$.getJSON("/front/getadmin1s",{country_code: $("#participant_country_code").val()}, function(j){
+  	$.getJSON("/front/getadmin1s",{country_code: $("#participant_country_code").val()}, function(j){
 	  var options = '';
 	  for (var i = 0; i < j.length; i++) {
 	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
 	  }
 	  $("select#participant_admin1uniq").html(options);
-    
+  
     $("select#participant_admin2uniq").html('');
 
 		$.getJSON("/front/getmetro",{country_code: $("#participant_country_code").val()}, function(j){
@@ -223,8 +224,7 @@ function chgcountry() {
 	    }
 	    $("select#participant_metro_area_id").html(options);
 		})
-			
-		$('#profile_edit').css('opacity','1.0');
+    $('#profile_edit').css('opacity','1.0');
 	})
 }
 

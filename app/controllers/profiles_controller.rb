@@ -623,6 +623,11 @@ class ProfilesController < ApplicationController
       geocountry = Geocountry.find_by_iso(@participant.country_code)
       @participant.country_name = geocountry.name
     end   
+    if @participant.country_code2.to_s != ""
+      #-- Fill in the second country name
+      geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
+      @participant.country_name2 = geocountry2.name
+    end   
     if @participant.admin2uniq.to_s != ""  
       geoadmin2 = Geoadmin2.find_by_admin2uniq(@participant.admin2uniq)
       if geoadmin2
@@ -681,7 +686,7 @@ class ProfilesController < ApplicationController
   def participant_params
     params.require(:participant).permit(
     :picture,
-    :first_name, :last_name, :title, :self_description, :address1, :address2, :city, :admin2uniq, :country_code, :country_name, :admin1uniq, :state_code, :state_name, :county_code, :county_name, :zip, :phone,
+    :first_name, :last_name, :title, :self_description, :address1, :address2, :city, :admin2uniq, :country_code, :country_name, :country_code2, :country_name2, :admin1uniq, :state_code, :state_name, :county_code, :county_name, :zip, :phone,
     :latitude, :longitude, :timezone, :timezone_offset, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :email, :visibility,
     :wall_visibility, :item_to_forum, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :forum_email, :group_email, :subgroup_email, :private_email, :system_email, :no_email, :handle,
     :indigenous, :other_minority, :veteran, :interfaith, :refugee, :tag_list, :mycom_email, :othercom_email

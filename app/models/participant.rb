@@ -18,6 +18,7 @@ class Participant < ActiveRecord::Base
   has_many :authentications, :dependent => :destroy
   has_many :dialog_admins, :dependent => :destroy
   belongs_to :geocountry, :foreign_key => :country_code, :primary_key => :iso
+  belongs_to :geocountry2, :class_name => 'Geocountry', :foreign_key => :country_code2, :primary_key => :iso
   belongs_to :geoadmin1, :foreign_key => :admin1uniq, :primary_key => :admin1uniq
   belongs_to :geoadmin2, :foreign_key => :admin2uniq, :primary_key => :admin2uniq
   belongs_to :metro_area
