@@ -622,11 +622,19 @@ class ProfilesController < ApplicationController
       #-- Fill in the country name
       geocountry = Geocountry.find_by_iso(@participant.country_code)
       @participant.country_name = geocountry.name
+      community = Community.where(context: 'nation', context_code: geocountry.iso3).first
+      if community
+        @participant.tag_list.add(community.tagname)
+      end
     end   
     if @participant.country_code2.to_s != ""
       #-- Fill in the second country name
       geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
       @participant.country_name2 = geocountry2.name
+      community = Community.where(context: 'nation', context_code: geocountry2.iso3).first
+      if community
+        @participant.tag_list.add(community.tagname)
+      end
     end   
     if @participant.admin2uniq.to_s != ""  
       geoadmin2 = Geoadmin2.find_by_admin2uniq(@participant.admin2uniq)
