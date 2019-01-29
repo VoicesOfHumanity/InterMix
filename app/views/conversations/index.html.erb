@@ -8,8 +8,10 @@
 	<td><%= conv.activity %></td>
 	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
   <td>
-    <% if conv.perspective -%>
-      <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= conv.perspective %>"><%= conv.perspective %></a>
+    <% if conv.perspective == 'outsider' -%>
+      <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>">outsider</a>
+    <% elsif conv.perspective -%>  
+      <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>&amp;comtag=<%= conv.perspective %>"><%= conv.perspective %></a>
     <% else -%>
       <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>">outsider</a>
     <% end -%>

@@ -246,6 +246,10 @@ class ProfilesController < ApplicationController
       end 
     end    
 
+    @major_communities = Community.where(major: true).order(:fullname)
+    @ungoals_communities = Community.where(ungoals: true).order(:fullname)
+    @sustdev_communities = Community.where(sustdev: true).order(:fullname)
+
     if flash.now[:alert] != ""
       @participant = Participant.find_by_id(@participant.id)
       if @subsection == 'meta'
