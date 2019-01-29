@@ -44,6 +44,26 @@ You must join a community to make it your current perspective. All messages you 
     var perspective = $('#perspective_select').children("option:selected").val();
     window.location.href = '?perspective='+perspective;
   }
+  function joinleave(comtag,id) {
+    var which = $('#comtagjoin_'+id).html();
+    var data = {
+      'comtag': comtag,
+      'which': which,
+    };
+  	$.ajax({
+      type: 'GET',
+  	  url: '/me/comtag',
+  	  data: data,
+  	  complete: function(t){ 
+        if (which=='join') {
+  		    $('#comtagjoin_'+id).html('leave')
+        } else {
+  		    $('#comtagjoin_'+id).html('join')
+        }
+        location.reload();
+      }
+  	});
+  }	
 </script>
 
 

@@ -530,6 +530,29 @@ class ProfilesController < ApplicationController
       current_participant.tag_list.remove(comtag)
     end
     current_participant.save
+    
+    #-- See if it affected the perspective in any conversations
+    community = Community.find_by_tagname(comtag)
+    for conversation in community.conversations    
+      # Pick an appropriate perspective for that conversation
+      perspectives = {}    
+      for com in conversation.communities
+        if current_participant.tag_list.include?(com.tagname)
+          perspectives[com.tagname] = com.fullname
+        end
+      end
+      if perspectives.length == 0
+        conversation.perspective = 'outsider'
+      elsif perspectives.length == 1
+        conversation.perspective = perspectives.keys[0]
+      elsif which == 'join'
+        conversation.perspective = comtag
+      else
+        conversation.perspective = perspectives.keys[0]
+      end
+      session["cur_perspective_#{conversation.id}"] = conversation.perspective 
+    end   
+    
     render plain: 'ok'
   end
   
