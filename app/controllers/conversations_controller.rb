@@ -57,6 +57,7 @@ class ConversationsController < ApplicationController
 
   # GET /conversations/1
   def show
+    @section = 'conversations'
     
     @perspectives = {}
     if params[:perspective].to_s != ''
