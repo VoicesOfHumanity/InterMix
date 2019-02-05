@@ -532,6 +532,8 @@ class ItemsController < ApplicationController
         tags << current_participant.geoadmin1.name
       elsif @item.geo_level == 'nation' and current_participant.geocountry
         tags << current_participant.geocountry.name
+      elsif @item.geo_level == 'planet'
+        tags << current_participant.geocountry.name          
       end
       tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*'
       tags << @comtag if @comtag.to_s != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*'
