@@ -22,6 +22,7 @@
 <tr><td class="label">Description:</td><td><div style="width:260px"><%= @participant.self_description %></div></td></tr>	
 <tr><td class="label">Address1:</td><td><%= @participant.address1 %></td></tr>	
 <tr><td class="label">Address2:</td><td><%= @participant.address2 %></td></tr>	
+<tr><td class="label">Zip:</td><td><%= @participant.zip %></td></tr>	
 <tr><td class="label">City:</td><td><%= @participant.city %></td></tr>	
 <tr><td class="label">County:</td><td><%= @participant.geoadmin2.name if @participant.geoadmin2 %></td></tr>	
 <tr><td class="label">State:</td><td><%= @participant.geoadmin1.name if @participant.geoadmin1 %></td></tr>	
@@ -29,7 +30,6 @@
 <% if @participant.country_code2.to_s != '' -%>
 <tr><td class="label">2nd Country:</td><td><%= @participant.geocountry2 ? @participant.geocountry2.name : @participant.country_code2 %></td></tr>	
 <% end -%>
-<tr><td class="label">Zip:</td><td><%= @participant.zip %></td></tr>	
 <tr><td class="label">Phone:</td><td><%= @participant.phone %></td></tr>	
 <tr><td class="label">Metropolitan Area:</td><td><%= @participant.metro_area ?  @participant.metro_area.name : @participant.metropolitan_area %></td></tr>
 <tr><td class="label">Bio Region:</td><td><%= @participant.bioregion %></td></tr>	

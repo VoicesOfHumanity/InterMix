@@ -45,11 +45,11 @@
 		<%= f.input :address1, :required => false %>
 		<%= f.input :address2, :required => false %>
 		<%= f.input :city, :required => false %>
-		<%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
-    <%= f.input :country_code2, :label => "2nd Country", :required => false, :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]} %>
+		<%= f.input :country_code, :label => "Country of Residence", :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
 		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]}, :input_html =>{:onchange=>"chgstate()"} %>  
     <%= f.input :admin2uniq, :label => "County", :as => :select, :required => false, :collection =>Geoadmin2.where(:admin1uniq=>@participant.admin1uniq).order(:name).select([:name,:admin2uniq]).collect {|r| [r.name,r.admin2uniq]} %>  
   	<%= f.input :zip, :required => false %>
+    <%= f.input :country_code2, :label => "2nd Country", :required => false, :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]} %>
 		<%= f.input :phone, :required => false %>
 		<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false %>
 		<%= f.input :bioregion, :required => false %>
