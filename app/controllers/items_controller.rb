@@ -272,6 +272,8 @@ class ItemsController < ApplicationController
       }
     end
     
+    logger.info("items#list_api returning #{items.length} items")
+    
     render json: @items
   end
   
