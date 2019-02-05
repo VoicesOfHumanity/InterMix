@@ -1191,6 +1191,7 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     item_id = params[:id].to_i
     vote = params[:vote].to_i
+    logger.info("items#thumbrate item:#{item_id} user:#{current_participant.id} vote:#{vote}")
 
     item = Item.includes(:dialog,:group).find_by_id(item_id)
 
