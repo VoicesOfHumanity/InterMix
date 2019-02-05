@@ -256,7 +256,7 @@ class ItemsController < ApplicationController
     @items = []
     
     for item in items
-      @items << {
+      rec = {
         'id': item.id,
         'created_at': item.created_at,
         'posted_by': item.posted_by,
@@ -270,6 +270,12 @@ class ItemsController < ApplicationController
         'link': "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg",
         'reply_to': item.reply_to,
       }
+      
+      rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
+      rec['thumbs'] = rating ? rating.approval.to_i : 0
+      
+      @items << rec
+      
     end
     
     logger.info("items#list_api returning #{items.length} items")
