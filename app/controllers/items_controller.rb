@@ -247,7 +247,7 @@ class ItemsController < ApplicationController
     
     @messtag = params[:messtag].to_s
     
-    items = Item.where(nil)
+    items = Item.where(is_first_in_thread: true)
     if @tag != ''
       items = items.tagged_with(@messtag)
     end
@@ -256,6 +256,13 @@ class ItemsController < ApplicationController
     @items = []
     
     for item in items
+      if item.has_picture
+        img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
+      elsif item.participant.picture.url.to_s != ''
+        img_link = item.participant.picture.url
+      else
+        img_link = ""
+      end
       rec = {
         'id': item.id,
         'created_at': item.created_at,
@@ -267,7 +274,7 @@ class ItemsController < ApplicationController
         'interest': item.interest,
         'media_type': item.media_type,
         'has_picture': item.has_picture,
-        'link': "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg",
+        'link': img_link,
         'reply_to': item.reply_to,
       }
       
