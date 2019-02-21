@@ -265,6 +265,28 @@ class ItemsController < ApplicationController
       end
       plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
       content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '')
+      
+      @comments = []
+      comments = Item.where(first_in_thread: item.id).order('id')
+      for comment in comments
+        plain_content = view_context.strip_tags(comment.html_content.to_s).strip
+        if plain_content.length > 500
+          com_content = plain_content[0,487] + '...'
+          has_more = 1
+        else
+          com_content = plain_content
+          has_more = 0
+        end
+        com = {
+          'id': comment.id,
+          'created_at': comment.created_at,
+          'posted_by': comment.posted_by,
+          'content': com_content,
+          'has_more': has_more
+        }
+        @comments << com
+      end
+      
       rec = {
         'id': item.id,
         'created_at': item.created_at,
@@ -279,6 +301,8 @@ class ItemsController < ApplicationController
         'has_picture': item.has_picture,
         'link': img_link,
         'reply_to': item.reply_to,
+        'comments': @comments,
+        'num_comments': @comments.length 
       }
       
       rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
