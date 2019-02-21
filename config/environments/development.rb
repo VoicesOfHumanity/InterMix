@@ -92,3 +92,5 @@ FACEBOOK_API_SECRET      = 'ec6fc05777932b40f23434bdbdadabec'
 VOH_DISCUSSION_ID = 5
 VOL_LOGO = "/images/data/dialogs/logos/7/original_blacksheep1S.jpg"
 
+INT_CONVERSATION_ID = 3
+

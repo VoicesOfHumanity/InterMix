@@ -5,6 +5,7 @@ if (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ 
   FACEBOOK_APP_ID          = '604196779657027'
   FACEBOOK_API_SECRET      = '03a98fc919e2ea25970367510d0c9b01'
   VOL_LOGO = "/images/data/photos/7/67.jpg"
+  INT_CONVERSATION_ID = 1
 else
   BASEDOMAIN = 'voh.intermix.org'
   ROOTDOMAIN = 'intermix.org'
@@ -12,6 +13,7 @@ else
   FACEBOOK_APP_ID          = '151526481561013'
   FACEBOOK_API_SECRET      = '3653366f2b6d4778e09db3d666d1fedf'
   VOL_LOGO = "/images/data/photos/7/67.jpg"
+  INT_CONVERSATION_ID = 1
 end
 
 DATADIR = '/home/apps/intermix/shared/data'

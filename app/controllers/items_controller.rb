@@ -263,6 +263,8 @@ class ItemsController < ApplicationController
       else
         img_link = ""
       end
+      plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
+      content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '')
       rec = {
         'id': item.id,
         'created_at': item.created_at,
@@ -270,6 +272,7 @@ class ItemsController < ApplicationController
         'subject': item.subject,
         'short_content': item.short_content,
         'html_content': item.html_content,
+        'content_without_hash': content_without_hash,
         'approval': item.approval,
         'interest': item.interest,
         'media_type': item.media_type,
@@ -323,6 +326,9 @@ class ItemsController < ApplicationController
         end
       end
     end
+
+    # NB: If not in other conversation, if one of the other of the user's nations is tagged, including in international conversation
+    # WHERE? HOW?
        
     @item.conversation_id = @conversation_id   
     
