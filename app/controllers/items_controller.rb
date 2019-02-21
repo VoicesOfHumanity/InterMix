@@ -264,7 +264,7 @@ class ItemsController < ApplicationController
         img_link = ""
       end
       plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
-      content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '')
+      content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
       if content_without_hash.length > 500
         content_without_hash = content_without_hash[0,500]
         item_has_more = 1
