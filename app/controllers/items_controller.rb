@@ -273,9 +273,10 @@ class ItemsController < ApplicationController
       end
       
       @comments = []
-      comments = Item.where(first_in_thread: item.id).order('id')
+      comments = Item.where(first_in_thread: item.id, is_first_in_thread: false).order('id')
       for comment in comments
         plain_content = view_context.strip_tags(comment.html_content.to_s).strip
+        plain_content.gsub!(/\B[#]\S+\b/, '')
         if plain_content.length > 500
           com_content = plain_content[0,487] + '...'
           has_more = 1
@@ -287,6 +288,7 @@ class ItemsController < ApplicationController
           'id': comment.id,
           'created_at': comment.created_at,
           'posted_by': comment.posted_by,
+          'posted_by_user': comment.participant.name,
           'content': com_content,
           'has_more': has_more
         }
@@ -297,6 +299,7 @@ class ItemsController < ApplicationController
         'id': item.id,
         'created_at': item.created_at,
         'posted_by': item.posted_by,
+        'posted_by_user': item.participant.name,
         'subject': item.subject,
         'short_content': item.short_content,
         'html_content': item.html_content,
