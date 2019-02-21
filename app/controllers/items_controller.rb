@@ -265,6 +265,12 @@ class ItemsController < ApplicationController
       end
       plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
       content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '')
+      if content_without_hash.length > 500
+        content_without_hash = content_without_hash[0,500]
+        item_has_more = 1
+      else
+        item_has_more = 0
+      end
       
       @comments = []
       comments = Item.where(first_in_thread: item.id).order('id')
@@ -302,7 +308,8 @@ class ItemsController < ApplicationController
         'link': img_link,
         'reply_to': item.reply_to,
         'comments': @comments,
-        'num_comments': @comments.length 
+        'num_comments': @comments.length,
+        'has_more': item_has_more,
       }
       
       rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
