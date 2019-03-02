@@ -251,7 +251,17 @@ class ItemsController < ApplicationController
     if @tag != ''
       items = items.tagged_with(@messtag)
     end
-    items = items.order("id desc").limit(5)    
+    items = items.order("id desc").limit(5)
+
+    rootonly = true
+    sortby = '*value*'
+    crit = {
+      'messtag': @messtag
+    }
+
+    items1,ratings,title = Item.get_items(crit,current_participant,rootonly)
+    itemsproc,extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
+    items = Item.get_sorted(items1,itemsproc,sortby,rootonly)
     
     @items = []
     
@@ -306,6 +316,7 @@ class ItemsController < ApplicationController
         'content_without_hash': content_without_hash,
         'approval': item.approval,
         'interest': item.interest,
+        'has_voted': item.has_voted(current_participant),
         'media_type': item.media_type,
         'has_picture': item.has_picture,
         'link': img_link,
@@ -318,8 +329,10 @@ class ItemsController < ApplicationController
       rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
       rec['thumbs'] = rating ? rating.approval.to_i : 0
       
-      @items << rec
-      
+      if !rec['has_voted']
+        @items << rec
+      end
+    
     end
     
     logger.info("items#list_api returning #{items.length} items")
