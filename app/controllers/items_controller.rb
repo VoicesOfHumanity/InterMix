@@ -305,6 +305,8 @@ class ItemsController < ApplicationController
         @comments << com
       end
       
+      has_voted = item.has_voted(current_participant)
+      
       rec = {
         'id': item.id,
         'created_at': item.created_at,
@@ -316,7 +318,7 @@ class ItemsController < ApplicationController
         'content_without_hash': content_without_hash,
         'approval': item.approval,
         'interest': item.interest,
-        'has_voted': item.has_voted(current_participant),
+        'has_voted': has_voted,
         'media_type': item.media_type,
         'has_picture': item.has_picture,
         'link': img_link,
@@ -329,7 +331,7 @@ class ItemsController < ApplicationController
       rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
       rec['thumbs'] = rating ? rating.approval.to_i : 0
       
-      if !rec['has_voted']
+      if !has_voted
         @items << rec
       end
     
