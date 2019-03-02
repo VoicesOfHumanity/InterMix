@@ -260,7 +260,7 @@ class ItemsController < ApplicationController
     }
 
     items1,ratings,title = Item.get_items(crit,current_participant,rootonly)
-    itemsproc,extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
+    itemsproc,extras = Item.get_itemsproc(items1,ratings,current_participant.id,rootonly)
     items = Item.get_sorted(items1,itemsproc,sortby,rootonly)
     
     @items = []
