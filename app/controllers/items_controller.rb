@@ -247,11 +247,11 @@ class ItemsController < ApplicationController
     
     @messtag = params[:messtag].to_s
     
-    items = Item.where(is_first_in_thread: true)
-    if @tag != ''
-      items = items.tagged_with(@messtag)
-    end
-    items = items.order("id desc").limit(5)
+    #items = Item.where(is_first_in_thread: true)
+    #if @tag != ''
+    #  items = items.tagged_with(@messtag)
+    #end
+    #items = items.order("id desc").limit(5)
 
     rootonly = true
     sortby = '*value*'
@@ -264,6 +264,8 @@ class ItemsController < ApplicationController
     items = Item.get_sorted(items1,itemsproc,sortby,rootonly)
     
     @items = []
+    
+    xcount = 0
     
     for item in items
       if item.has_picture
@@ -333,6 +335,10 @@ class ItemsController < ApplicationController
       
       if !has_voted
         @items << rec
+        xcount += 1
+        if xcount >= 8
+          break
+        end
       end
     
     end
