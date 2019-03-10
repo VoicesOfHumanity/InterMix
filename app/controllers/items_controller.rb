@@ -277,8 +277,8 @@ class ItemsController < ApplicationController
       end
       plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
       content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
-      if content_without_hash.length > 250
-        content_without_hash = content_without_hash[0,250]
+      if content_without_hash.length > 170
+        content_without_hash = content_without_hash[0,170]
         item_has_more = 1
       else
         item_has_more = 0
