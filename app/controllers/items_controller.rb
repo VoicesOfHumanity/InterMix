@@ -350,7 +350,7 @@ class ItemsController < ApplicationController
     
     end
     
-    own_items_sorted = own_items.sort {|a,b| a.id<=>b.id}
+    own_items_sorted = own_items.sort {|a,b| a['id']<=>b['id']}
     
     @items = own_items_sorted + other_items
     
