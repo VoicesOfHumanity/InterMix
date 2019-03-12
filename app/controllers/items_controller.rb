@@ -264,6 +264,8 @@ class ItemsController < ApplicationController
     items = Item.get_sorted(items1,itemsproc,sortby,rootonly)
     
     @items = []
+    own_items = []
+    other_items = []
     
     xcount = 0
     
@@ -334,14 +336,21 @@ class ItemsController < ApplicationController
       rec['thumbs'] = rating ? rating.approval.to_i : 0
       
       if !has_voted
-        @items << rec
+        #@items << rec
+        if current_participant.id == item.posted_by
+          own_items << rec
+        else
+          other_items << rec
+        end
         xcount += 1
-        if xcount >= 8
+        if xcount >= 12
           break
         end
       end
     
     end
+    
+    @items = own_items + other_items
     
     logger.info("items#list_api returning #{items.length} items")
     
