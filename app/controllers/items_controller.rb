@@ -350,7 +350,9 @@ class ItemsController < ApplicationController
     
     end
     
-    @items = own_items + other_items
+    own_items_sorted = itemsproc.sort {|a,b| a.id<=>b.id}
+    
+    @items = own_items_sorted + other_items
     
     logger.info("items#list_api returning #{items.length} items")
     
