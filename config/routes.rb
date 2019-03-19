@@ -280,6 +280,7 @@ Rails.application.routes.draw do
     get :follow, on: :member
     get :unfollow, on: :member
     post :list_api, on: :collection
+    get :list_api, on: :collection
     post :create_api, on: :collection
   end  
   

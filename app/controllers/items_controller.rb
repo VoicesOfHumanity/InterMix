@@ -340,6 +340,7 @@ class ItemsController < ApplicationController
         if current_participant.id == item.posted_by
           own_items << rec
         else
+          logger.info("items#list_api current:#{current_participant.id} != posted_by:#{item.posted_by}")
           other_items << rec
         end
         xcount += 1
@@ -350,13 +351,14 @@ class ItemsController < ApplicationController
     
     end
     
-    logger.info("items#list_api own_items: #{own_items.collect{|i| i['id']}}")
-    own_items_sorted = own_items.sort {|a,b| b['id']<=>a['id']}
-    logger.info("items#list_api own_items_sorted: #{own_items_sorted.collect{|i| i['id']}}")
+    #logger.info("items#list_api own_items[0]: #{own_items[0]}")
+    #logger.info("items#list_api own_items: #{own_items.collect{|i| i[:id]}}")
+    own_items_sorted = own_items.sort {|a,b| b[:id]<=>a[:id]}
+    #logger.info("items#list_api own_items_sorted: #{own_items_sorted.collect{|i| i[:id]}}")
     
     @items = own_items_sorted + other_items
     
-    logger.info("items#list_api returning #{items.length} items")
+    logger.info("items#list_api returning #{@items.length} items")
     
     render json: @items
   end
