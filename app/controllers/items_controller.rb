@@ -350,9 +350,9 @@ class ItemsController < ApplicationController
     
     end
     
-    loggerin.info("items#list_api own_items: #{own_items.collect{|i| i['id']}}")
+    logger.info("items#list_api own_items: #{own_items.collect{|i| i['id']}}")
     own_items_sorted = own_items.sort {|a,b| b['id']<=>a['id']}
-    loggerin.info("items#list_api own_items_sorted: #{own_items_sorted.collect{|i| i['id']}}")
+    logger.info("items#list_api own_items_sorted: #{own_items_sorted.collect{|i| i['id']}}")
     
     @items = own_items_sorted + other_items
     
