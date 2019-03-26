@@ -30,4 +30,7 @@
 
 <script>
 $('.thumbupdown').hover(function(){thumbhover(this,'in')},function(){thumbhover(this,'out')});
+<% if params.has_key?(:add_comment) -%>
+reply(<%= @first_item.id %>,false);
+<% end -%>
 </script>
