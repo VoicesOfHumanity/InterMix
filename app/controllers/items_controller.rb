@@ -331,6 +331,8 @@ class ItemsController < ApplicationController
         'num_comments': @comments.length,
         'has_more': item_has_more,
       }
+
+      logger.info("items#list_api subject:#{item.subject} num_comments:#{@comments.length}")
       
       rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
       rec['thumbs'] = rating ? rating.approval.to_i : 0
@@ -340,7 +342,6 @@ class ItemsController < ApplicationController
         if current_participant.id == item.posted_by
           own_items << rec
         else
-          logger.info("items#list_api current:#{current_participant.id} != posted_by:#{item.posted_by}")
           other_items << rec
         end
         xcount += 1
