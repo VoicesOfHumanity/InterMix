@@ -847,10 +847,11 @@ class ItemsController < ApplicationController
         @item.save    
       end 
       
-      if @item.reply_to.to_i > 0
+      if @item.reply_to.to_i > 0 
         #-- If it is a reply, they'll have interest rating 4 on whatever they replied to, and the top of the thread, if not the same  
+        #-- unless it is themselves
         orig_item = Item.find_by_id(@item.reply_to)
-        if orig_item
+        if orig_item and current_participant.id != orig_item.posted_by
           rating = Rating.where(item_id: @item.reply_to.to_i, participant_id: current_participant.id, rating_type: 'AllRatings', group_id: orig_item.group_id, dialog_id: orig_item.dialog_id, dialog_round_id: orig_item.dialog_round_id).first_or_initialize
           if rating.interest != 4
             rating.interest = 4
@@ -859,7 +860,7 @@ class ItemsController < ApplicationController
         end
         if @item.first_in_thread.to_i != @item.reply_to.to_i
           orig_item = Item.find_by_id(@item.first_in_thread)
-          if orig_item
+          if orig_item and current_participant.id != orig_item.posted_by
             rating = Rating.where(item_id: @item.first_in_thread.to_i, participant_id: current_participant.id, rating_type: 'AllRatings', group_id: orig_item.group_id, dialog_id: orig_item.dialog_id, dialog_round_id: orig_item.dialog_round_id).first_or_initialize
             if rating.interest != 4
               rating.interest = 4
