@@ -336,7 +336,7 @@ class ItemsController < ApplicationController
       rec['thumbs'] = rating ? rating.approval.to_i : 0
       
       if !has_voted
-        logger.info("items#list_api subject:#{item.subject} num_comments:#{@comments.length}")
+        logger.info("items#list_api !vote subject:#{item.short_content} num_comments:#{@comments.length}")
         #@items << rec
         if current_participant.id == item.posted_by
           own_items << rec
@@ -347,6 +347,8 @@ class ItemsController < ApplicationController
         if xcount >= 12
           break
         end
+      elsif current_participant.id == item.posted_by
+        logger.info("items#list_api voted subject:#{item.short_content} num_comments:#{@comments.length}")
       end
     
     end
