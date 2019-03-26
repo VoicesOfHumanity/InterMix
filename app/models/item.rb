@@ -418,7 +418,7 @@ class Item < ActiveRecord::Base
         content = "<a href=\"#{self.link}\" target=\"_blank\">#{self.media_type}</a>"
         content += "<br>#{self.short_content.to_s}"
       elsif self.media_type == 'picture'
-        content = "<img src=\"/images/data/items/#{self.id}/big.jpg\" alt=\"thumbnail\"><br>"
+        content = "<img src=\"https://#{BASEDOMAIN}/images/data/items/#{self.id}/big.jpg\" alt=\"thumbnail\"><br>"
         content += self.html_content.to_s != '' ? self.html_with_auth(recipient) : self.short_content
       else
         content = self.html_content.to_s != '' ? self.html_with_auth(recipient) : self.short_content
