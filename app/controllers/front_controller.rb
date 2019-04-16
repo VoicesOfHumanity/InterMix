@@ -1802,15 +1802,15 @@ class FrontController < ApplicationController
     auth = Authentication.where(uid: fb_uid).first
     if auth
       participant_id = auth.participant_id
-      participant = Participant.find_by_id(participant_id)
-      if participant
-        if participant.email.downcase == email.downcase
+      @participant = Participant.find_by_id(participant_id)
+      if @participant
+        if @participant.email.downcase == email.downcase
           ret['status'] = "Found by auth"
-          ret['user_id'] = participant.id
-          ret['username'] = participant.email
-          ret['name'] = participant.name
-          ret['auth_token'] = participant.authentication_token
-          sign_in(:participant, participant)  
+          ret['user_id'] = @participant.id
+          ret['username'] = @participant.email
+          ret['name'] = @participant.name
+          ret['auth_token'] = @participant.authentication_token
+          sign_in(:participant, @participant)  
           user_exists = true   
         else
           ret['status'] = "Email doesn't match"    
@@ -1820,14 +1820,14 @@ class FrontController < ApplicationController
       end
     elsif email != ''
       #-- If there's a user with that email, use that
-      participant = Participant.find_by_email(email)
-      if participant
+      @participant = Participant.find_by_email(email)
+      if @participant
         ret['status'] = "Found by email"
-        ret['user_id'] = participant.id
-        ret['username'] = participant.email
-        ret['name'] = participant.name
-        ret['auth_token'] = participant.authentication_token
-        sign_in(:participant, participant)  
+        ret['user_id'] = @participant.id
+        ret['username'] = @participant.email
+        ret['name'] = @participant.name
+        ret['auth_token'] = @participant.authentication_token
+        sign_in(:participant, @participant)  
         user_exists = true   
       else
         ret['status'] = "User not found. Creating new user."  
@@ -1977,7 +1977,16 @@ class FrontController < ApplicationController
       ret['username'] = @participant.email
       ret['name'] = @participant.name
       ret['auth_token'] = @participant.authentication_token
-      
+            
+    end
+    
+    if @participant
+      # We need the nation, state, city, gender, age, if available
+      ret['country_code'] = @participant.country_code
+      ret['admin1uniq'] = @participant.admin1uniq
+      ret['city'] = @participant.city
+      ret['gender'] = @participant.gender_id
+      ret['age'] = @participant.generation_id
     end
     
     render json: ret 

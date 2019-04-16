@@ -282,10 +282,28 @@ class Participant < ActiveRecord::Base
     return '???'
   end
   
+  def gender_id
+    self.metamap_nodes.each do |mn|
+      if mn.metamap_id == 3
+        return mn.id
+      end
+    end  
+    return 0
+  end
+  
   def generation
     self.metamap_nodes.each do |mn|
       if mn.metamap_id == 5
         return mn.name
+      end
+    end  
+    return '???'
+  end
+
+  def generation_id
+    self.metamap_nodes.each do |mn|
+      if mn.metamap_id == 5
+        return mn.id
       end
     end  
     return '???'
