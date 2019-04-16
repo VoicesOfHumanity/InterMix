@@ -153,6 +153,7 @@ Rails.application.routes.draw do
   devise_for :participants, :controllers => {:registrations => 'registrations'}
   resources :participants do
     get :search, :on => :collection
+    get :api_get_user_info, on: :member
   end
 
   get 'communities/all', to: 'communities#index', action: :index, which: 'all'

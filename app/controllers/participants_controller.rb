@@ -133,6 +133,20 @@ class ParticipantsController < ApplicationController
     end
   end
   
+  def api_get_user_info
+    #-- Return basic user information for the settings screen on app
+    ret = {'status': '', 'country_code': '', 'admin1uniq': '', 'city': '', 'gender': 0, 'age': 0}
+    @participant = Participant.find(params[:id])
+    if @participant
+      ret['country_code'] = @participant.country_code
+      ret['admin1uniq'] = @participant.admin1uniq
+      ret['city'] = @participant.city
+      ret['gender'] = @participant.gender_id
+      ret['age'] = @participant.generation_id
+    end    
+    render json: ret 
+  end
+  
   protected
   
   def geoupdate
