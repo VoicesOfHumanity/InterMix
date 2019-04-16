@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_22_175541) do
+ActiveRecord::Schema.define(version: 2019_04_16_204657) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 2019_01_22_175541) do
     t.string "voice_of_young"
     t.string "voice_of_middleage"
     t.string "voice_of_old"
+    t.boolean "moderated", default: false
     t.index ["tagname"], name: "index_communities_on_tagname"
   end
 
@@ -521,6 +522,7 @@ ActiveRecord::Schema.define(version: 2019_01_22_175541) do
     t.datetime "tweeted_user_at"
     t.boolean "tweeted_group", default: false
     t.datetime "tweeted_group_at"
+    t.boolean "been_moderated", default: true
     t.boolean "censored", default: false
     t.string "geo_level"
     t.string "intra_com", default: "public"
