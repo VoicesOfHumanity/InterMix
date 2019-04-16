@@ -140,7 +140,8 @@ class ParticipantsController < ApplicationController
     if @participant
       ret['country_code'] = @participant.country_code
       ret['country_name'] = @participant.geocountry ? @participant.geocountry.name : ''
-      ret['admin1uniq'] = @participant.geoadmin1 ? @participant.geoadmin1.name : ''
+      ret['admin1uniq'] = @participant.admin1uniq
+      ret['admin1_name'] = @participant.geoadmin1 ? @participant.geoadmin1.name : ''
       ret['city'] = @participant.city
       ret['gender'] = @participant.gender_id
       ret['gender_name'] = @participant.gender
