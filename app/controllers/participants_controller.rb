@@ -139,10 +139,13 @@ class ParticipantsController < ApplicationController
     @participant = Participant.find(params[:id])
     if @participant
       ret['country_code'] = @participant.country_code
-      ret['admin1uniq'] = @participant.admin1uniq
+      ret['country_name'] = @participant.geocountry ? @participant.geocountry.name : ''
+      ret['admin1uniq'] = @participant.geoadmin1 ? @participant.geoadmin1.name : ''
       ret['city'] = @participant.city
       ret['gender'] = @participant.gender_id
+      ret['gender_name'] = @participant.gender
       ret['age'] = @participant.generation_id
+      ret['age_name'] = @participant.generation
     end    
     render json: ret 
   end
