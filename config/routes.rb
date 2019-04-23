@@ -154,6 +154,7 @@ Rails.application.routes.draw do
   resources :participants do
     get :search, :on => :collection
     get :api_get_user_info, on: :member
+    get :api_save_user_info, on: :member
   end
 
   get 'communities/all', to: 'communities#index', action: :index, which: 'all'

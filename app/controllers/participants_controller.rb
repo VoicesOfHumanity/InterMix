@@ -151,6 +151,29 @@ class ParticipantsController < ApplicationController
     render json: ret 
   end
   
+  def api_save_user_info
+    #-- Save some user info from the app
+    @participant = Participant.find(params[:id])
+    city = params['city']
+    nation = params['nation']
+    region = params['region']
+    age = params['age'].to_i
+    gender = params['gender'].to_i
+    @participant.city = city
+    @participant.country_code = nation
+    @participant.country_name = @participant.geocountry ? @participant.geocountry.name : ''
+    @participant.admin1uniq = region
+    @participant.admin1_name = @participant.geoadmin1 ? @participant.geoadmin1.name : ''
+    @participant.gender = gender
+    @participant.age = age
+    begin
+      @participant.save!
+      render json: {'status': 'ok'}
+    rescue
+      render json: {'status': 'error'}      
+    end
+  end
+  
   protected
   
   def geoupdate
