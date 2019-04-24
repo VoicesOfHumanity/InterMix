@@ -324,7 +324,7 @@ class ProfilesController < ApplicationController
       ret['age_name'] = @participant.generation
     end    
     # Provide the choices of regions for their country
-    ret['regions'] = Geoadmin1.where("country_code='#{@participant.country_code}' and admin1_code!='00'").order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
+    ret['regions'] = Geoadmin1.where("country_code='#{@participant.country_code}' and admin1_code!='00'").order("name").collect {|r| {key: r.admin1uniq,label: r.name}}
     render json: ret 
   end
   
