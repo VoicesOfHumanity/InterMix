@@ -133,51 +133,6 @@ class ParticipantsController < ApplicationController
     end
   end
   
-  def api_get_user_info
-    #-- Return basic user information for the settings screen on app
-    ret = {'status': '', 'country_code': '', 'admin1uniq': '', 'city': '', 'gender': 0, 'age': 0}
-    @participant = Participant.find(params[:id])
-    if @participant
-      ret['country_code'] = @participant.country_code
-      ret['country_name'] = @participant.geocountry ? @participant.geocountry.name : ''
-      ret['admin1uniq'] = @participant.admin1uniq
-      ret['admin1_name'] = @participant.geoadmin1 ? @participant.geoadmin1.name : ''
-      ret['city'] = @participant.city
-      ret['gender'] = @participant.gender_id
-      ret['gender_name'] = @participant.gender
-      ret['age'] = @participant.generation_id
-      ret['age_name'] = @participant.generation
-    end    
-    render json: ret 
-  end
-  
-  def api_save_user_info
-    #-- Save some user info from the app
-    @participant = Participant.find(params[:id])
-    city = params['city']
-    nation = params['nation']
-    region = params['region']
-    age = params['age'].to_i
-    gender = params['gender'].to_i
-    @participant.city = city
-    @participant.country_code = nation
-    @participant.country_name = @participant.geocountry ? @participant.geocountry.name : ''
-    @participant.admin1uniq = region
-    @participant.gender = gender
-    @participant.age = age    
-    geoadmin1 = Geoadmin1.find_by_admin1uniq(@participant.admin1uniq)
-    if geoadmin1
-      @participant.state_code = geoadmin1.admin1_code
-      @participant.state_name = geoadmin1.name
-    end
-    begin
-      @participant.save!
-      render json: {'status': 'ok'}
-    rescue
-      render json: {'status': 'error'}      
-    end
-  end
-  
   protected
   
   def geoupdate

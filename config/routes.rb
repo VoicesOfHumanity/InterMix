@@ -153,8 +153,6 @@ Rails.application.routes.draw do
   devise_for :participants, :controllers => {:registrations => 'registrations'}
   resources :participants do
     get :search, :on => :collection
-    get :api_get_user_info, on: :member
-    post :api_save_user_info, on: :member
   end
 
   get 'communities/all', to: 'communities#index', action: :index, which: 'all'
@@ -354,6 +352,11 @@ Rails.application.routes.draw do
   get 'me/comtag' => 'profiles#comtag'
   get 'me/invite' => 'profiles#invite'
   post 'me/invitedo' => 'profiles#invitedo'
+  
+  resources :profiles do
+    get :api_get_user_info, on: :member
+    post :api_save_user_info, on: :member
+  end
   
   get 'fbapp(/:action)', :controller=>:fbapp
   
