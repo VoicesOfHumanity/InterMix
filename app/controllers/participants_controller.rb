@@ -163,9 +163,13 @@ class ParticipantsController < ApplicationController
     @participant.country_code = nation
     @participant.country_name = @participant.geocountry ? @participant.geocountry.name : ''
     @participant.admin1uniq = region
-    @participant.admin1_name = @participant.geoadmin1 ? @participant.geoadmin1.name : ''
     @participant.gender = gender
-    @participant.age = age
+    @participant.age = age    
+    geoadmin1 = Geoadmin1.find_by_admin1uniq(@participant.admin1uniq)
+    if geoadmin1
+      @participant.state_code = geoadmin1.admin1_code
+      @participant.state_name = geoadmin1.name
+    end
     begin
       @participant.save!
       render json: {'status': 'ok'}
