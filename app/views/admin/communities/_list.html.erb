@@ -10,6 +10,7 @@
     <th>ID</th>
     <th>Short name</th>
     <th>Full name</th>
+    <th>Moderated</th>
   </tr>
 
 <% odd_or_even = 0 %>
@@ -20,6 +21,7 @@
 		<td><a href="#" onclick="viewrec1(<%= community.id %>)"><%= community.id %></a></td>
     <td><a href="#" onclick="viewrec1(<%= community.id %>)"><%= community.tagname %></a></td>
     <td><%= community.fullname %></td>
+    <td><%= community.moderated ? 'yes' : '' %></td>
   </tr>
 <% end %>
 </table>

@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
   #after_filter :store_location
 
   before_action :store_user_location!, if: :storable_location?
+  
+  before_action :get_global_data
 
   #def store_location
     # store last url, particularly so we can set it after login
@@ -629,6 +631,14 @@ class ApplicationController < ActionController::Base
     def store_user_location!
       # :user is the scope we are authenticating
       store_location_for(:user, request.fullpath)
+    end
+    
+    def get_global_data
+      #-- Get some information once in a while, for efficiency, to not have to look it up all the time
+      if not session.has_key?(:global_got) or session[:global_got] < session[:global_got] - 3600
+        session[:global_got] = session[:global_got]
+        session[:moderated_communities] = Community.where(moderated: true).collect {|r| r.tagname }
+      end
     end
         
 end

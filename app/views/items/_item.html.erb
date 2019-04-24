@@ -214,7 +214,26 @@ end
 	  <div class="iteminfotxt">
 		<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
 		</div>
-		
+		    
+    <% 
+    censor_ok = false
+    for tag in item.tag_list
+      if session[:moderated_communities].include? tag
+        censor_ok = true
+      end
+    end
+    if item.censored
+      censor_text = "Uncensor"
+    else
+      censor_text = "Censor"
+    end   
+    -%>
+    <% if censor_ok and current_participant.sysadmin -%>
+	  <div class="iteminfotxt">
+		<strong><%= link_to_function censor_text, "censor(#{item.id})", {:class=>'reply_link'} %></strong>
+		</div>
+    <% end -%>
+    
 		<div class="iteminfotxt">
   		  <% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
   				  <strong><%= link_to_function "Add Comment", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %></strong>

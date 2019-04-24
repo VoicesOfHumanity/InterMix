@@ -1118,3 +1118,14 @@ function followthread(folun, item_id) {
         }
     });	
 }
+
+function censor(item_id) {
+  $.ajax({
+      type: "POST",
+      url: '/items/' + item_id + '/censor',
+  	  data: 'item_id='+item_id,
+      complete: function(t){	
+        location.reload();
+      }
+  });	
+}

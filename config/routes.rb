@@ -282,6 +282,7 @@ Rails.application.routes.draw do
     post :list_api, on: :collection
     get :list_api, on: :collection
     post :create_api, on: :collection
+    post :censor, on: :member
   end  
   
   resources :messages do

@@ -1320,7 +1320,20 @@ class ItemsController < ApplicationController
     #-- Public gallery
     @group_id = 8
     @items = Item.where("items.group_id=#{@group_id} and items.has_picture=1 and items.media_type='picture'").includes(:participant).order("items.id desc").limit(12)
-  end  
+  end
+  
+  def censor
+    #-- A moderator hits the censor button
+    item_id = params[:id]
+    item = Item.find_by_id(item_id)
+    if not item.censored
+      item.censored = true
+    else
+      item.censored = false  
+    end
+    item.save!
+    render plain: 'ok'
+  end
   
   def follow
     #-- A user will follow a particular item, or rather the root of it
