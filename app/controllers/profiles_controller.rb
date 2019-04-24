@@ -310,7 +310,7 @@ class ProfilesController < ApplicationController
     
   def api_get_user_info
     #-- Return basic user information for the settings screen on app
-    ret = {'status': '', 'country_code': '', 'admin1uniq': '', 'city': '', 'gender': 0, 'age': 0}
+    ret = {'status': '', 'country_code': '', 'admin1uniq': '', 'city': '', 'gender': 0, 'age': 0, 'regions': []}
     @participant = Participant.find(params[:id])
     if @participant
       ret['country_code'] = @participant.country_code
@@ -323,6 +323,8 @@ class ProfilesController < ApplicationController
       ret['age'] = @participant.generation_id
       ret['age_name'] = @participant.generation
     end    
+    # Provide the choices of regions for their country
+    ret['regions'] = Geoadmin1.where("country_code='#{@participant.country_code}' and admin1_code!='00'").order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
     render json: ret 
   end
   
