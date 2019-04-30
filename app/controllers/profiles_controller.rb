@@ -330,7 +330,8 @@ class ProfilesController < ApplicationController
   
   def api_save_user_info
     #-- Save some user info from the app
-    @participant = Participant.find(params[:id])
+    #@participant = Participant.find(params[:id])
+    @participant = current_participant
     city = params['city']
     nation = params['nation']
     region = params['region']
@@ -349,7 +350,7 @@ class ProfilesController < ApplicationController
       mnp = MetamapNodeParticipant.where(metamap_id: 3, participant_id: @participant.id).first
       if mnp
         mnp.metamap_node_id = gender
-        mnp.save
+        mnp.save!
       else
         MetamapNodeParticipant.create(metamap_id: 3, metamap_node_id: gender, participant_id: @participant.id)
       end
@@ -358,7 +359,7 @@ class ProfilesController < ApplicationController
       mnp = MetamapNodeParticipant.where(metamap_id: 5, participant_id: @participant.id).first
       if mnp
         mnp.metamap_node_id = age
-        mnp.save
+        mnp.save!
       else
         MetamapNodeParticipant.create(metamap_id: 5, metamap_node_id: age, participant_id: @participant.id)
       end
