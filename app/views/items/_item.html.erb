@@ -218,13 +218,13 @@ end
     <% if censor_ok -%>
       <% 
       if item.censored
-        censor_text = "Uncensor this item"
+        censor_text = "Uncensor"
       else
         censor_text = "Censor this item"
       end   
       -%>
   	  <div class="iteminfotxt">
-  		<strong><%= link_to_function censor_text, "censor(#{item.id})", {:class=>'reply_link'} %></strong>
+  		<strong><%= link_to_function censor_text, "censor(#{item.id},#{item.censored})", {:class=>'reply_link'} %></strong>
   		</div>
     <% end -%>
     

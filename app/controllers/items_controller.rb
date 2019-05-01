@@ -1332,6 +1332,8 @@ class ItemsController < ApplicationController
       item.censored = false  
     end
     item.save!
+    item.participant.status = 'inactive'
+    item.participant.save!
     render plain: 'ok'
   end
   

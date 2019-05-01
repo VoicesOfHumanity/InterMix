@@ -1119,13 +1119,20 @@ function followthread(folun, item_id) {
     });	
 }
 
-function censor(item_id) {
-  $.ajax({
-      type: "POST",
-      url: '/items/' + item_id + '/censor',
-  	  data: 'item_id='+item_id,
-      complete: function(t){	
-        location.reload();
-      }
-  });	
+function censor(item_id,is_censored) {
+  if (is_censored) {
+    var ctext = "Uncensor this item? The author will remain deactivated"
+  } else {
+    var ctext = "Yes, I am sure. Go ahead and censor this item and remove the author from the community and app.";
+  }
+  if (confirm(ctext)) {
+    $.ajax({
+        type: "POST",
+        url: '/items/' + item_id + '/censor',
+    	  data: 'item_id='+item_id,
+        complete: function(t){	
+          location.reload();
+        }
+    });	
+  }
 }
