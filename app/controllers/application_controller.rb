@@ -635,8 +635,8 @@ class ApplicationController < ActionController::Base
     
     def get_global_data
       #-- Get some information once in a while, for efficiency, to not have to look it up all the time
-      if not session.has_key?(:global_got) or session[:global_got] < session[:global_got] - 3600
-        session[:global_got] = session[:global_got]
+      if not session.has_key?(:global_got) or session[:global_got] < Time.now.to_i - 3600
+        session[:global_got] = Time.now.to_i
         session[:moderated_communities] = Community.where(moderated: true).collect {|r| r.tagname }
       end
     end

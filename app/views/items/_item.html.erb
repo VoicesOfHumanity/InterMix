@@ -215,23 +215,17 @@ end
 		<%= item.created_at.strftime("%Y-%m-%d %H:%M") %>
 		</div>
 		    
-    <% 
-    censor_ok = false
-    for tag in item.tag_list
-      if session[:moderated_communities].include? tag
-        censor_ok = true
-      end
-    end
-    if item.censored
-      censor_text = "Uncensor"
-    else
-      censor_text = "Censor"
-    end   
-    -%>
-    <% if censor_ok and current_participant.sysadmin -%>
-	  <div class="iteminfotxt">
-		<strong><%= link_to_function censor_text, "censor(#{item.id})", {:class=>'reply_link'} %></strong>
-		</div>
+    <% if censor_ok -%>
+      <% 
+      if item.censored
+        censor_text = "Uncensor this item"
+      else
+        censor_text = "Censor this item"
+      end   
+      -%>
+  	  <div class="iteminfotxt">
+  		<strong><%= link_to_function censor_text, "censor(#{item.id})", {:class=>'reply_link'} %></strong>
+  		</div>
     <% end -%>
     
 		<div class="iteminfotxt">

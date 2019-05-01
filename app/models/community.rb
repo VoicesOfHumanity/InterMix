@@ -4,6 +4,7 @@ class Community < ActiveRecord::Base
   has_many :participants, :through => :community_admins
   has_many :admins, -> { where "admin=1 and active=1"}, source: :participant, through: :community_admins
   has_many :moderators, -> { where "moderator=1 and active=1"}, source: :participant, through: :community_admins
+  has_many :admins_and_moderators, -> { where "(moderator=1 or admin=1) and active=1"}, source: :participant, through: :community_admins
 
   has_many :conversation_communities
   has_many :conversations, :through => :conversation_communities
