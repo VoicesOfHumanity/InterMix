@@ -2191,9 +2191,9 @@ class ItemsController < ApplicationController
       if tagmatch.length > 14
         tagmatch = tagmatch[0..13]
       end
-      tagmatches2 << tagmatch
+      tagmatches2 << tagmatch.downcase
     end
-    logger.info("items#itemprocess tags:#{tagmatches}") 
+    logger.info("items#itemprocess tags:#{tagmatches2}") 
     @item.tag_list = tagmatches2
     
     
