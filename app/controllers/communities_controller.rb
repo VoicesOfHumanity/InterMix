@@ -228,6 +228,7 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'edit'
     @community = Community.new(params[:community])
+    @community.tagname.downcase!
     flash.now[:alert] = ''
     if params[:community][:tagname].to_s == ''
       flash.now[:alert] += "The community needs a short name<br/>"
@@ -272,6 +273,7 @@ class CommunitiesController < ApplicationController
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
     @community.update_attributes(community_params)
+    @community.tagname.downcase!
     @community.description = sanitizethis(@community.description).strip
     @community.save
     # fix autotags
