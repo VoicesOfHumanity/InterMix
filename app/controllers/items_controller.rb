@@ -373,8 +373,6 @@ class ItemsController < ApplicationController
     logger.info("items#report_api")
     subject = "App post reported"
     
-    item
-    
     message = "<p>Item ##{item_id} reported by user ##{posted_by}</p><p>#{text}</p>"
     
     toemail = 'ffunch@cr8.com'
@@ -382,7 +380,7 @@ class ItemsController < ApplicationController
     cdata = {}
     email = SystemMailer.generic(subject, message, toemail, cdata)    
     begin
-      logger.info("application#emailit delivering email to #{toemail}")
+      logger.info("items#report_api delivering email to #{toemail}")
       email.deliver
     rescue
     end
