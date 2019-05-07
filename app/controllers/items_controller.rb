@@ -381,7 +381,7 @@ class ItemsController < ApplicationController
     toemail = 'appreport@intermix.org'
     
     cdata = {}
-    email = SystemMailer.generic(subject, message, toemail, cdata)    
+    email = SystemMailer.generic(SYSTEM_SENDER, toemail, subject, message, cdata)    
     begin
       logger.info("items#report_api delivering email to #{toemail}")
       email.deliver
