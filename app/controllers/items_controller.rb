@@ -373,9 +373,12 @@ class ItemsController < ApplicationController
     logger.info("items#report_api")
     subject = "App post reported"
     
-    message = "<p>Item ##{item_id} reported by user ##{posted_by}</p><p>#{text}</p>"
+    item = Item.find_by_id(item_id)
+    reporter = Participant.find_by_id(posted_by)
     
-    toemail = 'ffunch@cr8.com'
+    message = "<p>Item ##{item_id}:#{item.subject} reported by user ##{posted_by}:#{reporter.email}</p><p>#{text}</p>"
+    
+    toemail = 'appreport@intermix.org'
     
     cdata = {}
     email = SystemMailer.generic(subject, message, toemail, cdata)    
