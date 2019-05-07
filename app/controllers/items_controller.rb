@@ -365,6 +365,30 @@ class ItemsController < ApplicationController
     render json: @items
   end
   
+  def report_api
+    #-- Report a post
+    item_id = params[:id].to_i
+    text = params[:text]
+    posted_by = params[:posted_by].to_i
+    logger.info("items#report_api")
+    subject = "App post reported"
+    
+    item
+    
+    message = "<p>Item ##{item_id} reported by user ##{posted_by}</p><p>#{text}</p>"
+    
+    toemail = 'ffunch@cr8.com'
+    
+    cdata = {}
+    email = SystemMailer.generic(subject, message, toemail, cdata)    
+    begin
+      logger.info("application#emailit delivering email to #{toemail}")
+      email.deliver
+    rescue
+    end
+    render json: {'result': 'ok'}
+  end
+  
   def new
     #-- screen for a new item, either new thread or a reply
     @from = params[:from] || ''
