@@ -1121,7 +1121,7 @@ function followthread(folun, item_id) {
 
 function censor(item_id,is_censored) {
   if (is_censored) {
-    var ctext = "Uncensor this item? The author will remain deactivated"
+    var ctext = "Uncensor this item? The author will also be re-activated"
   } else {
     var ctext = "Yes, I am sure. Go ahead and censor this item and remove the author from the community and app.";
   }

@@ -1328,11 +1328,12 @@ class ItemsController < ApplicationController
     item = Item.find_by_id(item_id)
     if not item.censored
       item.censored = true
+      item.participant.status = 'inactive'
     else
       item.censored = false  
+      item.participant.status = 'active'
     end
     item.save!
-    item.participant.status = 'inactive'
     item.participant.save!
     render plain: 'ok'
   end
