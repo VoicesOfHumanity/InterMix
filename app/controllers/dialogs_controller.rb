@@ -141,7 +141,7 @@ class DialogsController < ApplicationController
         end
       end
       @section = 'conversations'
-    elsif @comtag != ''
+    elsif @comtag != '' and current_participant.tag_list.include?(@comtag)
       # If we're in a community, which is in just one conversation, and it isn't specified, redirect to there
       @community = Community.find_by_tagname(@comtag)
       if @community and @community.conversations.length == 1
