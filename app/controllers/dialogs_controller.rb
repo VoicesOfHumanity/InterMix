@@ -141,6 +141,15 @@ class DialogsController < ApplicationController
         end
       end
       @section = 'conversations'
+    elsif @comtag != ''
+      # If we're in a community, which is in just one conversation, and it isn't specified, redirect to there
+      @community = Community.find_by_tagname(@comtag)
+      if @community and @community.conversations.length == 1
+        @conversation = @community.conversations[0]
+        url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+        url += "&showresult=1" if @show_result == 1
+        redirect_to url 
+      end
     end
     
     if is_new
