@@ -411,4 +411,13 @@ function actionclick() {
   }
   per_reload();
 }
+function chg_conversation() {
+  var conv = $('#chg_conv').val();
+  if (conv != '') {
+    window.location.href = '?comtag='+cur_comtag+'&conv='+conv;
+  }
+}
+function leave_conversation() {
+  window.location.href = '?comtag='+cur_comtag+'&conv=-';  
+}
 </script>

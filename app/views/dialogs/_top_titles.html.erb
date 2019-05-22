@@ -16,7 +16,16 @@
 <% elsif @dsection == 'list' -%>
   - <span id="top_forum_header"><%= @nvaction ? 'Nonviolent Action Forum' : 'Forum' %></span>
 <% end -%>
-</a><br>
+</a>
+<% if @conversations and @conversation and @is_conv_member -%>
+  &nbsp;&nbsp;
+  <% if @conversations.length > 1 -%>
+    <%= select_tag "chg_conv", options_for_select([['Change Conversation','']]+@conversations.collect{|c| [c.name,c.shortname]}+[['Leave Conversation','-']]), :onchange => 'chg_conversation()' %>
+  <% else @conversations.length == 1 -%>
+    <input type="button" value="Leave Conversation" onclick="leave_conversation()">
+  <% end -%>
+<% end -%>
+<br>
   
 <% if false and @dsection == 'meta' -%>
   <% @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id.to_i > 0 %>
