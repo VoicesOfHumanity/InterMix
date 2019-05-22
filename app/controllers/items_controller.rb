@@ -464,32 +464,14 @@ class ItemsController < ApplicationController
     
     tags = []
     
+    @is_com_member = false
     if @comtag != ''
       @community = Community.where(tagname: @comtag).first
-    end
-    
-    if @item.conversation_id > 0
-      # We're in a conversation
-      @conversation = Conversation.find_by_id(@item.conversation_id)
-      if @conversation
-        @conv = @conversation.shortname
-        if @in_conversation
-          # Add conversation tag only if we're currently in the conversation
-          tags << @conv
-        end
-        # Which community or communities in the conversation is the current user in?
-        @conv_own_coms = {}
-        for com in @conversation.communities
-          if current_participant.tag_list.include?(com.tagname)
-            @conv_own_coms[com.tagname] = com.fullname
-          end
-        end
-        if @conv_own_coms.length == 1 and @conversation.together_apart == 'apart'
-          tags << @conv_own_coms.keys[0]
-        end
+      if current_participant.tag_list.include?(@comtag)
+        @is_com_member = true
       end
     end
-    
+        
     if @item.reply_to.to_i > 0
       @item.is_first_in_thread = false 
       #@olditem = Item.find_by_id(@item.reply_to)
@@ -501,7 +483,14 @@ class ItemsController < ApplicationController
         elsif @olditem.subject != ''
           @item.subject = @olditem.subject 
         end
-        @item.conversation_id = @olditem.conversation_id if @item.conversation_id.to_i == 0 and @olditem.conversation_id.to_i > 0
+        
+        # Only keep the conversation setting only if we're in the conversation and the current user is a community member
+        if @is_com_member and @in_conversation
+          @item.conversation_id = @conversation_id
+        else
+          @item.conversation_id = 0
+        end
+        
         @item.intra_conv = @olditem.intra_conv
         @item.group_id = @olditem.group_id if @item.group_id.to_i == 0 and @olditem.group_id.to_i > 0
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
@@ -542,6 +531,28 @@ class ItemsController < ApplicationController
       @item.intra_com = "@#{@comtag}" if @comtag
       #@item.subgroup_list = @subgroup if @subgroup.to_s != ''   
       @subgroup_add = @subgroup
+    end
+
+    if @item.conversation_id > 0
+      # We're in a conversation
+      @conversation = Conversation.find_by_id(@item.conversation_id)
+      if @conversation
+        @conv = @conversation.shortname
+        if @in_conversation
+          # Add conversation tag only if we're currently in the conversation
+          tags << @conv
+        end
+        # Which community or communities in the conversation is the current user in?
+        @conv_own_coms = {}
+        for com in @conversation.communities
+          if current_participant.tag_list.include?(com.tagname)
+            @conv_own_coms[com.tagname] = com.fullname
+          end
+        end
+        if @conv_own_coms.length == 1 and @conversation.together_apart == 'apart'
+          tags << @conv_own_coms.keys[0]
+        end
+      end
     end
     
     if @conversation
@@ -604,22 +615,22 @@ class ItemsController < ApplicationController
     end    
     
     #-- Check if they're not allowed to post a new root message, based on dialog/period settings, etc.
-    if @dialog and @item.reply_to.to_i == 0
-      if @dialog.active_period and @dialog.active_period.max_messages.to_i > 0
-        @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
-        if @previous_messages_period >= @dialog.active_period.max_messages.to_i
-          render plain: "<p>You've already reached your maximum number of threads for this period</p>"
-          return
-        end
-      end  
-      if @dialog.max_messages.to_i > 0
-        @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
-        if @previous_messages >= @dialog.max_messages.to_i
-          render plain: "<p>You've already reached your maximum number of threads for this discussion</p>"
-          return
-        end
-      end
-    end
+    #if @dialog and @item.reply_to.to_i == 0
+    #  if @dialog.active_period and @dialog.active_period.max_messages.to_i > 0
+    #    @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
+    #    if @previous_messages_period >= @dialog.active_period.max_messages.to_i
+    #      render plain: "<p>You've already reached your maximum number of threads for this period</p>"
+    #      return
+    #    end
+    #  end  
+    #  if @dialog.max_messages.to_i > 0
+    #    @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
+    #    if @previous_messages >= @dialog.max_messages.to_i
+    #      render plain: "<p>You've already reached your maximum number of threads for this discussion</p>"
+    #      return
+    #    end
+    #  end
+    #end
     
     if true or @item.reply_to.to_i == 0
       #-- Fill in some default message tags

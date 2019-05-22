@@ -261,7 +261,11 @@ function newitem(token) {
   }
   pars += "&nvaction="+(nvaction_on ? 1 : 0);
   pars += "&authenticity_token="+token;
-  pars += "&conversation_id="+conversation_id;
+  if ($('#conversation_id')) {
+    pars += "&conversation_id="+$('#conversation_id').val();
+  } else {
+    pars += "&conversation_id="+conversation_id;
+  }
 	$.ajax({
 		type: "GET",
 		cache: false,
