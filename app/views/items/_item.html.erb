@@ -351,7 +351,7 @@ end
     <div class="itemthumbdiv">
       <hr>
       <div class="thumbtitle">My Vote:</div> 
-      <%=raw thumbvote(itemproc) %>
+      <%=raw thumbvote(itemproc, (@conversation_id ? @conversation_id : 0)) %>
     </div>
     <% end -%>
     

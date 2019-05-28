@@ -36,7 +36,7 @@ module ApplicationHelper
     end    
   end
   
-  def thumbvote(iproc)
+  def thumbvote(iproc, conversation_id=0)
     # Show the thumbs up/down pictures under an item
     return '' if not iproc or not iproc.has_key?('id')
     item_id = iproc['id']
@@ -80,7 +80,7 @@ module ApplicationHelper
             end
           end      
         end
-        out += "<a href=\"#\" onclick=\"clickthumb(#{item_id},#{num});return(false)\"><img src=\"#{imgsrc}\" id=\"#{domid}\" style=\"#{style}\" class=\"thumbupdown\" data-item-id=\"#{item_id}\" data-num=\"#{num}\" data-value=\"#{Item.thumbs(iproc)}\" data-onoff=\"#{onoff}\" data-showing=\"#{showing}\"></a>\n"
+        out += "<a href=\"#\" onclick=\"clickthumb(#{item_id},#{num},#{conversation_id});return(false)\"><img src=\"#{imgsrc}\" id=\"#{domid}\" style=\"#{style}\" class=\"thumbupdown\" data-item-id=\"#{item_id}\" data-num=\"#{num}\" data-value=\"#{Item.thumbs(iproc)}\" data-onoff=\"#{onoff}\" data-showing=\"#{showing}\"></a>\n"
       end
     end
     out

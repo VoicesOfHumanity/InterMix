@@ -827,7 +827,7 @@ function thumbhover(el,inout) {
         updatethumbs(id,value)
     }
 }
-function clickthumb(id,num) {
+function clickthumb(id, num, conversation_id) {
     // A click on an up or down thumb
     thumbclicked = true;
     var vote = num;
@@ -855,7 +855,7 @@ function clickthumb(id,num) {
     $.ajax({
         type: "POST",
         url: '/items/' + id + '/thumbrate',
-    	data: 'item_id='+id+'&vote='+num,
+    	  data: 'item_id='+id+'&vote='+num+'&conversation_id='+conversation_id,
         complete: function(t){	
             $('#vote_app_rate_'+id).html(t.responseText);
             var classname = 'radio_app_'+(vote+10);

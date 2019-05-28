@@ -1239,7 +1239,7 @@ class ItemsController < ApplicationController
     render plain: vote
   end 
   
-  def rateitem(item, vote, from_mail=false)
+  def rateitem(item, vote, from_mail=false, conversation_id=0)
     # Called by fx thumbrate or view to record a vote, without showing any screen
     
     if not item.voting_ok(current_participant.id)
@@ -1261,6 +1261,14 @@ class ItemsController < ApplicationController
     if not rating
       is_new = true
       rating = Rating.create(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings', approval: vote, interest: vote.abs)
+    end
+    
+    if conversation_id > 0
+      conversation = Conversation.find_by_id(conversation_id)
+      if conversation and conversation.is_member_of(current_participant)
+        # If we're in a conversation, and the user is a member, only then do we store a conversation with the rating
+        rating.conversation_id = conversation_id
+      end
     end
     
     if is_new
@@ -1321,6 +1329,7 @@ class ItemsController < ApplicationController
     @from = params[:from] || ''
     item_id = params[:id].to_i
     vote = params[:vote].to_i
+    conversation_id = params[:conversation_id].to_i
     logger.info("items#thumbrate item:#{item_id} user:#{current_participant.id} vote:#{vote}")
 
     item = Item.includes(:dialog,:group).find_by_id(item_id)
@@ -1331,7 +1340,7 @@ class ItemsController < ApplicationController
       return
     end
     
-    rateitem(item, vote)
+    rateitem(item, vote, false, conversation_id)
     
     render plain: vote
   end   

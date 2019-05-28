@@ -1563,7 +1563,8 @@ class Item < ActiveRecord::Base
     end
     
     if crit[:conversation_id].to_i > 0
-      items = items.where("conversation_id=#{crit[:conversation_id]}")
+      items = items.where("items.conversation_id=#{crit[:conversation_id]}")
+      ratings = ratings.where(conversation_id: crit[:conversation_id])
       #ratings = ratings.where("participants.indigenous=1")
       @conversation = Conversation.find_by_id(crit[:conversation_id])
       #title += " | #{@conversation.name}" if @conversation
@@ -1597,31 +1598,31 @@ class Item < ActiveRecord::Base
       title += " | Voice of Humanity"
     end
 
-    if crit[:indigenous]
-      items = items.where("participants.indigenous=1")
-      ratings = ratings.where("participants.indigenous=1")
-      title += " | Indigenous"
-    end
-    if crit[:other_minority]
-      items = items.where("participants.other_minority=1")
-      ratings = ratings.where("participants.other_minority=1")
-      title += " | Other minority"
-    end
-    if crit[:veteran]
-      items = items.where("participants.veteran=1")
-      ratings = ratings.where("participants.veteran=1")
-      title += " | Veteran"    
-    end
-    if crit[:interfaith]
-      items = items.where("participants.interfaith=1")
-      ratings = ratings.where("participants.interfaith=1")
-      title += " | Interfaith"
-    end
-    if crit[:refugee]
-      items = items.where("participants.refugee=1")
-      ratings = ratings.where("participants.refugee=1")
-      title += " | Refugee"
-    end
+    #if crit[:indigenous]
+    #  items = items.where("participants.indigenous=1")
+    #  ratings = ratings.where("participants.indigenous=1")
+    #  title += " | Indigenous"
+    #end
+    #if crit[:other_minority]
+    #  items = items.where("participants.other_minority=1")
+    #  ratings = ratings.where("participants.other_minority=1")
+    #  title += " | Other minority"
+    #end
+    #if crit[:veteran]
+    #  items = items.where("participants.veteran=1")
+    #  ratings = ratings.where("participants.veteran=1")
+    #  title += " | Veteran"    
+    #end
+    #if crit[:interfaith]
+    #  items = items.where("participants.interfaith=1")
+    #  ratings = ratings.where("participants.interfaith=1")
+    #  title += " | Interfaith"
+    #end
+    #if crit[:refugee]
+    #  items = items.where("participants.refugee=1")
+    #  ratings = ratings.where("participants.refugee=1")
+    #  title += " | Refugee"
+    #end
     
     # tags
     if crit[:comtag].to_s == '*my*'
@@ -3025,7 +3026,7 @@ class Item < ActiveRecord::Base
       # It's the author
       return true  
       
-    elsif self.intra_conv != 'public' and self.conversation_id.to_i > 0
+    elsif false and self.intra_conv != 'public' and self.conversation_id.to_i > 0
       # A conversation-only post can only be commented on by members of the communities in the conversation
       # In the apart phase, furthermore only members of one of the communities of the poster can reply/vote
       if @conversation and @conversation.together_apart != 'apart' and defined? @in_conversation 

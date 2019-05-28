@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_16_204657) do
+ActiveRecord::Schema.define(version: 2019_05_22_160155) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -803,6 +803,7 @@ ActiveRecord::Schema.define(version: 2019_04_16_204657) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "period_id"
+    t.integer "conversation_id"
     t.index ["group_id", "id"], name: "index_ratings_on_group_id_and_id"
     t.index ["item_id", "id"], name: "index_ratings_on_item_id_and_id"
     t.index ["participant_id", "id"], name: "index_ratings_on_participant_id_and_id"
