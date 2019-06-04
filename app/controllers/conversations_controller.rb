@@ -37,11 +37,14 @@ class ConversationsController < ApplicationController
       for com in conversation.communities
         if current_participant.tag_list.include?(com.tagname)
           perspectives[com.tagname] = com.fullname
+          #logger.info("conversations#index user is in :#{com.tagname}")          
+        else
+          #logger.info("conversations#index user is not in :#{com.tagname}")          
         end
       end
       if perspectives.length == 0
         conversation.perspective = 'outsider'
-      elsif session.has_key?("cur_perspective_#{conversation.id}") != ''
+      elsif session.has_key?("cur_perspective_#{conversation.id}") and session["cur_perspective_#{conversation.id}"] != ''
         conversation.perspective = session["cur_perspective_#{conversation.id}"]
       elsif perspectives.length == 1
         conversation.perspective = perspectives.keys[0]
@@ -49,6 +52,7 @@ class ConversationsController < ApplicationController
         conversation.perspective = perspectives.keys[0]
       end
       session["cur_perspective_#{conversation.id}"] = conversation.perspective 
+      logger.info("conversations#index conversation #{conversation.shortname} perspectives:#{perspectives} chosen:#{conversation.perspective}")
       
       @conversations << conversation
     end    
