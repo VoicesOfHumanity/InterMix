@@ -552,6 +552,16 @@ class ItemsController < ApplicationController
         if @conv_own_coms.length == 1 and @conversation.together_apart == 'apart'
           tags << @conv_own_coms.keys[0]
         end
+        
+        if @conversation.together_apart != ''
+          if @item.reply_to.to_i > 0
+            if @olditem.together_apart.to_s != ''
+              tags << @olditem.together_apart
+            end
+          else
+            tags << @conversation.together_apart
+          end
+        end
       end
     end
     
@@ -799,6 +809,12 @@ class ItemsController < ApplicationController
           end
         end
       end
+      
+      if @conversation.together_apart != '' and @item.reply_to.to_i == 0
+        # Root messages in conversation are marked with togther or apart
+        @item.together_apart = @conversation.together_apart
+      end
+      
     end
     
     if @item.reply_to.to_i > 0
@@ -820,6 +836,7 @@ class ItemsController < ApplicationController
           @olditem.edit_locked = true
           @olditem.save
         end
+        @item.together_apart = @olditem.together_apart
       end
       if @conversation
         # If reply is from somebody outside the conversation, flag it
@@ -836,6 +853,16 @@ class ItemsController < ApplicationController
       @item.first_in_thread_group_id = @item.group_id
     end    
     logger.info("items#create by #{@item.posted_by}")
+    
+    if @item.together_apart.to_s != ''
+      tag = '#' + @item.together_apart
+      if not @item.html_content.include? tag
+        # Put it before the last </p>
+        array_of_pieces = @item.html_content.rpartition '</p>'
+        ( array_of_pieces[(array_of_pieces.find_index '</p>')] = "#{tag}</p>" ) rescue nil
+        @item.html_content = array_of_pieces.join  
+      end
+    end
     
     if @item.group_id.to_i == 0
       @item.group_id = GLOBAL_GROUP_ID
