@@ -8,6 +8,19 @@ if item['is_first_in_thread'] and item.dialog and item.dialog.active_period and 
   appclass = (itemproc['hasrating'].to_i > 0 and itemproc['rateapproval']) ? 'approval' : 'approvalplus'
 end
 %>
+<%
+if not defined? censor_ok
+  for tag in item.tag_list
+    if session[:moderated_communities].include? tag
+      community = Community.find_by_tagname(tag)
+      community_admins = community.admins_and_moderators.collect{|r| r.id }
+      if current_participant.sysadmin or community_admins.include? current_participant.id
+        censor_ok = true
+      end
+    end
+  end
+end
+%>
 
 	<% if @error_message.to_s != '' -%>
 	<p><%= @error_message %></p>
