@@ -1701,7 +1701,17 @@ class ItemsController < ApplicationController
           end
         end
       end
-    
+
+      @communities = []
+      if @conversation and @community
+        # If the user is in several communities in the conversation
+        for com in @conversation.communities
+          if current_participant.tag_list.include?(com.tagname)
+            @communities << com
+          end
+        end  
+      end
+          
       @dialog_id = crit[:dialog_id]
       @period_id = crit[:period_id]
     

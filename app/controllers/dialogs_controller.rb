@@ -145,11 +145,20 @@ class DialogsController < ApplicationController
       else
         @conversation = Conversation.find_by_shortname(@conv)
         @conversation_id = @conversation ? @conversation.id : 0
-        # Is this user a member of any of the communities?
-        for com in @conversation.communities
-          if current_participant.tag_list.include?(com.tagname)
-            @is_conv_member = true
-            break
+        if @conversation
+          # Is this user a member of any of the communities?
+          for com in @conversation.communities
+            if current_participant.tag_list.include?(com.tagname)
+              @is_conv_member = true
+              if not @comtag or @comtag == ''
+                # Not only that, but let's enforce that the community is selected
+                @comtag = com.tagname
+                url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+                url += "&showresult=1" if @show_result == 1
+                redirect_to url 
+              end
+              break
+            end
           end
         end
         @section = 'conversations'
@@ -169,6 +178,16 @@ class DialogsController < ApplicationController
         url += "&showresult=1" if @show_result == 1
         redirect_to url 
       end
+    end
+    
+    @communities = []
+    if @conversation and @community
+      # If the user is in several communities in the conversation
+      for com in @conversation.communities
+        if current_participant.tag_list.include?(com.tagname)
+          @communities << com
+        end
+      end  
     end
     
     if is_new
