@@ -42,6 +42,7 @@ class ConversationsController < ApplicationController
           #logger.info("conversations#index user is not in :#{com.tagname}")          
         end
       end
+      conversation.perspectives = perspectives
       if perspectives.length == 0
         conversation.perspective = 'outsider'
       elsif session.has_key?("cur_perspective_#{conversation.id}") and session["cur_perspective_#{conversation.id}"] != ''

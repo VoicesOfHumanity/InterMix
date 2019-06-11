@@ -4,6 +4,7 @@ class Conversation < ApplicationRecord
   
   attr_accessor :activity
   attr_accessor :perspective
+  attr_accessor :perspectives
   
   def activity_count
     #-- Count the number of messages in the conversation in the past month 
