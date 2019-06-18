@@ -1,7 +1,7 @@
 class ConversationsController < ApplicationController
 
 	layout "front"
-  before_action :set_conversation, only: [:show, :edit, :update, :destroy]
+  before_action :set_conversation, only: [:show, :edit, :update, :destroy, :change_perspective]
   before_action :authenticate_user_from_token!, except: [:join, :front, :fronttag]
   before_action :authenticate_participant!, except: [:join, :front, :fronttag]
   before_action :check_is_admin, except: [:index, :join, :front, :fronttag]
@@ -141,6 +141,20 @@ class ConversationsController < ApplicationController
   def destroy
     @conversation.destroy
     redirect_to conversations_url, notice: 'Conversation was successfully destroyed.'
+  end
+  
+  def change_perspective
+    # Change the current user's perspective. Called by Ajax
+    perspective = params[:perspective].to_s
+    com = Community.find_by_tagname(perspective)
+    if not com
+      render plain: "not found"
+    else  
+      if current_participant.tag_list.include?(com.tagname)
+        session["cur_perspective_#{@conversation.id}"] = perspective
+        render plain: "ok"
+      end
+    end
   end
 
   private

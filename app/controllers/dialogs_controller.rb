@@ -145,19 +145,31 @@ class DialogsController < ApplicationController
       else
         @conversation = Conversation.find_by_shortname(@conv)
         @conversation_id = @conversation ? @conversation.id : 0
-        if @conversation
-          # Is this user a member of any of the communities?
-          for com in @conversation.communities
-            if current_participant.tag_list.include?(com.tagname)
-              @is_conv_member = true
-              if not @comtag or @comtag == ''
-                # Not only that, but let's enforce that the community is selected
-                @comtag = com.tagname
-                url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-                url += "&showresult=1" if @show_result == 1
-                redirect_to url 
+        if @conversation and @comtag == ""
+          # Does the user already have a perspective
+          if session.has_key?("cur_perspective_#{@conversation.id}")
+            comtag = session["cur_perspective_#{@conversation.id}"]
+            if current_participant.tag_list.include?(comtag)
+              @comtag = comtag
+              url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+              url += "&showresult=1" if @show_result == 1
+              redirect_to url 
+            end
+          end  
+          if @comtag == ""
+            # Is this user a member of any of the communities?
+            for com in @conversation.communities
+              if current_participant.tag_list.include?(com.tagname)
+                @is_conv_member = true
+                if not @comtag or @comtag == ''
+                  # Not only that, but let's enforce that the community is selected
+                  @comtag = com.tagname
+                  url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+                  url += "&showresult=1" if @show_result == 1
+                  redirect_to url 
+                end
+                break
               end
-              break
             end
           end
         end

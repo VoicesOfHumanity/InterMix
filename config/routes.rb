@@ -189,6 +189,7 @@ Rails.application.routes.draw do
   get 'conversations/all', to: 'conversations#index', action: :index, csection: 'all'
   get 'conversations/my', to: 'conversations#index', action: :index, csection: 'my'
   resources :conversations do
+    get :change_perspective, on: :member
   end
   
   resources :groups do
