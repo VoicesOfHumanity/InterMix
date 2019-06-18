@@ -323,6 +323,9 @@ function reply(item_id,to_reply) {
 	}
 	$('#reply_'+item_id).show();
 	var params = 'reply_to=' + item_id;
+	if ($('#conversation_id') && $('#conversation_id').val() > 0 ) {
+	    params += '&conversation_id=' + $('#conversation_id').val();
+	}  
 	if ($('#group_id') && $('#group_id').val() > 0 ) {
 	    params += '&group_id=' + $('#group_id').val();
 	}

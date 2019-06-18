@@ -1167,6 +1167,8 @@ class ItemsController < ApplicationController
     @item_id = params[:id]
     @exp_item_id = (params[:exp_item_id] || 0).to_i
     @item = Item.includes([:dialog,:group,{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary]).find(@item_id)
+    @conversation_id = params[:conversation_id].to_i
+    @inline = (params[:inline].to_i == 1)
     
     @dialog_id = @item.dialog_id
     if @dialog_id.to_i > 0
@@ -1196,6 +1198,12 @@ class ItemsController < ApplicationController
     @first_item_id = @item.first_in_thread
     @first_item = Item.find(@first_item_id )
 
+    if @conversation_id > 0
+      @replies = Item.where(is_first_in_thread: false, first_in_thread: @first_item.id, conversation_id: @conversation_id).order("id")
+    else
+      @replies = Item.where(is_first_in_thread: false, first_in_thread: @first_item.id).order("id")
+    end
+
     @period_id = 0
     @posted_by = 0
     @posted_meta={}
@@ -1215,7 +1223,11 @@ class ItemsController < ApplicationController
     update_last_url
     #update_prefix
 
-    render :action=>'thread'
+    if @inline
+      render :action=>'thread', layout: false
+    else
+      render :action=>'thread'
+    end
   end
   
   def rate

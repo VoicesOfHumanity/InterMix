@@ -3010,9 +3010,13 @@ class Item < ActiveRecord::Base
     end  
   end 
   
-  def num_replies
+  def num_replies(conversation_id=0)
     #-- How many replies does this item have?
-    Item.where(:reply_to=>self.id).count
+    if conversation_id > 0
+      Item.where(conversation_id: conversation_id, reply_to: self.id).count
+    else
+      Item.where(reply_to: self.id).count
+    end
   end
   
   def reply_ok(participant_id)

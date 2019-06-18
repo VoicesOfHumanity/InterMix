@@ -348,12 +348,15 @@ end
    </div>
    <% end -%>
 
-		<% if (@show_result and item.num_replies > 0) or (@sortby == 'default' and itemproc['replies'].length > 0) or ((@threads=='root' or @threads=='flat') and item.num_replies > 0) %>
+   <% item_num_replies = (@conversation_id ? item.num_replies(@conversation_id) : item.num_replies) %>
+		<% if (@show_result and item_num_replies > 0) or (@sortby == 'default' and itemproc['replies'].length > 0) or ((@threads=='root' or @threads=='flat') and item_num_replies > 0) %>
 		<div class="iteminfotxt">
       <% if @simple -%>
         <% if item.is_first_in_thread -%>
 		      <a href="/dialogs/<%= item.dialog_id %>/forum?item_id=<%= item.id %>&amp;xmode=single&amp;show_comments=1"><strong>Show Comments</strong></a>
         <% end -%>
+      <% elsif @conversation %>
+		    <a href="/items/<%= item.id %>/thread" onclick="load_thread(<%= item.id %>,<%= @conversation.id %>);return false"><strong>Show Comments</strong></a>
       <% else -%>
 		    <a href="/items/<%= item.id %>/thread"><strong>Show Comments</strong></a>
       <% end -%>

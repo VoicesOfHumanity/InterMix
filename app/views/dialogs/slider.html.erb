@@ -427,4 +427,19 @@ function chg_community() {
     window.location.href = '?comtag='+com+'&conv='+cur_conv;
   }
 }
+function load_thread(item_id, conversation_id) {
+  // Load a thread (maybe with comments) into the main part of the screen, not in a different screen
+  $('#per_main').css('opacity','0.5');
+	$.ajax({
+    type: 'GET',
+	  url: '/items/'+item_id+'/thread?inline=1&conversation_id='+conversation_id,
+	  complete: function(t){ 
+      $('#per_main').css('opacity','1.0');
+  	  $('#per_main').html(t.responseText);
+      $('#maincontent').height( $('#per_main').height()+95 );
+      $(window).scrollTop(0);
+	  }
+	});	
+}
+
 </script>
