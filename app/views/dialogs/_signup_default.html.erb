@@ -54,7 +54,7 @@
 <tr>
   <td style="vertical-align:top">Communities<br>check to join</td>
   <td>
-    <% if not @comfound and @comname != '' -%>
+    <% if not @comfound and @comname and @comname != '' -%>
     <input type="checkbox" id="check_<%= @comtag %>" name="check[<%= @comtag %>]" value="1" data-tag="<%= @comtag %>" class="com_check" checked> <%= @comname %><br>    
     <% end -%>
     <% for com in @major_communities -%>  
