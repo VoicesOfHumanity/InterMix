@@ -1625,7 +1625,9 @@ class Item < ActiveRecord::Base
     #end
     
     # tags
-    if crit[:comtag].to_s == '*my*'
+    if crit.has_key?(:conversation_id) and crit[:conversation_id].to_i > 0
+      # Skip tags if we're in a conversation
+    elsif crit[:comtag].to_s == '*my*'
       title += " | My Communities"
       plist = ''
       comtag_list = ''
@@ -1680,7 +1682,10 @@ class Item < ActiveRecord::Base
       items = items.where("intra_com='public'")
       
     end
-    if crit[:messtag].to_s != ''
+    
+    if crit.has_key?(:conversation_id) and crit[:conversation_id].to_i > 0
+      # Skip tags if we're in a conversation
+    elsif crit[:messtag].to_s != ''
       title += " | ##{crit[:messtag]}"
       items = items.tagged_with(crit[:messtag])      
     end    
