@@ -1,8 +1,11 @@
 <h3><%=raw @title %>
-<% if @conversation and @communities and @communities.length > 1 -%>
-  &nbsp;&nbsp;
-  <%= select_tag "chg_com", options_for_select([['Change Community','']]+@communities.collect{|c| [c.fullname,c.tagname]}), :onchange => 'chg_community()' %>
-<% end -%>
+<% if @conversation %>
+  <br>My Perspective: <%= @comtag.to_s != '' ? @comtag : "outsider" %>
+  <% if @communities and @communities.length > 1 -%>
+    &nbsp;&nbsp;
+    <%= select_tag "chg_com", options_for_select([['Change Community','']]+@communities.collect{|c| [c.fullname,c.tagname]}), :onchange => 'chg_community()' %>
+  <% end -%>
+<% end -%>  
 </h3>
 
 <% show_part = (@num_all_posts.to_i>0 ? (1.0 * @items_length / @num_all_posts) : 0) %>

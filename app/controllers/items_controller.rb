@@ -1606,10 +1606,6 @@ class ItemsController < ApplicationController
       session[:comtag] = crit[:comtag]
       session[:messtag] = crit[:messtag]
       
-      if crit[:comtag].to_s != '' and crit[:comtag] != '*my*'
-        @community = Community.find_by_tagname(crit[:comtag])
-      end
-          
       nvaction_changed = false
       if params.has_key?(:nvaction) 
         crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
@@ -1714,8 +1710,13 @@ class ItemsController < ApplicationController
         end
       end
 
+      @comtag = ""
+      if crit[:comtag] != '' and crit[:comtag] != '*my*'
+        @comtag = crit[:comtag]
+      end
+      
       @communities = []
-      if @conversation and @community
+      if @conversation and @comtag and @comtag.to_s != ''
         # If the user is in several communities in the conversation
         for com in @conversation.communities
           if current_participant.tag_list.include?(com.tagname)
@@ -1723,7 +1724,29 @@ class ItemsController < ApplicationController
           end
         end  
       end
-          
+      
+      if @conversation
+        # What's their perspective? = @comtag
+        if @comtag and @comtag.to_s != ''
+          # A tag has been selected. See if they're a member
+          if not current_participant.tag_list.include?(@comtag)
+            @comtag = ""
+          end
+        elsif session.has_key?("cur_perspective_#{@conversation.id}")
+          # Does the user already have a perspective
+          comtag = session["cur_perspective_#{@conversation.id}"]
+          if current_participant.tag_list.include?(comtag)
+            @comtag = comtag
+          end
+        end    
+      else
+        # crit[:comtag] Might be blank, *my*, or a tag
+      end
+
+      if crit[:comtag].to_s != '' and crit[:comtag] != '*my*'
+        @community = Community.find_by_tagname(crit[:comtag])
+      end
+                    
       @dialog_id = crit[:dialog_id]
       @period_id = crit[:period_id]
     
