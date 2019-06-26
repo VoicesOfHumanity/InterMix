@@ -1,7 +1,7 @@
 <%= render(:partial => 'topmenu')%>
 
 <table style="width:595px">
-<tr><th>Forum</th><th>Activity</th><th>More Information</th><th>Mode</th><th>Perspective</th></tr>	
+<tr><th>Forum</th><th>Activity</th><th>More Information</th><th>Phase</th><th>Perspective</th></tr>	
 <% for conv in @conversations -%>
 <tr>
 	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>"><%= conv.shortname %></a></td>	

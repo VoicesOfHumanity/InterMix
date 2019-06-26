@@ -172,6 +172,13 @@ class DialogsController < ApplicationController
               end
             end
           end
+        else
+          # Is this user a member of any of the communities?
+          for com in @conversation.communities
+            if current_participant.tag_list.include?(com.tagname)
+              @is_conv_member = true
+            end
+          end
         end
         @section = 'conversations'
       end

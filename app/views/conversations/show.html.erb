@@ -7,7 +7,7 @@
 <p><%=raw @conversation.description %></p>
 <% end -%>
 
-<p><b>Phase:</b> <%= @conversation.together_apart %></p>
+<p><b>Current Phase:</b> <%= @conversation.together_apart %></p>
 
 <p><b>Current Perspective:</b> 
 <% if @perspectives.length > 1 -%>
@@ -21,6 +21,10 @@
   <%= @cur_perspective %>
 <% end -%>
 <br>
+<% if @cur_perspective == 'outsider' -%>
+As an Outsider, you can read but not post items in the conversation forum.
+<% end -%>
+
 You must join a community to make it your current perspective. All messages you write in this conversation will be automatically tagged with the community you have chosen as your perspective.</p>
 
 <% if @conversation.together_apart == 'together' -%>
@@ -31,7 +35,11 @@ You must join a community to make it your current perspective. All messages you 
 
 <% else -%>
 
-  <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= @cur_perspective %>"><%= @cur_perspective %> Forum</a></p>
+  <% if @cur_perspective == 'outsider' -%>
+    <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>">Forum</a> as an outsider</p>  
+  <% else -%>
+    <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= @cur_perspective %>"><%= @cur_perspective %> Forum</a></p>
+  <% end -%>
 
   <p>In Apart mode, the forum includes only messages from your current perspective. If you are not a member of any of the conversation communities, then you cannot post in the conversation, but you may comment and rate. Your comments and ratings as a non-member will not count in the conversation, only in the wider Order Out of Chaos forum.</p>
 

@@ -1625,8 +1625,16 @@ class Item < ActiveRecord::Base
     #end
     
     # tags
-    if crit.has_key?(:conversation_id) and crit[:conversation_id].to_i > 0
-      # Skip tags if we're in a conversation
+    if @conversation
+      # Tags in a conversation are treated a bit differently
+      if @conversation.together_apart == 'together'
+        # Don't care about comtags at all
+      elsif crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+        # Only show what's for the user's perspective
+        if current_participant.tag_list.include?(crit[:comtag])
+          items = items.where(representing_com: crit[:comtag])       
+        end
+      end
     elsif crit[:comtag].to_s == '*my*'
       title += " | My Communities"
       plist = ''
