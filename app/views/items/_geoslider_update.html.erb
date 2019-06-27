@@ -3,7 +3,7 @@
   <br>My Perspective: <%= @comtag.to_s != '' ? @comtag : "outsider" %>
   <% if @communities and @communities.length > 1 -%>
     &nbsp;&nbsp;
-    <%= select_tag "chg_com", options_for_select([['Change Community','']]+@communities.collect{|c| [c.fullname,c.tagname]}), :onchange => 'chg_community()' %>
+    <%= select_tag "chg_com", options_for_select([['Change Perspective','']]+@communities.collect{|c| [c.fullname,c.tagname]}), :onchange => 'chg_community()' %>
   <% end -%>
 <% end -%>  
 </h3>

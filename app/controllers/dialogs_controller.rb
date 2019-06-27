@@ -152,7 +152,7 @@ class DialogsController < ApplicationController
             if current_participant.tag_list.include?(comtag)
               @comtag = comtag
               url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-              url += "&showresult=1" if @show_result == 1
+              url += "&show_result=1" if @show_result == 1
               redirect_to url 
             end
           end  
@@ -165,7 +165,7 @@ class DialogsController < ApplicationController
                   # Not only that, but let's enforce that the community is selected
                   @comtag = com.tagname
                   url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-                  url += "&showresult=1" if @show_result == 1
+                  url += "&show_result=1" if @show_result == 1
                   redirect_to url 
                 end
                 break
@@ -182,19 +182,46 @@ class DialogsController < ApplicationController
         end
         @section = 'conversations'
       end
-    elsif @community and current_participant.tag_list.include?(@comtag)
-      # If we're in a community, and the user is a member
+      if @comtag != '' and not params.has_key?(:comtag)
+        url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+        url += "&show_result=1" if @show_result == 1
+        redirect_to url 
+      end
+    elsif session.has_key?(:conv) and @comtag.to_s != ''
+      # We remember a conversation from the session
+      @conv = session[:conv]
+      @conversation = Conversation.find_by_shortname(@conv)
+      com_found = false
+      for com in @conversation.communities
+        if com.tagname == @comtag and current_participant.tag_list.include?(@comtag)
+          com_found = true
+          break
+        end
+      end
+      if com_found
+        url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+        url += "&show_result=1" if @show_result == 1
+        redirect_to url
+      else
+        # forget about that conversation. Doesn't match community
+        @conv = nil
+        @conversation = nil
+        session.delete(:conv)
+      end
+    end
+    if not @conversation and @community and current_participant.tag_list.include?(@comtag)
+      # If we're in a community, and the user is a member. Conversation not specified. Figure out which one
       if @community.conversations.length == 1
         # Community is in only one conversation, go there
         @conversation = @community.conversations[0]
         url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-        url += "&showresult=1" if @show_result == 1
+        url += "&show_result=1" if @show_result == 1
         redirect_to url 
       elsif @community.conversations.length > 1
         # Community is in more than one conversation. Pick the last one.
         @conversation = @community.conversations.last
         url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-        url += "&showresult=1" if @show_result == 1
+        url += "&show_result=1" if @show_result == 1
         redirect_to url 
       end
     end
