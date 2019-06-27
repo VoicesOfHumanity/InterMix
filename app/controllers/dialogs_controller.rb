@@ -153,7 +153,8 @@ class DialogsController < ApplicationController
               @comtag = comtag
               url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
               url += "&show_result=1" if @show_result == 1
-              redirect_to url 
+              redirect_to url
+              return
             end
           end  
           if @comtag == ""
@@ -185,7 +186,8 @@ class DialogsController < ApplicationController
       if @comtag != '' and not params.has_key?(:comtag)
         url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
         url += "&show_result=1" if @show_result == 1
-        redirect_to url 
+        redirect_to url
+        return
       end
     elsif session.has_key?(:conv) and @comtag.to_s != ''
       # We remember a conversation from the session
@@ -202,6 +204,7 @@ class DialogsController < ApplicationController
         url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
         url += "&show_result=1" if @show_result == 1
         redirect_to url
+        return
       else
         # forget about that conversation. Doesn't match community
         @conv = nil
@@ -216,13 +219,15 @@ class DialogsController < ApplicationController
         @conversation = @community.conversations[0]
         url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
         url += "&show_result=1" if @show_result == 1
-        redirect_to url 
+        redirect_to url
+        return
       elsif @community.conversations.length > 1
         # Community is in more than one conversation. Pick the last one.
         @conversation = @community.conversations.last
         url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
         url += "&show_result=1" if @show_result == 1
-        redirect_to url 
+        redirect_to url
+        return
       end
     end
     
