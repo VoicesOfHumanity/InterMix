@@ -8,7 +8,7 @@
   <%= @dialog.name %>
 <% end -%>  
 <% if @dsection == 'meta' -%>
-  - <span id="top_result_header">Highest Rated <%= @nvaction ? 'Nonviolent Action Items' : 'Messages' %></span>
+  - <span id="top_result_header"><%= @conversation.name %> - Highest Rated <%= @nvaction ? 'Nonviolent Action Items' : 'Messages' %></span>
 <% elsif @dsection == 'info' -%>
   - About</span>
 <% elsif @dsection == 'list' and @conversation and @conversation.name.to_s != '' -%>
