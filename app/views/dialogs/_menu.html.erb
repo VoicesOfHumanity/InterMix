@@ -1,37 +1,19 @@
 <%= render(:partial => 'dialogs/top_titles')%>
 
-<% if true or session[:dialog_id].to_i == 0 -%>
-  <ul class="horizmenu">
+<ul class="horizmenu">
 
-  <li><a class="menu<%= ' selected' if @dsection=='list' %>" href="/dialogs/<%= @dialog.id %>/slider?<%= @comtag != "" ? "comtag=#{@comtag}&" : "" %><%= @conversation ? "conv=#{@conversation.shortname}&" : '' %>show_result=0">Forum</a></li>
-  <li><a class="menu<%= ' selected' if @dsection=='meta' %>" href="/dialogs/<%= @dialog.id %>/slider?<%= @comtag != "" ? "comtag=#{@comtag}&" : "" %><%= @conversation ? "conv=#{@conversation.shortname}&" : '' %>show_result=1">Voices of Humanity</a></li>
-  <li>yyy</li>
-  <% if true -%>
-     <% about_link = "whatever" %>
-  <% elsif @conversation -%>
-    <% about_link = "/conversations/#{@conversation.id}" %>
-  <% else -%>
-    <% about_link = (@community and @comtag.to_s!='' and @comtag!='*my*' ) ? "/communities/#{@community.id}" : "/dialogs/#{@dialog.id}/view" %>
-  <% end -%>
-  <li><a id="about_a" class="menu<%= @dsection=='info' ? ' selected' : ''  %>" href="<%= about_link %>XXX">About</a></li>
-
-  <% if false -%>
-  <li><a class="menu<%= ' selected' if @dsection=='forum' %>" href="/dialogs/<%= @dialog.id %>/forum">More Options</a></li>
-  <% end -%>
-  <% if false -%>
-  <li><a class="menu" href="/dialogs/<%= @dialog.id %>/view#participatinggroups">Groups</a></li>
-  <% end -%>
-  <% if @is_admin or current_participant.sysadmin -%>
-  <li><a class="menu<%= ' selected' if @dsection=='edit' %>" href="/dialogs/<%= @dialog.id %>/edit">Admin</a></li>
-  <% end -%>
-  <% if false -%>
-  <li><a  class="menu<%= ' selected' if @dsection=='' %>" href="/dialogs">All Discussions</a></li>
-  <% end -%>
-  <% if false and @dialog.active_period %>
-  <li><a class="menu" href="/dialogs/<%= @dialog.id %>/forum?simple=1">Easy Mode</a></li>
-  <% end %>
-  </ul>
-  
+<li><a class="menu<%= ' selected' if @dsection=='list' %>" href="/dialogs/<%= @dialog.id %>/slider?<%= @comtag != "" ? "comtag=#{@comtag}&" : "" %><%= @conversation ? "conv=#{@conversation.shortname}&" : '' %>show_result=0">Forum</a></li>
+<li><a class="menu<%= ' selected' if @dsection=='meta' %>" href="/dialogs/<%= @dialog.id %>/slider?<%= @comtag != "" ? "comtag=#{@comtag}&" : "" %><%= @conversation ? "conv=#{@conversation.shortname}&" : '' %>show_result=1">Voices of Humanity</a></li>
+<% if @conversation -%>
+  <% about_link = "/conversations/#{@conversation.id}" %>
+<% else -%>
+  <% about_link = (@community and @comtag.to_s!='' and @comtag!='*my*' ) ? "/communities/#{@community.id}" : "/dialogs/#{@dialog.id}/view" %>
 <% end -%>
+<li><a id="about_a" class="menu<%= @dsection=='info' ? ' selected' : ''  %>" href="<%= about_link %>">About</a></li>
+<% if @is_admin or current_participant.sysadmin -%>
+  <li><a class="menu<%= ' selected' if @dsection=='edit' %>" href="/dialogs/<%= @dialog.id %>/edit">Admin</a></li>
+<% end -%>
+</ul>
+  
 
 <div style="clear:both;height:1px"></div>
