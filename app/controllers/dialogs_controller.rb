@@ -53,9 +53,10 @@ class DialogsController < ApplicationController
   
   def slider
     return if redirect_if_not_voh
+    logger.info("dialogs#slider")
     @section = 'dialogs'
     @dsection = 'slider'
-    @dialog_id = params[:id].to_i
+    @dialog_id = VOH_DISCUSSION_ID
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     
@@ -241,23 +242,6 @@ class DialogsController < ApplicationController
       end  
     end
     
-    if is_new
-      @group_id = 0
-      session[:group_id] = @group_id
-    elsif params.has_key?(:group_id)
-      session[:group_id] = params[:group_id].to_i
-      @group_id = params[:group_id].to_i
-    else
-      @group_id = session[:group_id]
-    end        
-    @group = Group.find_by_id(@group_id)
-    if @group
-      @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first
-      @is_member = @group_participant ? true : false
-    else
-      @is_member = false
-    end
-    
     @geo_levels = [
       [6,'Planet&nbsp;Earth'],
       [5,'My&nbsp;Nation'],
@@ -274,65 +258,6 @@ class DialogsController < ApplicationController
     else
       @geo_level = 6
     end
-    @group_levels = [
-      [3,'All groups'],
-      [2,'My groups'],
-      [1,'Current group']
-    ]
-    if is_new
-      @group_level = 3
-    elsif session[:group_level].to_i > 0
-      @group_level = session[:group_level]
-    else
-      @group_level = 3
-    end
-    
-    if is_new
-      @indigenous = false
-      session[:indigenous] = @indigenous
-    elsif params.has_key?(:indigenous)
-      @indigenous = params[:indigenous]     
-      session[:indigenous] = @indigenous
-    else
-      @indigenous = session.has_key?(:indigenous) ? session[:indigenous] : false
-    end
-    if is_new
-      @other_minority = false
-      session[:other_minority] = @other_minority
-    elsif params.has_key?(:other_minority)
-      @other_minority = params[:other_minority]     
-      session[:other_minority] = @other_minority
-    else
-      @other_minority = session.has_key?(:other_minority) ? session[:other_minority] : false
-    end
-    if is_new
-      @veteran = false
-      session[:veteran] = @veteran
-    elsif params.has_key?(:veteran)
-      @veteran = params[:veteran]     
-      session[:veteran] = @veteran
-    else
-      @veteran = session.has_key?(:veteran) ? session[:veteran] : false
-    end
-    if is_new
-      @interfaith = false
-      session[:interfaith] = @interfaith
-    elsif params.has_key?(:interfaith)
-      @interfaith = params[:interfaith]     
-      session[:interfaith] = @interfaith
-    else
-      @interfaith = session.has_key?(:interfaith) ? session[:interfaith] : false
-    end
-    if is_new
-      @refugee = false
-      session[:refugee] = @refugee
-    elsif params.has_key?(:refugee)
-      @refugee = params[:refugee]     
-      session[:refugee] = @refugee
-    else
-      @refugee = session.has_key?(:refugee) ? session[:refugee] : false
-    end    
-    
     
     if @nvaction
       @suggestedtopic = "Nonviolent Action for Human Unity"
@@ -412,78 +337,13 @@ class DialogsController < ApplicationController
     #@datefrom = session.has_key?(:datefrom) ? session[:datefrom] : Date.today.beginning_of_month.strftime('%Y-%m-%d')
     logger.info("dialogs#slider datetype:#{@datetype} datefixed:#{@datefixed} datefrom:#{@datefrom}")    
     
-    #logger.info("dialogs#slider session list_period_id:#{session[:list_period_id]} result_period_id:#{session[:result_period_id]}")    
-    
-    if @show_result.to_i > 0
-      #-- Results will show either the previous period (if the latest period was chosen in list)
-      #-- or the same period, if any other than the latest period was chosen in list
-      recent_period_id = @dialog.recent_period ? @dialog.recent_period.id : 0
-      previous_period_id = @dialog.previous_period ? @dialog.previous_period.id : 0
-      if session.has_key?(:list_period_id) and session[:list_period_id].to_i > 0
-        list_period_id = session[:list_period_id]
-        if list_period_id == recent_period_id
-          #-- Most recent period was picked in listing. Use the one before
-          @period_id = previous_period_id
-          logger.info("dialogs#slider setting result period to the previous #{@period_id}")
-        else  
-          #-- Use the same one as in listing
-          @period_id = session[:list_period_id].to_i
-          logger.info("dialogs#slider setting result period to same as listing #{@period_id}")
-        end
-      else
-        #-- No sign of a selection in listing. Pick the next to last period
-        @period_id = recent_period_id
-        logger.info("dialogs#slider setting result period to previous #{@period_id}, as no listing was indicated")
-      end
-      if @period_id == 0
-        @period_id = recent_period_id
-        logger.info("dialogs#slider setting result period to #{@period_id} as it was zero")
-      end
-    else
-      #-- Listing will always start off showing the latest period, no matter where one comes from
-      logger.info("dialogs#slider setting listing period based on recent_period")
-      @period_id = @dialog.recent_period ? @dialog.recent_period.id : 0
-      session[:list_period_id] = @period_id
-    end
-    
-    #if session.has_key?(:slider_period_id) and session[:slider_period_id].to_i > 0
-    #  logger.info("dialogs#slider setting period based on slider_period_id")
-    #  @period_id = session[:slider_period_id].to_i
-    #elsif @dialog.recent_period
-    #  logger.info("dialogs#slider setting period based on recent_period")
-    #  @period_id = @dialog.recent_period.id
-    #else
-    #  logger.info("dialogs#slider setting period to zero")
-    #  @period_id = 0
-    #end
-    logger.info("dialogs#slider period:#{@period_id}")
-    @period = Period.find_by_id(@period_id) if @period_id > 0
-    if @period and @period.dialog_id != @dialog_id
-      # If the remembered period was for a different discussion, don't use it
-      logger.info("dialogs#slider period #{@period.id} is not for dialog #{@dialog_id} so changing it")
-      if @dialog.recent_period
-        @period_id = @dialog.recent_period.id
-      else
-        @period_id = 0
-      end
-      @period = Period.find_by_id(@period_id) if @period_id > 0
-    end
-    session[:slider_period_id] = @period_id
-    logger.info("dialogs#slider slider_period:#{session[:slider_period_id]}")
-
     @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
-    if @dialog.current_period.to_i > 0
-      @previous_messages_period = Item.where("posted_by=? and dialog_id=? and period_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id,@dialog.current_period.to_i).count      
-    end
 
     @sortby = nil
     if session.include?(:list_sortby) and session.include?(:slider_dialog_id)
       #-- Look at the previous sort used and see if we should use the same
       if session[:slider_dialog_id] !=  @dialog.id
         #-- It was for a different discussion
-        session.delete(:list_sortby)
-      elsif session.include?(:slider_group_id) and session[:slider_group_id].to_i != @group_id
-        #-- It was for a different group
         session.delete(:list_sortby)
       else
         @sortby = session[:list_sortby]
@@ -494,12 +354,6 @@ class DialogsController < ApplicationController
 
     if @sortby
       #-- If we already have the sort key, keep that
-    elsif @period and @period.sort_order == 'date'
-      @sortby = "items.id desc"
-    elsif @period and @period.sort_order == 'value'
-      @sortby = '*value*'      
-    elsif @period and @period.sort_order.to_s != ''
-      @sortby = @period.sort_order      
     else
       @sortby = '*value*'
     end

@@ -1450,13 +1450,6 @@ class Item < ActiveRecord::Base
     ratings = Rating.where(nil)
     title = ''
 
-    # Discussion and period
-    items = items.where("items.dialog_id = ?", crit[:dialog_id]) if crit[:dialog_id].to_i > 0
-    items = items.where("items.dialog_id = 0 or items.dialog_id is null") if crit[:dialog_id].to_i < 0
-    #items = items.where("items.period_id = ?", crit[:period_id]) if crit[:period_id].to_i > 0    
-    ratings = ratings.where("ratings.dialog_id=#{crit[:dialog_id]}") if crit[:dialog_id].to_i > 0
-    #ratings = ratings.where("ratings.period_id=#{crit[:period_id]}") if crit[:period_id].to_i >0  
-
     # Date period
     if crit.has_key?(:datefromuse) and crit[:datefromuse].to_s != ''
       if crit[:datefromuse].class == Date
@@ -1482,29 +1475,6 @@ class Item < ActiveRecord::Base
 
     items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
     ratings = ratings.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
-
-    # Group slider selections
-    group = nil   
-    group_id = 0  
-    if crit[:group_level] == 'current'
-      group_id = crit[:group_id].to_i
-      group = Group.find_by_id(group_id) if group_id > 0
-      items = items.where("items.group_id = #{group_id} or items.first_in_thread_group_id = #{group_id}")
-      ratings = ratings.where("ratings.group_id = #{group_id}")
-      if group
-        title += "#{group.name}"
-      else
-        title += "#{group_id}"        
-      end
-    elsif crit[:group_level] == 'user'
-      #-- Groups they're a member of
-      groups = current_participant.groups_in.collect{|g| g[0]}
-      items = items.where("items.group_id in (#{groups.join(',')}) or items.first_in_thread_group_id in (#{groups.join(',')})")
-      ratings = ratings.where("ratings.group_id in (#{groups.join(',')})")
-      title += "My groups"
-    elsif crit[:group_level] == 'all' 
-      title += "All groups"   
-    end
     
     # Don't worry about groups any more
     title = ''
@@ -1597,32 +1567,6 @@ class Item < ActiveRecord::Base
     elsif not crit[:show_result]
       title += " | Voice of Humanity"
     end
-
-    #if crit[:indigenous]
-    #  items = items.where("participants.indigenous=1")
-    #  ratings = ratings.where("participants.indigenous=1")
-    #  title += " | Indigenous"
-    #end
-    #if crit[:other_minority]
-    #  items = items.where("participants.other_minority=1")
-    #  ratings = ratings.where("participants.other_minority=1")
-    #  title += " | Other minority"
-    #end
-    #if crit[:veteran]
-    #  items = items.where("participants.veteran=1")
-    #  ratings = ratings.where("participants.veteran=1")
-    #  title += " | Veteran"    
-    #end
-    #if crit[:interfaith]
-    #  items = items.where("participants.interfaith=1")
-    #  ratings = ratings.where("participants.interfaith=1")
-    #  title += " | Interfaith"
-    #end
-    #if crit[:refugee]
-    #  items = items.where("participants.refugee=1")
-    #  ratings = ratings.where("participants.refugee=1")
-    #  title += " | Refugee"
-    #end
     
     # tags
     if @conversation

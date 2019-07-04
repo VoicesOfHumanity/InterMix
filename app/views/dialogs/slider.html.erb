@@ -1,4 +1,5 @@
 <%= render(:partial => 'dialogs/menu') %>
+<% logger.info("dialogs#slider slider.html") %>
 
 <div id="slider_container" style="overflow:none;width:740px;min-height:600px">
 
@@ -24,15 +25,7 @@
   
     <p>
         <% if (not @conversation) or (@conversation and @is_conv_member) %>
-        <input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
-    		<% elsif true -%>
-    		<% elsif session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
-    		<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
-        <% else -%>
-    			<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" title="<%= 
-    			if not session[:group_is_member] then "Not group member" elsif not @dialog.settings_with_period["posting_open"] then "Posting is not open"
-    	elsif not ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) then "Maximum messages have been reached"
-    	else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
+          <input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
     		<% end -%>
         
         <% if @showing_options == 'more' -%>
@@ -59,14 +52,6 @@
       <input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> onclick="per_reload()"><%=raw geo_desc %><br>    
     <% end -%>
     </div>
-
-    <% if false -%>
-      <div style="margin: 20px 0 0 0;">
-      <% @group_levels.each do |group_level,group_desc| -%>
-        <input type="radio" name="group_level_radio" value="<%= group_level %>" <%= group_level == @group_level ? "checked" : "" %> onclick="per_reload()"><%=raw group_desc %><br>    
-      <% end -%>
-      </div>
-    <% end -%>
     
     <div style="margin: 20px 0 0 0;">
       <input type="radio" name="comtag_radio" value="" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
@@ -140,15 +125,11 @@
 
 <input type="hidden" name="conversation_id" id="conversation_id" value="<%= @conversation_id %>">
 <input type="hidden" name="dialog_id" id="dialog_id" value="<%= @dialog_id %>">
-<input type="hidden" id="active_period_id" value="<%= @dialog.active_period ? @dialog.active_period.id : "0" %>">
-<input type="hidden" id="active_period_name" value="<%= @dialog.active_period ? @dialog.active_period.name : "" %>">
 <input type="hidden" name="in_dialog_id" id="in_dialog_id" value="<%= @dialog_id %>">
 <input type="hidden" name="geo_level" id="geo_level" value="1">
-<input type="hidden" name="group_level" id="group_level" value="1">
 <input type="hidden" name="batch_level" id="batch_level" value="<%= (@batch_level || 1).to_i %>">
 <input type="hidden" name="batch_size" id="batch_size" value="<%= (@batch_size || 4).to_i %>">
 <input type="hidden" id="from" name="from" value="geoslider">	
-<input type="hidden" id="in_group_id" name="in_group_id" value="<%= session[:group_id].to_i %>">	
 
 <div id="newforumitem" class="newforumitem" style="display:none"></div>
 
@@ -158,7 +139,6 @@ var geo_levels = {1: 'city', 2: 'county', 3: 'metro', 4: 'state', 5: 'nation', 6
 var cur_comtag = '';
 var cur_messtag = '';
 var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 5 %>;
-var cur_group_level = <%= @group_level > 0 ? @group_level : 3 %>;
 var cur_batch_level = <%= (@batch_level || 1).to_i %>;
 var cur_batch_size = <%= (@batch_size || 4).to_i %>;
 var showing_options = '<%= @showing_options %>';
@@ -182,19 +162,6 @@ $(function() {
       }
     });
     $( "#geo_level" ).val( $( "#geoslider" ).slider( "value" ) );
-    $( "#groupslider" ).slider({
-      orientation: "vertical",
-      range: "min",
-      min: 1,
-      max: 3,
-      value: cur_group_level,
-      slide: function( event, ui ) {
-        cur_group_level = ui.value;
-        $( "#group_level" ).val( cur_group_level );
-        per_reload();
-      }
-    });
-    $( "#group_level" ).val( $( "#groupslider" ).slider( "value" ) );
   }
 });
 var messtag_changed = false;
@@ -260,14 +227,7 @@ function per_reload(first,num,whatchanged,page,go_item) {
     $("input[name=messtag_radio][value='']").prop('checked', true);
   }
   cur_geo_level = $("input[name='geo_level_radio']:checked").val();
-  cur_group_level = $("input[name='group_level_radio']:checked").val();
-  
-  var indigenous = $('#indigenous').is(':checked') ? 1 : 0;
-  var other_minority = $('#other_minority').is(':checked') ? 1 : 0;
-  var veteran = $('#veteran').is(':checked') ? 1 : 0;
-  var interfaith = $('#interfaith').is(':checked') ? 1 : 0;
-  var refugee = $('#refugee').is(':checked') ? 1 : 0;
-  
+   
   var showratings = <%= params[:showratings].to_i == 1 ? 1 : 0 %>;
   var showfollow = <%= params[:showfollow].to_i == 1 ? 1 : 0 %>;
   
@@ -279,8 +239,7 @@ function per_reload(first,num,whatchanged,page,go_item) {
   var meta_3 = $("input[name='meta_3']:checked").val()
   var meta_5 = $("input[name='meta_5']:checked").val()
   var dialog_id = $('#dialog_id').val();
-  var period_id = $('#period_id').val();
-  var conversation_id = $('#conversation_id').val();
+   var conversation_id = $('#conversation_id').val();
   //var comtag = $('#comtag').val()
   var comtag = cur_comtag;
   var messtag = cur_messtag;
@@ -313,14 +272,8 @@ function per_reload(first,num,whatchanged,page,go_item) {
     $('#datefrom').val(datefrom);
   }
   var nvaction = nvaction_on ? 1 : 0
-  var active_period_id = $('#active_period_id').val();
   $('#newthreadbutton').prop('disabled', false);
-  //if (period_id==active_period_id) {
-  //  $('#newthreadbutton').prop('disabled', false);    
-  //} else {
-  //  $('#newthreadbutton').prop('disabled', true);   
-  //}
-  var data = {page: page, geo_level: cur_geo_level, indigenous: indigenous, other_minority: other_minority, veteran: veteran, interfaith: interfaith, refugee: refugee, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, period_id: period_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, nvaction_included: (nvaction_included ? 1 : 0), conversation_id: conversation_id}
+  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, nvaction_included: (nvaction_included ? 1 : 0), conversation_id: conversation_id}
   
   //var tag;
   //$('.com_check').each(function(i) {
@@ -336,7 +289,6 @@ function per_reload(first,num,whatchanged,page,go_item) {
 	$.ajax({
     type: 'GET',
 	  url: '/items/geoslider_update',
-    //group_level: cur_group_level, 
 	  data: data,
 	  complete: function(t){ 
     $('#per_main').css('opacity','1.0');

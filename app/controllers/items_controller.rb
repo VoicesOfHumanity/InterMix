@@ -1565,37 +1565,6 @@ class ItemsController < ApplicationController
       geo_levels = GEO_LEVELS               # {1 => 'city', 2 => 'county', 3 => 'metro', 4 => 'state', 5 => 'nation', 6 => 'planet'}    
       crit[:geo_level] = geo_levels[geo_level]
   
-      #group_level = params[:group_level].to_i
-      group_level = 3
-      session[:group_level] = group_level
-      @group_level = group_level
-      group_levels = {1 => 'current', 2 => 'user', 3 => 'all'}
-      crit[:group_level] = group_levels[group_level]
-  
-      #crit[:indigenous] = (params[:indigenous].to_i == 1) ? true : false
-      #crit[:other_minority] = (params[:other_minority].to_i == 1) ? true : false
-      #crit[:veteran] = (params[:veteran].to_i == 1) ? true : false
-      #crit[:interfaith] = (params[:interfaith].to_i == 1) ? true : false
-      #crit[:refugee] = (params[:refugee].to_i == 1) ? true : false
-    
-      #session[:indigenous] = crit[:indigenous]
-      #session[:other_minority] = crit[:other_minority]
-      #session[:veteran] = crit[:veteran]
-      #session[:interfaith] = crit[:interfaith]
-      #session[:refugee] = crit[:refugee]
-  
-      #crit[:dialog_id] = params[:dialog_id].to_i
-      crit[:dialog_id] = 0
-    
-      #crit[:period_id] = params[:period_id].to_i
-      crit[:period_id] = 0
-    
-      session[:slider_period_id] = crit[:period_id]
-      #logger.info("items#geoslider_update slider_period:#{session[:slider_period_id]}")
-    
-      #crit[:group_id] = session[:group_id].to_i
-      crit[:group_id] = 0
-      
       crit[:conversation_id] = params[:conversation_id].to_i
   
       crit[:gender] = params[:meta_3].to_i
@@ -1690,10 +1659,6 @@ class ItemsController < ApplicationController
       crit[:datefromuse] = @datefromuse.dup
       crit[:datefromto] = @datefromto.dup
     
-      # "datefixed"=>"month", "datefrom"=>""
-      # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
-      # item#get_items crit:{:geo_level=>"planet", :group_level=>"all", :dialog_id=>0, :period_id=>0, :group_id=>0, :gender=>0, :age=>0, :comtag=>"", :messtag=>"", :datefromuse=>Sun, 21 May 2017, :datefromto=>"", :show_result=>true}
-    
       # NB try to avoid this: items.created_at >= 'Y-m-d 00:00:00'
       
       @conversation_id = crit[:conversation_id].to_i
@@ -1747,58 +1712,12 @@ class ItemsController < ApplicationController
         @community = Community.find_by_tagname(crit[:comtag])
       end
                     
-      @dialog_id = crit[:dialog_id]
-      @period_id = crit[:period_id]
-    
-      @dialog = Dialog.find_by_id(crit[:dialog_id]) if crit[:dialog_id] > 0
-      @period = Period.find_by_id(crit[:period_id]) if crit[:period_id] > 0
+      @dialog_id = VOH_DISCUSSION_ID    
+      @dialog = Dialog.find_by_id(@dialog_id) if @dialog_id > 0
     
       @first = params[:first].to_i    # 1 if we got here when the page loads, rather than when parameters changed
     
       @showing_options = params[:showing_options] # less or more
-    
-      #if show_result and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
-      #  # If this is an active period and there's a previous period, use that instead
-      #  @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
-      #  if @period
-      #    @period_id = @period.id
-      #    crit[:period_id] = @period.id
-      #    #session[:slider_period_id] = @period.id
-      #  else
-      #     @period = Period.find_by_id(crit[:period_id])
-      #  end
-      #end
-      #if show_result and @first==1 and @dialog.current_period and @period_id == @dialog.current_period and @period.period_number > 1
-      #  # If this is an active period and there's a previous period, use that instead
-      #  @period = Period.where(dialog_id: @dialog_id, period_number: @period.period_number-1).last
-      #  if @period
-      #    @period_id = @period.id
-      #    crit[:period_id] = @period.id
-      #    #session[:slider_period_id] = @period.id
-      #  else
-      #     @period = Period.find_by_id(crit[:period_id])
-      #  end
-      #elsif not show_result and @first==1
-      #  # List should always be active/latest period  
-      #  if @dialog.active_period
-      #    @period = @dialog.active_period
-      #  elsif @dialog.recent_period
-      #    @period = @dialog.recent_period        
-      #  end
-      #  @period_id = @period.id
-      #end
-      @period_id = @period_id
-    
-      session[:slider_dialog_id] = @dialog_id
-      session[:slider_group_id] = @group_id
-    
-      if show_result
-        session[:result_period_id] = @period_id
-        logger.info("items#geoslider_update set result_period_id to #{@period_id}")
-      else
-        session[:list_period_id] = @period_id
-        logger.info("items#geoslider_update set list_period_id to #{@period_id}")
-      end
 
       @threads = params[:threads]
       session[:list_threads] = @threads
@@ -1811,8 +1730,7 @@ class ItemsController < ApplicationController
       #-- See how many total posts there are in the selected period, to be able to do a graphic
       all_posts = Item.where(nil)
       all_posts = all_posts.where(:is_first_in_thread => true) if rootonly
-      all_posts = all_posts.where(dialog_id: crit[:dialog_id]) if crit[:dialog_id] > 0
-      #all_posts = all_posts.where(period_id: crit[:period_id]) if crit[:period_id] > 0
+      #all_posts = all_posts.where(dialog_id: crit[:dialog_id]) if crit[:dialog_id] > 0
       all_posts = all_posts.where("items.created_at >= ?", crit[:datefromuse])
       @num_all_posts = all_posts.count
       # SELECT COUNT(*) FROM `items` WHERE `items`.`is_first_in_thread` = 1 AND (items.created_at >= '2017-05-21')
@@ -1823,8 +1741,6 @@ class ItemsController < ApplicationController
       @data = {}  
   
       if show_result
-        # Results will be for the previous period, if there's a current period
-      
         # If we're showing results, then add up results for the required gender and age combinations
         # We will go through the overall items and ratings we have, and put them in those several buckets
         # Then we will add up the results in each of those buckets

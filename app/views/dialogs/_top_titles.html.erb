@@ -1,3 +1,4 @@
+<% logger.info("dialogs#slider _top_titles") %>
 <p style="clear:both;padding:0 19px 0 0">
   
 <a href="/dialogs/<%= @dialog.id %>/slider" style="text-decoration:none;"><span style="font-size:20px;color:#000;">
@@ -5,14 +6,14 @@
 <% if @conversation -%>  
   Conversation
 <% else -%>  
-  <%= @dialog.name %>
+  <%= @dialog ? @dialog.name : '???' %>
 <% end -%>  
 <% if @dsection == 'meta' -%>
-  - <span id="top_result_header"><%= @conversation.name %> - Highest Rated <%= @nvaction ? 'Nonviolent Action Items' : 'Messages' %></span>
+  - <span id="top_result_header"><%= @conversation.name if @conversation %> - Highest Rated <%= @nvaction ? 'Nonviolent Action Items' : 'Messages' %></span>
 <% elsif @dsection == 'info' -%>
   - About</span>
 <% elsif @dsection == 'list' and @conversation and @conversation.name.to_s != '' -%>
-  - <span id="top_forum_header"><%= @conversation.name %> - <%=  @conversation.together_apart.capitalize %></span> 
+  - <span id="top_forum_header"><%= @conversation.name if @conversation %> - <%=  @conversation.together_apart.capitalize %></span> 
 <% elsif @dsection == 'list' -%>
   - <span id="top_forum_header"><%= @nvaction ? 'Nonviolent Action Forum' : 'Forum' %></span>
 <% end -%>
@@ -25,41 +26,5 @@
     <input type="button" value="Leave Conversation" onclick="leave_conversation()">
   <% end -%>
 <% end -%>
-<br>
-  
-<% if false and @dsection == 'meta' -%>
-  <% @limit_group = Group.find_by_id(@limit_group_id) if @limit_group_id.to_i > 0 %>
-  <span style="font-size:16px"><%= @period_id.to_i==0 ? "Overall": "Decision" %> Results for Discussion:</span><br/><span style="font-size:20px"><%= @dialog.name %></span><span style="font-size:16px"><%= @period ? ": #{@period.name}" : "" %></span>
-  	<% if @limit_group %><br><span style="font-size:16px">Results for group: <span style="color:#900;font-weight:bold;"><%= @limit_group.name %></span></span><% end %>
-    
-<% else -%>
-  <% @group = Group.find_by_id(@group_id.to_i > 0 ? @group_id : session[:group_id]) if not @group %>
-  <% if false -%>
-  Group: <a href="/groups/<%= @group ? @group.id : 0 %>/forum" style="text-decoration:none;"><span style="font-size:20px;color:#000;"><%= @group ? @group.name : '[unknown]' %></span></a><br>
-  This Discussion: <span style="font-size:20px"><%= @dialog.name %>&nbsp;&nbsp;</span><img src="/images/question-mark.png" class="tooltip" width="16" height="16" title="<%= @dialog.description.to_s != '' ? @dialog.description : "No description for this discussion" %>"><br>
-  <% end -%>
 
-  <% if false -%>
-    <% if @dsection=='list' or @dsection=='meta' or (@dialog.active_period and @sortby=='default') or @period_id.to_i > 0 -%>
-      Month: 
-      <% if @dsection=='list' or @dsection=='meta' -%>
-      		<% if @dialog.periods.length > 0 -%>
-      		  <%= select_tag "period_id", options_for_select([['All messages',0]]+@dialog.periods.collect{|c| ["#{c.period_number.to_i>0 ? "##{c.period_number} " : ""}#{c.name}",c.id]},session[:slider_period_id]), :onchange=>"per_reload()" %>
-      		<% else -%>
-      		  <%= hidden_field_tag :period_id, 0 %>	
-      		<% end -%>
-      <% else -%>
-        <span style="font-size:20px" id="period_name_heading"><%= (@period and @period.period_number.to_i > 0) ? "##{@period.period_number} " : ""%><%= @period ? ": #{@period.name}" : "" %>&nbsp;&nbsp;</span>
-      <% end -%>
-    <% end -%>
-  
-    <% if @period_id.to_i > 0 -%>
-      <img src="/images/question-mark.png" class="tooltip" width="16" height="16" title="<%= show_period_instructions(@dialog,@period) %>">
-    	<% if @dsection == 'forum' and @period.shortdesc.to_s != '' -%>
-    	  <br><div style="border:1px solid #000;width:90%;padding:8px 8px 0px 10px;"><%=raw @period.description %></div>
-    	<% end -%>
-    <% end -%>
-  <% end -%>
-
-<% end -%>
 </p>
