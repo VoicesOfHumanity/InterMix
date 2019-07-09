@@ -42,7 +42,7 @@ class CommunitiesController < ApplicationController
       communities = Community.where(is_sub: false, context: 'nation')
       @csection = 'nations' 
     elsif params[:which].to_s == 'other'  
-      communities = Community.where(is_sub: false, more: true)
+      communities = Community.where(is_sub: false, major: false, ungoals: false, more: true).where.not(context: 'nation')
       @csection = 'other'            
     else
       #-- My communities
