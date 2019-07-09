@@ -5,9 +5,10 @@
 		<%= f.input :fullname, :required => true %>
 		<%= f.input :description %>
     <%= f.input :major, :label => "Major checkbox?" %>
+    <%= f.input :more, :label => "More communities list?" %>    
     <%= f.input :bold, :label => "Bold text?" %>
     <%= f.input :ungoals, :label => "UN Goal?" %>
-    <%= f.input :sustdev, :label => "Sustainable Development Goal?" %>        
+    <%= f.input :sustdev, :label => "Sustainable Development Goal?" %>
 		<%= f.input :moderated, :label => "Moderated?" %>
 		<%= f.input :twitter_post, :label => "Post items to twitter?" %>
 		<%= f.input :tweet_what, :label => "Items to tweet", :as => :select, :collection =>[['* all *'],['root messages','roots']] %>
