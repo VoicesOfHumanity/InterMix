@@ -52,24 +52,79 @@ class DialogsController < ApplicationController
   end  
   
   def slider
+    #-- This is when we go to dialogs/x/slider. Not when we move between tabs or change options
+    #-- It might be clicking one of: Order out of Chaos, Conversation forum, or Community forum
+    
     return if redirect_if_not_voh
     logger.info("dialogs#slider")
-    @section = 'dialogs'
     @dsection = 'slider'
     @dialog_id = VOH_DISCUSSION_ID
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     
     comtag_before = session.has_key?(:comtag) ? session[:comtag] : ''
+
+    @conv = ''
+    @comtag = ''
+
+    if params.has_key?(:conv)
+      @in = 'conversation'
+      @section = 'conversations'
+      @conv = params[:conv]
+      @comtag = params[:comtag] if params.has_key?
+      # Conversations should have conv and comtag specifed in the URL
+    elsif params.has_key?(:comtag)
+      @in = 'community'
+      @section = 'communities'
+      @comtag = params[:comtag]
+      # Communities should have comtag specified in the url
+    else
+      @in = 'main'
+      @section = 'home'
+      # There should be neither conversation nor community mentioned in the url. Comtag might later be selected as an option within the main forum.
+    end
     
-    if params.values.length <= 3
+    # Certain things might be remembered as a cookie, when we move between tabs, but should be reset if we go to another section:
+    # comtag (only in main forum)
+    # messtag (don't use in conversation)
+    # nvaction
+    # geo_level
+    # gender?
+    # age?
+    # datetype
+    # datefixed
+    # sortby
+    # threads
+    
+    if not params.has_key?(:show_result)
       # {"controller"=>"dialogs", "action"=>"slider", "id"=>"5"}
       # We come in from the order out of chaos button, rather than the tabs. Reset the session cookies
-      is_new = true 
+      is_new = true
     else
       is_new = false
     end
     #logger.info("dialogs#slider is_new:#{is_new} params.length:#{params.length} params:#{params.inspect}")
+    
+    if is_new
+      # First time here, reset some options
+      session.delete(:comtag) if @in == 'main'
+      session.delete(:messtag)
+      session.delete(:nvaction)
+      session.delete(:geo_level)
+      # gender and aga?
+      session.delete(:datetype)
+      session.delete(:datefixed)
+      session.delete(:threads)
+      session.delete(:sortby)
+    else
+      # We're just moving between tabs. Remember the options
+      @comtag = session[:comtag].to_s if @in == 'main'
+      @messtag = session[:messtag].to_s
+      
+    end
+    
+    
+    
     
     if is_new
       @comtag = ''
