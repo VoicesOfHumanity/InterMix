@@ -38,7 +38,8 @@ You must join a community to make it your current perspective. All messages you 
   <% if @cur_perspective == 'outsider' -%>
     <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>">Forum</a> as an outsider</p>  
   <% else -%>
-    <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= @cur_perspective %>"><%= @cur_perspective %> Forum</a></p>
+    <% perspective_community = Community.find_by_tagname(@cur_perspective) %>
+    <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= @cur_perspective %>"><%= perspective_community.name %> Forum</a></p>
   <% end -%>
 
   <p>In Apart mode, the forum includes only messages from your current perspective. If you are not a member of any of the conversation communities, then you cannot post in the conversation, but you may comment and rate. Your comments and ratings as a non-member will not count in the conversation, only in the wider Order Out of Chaos forum.</p>
