@@ -1569,7 +1569,7 @@ class Item < ActiveRecord::Base
     end
     
     # tags
-    if @conversation
+    if crit['in'] == 'conversation' and @conversation
       # Tags in a conversation are treated a bit differently
       if @conversation.together_apart == 'together'
         # Don't care about comtags at all

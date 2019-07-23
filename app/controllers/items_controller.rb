@@ -1559,6 +1559,9 @@ class ItemsController < ApplicationController
       @show_result = show_result
       whatchanged = params[:whatchanged].to_s
     
+      @in = params['in'].to_s
+      crit['in'] = @in
+    
       geo_level = params[:geo_level].to_i
       session[:geo_level] = geo_level
       @geo_level = geo_level
@@ -1662,51 +1665,50 @@ class ItemsController < ApplicationController
       # NB try to avoid this: items.created_at >= 'Y-m-d 00:00:00'
       
       @conversation_id = crit[:conversation_id].to_i
-      @in_conversation = false
+      @in_conversation = (params[:in_conversation].to_i == 1) ? true : false
       if @conversation_id.to_i > 0
         @conversation = Conversation.find_by_id(@conversation_id)
-        if @conversation
-          # Check if the user is in any community in the conversation
-          for com in @conversation.communities
-            if current_participant.tag_list.include?(com.tagname)
-              @in_conversation = true
-            end
-          end
-        end
+        #if @conversation
+        #  # Check if the user is in any community in the conversation
+        #  for com in @conversation.communities
+        #    if current_participant.tag_list.include?(com.tagname)
+        #      @in_conversation = true
+        #    end
+        #  end
+        #end
       end
+      
+      @perspective = params[:perspective]
+      crit[:perspective] = @perspective
 
       @comtag = ""
       if crit[:comtag] != '' and crit[:comtag] != '*my*'
         @comtag = crit[:comtag]
       end
       
-      @communities = []
-      if @conversation and @comtag and @comtag.to_s != ''
-        # If the user is in several communities in the conversation
-        for com in @conversation.communities
-          if current_participant.tag_list.include?(com.tagname)
-            @communities << com
-          end
-        end  
+      if session.has_key?(:community_list)
+        @community_list = session['community_list']
+      else
+        @community_list = []
       end
       
-      if @conversation
-        # What's their perspective? = @comtag
-        if @comtag and @comtag.to_s != ''
-          # A tag has been selected. See if they're a member
-          if not current_participant.tag_list.include?(@comtag)
-            @comtag = ""
-          end
-        elsif session.has_key?("cur_perspective_#{@conversation.id}")
-          # Does the user already have a perspective
-          comtag = session["cur_perspective_#{@conversation.id}"]
-          if current_participant.tag_list.include?(comtag)
-            @comtag = comtag
-          end
-        end    
-      else
-        # crit[:comtag] Might be blank, *my*, or a tag
-      end
+      #if @conversation
+      #  # What's their perspective? = @comtag
+      #  if @comtag and @comtag.to_s != ''
+      #    # A tag has been selected. See if they're a member
+      #    if not current_participant.tag_list.include?(@comtag)
+      #      @comtag = ""
+      #    end
+      #  elsif session.has_key?("cur_perspective_#{@conversation.id}")
+      #    # Does the user already have a perspective
+      #    comtag = session["cur_perspective_#{@conversation.id}"]
+      #    if current_participant.tag_list.include?(comtag)
+      #      @comtag = comtag
+      #    end
+      #  end    
+      #else
+      #  # crit[:comtag] Might be blank, *my*, or a tag
+      #end
 
       if crit[:comtag].to_s != '' and crit[:comtag] != '*my*'
         @community = Community.find_by_tagname(crit[:comtag])

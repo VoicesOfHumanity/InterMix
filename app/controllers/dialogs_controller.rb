@@ -71,17 +71,33 @@ class DialogsController < ApplicationController
       @in = 'conversation'
       @section = 'conversations'
       @conv = params[:conv]
-      @comtag = params[:comtag] if params.has_key?
-      # Conversations should have conv and comtag specifed in the URL
+      @comtag = params[:comtag] if params.has_key?(:comtag)
+      # Conversations should have conv and comtag specifed in the URL. At first there might only be a conv and no comtag
+      logger.info("dialogs#slider in conversation #{@conv}")
     elsif params.has_key?(:comtag)
       @in = 'community'
       @section = 'communities'
       @comtag = params[:comtag]
       # Communities should have comtag specified in the url
+      logger.info("dialogs#slider in community #{@comtag}")
     else
       @in = 'main'
       @section = 'home'
       # There should be neither conversation nor community mentioned in the url. Comtag might later be selected as an option within the main forum.
+      logger.info("dialogs#slider in main")
+    end
+
+    if @show_result == 1
+      @dsection = 'meta'
+    else
+      @dsection = 'list'
+    end
+
+    if not params.has_key?(:show_result)
+      # all movement between tabs keeps the show_result parameter. If it isn't there, we're coming here from elsewhere
+      is_new = true
+    else
+      is_new = false
     end
     
     # Certain things might be remembered as a cookie, when we move between tabs, but should be reset if we go to another section:
@@ -93,20 +109,24 @@ class DialogsController < ApplicationController
     # age?
     # datetype
     # datefixed
+    # datefrom
     # sortby
     # threads
-    
-    if not params.has_key?(:show_result)
-      # {"controller"=>"dialogs", "action"=>"slider", "id"=>"5"}
-      # We come in from the order out of chaos button, rather than the tabs. Reset the session cookies
-      is_new = true
-    else
-      is_new = false
-    end
-    #logger.info("dialogs#slider is_new:#{is_new} params.length:#{params.length} params:#{params.inspect}")
-    
+  
+    # defaults
+    @geo_level = 6
+    @nvaction = false
+    @messtag = ''
+    @datetype = 'fixed'
+    @datefixed = 'month'
+    @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
+    @sortby = '*value*'
+    @threads = 'flat'
+    @perspective = ''
+      
     if is_new
       # First time here, reset some options
+      session.delete(:conv)
       session.delete(:comtag) if @in == 'main'
       session.delete(:messtag)
       session.delete(:nvaction)
@@ -114,187 +134,167 @@ class DialogsController < ApplicationController
       # gender and aga?
       session.delete(:datetype)
       session.delete(:datefixed)
-      session.delete(:threads)
-      session.delete(:sortby)
+      session.delete(:datefrom)
+      session.delete(:list_threads)
+      session.delete(:list_sortby)
     else
       # We're just moving between tabs. Remember the options
-      @comtag = session[:comtag].to_s if @in == 'main'
-      @messtag = session[:messtag].to_s
-      
+      @geo_level = session[:geo_level] if session[:geo_level].to_i > 0
+      @comtag = session[:comtag].to_s if session.has_key?(:comtag) and @in == 'main' and @comtag == ''
+      @messtag = session[:messtag].to_s if session.has_key?(:messtag)
+      @nvaction = session[:nvaction] if session.has_key?(:nvaction)
+      @datetype = session[:datetype] if session.has_key?(:datetype)
+      @datefixed = session[:datefixed] if session.has_key?(:datefixed)
+      @datefrom = session[:datefrom] if session.has_key?(:datefrom)
+      @sortby = session[:list_sortby] if session.has_key?(:list_sortby)
+      @threads = session[:list_threads] if session.has_key?(:list_threads)
     end
-    
-    
-    
-    
-    if is_new
-      @comtag = ''
-      session[:comtag] = @comtag
-    elsif params.has_key?(:comtag)
-      @comtag = params[:comtag].to_s
-      session[:comtag] = @comtag
-    else
-      @comtag = session[:comtag].to_s
-      logger.info("dialogs#slider @comtag set based on session")
-    end
-    if is_new
-      @messtag = ''
-      session[:messtag] = @messtag
-    elsif params.has_key?(:messtag)
-      @messtag = params[:messtag].to_s
-      session[:messtag] = @messtag
-    elsif params.values.length == 4 and @comtag != '' and not params.has_key?(:show_result)
-    #elsif params.has_key?(:comtag) and @comtag != '' and not params.has_key?(:messtag)
+
+    # We might have gotten specific parameters, which override defaults and session variables
+    # Note: conv and comtag were handled at the top
+    if params.has_key?(:messtag)
+      @messtag = params[:messtag].to_s     
+    elsif params.has_key?(:comtag) and @comtag != '' and @in == 'main' and not params.has_key?(:show_result)
       #-- If they clicked on a community tag link, select the message tag too
       @messtag = @comtag
       logger.info("dialogs#slider @messtag set to the same as @comtag")
-    else
-      @messtag = session[:messtag].to_s
-      logger.info("dialogs#slider @messtag set based on session")
     end
-    #if is_new
-    #  @nvaction = false
-    #  session[:nvaction] = @nvaction
-    if session.has_key?(:nvaction)
-      @nvaction = session[:nvaction]        
-    elsif params.has_key?(:nvaction)
+    if params.has_key?(:nvaction)
       @nvaction = (params[:nvaction].to_i == 1) ? true : false
-      session[:nvaction] = @nvaction
-    else
-      @nvaction = false
-      session[:nvaction] = @nvaction  
     end
     
-    if (@comtag != '' and params.has_key?(:joincom)) or (session.has_key?(:joincom))
-      # They should be joined to the community, if they aren't already a member ?comtag=love&joincom=1
-      if session.has_key?(:joincom)
-        @comtag = comtag_before
-      end
-      comtag = @comtag
-      comtag.gsub!(/[^0-9A-za-z_]/,'')
-      comtag.downcase!
-      if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
-      elsif comtag != ''
-        current_participant.tag_list.add(comtag)
-      end
-      current_participant.save
-      @messtag = @comtag
-      session[:messtag] = @messtag
-      session[:comtag] = @comtag
-      session.delete(:joincom)
-    end
-    
-    @conversations = []
+    # Remember our current settings, mainly for going back and forth between tabs
+    session[:conv] = @conv
+    session[:comtag] = @comtag
+    session[:messtag] = @messtag
+    session[:nvaction] = @nvaction
+    session[:geo_level] = @geo_level
+    session[:datetype] = @datetype
+    session[:datefixed] = @datefixed
+    session[:datefrom] = @datefrom
+    session[:list_sortby] = @sortby
+    session[:list_threads] = @threads
+
+    # Get some objects we might need
     if @comtag != ''
-      @community = Community.find_by_tagname(@comtag)      
-    end
+      @community = Community.find_by_tagname(@comtag)
+      @community_id = @community.id      
+    end    
+    @conversations = []
     if @community
       @conversations = @community.conversations
     end
-    
-    @is_conv_member = false
-    if params.has_key?(:conv)
-      # A conversation has already been specified, maybe from a redirect from here
-      @conv = params[:conv]
-      session[:conv] = @conv
-      if @conv == '-'
-        # Actually, no, we don't want any conversation, even automatically
-      else
-        @conversation = Conversation.find_by_shortname(@conv)
-        @conversation_id = @conversation ? @conversation.id : 0
-        if @conversation and @comtag == ""
-          # Does the user already have a perspective
-          if session.has_key?("cur_perspective_#{@conversation.id}")
-            comtag = session["cur_perspective_#{@conversation.id}"]
-            if current_participant.tag_list.include?(comtag)
-              @comtag = comtag
-              url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-              url += "&show_result=1" if @show_result == 1
-              redirect_to url
-              return
-            end
-          end  
-          if @comtag == ""
-            # Is this user a member of any of the communities?
-            for com in @conversation.communities
-              if current_participant.tag_list.include?(com.tagname)
-                @is_conv_member = true
-                if not @comtag or @comtag == ''
-                  # Not only that, but let's enforce that the community is selected
-                  @comtag = com.tagname
-                  url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-                  url += "&show_result=1" if @show_result == 1
-                  redirect_to url 
-                end
-                break
-              end
-            end
-          end
-        else
-          # Is this user a member of any of the communities?
-          for com in @conversation.communities
-            if current_participant.tag_list.include?(com.tagname)
-              @is_conv_member = true
-            end
-          end
-        end
-        @section = 'conversations'
-      end
-      if @comtag != '' and not params.has_key?(:comtag)
-        url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-        url += "&show_result=1" if @show_result == 1
-        redirect_to url
-        return
-      end
-    elsif session.has_key?(:conv) and @comtag.to_s != ''
-      # We remember a conversation from the session
-      @conv = session[:conv]
+    if @conv != '' and @conv != '-'
       @conversation = Conversation.find_by_shortname(@conv)
-      com_found = false
-      for com in @conversation.communities
-        if com.tagname == @comtag and current_participant.tag_list.include?(@comtag)
-          com_found = true
-          break
-        end
-      end
-      if com_found
-        url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-        url += "&show_result=1" if @show_result == 1
-        redirect_to url
-        return
-      else
-        # forget about that conversation. Doesn't match community
-        @conv = nil
-        @conversation = nil
-        session.delete(:conv)
-      end
+      @conversation_id = @conversation ? @conversation.id : 0
     end
-    if not @conversation and @community and current_participant.tag_list.include?(@comtag)
-      # If we're in a community, and the user is a member. Conversation not specified. Figure out which one
-      if @community.conversations.length == 1
-        # Community is in only one conversation, go there
-        @conversation = @community.conversations[0]
-        url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-        url += "&show_result=1" if @show_result == 1
-        redirect_to url
-        return
-      elsif @community.conversations.length > 1
-        # Community is in more than one conversation. Pick the last one.
-        @conversation = @community.conversations.last
-        url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-        url += "&show_result=1" if @show_result == 1
-        redirect_to url
-        return
-      end
-    end
-    
     @communities = []
-    if @conversation and @community
+    if @conversation
       # If the user is in several communities in the conversation
       for com in @conversation.communities
         if current_participant.tag_list.include?(com.tagname)
           @communities << com
         end
       end  
+    end
+    @community_list = @communities.collect{|c| [c.fullname,c.tagname]}
+    session['community_list'] = @community_list
+    
+    if @in == 'community'
+      #-- In a community, they maybe need to join
+      if (@comtag != '' and params.has_key?(:joincom)) or (session.has_key?(:joincom))
+        # They should be joined to the community, if they aren't already a member ?comtag=love&joincom=1
+        if session.has_key?(:joincom)
+          @comtag = comtag_before
+        end
+        comtag = @comtag
+        comtag.gsub!(/[^0-9A-za-z_]/,'')
+        comtag.downcase!
+        if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
+        elsif comtag != ''
+          current_participant.tag_list.add(comtag)
+        end
+        current_participant.save
+        @messtag = @comtag
+        session[:messtag] = @messtag
+        session[:comtag] = @comtag
+        session.delete(:joincom)
+      end
+
+      # Do we want to send them to a conversation, if they have only community specified? I think not
+      if false and not @conversation and @community and current_participant.tag_list.include?(@comtag)
+        # If we're in a community, and the user is a member. Conversation not specified. Figure out which one
+        if @community.conversations.length == 1
+          # Community is in only one conversation, go there
+          @conversation = @community.conversations[0]
+          url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+          url += "&show_result=1" if @show_result == 1
+          redirect_to url
+          return
+        elsif @community.conversations.length > 1
+          # Community is in more than one conversation. Pick the last one.
+          @conversation = @community.conversations.last
+          url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+          url += "&show_result=1" if @show_result == 1
+          redirect_to url
+          return
+        end
+      end
+      
+    elsif @in == 'conversation' and @conv != '-' and @conversation
+      #-- In a conversation, they also need a community/perspective, if there is a suitable one      
+      logger.info("dialogs#slider check for conversation perspective")
+      @perspective = ''
+      @is_conv_member = false
+      if @comtag == ""
+        # Does the user already have a perspective
+        if session.has_key?("cur_perspective_#{@conversation.id}")
+          comtag = session["cur_perspective_#{@conversation.id}"]
+          logger.info("dialogs#slider perspective from cookie: #{comtag}")
+          if comtag != '' and current_participant.tag_list.include?(comtag)
+            @perspective = comtag
+            url = "/dialogs/#{@dialog_id}/slider?comtag=#{comtag}&conv=#{@conversation.shortname}"
+            url += "&show_result=1" if @show_result == 1
+            redirect_to url
+            return
+          end
+        end  
+        # Is this user a member of any of the communities?
+        for com in @conversation.communities
+          if current_participant.tag_list.include?(com.tagname)
+            @is_conv_member = true
+            if (not @comtag or @comtag == '') and com.tagname.to_s != ''
+              # Not only that, but let's enforce that the community is selected
+              @comtag = com.tagname
+              @perspective = @comtag
+              session["cur_perspective_#{@conversation.id}"] = @perspective
+              url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+              url += "&show_result=1" if @show_result == 1
+              redirect_to url 
+            end
+            break
+          end
+        end
+        @perspective = 'outsider'
+      else
+        # We have a comtag
+        # Is this user a member of any of the communities for the conversation?
+        for com in @conversation.communities
+          if current_participant.tag_list.include?(com.tagname)
+            @is_conv_member = true
+            # Is it the one selected?
+            if com.tagname == @comtag
+              # remember it as the current perspective for this conversation
+              @perspective = @comtag
+              session["cur_perspective_#{@conversation.id}"] = @perspective
+            end
+          end
+        end
+        @perspective = 'outsider' if @perspective == ''
+      end      
+      if @comtag == ''
+        @perspective = 'outsider'
+      end
     end
     
     @geo_levels = [
@@ -305,14 +305,6 @@ class DialogsController < ApplicationController
       [2,'My&nbsp;County'],
       [1,'My&nbsp;City/Town']
     ]
-    # geo level defaults to Planet Earth, but a different choice is remembered in the current session
-    if is_new
-      @geo_level = 6
-    elsif session[:geo_level].to_i > 0
-      @geo_level = session[:geo_level]
-    else
-      @geo_level = 6
-    end
     
     if @nvaction
       @suggestedtopic = "Nonviolent Action for Human Unity"
@@ -328,63 +320,14 @@ class DialogsController < ApplicationController
     else  
       @suggestedtopic = session.has_key?(:suggestedtopic) ? session[:suggestedtopic] : ""
     end
-    
-    if @show_result == 1
-      @dsection = 'meta'
-    else
-      @dsection = 'list'
-    end
-    
+        
     @showing_options = 'less'
-    if is_new
-      #if @dialog.default_datetype.to_s != ''
-      #  @datetype = @dialog.default_datetype
-      #  logger.info("dialogs#slider getting datetype from default_date_type:#{@datetime}")
-      #else
-      @datetype = 'fixed'
-      #end
-    elsif session.has_key?(:datetype)
-      @datetype = session[:datetype]
-    #elsif @dialog.default_datetype.to_s != ''
-    #  @datetype = @dialog.default_datetype
-    else
-      @datetype = 'fixed'
-    end
     if @show_result.to_i > 0 and @dialog.default_datetype.to_s != '' and @datetype != @dialog.default_datetype
       @showing_options = 'more'
     end  
-    if is_new
-      #if @dialog.default_datefixed.to_s != ''
-      #  @datefixed = @dialog.default_datefixed
-      #else
-      @datefixed = 'month'
-      #end
-    elsif session.has_key?(:datefixed)
-      @datefixed = session[:datefixed]
-    #elsif @dialog.default_datefixed.to_s != ''
-    #  @datefixed = @dialog.default_datefixed
-    else
-      @datefixed = 'month'
-    end
     if @show_result.to_i > 0 and @dialog.default_datefixed.to_s != '' and @datefixed != @dialog.default_datefixed
       @showing_options = 'more'
     end  
-    if is_new
-      if @dialog.default_datefrom.to_s != ''
-        @datefrom = @dialog.default_datefrom
-      else
-        @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
-      end
-    elsif session.has_key?(:datefrom)
-      @datefrom = session[:datefrom]
-    elsif @dialog.default_datefrom.to_s != ''
-      @datefrom = @dialog.default_datefrom
-    else
-      @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
-    end
-    #if @datefrom.class != Date
-    #  @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')      
-    #end
     if @show_result.to_i > 0 and @dialog.default_datefrom.to_s != '' and @datefrom != @dialog.default_datefrom
       @showing_options = 'more'
     end  
@@ -394,46 +337,6 @@ class DialogsController < ApplicationController
     
     @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
 
-    @sortby = nil
-    if session.include?(:list_sortby) and session.include?(:slider_dialog_id)
-      #-- Look at the previous sort used and see if we should use the same
-      if session[:slider_dialog_id] !=  @dialog.id
-        #-- It was for a different discussion
-        session.delete(:list_sortby)
-      else
-        @sortby = session[:list_sortby]
-      end
-    else
-      session.delete(:list_sortby) if session.include?(:list_sortby) 
-    end
-
-    if @sortby
-      #-- If we already have the sort key, keep that
-    else
-      @sortby = '*value*'
-    end
-
-    @threads = nil
-    if session.include?(:list_threads) and session.include?(:slider_dialog_id)
-      #-- Look at the previous comment setting used and see if we should use the same
-      if session[:slider_dialog_id] !=  @dialog.id
-        #-- It was for a different discussion
-        session.delete(:list_threads)
-      elsif session.include?(:slider_group_id) and session[:slider_group_id].to_i != @group_id
-        #-- It was for a different group
-        session.delete(:list_threads)
-      else
-        @threads = session[:list_threads]
-      end
-    else
-      session.delete(:list_threads) if session.include?(:list_threads) 
-    end
-
-    if @threads
-      #-- If we have a comment setting, use it
-    else
-      @threads = 'flat'
-    end
 
     logger.info("dialogs#slider @sortby:#{@sortby} @threads:#{@threads}")
     

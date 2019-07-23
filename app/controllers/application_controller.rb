@@ -370,6 +370,7 @@ class ApplicationController < ActionController::Base
       end
       if xsub != 'voh'
         new_url =  "https://voh.#{ROOTDOMAIN}#{request.fullpath}"
+        logger.info("application#redirect_if_not_voh redirecting to #{new_url}")
         redirect_to new_url
         return true
       end
