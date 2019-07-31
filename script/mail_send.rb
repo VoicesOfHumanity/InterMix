@@ -164,6 +164,8 @@ for p in participants
     did_items = 0
     
     user_dialogs = {}
+
+    p_tag_list = p.tag_list_downcase
     
     for item in items
       
@@ -173,13 +175,16 @@ for p in participants
       #-- Is it an item we need, or do we skip it?
       in_week = true
       in_day = (item.created_at > dstart)
+      
+      i_tag_list = item.tag_list_downcase
+      i_p_tag_list = item.participant.tag_list_downcase
 
       # Does the user have any tags found in the message tags for that message?
-      hasmessmatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list.length > 0 and p.tag_list.any?{|t| item.tag_list.include?(t) } )
+      hasmessmatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p_tag_list.length > 0 and p_tag_list.any?{|t| i_tag_list.include?(t) } )
       #puts "    p.tag_list:#{p.tag_list.inspect}"
       
       # Does the user have any tags found in the community tags of the author of that message
-      hascommatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list.length > 0 and p.tag_list.any?{|t| item.participant.tag_list.include?(t) } )
+      hascommatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p_tag_list.length > 0 and p_tag_list.any?{|t| i_p_tag_list.include?(t) } )
 
       send_it = false
       is_mycom = (hasmessmatch and hascommatch)

@@ -415,7 +415,7 @@ class ItemsController < ApplicationController
     if false and @conversation_id == 0
       # Check if the user is in a community that is in a conversation. If so, count it for that conversation
       # Eh, but which one if there are several?
-      for com_tag in current_participant.tag_list
+      for com_tag in current_participant.tag_list_downcase
         community = Community.find_by_tagname(com_tag)
         if community.conversations and community.conversations.length > 0
           @conversation_id = community.conversations[0].id
@@ -467,7 +467,7 @@ class ItemsController < ApplicationController
     @is_com_member = false
     if @comtag != ''
       @community = Community.where(tagname: @comtag).first
-      if current_participant.tag_list.include?(@comtag)
+      if current_participant.tag_list_downcase.include?(@comtag.downcase)
         @is_com_member = true
       end
     end
@@ -511,7 +511,7 @@ class ItemsController < ApplicationController
           if tagmatch.length > 14
             tagmatch = tagmatch[0..13]
           end
-          tags << tagmatch
+          tags << tagmatch.downcase
         end
         
         #logger.info("items#new replying. Existing @comtag:#{@comtag}")
@@ -537,7 +537,7 @@ class ItemsController < ApplicationController
       # We're in a conversation
       @conversation = Conversation.find_by_id(@item.conversation_id)
       if @conversation
-        @conv = @conversation.shortname
+        @conv = @conversation.shortname.downcase
         if @in_conversation
           # Add conversation tag only if we're currently in the conversation
           tags << @conv
@@ -545,12 +545,12 @@ class ItemsController < ApplicationController
         # Which community or communities in the conversation is the current user in?
         @conv_own_coms = {}
         for com in @conversation.communities
-          if current_participant.tag_list.include?(com.tagname)
+          if current_participant.tag_list_downcase.include?(com.tagname.downcase)
             @conv_own_coms[com.tagname] = com.fullname
           end
         end
         if @conv_own_coms.length == 1 and @conversation.together_apart == 'apart'
-          tags << @conv_own_coms.keys[0]
+          tags << @conv_own_coms.keys[0].downcase
         end
         
         if @conversation.together_apart != ''
@@ -646,7 +646,7 @@ class ItemsController < ApplicationController
       #-- Fill in some default message tags
       tags << 'nvaction' if @nvaction
       if @item.reply_to.to_i > 0 and @olditem
-        tags.concat @olditem.tag_list
+        tags.concat @olditem.tag_list_downcase
       end
       logger.info("items#new tags:#{tags.inspect}") 
       if @meta_3 == 207
@@ -842,7 +842,7 @@ class ItemsController < ApplicationController
         # If reply is from somebody outside the conversation, flag it
         @in_conversation = false
         for com in @conversation.communities
-          if current_participant.tag_list.include?(com.tagname)
+          if current_participant.tag_list_downcase.include?(com.tagname.downcase)
             @in_conversation = true
           end
         end

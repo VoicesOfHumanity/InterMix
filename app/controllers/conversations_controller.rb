@@ -18,7 +18,7 @@ class ConversationsController < ApplicationController
       conversations2 = Conversation.all
       for conversation in conversations2
         for com in conversation.communities
-          if current_participant.tag_list.include?(com.tagname)
+          if current_participant.tag_list_downcase.include?(com.tagname.downcase)
             conversations << conversation
             break
           end
@@ -35,7 +35,7 @@ class ConversationsController < ApplicationController
       # Pick an appropriate perspective
       perspectives = {}    
       for com in conversation.communities
-        if current_participant.tag_list.include?(com.tagname)
+        if current_participant.tag_list_downcase.include?(com.tagname.downcase)
           perspectives[com.tagname] = com.fullname
           #logger.info("conversations#index user is in :#{com.tagname}")          
         else
@@ -75,7 +75,7 @@ class ConversationsController < ApplicationController
     
     @communities = @conversation.communities
     for com in @communities
-      if current_participant.tag_list.include?(com.tagname)
+      if current_participant.tag_list_downcase.include?(com.tagname.downcase)
         @perspectives[com.tagname] = com.fullname
       end
     end
@@ -150,7 +150,7 @@ class ConversationsController < ApplicationController
     if not com
       render plain: "not found"
     else  
-      if current_participant.tag_list.include?(com.tagname)
+      if current_participant.tag_list_downcase.include?(com.tagname.downcase)
         session["cur_perspective_#{@conversation.id}"] = perspective
         render plain: "ok"
       end

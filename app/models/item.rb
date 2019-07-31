@@ -28,6 +28,10 @@ class Item < ActiveRecord::Base
     tag_counts.collect {|t| t.name}.join(', ')  
   end
   
+  def tag_list_downcase
+    tag_list.map(&:downcase)
+  end
+  
   def excerpt
     #-- A 35 word excerpt, to use as an alternative to the tweet version
     plain_content = ActionView::Base.full_sanitizer.sanitize(self.html_content.to_s).strip
@@ -117,10 +121,10 @@ class Item < ActiveRecord::Base
       # To find if they would get it as a default, check the community match and their settings
 
       # Does the user have any tags found in the message tags for that message?
-      hasmessmatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list.length > 0 and p.tag_list.any?{|t| self.tag_list.include?(t) } )
+      hasmessmatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list_downcase.length > 0 and p.tag_list_downcase.any?{|t| self.tag_list_downcase.include?(t) } )
     
       # Does the user have any tags found in the community tags of the author of that message
-      hascommatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list.length > 0 and p.tag_list.any?{|t| self.participant and self.participant.tag_list.include?(t) } )
+      hascommatch = ( p.tag_list.class == ActsAsTaggableOn::TagList and p.tag_list_downcase.length > 0 and p.tag_list_downcase.any?{|t| self.participant and self.participant.tag_list_downcase.include?(t) } )
     
       is_mycom = (hasmessmatch and hascommatch)
 
@@ -269,8 +273,8 @@ class Item < ActiveRecord::Base
     
     allpeople = Participant.where(status: 'active').where("mycom_email='instant' or othercom_email='instant'")
     for person in allpeople
-      hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list.length > 0 and person.tag_list.any?{|t| self.tag_list.include?(t) } )
-      hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list.length > 0 and person.tag_list.any?{|t| self.participant.tag_list.include?(t) } )
+      hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.tag_list_downcase.include?(t) } )
+      hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.participant.tag_list_downcase.include?(t) } )
       if person.id == 6 or person.id == 1867
         logger.info("Item#emailit person #{person.id}: hasmessmatch:#{hasmessmatch} with item #{self.id}")
         logger.info("Item#emailit person #{person.id}: hascommatch:#{hascommatch} with person #{self.participant.id}")
@@ -299,7 +303,7 @@ class Item < ActiveRecord::Base
       # It is for a particular community only. Remove anybody who's not a member
       tagname = self.intra_com[1,50]
       for person in allpeople
-        if not person.tag_list.include?(tagname)
+        if not person.tag_list_downcase.include?(tagname.downcase)
           participants.delete(person)
         end
       end  
@@ -1575,8 +1579,8 @@ class Item < ActiveRecord::Base
         # Don't care about comtags at all
       elsif crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
         # Only show what's for the user's perspective
-        if current_participant.tag_list.include?(crit[:comtag])
-          items = items.where(representing_com: crit[:comtag])       
+        if current_participant.tag_list_downcase.include?(crit[:comtag].downcase)
+          items = items.where(representing_com: crit[:comtag].downcase)       
         end
       end
     elsif crit[:comtag].to_s == '*my*'
@@ -1585,7 +1589,7 @@ class Item < ActiveRecord::Base
       comtag_list = ''
       comtags = {}
       ps = {}
-      for tag in current_participant.tag_list
+      for tag in current_participant.tag_list_downcase
         comtags[tag] = true
         for p in Participant.tagged_with(tag)
           ps[p.id] = true
@@ -1606,8 +1610,8 @@ class Item < ActiveRecord::Base
       title += " | @#{crit[:comtag]}"
       # does the current user have that tag?
       has_tag = false
-      for tag in current_participant.tag_list
-        if tag == crit[:comtag]
+      for tag in current_participant.tag_list_downcase
+        if tag == crit[:comtag].downcase
           has_tag = true
         end
       end
@@ -3000,13 +3004,13 @@ class Item < ActiveRecord::Base
         if conversation.together_apart == 'apart'
           # One must be in the community of the poster
           for com in conversation.communities
-            if participant.tag_list.include?(com.tagname) and self.participant.tag_list.include?(com.tagname)
+            if participant.tag_list_downcase.include?(com.tagname) and self.participant.tag_list_downcase.include?(com.tagname)
               return true
             end
           end
         else
           for com in conversation.communities
-            if participant.tag_list.include?(com.tagname)
+            if participant.tag_list_downcase.include?(com.tagname)
               return true
             end
           end

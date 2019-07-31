@@ -192,7 +192,7 @@ class DialogsController < ApplicationController
     if @conversation
       # If the user is in several communities in the conversation
       for com in @conversation.communities
-        if current_participant.tag_list.include?(com.tagname)
+        if current_participant.tag_list_downcase.include?(com.tagname.downcase)
           @communities << com
         end
       end  
@@ -251,7 +251,7 @@ class DialogsController < ApplicationController
         if session.has_key?("cur_perspective_#{@conversation.id}")
           comtag = session["cur_perspective_#{@conversation.id}"]
           logger.info("dialogs#slider perspective from cookie: #{comtag}")
-          if comtag != '' and current_participant.tag_list.include?(comtag)
+          if comtag != '' and current_participant.tag_list_downcase.include?(comtag.downcase)
             @perspective = comtag
             url = "/dialogs/#{@dialog_id}/slider?comtag=#{comtag}&conv=#{@conversation.shortname}"
             url += "&show_result=1" if @show_result == 1
@@ -261,7 +261,7 @@ class DialogsController < ApplicationController
         end  
         # Is this user a member of any of the communities?
         for com in @conversation.communities
-          if current_participant.tag_list.include?(com.tagname)
+          if current_participant.tag_list_downcase.include?(com.tagname.downcase)
             @is_conv_member = true
             if (not @comtag or @comtag == '') and com.tagname.to_s != ''
               # Not only that, but let's enforce that the community is selected
@@ -280,7 +280,7 @@ class DialogsController < ApplicationController
         # We have a comtag
         # Is this user a member of any of the communities for the conversation?
         for com in @conversation.communities
-          if current_participant.tag_list.include?(com.tagname)
+          if current_participant.tag_list_downcase.include?(com.tagname.downcase)
             @is_conv_member = true
             # Is it the one selected?
             if com.tagname == @comtag
@@ -1262,7 +1262,7 @@ class DialogsController < ApplicationController
                 
                   useitem['subgroup_list'] = item.subgroup_list
                   useitem['show_subgroup'] = item.show_subgroup
-                  useitem['tag_list'] = item.tag_list
+                  useitem['tag_list'] = item.tag_list_downcase
                   useitem['item_rating_summary'] = item.item_rating_summary
                 
                   useitem['participant'] = item.participant ? item.participant.attributes : nil

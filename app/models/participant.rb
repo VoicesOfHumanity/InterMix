@@ -68,6 +68,10 @@ class Participant < ActiveRecord::Base
     tag_counts.collect {|t| t.name}.join(', ')  
   end
   
+  def tag_list_downcase
+    self.tag_list.map(&:downcase)
+  end
+  
   def to_liquid
       {'id'=>id,'name'=>name,'first_name'=>first_name,'last_name'=>last_name,'email'=>email,'title'=>title,'self_description'=>self_description,'city'=>city,'country_name'=>country_name,'authentication_token'=>authentication_token,'fb_uid'=>fb_uid}
   end

@@ -91,24 +91,24 @@
       <div style="width:25%;float:left;font-weight:bold">Communities<br>check to join</div>
       <div style="width:75%;float:left">
         <% for com in @major_communities -%>  
-        <% checked = @participant.tag_list.include?(com.tagname) ? 'checked' : '' %>
+        <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
         <input type="checkbox" id="check_<%= com.tagname %>_mc" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <%= com.fullname %><br>
         <% end -%>  
         [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>  
         <div id="more_com" style="display:none">  
         <% for com in @ungoals_communities -%>  
-        <% checked = @participant.tag_list.include?(com.tagname) ? 'checked' : '' %>
+        <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
         <input type="checkbox" id="check_<%= com.tagname %>_ug" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
         <% end -%>  
         <% for com in @sustdev_communities -%>  
-        <% checked = @participant.tag_list.include?(com.tagname) ? 'checked' : '' %>
+        <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
         <input type="checkbox" id="check_<%= com.tagname %>_sd" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
         <% end -%>  
       </div>  
         
         <% if false -%>
           <% GLOBAL_COMMUNITIES.each do |tag| -%>
-            <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
+            <% checked = @participant.tag_list_downcase.include?(tag) ? 'checked' : '' %>
             <input type="checkbox" id="check_<%= tag %>_gc" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
           <% end -%>
           [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>

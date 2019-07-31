@@ -48,7 +48,7 @@ class CommunitiesController < ApplicationController
       #-- My communities
       comtag_list = ''.dup
       comtags = {}
-      for tag in current_participant.tag_list
+      for tag in current_participant.tag_list_downcase
         comtags[tag] = true
       end
       @comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
