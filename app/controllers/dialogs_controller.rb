@@ -241,9 +241,15 @@ class DialogsController < ApplicationController
         end
       end
       
-    elsif @in == 'conversation' and @conv == '-' and @comtag != ''
-      #-- They want to leave the conversation. Which really just means to go to the appropriate community
-      url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}"
+    elsif @in == 'conversation' and @conv == '-'
+      #-- They want to leave the conversation, i.e. leave conversation mode
+      if @comtag != ''
+        #-- Go to that community
+        url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}"
+      else
+        #-- Go to order out of chaos
+        url = "/dialogs/#{@dialog_id}/slider"        
+      end
       redirect_to url
       return      
       
