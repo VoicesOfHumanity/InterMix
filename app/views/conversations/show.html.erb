@@ -7,9 +7,8 @@
 <p><%=raw @conversation.description %></p>
 <% end -%>
 
-<p><b>Current Phase:</b> <%= @conversation.together_apart %></p>
-
-<p><b>Current Perspective:</b> 
+<p><b>Current Phase:</b> <%= @conversation.together_apart %><br>
+<b>Current Perspective:</b> 
 <% if @perspectives.length > 1 -%>
   <select id="perspective_select" onchange="select_perspective()">
     <% @perspectives.each do |ptab,pname| %>
@@ -20,12 +19,14 @@
 <% else -%>
   <%= @cur_perspective %>
 <% end -%>
-<br>
+</p>  
+
 <% if @cur_perspective == 'outsider' -%>
-As an Outsider, you can read but not post items in the conversation forum.
+<p>As an Outsider, you can read but not post items in the conversation forum.</p>
 <% end -%>
 
-You must join a community to make it your current perspective. All messages you write in this conversation will be automatically tagged with the community you have chosen as your perspective.</p>
+
+<p>You must join a community to make it your current perspective. All messages you write in this conversation will be automatically tagged with the community you have chosen as your perspective.</p>
 
 <% if @conversation.together_apart == 'together' -%>
 

@@ -12,6 +12,7 @@ class ConversationsController < ApplicationController
     @section = 'conversations'
     @csection = params[:csection].to_s
     @csection = 'my' if @csection == ''
+    @sort = params[:sort] || 'activity'
     
     conversations = []
     if @csection == 'my'
@@ -56,7 +57,14 @@ class ConversationsController < ApplicationController
       logger.info("conversations#index conversation #{conversation.shortname} perspectives:#{perspectives} chosen:#{conversation.perspective}")
       
       @conversations << conversation
-    end    
+    end
+    
+    # sort
+    if @sort == 'activity'
+      @conversations.sort! { |a,b| b.send(@sort) <=> a.send(@sort) } 
+    else
+      @conversations.sort! { |a,b| a.send(@sort) <=> b.send(@sort) } 
+    end
     
   end
 

@@ -374,6 +374,7 @@ function actionclick() {
 function chg_conversation() {
   var conv = $('#chg_conv').val();
   if (conv != '') {
+    // Might be a - to leave the conversation (and go to community)
     window.location.href = '?comtag='+cur_comtag+'&conv='+conv;
   }
 }

@@ -71,7 +71,7 @@ class DialogsController < ApplicationController
       @in = 'conversation'
       @section = 'conversations'
       @conv = params[:conv]
-      @comtag = params[:comtag] if params.has_key?(:comtag)
+      @comtag = params[:comtag] if params.has_key?(:comtag)  # might be a - to leave the conversation
       # Conversations should have conv and comtag specifed in the URL. At first there might only be a conv and no comtag
       logger.info("dialogs#slider in conversation #{@conv}")
     elsif params.has_key?(:comtag)
@@ -176,7 +176,7 @@ class DialogsController < ApplicationController
     session[:list_threads] = @threads
 
     # Get some objects we might need
-    if @comtag != ''
+    if @comtag != '' and @comtag != '-'
       @community = Community.find_by_tagname(@comtag)
       @community_id = @community.id      
     end    
@@ -240,6 +240,12 @@ class DialogsController < ApplicationController
           return
         end
       end
+      
+    elsif @in == 'conversation' and @conv == '-' and @comtag != ''
+      #-- They want to leave the conversation. Which really just means to go to the appropriate community
+      url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}"
+      redirect_to url
+      return      
       
     elsif @in == 'conversation' and @conv != '-' and @conversation
       #-- In a conversation, they also need a community/perspective, if there is a suitable one      

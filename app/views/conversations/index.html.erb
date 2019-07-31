@@ -32,7 +32,7 @@
 
 <p>Sort: 
 <select name="sort" id="sortselect">
-<% {'activity'=>'Activity', 'tag'=>'Forum'}.each do |val,txt| -%>    
+<% {'activity'=>'Activity', 'shortname'=>'Forum'}.each do |val,txt| -%>    
 <option value="<%= val %>"<%= ' selected' if val == @sort %>><%= txt %></option>    
 <% end -%>
 </select>
