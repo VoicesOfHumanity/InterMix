@@ -669,10 +669,14 @@ class ItemsController < ApplicationController
         tags << current_participant.metro_area.name
       elsif @item.geo_level == 'state' and current_participant.admin1uniq.to_s != ''
         tags << current_participant.geoadmin1.name
-      elsif @item.geo_level == 'nation' and current_participant.geocountry
-        tags << current_participant.geocountry.name
-      elsif @item.geo_level == 'planet'
-        tags << current_participant.geocountry.name          
+      elsif (@item.geo_level == 'nation' or @item.geo_level == 'planet') and current_participant.geocountry
+        # Country. Look for a matching community, and use its tag
+        country_com = Community.where(context: 'nation', context_code:current_participant.geocountry.iso3).first
+        if country_com
+          tags << country_com.tagname
+        else
+          tags << current_participant.geocountry.name
+        end
       end
       tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*'
       tags << @comtag if @comtag.to_s != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*'
