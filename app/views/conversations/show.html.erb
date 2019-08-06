@@ -1,6 +1,8 @@
+<% if false -%>
 <%= render(:partial => 'topmenu')%>
+<% end -%>
 
-<h3><%=raw @conversation.name %></h3>
+<%= render(:partial => 'dialogs/menu') %>
 
 
 <% if @conversation.description.to_s != '' -%>

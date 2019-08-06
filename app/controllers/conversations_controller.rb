@@ -72,6 +72,11 @@ class ConversationsController < ApplicationController
   def show
     @section = 'conversations'
     
+    # Stuff that's needed because we show the menu from the slider
+    @dialog_id = VOH_DISCUSSION_ID
+    @dialog = Dialog.includes(:creator).find(@dialog_id)
+    @dsection = 'info'
+    
     @perspectives = {}
     if params[:perspective].to_s != ''
       @cur_perspective = params[:perspective]

@@ -11,6 +11,9 @@
 <% if @dsection == 'meta' -%>
   - <span id="top_result_header"><%= @conversation.name if @conversation %> - Highest Rated <%= @nvaction ? 'Nonviolent Action Items' : 'Messages' %></span>
 <% elsif @dsection == 'info' -%>
+  <% if @conversation -%>
+  - <%= @conversation.name %>
+  <% end -%>
   - About</span>
 <% elsif @dsection == 'list' and @conversation and @conversation.name.to_s != '' -%>
   - <span id="top_forum_header"><%= @conversation.name if @conversation %> - <%=  @conversation.together_apart.capitalize %></span> 
