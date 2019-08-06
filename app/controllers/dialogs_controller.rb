@@ -181,8 +181,22 @@ class DialogsController < ApplicationController
       @community_id = @community.id      
     end    
     @conversations = []
-    if @community
-      @conversations = @community.conversations
+    #if @community
+    #  @conversations = @community.conversations
+    #end
+    if @in == 'conversation'
+      # Which conversations does this use have access to, through any community
+      conv_done = {}
+      for conv in Conversation.all
+        for com in conv.communities
+          if current_participant.tag_list_downcase.include?(com.tagname.downcase)
+            if not conv_done.has_key?(conv.shortname)
+              @conversations << conv
+              conv_done[conv.shortname] = true
+            end
+          end
+        end
+      end
     end
     if @conv != '' and @conv != '-'
       @conversation = Conversation.find_by_shortname(@conv)
