@@ -661,22 +661,57 @@ class ItemsController < ApplicationController
       elsif @meta_5 == 407
           tags << 'VoiceOfWisdom'        
       end
-      if @item.geo_level == 'city' and current_participant.city.to_s != ''
-        tags << current_participant.city
-      elsif @item.geo_level == 'county' and current_participant.admin2uniq.to_s != ''
-        tags << current_participant.geoadmin2.name
-      elsif @item.geo_level == 'metro' and current_participant.metro_area_id.to_i > 0
-        tags << current_participant.metro_area.name
-      elsif @item.geo_level == 'state' and current_participant.admin1uniq.to_s != ''
-        tags << current_participant.geoadmin1.name
-      elsif (@item.geo_level == 'nation' or @item.geo_level == 'planet') and current_participant.geocountry
-        # Country. Look for a matching community, and use its tag
+      if current_participant.geocountry
         country_com = Community.where(context: 'nation', context_code:current_participant.geocountry.iso3).first
         if country_com
-          tags << country_com.tagname
+          country_tag = country_com.tagname
         else
-          tags << current_participant.geocountry.name
+          country_tag = current_participant.geocountry.name
         end
+      else
+        country_tag = ''
+      end
+      if @item.geo_level == 'city' and current_participant.city.to_s != ''
+        tags << current_participant.city
+        if current_participant.admin2uniq.to_s != ''
+          tags << current_participant.geoadmin2.name
+        end
+        if current_participant.metro_area_id.to_i > 0
+          tags << current_participant.metro_area.name
+        end
+        if current_participant.admin1uniq.to_s != ''
+          tags << current_participant.geoadmin1.name
+        end
+        if country_tag != ''
+          tags << country_tag
+        end
+      elsif @item.geo_level == 'county' and current_participant.admin2uniq.to_s != ''
+        tags << current_participant.geoadmin2.name
+        if current_participant.metro_area_id.to_i > 0
+          tags << current_participant.metro_area.name
+        end
+        if current_participant.admin1uniq.to_s != ''
+          tags << current_participant.geoadmin1.name
+        end
+        if country_tag != ''
+          tags << country_tag
+        end
+      elsif @item.geo_level == 'metro' and current_participant.metro_area_id.to_i > 0
+        tags << current_participant.metro_area.name
+        if current_participant.admin1uniq.to_s != ''
+          tags << current_participant.geoadmin1.name
+        end
+        if country_tag != ''
+          tags << country_tag
+        end
+      elsif @item.geo_level == 'state' and current_participant.admin1uniq.to_s != ''
+        tags << current_participant.geoadmin1.name
+        if country_tag != ''
+          tags << country_tag
+        end
+      elsif (@item.geo_level == 'nation' or (@conversation and @conversation.context=='nation')) and country_tag != ''
+        # Country. Look for a matching community, and use its tag
+        tags << country_tag
       end
       tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*'
       tags << @comtag if @comtag.to_s != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*'
