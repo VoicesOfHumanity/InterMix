@@ -34,7 +34,7 @@
 
   <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>"><%= @conversation.name %> Forum</a></p>
   
-  <p>In Together mode, the forum includes messages from all the conversation communities. When you add a post or a comment, it will be automatically tagged with your current perspective. If you are not a member of any of the conversation communities, then you cannot post in the conversation, but you may comment and rate. Your comments and ratings as a non-member will not count in the conversation, only in the wider Order Out of Chaos forum.</p>
+  <p>In Together phase, the forum includes messages from all the conversation communities. When you add a post or a comment, it will be automatically tagged with your current perspective. If you are not a member of any of the conversation communities, then you cannot post in the conversation, but you may comment and rate. Your comments and ratings as a non-member will not count in the conversation, only in the wider Order Out of Chaos forum.</p>
 
 <% else -%>
 
@@ -45,7 +45,7 @@
     <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= @cur_perspective %>"><%= perspective_community.name %> Forum</a></p>
   <% end -%>
 
-  <p>In Apart mode, the forum includes only messages from your current perspective. If you are not a member of any of the conversation communities, then you cannot post in the conversation, but you may comment and rate. Your comments and ratings as a non-member will not count in the conversation, only in the wider Order Out of Chaos forum.</p>
+  <p>In Apart phase, the forum includes only messages from your current perspective. If you are not a member of any of the conversation communities, then you cannot post in the conversation, but you may comment and rate. Your comments and ratings as a non-member will not count in the conversation, only in the wider Order Out of Chaos forum.</p>
 
 <% end -%>
 
