@@ -12,7 +12,11 @@
 <% end -%>
 <li><a id="about_a" class="menu<%= @dsection=='info' ? ' selected' : ''  %>" href="<%= about_link %>">About</a></li>
 <% if @is_admin or current_participant.sysadmin -%>
-  <li><a class="menu<%= ' selected' if @dsection=='edit' %>" href="/dialogs/<%= @dialog.id %>/edit">Admin</a></li>
+  <% if @conversation -%>
+    <li><a class="menu<%= ' selected' if @dsection=='edit' %>" href="/conversations/<%= @conversation.id %>/edit">Admin</a></li>
+  <% else -%>
+    <li><a class="menu<%= ' selected' if @dsection=='edit' %>" href="/dialogs/<%= @dialog.id %>/edit">Admin</a></li>
+  <% end -%>
 <% end -%>
 </ul>
   

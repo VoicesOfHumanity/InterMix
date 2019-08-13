@@ -32,7 +32,12 @@
     </td>
   </tr>
   
-  <% if @suggestedtopic.to_s != "" -%>
+  <% if @conversation -%>
+  <tr>
+    <td style="text-align:right;vertical-align:top;background-color:transparent">Description:</td>
+    <td style="background-color:transparent"><%= @conversation.description %></td>
+  </tr>  
+  <% elsif @suggestedtopic.to_s != "" -%>
   <tr>
     <td style="text-align:right;vertical-align:top;background-color:transparent">Suggested topic:</td>
     <td style="background-color:transparent"><%= @suggestedtopic %></td>

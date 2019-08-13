@@ -124,10 +124,21 @@ class ConversationsController < ApplicationController
   # GET /conversations/new
   def new
     @conversation = Conversation.new
+
+    # Stuff that's needed because we show the menu from the slider
+    @dialog_id = VOH_DISCUSSION_ID
+    @dialog = Dialog.includes(:creator).find(@dialog_id)
+    @dsection = 'info'
   end
 
   # GET /conversations/1/edit
   def edit
+    @section = 'conversations'
+
+    # Stuff that's needed because we show the menu from the slider
+    @dialog_id = VOH_DISCUSSION_ID
+    @dialog = Dialog.includes(:creator).find(@dialog_id)
+    @dsection = 'edit'
   end
 
   # POST /conversations
