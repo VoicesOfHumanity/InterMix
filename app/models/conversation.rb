@@ -16,7 +16,7 @@ class Conversation < ApplicationRecord
     # Figure out if somebody is a member of one of the member communities, and thus member of the conversation
     for com_tag in p.tag_list_downcase
       community = Community.find_by_tagname(com_tag)
-      if community.conversations.include?(self)
+      if community and community.conversations and community.conversations.include?(self)
         return true
       end
     end

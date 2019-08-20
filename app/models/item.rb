@@ -1496,18 +1496,18 @@ class Item < ActiveRecord::Base
         ratings = ratings.where("1=0")
         title += "Unknown City"
       end  
-    elsif crit[:geo_level] == 'county'  
-      if current_participant.admin2uniq.to_s != ''
+    elsif crit[:geo_level] == 'county'
+      if current_participant.admin2uniq.to_s != '' and current_participant.geoadmin2
         items = items.where("participants.admin2uniq=?",current_participant.admin2uniq)
         ratings = ratings.where("participants.admin2uniq=?",current_participant.admin2uniq)
-        title += "#{current_participant.geoadmin2.name}"
+        title += "#{current_participant.geoadmin2.name}" 
       else
         items = items.where("1=0")
         ratings = ratings.where("1=0")
         title += "Unknown County"
       end  
     elsif crit[:geo_level] == 'metro'
-      if current_participant.metro_area_id.to_i > 0
+      if current_participant.metro_area_id.to_i > 0 and current_participant.metro_area
         items = items.where("participants.metro_area_id=?",current_participant.metro_area_id)
         ratings = ratings.where("participants.metro_area_id=?",current_participant.metro_area_id)
         title += "#{current_participant.metro_area.name}"
@@ -1517,7 +1517,7 @@ class Item < ActiveRecord::Base
         title += "Unknown Metro Area"
       end  
     elsif crit[:geo_level] == 'state'  
-      if current_participant.admin1uniq.to_s != ''
+      if current_participant.admin1uniq.to_s != '' and current_participant.geoadmin1
         items = items.where("participants.admin1uniq=?",current_participant.admin1uniq)
         ratings = ratings.where("participants.admin1uniq=?",current_participant.admin1uniq)
         title += "#{current_participant.geoadmin1.name}"

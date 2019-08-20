@@ -10,6 +10,7 @@ end
 %>
 <%
 if not defined? censor_ok
+  censor_ok = false
   for tag in item.tag_list
     if session[:moderated_communities].include? tag
       community = Community.find_by_tagname(tag)
