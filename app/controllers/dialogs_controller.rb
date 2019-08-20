@@ -211,6 +211,7 @@ class DialogsController < ApplicationController
         end
       end  
     end
+    @perspectives = @communities
     @community_list = @communities.collect{|c| [c.fullname,c.tagname]}
     session['community_list'] = @community_list
     
@@ -273,37 +274,30 @@ class DialogsController < ApplicationController
       @perspective = ''
       @is_conv_member = false
       if @comtag == ""
-        # Does the user already have a perspective
-        if session.has_key?("cur_perspective_#{@conversation.id}")
-          comtag = session["cur_perspective_#{@conversation.id}"]
-          logger.info("dialogs#slider perspective from cookie: #{comtag}")
-          if comtag != '' and current_participant.tag_list_downcase.include?(comtag.downcase)
-            @perspective = comtag
-            url = "/dialogs/#{@dialog_id}/slider?comtag=#{comtag}&conv=#{@conversation.shortname}"
-            url += "&show_result=1" if @show_result == 1
-            redirect_to url
-            return
-          end
-        end  
-        # Is this user a member of any of the communities?
-        for com in @conversation.communities
-          if current_participant.tag_list_downcase.include?(com.tagname.downcase)
-            @is_conv_member = true
-            if (not @comtag or @comtag == '') and com.tagname.to_s != ''
-              # Not only that, but let's enforce that the community is selected
-              @comtag = com.tagname
-              @perspective = @comtag
-              session["cur_perspective_#{@conversation.id}"] = @perspective
-              url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-              url += "&show_result=1" if @show_result == 1
-              redirect_to url 
-            end
-            break
-          end
+        # Does the user already have a reasonable perspective?
+        if @perspectives.length == 0
+          @perspective = 'outsider'
+        elsif session.has_key?("cur_perspective_#{@conversation.id}") and session["cur_perspective_#{@conversation.id}"] != ''
+          @comtag = session["cur_perspective_#{@conversation.id}"]
+          logger.info("dialogs#slider perspective from cookie: #{@comtag} for #{@conversation.shortname}")
+        elsif @perspectives.length == 1
+          @comtag = perspectives.keys[0]
+          logger.info("dialogs#slider perspective from only available: #{@comtag} for #{@conversation.shortname}")
+        else
+          @comtag = perspectives.keys[0]
+          logger.info("dialogs#slider perspective from first in the list: #{@comtag} for #{@conversation.shortname}")
+        end
+        if @comtag != '' and current_participant.tag_list_downcase.include?(@comtag.downcase)
+          @perspective = @comtag
+          url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+          url += "&show_result=1" if @show_result == 1
+          redirect_to url
+          return
         end
         @perspective = 'outsider'
       else
         # We have a comtag
+        logger.info("dialogs#slider perspective from given comtag: #{@comtag} for #{@conversation.shortname}")
         # Is this user a member of any of the communities for the conversation?
         for com in @conversation.communities
           if current_participant.tag_list_downcase.include?(com.tagname.downcase)
@@ -313,6 +307,7 @@ class DialogsController < ApplicationController
               # remember it as the current perspective for this conversation
               @perspective = @comtag
               session["cur_perspective_#{@conversation.id}"] = @perspective
+              logger.info("dialogs#slider settting perspective in cookie: #{@perspective} for #{@conversation.shortname}")
             end
           end
         end
