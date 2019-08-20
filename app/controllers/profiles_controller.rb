@@ -113,9 +113,10 @@ class ProfilesController < ApplicationController
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@profile_id)
     logger.info("profiles#update #{@participant.id}")
+    @old_country_code = @participant.country_code.clone
+    @old_country_code2 = @participant.country_code2.clone
     @goto = params[:goto]  # Maybe a (forum) link to continue to after saving
         
-    geoupdate
     @participant.has_participated = true
     
     flash.now[:alert] = ''
@@ -263,6 +264,8 @@ class ProfilesController < ApplicationController
     end
     
     if @participant.save
+
+      geoupdate
       
       if @participant.twitter_username == '' and @participant.twitter_oauth_token != ''
         @participant.twitter_oauth_token = ''
@@ -708,6 +711,7 @@ class ProfilesController < ApplicationController
   def geoupdate
     #-- Update geo-related fields, when saving a participant, or if one of the fields changed
     #-- Duplicate of what's in participants controller. Not good.
+    #logger.info("profiles#geoupdate country_code:#{@participant.country_code} country_code2:#{@participant.country_code2} old_country_code:#{@old_country_code} old_country_code2:#{@old_country_code2}")
     if @participant.country_code.to_s != ""
       #-- Fill in the country name
       geocountry = Geocountry.find_by_iso(@participant.country_code)
@@ -715,15 +719,31 @@ class ProfilesController < ApplicationController
       community = Community.where(context: 'nation', context_code: geocountry.iso3).first
       if community
         @participant.tag_list.add(community.tagname)
+        if @old_country_code and @old_country_code != @participant.country_code
+          logger.info("profiles#geoupdate country_code #{@old_country_code} -> #{@participant.country_code}")
+          ogeocountry = Geocountry.find_by_iso(@old_country_code)
+          ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
+          if ocommunity
+            @participant.tag_list.remove(ocommunity.tagname)
+          end
+        end
       end
     end   
     if @participant.country_code2.to_s != ""
       #-- Fill in the second country name
       geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
       @participant.country_name2 = geocountry2.name
-      community = Community.where(context: 'nation', context_code: geocountry2.iso3).first
-      if community
-        @participant.tag_list.add(community.tagname)
+      community2 = Community.where(context: 'nation', context_code: geocountry2.iso3).first
+      if community2
+        @participant.tag_list.add(community2.tagname)
+        if @old_country_code2 and @old_country_code2 != @participant.country_code2 and @old_country_code2 != @participant.country_code
+          logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> #{@participant.country_code2}")
+          ogeocountry = Geocountry.find_by_iso(@old_country_code)
+          ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
+          if ocommunity
+            @participant.tag_list.remove(ocommunity.tagname)
+          end
+        end
       end
     end   
     if @participant.admin2uniq.to_s != ""  
