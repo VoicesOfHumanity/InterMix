@@ -115,26 +115,23 @@ class Admin::ConversationsController < ApplicationController
   def community_add
     #-- Add a community to the conversation
     @community_id = params[:community_id]
-    
     conversation_community = ConversationCommunity.where(conversation_id: @conversation_id, community_id: @community_id).first
     if not conversation_community
       conversation_community = ConversationCommunity.create(conversation_id: @conversation_id, community_id: @community_id)
     end
-
     communities    
   end 
   
   def community_del 
     #-- Remove a community from the conversation
-    @community_id = params[:id].to_i
-    participant_ids = params[:participant_ids]
-    for participant_id in participant_ids
-      community_admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, participant_id]).first
-      if community_admin
-        community_admin.destroy
+    community_ids = params[:community_ids]
+    for community_id in community_ids
+      com = ConversationCommunity.where(conversation_id: @conversation.id, community_id: community_id).first
+      if com
+        com.destroy
       end
     end
-    admins
+    communities
   end
   
 
