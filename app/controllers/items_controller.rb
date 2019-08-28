@@ -1435,8 +1435,8 @@ class ItemsController < ApplicationController
   def get_summary
     @item_id = params[:id]
     items = Item.where(:id=>@item_id).includes(:item_rating_summary,:dialog)
-    @item = items[0]
-    @item.item_rating_summary.recalculate(false,@item.dialog)
+    @item = items[0]    
+    @item.item_rating_summary.recalculate(false,@item.dialog) if @item.item_rating_summary
     render :partial=>"rating_summary", :layout=>false, :locals=>{:item=>@item}
   end
   
