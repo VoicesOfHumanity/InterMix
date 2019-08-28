@@ -13,6 +13,7 @@ if (CKEDITOR.instances['item_html_content']) {
 	<%= hidden_field :item, :dialog_id %>
 	<%= hidden_field :item, :period_id %>
 	<%= hidden_field :item, :conversation_id %>
+	<%= hidden_field :item, :representing_com %>
 	<%= hidden_field_tag :js_message_length, 0 %>
 </div>
 
@@ -163,7 +164,7 @@ if (CKEDITOR.instances['item_html_content']) {
     	  <% end -%>
       <% end -%>
       
-      <% if @conversation and @conversation.together_apart == 'apart' and @conv_own_coms -%>
+      <% if false and @conversation and @conversation.together_apart == 'apart' and @conv_own_coms -%>
   	    Representing: <select name="item[representing_com]" id="item_representing_com">
     	    <%= options_for_select(@conv_own_coms.invert.to_a) %>
   	    </select>

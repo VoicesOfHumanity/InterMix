@@ -552,6 +552,10 @@ class ItemsController < ApplicationController
         if @conv_own_coms.length == 1 and @conversation.together_apart == 'apart'
           tags << @conv_own_coms.keys[0].downcase
         end
+        if @comtag and @conv_own_coms.has_key?(@comtag)
+          @item.representing_com = @comtag
+          tags << @comtag
+        end
         
         if @conversation.together_apart != ''
           if @item.reply_to.to_i > 0
@@ -826,7 +830,7 @@ class ItemsController < ApplicationController
         array_of_pieces = @item.html_content.rpartition '</p>'
         ( array_of_pieces[(array_of_pieces.find_index '</p>')] = " #{tag}</p>" ) rescue nil
         @item.html_content = array_of_pieces.join  
-        logger.info("items#create representing_com tag added at the end")
+        logger.info("items#create conversation tag added at the end")
       end
 
       if @conversation.together_apart == 'apart' and @item.representing_com.to_s != ''
