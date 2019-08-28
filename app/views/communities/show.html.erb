@@ -4,7 +4,24 @@
 <h3><%=raw @community.fullname %></h3>
 
 <p><b>Short Name:</b> <%= @community.tagname %>&nbsp;&nbsp;
-<button onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
+<%
+prof_nation = false
+if @community.context=='nation'
+  geocountry = Geocountry.find_by_iso3(@community.context_code)
+  if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
+    prof_nation = true
+  end
+end
+%>
+<% if prof_nation -%>
+  <!--in&nbsp;profile-->
+<% else -%>
+    <button onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
+<% end -%>
+    
+    
+    
+
 </p>
 
 <% if @community.is_sub -%>

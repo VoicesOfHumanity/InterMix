@@ -63,7 +63,22 @@
       <% end -%>
     	<td><%= com.activity_count %></td>
     	<td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a></td>
-    	<td><a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a></td>
+    	<td>
+            <%
+            prof_nation = false
+            if com.context=='nation'
+              geocountry = Geocountry.find_by_iso3(com.context_code)
+              if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
+                prof_nation = true
+              end
+            end
+            %>
+            <% if prof_nation -%>
+              in&nbsp;profile
+            <% else -%>
+                <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>            
+            <% end -%>
+        </td>
     </tr>
   <% end -%>
   </table>

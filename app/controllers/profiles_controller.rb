@@ -718,13 +718,18 @@ class ProfilesController < ApplicationController
       @participant.country_name = geocountry.name
       community = Community.where(context: 'nation', context_code: geocountry.iso3).first
       if community
+        #logger.info("profiles#geoupdate adding #{community.tagname} to tag_list")
         @participant.tag_list.add(community.tagname)
+        @participant.save
         if @old_country_code and @old_country_code != @participant.country_code
           logger.info("profiles#geoupdate country_code #{@old_country_code} -> #{@participant.country_code}")
           ogeocountry = Geocountry.find_by_iso(@old_country_code)
           ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
           if ocommunity
             @participant.tag_list.remove(ocommunity.tagname)
+            @participant.save
+          else
+            logger.info("profiles#geoupdate community not found for nation/#{ogeocountry.iso3}")
           end
         end
       end
@@ -736,12 +741,14 @@ class ProfilesController < ApplicationController
       community2 = Community.where(context: 'nation', context_code: geocountry2.iso3).first
       if community2
         @participant.tag_list.add(community2.tagname)
+        @participant.save
         if @old_country_code2 and @old_country_code2 != @participant.country_code2 and @old_country_code2 != @participant.country_code
           logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> #{@participant.country_code2}")
           ogeocountry = Geocountry.find_by_iso(@old_country_code)
           ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
           if ocommunity
             @participant.tag_list.remove(ocommunity.tagname)
+            @participant.save
           end
         end
       end
