@@ -90,6 +90,7 @@ class ItemRatingSummary < ActiveRecord::Base
     
     self.save!  
     
+    return self
   end
   
   def sumupdate(intapp, vote)
