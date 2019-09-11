@@ -77,7 +77,7 @@ end
         return
       end
       reply_to = res[2] if res.length > 2
-      shortname = shortname.downcase
+      #shortname = shortname.downcase
       puts "  group shortname:#{shortname}"
       logger.info("receive_mailer#receive group shortname:#{shortname} messagetype:#{type_list_message}")
     

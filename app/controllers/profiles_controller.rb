@@ -580,7 +580,7 @@ class ProfilesController < ApplicationController
     which = params[:which]    
     if which == 'join'
       comtag.gsub!(/[^0-9A-za-z_]/,'')
-      comtag.downcase!
+      #comtag.downcase!
       if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
       elsif comtag != ''
         current_participant.tag_list.add(comtag)

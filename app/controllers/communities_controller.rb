@@ -228,7 +228,7 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'edit'
     @community = Community.new(params[:community])
-    @community.tagname.downcase!
+    #@community.tagname.downcase!
     flash.now[:alert] = ''
     if params[:community][:tagname].to_s == ''
       flash.now[:alert] += "The community needs a short name<br/>"
@@ -236,7 +236,7 @@ class CommunitiesController < ApplicationController
       flash.now[:alert] += "The community needs a long name<br/>"
     end
     if params[:community][:tagname].to_s != ''
-      tagname = params[:community][:tagname].strip.gsub(/[^0-9A-za-z_]/,'').downcase
+      tagname = params[:community][:tagname].strip.gsub(/[^0-9A-za-z_]/,'')
       community = Community.where(tagname: tagname).first
       if community
         flash.now[:alert] += "There's already a @#{tagname} community"
@@ -273,7 +273,7 @@ class CommunitiesController < ApplicationController
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
     @community.update_attributes(community_params)
-    @community.tagname.downcase!
+    #@community.tagname.downcase!
     @community.description = sanitizethis(@community.description).strip
     @community.save
     # fix autotags
@@ -283,8 +283,8 @@ class CommunitiesController < ApplicationController
       tags = autotags.split(/\W+/)
       tagsdone = {}
       for tag in tags
-        tag.downcase!
-        if tag != @community.tagname.downcase and not tagsdone[tag]
+        #tag.downcase!
+        if tag.downcase != @community.tagname.downcase and not tagsdone[tag]
           if newautotags != ''
             newautotags += ', '
           end
@@ -372,7 +372,7 @@ class CommunitiesController < ApplicationController
     #-- Add a sub-community
     @community_id = params[:id].to_i
     @community = Community.find_by_id(@community_id)
-    @tagname = params[:tagname].strip.gsub(/[^0-9A-za-z_]/,'').downcase
+    @tagname = params[:tagname].strip.gsub(/[^0-9A-za-z_]/,'')
     
     scommunity = Community.where(tagname: @tagname).first
     if not @is_admin

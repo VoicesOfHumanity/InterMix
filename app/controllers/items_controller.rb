@@ -511,7 +511,7 @@ class ItemsController < ApplicationController
           if tagmatch.length > 14
             tagmatch = tagmatch[0..13]
           end
-          tags << tagmatch.downcase
+          tags << tagmatch
         end
         
         #logger.info("items#new replying. Existing @comtag:#{@comtag}")
@@ -537,7 +537,7 @@ class ItemsController < ApplicationController
       # We're in a conversation
       @conversation = Conversation.find_by_id(@item.conversation_id)
       if @conversation
-        @conv = @conversation.shortname.downcase
+        @conv = @conversation.shortname
         if @in_conversation
           # Add conversation tag only if we're currently in the conversation
           tags << @conv
@@ -550,7 +550,7 @@ class ItemsController < ApplicationController
           end
         end
         if @conv_own_coms.length == 1 and @conversation.together_apart == 'apart'
-          tags << @conv_own_coms.keys[0].downcase
+          tags << @conv_own_coms.keys[0]
         end
         if @comtag and @conv_own_coms.has_key?(@comtag)
           @item.representing_com = @comtag
@@ -2486,7 +2486,7 @@ class ItemsController < ApplicationController
       if tagmatch.length > 14
         tagmatch = tagmatch[0..13]
       end
-      tagmatches2 << tagmatch.downcase
+      tagmatches2 << tagmatch
     end
     logger.info("items#itemprocess tags:#{tagmatches2}") 
     @item.tag_list = tagmatches2

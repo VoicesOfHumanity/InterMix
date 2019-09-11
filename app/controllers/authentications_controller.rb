@@ -66,7 +66,7 @@ class AuthenticationsController < ApplicationController
             logger.info("authentications#create joining to community #{session[:comtag]}")
             comtag = session[:comtag]
             comtag.gsub!(/[^0-9A-za-z_]/,'')
-            comtag.downcase!
+            #comtag.downcase!
             if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
             elsif comtag != ''
               @participant.tag_list.add(comtag)

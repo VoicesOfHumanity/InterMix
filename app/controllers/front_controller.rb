@@ -1196,7 +1196,7 @@ class FrontController < ApplicationController
           #-- Join them right away if logged in
           comtag = session[:comtag]
           comtag.gsub!(/[^0-9A-za-z_]/,'')
-          comtag.downcase!
+          #comtag.downcase!
           if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
           elsif comtag != ''
             current_participant.tag_list.add(comtag)
@@ -1383,7 +1383,7 @@ class FrontController < ApplicationController
       logger.info("front#fbjoinfinal joining to community #{session[:comtag]}")
       comtag = session[:comtag]
       comtag.gsub!(/[^0-9A-za-z_]/,'')
-      comtag.downcase!
+      #comtag.downcase!
       if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
       elsif comtag != ''
         @participant.tag_list.add(comtag)
@@ -1895,7 +1895,7 @@ class FrontController < ApplicationController
         logger.info("front#fbjoinfinal joining to community #{session[:comtag]}")
         xcomtag = comtag
         xcomtag.gsub!(/[^0-9A-za-z_]/,'')
-        xcomtag.downcase!
+        #xcomtag.downcase!
         if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
         elsif xcomtag != ''
           @participant.tag_list.add(xcomtag)
