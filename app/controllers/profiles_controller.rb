@@ -715,21 +715,23 @@ class ProfilesController < ApplicationController
     if @participant.country_code.to_s != ""
       #-- Fill in the country name
       geocountry = Geocountry.find_by_iso(@participant.country_code)
-      @participant.country_name = geocountry.name
-      community = Community.where(context: 'nation', context_code: geocountry.iso3).first
-      if community
-        #logger.info("profiles#geoupdate adding #{community.tagname} to tag_list")
-        @participant.tag_list.add(community.tagname)
-        @participant.save
-        if @old_country_code and @old_country_code != @participant.country_code
-          logger.info("profiles#geoupdate country_code #{@old_country_code} -> #{@participant.country_code}")
-          ogeocountry = Geocountry.find_by_iso(@old_country_code)
-          ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
-          if ocommunity
-            @participant.tag_list.remove(ocommunity.tagname)
-            @participant.save
-          else
-            logger.info("profiles#geoupdate community not found for nation/#{ogeocountry.iso3}")
+      if geocountry
+        @participant.country_name = geocountry.name
+        community = Community.where(context: 'nation', context_code: geocountry.iso3).first
+        if community
+          #logger.info("profiles#geoupdate adding #{community.tagname} to tag_list")
+          @participant.tag_list.add(community.tagname)
+          @participant.save
+          if @old_country_code and @old_country_code != @participant.country_code
+            logger.info("profiles#geoupdate country_code #{@old_country_code} -> #{@participant.country_code}")
+            ogeocountry = Geocountry.find_by_iso(@old_country_code)
+            if ogeocountry
+              ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
+              if ocommunity
+                @participant.tag_list.remove(ocommunity.tagname)
+                @participant.save
+              end
+            end
           end
         end
       end
@@ -737,34 +739,38 @@ class ProfilesController < ApplicationController
     if @participant.country_code2.to_s != ""
       #-- Fill in the second country name
       geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
-      @participant.country_name2 = geocountry2.name
-      community2 = Community.where(context: 'nation', context_code: geocountry2.iso3).first
-      if community2
-        @participant.tag_list.add(community2.tagname)
-        @participant.save
-        if @old_country_code2 and @old_country_code2 != @participant.country_code2 and @old_country_code2 != @participant.country_code
-          logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> #{@participant.country_code2}")
-          ogeocountry = Geocountry.find_by_iso(@old_country_code2)
-          ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
-          if ocommunity
-            logger.info("profiles#geoupdate removing nation2 community #{ocommunity.tagname} from user")
-            @participant.tag_list.remove(ocommunity.tagname)
-            @participant.save
-          else
-            logger.info("profiles#geoupdate community not found for nation2/#{ogeocountry.iso3}")
+      if geocountry2
+        @participant.country_name2 = geocountry2.name
+        community2 = Community.where(context: 'nation', context_code: geocountry2.iso3).first
+        if community2
+          @participant.tag_list.add(community2.tagname)
+          @participant.save
+          if @old_country_code2 and @old_country_code2 != @participant.country_code2 and @old_country_code2 != @participant.country_code
+            logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> #{@participant.country_code2}")
+            ogeocountry = Geocountry.find_by_iso(@old_country_code2)
+            if ogeocountry
+              ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
+              if ocommunity
+                logger.info("profiles#geoupdate removing nation2 community #{ocommunity.tagname} from user")
+                @participant.tag_list.remove(ocommunity.tagname)
+                @participant.save
+              end
+            end  
           end
         end
       end
     elsif @participant.country_code2.to_s == "" and @old_country_code2 != "" and @old_country_code2 != @participant.country_code
       logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> [blank]")
       ogeocountry = Geocountry.find_by_iso(@old_country_code2)
-      ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
-      if ocommunity
-        logger.info("profiles#geoupdate removing nation2 community #{ocommunity.tagname} from user")
-        @participant.tag_list.remove(ocommunity.tagname)
-        @participant.save
-      else
-        logger.info("profiles#geoupdate community not found for nation2/#{ogeocountry.iso3}")
+      if ogeocountry
+        ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
+        if ocommunity
+          logger.info("profiles#geoupdate removing nation2 community #{ocommunity.tagname} from user")
+          @participant.tag_list.remove(ocommunity.tagname)
+          @participant.save
+        else
+          logger.info("profiles#geoupdate community not found for nation2/#{ogeocountry.iso3}")
+        end
       end
     end   
     if @participant.admin2uniq.to_s != ""  
