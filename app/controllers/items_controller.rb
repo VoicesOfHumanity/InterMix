@@ -825,6 +825,7 @@ class ItemsController < ApplicationController
     if @item.conversation_id.to_i > 0
       @conversation = Conversation.find_by_id(@item.conversation_id)      
       tag = '#' + @conversation.shortname
+      logger.info("items#create conversation #{@conversation.id} should have tag #{tag}. together_apart:#{@conversation.together_apart} representing_com:#{@item.representing_com}")
       if not @item.html_content.include? tag
         # If the conversation hashtag is missing, add it back in before the last </p>
         array_of_pieces = @item.html_content.rpartition '</p>'

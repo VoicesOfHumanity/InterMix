@@ -755,6 +755,17 @@ class ProfilesController < ApplicationController
           end
         end
       end
+    elsif @participant.country_code2.to_s == "" and @old_country_code2 != "" and @old_country_code2 != @participant.country_code
+      logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> [blank]")
+      ogeocountry = Geocountry.find_by_iso(@old_country_code2)
+      ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
+      if ocommunity
+        logger.info("profiles#geoupdate removing nation2 community #{ocommunity.tagname} from user")
+        @participant.tag_list.remove(ocommunity.tagname)
+        @participant.save
+      else
+        logger.info("profiles#geoupdate community not found for nation2/#{ogeocountry.iso3}")
+      end
     end   
     if @participant.admin2uniq.to_s != ""  
       geoadmin2 = Geoadmin2.find_by_admin2uniq(@participant.admin2uniq)
