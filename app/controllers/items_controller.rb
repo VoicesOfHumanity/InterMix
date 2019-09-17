@@ -502,17 +502,8 @@ class ItemsController < ApplicationController
         @item.subgroup_list = @olditem.subgroup_list if @olditem.subgroup_list.to_s != ''
         
         # Get the message tags from the previous message, if any
-        xtxt = ActionView::Base.full_sanitizer.sanitize(@olditem.html_content)
-        #logger.info("items#new xtxt:#{xtxt}") 
-        tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$|,|;|:|-|\.|\?)/i).map{|s| s[0]}
-        tags = []
-        for tagmatch in tagmatches
-          tagmatch.gsub!(/[^0-9A-za-z_]/,'')
-          if tagmatch.length > 14
-            tagmatch = tagmatch[0..13]
-          end
-          tags << tagmatch
-        end
+        tags = tags + get_tags_from_html(@olditem.html_content)
+        tags_downcase = get_tags_from_html(@olditem.html_content,true)
         
         #logger.info("items#new replying. Existing @comtag:#{@comtag}")
         @comtag = @olditem.intra_com if @olditem.intra_com and @olditem.intra_com != 'public'
@@ -538,7 +529,7 @@ class ItemsController < ApplicationController
       @conversation = Conversation.find_by_id(@item.conversation_id)
       if @conversation
         @conv = @conversation.shortname
-        if @in_conversation
+        if @in_conversation and not tags_downcase.include? @conv.downcase
           # Add conversation tag only if we're currently in the conversation
           tags << @conv
         end
@@ -550,20 +541,28 @@ class ItemsController < ApplicationController
           end
         end
         if @conv_own_coms.length == 1 and @conversation.together_apart == 'apart'
-          tags << @conv_own_coms.keys[0]
+          if not tags_downcase.include? @conv_own_coms.keys[0].downcase
+            tags << @conv_own_coms.keys[0]
+          end
         end
         if @comtag and @conv_own_coms.has_key?(@comtag)
           @item.representing_com = @comtag
-          tags << @comtag
+          if not tags_downcase.include? @comtag.downcase
+            tags << @comtag
+          end
         end
         
         if @conversation.together_apart != ''
           if @item.reply_to.to_i > 0
             if @olditem.together_apart.to_s != ''
-              tags << @olditem.together_apart
+              if not tags_downcase.include? @olditem.together_apart.downcase
+                tags << @olditem.together_apart
+              end
             end
           else
-            tags << @conversation.together_apart
+            if not tags_downcase.include? @conversation.together_apart.downcase
+              tags << @conversation.together_apart
+            end
           end
         end
       end
@@ -573,7 +572,9 @@ class ItemsController < ApplicationController
       @item.intra_conv = @conv if @item.reply_to.to_i == 0    # A reply will keep same setting, conversation only, or not
     end
     
-    tags << 'nvaction' if @nvaction
+    if not tags_downcase.include? 'nvaction'
+      tags << 'nvaction' if @nvaction
+    end
 
     @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)       
     @dialogsin = DialogParticipant.where("participant_id=#{current_participant.id}").includes(:dialog)  
@@ -678,54 +679,54 @@ class ItemsController < ApplicationController
       if @item.geo_level == 'city' and current_participant.city.to_s != ''
         tags << current_participant.city
         if current_participant.admin2uniq.to_s != ''
-          tags << current_participant.geoadmin2.name
+          tags << current_participant.geoadmin2.name if not tags_downcase.include? current_participant.geoadmin2.name.downcase
         end
         if current_participant.metro_area_id.to_i > 0
-          tags << current_participant.metro_area.name
+          tags << current_participant.metro_area.name if not tags_downcase.include? current_participant.metro_area.name.downcase
         end
         if current_participant.admin1uniq.to_s != ''
-          tags << current_participant.geoadmin1.name
+          tags << current_participant.geoadmin1.name if not tags_downcase.include? current_participant.geoadmin1.name.downcase
         end
         if country_tag != ''
-          tags << country_tag
+          tags << country_tag if not tags_downcase.include? country_tag.downcase
         end
       elsif @item.geo_level == 'county' and current_participant.admin2uniq.to_s != ''
         tags << current_participant.geoadmin2.name
         if current_participant.metro_area_id.to_i > 0
-          tags << current_participant.metro_area.name
+          tags << current_participant.metro_area.name if not tags_downcase.include? current_participant.metro_area.name.downcase
         end
         if current_participant.admin1uniq.to_s != ''
-          tags << current_participant.geoadmin1.name
+          tags << current_participant.geoadmin1.name if not tags_downcase.include? current_participant.geoadmin1.name.downcase
         end
         if country_tag != ''
-          tags << country_tag
+          tags << country_tag if not tags_downcase.include? country_tag.downcase
         end
       elsif @item.geo_level == 'metro' and current_participant.metro_area_id.to_i > 0
         tags << current_participant.metro_area.name
         if current_participant.admin1uniq.to_s != ''
-          tags << current_participant.geoadmin1.name
+          tags << current_participant.geoadmin1.name if not tags_downcase.include? current_participant.geoadmin1.name.downcase
         end
         if country_tag != ''
-          tags << country_tag
+          tags << country_tag if not tags_downcase.include? country_tag.downcase
         end
       elsif @item.geo_level == 'state' and current_participant.admin1uniq.to_s != ''
         tags << current_participant.geoadmin1.name
         if country_tag != ''
-          tags << country_tag
+          tags << country_tag if not tags_downcase.include? country_tag.downcase
         end
       elsif (@item.geo_level == 'nation' or (@conversation and @conversation.context=='nation')) and country_tag != ''
         # Country. Look for a matching community, and use its tag
-        tags << country_tag
+        tags << country_tag if not tags_downcase.include? country_tag.downcase
       end
-      tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*'
-      tags << @comtag if @comtag.to_s != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*'
+      tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*' and not tags_downcase.include? @messtag.downcase
+      tags << @comtag if @comtag.to_s != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*' and not tags_downcase.include? @comtag.downcase
       
       if @item.is_first_in_thread and @community 
         #-- Add tags for this and any parent communities
         if @community.autotags.to_s != ''
           autotags = @community.autotags.gsub('#','').split(/\W+/)
           for autotag in autotags
-            tags << autotag
+            tags << autotag if not tags_downcase.include? autotag.downcase
           end        
         end
         com = @community
@@ -734,7 +735,7 @@ class ItemsController < ApplicationController
           if parent.autotags.to_s != ''
             autotags = parent.autotags.gsub('#','').split(/\W+/)
             for autotag in autotags
-              tags << autotag
+              tags << autotag if not tags_downcase.include? autotag.downcase
             end
           end
           com = parent
@@ -744,10 +745,14 @@ class ItemsController < ApplicationController
     
     logger.info("items#new tags:#{tags.inspect}") 
     tagtext = ''.dup
+    has_done = {}
     tags.uniq.each do |tag|
-      tagtext += ' ' if tagtext != ''
-      tag = tag.gsub(/[^0-9A-za-z_]/i,'')
-      tagtext += "##{tag}"
+      if not has_done.has_key? tag.downcase
+        tagtext += ' ' if tagtext != ''
+        tag = tag.gsub(/[^0-9A-za-z_]/i,'')
+        tagtext += "##{tag}"
+        has_done[tag.downcase] = true
+      end
     end
     @item.html_content += "<p><br><br>#{tagtext}</p>"
     
