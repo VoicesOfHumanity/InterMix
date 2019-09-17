@@ -641,5 +641,29 @@ class ApplicationController < ActionController::Base
         session[:moderated_communities] = Community.where(moderated: true).collect {|r| r.tagname }
       end
     end
+    
+    def get_tags_from_html(html,downcase=false)
+      # Extract an array of tags, if any, from a piece of html
+      xtxt = ActionView::Base.full_sanitizer.sanitize(html)
+      tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$|,|;|:|-|\.|\?)/i).map{|s| s[0]}
+      tagmatches2 = []
+      got = {}
+      for tagmatch in tagmatches
+        tagmatch.gsub!(/[^0-9A-za-z_]/,'')
+        if tagmatch.length > 14
+          tagmatch = tagmatch[0..13]
+        end        
+        if downcase
+          tag = tagmatch.downcase
+        else
+          tag = tagmatch
+        end
+        if not got.has_key?(tag)
+          tagmatches2 << tag
+          got[tag] = true
+        end
+      end
+      return tagmatches2
+    end
         
 end

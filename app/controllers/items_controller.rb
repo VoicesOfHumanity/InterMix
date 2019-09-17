@@ -821,23 +821,28 @@ class ItemsController < ApplicationController
       render :json=>results, :layout=>false
       return
     end
+
+    tags_in_html = get_tags_from_html(@item.html_content,true)
+    logger.info("items#create tags_in_html:#{tags_in_html.inspect}")
     
     if @item.conversation_id.to_i > 0
       @conversation = Conversation.find_by_id(@item.conversation_id)      
       tag = '#' + @conversation.shortname
-      logger.info("items#create conversation #{@conversation.id} should have tag #{tag}. together_apart:#{@conversation.together_apart} representing_com:#{@item.representing_com}")
-      if not @item.html_content.include? tag
+      logger.info("items#create conversation #{@conversation.id} should have tag #{tag}. together_apart:#{@conversation.together_apart} representing_com:#{@item.representing_com}")      
+      if not tags_in_html.include? @conversation.shortname.downcase
         # If the conversation hashtag is missing, add it back in before the last </p>
+        logger.info("items#create conversation tag added at the end")
         array_of_pieces = @item.html_content.rpartition '</p>'
         ( array_of_pieces[(array_of_pieces.find_index '</p>')] = " #{tag}</p>" ) rescue nil
         @item.html_content = array_of_pieces.join  
-        logger.info("items#create conversation tag added at the end")
+        tags_in_html = get_tags_from_html(@item.html_content,true)
       end
 
       if @conversation.together_apart == 'apart' and @item.representing_com.to_s != ''
         # If there's a represent community, include the hash tag, if not there, if it is in the apart period
         tag = '#' + @item.representing_com
-        if not @item.html_content.include? tag
+        #if not @item.html_content.include? tag
+        if not tags_in_html.include? @item.representing_com.downcase
           # If it is not already there. It would be if there was only one community they were a member of
           logger.info("items#create representing_com tag not already there")
           if @item.html_content.include? "##{@conversation.shortname}"
@@ -899,6 +904,7 @@ class ItemsController < ApplicationController
     logger.info("items#create by #{@item.posted_by}")
     
     if @item.together_apart.to_s != ''
+      # add a together / apart tag, if not already there
       tag = '#' + @item.together_apart
       if not @item.html_content.include? tag
         # Put it before the last </p>
