@@ -463,6 +463,7 @@ class ItemsController < ApplicationController
     end    
     
     tags = []
+    tags_downcase = []
     
     @is_com_member = false
     if @comtag != ''
@@ -572,7 +573,7 @@ class ItemsController < ApplicationController
       @item.intra_conv = @conv if @item.reply_to.to_i == 0    # A reply will keep same setting, conversation only, or not
     end
     
-    if not tags_downcase.include? 'nvaction'
+    if not tags.include? 'nvaction'
       tags << 'nvaction' if @nvaction
     end
 
