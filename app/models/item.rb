@@ -469,12 +469,7 @@ class Item < ActiveRecord::Base
       email_log = Email.create(participant_id:recipient.id, context:'instant')
       cdata['email_id'] = email_log.id
       
-      if group
-        #-- A group message  
-        email = ItemMailer.group_item(msubject, itext, recipient.email_address_with_name, cdata)
-      else    
-        email = ItemMailer.item(msubject, itext, recipient.email_address_with_name, cdata)
-      end
+      email = ItemMailer.item(msubject, itext, recipient.email_address_with_name, cdata)
       
       begin
         logger.info("Item#emailit delivering email to #{recipient.id}:#{recipient.name}")
