@@ -16,7 +16,8 @@
 		<%= f.input :metropolitan_area %>
 		<%= f.input :bioregion %>
 		<%= f.input :faith_tradition %>
-		<%= f.input :tag_list, :as => :string, :input_html => {:size=>80}  %>
+    <li class="string input optional stringish" id="participant_tag_list_input"><label for="participant_tag_list" class="label">Tag list</label><input size="80" id="participant_tag_list" type="text" value="<%= @participant.tag_list.join(',') %>" name="participant[tag_list]">
+    </li>
 		<%= f.input :status, as: :select, collection: PARTICIPANT_STATUSES %>
 		<%= f.input :visibility, :as => :select, :collection =>PARTICIPANT_VISIBILITY %>
 		
