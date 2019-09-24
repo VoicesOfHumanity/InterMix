@@ -719,7 +719,7 @@ class ItemsController < ApplicationController
         # Country. Look for a matching community, and use its tag
         tags << country_tag if not tags_downcase.include? country_tag.downcase
       end
-      tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*' and not tags_downcase.include? @messtag.downcase
+      tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*' and @messtag != '*other*' and not tags_downcase.include? @messtag.downcase
       tags << @comtag if @comtag.to_s != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*' and not tags_downcase.include? @comtag.downcase
       
       if @item.is_first_in_thread and @community 
