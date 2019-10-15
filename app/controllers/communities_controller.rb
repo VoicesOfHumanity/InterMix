@@ -241,6 +241,7 @@ class CommunitiesController < ApplicationController
       if community
         flash.now[:alert] += "There's already a @#{tagname} community"
       end
+      @community.tagname = tagname
     end
     if flash.now[:alert] != ''  
       render action: :edit

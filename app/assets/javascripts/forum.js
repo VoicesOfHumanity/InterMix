@@ -250,6 +250,10 @@ function newitem(token) {
   if ($("input[name='messtag_radio']").length) {
       var messtag = $("input[name='messtag_radio']:checked").val();
       pars += '&messtag='+messtag;
+      var messtag_other = $('#messtag_other').val();
+      if (messtag_other!='') {
+        pars += '&messtag_other='+messtag_other;
+      } 
   }
   if ($("input[name='meta_3']").length) {
       var meta_3 = $("input[name='meta_3']:checked").val();

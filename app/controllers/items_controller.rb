@@ -400,6 +400,7 @@ class ItemsController < ApplicationController
     @subgroup = params[:subgroup].to_s
     @comtag = params[:comtag].to_s
     @messtag = params[:messtag].to_s
+    @messtag_other = params[:messtag_other].to_s
     @nvaction = (params[:nvaction].to_i == 1) ? true : false
     @conversation_id = params[:conversation_id].to_i
     logger.info("items#new @comtag:#{@comtag} @messtag:#{@messtag}") 
@@ -720,6 +721,7 @@ class ItemsController < ApplicationController
         tags << country_tag if not tags_downcase.include? country_tag.downcase
       end
       tags << @messtag if @messtag.to_s != '' and !tags.include?(@messtag) and @messtag != 'my' and @messtag != '*my*' and @messtag != '*other*' and not tags_downcase.include? @messtag.downcase
+      tags << @messtag_other if @messtag_other.to_s != '' and @messtag == '*other*'
       tags << @comtag if @comtag.to_s != '' and !tags.include?(@comtag) and @comtag != 'my' and @comtag != '*my*' and not tags_downcase.include? @comtag.downcase
       
       if @item.is_first_in_thread and @community 
