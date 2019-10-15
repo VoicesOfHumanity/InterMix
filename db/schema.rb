@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_04_130412) do
+ActiveRecord::Schema.define(version: 2019_10_10_171511) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -300,6 +300,33 @@ ActiveRecord::Schema.define(version: 2019_06_04_130412) do
     t.index ["extrasort", "name"], name: "sortname"
     t.index ["iso"], name: "iso"
     t.index ["name"], name: "name"
+  end
+
+  create_table "geonames", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "asciiname"
+    t.text "alternatenames"
+    t.decimal "latitude", precision: 11, scale: 6
+    t.decimal "longitude", precision: 11, scale: 6
+    t.string "feature_class", limit: 1
+    t.string "feature_code", limit: 10
+    t.string "country_code", limit: 2
+    t.string "cc2"
+    t.string "admin1_code", limit: 20
+    t.string "admin2_code", limit: 80
+    t.string "admin3_code", limit: 20
+    t.string "admin4_code", limit: 20
+    t.bigint "population"
+    t.integer "elevation"
+    t.integer "gtopo30"
+    t.string "timezone"
+    t.date "modification_date"
+    t.string "fclasscode", limit: 7
+    t.index ["admin1_code", "admin2_code"], name: "admin_code"
+    t.index ["feature_class", "feature_code"], name: "feature"
+    t.index ["latitude"], name: "latitude"
+    t.index ["longitude"], name: "longitude"
+    t.index ["name"], name: "geonames_name_index", length: 30
   end
 
   create_table "group_metamaps", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

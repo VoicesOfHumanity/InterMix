@@ -166,4 +166,15 @@ module ApplicationHelper
   #print "#{phase(2010,2,10)}\n"
   #print "#{phase(1987,5,10)}\n"
         
+  def adminuniq_part(xuniq, pos=1)
+    # given an admin1uniq or admin2uniq like DK.17, get one part, separated by period, starting with zero
+    xarr = xuniq.split('.')
+    if xarr.length > pos
+      return xarr[pos]
+    else
+      return xuniq
+    end
+  end        
+        
+      
 end
