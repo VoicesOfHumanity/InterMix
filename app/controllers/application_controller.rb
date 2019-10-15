@@ -50,6 +50,45 @@ class ApplicationController < ActionController::Base
     end
     #render :layout=>false, :text => res.to_json
     render json: res
+  end
+  
+  def getadmin2_from_city
+    country_code = params[:country_code].to_s
+    admin1uniq = params[:admin1uniq].to_s
+    city_name = params[:city_name].to_s
+    xarr = admin1uniq.split('.')
+    admin1_code = xarr[1]
+    city = Geoname.where(country_code: country_code, admin1_code: admin1_code, name: city_name).first
+    if city
+      admin2_code = city.admin2_code
+      county = Geoadmin2.where(country_code: country_code, admin1_code: admin1_code, admin2_code: admin2_code).first
+      if county
+        render json: [county.admin2uniq,county.name]
+      else
+        logger.info("getadmin2_from_city didn't find county on #{country_code}|#{admin1_code}|#{admin2_code}")
+        render json: ['','']        
+      end
+    else
+      logger.info("getadmin2_from_city didn't find city on #{country_code}|#{admin1_code}|#{city_name}")
+      render json: ['','']
+    end
+  end
+
+  def getcities
+    #-- Get the city entries for a certain state/region, for a select box
+    #-- We either get everything in a certain country or everything in an admin1 region
+    @country_code = params[:country_code].to_s
+    @admin1uniq = params[:admin1uniq].to_s
+    if @admin1uniq == '' and @country_code == '' 
+      res = [{:val=>0, :txt=>''}]
+    elsif @admin1uniq != ""
+      xarr = @admin1uniq.split('.')
+      admin1_code = xarr[1]
+      res = [''] + Geoname.where(country_code: @country_code, admin1_code: admin1_code, fclasscode: 'P.PPL').order("name").collect {|r| r.name}
+    elsif @country_code != ""
+      res = [''] + Geoname.where(country_code: @country_code, fclasscode: 'P.PPL').order("name").collect {|r| r.name}
+    end
+    render json: res
   end  
   
   def getmetro

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_10_171511) do
+ActiveRecord::Schema.define(version: 2019_10_15_173944) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -302,7 +302,7 @@ ActiveRecord::Schema.define(version: 2019_10_10_171511) do
     t.index ["name"], name: "name"
   end
 
-  create_table "geonames", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "geonames", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.string "asciiname"
     t.text "alternatenames"
@@ -322,7 +322,7 @@ ActiveRecord::Schema.define(version: 2019_10_10_171511) do
     t.string "timezone"
     t.date "modification_date"
     t.string "fclasscode", limit: 7
-    t.index ["admin1_code", "admin2_code"], name: "admin_code"
+    t.index ["country_code", "admin1_code", "admin2_code"], name: "index_geonames_on_country_code_and_admin1_code_and_admin2_code"
     t.index ["feature_class", "feature_code"], name: "feature"
     t.index ["latitude"], name: "latitude"
     t.index ["longitude"], name: "longitude"

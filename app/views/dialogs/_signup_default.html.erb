@@ -16,6 +16,7 @@
 <form action="/front/dialogjoin" method="post" id="profile_edit">
 <input type="hidden" name="group_id" value="{{ group.id }}">      
 <input type="hidden" name="dialog_id" value="{{ dialog.id }}">
+<input type="hidden" name="admin2uniq" id="admin2uniq" value="">
 <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />	
 <table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px">    
 
@@ -35,9 +36,11 @@
     
 <tr><td>Metro Area</td><td><select name="metro_area_id" id="metro_area_id"></select></td></tr>
 
-<tr><td>County</td><td><select name="admin2uniq" id="admin2uniq"></select></td></tr>
-
+<tr><td>City</td><td><select name="city" id="city" onchange="chgcity()"></select></td></tr>
+<% if false -%>
 <tr><td>City</td><td><input type="text" name="city" value="" size="30" style="width:200px"></td></tr>    
+<tr><td>County</td><td><select name="admin2uniq" id="admin2uniq"></select></td></tr>
+<% end -%>
 
 {% for m in meta %}
 <tr><td>{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
@@ -163,12 +166,30 @@ function chgcountry() {
 }
 function chgstate() {
 	$('#profile_edit').css('opacity','0.5');
-	$.getJSON("/front/getadmin2s",{country_code: $("#country_code").val(), admin1uniq: $("#admin1uniq").val()}, function(j){
-	  var options = '<option>* choose *</option>';
+	//$.getJSON("/front/getadmin2s",{country_code: $("#country_code").val(), admin1uniq: $("#admin1uniq").val()}, function(j){
+	//  var options = '<option>* choose *</option>';
+	//  for (var i = 0; i < j.length; i++) {
+	//    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	//  }
+	//  $("select#admin2uniq").html(options);
+	//	$('#profile_edit').css('opacity','1.0');
+	//})
+	$.getJSON("/front/getcities",{country_code: $("#country_code").val(), admin1uniq: $("#admin1uniq").val()}, function(j){
+	  var options = '';
 	  for (var i = 0; i < j.length; i++) {
-	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	    options += '<option value="' + j[i] + '">' + j[i] + '</option>';
 	  }
-	  $("select#admin2uniq").html(options);
+	  $("select#city").html(options);
+		$('#profile_edit').css('opacity','1.0');
+	})
+}
+function chgcity() {
+  // Look up the county from the city
+	$('#profile_edit').css('opacity','0.5');
+	$.getJSON("/front/getadmin2_from_city",{country_code: $("#country_code").val(), admin1uniq: $("#admin1uniq").val(), city_name: $("#city").val()}, function(j){
+    var admin2uniq = j[0];
+    var county_name = j[1];
+    $("#admin2uniq").val(admin2uniq);
 		$('#profile_edit').css('opacity','1.0');
 	})
 }

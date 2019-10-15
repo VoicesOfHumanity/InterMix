@@ -296,7 +296,9 @@ Rails.application.routes.draw do
   get 'optout_confirm' => 'front#optout_confirm'
   get 'front/getadmin1s' => 'front#getadmin1s'
   get 'front/getadmin2s' => 'front#getadmin2s'
+  get 'front/getcities' => 'front#getcities'
   get 'front/getmetro' => 'front#getmetro'
+  get 'front/getadmin2_from_city'
   get 'front/setsess' => 'front#setsess'
   get 'front/test' => 'front#test'
   get 'helptext(/:code)', :controller=>:front, :action=>:helptext

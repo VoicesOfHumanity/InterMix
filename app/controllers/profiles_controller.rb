@@ -782,7 +782,8 @@ class ProfilesController < ApplicationController
         if @participant.admin1uniq.to_i == 0
           #-- If we got the admin2 first, look up the admin1 from it
           @participant.admin1uniq = geoadmin2.admin1uniq
-        end  
+        end
+        @participant.save
       end 
     end
     if @participant.admin1uniq.to_s != ""
@@ -791,11 +792,13 @@ class ProfilesController < ApplicationController
       if geoadmin1
         @participant.state_code = geoadmin1.admin1_code
         @participant.state_name = geoadmin1.name
+        @participant.save
       end
     end    
     if @participant.timezone.to_s!=''
       #-- Calculate timezone offset from UTC
       @participant.timezone_offset = TZInfo::Timezone.get(@participant.timezone).period_for_utc(Time.new).utc_offset / 3600
+      @participant.save
     end      
   end
   
