@@ -113,6 +113,7 @@ class ProfilesController < ApplicationController
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@profile_id)
     logger.info("profiles#update #{@participant.id}")
+    @oldparticipant = @participant.dup
     @old_country_code = @participant.country_code.clone
     @old_country_code2 = @participant.country_code2.clone
     @goto = params[:goto]  # Maybe a (forum) link to continue to after saving
@@ -712,6 +713,51 @@ class ProfilesController < ApplicationController
     #-- Update geo-related fields, when saving a participant, or if one of the fields changed
     #-- Duplicate of what's in participants controller. Not good.
     #logger.info("profiles#geoupdate country_code:#{@participant.country_code} country_code2:#{@participant.country_code2} old_country_code:#{@old_country_code} old_country_code2:#{@old_country_code2}")
+    updated_country_code = false
+    updated_admin1 = false
+    updated_admin2 = false
+    updated_metro = false
+    updated_city = false
+    updated_zip = false
+    if @participant.country_code != @oldparticipant.country_code
+      updated_country_code = true
+      @participant.country_name = ''
+    end
+    if @participant.admin1uniq != @oldparticipant.admin1uniq
+      updated_admin1 = true
+    end
+    if @participant.admin2uniq != @oldparticipant.admin2uniq
+      updated_admin2 = true
+    end
+    if @participant.metro_area_id != @oldparticipant.metro_area_id
+      updated_metro = true
+    end
+    if @participant.city != @oldparticipant.city
+      updated_city = true
+    end
+    if @participant.zip != @oldparticipant.zip
+      updated_zip = true
+    end
+    if updated_country_code and not updated_admin1
+      @participant.admin1uniq = ''
+      @participant.state_code = ''
+      @participant.state_name = ''
+    end
+    if updated_country_code and not updated_admin2
+      @participant.admin2uniq = ''
+      @participant.county_code = ''
+      @participant.county_name = ''
+    end
+    if updated_country_code and not updated_metro
+      @participant.metro_area_id = 0
+      @participant.metropolitan_area = ''
+    end
+    if updated_country_code and not updated_city
+      @participant.city = ''
+    end
+    if updated_country_code and not updated_zip
+      @participant.zip = ''
+    end
     if @participant.country_code.to_s != ""
       #-- Fill in the country name
       geocountry = Geocountry.find_by_iso(@participant.country_code)
@@ -721,7 +767,6 @@ class ProfilesController < ApplicationController
         if community
           #logger.info("profiles#geoupdate adding #{community.tagname} to tag_list")
           @participant.tag_list.add(community.tagname)
-          @participant.save
           if @old_country_code and @old_country_code != @participant.country_code
             logger.info("profiles#geoupdate country_code #{@old_country_code} -> #{@participant.country_code}")
             ogeocountry = Geocountry.find_by_iso(@old_country_code)
@@ -729,7 +774,6 @@ class ProfilesController < ApplicationController
               ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
               if ocommunity
                 @participant.tag_list.remove(ocommunity.tagname)
-                @participant.save
               end
             end
           end
@@ -744,7 +788,6 @@ class ProfilesController < ApplicationController
         community2 = Community.where(context: 'nation', context_code: geocountry2.iso3).first
         if community2
           @participant.tag_list.add(community2.tagname)
-          @participant.save
           if @old_country_code2 and @old_country_code2 != @participant.country_code2 and @old_country_code2 != @participant.country_code
             logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> #{@participant.country_code2}")
             ogeocountry = Geocountry.find_by_iso(@old_country_code2)
@@ -753,7 +796,6 @@ class ProfilesController < ApplicationController
               if ocommunity
                 logger.info("profiles#geoupdate removing nation2 community #{ocommunity.tagname} from user")
                 @participant.tag_list.remove(ocommunity.tagname)
-                @participant.save
               end
             end  
           end
@@ -767,7 +809,6 @@ class ProfilesController < ApplicationController
         if ocommunity
           logger.info("profiles#geoupdate removing nation2 community #{ocommunity.tagname} from user")
           @participant.tag_list.remove(ocommunity.tagname)
-          @participant.save
         else
           logger.info("profiles#geoupdate community not found for nation2/#{ogeocountry.iso3}")
         end
@@ -782,8 +823,8 @@ class ProfilesController < ApplicationController
         if @participant.admin1uniq.to_i == 0
           #-- If we got the admin2 first, look up the admin1 from it
           @participant.admin1uniq = geoadmin2.admin1uniq
+          updated_admin2 = true
         end
-        @participant.save
       end 
     end
     if @participant.admin1uniq.to_s != ""
@@ -792,14 +833,13 @@ class ProfilesController < ApplicationController
       if geoadmin1
         @participant.state_code = geoadmin1.admin1_code
         @participant.state_name = geoadmin1.name
-        @participant.save
       end
     end    
     if @participant.timezone.to_s!=''
       #-- Calculate timezone offset from UTC
-      @participant.timezone_offset = TZInfo::Timezone.get(@participant.timezone).period_for_utc(Time.new).utc_offset / 3600
-      @participant.save
-    end      
+      @participant.timezone_offset = TZInfo::Timezone.get(@participant.timezone).period_for_utc(Time.new).utc_offset / 3600      
+    end
+    @participant.save      
   end
   
 #  def check_group_and_dialog  

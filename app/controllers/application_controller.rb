@@ -58,7 +58,7 @@ class ApplicationController < ActionController::Base
     city_name = params[:city_name].to_s
     xarr = admin1uniq.split('.')
     admin1_code = xarr[1]
-    city = Geoname.where(country_code: country_code, admin1_code: admin1_code, name: city_name).first
+    city = Geoname.where(country_code: country_code, admin1_code: admin1_code, name: city_name, fclasscode: 'P.PPL').first
     if city
       admin2_code = city.admin2_code
       county = Geoadmin2.where(country_code: country_code, admin1_code: admin1_code, admin2_code: admin2_code).first
