@@ -20,7 +20,9 @@
 			</label>
 			<textarea id="dialog_front_template" name="dialog[front_template]" rows="5"><%= @conversation.front_template %></textarea>
 		</li>
-
+    
+		<%= f.input :together_apart, :label => "Mode", :as => :select, :collection =>['together','apart'] %>
+    
 	<% end %>
 
 	<p>

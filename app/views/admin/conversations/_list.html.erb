@@ -10,6 +10,7 @@
     <th>ID</th>
     <th>Short name</th>
     <th>Full name</th>
+    <th>Mode</th>
   </tr>
 
 <% odd_or_even = 0 %>
@@ -20,6 +21,7 @@
 		<td><a href="#" onclick="viewrec1(<%= conversation.id %>)"><%= conversation.id %></a></td>
     <td><a href="#" onclick="viewrec1(<%= conversation.id %>)"><%= conversation.shortname %></a></td>
     <td><%= conversation.name %></td>
+    <td><%= conversation.together_apart %></td>
   </tr>
 <% end %>
 </table>
