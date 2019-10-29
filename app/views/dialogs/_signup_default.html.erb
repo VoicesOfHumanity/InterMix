@@ -153,6 +153,8 @@ function chgcountry() {
 	  }
 	  $("select#admin1uniq").html(options);    
     $("select#admin2uniq").html('');
+    $("select#participant_city").html('');
+    $("#participant_zip").val('');
 		$.getJSON("/front/getmetro",{country_code: $("#country_code").val()}, function(j){
 	    var options = '<option>* choose *</option>';
 	    for (var i = 0; i < j.length; i++) {

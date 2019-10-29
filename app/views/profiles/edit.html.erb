@@ -223,10 +223,11 @@ function chgcountry() {
 	  for (var i = 0; i < j.length; i++) {
 	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
 	  }
-	  $("select#participant_admin1uniq").html(options);
-  
+	  $("select#participant_admin1uniq").html(options);  
     $("select#participant_admin2uniq").html('');
-
+    $('#county_name').html('');
+    $("select#participant_city").html('');
+    $("#participant_zip").val('');
 		$.getJSON("/front/getmetro",{country_code: $("#participant_country_code").val()}, function(j){
 	    var options = '';
 	    for (var i = 0; i < j.length; i++) {

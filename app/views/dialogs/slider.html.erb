@@ -41,9 +41,9 @@
     
     <% if @show_result.to_i == 1 -%>
       <% if @include_nvaction -%>
-        <input type="button" value="NV Action items are excluded" style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">   
+        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">"NV Action items<br>are included</button>  
       <% else -%>
-        <input type="button" value="NV Action items are included" style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">
+        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are excluded</button>
       <% end -%>
     <% end -%>  
     
@@ -325,10 +325,10 @@ function chg_options() {
 function chg_nvaction_include() {
   if (nvaction_included) {
     nvaction_included = false;
-    $('#nvaction_include_button').val("NV Action items are included");
+    $('#nvaction_include_button').html("NV Action items<br>are excluded");
   } else {
     nvaction_included = true;
-    $('#nvaction_include_button').val("NV Action items are excluded");
+    $('#nvaction_include_button').html("NV Action items<br>are included");
   }
   per_reload();
 }
