@@ -846,7 +846,8 @@ class ItemsController < ApplicationController
         tags_in_html = get_tags_from_html(@item.html_content,true)
       end
 
-      if @conversation.together_apart == 'apart' and @item.representing_com.to_s != ''
+      #if @conversation.together_apart == 'apart' and @item.representing_com.to_s != ''
+      if @item.representing_com.to_s != ''
         # If there's a represent community, include the hash tag, if not there, if it is in the apart period
         tag = '#' + @item.representing_com
         #if not @item.html_content.include? tag
