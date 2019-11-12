@@ -365,7 +365,7 @@ end
 		<% end -%>
     
    <% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
-    <div class="itemthumbdiv">
+    <div class="itemthumbdiv" id="thumbs<%= item.id %>">
       <hr>
       <div class="thumbtitle">My Vote:</div> 
       <%=raw thumbvote(itemproc, (@conversation_id ? @conversation_id : 0)) %>

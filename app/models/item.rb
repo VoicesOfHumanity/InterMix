@@ -460,8 +460,9 @@ class Item < ActiveRecord::Base
       
       if not self.has_voted(p)
         itext += "<p>Vote here: "
-        itext += "<a href=\"https://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1\"><img src=\"https://voh.intermix.org/images/thumbsdownoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>&nbsp;"
-        itext += "<a href=\"https://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1\"><img src=\"https://voh.intermix.org/images/thumbsupoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs up\"/></a>"
+        itext += "<a href=\"https://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=-1#thumbs#{self.id}\"><img src=\"https://voh.intermix.org/images/thumbsdownoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs down\"/></a>&nbsp;"
+        itext += "<a href=\"https://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}&amp;thumb=1#thumbs#{self.id}\"><img src=\"https://voh.intermix.org/images/thumbsupoff.jpg\" height=\"30\" width=\"30\" style=\"heigh:30px;width30px;\" alt=\"thumbs up\"/></a>"
+        itext += "<br>When you vote, you will be taken online so you can comment or change your vote."
         itext += "</p>"
       end
 
