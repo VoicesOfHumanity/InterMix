@@ -192,7 +192,7 @@ end
     <% if item.participant and item.participant.picture.exists? then -%>
         <%= image_tag item.participant.picture.url(:thumb) %>    
     <% else -%>
-      <img src="/images/default_user_icon-50x50.png">
+      <img src="/images/default_user_icon-50x50.png" alt="user icon">
     <% end -%>
     </div>
 		<div class="iteminfotxt">

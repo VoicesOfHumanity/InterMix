@@ -736,7 +736,7 @@ class FrontController < ApplicationController
       @content = template.render(cdata)
     else
       @content = ""
-      @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
+      @content += "<p><img src=\"#{@logo}\" alt=\"logo\"/></p>" if @logo
       #@content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
       @content += "<p align=\"center\"><big><b>#{@group.name}</b> Signup Success!</big></p>"
       @content += "<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>"
@@ -1080,7 +1080,7 @@ class FrontController < ApplicationController
       @content = template.render(cdata)
     else
       @content = ""
-      @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
+      @content += "<p><img src=\"#{@logo}\" alt=\"logo\" /></p>" if @logo
       #@content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
       @content += "<p align=\"center\"><big><b>#{@group.name}</b> Signup Success!</big></p>"
       @content += "<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>"
@@ -1096,7 +1096,7 @@ class FrontController < ApplicationController
     @participant = Participant.find_by_confirmation_token(params[:code])
     @comtag = params[:comtag].to_s
     @content = ""
-    @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
+    @content += "<p><img src=\"#{@logo}\" alt=\"logo\" /></p>" if @logo
     if @participant
       @participant.status = 'active'
       @participant.new_signup = true
@@ -1732,7 +1732,7 @@ class FrontController < ApplicationController
       @content = template.render(cdata)
     else
       @content = ""
-      @content += "<p><img src=\"#{@logo}\"/></p>" if @logo
+      @content += "<p><img src=\"#{@logo}\" alt=\"logo\"/></p>" if @logo
       #@content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
       @content += "<p align=\"center\"><big><b>#{@group.name}</b> Signup Success!</big></p>"
       @content += "<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>"

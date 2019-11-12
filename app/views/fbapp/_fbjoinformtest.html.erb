@@ -1,5 +1,5 @@
 <p><% for item in @samples -%>
-<img src="/images/data/items/<%= item.id %>/thumb.jpg" width="50" height="50" title="<%= "#{item.participant.first_name} #{item.participant.last_name}: #{item.short_content}" %>">
+<img src="/images/data/items/<%= item.id %>/thumb.jpg" width="50" height="50" title="<%= "#{item.participant.first_name} #{item.participant.last_name}: #{item.short_content}" %>" alt="picture">
 <% end -%>
 </p>
 

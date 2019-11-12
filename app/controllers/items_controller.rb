@@ -2561,7 +2561,7 @@ class ItemsController < ApplicationController
           linktitle = linkobj.title.to_s
           if linkurl != ''
             if linkimg != ''
-              @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"200\" title=\"#{linktitle}\"></a>"
+              @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"200\" title=\"#{linktitle}\" alt=\"article thumbnail\"></a>"
             else
               @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\">#{linktitle}</a>"
             end

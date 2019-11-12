@@ -6,7 +6,7 @@
 <body>
 
 <% if false -%>
-<img src="https://<%= BASEDOMAIN %>/images/logo.gif"/>
+<img src="https://<%= BASEDOMAIN %>/images/logo.gif" alt="logo" />
 <% end -%>
 
 <p>
@@ -26,7 +26,7 @@ To block emails from the Voices of Humanity social media, <a href="https://<%= B
 
 <hr style="clear:both">
 
-<img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none">
+<img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none" alt="logo">
 
 </body>
 </html>

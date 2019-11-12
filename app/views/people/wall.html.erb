@@ -3,9 +3,9 @@
 <% if @participant and @participant.picture.exists? -%>
   <%= image_tag @participant.picture.url(:thumb) %>    
 <% elsif @participant.fb_uid.to_i > 0 -%>
-  <img src="https://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" />
+  <img src="https://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" alt="facebook picture" />
 <% else -%>
-  <img src="/images/default_user_icon-50x50.png">
+  <img src="/images/default_user_icon-50x50.png" alt="default user icon">
 <% end -%>
 
 <h3>Posted by <a href="/participant/<%= @participant.id %>/profile"><%= @participant.name %></a>:</h3>

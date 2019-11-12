@@ -6,7 +6,7 @@
 <body>
 	
 <% if @cdata['group'] and @cdata['group'].logo.exists? then -%>
-<img src="https://<%= BASEDOMAIN %>/<%= @cdata['group'].logo.url %>"><br/><br/>
+<img src="https://<%= BASEDOMAIN %>/<%= @cdata['group'].logo.url %>" alt="logo"><br/><br/>
 <% else -%>	
 <img src="https://<%= BASEDOMAIN %>/images/logo.gif"/><br/><br/>
 <% end -%>
@@ -18,7 +18,7 @@
 <hr/>
 
 <p>To block emails from the Voices of Humanity social media, <a href="https://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
-<img src="https://<%= BASEDOMAIN %>/pixel/<%= @cdata['message'].id.to_i if @cdata['message'] %>.gif" width="0" height="0" border="0" style="display:none">
+<img src="https://<%= BASEDOMAIN %>/pixel/<%= @cdata['message'].id.to_i if @cdata['message'] %>.gif" width="0" height="0" border="0" style="display:none" alt="pixel">
 
 </body>
 </html>

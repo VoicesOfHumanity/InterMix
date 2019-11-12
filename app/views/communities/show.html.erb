@@ -29,7 +29,7 @@ end
 <% end -%>
 
 <% if @community.logo.exists? then -%>
-<p><img src="<%= @community.logo.url %>" style="max-width:600px;max-height:300px"></p>
+<p><img src="<%= @community.logo.url %>" style="max-width:600px;max-height:300px" alt="Community logo"></p>
 
 <% else %>
 <p>[no logo]</p>

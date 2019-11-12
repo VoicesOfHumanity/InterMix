@@ -8,7 +8,7 @@
 <p>Subcommunity of <a href="/communities/<%= @community.id %>"><%= @community.fullname %></a></p>
 
 <% if @sub.logo.exists? then -%>
-<p><img src="<%= @sub.logo.url %>" style="max-width:600px;max-height:300px"></p>
+<p><img src="<%= @sub.logo.url %>" style="max-width:600px;max-height:300px" alt="Sub-community logo"></p>
 <% else %>
 <p>[no logo]</p>
 <% end -%>

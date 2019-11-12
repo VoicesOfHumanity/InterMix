@@ -36,7 +36,7 @@
         <% if @participant.picture.exists? then -%>
           <%= image_tag @participant.picture.url(:thumb) %>
         <% else -%>
-          <img src="/images/default_user_icon-50x50.png" style="background-color:#999">
+          <img src="/images/default_user_icon-50x50.png" style="background-color:#999" alt="default user icon">
         <% end -%>
       </div>
     </li>

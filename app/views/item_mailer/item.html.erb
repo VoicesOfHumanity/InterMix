@@ -6,9 +6,9 @@
 <body>
 
 <% if @cdata and @cdata['logo'].to_s != '' -%>	
-<img src="<%= @cdata['logo'] %>"/>
+<img src="<%= @cdata['logo'] %>" alt="logo" />
 <% else -%>
-<img src="https://<%= BASEDOMAIN %>/images/logo.gif"/>
+<img src="https://<%= BASEDOMAIN %>/images/logo.gif" alt="logo" />
 <% end -%>
 <br/><br/>
 
@@ -31,7 +31,7 @@ To block emails from the Voices of Humanity social media, <a href="http://<%= BA
 <p id="footer">
 	<a href="https://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.</p>
 
-<img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none">
+<img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none" alt="pixel">
 
 </body>
 </html>

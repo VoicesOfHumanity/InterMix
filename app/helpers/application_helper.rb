@@ -80,7 +80,7 @@ module ApplicationHelper
             end
           end      
         end
-        out += "<a href=\"#\" onclick=\"clickthumb(#{item_id},#{num},#{conversation_id});return(false)\"><img src=\"#{imgsrc}\" id=\"#{domid}\" style=\"#{style}\" class=\"thumbupdown\" data-item-id=\"#{item_id}\" data-num=\"#{num}\" data-value=\"#{Item.thumbs(iproc)}\" data-onoff=\"#{onoff}\" data-showing=\"#{showing}\"></a>\n"
+        out += "<a href=\"#\" onclick=\"clickthumb(#{item_id},#{num},#{conversation_id});return(false)\"><img src=\"#{imgsrc}\" id=\"#{domid}\" style=\"#{style}\" class=\"thumbupdown\" alt=\"voting thumb up/down\" data-item-id=\"#{item_id}\" data-num=\"#{num}\" data-value=\"#{Item.thumbs(iproc)}\" data-onoff=\"#{onoff}\" data-showing=\"#{showing}\"></a>\n"
       end
     end
     out

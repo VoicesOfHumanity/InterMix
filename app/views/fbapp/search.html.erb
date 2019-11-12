@@ -9,7 +9,7 @@
 	<tr>
 	<% end -%>
 	<td>
-	<img src="/images/data/items/<%= item.id %>/big.jpg" width="200" title="<%= "#{item.participant.first_name} #{item.participant.last_name}: #{item.short_content}" %>"><br>
+	<img src="/images/data/items/<%= item.id %>/big.jpg" width="200" title="<%= "#{item.participant.first_name} #{item.participant.last_name}: #{item.short_content}" %>" alt="thumbnail"><br>
 	<span style="font-family:Comic Sans MS"><%= "#{item.short_content} - #{item.participant.first_name} #{item.participant.last_name}" %></span>
 	</td>
 	<% x += 1 -%>
