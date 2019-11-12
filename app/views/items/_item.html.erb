@@ -190,7 +190,7 @@ end
 	<div class="iteminfo" id="iteminfo_<%= item.id %>">
     <div class="iteminfopic">
     <% if item.participant and item.participant.picture.exists? then -%>
-        <%= image_tag item.participant.picture.url(:thumb) %>    
+        <%= image_tag item.participant.picture.url(:thumb), alt: "user icon" %>    
     <% else -%>
       <img src="/images/default_user_icon-50x50.png" alt="user icon">
     <% end -%>

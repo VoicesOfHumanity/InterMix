@@ -1,7 +1,7 @@
 <%= render(:partial => 'menu')%>
 
 <% if @participant and @participant.picture.exists? -%>
-  <%= image_tag @participant.picture.url(:thumb) %>    
+  <%= image_tag @participant.picture.url(:thumb), alt: "user photo" %>    
 <% elsif @participant.fb_uid.to_i > 0 -%>
   <img src="https://graph.facebook.com/<%= @participant.fb_uid %>/picture" style="float:left;margin-left:10px" alt="facebook picture" />
 <% else -%>
