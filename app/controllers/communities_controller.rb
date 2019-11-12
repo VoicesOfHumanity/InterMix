@@ -57,7 +57,11 @@ class CommunitiesController < ApplicationController
     end
 
     if ['id','tag'].include?(sort) or @sort == 'id desc'
+      logger.info("communities#index sort by #{@sort} in query")
       communities = communities.order(@sort)      
+    #elsif @sort == 'activity'
+    #  logger.info("communities#index pre-sort by tagname in query")
+    #  communities = communities.order("tagname")      
     end
     
     @communities = []
@@ -68,7 +72,11 @@ class CommunitiesController < ApplicationController
     end
     
     if ['id','tag'].include?(sort) or @sort == 'id desc'
+    elsif @sort == 'activity'
+      logger.info("communities#index sort by activity,tagname after the fact")
+      @communities.sort! { |a,b| [b.send('activity'),a.send('tagname')] <=> [a.send('activity'),b.send('tagname')] }
     else
+      logger.info("communities#index sort by #{@sort} after the fact")
       @communities.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
     end
        
