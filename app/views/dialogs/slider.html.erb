@@ -39,13 +39,11 @@
       <img src="/images/<%= @nvaction ? 'exitaction' : 'nvaction' %>.jpg" id="actionbutton" onclick="actionclick()">
     </div>
     
-    <% if @show_result.to_i == 1 -%>
-      <% if @include_nvaction -%>
-        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">"NV Action items<br>are included</button>  
-      <% else -%>
-        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are excluded</button>
-      <% end -%>
-    <% end -%>  
+    <% if @include_nvaction -%>
+      <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">"NV Action items<br>are included</button>  
+    <% else -%>
+      <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are excluded</button>
+    <% end -%>
     
     <div style="margin: 20px 0 0 0;">
     <% @geo_levels.each do |geo_level,geo_desc| -%>
