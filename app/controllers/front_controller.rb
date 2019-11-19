@@ -568,6 +568,7 @@ class FrontController < ApplicationController
       @participant.interfaith = (params[:interfaith].to_i == 1)
       @participant.refugee = (params[:refugee].to_i == 1)
       @participant.tag_list = params[:participant][:tag_list] if params[:participant].has_key?(:tag_list)
+      @participant.tag_list.add(@comtag) if @comtag.to_s != ''
     end
 
     if flash[:alert] != ''
@@ -1357,6 +1358,7 @@ class FrontController < ApplicationController
       redirect_to '/fbjoin' 
       return   
     end  
+    logger.info("front#fbjoinfinal participant #{@participant.id} has been created")
     
     if @group
       @group_participant = GroupParticipant.new(:group_id=>@group.id,:participant_id=>@participant.id)
@@ -1390,6 +1392,8 @@ class FrontController < ApplicationController
       end
       @participant.save
       session.delete(:joincom)
+    else
+      logger.info("front#fbjoinfinal not joining any community")
     end
         
     if @participant.fb_uid.to_i >0 and not @participant.picture.exists?
@@ -1487,6 +1491,7 @@ class FrontController < ApplicationController
     sign_in(:participant, @participant)
     
     #redirect_to '/me/profile/edit'
+    logger.info("front#fbjoinfinal redirecting to /dialogs/#{VOH_DISCUSSION_ID}/slider")
     redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider"
     
     #render :action=>:confirm, :layout=>'front'

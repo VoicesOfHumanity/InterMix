@@ -564,7 +564,8 @@ class ApplicationController < ActionController::Base
     elsif not session[:has_required]
       session[:has_required] = current_participant.has_required
       if not session[:has_required]
-        redirect_to :controller => :profiles, :action=>:edit
+        logger.info("application#check_required redirecting to profile edit")
+        redirect_to :controller => :profiles, :action=>:edit, id: current_participant.id
       end
     end
   end
