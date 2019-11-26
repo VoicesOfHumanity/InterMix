@@ -1667,21 +1667,34 @@ class ItemsController < ApplicationController
       cutoff = 1.month.from_now
       @moons = [] 
       xstart = '2016-03-08'
-      xmoon = crit[:nvaction] ? 'full' : 'new' 
-      #moon_recs = Moon.where(new_or_full: xmoon).where("mdate<='#{cutoff}'").order(:mdate)
-      moon_recs = Moon.where("mdate<='#{cutoff}'").order(:mdate)
+      if @in == 'conversation'
+        moon_recs = Moon.where("mdate<='#{cutoff}'").order(:mdate)      
+      else  
+        xmoon = crit[:nvaction] ? 'full' : 'new' 
+        moon_recs = Moon.where(new_or_full: xmoon).where("mdate<='#{cutoff}'").order(:mdate)
+      end
+      @datefixed = 'month' if @datefixed == ''
       for moon_rec in moon_recs
         xend = moon_rec['mdate'].strftime('%Y-%m-%d')
         dend = moon_rec['mdate'].strftime('%B %-d, %Y')
         dstart = xstart.to_date.strftime('%B %-d, %Y')
         xrange = "#{xstart}_#{xend}"
-        drange = "#{moon_rec.new_or_full} moon #{dstart} - #{dend}"
+        if @in == 'conversation'
+          together_apart = (moon_rec.new_or_full == 'full') ? 'together' : 'apart'
+          drange = "#{together_apart} #{dstart} - #{dend}"
+          if today > xstart.to_date.strftime('%Y-%m-%d') and today <= xend.to_date.strftime('%Y-%m-%d')
+            @datefixed = xrange
+          end
+        else
+          drange = "#{moon_rec.new_or_full} moon #{dstart} - #{dend}"
+        end
         if xstart <= today
           @moons << [drange,xrange]
         end
         xstart = xend
-      end    
-      if @datetype == 'fixed' and nvaction_changed
+      end
+      if @in == 'conversation' and @datefixed != ''
+      elsif @datetype == 'fixed' and nvaction_changed
         @datefixed = 'month'
       end
     
