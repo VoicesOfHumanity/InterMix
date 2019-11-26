@@ -861,7 +861,7 @@ class ItemsController < ApplicationController
           else
             # Put it before the last </p>
             array_of_pieces = @item.html_content.rpartition '</p>'
-            ( array_of_pieces[(array_of_pieces.find_index '</p>')] = "#{tag}</p>" ) rescue nil
+            ( array_of_pieces[(array_of_pieces.find_index '</p>')] = " #{tag}</p>" ) rescue nil
             @item.html_content = array_of_pieces.join  
             logger.info("items#create representing_com tag added at the end")
           end
@@ -918,7 +918,7 @@ class ItemsController < ApplicationController
       if not @item.html_content.include? tag
         # Put it before the last </p>
         array_of_pieces = @item.html_content.rpartition '</p>'
-        ( array_of_pieces[(array_of_pieces.find_index '</p>')] = "#{tag}</p>" ) rescue nil
+        ( array_of_pieces[(array_of_pieces.find_index '</p>')] = " #{tag}</p>" ) rescue nil
         @item.html_content = array_of_pieces.join  
       end
     end
