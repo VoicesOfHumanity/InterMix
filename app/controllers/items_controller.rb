@@ -506,6 +506,8 @@ class ItemsController < ApplicationController
         # Get the message tags from the previous message, if any
         tags = tags + get_tags_from_html(@olditem.html_content)
         tags_downcase = get_tags_from_html(@olditem.html_content,true)
+
+        @item.representing_com = @olditem.representing_com
         
         #logger.info("items#new replying. Existing @comtag:#{@comtag}")
         @comtag = @olditem.intra_com if @olditem.intra_com and @olditem.intra_com != 'public'

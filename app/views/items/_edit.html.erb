@@ -164,10 +164,12 @@ if (CKEDITOR.instances['item_html_content']) {
     	  <% end -%>
       <% end -%>
       
-      <% if @conversation and @conversation.together_apart == 'apart' and @conv_own_coms -%>
+      <% if @conversation and @conversation.together_apart == 'apart' and @conv_own_coms and @item.reply_to.to_i == 0 -%>
   	    Representing: <select name="item[representing_com]" id="item_representing_com">
-    	    <%= options_for_select([['Public','public']]+@conv_own_coms.invert.to_a) %>
+    	    <%= options_for_select([['Public','public']]+@conv_own_coms.invert.to_a, @item.representing_com) %>
   	    </select>
+      <% elsif @item.representing_com.to_s != '' -%>
+        <input type="hidden" name="item[representing_com]" id="item_representing_com" value="<%= @item.representing_com %>">
       <% end -%>
             
   	</div>
