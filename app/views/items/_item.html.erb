@@ -339,7 +339,7 @@ end
 	 <% if item.intra_com.to_s != '' and item.intra_com.to_s != 'public' %>
 	 <div class="iteminfotxt" style="font-weight:bold;color:#44a">This message: Only <%= item.intra_com %></div>
 	 <% end -%>
-	 <% if item.representing_com.to_s != '' and @in == 'conversation' and @conversation and @conversation.together_apart == 'apart' %>
+	 <% if item.representing_com.to_s != '' and item.representing_com.to_s != 'public' and @in == 'conversation' and @conversation and @conversation.together_apart == 'apart' %>
 	 <div class="iteminfotxt" style="font-weight:bold;color:#44a">This message: Only <%= item.representing_com %></div>
 	 <% end -%>
    

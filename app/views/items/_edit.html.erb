@@ -166,7 +166,7 @@ if (CKEDITOR.instances['item_html_content']) {
       
       <% if @conversation and @conversation.together_apart == 'apart' and @conv_own_coms -%>
   	    Representing: <select name="item[representing_com]" id="item_representing_com">
-    	    <%= options_for_select(@conv_own_coms.invert.to_a) %>
+    	    <%= options_for_select([['Public','public']]+@conv_own_coms.invert.to_a) %>
   	    </select>
       <% end -%>
             

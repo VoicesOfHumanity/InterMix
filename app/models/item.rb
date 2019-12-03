@@ -1570,15 +1570,22 @@ class Item < ActiveRecord::Base
     
     # tags
     if crit['in'] == 'conversation' and @conversation
-      # Tags in a conversation are treated a bit differently
-      if @conversation.together_apart == 'together'
-        # Don't care about comtags at all
-      elsif crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
-        # Only show what's for the user's perspective
-        if current_participant.tag_list_downcase.include?(crit[:comtag].downcase)
-          items = items.where(representing_com: crit[:comtag].downcase)       
-        end
+      # Tags in a conversation are treated a bit differently      
+      # representing_com messages can only be seen if one is in that comtag
+      if crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+        items = items.where("representing_com='public' or lower(representing_com)='#{crit[:comtag].downcase}'")
+      else
+        items = items.where("representing_com='public'")        
       end
+      # What about this now??
+      #if @conversation.together_apart == 'together'
+      #  # Don't care about comtags at all
+      #elsif crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+      #  # Only show what's for the user's perspective
+      #  if current_participant.tag_list_downcase.include?(crit[:comtag].downcase)
+      #    items = items.where(representing_com: crit[:comtag].downcase)       
+      #  end
+      #end
     elsif crit[:comtag].to_s == '*my*'
       title += " | My Communities"
       plist = ''
@@ -1625,7 +1632,6 @@ class Item < ActiveRecord::Base
 
       # Show items that either are public, or specifically for this community
       items = items.where("intra_com='public' or intra_com='@#{crit[:comtag]}'")
-
 
     #elsif crit[:posted_by].to_i == 0 and not (crit.has_key?(:from) and crit[:from] == 'mail')
     elsif crit[:posted_by].to_i == 0
