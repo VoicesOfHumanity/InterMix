@@ -119,7 +119,7 @@ class DialogsController < ApplicationController
     @messtag = ''
     @datetype = 'fixed'
     @datefixed = 'month'
-    @datefrom = Date.today.beginning_of_month.strftime('%Y-%m-%d')
+    @datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
     @sortby = '*value*'
     @threads = 'flat'
     @perspective = ''
