@@ -1682,7 +1682,7 @@ class ItemsController < ApplicationController
         dstart = xstart.to_date.strftime('%B %-d, %Y')
         xrange = "#{xstart}_#{xend}"
         if @in == 'conversation'
-          together_apart = (moon_rec.new_or_full == 'full') ? 'together' : 'apart'
+          together_apart = (moon_rec.new_or_full == 'full') ? 'apart' : 'together'
           drange = "#{together_apart} #{dstart} - #{dend}"
           if today > xstart.to_date.strftime('%Y-%m-%d') and today <= xend.to_date.strftime('%Y-%m-%d')
             @datefixed = xrange
