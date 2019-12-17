@@ -45,7 +45,7 @@ class ParticipantsController < ApplicationController
       @participants = @participants.where(:sysadmin => true) if sysadmin > 0
       @participants = @participants.order(xorder)
       
-      @participants = @participants.paginate :page=>@page, :per_page => @per_page    
+      @participants = @participants.paginate page: @page, per_page: @per_page
       
       #@participants = Participant.paginate :page=>@page, :per_page => @per_page, :conditions=>"#{xcond}", :order=>xorder
     end

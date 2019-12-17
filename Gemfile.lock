@@ -366,7 +366,7 @@ GEM
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
-    will_paginate (3.1.6)
+    will_paginate (3.1.8)
 
 PLATFORMS
   ruby
@@ -416,7 +416,7 @@ DEPENDENCIES
   twitter
   uglifier
   web-console
-  will_paginate
+  will_paginate (~> 3.1.7)
 
 BUNDLED WITH
    1.16.1

@@ -30,6 +30,9 @@
 <% end %>
 </table>
 
+<% if false -%>
+<%= will_paginate @participants %>
+<% else -%>
 <%= "#{(@participants.current_page-1)*@participants.per_page+1}-#{[@participants.total_entries,@participants.current_page*@participants.per_page].min} of #{@participants.total_entries} items" if @participants.respond_to?('total_entries') and @participants.total_entries.to_i>1 %>
 &nbsp;&nbsp;&nbsp;
 <%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 and @participants.respond_to?('current_page') and @participants.current_page>1 %>
@@ -37,5 +40,6 @@
 <%= raw "page #{@participants.current_page} of #{@participants.total_pages}" if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 %>
 <%= raw %(<a href="javascript:gotopage(#{@participants.next_page})">&gt;</a>) if @participants.respond_to?('next_page') and @participants.next_page %>
 <%= raw %(<a href="javascript:gotopage(#{@participants.total_pages})">&gt;&gt;</a>) if @participants.respond_to?('total_pages') and @participants.total_pages.to_i>1 and @participants.current_page<@participants.total_pages %>
+<% end -%>
 
 <% end -%>

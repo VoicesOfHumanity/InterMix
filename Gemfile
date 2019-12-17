@@ -57,7 +57,7 @@ gem 'sanitize'
 #gem 'formtastic', '~> 1.2.4'
 gem 'formtastic'
 #gem "will_paginate", "~> 3.0.pre2"
-gem "will_paginate"
+gem "will_paginate", "~> 3.1.7"
 gem "nifty-generators"
 gem "nokogiri"
 gem "liquid"
