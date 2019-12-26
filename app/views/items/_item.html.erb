@@ -303,6 +303,11 @@ end
     </div>
     <% end -%>
     
+    <% if item.conversation -%>
+      <div class="iteminfotxt">
+        Conversation: <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= item.conversation.shortname %><% if @comtag.to_s!='' %>&comtag=<%= @comtag %><% end %>"><%= item.conversation.name %></a>
+      </div>
+    <% end -%>
     
     <% if false and item.geo_level.to_s != '' -%>
       <div class="iteminfotxt">

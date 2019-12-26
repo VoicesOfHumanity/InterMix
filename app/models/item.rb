@@ -4,6 +4,7 @@ class Item < ActiveRecord::Base
   belongs_to :group, :counter_cache => true
   belongs_to :dialog
   belongs_to :period
+  belongs_to :conversation
   has_many :allratings, :class_name=>"Rating"
   has_one :item_rating_summary
   

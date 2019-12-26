@@ -1,6 +1,7 @@
 class Conversation < ApplicationRecord
   has_many :conversation_communities
   has_many :communities, :through => :conversation_communities
+  has_many :items
   
   attr_accessor :activity
   attr_accessor :perspective
