@@ -68,20 +68,20 @@ class DialogsController < ApplicationController
     @comtag = ''
     
     #-- Special case for communities
-    if params.has_key?(:comtag) and not params.has_key?(:conv)
-      #-- Send them to Conversation forum if the user is a member and the community is a member of just one conversation
-      #-- Seems like a bad idea, but OK
-      @comtag = params[:comtag]
-      if @comtag != '' and @comtag != '-'
-        @community = Community.find_by_tagname(@comtag)
-        @community_id = @community.id      
-      end    
-      if @community.conversations.length == 1 and current_participant.tag_list.include?(@community.tagname)
-        conversation = @community.conversations[0]
-        redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{conversation.shortname}&comtag=#{@community.tagname}"
-        return
-      end
-    end
+    #if params.has_key?(:comtag) and not params.has_key?(:conv)
+    #  #-- Send them to Conversation forum if the user is a member and the community is a member of just one conversation
+    #  #-- Seems like a bad idea, but OK
+    #  @comtag = params[:comtag]
+    #  if @comtag != '' and @comtag != '-'
+    #    @community = Community.find_by_tagname(@comtag)
+    #    @community_id = @community.id      
+    #  end    
+    #  if @community.conversations.length == 1 and current_participant.tag_list.include?(@community.tagname)
+    #    conversation = @community.conversations[0]
+    #    redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{conversation.shortname}&comtag=#{@community.tagname}"
+    #    return
+    #  end
+    #end
     #-----
 
     if params.has_key?(:conv)
