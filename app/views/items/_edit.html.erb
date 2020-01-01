@@ -145,7 +145,7 @@ if (CKEDITOR.instances['item_html_content']) {
   	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
 	 
   	  <% intra_options = [['Public','public']] %>
-  	  <% intra_options << ["Only @#{@comtag}","@#{@comtag}"] if (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*' and (!@conversation or @conversation.together_apart=='apart')) %>
+  	  <% intra_options << ["Only @#{@comtag}","@#{@comtag}"] if (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*' and (!@conversation or @conversation.together_apart=='apart') and @is_com_member) %>
   	  <% if intra_options.length > 1 -%>
     	  <select name="item[intra_com]" id="item_intra_com">
     	  <% def_intra = @item.intra_com ? @item.intra_com : 'public' %>		  

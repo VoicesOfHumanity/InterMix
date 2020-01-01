@@ -2987,12 +2987,18 @@ class Item < ActiveRecord::Base
     #-- Decide whether the current user is allowed to reply on this item
     #(@from == 'dialog' and item.dialog and item.dialog.settings_with_period["allow_replies"] and session[:group_is_member]) or (@from == 'group' and item.group and @is_member)
 
+    participant = Participant.find_by_id(participant_id)
+
     if participant_id.to_i == 0
       return false
       
     elsif participant_id == self.posted_by
       # It's the author
-      return true  
+      return true
+      
+    elsif self.intra_com != 'public' and participant.tag_list_downcase.include?(self.intra_com.downcase)
+      # Can't reply to a non-public message for a community if not a member
+      return false
       
     elsif false and self.intra_conv != 'public' and self.conversation_id.to_i > 0
       # A conversation-only post can only be commented on by members of the communities in the conversation
@@ -3001,7 +3007,6 @@ class Item < ActiveRecord::Base
         return @in_converation
       end
 
-      participant = Participant.find_by_id(participant_id)
       conversation = Conversation.find_by_id(self.conversation_id)
       if conversation
         if conversation.together_apart == 'apart'
@@ -3043,7 +3048,7 @@ class Item < ActiveRecord::Base
       end
       return false
       
-    elsif self.group_id.to_i > 0  
+    elsif false and self.group_id.to_i > 0  
       #-- This message belongs to a grop
       group = Group.includes(:owner_participant).find_by_id(self.group_id)
       group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).first
