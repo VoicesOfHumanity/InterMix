@@ -67,6 +67,8 @@
       <input type="radio" name="messtag_radio" value="" onclick="per_reload(false,1,'messtag')" <%= @messtag.to_s=='' ? "checked" : "" %>>any hashtag<br>
       <% if @messtag.to_s != '' and not current_participant.tag_list.include?(@messtag) -%>
       <input type="radio" name="messtag_radio" value="<%= @messtag %>" onclick="per_reload(false,1,'messtag')" checked>#<%= @messtag %><br>
+      <% elsif @comtag.to_s != '' and @comtag != '*my*' and not current_participant.tag_list.include?(@comtag) -%>
+      <input type="radio" name="messtag_radio" value="<%= @comtag %>" onclick="per_reload(false,1,'messtag')" checked>#<%= @comtag %><br>
       <% end -%>
       <% current_participant.tags.each do |tag| -%>
         <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'messtag')">#<%= tag.name %><br> 
