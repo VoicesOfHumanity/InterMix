@@ -1539,6 +1539,7 @@ class Item < ActiveRecord::Base
       #ratings = ratings.where("participants.indigenous=1")
       @conversation = Conversation.find_by_id(crit[:conversation_id])
       #title += " | #{@conversation.name}" if @conversation
+      items = items.where("intra_com='public'")
       items = items.where("intra_conv='public' or intra_conv='#{@conversation.shortname}'")
     else
       items = items.where("intra_conv='public'")        
