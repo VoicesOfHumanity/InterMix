@@ -1751,11 +1751,13 @@ class ItemsController < ApplicationController
         #      @in_conversation = true
         #    end
         #  end
-        #end
+        #end        
+        @perspective = params[:perspective]
+        if @conversation.together_apart == 'apart'
+          crit[:perspective] = @perspective
+        end
       end
       
-      @perspective = params[:perspective]
-      crit[:perspective] = @perspective
 
       @comtag = ""
       if crit[:comtag] != '' and crit[:comtag] != '*my*'
