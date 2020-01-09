@@ -133,6 +133,7 @@ class DialogsController < ApplicationController
     # defaults
     @geo_level = 6
     @nvaction = false
+    @include_nvaction = false
     @messtag = ''
     @datetype = 'fixed'
     @datefixed = 'month'
@@ -227,6 +228,7 @@ class DialogsController < ApplicationController
           @communities << com
         end
       end  
+      @include_nvaction = (@conversation.together_apart == 'apart' ? true : false)
     end
     @perspectives = @communities
     @community_list = @communities.collect{|c| [c.fullname,c.tagname]}
