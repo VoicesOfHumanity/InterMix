@@ -1574,11 +1574,13 @@ class Item < ActiveRecord::Base
     if crit['in'] == 'conversation' and @conversation
       # Tags in a conversation are treated a bit differently      
       # representing_com messages can only be seen if one is in that comtag
-      if crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
-        items = items.where("representing_com='public' or lower(representing_com)='#{crit[:comtag].downcase}'")
-      else
-        items = items.where("representing_com='public'")        
-      end
+      if @conversation.together_apart == 'apart'
+        if crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+          items = items.where("representing_com='public' or lower(representing_com)='#{crit[:comtag].downcase}'")
+        else
+          items = items.where("representing_com='public'")        
+        end
+      end  
       # What about this now??
       #if @conversation.together_apart == 'together'
       #  # Don't care about comtags at all
