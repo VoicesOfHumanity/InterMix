@@ -298,10 +298,10 @@ class DialogsController < ApplicationController
           @comtag = session["cur_perspective_#{@conversation.id}"]
           logger.info("dialogs#slider perspective from cookie: #{@comtag} for #{@conversation.shortname}")
         elsif @perspectives.length == 1
-          @comtag = perspectives.keys[0]
+          @comtag = @perspectives.keys[0]
           logger.info("dialogs#slider perspective from only available: #{@comtag} for #{@conversation.shortname}")
         else
-          @comtag = perspectives.keys[0]
+          @comtag = @perspectives.keys[0]
           logger.info("dialogs#slider perspective from first in the list: #{@comtag} for #{@conversation.shortname}")
         end
         if @comtag != '' and current_participant.tag_list_downcase.include?(@comtag.downcase)
