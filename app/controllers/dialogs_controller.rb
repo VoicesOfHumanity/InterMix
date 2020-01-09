@@ -137,7 +137,7 @@ class DialogsController < ApplicationController
     @datetype = 'fixed'
     @datefixed = 'month'
     @datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
-    @sortby = '*value*'
+    @sortby = (@in == 'main' ? 'items.id desc' : '*value*')
     @threads = 'flat'
     @perspective = ''
       
