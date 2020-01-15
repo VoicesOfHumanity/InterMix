@@ -3,8 +3,10 @@
   
 <a href="/dialogs/<%= @dialog.id %>/slider" style="text-decoration:none;"><span style="font-size:20px;color:#000;">
   
-<% if @conversation -%>  
+<% if @in == 'conversation' and @conversation -%>  
   Conversation
+<% elsif @in == 'community' and @community %>
+  <%= @community.fullname %>
 <% else -%>  
   <%= @dialog ? @dialog.name : '???' %>
 <% end -%>  
