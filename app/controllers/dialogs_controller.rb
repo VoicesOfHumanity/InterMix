@@ -172,7 +172,7 @@ class DialogsController < ApplicationController
     # Note: conv and comtag were handled at the top
     if params.has_key?(:messtag)
       @messtag = params[:messtag].to_s     
-    elsif params.has_key?(:comtag) and @comtag != '' and @in == 'main' and not params.has_key?(:show_result)
+    elsif params.has_key?(:comtag) and @comtag != '' and (@in == 'main' or @in == 'community') and not params.has_key?(:show_result)
       #-- If they clicked on a community tag link, select the message tag too
       @messtag = @comtag
       logger.info("dialogs#slider @messtag set to the same as @comtag")
