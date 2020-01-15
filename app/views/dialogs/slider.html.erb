@@ -40,7 +40,7 @@
     </div>
     
     <% if @include_nvaction -%>
-      <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">"NV Action items<br>are included</button>  
+      <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are included</button>  
     <% else -%>
       <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are excluded</button>
     <% end -%>
@@ -148,7 +148,7 @@ var cur_batch_size = <%= (@batch_size || 4).to_i %>;
 var showing_options = '<%= @showing_options %>';
 var user_comtags = <%=raw current_participant.tag_list.inspect %>;
 var nvaction_on = <%= @nvaction ? 'true' : 'false' %>;
-var nvaction_included = false;
+var nvaction_included = <%= @include_nvaction ? 'true' : 'false' %>;;
 var conversation_id = <%= @conversation_id.to_i %>;
 var in_conversation = <%= @in_conversation ? 1 : 0 %>;
 var perspective = '<%= @perspective.to_s %>';
