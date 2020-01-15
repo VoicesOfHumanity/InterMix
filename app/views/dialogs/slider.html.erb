@@ -51,8 +51,9 @@
     <% end -%>
     </div>
     
+    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     
-    <div style="margin: 20px 0 0 0;display: <%= @in == 'conversation' ? 'none' : 'block' -%>">
+    <div style="display: <%= @in == 'conversation' ? 'none' : 'block' -%>">
       <input type="radio" name="comtag_radio" value="" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
       <% if @comtag.to_s != '' and @comtag != '*my*' and not current_participant.tag_list.include?(@comtag) -%>
       <input type="radio" name="comtag_radio" value="<%= @comtag %>" onclick="per_reload(false,1,'comtag')" checked>@<%= @comtag %><br>
@@ -62,8 +63,10 @@
         <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
       <% end %>
     </div>
+    
+    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
   
-    <div style="margin: 20px 0 0 0;display: <%= @in == 'conversation' ? 'none' : 'block' -%>">
+    <div style="display: <%= @in == 'conversation' ? 'none' : 'block' -%>">
       <input type="radio" name="messtag_radio" value="" onclick="per_reload(false,1,'messtag')" <%= @messtag.to_s=='' ? "checked" : "" %>>any hashtag<br>
       <% if @messtag.to_s != '' and not current_participant.tag_list.include?(@messtag) -%>
       <input type="radio" name="messtag_radio" value="<%= @messtag %>" onclick="per_reload(false,1,'messtag')" checked>#<%= @messtag %><br>
@@ -76,7 +79,9 @@
       <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">#<input type="text" id="messtag_other" size="10" maxlength="14">
     </div>
 
-    <div style="margin: 20px 0 0 0;">
+    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
+
+    <div style="">
       <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
       <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
         <% if not metamap_node.sumcat -%>
@@ -89,7 +94,9 @@
       <% end %>
     </div>
 
-    <div style="margin: 20px 0 0 0;">
+    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
+
+    <div style="">
       <input type="radio" name="meta_5" id="meta_5_0" value="0" checked onclick="per_reload()">all<br>
       <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
         <% if not metamap_node.sumcat -%>
