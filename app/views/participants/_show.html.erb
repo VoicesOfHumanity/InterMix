@@ -17,9 +17,8 @@
 <tr><td class="left">Tags:</td><td><%= @participant.tag_list if @participant.tag_list %></td></tr>
 <tr><td class="left">Status:</td><td><%= @participant.status %></td></tr>	
 <tr><td class="left">Visibility:</td><td><%= @participant.visibility%></td></tr>	
-
-<tr><td class="left">Forum emails:</td><td><%= @participant.forum_email %></td></tr>	
-<tr><td class="left">Group emails:</td><td><%= @participant.group_email %></td></tr>	
+<tr><td class="left">My community emails:</td><td><%= @participant.mycom_email %></td></tr>	
+<tr><td class="left">Other community emails:</td><td><%= @participant.othercom_email %></td></tr>
 <tr><td class="left">Private emails:</td><td><%= @participant.private_email %></td></tr>	
 <tr><td class="left">System emails:</td><td><%= @participant.system_email %></td></tr>	
 <tr><td class="left">Block all emails?</td><td><%= @participant.no_email %></td></tr>	
