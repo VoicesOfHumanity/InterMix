@@ -64,9 +64,9 @@
       <% current_participant.tags.each do |tag| -%>
         <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
       <% end %>
+      <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     </div>
     
-    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
   
     <div style="display: <%= @in == 'conversation' ? 'none' : 'block' -%>">
       <input type="radio" name="messtag_radio" value="" onclick="per_reload(false,1,'messtag')" <%= @messtag.to_s=='' ? "checked" : "" %>>any hashtag<br>
@@ -79,9 +79,8 @@
         <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'messtag')">#<%= tag.name %><br> 
       <% end %>
       <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">#<input type="text" id="messtag_other" size="10" maxlength="14">
+      <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     </div>
-
-    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
 
     <div style="">
       <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
