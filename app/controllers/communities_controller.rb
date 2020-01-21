@@ -710,7 +710,7 @@ class CommunitiesController < ApplicationController
     cdata['subject'] = '[Subject line]'
       
     if @community.send("#{which}_template").to_s != ""
-      template_content = render_to_string(:text=>@community.send("#{which}_template"),:layout=>false)
+      template_content = render_to_string(plain: @community.send("#{which}_template"), layout: false)
     else
       template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
     end      
