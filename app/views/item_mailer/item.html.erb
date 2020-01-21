@@ -5,18 +5,15 @@
 </head>
 <body>
 
-<% if @cdata and @cdata['logo'].to_s != '' -%>	
-<img src="<%= @cdata['logo'] %>" alt="logo" />
-<% else -%>
-<img src="https://<%= BASEDOMAIN %>/images/logo.gif" alt="logo" />
-<% end -%>
-<br/><br/>
-
-<% if @cdata and @cdata['is_instant'] -%>
-<p>To go to the Order out of Chaos Voices of Humanity forum, <a href="<%= @cdata['forum_link'] %>">click here</a>.<br>
-To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
+<p>
+<b>Getting Started, 123</b>
+<ol>
+<li>Read down the online Forum list.</li>
+<li>Vote thumbs up or thumbs down on items you particularly like or dislike.</li>
+<li>Use the "Add my voice" button to start a new topic or click the "Add Comme nt" link to reply to one of the items.</li>
+</ol>
+To block all emails, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
 </p>
-<% end -%>
 
 <hr/>
 
@@ -31,7 +28,13 @@ To block emails from the Voices of Humanity social media, <a href="http://<%= BA
 <p id="footer">
 	<a href="https://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.</p>
 
-<img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none" alt="pixel">
+<% if @cdata and @cdata['logo'].to_s != '' -%>	
+<img src="<%= @cdata['logo'] %>" alt="logo" />
+<% else -%>
+<img src="https://<%= BASEDOMAIN %>/images/logo.gif" alt="logo" />
+<% end -%>
+
+<img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none" alt="pixel" data-template="item">
 
 </body>
 </html>

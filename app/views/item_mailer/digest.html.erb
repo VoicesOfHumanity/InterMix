@@ -5,16 +5,14 @@
 </head>
 <body>
 
-<% if false -%>
-<img src="https://<%= BASEDOMAIN %>/images/logo.gif" alt="logo" />
-<% end -%>
-
 <p>
-<% if false -%>  
-<a href="https://<%= BASEDOMAIN %>/groups?auth_token=<%= @cdata['recipient'].authentication_token %>">Log in</a> to respond to or rate any of these posts, to access more features, or if you're having trouble seeing this. 
-<% end -%>
-To go to the Order out of Chaos Voices of Humanity forum, <a href="https://<%= BASEDOMAIN %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.<br>
-To block emails from the Voices of Humanity social media, <a href="https://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
+<b>Getting Started, 123</b>
+<ol>
+<li>Read down the online Forum list.</li>
+<li>Vote thumbs up or thumbs down on items you particularly like or dislike.</li>
+<li>Use the "Add my voice" button to start a new topic or click the "Add Comme nt" link to reply to one of the items.</li>
+</ol>
+To block all emails, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
 </p>
 
 <hr/>
@@ -26,7 +24,14 @@ To block emails from the Voices of Humanity social media, <a href="https://<%= B
 
 <hr style="clear:both">
 
-<img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none" alt="logo">
+<br>
+<% if @cdata and @cdata['logo'].to_s != '' -%>	
+<img src="<%= @cdata['logo'] %>" alt="logo" />
+<% else -%>
+<img src="https://<%= BASEDOMAIN %>/images/logo.gif" alt="logo" />
+<% end -%>
+
+<img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none" alt="logo" data-template="digest">
 
 </body>
 </html>
