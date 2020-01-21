@@ -1650,11 +1650,11 @@ class ItemsController < ApplicationController
         #  #-- Forum page will include nvaction
         #  crit[:nvaction_included] = true
         #els
-        if params.has_key?(:nvaction_included)
-          crit[:nvaction_included] = (params[:nvaction_included].to_i == 1) ? true : false
-          session[:nvaction_included] = crit[:nvaction_included]
-          logger.info("items#geoslider_update nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
-        end
+        #if params.has_key?(:nvaction_included)
+        #  crit[:nvaction_included] = (params[:nvaction_included].to_i == 1) ? true : false
+        #  session[:nvaction_included] = crit[:nvaction_included]
+        #  logger.info("items#geoslider_update nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
+        #end
       end
     
       @datetype = params[:datetype].to_s    # fixed or range

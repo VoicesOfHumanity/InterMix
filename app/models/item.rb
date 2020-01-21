@@ -1655,12 +1655,12 @@ class Item < ActiveRecord::Base
     if crit.has_key?(:nvaction) and crit[:nvaction] === true
       items = items.tagged_with('nvaction')      
       logger.info("item#get_items nvaction:#{crit[:nvaction]} include nvaction")
-    elsif crit.has_key?(:nvaction) and crit[:nvaction] === false
-      if crit.has_key?(:nvaction_included) and crit[:nvaction_included] === false
-        items = items.tagged_with('nvaction', exclude: true)  
-        logger.info("item#get_items nvaction:#{crit[:nvaction]} exclude nvaction")
-      end          
-      logger.info("item#get_items nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
+    elsif crit.has_key?(:nvaction) and crit[:nvaction] === false      
+      #if crit.has_key?(:nvaction_included) and crit[:nvaction_included] === false
+      #  items = items.tagged_with('nvaction', exclude: true)  
+      #  logger.info("item#get_items nvaction:#{crit[:nvaction]} exclude nvaction")
+      #end          
+      #logger.info("item#get_items nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
     end
     logger.info("item#get_items crit:#{crit.inspect}")
       

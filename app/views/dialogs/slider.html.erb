@@ -39,10 +39,12 @@
       <img src="/images/<%= @nvaction ? 'exitaction' : 'nvaction' %>.jpg" id="actionbutton" onclick="actionclick()" alt="NV action button">
     </div>
     
-    <% if @include_nvaction -%>
-      <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are included</button>  
-    <% else -%>
-      <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are excluded</button>
+    <% if false -%>
+      <% if @include_nvaction -%>
+        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are included</button>  
+      <% else -%>
+        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are excluded</button>
+      <% end -%>
     <% end -%>
     
     <div style="margin: 20px 0 0 0;">
@@ -155,7 +157,7 @@ var cur_batch_size = <%= (@batch_size || 4).to_i %>;
 var showing_options = '<%= @showing_options %>';
 var user_comtags = <%=raw current_participant.tag_list.inspect %>;
 var nvaction_on = <%= @nvaction ? 'true' : 'false' %>;
-var nvaction_included = <%= @include_nvaction ? 'true' : 'false' %>;;
+//var nvaction_included = <%= @include_nvaction ? 'true' : 'false' %>;;
 var conversation_id = <%= @conversation_id.to_i %>;
 var in_conversation = <%= @in_conversation ? 1 : 0 %>;
 var perspective = '<%= @perspective.to_s %>';
@@ -288,7 +290,9 @@ function per_reload(first,num,whatchanged,page,go_item) {
   }
   var nvaction = nvaction_on ? 1 : 0
   $('#newthreadbutton').prop('disabled', false);
-  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, nvaction_included: (nvaction_included ? 1 : 0), conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection}
+  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection}
+  
+  //nvaction_included: (nvaction_included ? 1 : 0),
   
   //var tag;
   //$('.com_check').each(function(i) {
