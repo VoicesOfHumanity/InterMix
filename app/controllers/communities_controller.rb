@@ -611,6 +611,8 @@ class CommunitiesController < ApplicationController
     @csection = 'invite'
     @community_id = params[:id].to_i
     @community = Community.find_by_id(@community_id)
+    #@xpreview = get_preview_template(@community_id, 'invite')
+    @preview = "<b>test</b>"
   end  
   
   def invitedo
@@ -847,6 +849,37 @@ class CommunitiesController < ApplicationController
     ]
     @geo_level = 6 if not @geo_level
     
+  end
+
+  def get_preview_template(community_id, which)
+    #-- Just to produce a partially filled in template preview
+    @community_id = community_id
+    @community = Community.find_by_id(@community_id)
+    @logo = @community.logo.exists? ? "https://#{BASEDOMAIN}#{@community.logo.url}" : "" 
+    @participant = current_participant
+    @email = @participant.email
+    @name = @participant.name
+    @countries = Geocountry.order(:name).select([:name,:iso])
+    
+    cdata = {}
+    cdata['community'] = @community
+    cdata['community_logo'] = @logo
+    cdata['participant'] = @participant
+    cdata['current_participant'] = @current_participant
+    cdata['recipient'] = @participant
+    cdata['password'] = '[#@$#$%$^]'
+    cdata['confirmlink'] = "https://#{@domain}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group_id}"
+    cdata['logo'] = @logo
+    cdata['message'] = '[Custom message]'    
+    cdata['subject'] = '[Subject line]'
+      
+    if @community.send("#{which}_template").to_s != ""
+      template_content = render_to_string(plain: @community.send("#{which}_template"), layout: false)
+    else
+      template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
+    end      
+    preview_html = Liquid::Template.parse(template_content).render(cdata)
+    return(preview_html)
   end
 
 end

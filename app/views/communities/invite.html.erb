@@ -12,6 +12,36 @@
 
 <p><input type="submit" value="Submit"></p>
 
-<p>Optional e-mail message to send to prospective members:<br><%= text_area_tag 'messtext', @messtext, :rows => 3, :cols => 30 %></p>
+<p>Optional e-mail message to send to prospective members:<br>
+  <textarea name="messtext" id="messtext" rows="3" cols="30" onchange="update_preview()" onkeyup="update_preview()"><%= @messtext %></textarea>
+</p>
 
 </form>
+
+<p>Preview:</p>
+
+<div id="preview">Loading...</div>
+
+
+
+<script>
+  var preview_text = '';
+	$.ajax({
+    type: "GET",
+    url: "/communities/<%= @community.id %>/test_template?which=invite",
+    complete: function(t){
+      preview_text = t.responseText;	
+      $("#preview").html(preview_text);
+     }
+  });	
+  function update_preview() {
+    var messtext = $('#messtext').val();
+    var outtext;
+    if (messtext!='') {
+      outtext = messtext + "<br><hr style=\"clear:both;\">\n" + preview_text
+    } else {
+      outtext = preview_text;
+    }
+    $("#preview").html(outtext);
+  }
+</script>
