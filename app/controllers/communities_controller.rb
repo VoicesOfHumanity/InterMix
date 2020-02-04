@@ -717,7 +717,7 @@ class CommunitiesController < ApplicationController
       template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
     end      
     template = Liquid::Template.parse(template_content)
-    render html: template.render(cdata).html_safe, layout: 'front'
+    render html: template.render(cdata).html_safe, layout: false
   end
 
   def get_default
