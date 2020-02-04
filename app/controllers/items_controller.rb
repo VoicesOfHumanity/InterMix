@@ -486,8 +486,10 @@ class ItemsController < ApplicationController
           @item.subject = @olditem.subject 
         end
         
-        # Only keep the conversation setting only if we're in the conversation and the current user is a community member
-        if @is_com_member and @in_conversation
+        # Only keep the conversation setting only if we're in the conversation and the current user is a community member or it's the author
+        if @olditem.posted_by == current_participant.id
+          @item.conversation_id = @olditem.conversation_id
+        elsif @is_com_member and @in_conversation
           @item.conversation_id = @conversation_id
         else
           @item.conversation_id = 0
