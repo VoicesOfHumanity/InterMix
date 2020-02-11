@@ -486,13 +486,27 @@ class ItemsController < ApplicationController
           @item.subject = @olditem.subject 
         end
         
-        # Only keep the conversation setting only if we're in the conversation and the current user is a community member or it's the author
-        if @olditem.posted_by == current_participant.id
-          @item.conversation_id = @olditem.conversation_id
-        elsif @is_com_member and @in_conversation
-          @item.conversation_id = @conversation_id
-        else
-          @item.conversation_id = 0
+        @item.conversation_id = 0
+        if @olditem.conversation_id.to_i > 0
+          if @olditem.posted_by == current_participant.id
+            # The author always gets the same conversation
+            @item.conversation_id = @olditem.conversation_id
+          #elsif @is_com_member and @in_conversation
+          #@item.conversation_id = @conversation_id
+          else
+            # Keep the conversation if the user is in a community that is in that conversation
+            if not @conversation or @conversation.id != @item.conversation_id
+              @conversation = Conversation.find_by_id(@item.conversation_id)
+            end
+            if @conversation
+              for com in @conversation.communities
+                if current_participant.tag_list_downcase.include?(com.tagname.downcase)
+                  @item.conversation_id = @olditem.conversation_id
+                  break
+                end
+              end
+            end
+          end
         end
         
         @item.intra_conv = @olditem.intra_conv
@@ -532,7 +546,9 @@ class ItemsController < ApplicationController
 
     if @item.conversation_id > 0
       # We're in a conversation
-      @conversation = Conversation.find_by_id(@item.conversation_id)
+      if not @conversation or @conversation.id != @item.conversation_id
+        @conversation = Conversation.find_by_id(@item.conversation_id)
+      end
       if @conversation
         @conv = @conversation.shortname
         if @in_conversation and not tags_downcase.include? @conv.downcase

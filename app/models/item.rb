@@ -392,7 +392,8 @@ class Item < ActiveRecord::Base
       # http://yekmer.posterous.com/single-access-token-using-devise
       recipient.ensure_authentication_token!
       
-      domain = 'voh.' + ROOTDOMAIN 
+      #domain = 'voh.' + ROOTDOMAIN 
+      domain = BASEDOMAIN
       group_domain = domain
       
       cdata = {}
@@ -453,6 +454,10 @@ class Item < ActiveRecord::Base
       #itext += " <a href=\"#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
       itext += " <a href=\"https://#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
 
+      if self.conversation
+        itext += " Conversation: <a href=\"https://#{domain}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{self.conversation.shortname}&amp;auth_token=#{p.authentication_token}\">#{self.conversation.name}</a>"
+      end
+      
    	  if self.intra_com.to_s != '' and self.intra_com.to_s != 'public'
         itext += " &nbsp;<span style=\"font-weight:bold;color:#44a\">This message: Only #{self.intra_com}</span>"
       end
@@ -472,7 +477,7 @@ class Item < ActiveRecord::Base
       cdata['email_id'] = email_log.id
       
       email = ItemMailer.item(msubject, itext, recipient.email_address_with_name, cdata)
-      
+
       begin
         logger.info("Item#emailit delivering email to #{recipient.id}:#{recipient.name}")
         email.deliver_now
