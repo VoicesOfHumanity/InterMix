@@ -116,6 +116,8 @@ puts("crit: #{crit.inspect}")
 #-- Get the winners for the period
 puts("Calculating results...")
 
+got_results = 0
+
 # two genders, three ages, and voice of humanity
 # total
 crit[:gender] = 0
@@ -130,6 +132,7 @@ puts "gender:all age:all items:#{items.length}"
 @items = Item.get_sorted(items,@itemsproc,@sortby,false)
 #puts "extras:#{@extras}"
 if @items.length > 0 and ratings.length > 0
+  got_results += @items.length
   exp = ""
   #exp = "@items[0].id:#{@items[0].id} @itemsproc[items[0].id]['value']:#{@itemsproc[items[0].id]['value']}"
   #exp = @itemsproc[items[0].id].inspect
@@ -160,6 +163,7 @@ for gender_rec in genders
     @items = Item.get_sorted(items,@itemsproc,@sortby,false)
     puts "gender:#{name} age:all items:#{@items.length}"
     if @items.length > 0 and ratings.length > 0
+      got_results += @items.length
       if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
         item = @items[0]
         iproc = @itemsproc[item.id]
@@ -194,6 +198,7 @@ for age_rec in ages
     @items = Item.get_sorted(items,@itemsproc,@sortby,false)
     puts "gender:all age:#{name} items:#{@items.length}"
     if @items.length > 0 and ratings.length > 0
+      got_results += @items.length
       if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['value'] > 0
         item = @items[0]
         iproc = @itemsproc[item.id]
@@ -212,6 +217,11 @@ for age_rec in ages
     
     @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras, image: image}
   end
+end
+
+if got_results == 0
+  puts "Got no result items. No need to send messages"
+  exit
 end
 
 #-- Go through the results
