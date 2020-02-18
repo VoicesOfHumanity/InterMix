@@ -256,7 +256,7 @@ class DialogsController < ApplicationController
       end
 
       # Do we want to send them to a conversation, if they have only community specified? I think not
-      if false and not @conversation and @community and current_participant.tag_list.include?(@comtag)
+      if not @conversation and @community and current_participant.tag_list.include?(@comtag)
         # If we're in a community, and the user is a member. Conversation not specified. Figure out which one
         if @community.conversations.length == 1
           # Community is in only one conversation, go there
