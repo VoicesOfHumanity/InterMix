@@ -1192,7 +1192,7 @@ class FrontController < ApplicationController
     #-- Meant as a direct link to join with FB, keeping the comtag settings
     if params[:comtag].to_s != ''
       session[:comtag] = params[:comtag]
-      if params.has_key?(:joincom)
+      if true or params.has_key?(:joincom)
         if participant_signed_in?
           #-- Join them right away if logged in
           comtag = session[:comtag]

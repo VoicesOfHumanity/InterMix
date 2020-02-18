@@ -64,7 +64,7 @@ end
   <tr><th>Forum</th><th>More Information</th></tr>	
   <% for conv in @community.conversations -%>
     <tr>
-    	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>"><%= conv.shortname %></a></td>	
+    	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>&comtag=<%= @community.tagname %>"><%= conv.shortname %></a></td>	
     	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
     </tr>
   <% end -%>
