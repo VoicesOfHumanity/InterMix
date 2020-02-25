@@ -1101,7 +1101,7 @@ class FrontController < ApplicationController
     #-- End point of the confirmation link in e-mail, when signing up
     @participant = Participant.find_by_confirmation_token(params[:code])
     @comtag = params[:comtag].to_s
-    @joincom = params.has_key(:joincom)
+    @joincom = params.has_key?(:joincom)
     @content = ""
     @content += "<p><img src=\"#{@logo}\" alt=\"logo\" /></p>" if @logo
     if @participant
@@ -2142,10 +2142,6 @@ class FrontController < ApplicationController
         @community = nil  
       end
       
-              
-        
-      
-      
       cdata = {'group'=>@group, 'dialog'=>@dialog, 'dialog_group'=>@dialog_group, 'community'=>@community, 'countries'=>@countries, 'meta'=>@meta, 'message'=>@message, 'name'=>@name, 'first_name'=>@first_name, 'last_name'=>@last_name, 'country_code'=>@country_code, 'email'=>@email, 'subject'=>@subject, 'cookies'=>cookies, 'logo'=>@logo, 'metro_areas'=>@metro_areas}
       cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
       cdata['dialog_logo'] = "//#{BASEDOMAIN}#{@dialog.logo.url}" if @dialog.logo.exists?
@@ -2154,6 +2150,7 @@ class FrontController < ApplicationController
       cdata['veteran'] = @veteran.to_i
       cdata['interfaith'] = @interfaith.to_i
       cdata['refugee'] = @refugee.to_i
+      cdata['email'] = params[:email] if params.has_key? :email
       
       if @dialog_group and @dialog_group.signup_template.to_s != ''
         template_content = @dialog_group.signup_template

@@ -55,7 +55,7 @@ class Community < ActiveRecord::Base
   end
   
   def to_liquid
-      {'id'=>id,'tagname'=>tagname,'description'=>description,'fullname'=>fullname}
+      {'id'=>id,'tagname'=>tagname,'description'=>description,'fullname'=>fullname, 'name'=>name}
   end
   
   

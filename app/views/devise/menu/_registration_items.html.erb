@@ -5,7 +5,8 @@
   </li>
 	<% end %>
 <% elsif (@dialog_id.to_i > 0 or session[:dialog_id].to_i > 0) and @comtag.to_s != '' -%>	
-	<li class="menu"><a class="<%= 'selected' if @section=='join' %>" href="/djoin?comtag=<%= @comtag %>&joincom=1">Join</a></li>
+  <% extraparams = params.has_key?(:email) ? "&email=#{CGI.escape(params[:email])}" : "" %>
+	<li class="menu"><a class="<%= 'selected' if @section=='join' %>" href="/djoin?comtag=<%= @comtag %>&joincom=1<%= extraparams %>">Join</a></li>
 <% elsif @dialog_id.to_i > 0 or session[:dialog_id].to_i > 0 -%>	
 	<li class="menu"><a class="<%= 'selected' if @section=='join' %>" href="/djoin">Join</a></li>
 <% elsif @group_id.to_i > 0 or session[:group_id].to_i > 0 -%>	
