@@ -661,7 +661,7 @@ class CommunitiesController < ApplicationController
           
           if @recipient
             # They already have an account, send a link that logs them in, joins them, and sends them to the forum
-            @cdata['joinlink'] = "https://#{BASEDOMAIN}/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}&amp;joincom=1&amp;auth_token=#{@participant.authentication_token}"
+            @cdata['joinlink'] = "https://#{BASEDOMAIN}/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}&amp;joincom=1&amp;auth_token=#{@recipient.authentication_token}"
           else
             @cdata['joinlink'] = "https://#{BASEDOMAIN}/#{@community.tagname}?joincom=1&amp;email=#{email}"            
           end
