@@ -672,12 +672,12 @@ class CommunitiesController < ApplicationController
             template = Liquid::Template.parse(@messtext)
             html_content = template.render(@cdata)
           else
-            html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join the community: #{@community.fullname}<br/>"
+            html_content = "<p>You have been invited by #{current_participant.email_address_with_name} to join the community: #{@community.name}<br/>"
             html_content += "Go <a href=\"#{@cdata['joinlink']}\">here</a> to join.<br>"
             html_content += "</p>"            
           end
         
-          subject = "#{current_participant.name} invites you to #{@community.fullname} on InterMix"
+          subject = "#{current_participant.name} invites you to #{@community.name} on InterMix"
 
           emailmess = SystemMailer.template("do-not-reply@intermix.org", email, subject, html_content, @cdata)
 
