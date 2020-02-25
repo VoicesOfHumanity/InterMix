@@ -651,13 +651,22 @@ class CommunitiesController < ApplicationController
         email = line.strip
 
         @recipient = Participant.find_by_email(email)
-        if @recipient
-          flash[:alert] += "\"#{email}\" is already a Voices of Humanity member<br>"  
-        elsif not email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
+        #if @recipient
+        #  flash[:alert] += "\"#{email}\" is already a Voices of Humanity member<br>"  
+        if not email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
           flash[:alert] += "\"#{email}\" doesn't look like a valid e-mail address<br>"  
         else
+          
+          #@cdata['joinlink'] = "https://#{BASEDOMAIN}/fbjoinlink?comtag=#{@community.tagname}&amp;joincom=1&amp;email=#{email}"
+          
+          if @recipient
+            # They already have an account, send a link that logs them in, joins them, and sends them to the forum
+            @cdata['joinlink'] = "https://#{BASEDOMAIN}/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}&amp;joincom=1&amp;auth_token=#{@participant.authentication_token}"
+          else
+            @cdata['joinlink'] = "https://#{BASEDOMAIN}/#{@community.tagname}?joincom=1&amp;email=#{email}"            
+          end
+          
           @cdata['email'] = email
-          @cdata['joinlink'] = "https://#{BASEDOMAIN}/fbjoinlink?comtag=#{@community.tagname}&amp;joincom=1&amp;email=#{email}"
 
           if @messtext.to_s != ''
             template = Liquid::Template.parse(@messtext)

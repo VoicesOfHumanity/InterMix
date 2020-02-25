@@ -255,7 +255,7 @@ class DialogsController < ApplicationController
         session.delete(:joincom)
       end
 
-      # Do we want to send them to a conversation, if they have only community specified? I think not
+      # Do we want to send them to a conversation, if they have only community specified? We do now
       if not @conversation and @community and current_participant.tag_list.include?(@comtag)
         # If we're in a community, and the user is a member. Conversation not specified. Figure out which one
         if @community.conversations.length == 1

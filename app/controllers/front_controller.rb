@@ -323,7 +323,7 @@ class FrontController < ApplicationController
   end
   
   def dialogjoin
-    #-- What the discussion join form posts to
+    #-- What the discussion join form posts to. This is the main way to join, even if we don't use discussions
     @dialog_id = params[:dialog_id].to_i
     @group_id = params[:group_id].to_i
     logger.info("Front#dialogjoin dialog:#{@dialog_id} group:#{@group_id}")
@@ -340,6 +340,9 @@ class FrontController < ApplicationController
     @comtag = params[:comtag].to_s
     if @comtag.to_s != ''
       @community = Community.find_by_tagname(@comtag)
+      if params.has_key?(:joincom)
+        @joincom = true
+      end
     end
     
     @dialog = Dialog.find_by_id(@dialog_id)
@@ -678,7 +681,9 @@ class FrontController < ApplicationController
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
     cdata['community'] = @community if @community
-    if @comtag and @comtag.to_s != ''
+    if @comtag and @comtag.to_s != '' and @joincom
+      cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}&amp;joincom=1\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}</a>"      
+    elsif @comtag and @comtag.to_s != ''
       cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}</a>"      
     else
       cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&dialog_id=#{@dialog.id}</a>"
@@ -1096,6 +1101,7 @@ class FrontController < ApplicationController
     #-- End point of the confirmation link in e-mail, when signing up
     @participant = Participant.find_by_confirmation_token(params[:code])
     @comtag = params[:comtag].to_s
+    @joincom = params.has_key(:joincom)
     @content = ""
     @content += "<p><img src=\"#{@logo}\" alt=\"logo\" /></p>" if @logo
     if @participant
@@ -1144,8 +1150,13 @@ class FrontController < ApplicationController
       #  redirect_to "/dialogs/#{@dialog.id}/forum"
       #  return
       if @comtag and @comtag.to_s != ''
-          redirect_to "//#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider?comtag=#{@comtag}"
-          return
+        if @joincom
+          @participant.tag_list.add(@comtag)
+          @participant.save
+        end
+        session[:comtag] = @comtag
+        redirect_to "//#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider?comtag=#{@comtag}"
+        return
       elsif @dialog and @group
         cdata['domain'] = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}" if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
         cdata['logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?

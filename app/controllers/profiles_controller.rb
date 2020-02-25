@@ -302,6 +302,9 @@ class ProfilesController < ApplicationController
       
       if @goto.to_s != ''
         redirect_to @goto and return
+      elsif session.has_key?(:comtag)
+        comtag = session[:comtag]
+        redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{comtag}" and return
       else        
         @subsection = 'view'
         render :action=>'index' and return
