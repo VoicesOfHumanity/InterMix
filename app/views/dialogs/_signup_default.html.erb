@@ -43,7 +43,7 @@
 <% end -%>
 
 {% for m in meta %}
-<tr><td>{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
+<tr><td>*{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
 {% endfor %}
 
 <% if false -%>

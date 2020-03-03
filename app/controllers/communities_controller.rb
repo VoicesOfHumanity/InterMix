@@ -677,7 +677,7 @@ class CommunitiesController < ApplicationController
             html_content += "</p>"            
           end
         
-          subject = "#{current_participant.name} invites you to #{@community.name} on InterMix"
+          subject = "#{current_participant.name} invites you to the \"#{@community.name}\" community on Voices of Hummanity"
 
           emailmess = SystemMailer.template("do-not-reply@intermix.org", email, subject, html_content, @cdata)
 
