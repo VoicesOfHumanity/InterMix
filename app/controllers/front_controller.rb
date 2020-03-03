@@ -390,6 +390,7 @@ class FrontController < ApplicationController
     @veteran = params[:veteran].to_i
     @interfaith = params[:interfaith].to_i
     @refugee = params[:refugee].to_i
+    @tag_list = params[:participant].has_key?(:tag_list) ? params[:participant][:tag_list] : []
     tempfilepath = ''
     
     flash[:notice] = ''

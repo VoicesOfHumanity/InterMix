@@ -61,15 +61,15 @@
     <input type="checkbox" id="check_<%= @comtag %>" name="check[<%= @comtag %>]" value="1" data-tag="<%= @comtag %>" class="com_check" checked> <%= @comname %><br>    
     <% end -%>
     <% for com in @major_communities -%>  
-    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= @comtag.to_s==com.tagname ? ' checked' : '' %>> <%= com.fullname %><br>
+    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= @comtag.to_s==com.tagname or (@tag_list and @tag_list.include?(com.tagname)) ? ' checked' : '' %>> <%= com.fullname %><br>
     <% end -%>  
     [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>  
     <div id="more_com" style="display:none">  
     <% for com in @ungoals_communities -%>  
-    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"<%= @comtag.to_s==com.tagname ? ' checked' : '' %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"<%= @comtag.to_s==com.tagname or (@tag_list and @tag_list.include?(com.tagname)) ? ' checked' : '' %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
     <% end -%>  
     <% for com in @sustdev_communities -%>  
-    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"<%= @comtag.to_s==com.tagname ? ' checked' : '' %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"<%= @comtag.to_s==com.tagname or (@tag_list and @tag_list.include?(com.tagname)) ? ' checked' : '' %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
     <% end -%>  
     </div>  
       
@@ -194,5 +194,14 @@ function chgcity() {
     $("#admin2uniq").val(admin2uniq);
 		$('#profile_edit').css('opacity','1.0');
 	})
+}
+if ($("#country_code").val() != '') {
+  chgcountry();
+  if ($("#admin1uniq").val() != '') {
+    chgstate();
+    if ($("#city").val() != '') {
+      chgcity();
+    }
+  }
 }
 </script>

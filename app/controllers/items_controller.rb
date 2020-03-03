@@ -1369,7 +1369,7 @@ class ItemsController < ApplicationController
   def rateitem(item, vote, from_mail=false, conversation_id=0)
     # Called by fx thumbrate or view to record a vote, without showing any screen
     
-    if not item.voting_ok(current_participant.id)
+    if not current_participant or not item.voting_ok(current_participant.id)
       return
     end    
     
