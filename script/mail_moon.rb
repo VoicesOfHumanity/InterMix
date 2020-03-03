@@ -266,6 +266,8 @@ for p in participants
   etext = ""  
   etext += "<p>" + @moon.top_text + "</p>" if @moon.top_text.to_s != ''
   etext += "<hr/>"
+  
+  next if @data.length == 0
 
   @data.each do |name,info|
     heading = info[:name ]
