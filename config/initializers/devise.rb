@@ -181,7 +181,7 @@ Devise.setup do |config|
   end
   
   config.omniauth :google_oauth2, "347530640667-ofi2v3lo7ijkmrjkn608ob2581moupek.apps.googleusercontent.com", "EisPs0whNq-803uqnXQLI7je", {
-      scope: "contacts.readonly,userinfo.email"
+      scope: "userinfo.email"
   }
   
   #config.omniauth :google_apps, OpenID::Store::Filesystem.new('/tmp'), :domain => 'gmail.com'
