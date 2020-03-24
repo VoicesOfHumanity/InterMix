@@ -40,6 +40,7 @@ gem "omniauth"
 gem 'omniauth-openid'
 gem 'omniauth-facebook'
 gem 'omniauth-twitter'
+gem 'omniauth-google-oauth2'
 #gem 'omniauth-google_apps'
 
 gem 'rest-graph'

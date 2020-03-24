@@ -180,6 +180,10 @@ Devise.setup do |config|
     config.omniauth :facebook, "151526481561013", "3653366f2b6d4778e09db3d666d1fedf"
   end
   
+  config.omniauth :google_oauth2, "347530640667-ofi2v3lo7ijkmrjkn608ob2581moupek.apps.googleusercontent.com", "EisPs0whNq-803uqnXQLI7je", {
+      scope: "contacts.readonly,userinfo.email"
+  }
+  
   #config.omniauth :google_apps, OpenID::Store::Filesystem.new('/tmp'), :domain => 'gmail.com'
   #OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE if Rails.env.development? 
 
