@@ -15,8 +15,13 @@ It looks like you might not have cookies turned on.<br><br>Signing in to this si
 <% end -%>
 
 <p><a href="/participants/auth/facebook" class="auth_provider">
-  <%= image_tag "/images/login/facebook_64.png", :size => "64x64", :alt => "Facebook" %>
+  <%= image_tag "/images/login/facebook_64.png", size: "64x64", alt: "Facebook", style: "display:inline-block;vertical-align:middle" %>
   Click to sign in with your Facebook login.
+</a>
+</p>
+<p><a href="/participants/auth/google_oauth2" class="auth_provider">
+  <%= image_tag "/images/login/google_oauth2_64.png", size: "64x64", alt: "Google", style: "display:inline-block;vertical-align:middle" %>
+  Click to sign in with your Google login.
 </a>
 </p>
 
