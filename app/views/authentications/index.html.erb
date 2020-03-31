@@ -5,7 +5,7 @@
     <p><strong>You can sign in to this account using:</strong></p>
     <div class="authentications">
       <% for authentication in @authentications %>
-        <div class="authentication" style="<%= authentication.provider[0..5]=='google' ? "width: 140px" : "" %>">
+        <div class="authentication" style="<%= authentication.provider[0..5]=='google' ? "width: 145px" : "" %>">
           <%= image_tag "/images/login/#{authentication.provider}_32.png", :size => "32x32" %>
           <div class="provider"><%= authentication.provider[0..5]=='google' ? "Google" : authentication.provider.titleize %></div>
           <div class="uid"><%= authentication.uid %></div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_05_211348) do
+ActiveRecord::Schema.define(version: 2020_03_31_215438) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -93,6 +93,16 @@ ActiveRecord::Schema.define(version: 2019_11_05_211348) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["community_id", "participant_id"], name: "index_community_admins_on_community_id_and_participant_id"
+  end
+
+  create_table "community_networks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "community_id"
+    t.integer "network_id"
+    t.integer "created_by"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id", "network_id"], name: "index_community_networks_on_community_id_and_network_id"
+    t.index ["network_id", "community_id"], name: "index_community_networks_on_network_id_and_community_id"
   end
 
   create_table "conversation_communities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -656,6 +666,15 @@ ActiveRecord::Schema.define(version: 2019_11_05_211348) do
     t.string "mtime", limit: 5, default: "12:00"
     t.boolean "mailing_sent", default: false
     t.index ["mdate"], name: "index_moons_on_mdate"
+  end
+
+  create_table "networks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.integer "created_by"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by"], name: "created_by"
+    t.index ["name"], name: "name"
   end
 
   create_table "participants", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
