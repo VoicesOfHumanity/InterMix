@@ -3,8 +3,7 @@
 class Admin::DialogsController < ApplicationController
 
 	layout "admin"
-  before_action :authenticate_participant!
-  before_action :authenticate_user_from_token!
+  append_before_action :authenticate_participant!
 
   def search
     @heading = 'Dialogs'
