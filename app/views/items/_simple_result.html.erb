@@ -1,4 +1,12 @@
-<h3><%=raw @title %></h3>
+<h3><%=raw @title %>
+<% if @conversation %>
+  <br>My Perspective: <%= @perspective %>
+  <% if @community_list and @community_list.length > 1 -%>
+    &nbsp;&nbsp;
+    <%= select_tag "chg_com", options_for_select([['Change Perspective','']]+@community_list), :onchange => 'chg_community()' %>
+  <% end -%>
+<% end -%>  
+</h3>
 
 <% if @period -%>
 <p>These results are for the period "<%= @period.name %>"</p>

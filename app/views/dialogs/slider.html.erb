@@ -395,7 +395,7 @@ function leave_conversation() {
 function chg_community() {
   var com = $('#chg_com').val();
   if (com != '') {
-    window.location.href = '?comtag='+com+'&conv='+cur_conv;
+    window.location.href = '?comtag='+com+'&conv='+cur_conv+'<%= @show_result ? "&amp;show_result=1" : "" %>';
   }
 }
 function load_thread(item_id, conversation_id) {
