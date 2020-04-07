@@ -495,8 +495,8 @@ class ItemsController < ApplicationController
           #@item.conversation_id = @conversation_id
           else
             # Keep the conversation if the user is in a community that is in that conversation
-            if not @conversation or @conversation.id != @item.conversation_id
-              @conversation = Conversation.find_by_id(@item.conversation_id)
+            if not @conversation or @conversation.id != @olditem.conversation_id
+              @conversation = Conversation.find_by_id(@olditem.conversation_id)
             end
             if @conversation
               for com in @conversation.communities
