@@ -455,7 +455,7 @@ class Item < ActiveRecord::Base
       itext += " <a href=\"https://#{domain}/items/#{self.id}/unfollow?email=1&amp;auth_token=#{p.authentication_token}\">Unfollow thread</a>"
 
       if self.conversation
-        itext += " Conversation: <a href=\"https://#{domain}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{self.conversation.shortname}&amp;auth_token=#{p.authentication_token}\">#{self.conversation.name}</a>"
+        itext += " Together&Apart: <a href=\"https://#{domain}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{self.conversation.shortname}&amp;auth_token=#{p.authentication_token}\">#{self.conversation.name}</a>"
       end
       
    	  if self.intra_com.to_s != '' and self.intra_com.to_s != 'public'

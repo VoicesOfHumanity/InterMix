@@ -30,7 +30,7 @@
   <% if @conversations.length > 1 -%>
     <%= select_tag "chg_conv", options_for_select([['Change Conversation','']]+@conversations.collect{|c| [c.name,c.shortname]}+[['Leave Conversation','-']]), :onchange => 'chg_conversation()' %>
   <% else -%>
-    <input type="button" value="Leave Conversation" onclick="leave_conversation()">
+    <input type="button" value="Exit Conversation" onclick="leave_conversation()">
   <% end -%>
 <% end -%>
 
