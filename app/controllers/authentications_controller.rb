@@ -59,7 +59,14 @@ class AuthenticationsController < ApplicationController
             @participant.save!
           end
           sign_in(:participant, @participant)
-          flash[:notice] = "Authentication successful. Facebook login added to your existing account."
+          if omniauth['provider'] == 'facebook'
+            loginname = "Facebook"
+          elsif omniauth['provider'] == 'google_oauth2'
+            loginname = "Google"
+          else
+            loginname = "Facebook"
+          end
+          flash[:notice] = "Authentication successful. #{loginname} login added to your existing account."
           logger.info("authentications#create #{current_participant.id} authenticated")          
           if session.has_key?(:comtag) and session.has_key?(:joincom)
             # They should be joined to a community, if they aren't already a member ?comtag=love&joincom=1
