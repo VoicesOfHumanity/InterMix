@@ -13,6 +13,7 @@ class Participant < ActiveRecord::Base
   #has_and_belongs_to_many :groups, :join_table => :group_participants
   has_many :groups, :through => :group_participants
   has_many :dialogs, :through => :dialog_admins
+  has_many :networks, :foreign_key => :created_by
   has_many :items, :foreign_key => :posted_by
   has_many :ratings
   has_many :authentications, :dependent => :destroy

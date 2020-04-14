@@ -1,0 +1,17 @@
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @network.id %></td></tr>	
+<tr><td class="left">Name:</td><td><%= @network.name %></td></tr>	
+<tr><td class="left">Created by:</td><td><%= @network.participant.name if @network.participant %></td></tr>	
+<tr><td class="left">Created:</td><td><%= @network.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @network.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+<p>
+<a href="javascript:editrec1()">Edit</a> | 
+<a href="javascript:delrec1()">Delete</a> |&nbsp;&nbsp;&nbsp;
+<a href="javascript:list2()">Communities</a>
+</p>
+
+<script>
+curid1 = <%= @network.id %>;
+</script>

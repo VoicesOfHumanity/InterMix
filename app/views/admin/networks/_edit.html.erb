@@ -1,0 +1,12 @@
+<%= semantic_form_for [:admin, @network] do |f| %>
+
+	<%= f.inputs do %>
+		<%= f.input :name, :required => true %>
+  <% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec1(<%= @network.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec1()" />
+</p>

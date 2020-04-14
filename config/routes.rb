@@ -86,6 +86,13 @@ Rails.application.routes.draw do
       post :community_add, :on => :member
       delete :community_del, :on => :member
     end
+
+    resources :networks do
+      get :search, :on => :collection
+      get :communities, on: :member
+      post :community_add, :on => :member
+      delete :community_del, :on => :member
+    end
     
     resources :hubs do
       get :search, :on => :collection
