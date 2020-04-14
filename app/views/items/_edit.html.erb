@@ -145,10 +145,15 @@ if (CKEDITOR.instances['item_html_content']) {
   	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
 	 
   	  <% intra_options = [['Public','public']] %>
-  	  <% intra_options << ["Only @#{@comtag}","@#{@comtag}"] if (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*' and (!@conversation) and @is_com_member) %>
+  	  <% def_intra = @item.intra_com ? @item.intra_com : 'public' %>		  
+      <% if (@item.reply_to.to_i>0 and @olditem and @olditem.intra_com.to_s!='') -%>
+  	    <% intra_options << ["Only #{@olditem.intra_com}","#{@olditem.intra_com}"]  %>
+        <% def_intra = "#{@olditem.intra_com}" %>
+      <% elsif (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*' and (!@conversation) and @is_com_member) -%>
+  	    <% intra_options << ["Only @#{@comtag}","@#{@comtag}"]  %>
+      <% end -%>
   	  <% if intra_options.length > 1 -%>
     	  <select name="item[intra_com]" id="item_intra_com">
-    	  <% def_intra = @item.intra_com ? @item.intra_com : 'public' %>		  
     	  <%= options_for_select(intra_options,def_intra) %>
     	  </select>
   	  <% end -%>

@@ -528,7 +528,11 @@ class ItemsController < ApplicationController
         #logger.info("items#new replying. Existing @comtag:#{@comtag}")
         @comtag = @olditem.intra_com if @olditem.intra_com and @olditem.intra_com != 'public'
         #logger.info("items#new replying. Setting @comtag:#{@comtag} based on @olditem.intra_com:#{@olditem.intra_com}")
-        @item.intra_com = @comtag if @comtag
+        if @olditem.intra_com
+          @item.intra_com = @olditem.intra_com
+        elsif @comtag
+          @item.intra_com = @comtag          
+        end
         @comtag = @comtag.gsub('@','') if @comtag
         #logger.info("items#new replying. @comtag is now:#{@comtag}")
         
