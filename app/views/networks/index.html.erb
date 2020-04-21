@@ -1,0 +1,27 @@
+<%= render(:partial => 'communities/topmenu')%>
+
+<table style="width:595px">
+<tr><th>Name</th><th>Members</th><th>Activity</th></tr>	
+<% for network in @networks -%>
+<tr>
+	<td><a href="/networks/<%= network.id %>"><%= network.name %></a></td>
+	<td>?</td>	
+	<td>?</td>
+</tr>	
+<% end -%>
+</table>
+
+<p>Sort: 
+<select name="sort" id="sortselect">
+<% {'activity'=>'Activity', 'shortname'=>'Forum'}.each do |val,txt| -%>    
+<option value="<%= val %>"<%= ' selected' if val == @sort %>><%= txt %></option>    
+<% end -%>
+</select>
+</p>
+
+<script>
+$('#sortselect').on('change', function() {
+  var xsort = $('#sortselect').val();
+  window.location.href = "?sort=" + xsort;
+})
+</script>	

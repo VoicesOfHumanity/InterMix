@@ -14,7 +14,7 @@ class Admin::NetworksController < ApplicationController
     @networks = Network.all
     
     network_id = params[:network_id].to_i
-    name = params[:name].to_i
+    name = params[:name]
 
     @per_page = (params[:per_page] || 30).to_i
     @page = ( params[:page] || 1 ).to_i
@@ -26,12 +26,12 @@ class Admin::NetworksController < ApplicationController
     xorder += sort2 if sort2!=""
 
     xcond = "1=1"
-    if @name != ''
+    if name != ''
       xcond = "name like '#{name}%'"
     end
 
     if network_id>0
-      @networks = [Network.find(conversation_id)]
+      @networks = [Network.find(network_id)]
     else  
       @networks = Network.where(xcond).order(xorder).paginate(:page=>@page, :per_page => @per_page)  
     end
@@ -45,7 +45,7 @@ class Admin::NetworksController < ApplicationController
   def show
     respond_to do |format|
       format.html { render :partial=>'show', :layout=>false }
-      format.xml  { render :xml => @conversation }
+      format.xml  { render :xml => @network }
     end
   end
 
@@ -78,7 +78,6 @@ class Admin::NetworksController < ApplicationController
     end
   end
 
-  # PATCH/PUT /conversations/1
   def update
     respond_to do |format|
       if @network.update_attributes(params[:network])
@@ -91,7 +90,6 @@ class Admin::NetworksController < ApplicationController
     end    
   end
 
-  # DELETE /conversations/1
   def destroy
     @network.destroy
     respond_to do |format|
@@ -103,7 +101,7 @@ class Admin::NetworksController < ApplicationController
 
 
   def communities
-    #-- Return a list of the communities in this conversation
+    #-- Return a list of the communities in this network
     @communities = @network.communities
     @allcommunities = Community.where("fullname!=''")
     render :partial=>"communities", :layout=>false
@@ -112,18 +110,18 @@ class Admin::NetworksController < ApplicationController
   def community_add
     #-- Add a community to the network
     @community_id = params[:community_id]
-    community_network = CommunityNetwork.where(network_id: @network_id, community_id: @community_id).first
+    community_network = NetworkCommunity.where(network_id: @network_id, community_id: @community_id).first
     if not community_network
-      community_network = CommunityNetwork.create(network_id: @network_id, community_id: @community_id)
+      community_network = NetworkCommunity.create(network_id: @network_id, community_id: @community_id, created_by: current_participant.id)
     end
     communities    
   end 
   
   def community_del 
-    #-- Remove a community from the conversation
+    #-- Remove a community from the network
     community_ids = params[:community_ids]
     for community_id in community_ids
-      com = CommunityNetwork.where(network_id: @network.id, community_id: community_id).first
+      com = NetworkCommunity.where(network_id: @network.id, community_id: community_id).first
       if com
         com.destroy
       end

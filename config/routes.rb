@@ -198,6 +198,12 @@ Rails.application.routes.draw do
   resources :conversations do
     get :change_perspective, on: :member
   end
+
+  get 'networks/all', to: 'networks#index', action: :index, which: 'allnet'
+  get 'networks/my', to: 'networks#index', action: :index, which: 'mynet'
+  resources :networks do
+    get :index, :on => :collection
+  end
   
   resources :groups do
     member do

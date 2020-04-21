@@ -1,4 +1,4 @@
-<% if !@conversations or !@conversations.class==Array or @conversations.length==0 -%>
+<% if !@networks or !@networks.class==Array or @networks.length==0 -%>
 
 <p>None</p>
 
@@ -8,20 +8,18 @@
   <tr>
 	<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
     <th>ID</th>
-    <th>Short name</th>
-    <th>Full name</th>
-    <th>Mode</th>
+    <th>Name</th>
+    <th>Created by</th>
   </tr>
 
 <% odd_or_even = 0 %>
-<% @conversations.each do |conversation| %>
+<% @networks.each do |network| %>
 	<% odd_or_even = 1-odd_or_even%>
 	<tr class="line<%= odd_or_even %>">
-		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= conversation.id %>" /></td>
-		<td><a href="#" onclick="viewrec1(<%= conversation.id %>)"><%= conversation.id %></a></td>
-    <td><a href="#" onclick="viewrec1(<%= conversation.id %>)"><%= conversation.shortname %></a></td>
-    <td><%= conversation.name %></td>
-    <td><%= conversation.together_apart %></td>
+		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= network.id %>" /></td>
+		<td><a href="#" onclick="viewrec1(<%= network.id %>)"><%= network.id %></a></td>
+    <td><a href="#" onclick="viewrec1(<%= network.id %>)"><%= network.name %></a></td>
+    <td><%= network.participant.name %></td>
   </tr>
 <% end %>
 </table>
