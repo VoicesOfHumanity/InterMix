@@ -27,7 +27,13 @@ class NetworksController < ApplicationController
       @csection = 'allnet'
       networks = Network.all
     end
-    @networks = networks
+    #@networks = networks
+
+    @networks = []
+    networks.uniq.each do |network|
+      network.activity = network.activity_count
+      @networks << network
+    end
     
     # sort
     if @sort == 'activity'

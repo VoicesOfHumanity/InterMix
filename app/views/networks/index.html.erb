@@ -1,12 +1,14 @@
 <%= render(:partial => 'communities/topmenu')%>
 
+<p style="clear:both"><input type="button" value="Add network" onclick="addnet()"></p>
+
 <table style="width:595px">
 <tr><th>Name</th><th>Members</th><th>Activity</th></tr>	
 <% for network in @networks -%>
 <tr>
 	<td><a href="/networks/<%= network.id %>"><%= network.name %></a></td>
-	<td>?</td>	
-	<td>?</td>
+	<td><%= network.members.count %></td>	
+	<td><%= network.activity %></td>
 </tr>	
 <% end -%>
 </table>
@@ -24,4 +26,7 @@ $('#sortselect').on('change', function() {
   var xsort = $('#sortselect').val();
   window.location.href = "?sort=" + xsort;
 })
+function addnet() {
+  window.location.href = "/networks/new";
+}
 </script>	
