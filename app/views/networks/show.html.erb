@@ -1,0 +1,63 @@
+<%= render(:partial => 'communities/topmenu')%>
+
+<h3>Network: <%= @network.name %></h3>
+
+
+
+<p><b>Communities:</b></p>
+
+<% if @communities.length > 0 -%>
+  <table style="width:595px">
+  <tr><!--<th>Forum</th>--><th>Activity</th><th>More Information</th><th>&nbsp;</th></tr>	
+  <% for com in @communities -%>
+    <tr>
+    	<td><%= com.activity_count %></td>
+    	<td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a></td>
+    	<td>
+            <%
+            prof_nation = false
+            if com.context=='nation'
+              geocountry = Geocountry.find_by_iso3(com.context_code)
+              if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
+                prof_nation = true
+              end
+            end
+            %>
+            <% if prof_nation -%>
+              in&nbsp;profile
+            <% else -%>
+                <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>            
+            <% end -%>
+        </td>
+    </tr>
+  <% end -%>
+  </table>
+<% end -%>
+
+<script>
+  function joinleave(comtag,id) {
+    var which = $('#comtagjoin_'+id).html();
+    var data = {
+      'comtag': comtag,
+      'which': which,
+    };
+  	$.ajax({
+      type: 'GET',
+  	  url: '/me/comtag',
+  	  data: data,
+  	  complete: function(t){ 
+        if (which=='join') {
+  		    $('#comtagjoin_'+id).html('leave')
+        } else {
+  		    $('#comtagjoin_'+id).html('join')
+        }
+        location.reload();
+      }
+  	});
+  }	
+</script>
+
+
+
+
+

@@ -1,0 +1,14 @@
+<%= render(:partial => 'communities/topmenu')%>
+
+<%= semantic_form_for( @network, :html => { :multipart => true } ) do |f| %>
+
+	<%= f.inputs do %>
+		<%= f.input :name, :required => true %>		    
+	<% end %>
+
+	<p>
+	  <input type="button" value="Cancel" onclick="window.location='/networks/<%= @network.id %>/admin'" />
+	  <input type="submit" value="Save" />
+	</p>
+	
+<% end %>

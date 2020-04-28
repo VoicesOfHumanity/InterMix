@@ -7,9 +7,6 @@ class NetworksController < ApplicationController
 
   def index
     # Show a list of networks
-    @section = 'communities'
-    @csection = params[:csection].to_s
-    @csection = 'mynet' if @csection == ''
     @sort = params[:sort] || 'activity'
     
     networks = []
@@ -44,12 +41,57 @@ class NetworksController < ApplicationController
     
   end
 
+  def show
+    
+    @communities = @network.communities
+    
+    # sort communities
+    @communities = @communities.to_a
+    @communities.sort! do |a, b|
+      a.tagname <=> b.tagname
+    end
+    
+  end
+
+  def new
+    @network = Network.new
+  end
+
+  def edit
+  end
+
+  def create
+    @network = Conversation.new(network_params)
+
+    if @network.save
+      redirect_to @network, notice: 'Network was successfully created.'
+    else
+      render :new
+    end
+  end
+
+  def update
+    if @network.update(network_params)
+      redirect_to @network, notice: 'Network was successfully updated.'
+    else
+      render :edit
+    end
+  end
+
+  def destroy
+    @network.destroy
+    redirect_to networks_url, notice: 'Network was successfully destroyed.'
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_network
       @network_id = params[:id]
       @network = Network.find(@network_id)
+      @section = 'communities'
+      @csection = params[:csection].to_s
+      @csection = 'mynet' if @csection == ''
     end
 
     # Only allow a trusted parameter "white list" through.

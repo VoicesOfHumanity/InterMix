@@ -9,7 +9,35 @@
 	<td><a href="/networks/<%= network.id %>"><%= network.name %></a></td>
 	<td><%= network.members.count %></td>	
 	<td><%= network.activity %></td>
-</tr>	
+</tr>
+<tr>
+  <td colspan=3>
+    <% if network.communities.length > 0 -%>
+    <ul>
+      <% for com in network.communities -%>
+        <%
+        prof_nation = false
+        if com.context=='nation'
+          geocountry = Geocountry.find_by_iso3(com.context_code)
+          if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
+            prof_nation = true
+          end
+        end
+        %>
+        <li><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a>
+        <% if prof_nation -%>
+          in&nbsp;profile
+        <% else -%>
+            <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>            
+        <% end -%>
+        
+        
+        </li>
+      <% end -%>
+    </ul>
+    <% end -%>
+  </td>
+</tr>  
 <% end -%>
 </table>
 
@@ -29,4 +57,24 @@ $('#sortselect').on('change', function() {
 function addnet() {
   window.location.href = "/networks/new";
 }
+function joinleave(comtag,id) {
+  var which = $('#comtagjoin_'+id).html();
+  var data = {
+    'comtag': comtag,
+    'which': which,
+  };
+	$.ajax({
+    type: 'GET',
+	  url: '/me/comtag',
+	  data: data,
+	  complete: function(t){ 
+      if (which=='join') {
+		    $('#comtagjoin_'+id).html('leave')
+      } else {
+		    $('#comtagjoin_'+id).html('join')
+      }
+      location.reload();
+    }
+	});
+}	
 </script>	
