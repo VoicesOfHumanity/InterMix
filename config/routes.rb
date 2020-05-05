@@ -202,7 +202,8 @@ Rails.application.routes.draw do
   get 'networks/all', to: 'networks#index', action: :index, which: 'allnet'
   get 'networks/my', to: 'networks#index', action: :index, which: 'mynet'
   resources :networks do
-    get :index, :on => :collection
+    get :index, on: :collection
+    get :members, on: :member
   end
   
   resources :groups do

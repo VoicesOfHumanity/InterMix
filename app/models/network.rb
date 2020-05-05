@@ -26,8 +26,7 @@ class Network < ApplicationRecord
   def members
     members = []
     for comtag in self.community_tags
-      com_members = Participant.tagged_with(comtag).where(status: 'active', no_email: false)
-      members << com_members
+      members.concat Participant.tagged_with(comtag).where(status: 'active', no_email: false).all.to_a
     end
     members.uniq
   end

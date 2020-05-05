@@ -1,0 +1,9 @@
+<%= render(:partial => 'communities/topmenu')%>
+
+<h3><%= @network.name %> members</h3>
+
+<div id="memlist">
+<% @members.each do |participant| %>
+		<b><a href="/participant/<%= participant.id %>/profile"><%= participant.name %></a></b><br>
+<% end %>
+</div>

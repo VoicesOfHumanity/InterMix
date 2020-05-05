@@ -1,7 +1,7 @@
 class NetworksController < ApplicationController
 
 	layout "front"
-  before_action :set_network, only: [:show, :edit, :update, :destroy]
+  before_action :set_network, only: [:show, :edit, :update, :destroy, :members]
   before_action :authenticate_participant!
   before_action :check_is_admin, except: [:index]
 
@@ -82,6 +82,12 @@ class NetworksController < ApplicationController
     @network.destroy
     redirect_to networks_url, notice: 'Network was successfully destroyed.'
   end
+  
+  def members
+    # List all members in all the member communities
+    puts @network.members
+    @members = @network.members
+  end  
 
 
   private

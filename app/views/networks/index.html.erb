@@ -7,7 +7,7 @@
 <% for network in @networks -%>
 <tr>
 	<td><a href="/networks/<%= network.id %>"><%= network.name %></a></td>
-	<td><%= network.members.count %></td>	
+	<td><a href="/networks/<%= network.id %>/members"><%= network.members.count %></a></td>	
 	<td><%= network.activity %></td>
 </tr>
 <tr>
