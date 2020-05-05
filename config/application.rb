@@ -32,7 +32,7 @@ module Intermix
     
     #-- Using postmark for mailing
     config.action_mailer.delivery_method   = :postmark
-    config.action_mailer.postmark_settings = { :api_key => "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb" }
+    config.action_mailer.postmark_settings = { api_key: "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb", message_stream: 'broadcast-stream' }
 
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true

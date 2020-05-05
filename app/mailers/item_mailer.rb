@@ -11,9 +11,10 @@ class ItemMailer < ActionMailer::Base
     @cdata = cdata if cdata   
     headers["InterMix-ID"] = "i#{cdata['item'].id}" if cdata['item']
     mail(
-      :to => email,
-      :subject => (subject ? subject : "InterMix forum posting")
+      to: email,
+      subject: (subject ? subject : "InterMix forum posting")
     )
+    mail.header['X-PM-Message-Stream'] = 'broadcast-stream'
   end  
 
   def group_item(subject,message,email,cdata={})
@@ -34,6 +35,7 @@ class ItemMailer < ActionMailer::Base
       :to => email,
       :subject => subject
     )
+    mail.header['X-PM-Message-Stream'] = 'broadcast-stream'
   end  
   
   def digest(subject,message,email,cdata={})
@@ -44,6 +46,7 @@ class ItemMailer < ActionMailer::Base
       :to => email,
       :subject => (subject ? subject : "InterMix Message Digest")
     )
+    mail.header['X-PM-Message-Stream'] = 'broadcast-stream'
   end
 
   def moon(subject,message,email,cdata={})
@@ -54,6 +57,7 @@ class ItemMailer < ActionMailer::Base
       :to => email,
       :subject => (subject ? subject : "[voicesofhumanity] New Moon")
     )
+    mail.header['X-PM-Message-Stream'] = 'broadcast-stream'
   end
 
 end
