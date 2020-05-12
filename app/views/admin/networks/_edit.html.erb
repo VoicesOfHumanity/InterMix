@@ -2,6 +2,28 @@
 
 	<%= f.inputs do %>
 		<%= f.input :name, :required => true %>
+    
+		<li class="select required" id="age_input">
+			<div style="width:25%;float:left;">Generation</div>
+			<div style="width:75%;float:left">    
+        <%= select_tag "network[age]", options_for_select([["Youth",405], ["Experience",406], ["Wisdom",407], ["Simply-Human",409],["*any*",0]], @network.age)%>
+			</div>
+		</li>		
+
+		<li class="select required" id="gender_input">
+			<div style="width:25%;float:left;">Gender</div>
+			<div style="width:75%;float:left">    
+        <%= select_tag "network[gender]", options_for_select([["Women",208], ["Men",207], ["Simply-Human",408],["*any*",0]], @network.gender)%>
+			</div>
+		</li>		
+
+		<li class="select required" id="geo_level_input">
+			<div style="width:25%;float:left;">Geographical</div>
+			<div style="width:75%;float:left">    
+        <%= select_tag "network[geo_level]", options_for_select(GEO_LEVELS.invert.to_a + [["*any*",0]], @network.geo_level)%>
+			</div>
+		</li>		
+
   <% end %>
 
 <% end %>

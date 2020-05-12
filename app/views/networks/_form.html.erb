@@ -15,6 +15,28 @@
     <%= form.label :name %>
     <%= form.text_field :name %>
   </div>
+  
+  <% for com in @mycommunities -%>
+    <% if com.name.to_s != '' -%>
+      <input type="checkbox">
+      <b><%= com.name %></b><br>
+    <% end -%>
+  <% end -%>
+
+	<div class="field">
+    <label>Generation Identity</label>  
+    <%= select_tag "network[age]", options_for_select([["Youth",405], ["Experience",406], ["Wisdom",407], ["Simply-Human",409],["*any*",0]], @network.age)%>
+	</div>
+  
+	<div class="field">
+    <label>Gender Identity</label>  
+    <%= select_tag "network[gender]", options_for_select([["Women",208], ["Men",207], ["Simply-Human",408],["*any*",0]], @network.gender)%>
+	</div>
+
+	<div class="field">
+    <label>Geographical Level</label>  
+    <%= select_tag "network[geo_level]", options_for_select(GEO_LEVELS.invert.to_a + [["*any*",0]], @network.geo_level)%>
+  </div>
 
   <div class="actions">
     <%= form.submit %>

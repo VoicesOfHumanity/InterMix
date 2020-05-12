@@ -1,6 +1,11 @@
 <table class="edittable">
 <tr><td class="left">ID:</td><td><%= @network.id %></td></tr>	
 <tr><td class="left">Name:</td><td><%= @network.name %></td></tr>	
+
+<tr><td class="left">Generation:</td><td><%= @network.age.to_i > 0 ? AGE_CHOICES[@network.age] : "*any*" %></td></tr>	
+<tr><td class="left">Gender:</td><td><%= @network.gender.to_i > 0 ? GENDER_CHOICES[@network.gender] : "*any*" %></td></tr>	
+<tr><td class="left">Geographical:</td><td><%= @network.geo_level > 0 ? GEO_LEVELS[@network.geo_level] : "*any*" %></td></tr>	
+
 <tr><td class="left">Created by:</td><td><%= @network.participant.name if @network.participant %></td></tr>	
 <tr><td class="left">Created:</td><td><%= @network.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 <tr><td class="left">Updated:</td><td><%= @network.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	

@@ -138,7 +138,7 @@ class Admin::NetworksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def network_params
-      params.require(:network).permit(:name, :created_by)
+      params.require(:network).permit(:name, :created_by, :age, :gender, :geo_level)
     end
 
 end

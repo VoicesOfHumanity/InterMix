@@ -162,6 +162,9 @@ MAIL_SYSTEM = 'postmark'   # postmark or system
 GEO_LEVELS = {1 => 'city', 2 => 'county', 3 => 'metro', 4 => 'state', 5 => 'nation', 6 => 'planet'}
 GEO_LEVEL_DESC = {'city' => "My city/town", 'county' => 'My county', 'metro' => "My metro region", "state" => "State/province", "nation" => "My nation", "earth" => "Planet Earth"}
 
+AGE_CHOICES = {405=> "Youth", 406=> "Experience", 407=> "Wisdom", 409=> "Simply-Human"}
+GENDER_CHOICES = {207=> "Men", 208=> "Female", 408=> "Simply-Human"}
+
 # These are in localsettings.rb
 #TWITTER_CONSUMER_KEY = 'xxxxxx'   # = API key. And this is for the Posting app, not the Login app
 #TWITTER_CONSUMER_SECRET = 'xxxxxx'

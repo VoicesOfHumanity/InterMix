@@ -55,6 +55,15 @@ class NetworksController < ApplicationController
 
   def new
     @network = Network.new
+    
+    comtag_list = ''.dup
+    comtags = {}
+    for tag in current_participant.tag_list_downcase
+      comtags[tag] = true
+    end
+    comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
+    @mycommunities = Community.where("tagname in (#{comtag_list})")
+    
   end
 
   def edit
@@ -102,7 +111,7 @@ class NetworksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def network_params
-      params.require(:network).permit(:name)
+      params.require(:network).permit(:name, :age, :gender, :geo_level)
     end
     
     def check_is_admin
