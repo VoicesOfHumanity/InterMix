@@ -6,7 +6,7 @@
 <tr><th>Name</th><th>Members</th><th>Activity</th></tr>	
 <% for network in @networks -%>
 <tr>
-	<td><a href="/networks/<%= network.id %>"><%= network.name %></a></td>
+	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?network_id=<%= network.id %>"><%= network.name %></a></td>
 	<td><a href="/networks/<%= network.id %>/members"><%= network.members.count %></a></td>	
 	<td><%= network.activity %></td>
 </tr>

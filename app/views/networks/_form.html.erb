@@ -24,13 +24,13 @@
   <% end -%>
 
 	<div class="field">
-    <label>Generation Identity</label>  
-    <%= select_tag "network[age]", options_for_select([["Youth",405], ["Experience",406], ["Wisdom",407], ["Simply-Human",409],["*any*",0]], @network.age)%>
+    <label>Generation Identity</label>
+    <%= select_tag "network[age]", options_for_select(@age_options + [["*any*",0]], @network.age)%>
 	</div>
   
 	<div class="field">
     <label>Gender Identity</label>  
-    <%= select_tag "network[gender]", options_for_select([["Women",208], ["Men",207], ["Simply-Human",408],["*any*",0]], @network.gender)%>
+    <%= select_tag "network[gender]", options_for_select(@gender_options + [["*any*",0]], @network.gender)%>
 	</div>
 
 	<div class="field">

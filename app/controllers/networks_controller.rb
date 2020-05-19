@@ -64,6 +64,26 @@ class NetworksController < ApplicationController
     comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
     @mycommunities = Community.where("tagname in (#{comtag_list})")
     
+    @gender_options = []
+    gender_texts = {208=>"Women", 207=>"Men", 408=>"Simply-Human"}
+    gender = 0
+    @age_options = []
+    age_texts = {405=>"Youth", 406=>"Experience", 407=>"Wisdom", 409=>"Simply-Human"}
+    age = 0    
+    current_participant.metamap_nodes.each do |mn|
+      if mn.metamap_id == 3
+        gender = mn.id
+      elsif mn.metamap_id == 5
+        age = mn.id
+      end
+    end  
+    if age > 0
+      @age_options = [[age_texts[age], age]]
+    end
+    if gender > 0
+      @gender_options = [[gender_texts[gender], gender]]
+    end
+    
   end
 
   def edit

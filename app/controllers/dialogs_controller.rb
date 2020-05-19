@@ -61,6 +61,7 @@ class DialogsController < ApplicationController
     @dialog_id = VOH_DISCUSSION_ID
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
+    @network_id = params[:network_id].to_i
     
     comtag_before = session.has_key?(:comtag) ? session[:comtag] : ''
 
