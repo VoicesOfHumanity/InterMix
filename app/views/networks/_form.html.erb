@@ -18,7 +18,7 @@
   
   <% for com in @mycommunities -%>
     <% if com.name.to_s != '' -%>
-      <input type="checkbox">
+      <input type="checkbox" name="communities[]" value="<%= com.id %>" checked>
       <b><%= com.name %></b><br>
     <% end -%>
   <% end -%>
