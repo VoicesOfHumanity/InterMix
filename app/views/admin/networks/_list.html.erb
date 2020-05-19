@@ -19,7 +19,7 @@
 		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= network.id %>" /></td>
 		<td><a href="#" onclick="viewrec1(<%= network.id %>)"><%= network.id %></a></td>
     <td><a href="#" onclick="viewrec1(<%= network.id %>)"><%= network.name %></a></td>
-    <td><%= network.participant.name %></td>
+    <td><%= network.participant.name if network.participant %></td>
   </tr>
 <% end %>
 </table>

@@ -70,9 +70,25 @@ class NetworksController < ApplicationController
   end
 
   def create
-    @network = Conversation.new(network_params)
+    @network = Network.new(network_params)
+    @network.created_by = current_participant.id
 
     if @network.save
+      
+      comarray = []
+      if params[:communities]
+        for com in params[:communities]
+          com = com.to_i
+          netcom = NetworkCommunity.where(network_id: @network.id, community_id: com.to_i).first
+          if not netcom
+            netcom = NetworkCommunity.create(network_id: @network.id, community_id: com.to_i, created_by: current_participant.id)
+          end
+          comarray << com
+        end
+        @network.communityarray = comarray
+        @network.save
+      end
+      
       redirect_to @network, notice: 'Network was successfully created.'
     else
       render :new

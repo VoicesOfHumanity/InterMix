@@ -5,6 +5,8 @@ class Network < ApplicationRecord
   belongs_to :participant, :foreign_key => :created_by
 
   attr_accessor :activity
+  
+  serialize :communityarray
 
   def community_tags
     self.communities.collect{|com| com.tagname}
