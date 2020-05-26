@@ -1423,6 +1423,10 @@ class FrontController < ApplicationController
       url = "https://graph.facebook.com/#{@participant.fb_uid}/picture?type=large"
       @participant.picture = URI.parse(url).open
       @participant.save!
+    elsif @participant.google_uid.to_s != '' and not @participant.picture.exists? and omniauth['info'].has_key? 'image'
+      url = omniauth['info']['image']
+      @participant.picture = URI.parse(url).open
+      @participant.save!
     end
         
     @participant.ensure_authentication_token!

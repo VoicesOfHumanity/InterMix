@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_12_200734) do
+ActiveRecord::Schema.define(version: 2020_05_26_201840) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -787,6 +787,7 @@ ActiveRecord::Schema.define(version: 2020_05_12_200734) do
     t.boolean "refugee", default: false
     t.text "check_boxes"
     t.text "explanation"
+    t.string "google_uid", default: ""
     t.index ["confirmation_token"], name: "index_participants_on_confirmation_token", unique: true
     t.index ["country_code", "state_code", "city"], name: "index_participants_on_country_code_and_state_code_and_city", length: { city: 20 }
     t.index ["direct_email_code"], name: "index_participants_on_direct_email_code", length: 20

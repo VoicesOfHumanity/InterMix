@@ -106,6 +106,11 @@ class Participant < ActiveRecord::Base
       else
         logger.info("participant#get_fields_from_omniauth Didn't get any omniauth['info']")  
       end
+    when 'google_oauth2'
+      self.google_uid = omniauth['uid']
+      if ['info']
+        self.email = omniauth['info']['email'] if email.blank?
+      end
     when 'twitter'
       if omniauth['user_info']
         #self.email = omniauth['user_info']['email'] if email.blank?

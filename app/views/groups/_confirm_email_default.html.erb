@@ -10,6 +10,12 @@
   
   <p>To sign-in at any time with Facebook, go to the VoH home page at <a href="https://voh.intermix.org">https://voh.intermix.org</a> and click the Facebook icon. Or you can sign-in with your user-id and password:</p>
 
+{% elsif participant.google_uid != '' %}
+
+  <p>You have successfully signed up with "<b>{{ group.name }}</b>" via Google. Welcome!</p>
+  
+  <p>To sign-in at any time with Google, go to the VoH home page at <a href="https://voh.intermix.org">https://voh.intermix.org</a> and click the Google icon. Or you can sign-in with your user-id and password:</p>
+
 {% else %}
 
   {% if group.openness == 'open' %}
