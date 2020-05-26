@@ -92,6 +92,11 @@ class DialogsController < ApplicationController
       @comtag = params[:comtag] if params.has_key?(:comtag)  # might be a - to leave the conversation
       # Conversations should have conv and comtag specifed in the URL. At first there might only be a conv and no comtag
       logger.info("dialogs#slider in conversation #{@conv}")
+    elsif params.has_key?(:network_id)
+      @in = 'network'
+      @section = 'communities'      
+      @network_id = params[:network_id]
+      logger.info("dialogs#slider in network ##{@network_id} under communities")
     elsif params.has_key?(:comtag)
       @in = 'community'
       @section = 'communities'
@@ -234,6 +239,10 @@ class DialogsController < ApplicationController
     @perspectives = @communities
     @community_list = @communities.collect{|c| [c.fullname,c.tagname]}
     session['community_list'] = @community_list
+    
+    if @network_id.to_i > 0
+      @network = Network.find_by_id(@network_id)
+    end
     
     if @in == 'community'
       #-- In a community, they maybe need to join

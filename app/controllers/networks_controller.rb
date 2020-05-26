@@ -7,6 +7,9 @@ class NetworksController < ApplicationController
 
   def index
     # Show a list of networks
+    @section = 'communities'
+    @csection = 'mynet'
+       
     @sort = params[:sort] || 'activity'
     
     networks = []
@@ -43,6 +46,7 @@ class NetworksController < ApplicationController
 
   def show
     
+    @section = 'communities'      
     @communities = @network.communities
     
     # sort communities
@@ -54,6 +58,7 @@ class NetworksController < ApplicationController
   end
 
   def new
+    @section = 'communities'      
     @network = Network.new
     
     comtag_list = ''.dup
@@ -87,6 +92,7 @@ class NetworksController < ApplicationController
   end
 
   def edit
+    @section = 'communities'      
   end
 
   def create
@@ -130,6 +136,7 @@ class NetworksController < ApplicationController
   
   def members
     # List all members in all the member communities
+    @section = 'communities'      
     puts @network.members
     @members = @network.members
   end  
