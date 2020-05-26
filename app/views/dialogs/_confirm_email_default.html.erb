@@ -1,6 +1,6 @@
 <img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;" alt="icon">
 
-{% if participant.name %}
+{% if participant.name.to_s != '' %}
 <p>Dear {{ participant.name }},</p>
 {% end %}
 

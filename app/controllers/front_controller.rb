@@ -1288,9 +1288,7 @@ class FrontController < ApplicationController
     flash[:alert] = '' 
 
     omniauth = session[:omniauth]
-    logger.info("front#fbjoinfinal omniauth:#{omniauth.inspect}")
-    
-    #omniauth_auth = request.env["omniauth.auth"]
+    #logger.info("front#fbjoinfinal omniauth:#{omniauth.inspect}")
     if omniauth['provider'] == 'facebook'
       loginservice = "Facebook"
     elsif omniauth['provider'] == 'google_oauth2'
@@ -1508,7 +1506,7 @@ class FrontController < ApplicationController
     
     cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
     
-    flash[:notice] = "Your account has been created and you're now signed in."
+    flash[:notice] = "Your account has been created and you're now signed in. We've sent you an email with a password you can use for logging in with as well."
     @participant.status = 'active'
     @participant.new_signup = true
     @participant.save
