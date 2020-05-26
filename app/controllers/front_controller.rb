@@ -1233,9 +1233,9 @@ class FrontController < ApplicationController
   end 
   
   def fbjoin
-    #-- The user has selected a group. We'll remember that, and move on to facebook authentication
-    #-- If a group hasn't been selected, show the screen to do so
-    #-- We'll assume they already have been authenticated by facebook
+    #-- Somebody has already been authenticated by facebook OR GOOGLE
+    #-- Probably coming from authentications_controller/create
+    #-- Check if the group is ok, then go on to final signup step
     
     @group_id = params[:group_id].to_i
     @group_id,@dialog_id = get_group_dialog_from_subdomain if @group_id == 0
@@ -1272,7 +1272,7 @@ class FrontController < ApplicationController
   end  
   
   def fbjoinfinal
-    #-- Joining after authenticating with facebook.
+    #-- Joining after authenticating with facebook OR GOOGLE.
     #-- That happens in the authentications controller, which already should have checked that they don't already have an account
     #-- The Facebook information is found in session[:omniauth]
     #-- The selected group and maybe discussion should be in session[:join_group_id] and session[:join_dialog_id]
@@ -1287,8 +1287,17 @@ class FrontController < ApplicationController
     flash[:notice] = ''
     flash[:alert] = '' 
     
-    flash[:notice] += "You have successfully authenticated with Facebook"
-    logger.info("front#fbjoinfinal authenticated with Facebook")
+    omniauth_auth = request.env["omniauth.auth"]
+    if omniauth_auth['provider'] == 'facebook'
+      loginservice = "Facebook"
+    elsif omniauth_auth['provider'] == 'google_oauth2'
+      loginservice = "Google"
+    else
+      loginservice = "Facebook"
+    end
+    
+    flash[:notice] += "You have successfully authenticated with #{loginservice}"
+    logger.info("front#fbjoinfinal authenticated with #{loginservice}")
     
     @group_id = session[:join_group_id].to_i
     @dialog_id = session[:join_dialog_id].to_i
@@ -1316,6 +1325,7 @@ class FrontController < ApplicationController
     end
     
     omniauth = session[:omniauth]
+    logger.info("front#fbjoinfinal omniauth:#{omniauth.inspect}")
     
     @participant = Participant.new
     #-- This should set email, first/last name, fb uid/link

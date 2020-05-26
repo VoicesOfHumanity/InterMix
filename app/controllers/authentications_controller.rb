@@ -45,7 +45,7 @@ class AuthenticationsController < ApplicationController
       # First check for duplicate account
       participants = Participant.where(:email=>@participant.email)
       if participants.length > 0
-        #-- We already know them by their email. Just add Facebook to their account
+        #-- We already know them by their email. Just add the new service to their account
         @participant = participants[0]
         if @participant.status == 'active' or @participants.status == 'unconfirmed'
           @participant.status = 'active'

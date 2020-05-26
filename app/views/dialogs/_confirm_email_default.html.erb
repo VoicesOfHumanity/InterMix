@@ -1,6 +1,8 @@
 <img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;" alt="icon">
 
+{% if participant.name %}
 <p>Dear {{ participant.name }},</p>
+{% end %}
 
 <p>You have successfully signed up with "<b>{{ group.name }}</b>". Welcome!</p>
 
