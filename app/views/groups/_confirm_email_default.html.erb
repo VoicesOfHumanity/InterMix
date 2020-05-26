@@ -1,9 +1,5 @@
 <img src="{{ logo }}" width="150" style="float:left;width:150px;margin:0 10px 10px 0;">
 
-{% if participant.name.to_s != '' and participant.name.to_s != '???' %}
-<p>Dear {{ participant.name }},</p>
-{% endif %}
-
 {% if participant.fb_uid %}
 
   <p>You have successfully signed up with "<b>{{ group.name }}</b>" via Facebook. Welcome!</p>
