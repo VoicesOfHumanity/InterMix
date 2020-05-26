@@ -1286,11 +1286,14 @@ class FrontController < ApplicationController
     
     flash[:notice] = ''
     flash[:alert] = '' 
+
+    omniauth = session[:omniauth]
+    logger.info("front#fbjoinfinal omniauth:#{omniauth.inspect}")
     
-    omniauth_auth = request.env["omniauth.auth"]
-    if omniauth_auth['provider'] == 'facebook'
+    #omniauth_auth = request.env["omniauth.auth"]
+    if omniauth['provider'] == 'facebook'
       loginservice = "Facebook"
-    elsif omniauth_auth['provider'] == 'google_oauth2'
+    elsif omniauth['provider'] == 'google_oauth2'
       loginservice = "Google"
     else
       loginservice = "Facebook"
@@ -1323,10 +1326,7 @@ class FrontController < ApplicationController
       redirect_to '/fbjoin' 
       return   
     end
-    
-    omniauth = session[:omniauth]
-    logger.info("front#fbjoinfinal omniauth:#{omniauth.inspect}")
-    
+        
     @participant = Participant.new
     #-- This should set email, first/last name, fb uid/link
     @participant.apply_omniauth(omniauth)
