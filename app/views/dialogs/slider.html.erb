@@ -93,7 +93,7 @@
       <input type="radio" name="messtag_radio" value="<%= @comtag %>" onclick="per_reload(false,1,'messtag')" checked>#<%= @comtag %><br>
       <% end -%>
       <% current_participant.tags.each do |tag| -%>
-        <% if @network.communities.collect{|com| com.tagname }.include? tag.name -%>
+        <% if @network and @network.communities.collect{|com| com.tagname }.include? tag.name -%>
           <input type="checkbox" name="messtag_radio" value="<%= tag.name %>" checked disabled>#<%= tag.name %><br>
         <% else -%>
           <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'messtag')">#<%= tag.name %><br>
