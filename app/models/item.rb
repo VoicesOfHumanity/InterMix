@@ -1485,6 +1485,26 @@ class Item < ActiveRecord::Base
     # Don't worry about groups any more
     title = ''
   
+    if crit[:network_id].to_i > 0
+      # A network will have some fixed comtags, possible age, gender and geo level
+      @network = Network.find_by_id(crit[:network_id]) if not @network
+      if @network.geo_level.to_i > 0
+        crit[:geo_level] = GEO_LEVELS[@network.geo_level]
+      end
+      crit[:gender] = @network.gender if @network.gender.to_i > 0
+      crit[:age] = @network.age if @network.age.to_i > 0
+      
+      network_comtags = @network.communities.collect{|com| com.tagname }
+      
+      plist = Participant.tagged_with(network_comtags).collect {|p| p.id}.join(',')
+      if plist != ''
+        items = items.where("participants.id in (#{plist})")
+        items = items.where("intra_com='public'")            
+      else
+        items = items.where("1=0")
+      end
+    end
+  
     # Either posted in that geo level or no geo level given
     #items = items.where("geo_level = ? or geo_level is null or geo_level = ''", crit[:geo_level]) if (crit[:geo_level].to_s != '' and crit[:geo_level] != 'all')
   
@@ -1549,7 +1569,7 @@ class Item < ActiveRecord::Base
     else
       items = items.where("intra_conv='public'")        
     end
-    
+        
     if crit[:gender].to_i != 0
       items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
       ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   

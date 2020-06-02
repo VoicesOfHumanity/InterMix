@@ -13,12 +13,12 @@
 
   <div class="field">
     <%= form.label :name %>
-    <%= form.text_field :name %>
+    <%= form.text_field :name, size: "50" %>
   </div>
   
   <% for com in @mycommunities -%>
     <% if com.name.to_s != '' -%>
-      <input type="checkbox" name="communities[]" value="<%= com.id %>" checked>
+      <input type="checkbox" name="communities[]" value="<%= com.id %>" <%= 'checked' if @network.communityarray and @network.communityarray.includes? com.tagname %>>
       <b><%= com.name %></b><br>
     <% end -%>
   <% end -%>

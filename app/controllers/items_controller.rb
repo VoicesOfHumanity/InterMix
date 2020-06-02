@@ -1652,6 +1652,7 @@ class ItemsController < ApplicationController
       crit[:geo_level] = geo_levels[geo_level]
   
       crit[:conversation_id] = params[:conversation_id].to_i
+      crit[:network_id] = params[:network_id].to_i
   
       crit[:gender] = params[:meta_3].to_i
       crit[:age] = params[:meta_5].to_i
@@ -1812,6 +1813,10 @@ class ItemsController < ApplicationController
 
       if crit[:comtag].to_s != '' and crit[:comtag] != '*my*'
         @community = Community.find_by_tagname(crit[:comtag])
+      end
+      
+      if crit[:network_id].to_i > 0
+        @network = Network.find_by_id(crit[:network_id])
       end
                     
       @dialog_id = VOH_DISCUSSION_ID    

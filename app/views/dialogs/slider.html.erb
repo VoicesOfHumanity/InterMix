@@ -63,10 +63,14 @@
     <div style="display: <%= @in == 'conversation' ? 'none' : 'block' -%>">
       <% if @in == 'network' -%>
         <input type="radio" name="comtag_radio" value="" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
-        <% @network.communities.each do |com| -%>
-          <input type="radio" name="comtag_radio" value="<%= com.tagname %>" <%= (com.tagname == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= com.tagname %><br> 
-        <% end %>
-              
+        <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br>
+        <% current_participant.tags.each do |tag| -%>
+          <% if @network.communities.collect{|com| com.tagname }.include? tag.name -%>
+            <input type="checkbox" name="comtag_radio" value="<%= tag.name %>" checked disabled>@<%= tag.name %><br> 
+          <% else -%>
+            <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
+          <% end -%>
+        <% end %>              
       <% else -%>
         <input type="radio" name="comtag_radio" value="" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
         <% if @comtag.to_s != '' and @comtag != '*my*' and not current_participant.tag_list.include?(@comtag) -%>
@@ -89,7 +93,11 @@
       <input type="radio" name="messtag_radio" value="<%= @comtag %>" onclick="per_reload(false,1,'messtag')" checked>#<%= @comtag %><br>
       <% end -%>
       <% current_participant.tags.each do |tag| -%>
-        <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'messtag')">#<%= tag.name %><br> 
+        <% if @network.communities.collect{|com| com.tagname }.include? tag.name -%>
+          <input type="checkbox" name="messtag_radio" value="<%= tag.name %>" checked disabled>#<%= tag.name %><br>
+        <% else -%>
+          <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'messtag')">#<%= tag.name %><br>
+        <% end -%>
       <% end %>
       <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">#<input type="text" id="messtag_other" size="10" maxlength="14">
       <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
@@ -157,6 +165,7 @@
 
 </div>
 
+<input type="hidden" name="network_id" id="network_id" value="<%= @network_id %>">
 <input type="hidden" name="conversation_id" id="conversation_id" value="<%= @conversation_id %>">
 <input type="hidden" name="dialog_id" id="dialog_id" value="<%= @dialog_id %>">
 <input type="hidden" name="in_dialog_id" id="in_dialog_id" value="<%= @dialog_id %>">
@@ -187,6 +196,7 @@ var in_conversation = <%= @in_conversation ? 1 : 0 %>;
 var perspective = '<%= @perspective.to_s %>';
 var cur_conv = '<%= @conversation ? @conversation.shortname : '' %>';
 var insection = '<%= @in %>';
+var network_id = <%= @network_id.to_i %>;
 
 $(function() {
   if (false) {
@@ -314,7 +324,7 @@ function per_reload(first,num,whatchanged,page,go_item) {
   }
   var nvaction = nvaction_on ? 1 : 0
   $('#newthreadbutton').prop('disabled', false);
-  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection}
+  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id}
   
   //nvaction_included: (nvaction_included ? 1 : 0),
   

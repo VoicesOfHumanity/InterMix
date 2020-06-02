@@ -46,7 +46,8 @@ class NetworksController < ApplicationController
 
   def show
     
-    @section = 'communities'      
+    @section = 'communities'
+    @csection = 'mynet'
     @communities = @network.communities
     
     # sort communities
@@ -58,49 +59,38 @@ class NetworksController < ApplicationController
   end
 
   def new
-    @section = 'communities'      
+    @section = 'communities'
+    @csection = 'mynet'
     @network = Network.new
     
-    comtag_list = ''.dup
-    comtags = {}
-    for tag in current_participant.tag_list_downcase
-      comtags[tag] = true
-    end
-    comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
-    @mycommunities = Community.where("tagname in (#{comtag_list})")
-    
-    @gender_options = []
-    gender_texts = {208=>"Women", 207=>"Men", 408=>"Simply-Human"}
-    gender = 0
-    @age_options = []
-    age_texts = {405=>"Youth", 406=>"Experience", 407=>"Wisdom", 409=>"Simply-Human"}
-    age = 0    
-    current_participant.metamap_nodes.each do |mn|
-      if mn.metamap_id == 3
-        gender = mn.id
-      elsif mn.metamap_id == 5
-        age = mn.id
-      end
-    end  
-    if age > 0
-      @age_options = [[age_texts[age], age]]
-    end
-    if gender > 0
-      @gender_options = [[gender_texts[gender], gender]]
-    end
-    
+    prepare_edit
   end
 
   def edit
-    @section = 'communities'      
+    @section = 'communities'
+    @csection = 'mynet'
   end
 
   def create
+    @section = 'communities'
+    @csection = 'mynet'
+    
     @network = Network.new(network_params)
     @network.created_by = current_participant.id
 
-    if @network.save
-      
+    flash.now[:alert] = ''
+    if @network.name.to_s == ''
+      flash.now[:alert] += "The network needs a name<br/>"
+    elsif Network.where(name: @network.name).count > 0
+      flash.now[:alert] += "There's already a network with that name<br/>"
+    elsif not (params[:communities] and params[:communities].length > 0)
+      flash.now[:alert] += "Please select at least one community<br/>"
+    end
+
+    if flash.now[:alert] != ''
+      prepare_edit
+      render action: :new
+    elsif @network.save      
       comarray = []
       if params[:communities]
         for com in params[:communities]
@@ -113,9 +103,9 @@ class NetworksController < ApplicationController
         end
         @network.communityarray = comarray
         @network.save
-      end
-      
-      redirect_to @network, notice: 'Network was successfully created.'
+      end     
+      #redirect_to @network, notice: 'Network was successfully created.'
+      redirect_to '/networks/my', notice: 'Network was successfully created.'
     else
       render :new
     end
@@ -172,6 +162,36 @@ class NetworksController < ApplicationController
           @is_admin = true
         end
       end
+    end
+
+    def prepare_edit
+      comtag_list = ''.dup
+      comtags = {}
+      for tag in current_participant.tag_list_downcase
+        comtags[tag] = true
+      end
+      comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
+      @mycommunities = Community.where("tagname in (#{comtag_list})")
+    
+      @gender_options = []
+      gender_texts = {208=>"Women", 207=>"Men", 408=>"Simply-Human"}
+      gender = 0
+      @age_options = []
+      age_texts = {405=>"Youth", 406=>"Experience", 407=>"Wisdom", 409=>"Simply-Human"}
+      age = 0    
+      current_participant.metamap_nodes.each do |mn|
+        if mn.metamap_id == 3
+          gender = mn.id
+        elsif mn.metamap_id == 5
+          age = mn.id
+        end
+      end  
+      if age > 0
+        @age_options = [[age_texts[age], age]]
+      end
+      if gender > 0
+        @gender_options = [[gender_texts[gender], gender]]
+      end    
     end
 
 end
