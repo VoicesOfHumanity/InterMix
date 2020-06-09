@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_26_201840) do
+ActiveRecord::Schema.define(version: 2020_06_09_193110) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -761,6 +761,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_201840) do
     t.string "mycom_email", default: "daily"
     t.string "othercom_email", default: "daily"
     t.boolean "no_email", default: false
+    t.string "no_email_reason", default: ""
     t.string "direct_email_code"
     t.boolean "has_participated", default: false
     t.integer "old_user_id"
