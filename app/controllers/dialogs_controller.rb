@@ -2429,7 +2429,7 @@ class DialogsController < ApplicationController
     cdata['subject'] = '[Subject line]'
       
     if @dialog.send("#{which}_template").to_s != ""
-      template_content = render_to_string(:text=>@dialog.send("#{which}_template"),:layout=>false)
+      template_content = render_to_string(plain: @dialog.send("#{which}_template"), layout: false)      
     else
       template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
     end      
