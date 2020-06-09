@@ -270,6 +270,11 @@ function newitem(token) {
   } else {
     pars += "&conversation_id="+conversation_id;
   }
+  if ($('#network_id')) {
+    pars += "&network_id="+$('#network_id').val();
+  } else {
+    pars += "&network_id="+network_id;
+  }
 	$.ajax({
 		type: "GET",
 		cache: false,

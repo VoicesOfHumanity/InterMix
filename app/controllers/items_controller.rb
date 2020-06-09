@@ -403,6 +403,7 @@ class ItemsController < ApplicationController
     @messtag_other = params[:messtag_other].to_s
     @nvaction = (params[:nvaction].to_i == 1) ? true : false
     @conversation_id = params[:conversation_id].to_i
+    @network_id = params[:network_id].to_i
     logger.info("items#new @comtag:#{@comtag} @messtag:#{@messtag}") 
     @meta_3 = params[:meta_3].to_i    # gender
     @meta_5 = params[:meta_5].to_i    # age
@@ -412,6 +413,7 @@ class ItemsController < ApplicationController
     end
     
     @in_conversation =  (@conversation_id > 0)
+    @in_network =  (@network_id > 0)
       
     if false and @conversation_id == 0
       # Check if the user is in a community that is in a conversation. If so, count it for that conversation
@@ -592,6 +594,26 @@ class ItemsController < ApplicationController
           end
         end
       end
+      
+    elsif @network_id > 0
+      #-- We're in a network. Include all tags that go with that
+      @network = Network.find_by_id(@network_id)
+      for com in @network.communities
+        tags << com.tagname
+      end
+      if @network.gender == 207
+          tags << 'VoiceOfMen'    
+      elsif @network.gender == 208
+          tags << 'VoiceOfWomen'         
+      end
+      if @network.age == 405
+          tags << 'VoiceOfYouth'
+      elsif @network.age == 406
+          tags << 'VoiceOfExperience'
+      elsif @network.age == 407
+          tags << 'VoiceOfWisdom'        
+      end      
+      
     end
     
     if @conversation
