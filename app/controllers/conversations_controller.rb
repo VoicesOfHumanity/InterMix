@@ -5,6 +5,7 @@ class ConversationsController < ApplicationController
   before_action :authenticate_user_from_token!, except: [:join, :front, :fronttag]
   before_action :authenticate_participant!, except: [:join, :front, :fronttag]
   before_action :check_is_admin, except: [:index, :join, :front, :fronttag]
+  append_before_action :check_required only: :index
 
   # GET /conversations
   def index
