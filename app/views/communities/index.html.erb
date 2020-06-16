@@ -1,5 +1,9 @@
 <%= render(:partial => 'topmenu')%>
 
+<% if current_participant.tag_list.length == 0 %>
+<p style="clear:both;color:darkred">You're not a member of any community</p>
+<% end %>
+
 <p style="clear:both"><input type="button" value="Add community" onclick="addcom()"></p>
 
 <table style="width:595px">
