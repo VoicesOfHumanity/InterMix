@@ -791,6 +791,8 @@ class CommunitiesController < ApplicationController
       desc = Liquid::Template.parse(tcontent).render(@cdata)
     end
     @content = "<div>#{desc}</div>"    
+    session[:comtag] = @comtag
+    session[:joincom] = 1
     render action: :front    
   end
 
