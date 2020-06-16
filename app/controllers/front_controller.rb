@@ -1516,8 +1516,13 @@ class FrontController < ApplicationController
     sign_in(:participant, @participant)
     
     #redirect_to '/me/profile/edit'
-    logger.info("front#fbjoinfinal redirecting to /dialogs/#{VOH_DISCUSSION_ID}/slider")
-    redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider"
+    if session.has_key?(:comtag) and session.has_key?(:joincom)
+      logger.info("front#fbjoinfinal redirecting to /dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{comtag}")
+      redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{comtag}"   
+    else
+      logger.info("front#fbjoinfinal redirecting to /dialogs/#{VOH_DISCUSSION_ID}/slider")
+      redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider"
+    end
     
     #render :action=>:confirm, :layout=>'front'
     
