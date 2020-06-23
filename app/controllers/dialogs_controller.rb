@@ -7,6 +7,7 @@ class DialogsController < ApplicationController
   append_before_action :authenticate_participant!, :except => :previous_result
   append_before_action :get_group_dialog_from_subdomain, :check_group_and_dialog, :check_status, :except => :previous_result
   append_before_action :redirect_subdom, :except => :index
+  append_before_action :check_required, only: :slider
 
   def index
     #-- Show an overview of dialogs this person has access to

@@ -5,6 +5,7 @@ class ItemsController < ApplicationController
   layout "front"
   before_action :authenticate_user_from_token!, :except=>[:pubgallery]
   before_action :authenticate_participant!, :except=>[:pubgallery,:view]
+  append_before_action :check_required, only: :new
 
   def index
     list  
