@@ -1714,8 +1714,9 @@ class ItemsController < ApplicationController
       cutoff = 1.month.from_now
       @moons = [] 
       xstart = '2016-03-08'
+      month6ago = (Date.today-180).strftime("%Y-%m-%d")
       if @in == 'conversation'
-        moon_recs = Moon.where("mdate<='#{cutoff}'").order(:mdate)      
+        moon_recs = Moon.where("mdate>='#{month6ago}' and mdate<='#{cutoff}'").order(:mdate)      
       else  
         xmoon = crit[:nvaction] ? 'full' : 'new' 
         moon_recs = Moon.where(new_or_full: xmoon).where("mdate<='#{cutoff}'").order(:mdate)
@@ -1735,7 +1736,11 @@ class ItemsController < ApplicationController
         else
           drange = "#{moon_rec.new_or_full} moon #{dstart} - #{dend}"
         end
-        if xstart <= today
+        if @in == 'conversation'
+          if xstart >= month6ago
+            @moons << [drange,xrange]
+          end       
+        elsif xstart <= today
           @moons << [drange,xrange]
         end
         xstart = xend
