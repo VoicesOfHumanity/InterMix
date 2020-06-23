@@ -10,8 +10,10 @@
 <% else -%>  
   <%= @dialog ? @dialog.name : '???' %>
 <% end -%>  
-<% if @dsection == 'meta' -%>
-  - <span id="top_result_header"><%= @conversation.name if @conversation %> - Highest Rated <%= @nvaction ? 'Nonviolent Action Items' : 'Messages' %></span>
+<% if @dsection == 'meta' and @conversation and @conversation.name.to_s != '' -%>
+  - <span id="top_result_header"><%= @conversation.name %> - <%=  @conversation.together_apart.capitalize %> - Highest Rated <%= @nvaction ? 'Nonviolent Action Items' : 'Messages' %></span>
+<% elsif @dsection == 'meta' -%>
+  - <span id="top_result_header">Highest Rated <%= @nvaction ? 'Nonviolent Action Items' : 'Messages' %></span>
 <% elsif @dsection == 'info' -%>
   <% if @conversation -%>
   - <%= @conversation.name %>
