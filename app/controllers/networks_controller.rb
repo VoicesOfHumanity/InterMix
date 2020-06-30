@@ -87,6 +87,18 @@ class NetworksController < ApplicationController
       flash.now[:alert] += "Please select at least one community<br/>"
     end
 
+    if @network.geo_level == 1 and @current_participant.city.to_s != ''
+      @network.geo_level_detail = @current_participant.city
+    elsif @network.geo_level == 2 and @current_participant.geoadmin2
+      @network.geo_level_detail = @current_participant.geoadmin2.name
+    elsif @network.geo_level == 3 and @current_participant.metro_area
+      @network.geo_level_detail = @current_participant.metro_area.name
+    elsif @network.geo_level == 4 and @current_participant.geoadmin1
+      @network.geo_level_detail = @current_participant.geoadmin1.name
+    elsif @network.geo_level == 5 and @current_participant.geocountry
+      @network.geo_level_detail = @current_participant.geocountry.name
+    end  
+
     if flash.now[:alert] != ''
       prepare_edit
       render action: :new
@@ -172,6 +184,34 @@ class NetworksController < ApplicationController
       end
       comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
       @mycommunities = Community.where("tagname in (#{comtag_list})")
+    
+      @geo_levels = []
+      GEO_LEVELS.each do |num, name|
+        fullname = name
+        if num == 1
+          if @current_participant.city.to_s != ''
+            fullname = "#{name}: #{@current_participant.city}"
+          end
+        elsif num == 2
+          if @current_participant.geoadmin2
+            fullname = "#{name}: #{@current_participant.geoadmin2.name}"
+          end
+        elsif num == 3
+          if @current_participant.metro_area
+            fullname = "#{name}: #{@current_participant.metro_area.name}"
+          end
+        elsif num == 4
+          if @current_participant.geoadmin1
+            fullname = "#{name}: #{@current_participant.geoadmin1.name}"
+          end
+        elsif num == 5
+          if @current_participant.geocountry
+            fullname = "#{name}: #{@current_participant.geocountry.name}"
+          end
+        end  
+        @geo_levels << [fullname,num]
+      end
+      GEO_LEVELS.invert.to_a
     
       @gender_options = []
       gender_texts = {208=>"Women", 207=>"Men", 408=>"Simply-Human"}

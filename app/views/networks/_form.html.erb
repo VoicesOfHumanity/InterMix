@@ -35,7 +35,7 @@
 
 	<div class="field">
     <label>Geographical Level</label>  
-    <%= select_tag "network[geo_level]", options_for_select(GEO_LEVELS.invert.to_a + [["*any*",0]], @network.geo_level)%>
+    <%= select_tag "network[geo_level]", options_for_select(@geo_levels + [["*any*",0]], @network.geo_level)%>
   </div>
 
   <div class="actions">

@@ -30,10 +30,25 @@
         <% else -%>
             <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>            
         <% end -%>
-        
-        
         </li>
       <% end -%>
+
+      <% if network.geo_level > 0 -%>
+        <li>
+          <%= GEO_LEVELS[network.geo_level].capitalize %>
+          <% if network.geo_level_detail.to_s != '' -%>
+            : <%= network.geo_level_detail %>
+          <% end -%>
+        </li>
+      <% end -%>
+      
+      <% if network.age > 0 -%>
+        <li>Generation: <%= AGE_CHOICES[network.age] %></li>
+      <% end -%>
+      <% if network.gender > 0 -%>
+        <li>Gender: <%= GENDER_CHOICES[network.gender] %></li>
+      <% end -%>
+      
     </ul>
     <% end -%>
   </td>

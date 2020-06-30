@@ -1,6 +1,6 @@
 .bundle
 .DS_Store
-log/*.log
+log/*.log*
 tmp/**/*
 public/images/data
 config/database.yml

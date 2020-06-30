@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_09_193110) do
+ActiveRecord::Schema.define(version: 2020_06_30_203724) do
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"
@@ -687,6 +687,7 @@ ActiveRecord::Schema.define(version: 2020_06_09_193110) do
     t.integer "age", default: 0
     t.integer "gender", default: 0
     t.integer "geo_level", default: 0
+    t.string "geo_level_detail", default: ""
     t.index ["created_by"], name: "created_by"
     t.index ["name"], name: "name"
   end
