@@ -53,13 +53,11 @@
       <label class="label">County</label> <span id="county_name"><%= @participant.county_name %></span>
     </li>
     
-    <% if false -%>
-		<%= f.input :city, :required => false %>    
-    <%= f.input :admin2uniq, :label => "County", :as => :select, :required => false, :collection =>Geoadmin2.where(:admin1uniq=>@participant.admin1uniq).order(:name).select([:name,:admin2uniq]).collect {|r| [r.name,r.admin2uniq]} %>  
-    <% end -%>
-    
   	<%= f.input :zip, :required => false %>
-    <%= f.input :country_code2, :label => "2nd Country", :required => false, :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, prompt: "* choose *" %>
+    <li class="select input optional" id="participant_country_code2_input">
+      <label for="participant_country_code2" class="label">2nd Country</label>
+      <%= select_tag "participant[country_code2]", options_from_collection_for_select(Geocountry.order(:extrasort,:name).select([:name,:iso]),'iso','name',(@participant.country_code2)), include_blank: "* choose *", id: "participant_country_code2_input"%>
+    </li>
 		<%= f.input :phone, :required => false %>
 		<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false, prompt: "* choose *" %>
 		<%= f.input :bioregion, :required => false %>
@@ -76,24 +74,7 @@
   			</div>
   		</li>		
 		<% end -%>
-		
-    <% if false -%>
-		<div style="display:inline;position:relative;top:20px"><b>Indigenous</b></div>
-    <% ind_checked = {}; ind_checked[:checked] = 'checked' if @participant.indigenous %>
-		<%= f.input :indigenous, :as => :boolean, :label=>"check here if you identify with an indigenous people or tribe", :input_html => ind_checked %>
-		<div style="display:inline;position:relative;top:20px"><b>Other Minority</b></div>
-    <% min_checked = {}; min_checked[:checked] = 'checked' if @participant.other_minority %>
-		<%= f.input :other_minority, :as => :boolean, :label=>"check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country", :input_html => min_checked %>
-		<div style="display:inline;position:relative;top:20px"><b>Veteran</b></div>
-    <% vet_checked = {}; vet_checked[:checked] = 'checked' if @participant.veteran %>
-		<%= f.input :veteran, :as => :boolean, :label=>"check here if you are a veteran", :input_html => vet_checked %>		
-    <div style="display:inline;position:relative;top:20px"><b>Interfaith</b></div>
-    <% int_checked = {}; int_checked[:checked] = 'checked' if @participant.interfaith %>
-		<%= f.input :interfaith, :as => :boolean, :label=>"check here if you identify as interfaith", :input_html => int_checked %>		
-    <div style="display:inline;position:relative;top:20px"><b>Refugee</b></div>
-    <% ref_checked = {}; ref_checked[:checked] = 'checked' if @participant.refugee %>
-		<%= f.input :refugee, :as => :boolean, :label=>"check here if you identify as a refugee", :input_html => ref_checked %>		
-    <% end -%>
+
     
     <p><input id="settings_submit" type="submit" value="Save" onclick="savetags();return(true)"><br><br></p>
     
