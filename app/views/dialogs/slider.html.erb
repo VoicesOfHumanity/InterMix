@@ -49,7 +49,7 @@
     
     <div style="margin: 20px 0 0 0;">
     <% freeze_geo = false %>
-    <% if @in == 'network' and @network.geo_level.to_i > 0 %>
+    <% if @in == 'network' and @network and @network.geo_level.to_i > 0 %>
       <% @geo_level = @network.geo_level  %>
       <% freeze_geo = true %>
     <% end -%>
@@ -65,7 +65,7 @@
         <input type="radio" name="comtag_radio" value="" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
         <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br>
         <% current_participant.tags.each do |tag| -%>
-          <% if @network.communities.collect{|com| com.tagname }.include? tag.name -%>
+          <% if @network and @network.communities.collect{|com| com.tagname }.include? tag.name -%>
             <input type="checkbox" name="comtag_radio" value="<%= tag.name %>" checked disabled>@<%= tag.name %><br> 
           <% else -%>
             <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
@@ -106,7 +106,7 @@
     <div style="">
       <% gender = 0 %>
       <% freeze_gender = false %>
-      <% if @in == 'network' and @network.gender.to_i > 0 %>
+      <% if @in == 'network' and @network and @network.gender.to_i > 0 %>
         <% gender = @network.gender  %>
         <% freeze_gender = true %>
       <% end -%>
@@ -127,7 +127,7 @@
     <div style="">
       <% age = 0 %>
       <% freeze_age = false %>
-      <% if @in == 'network' and @network.age.to_i > 0 %>
+      <% if @in == 'network' and @network and @network.age.to_i > 0 %>
         <% age = @network.age  %>
         <% freeze_age = true %>
       <% end -%>

@@ -840,6 +840,13 @@ class ItemsController < ApplicationController
     @group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",@group.id,current_participant.id).first if @group
     @is_member = @group_participant ? true : false
     @is_moderator = ((@group_participant and @group_participant.moderator) or current_participant.sysadmin)
+    @is_com_member = false
+    if @comtag.to_s != ''
+      @community = Community.where(tagname: @comtag).first
+      if current_participant.tag_list_downcase.include?(@comtag.downcase)
+        @is_com_member = true
+      end
+    end
     if @item.dialog_id.to_i > 0
       @dialog_id = @item.dialog_id
       @dialog = Dialog.find_by_id(@item.dialog_id)
@@ -869,6 +876,7 @@ class ItemsController < ApplicationController
     @item.item_type = 'message'
     @item.posted_by = current_participant.id
     @item.geo_level = params[:geo_level] if params[:geo_level]
+    @comtag = params[:comtag] if params.has_key?(:comtag)
 
     if current_participant.status != 'active'
       #-- Make sure this is an active member

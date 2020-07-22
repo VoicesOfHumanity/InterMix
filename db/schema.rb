@@ -312,7 +312,7 @@ ActiveRecord::Schema.define(version: 2020_06_30_203724) do
     t.index ["name"], name: "name"
   end
 
-  create_table "geonames", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "geonames", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.string "asciiname"
     t.text "alternatenames"
