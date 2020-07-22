@@ -1353,8 +1353,8 @@ class FrontController < ApplicationController
         end
       end
     else
-      @participant.country_code = 'US'
-      @participant.country_name = 'United States'  
+      #@participant.country_code = 'US'
+      #@participant.country_name = 'United States'  
     end  
 
     #-- Create a password automatically
