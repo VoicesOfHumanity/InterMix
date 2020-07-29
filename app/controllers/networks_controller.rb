@@ -89,14 +89,19 @@ class NetworksController < ApplicationController
 
     if @network.geo_level == 1 and @current_participant.city.to_s != ''
       @network.geo_level_detail = @current_participant.city
+      @network.geo_level_id = @current_participant.city
     elsif @network.geo_level == 2 and @current_participant.geoadmin2
       @network.geo_level_detail = @current_participant.geoadmin2.name
+      @network.geo_level_id = @current_participant.admin2uniq
     elsif @network.geo_level == 3 and @current_participant.metro_area
       @network.geo_level_detail = @current_participant.metro_area.name
+      @network.geo_level_id = @current_participant.metro_area_id.to_s
     elsif @network.geo_level == 4 and @current_participant.geoadmin1
       @network.geo_level_detail = @current_participant.geoadmin1.name
+      @network.geo_level_id = @current_participant.admin1uniq
     elsif @network.geo_level == 5 and @current_participant.geocountry
       @network.geo_level_detail = @current_participant.geocountry.name
+      @network.geo_level_id = @current_participant.country_code
     end  
 
     if flash.now[:alert] != ''

@@ -1490,12 +1490,18 @@ class Item < ActiveRecord::Base
       @network = Network.find_by_id(crit[:network_id]) if not @network
       if @network.geo_level.to_i > 0
         crit[:geo_level] = GEO_LEVELS[@network.geo_level]
+        if @network.geo_level_id.to_s != ''
+          crit[:geo_level_id] = @network.geo_level_id
+        end
+        if @network.geo_level_detail.to_s != ''
+          crit[:geo_level_detail] = @network.geo_level_detail
+        end
       end
       crit[:gender] = @network.gender if @network.gender.to_i > 0
       crit[:age] = @network.age if @network.age.to_i > 0
       
       network_comtags = @network.communities.collect{|com| com.tagname }
-      
+            
       plist = Participant.tagged_with(network_comtags).collect {|p| p.id}.join(',')
       if plist != ''
         items = items.where("participants.id in (#{plist})")
@@ -1509,7 +1515,11 @@ class Item < ActiveRecord::Base
     #items = items.where("geo_level = ? or geo_level is null or geo_level = ''", crit[:geo_level]) if (crit[:geo_level].to_s != '' and crit[:geo_level] != 'all')
   
     if crit[:geo_level] == 'city'
-      if current_participant.city.to_s != ''
+      if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+        items = items.where("participants.city=?",crit[:geo_level_id])
+        ratings = ratings.where("participants.city=?",crit[:geo_level_id])
+        title += "#{crit[:geo_level_detail]}"
+      elsif current_participant.city.to_s != ''
         items = items.where("participants.city=?",current_participant.city)
         ratings = ratings.where("participants.city=?",current_participant.city)
         title += "#{current_participant.city}"
@@ -1519,7 +1529,11 @@ class Item < ActiveRecord::Base
         title += "Unknown City"
       end  
     elsif crit[:geo_level] == 'county'
-      if current_participant.admin2uniq.to_s != '' and current_participant.geoadmin2
+      if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+        items = items.where("participants.admin2uniq=?",crit[:geo_level_id])
+        ratings = ratings.where("participants.admin2uniq=?",crit[:geo_level_id])
+        title += "#{crit[:geo_level_detail]}"
+      elsif current_participant.admin2uniq.to_s != '' and current_participant.geoadmin2
         items = items.where("participants.admin2uniq=?",current_participant.admin2uniq)
         ratings = ratings.where("participants.admin2uniq=?",current_participant.admin2uniq)
         title += "#{current_participant.geoadmin2.name}" 
@@ -1529,7 +1543,11 @@ class Item < ActiveRecord::Base
         title += "Unknown County"
       end  
     elsif crit[:geo_level] == 'metro'
-      if current_participant.metro_area_id.to_i > 0 and current_participant.metro_area
+      if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+        items = items.where("participants.metro_area_id=?",crit[:geo_level_id])
+        ratings = ratings.where("participants.metro_area_id=?",crit[:geo_level_id])
+        title += "#{crit[:geo_level_detail]}"
+      elsif current_participant.metro_area_id.to_i > 0 and current_participant.metro_area
         items = items.where("participants.metro_area_id=?",current_participant.metro_area_id)
         ratings = ratings.where("participants.metro_area_id=?",current_participant.metro_area_id)
         title += "#{current_participant.metro_area.name}"
@@ -1539,7 +1557,11 @@ class Item < ActiveRecord::Base
         title += "Unknown Metro Area"
       end  
     elsif crit[:geo_level] == 'state'  
-      if current_participant.admin1uniq.to_s != '' and current_participant.geoadmin1
+      if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+        items = items.where("participants.admin1uniq=?",crit[:geo_level_id])
+        ratings = ratings.where("participants.admin1uniq=?",crit[:geo_level_id])
+        title += "#{crit[:geo_level_detail]}"
+      elsif current_participant.admin1uniq.to_s != '' and current_participant.geoadmin1
         items = items.where("participants.admin1uniq=?",current_participant.admin1uniq)
         ratings = ratings.where("participants.admin1uniq=?",current_participant.admin1uniq)
         title += "#{current_participant.geoadmin1.name}"
@@ -1549,9 +1571,15 @@ class Item < ActiveRecord::Base
         title += "Unknown State"
       end  
     elsif crit[:geo_level] == 'nation'
-      items = items.where("participants.country_code=?",current_participant.country_code)
-      ratings = ratings.where("participants.country_code=?",current_participant.country_code)
-      title += "#{current_participant.geocountry.name}"
+      if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+        items = items.where("participants.country_code=?",crit[:geo_level_id])
+        ratings = ratings.where("participants.country_code=?",crit[:geo_level_id])
+        title += "#{crit[:geo_level_detail]}"
+      else
+        items = items.where("participants.country_code=?",current_participant.country_code)
+        ratings = ratings.where("participants.country_code=?",current_participant.country_code)
+        title += "#{current_participant.geocountry.name}"
+      end
     elsif crit[:geo_level] == 'planet'
       title += "Planet Earth"  
     elsif crit[:geo_level] == 'all'
