@@ -54,6 +54,25 @@ class Community < ActiveRecord::Base
     return {nations: nations.length, states: states.length, metros: metros.length, cities: cities.length}
   end
   
+  def go_to_conversation(participant)
+    # Decide if we should go to a conversation, rather than the forum for this community
+    conversation = nil
+    if participant.tag_list.include?(self.tagname)
+      # If we're in a community, and the user is a member. Conversation not specified. Figure out which one
+      if self.conversations.length == 1
+        # Community is in only one conversation, go there
+        conversation = self.conversations[0]
+      elsif self.conversations.length > 1
+        # Community is in more than one conversation. Pick the last one.
+        conversation = self.conversations.last
+      end
+    end
+    if conversation
+      return conversation.shortname
+    end
+    return ''
+  end
+  
   def to_liquid
       {'id'=>id,'tagname'=>tagname,'description'=>description,'fullname'=>fullname, 'name'=>name}
   end
