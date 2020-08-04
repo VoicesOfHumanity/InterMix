@@ -130,7 +130,8 @@ class NetworksController < ApplicationController
 
   def update
     if @network.update(network_params)
-      redirect_to @network, notice: 'Network was successfully updated.'
+      #redirect_to @network, notice: 'Network was successfully updated.'
+      redirect_to '/networks/my', notice: 'Network was successfully updated.'
     else
       render :edit
     end
@@ -138,7 +139,8 @@ class NetworksController < ApplicationController
 
   def destroy
     @network.destroy
-    redirect_to networks_url, notice: 'Network was successfully destroyed.'
+    #redirect_to networks_url, notice: 'Network was successfully destroyed.'
+    redirect_to '/networks/my', notice: 'Network was successfully deleted.'
   end
   
   def members
