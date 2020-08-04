@@ -67,10 +67,12 @@ end
   <table style="width:595px">
   <tr><th>Forum</th><th>More Information</th></tr>	
   <% for conv in @community.conversations -%>
-    <tr>
-    	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>&comtag=<%= @community.tagname %>"><%= conv.shortname %></a></td>	
-    	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
-    </tr>
+    <% if conv.active -%>
+      <tr>
+      	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>&comtag=<%= @community.tagname %>"><%= conv.shortname %></a></td>	
+      	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
+      </tr>
+    <% end -%>
   <% end -%>
   </table>
 <% end -%>
