@@ -1607,6 +1607,7 @@ class Item < ActiveRecord::Base
       ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
     end
 
+    logger.info("item#get_items gender:#{crit[:gender]} age:#{crit[:age]} title:#{title}")
     if crit[:gender].to_i > 0 and crit[:age].to_i == 0
       gender = MetamapNode.find_by_id(crit[:gender].to_i)
       title += " | #{gender.name_as_group}"
@@ -1622,6 +1623,7 @@ class Item < ActiveRecord::Base
     elsif not crit[:show_result]
       title += " | Voice of Humanity"
     end
+    logger.info("item#get_items title:#{title}")
     
     # tags
     if crit['in'] == 'conversation' and @conversation

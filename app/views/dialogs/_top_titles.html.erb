@@ -3,7 +3,9 @@
 
 <span style="font-size:20px;color:#000;">
   
-<% if @in == 'conversation' and @conversation -%>  
+<% if @in == 'network' and @network -%>
+  Network: <%= @network.name %>
+<% elsif @in == 'conversation' and @conversation -%>  
   Conversation
 <% elsif @in == 'community' and @community %>
   <%= @community.fullname %>

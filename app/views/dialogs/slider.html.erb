@@ -10,6 +10,18 @@
       loading...
         
     </div>
+    
+    <% if @in == 'network' and @network -%>
+    <div>
+      <br>
+      <h3>Communities in this network:</h3>
+      <ul>
+      <% for com in @network.communities -%>
+        <li><%= com.tagname %></li>
+      <% end -%>
+      </ul>
+    </div>
+    <% end -%>
   
     <input type="hidden" id="sortby" value="<%= @sortby %>">
     <input type="hidden" id="threads" value="<%= @threads %>">
