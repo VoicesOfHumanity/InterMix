@@ -190,7 +190,7 @@ class ConversationsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def conversation_params
-      params.require(:conversation).permit(:name, :shortname, :description, :front_template, :together_apart)
+      params.require(:conversation).permit(:name, :shortname, :description, :front_template, :together_apart, :active)
     end
     
     def check_is_admin

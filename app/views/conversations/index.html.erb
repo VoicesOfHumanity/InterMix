@@ -3,30 +3,32 @@
 <table style="width:595px">
 <tr><th>Forum</th><th>Activity</th><th>More Information</th><th>Phase</th><th>Perspective</th></tr>	
 <% for conv in @conversations -%>
-<tr>
-	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>"><%= conv.shortname %></a></td>	
-	<td><%= conv.activity %></td>
-	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
-  <td><%= conv.together_apart %></td>
-  <td>
-    <% if conv.perspective == 'outsider' -%>
-      outsider
-    <% elsif conv.perspective and conv.perspectives.length == 1 -%>
-      <%= conv.perspective %>
-    <% elsif conv.perspectives and conv.perspectives.length > 1 -%>  
-      <select id="conv_perspective_select_<%= conv.id %>" onchange="change_perspective(<%= conv.id %>)">
-        <% for persp in conv.perspectives -%>
-          <% xselected = (conv.perspective == persp[0]) ? " selected" : "" %>
-          <option value="<%= persp[0] %>"<%= xselected %>><%= persp[0] %></option>
+  <% if conv.active or (@csection == 'my' and conv.is_admin(current_participant)) -%>
+    <tr>
+    	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>"><%= conv.shortname %></a></td>	
+    	<td><%= conv.activity %></td>
+    	<td><a href="/conversations/<%= conv.id %>"><%= conv.name.to_s != '' ?  conv.name : conv.shortname %></a></td>
+      <td><%= conv.together_apart %></td>
+      <td>
+        <% if conv.perspective == 'outsider' -%>
+          outsider
+        <% elsif conv.perspective and conv.perspectives.length == 1 -%>
+          <%= conv.perspective %>
+        <% elsif conv.perspectives and conv.perspectives.length > 1 -%>  
+          <select id="conv_perspective_select_<%= conv.id %>" onchange="change_perspective(<%= conv.id %>)">
+            <% for persp in conv.perspectives -%>
+              <% xselected = (conv.perspective == persp[0]) ? " selected" : "" %>
+              <option value="<%= persp[0] %>"<%= xselected %>><%= persp[0] %></option>
+            <% end -%>
+          </select>  
+        <% elsif conv.perspective -%>  
+          <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>&amp;comtag=<%= conv.perspective %>"><%= conv.perspective %></a>
+        <% else -%>
+          <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>">outsider</a>
         <% end -%>
-      </select>  
-    <% elsif conv.perspective -%>  
-      <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>&amp;comtag=<%= conv.perspective %>"><%= conv.perspective %></a>
-    <% else -%>
-      <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= conv.shortname %>">outsider</a>
-    <% end -%>
-  </td>
-</tr>	
+      </td>
+    </tr>	
+  <% end -%>
 <% end -%>
 </table>
 

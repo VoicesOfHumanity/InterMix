@@ -17,7 +17,9 @@
       <h3>Communities in this network:</h3>
       <ul>
       <% for com in @network.communities -%>
-        <li><%= com.tagname %></li>
+        <% if com.active -%>
+          <li><%= com.tagname %></li>
+        <% end -%>
       <% end -%>
       </ul>
     </div>
@@ -90,7 +92,10 @@
         <% end -%>
         <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br> 
         <% current_participant.tags.each do |tag| -%>
-          <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
+          <% community = Community.find_by_tagname(tag.name) %>
+          <% if community and community.active -%>
+            <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
+          <% end -%>
         <% end %>
       <% end %>
       <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
@@ -105,10 +110,13 @@
       <input type="radio" name="messtag_radio" value="<%= @comtag %>" onclick="per_reload(false,1,'messtag')" checked>#<%= @comtag %><br>
       <% end -%>
       <% current_participant.tags.each do |tag| -%>
-        <% if @network and @network.communities.collect{|com| com.tagname }.include? tag.name -%>
-          <input type="checkbox" name="messtag_radio" value="<%= tag.name %>" checked disabled>#<%= tag.name %><br>
-        <% else -%>
-          <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'messtag')">#<%= tag.name %><br>
+        <% community = Community.find_by_tagname(tag.name) %>
+        <% if community and community.active -%>
+          <% if @network and @network.communities.collect{|com| com.tagname }.include? tag.name -%>
+            <input type="checkbox" name="messtag_radio" value="<%= tag.name %>" checked disabled>#<%= tag.name %><br>
+          <% else -%>
+            <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'messtag')">#<%= tag.name %><br>
+          <% end -%>
         <% end -%>
       <% end %>
       <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">#<input type="text" id="messtag_other" size="10" maxlength="14">

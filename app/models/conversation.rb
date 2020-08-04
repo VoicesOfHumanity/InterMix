@@ -23,5 +23,11 @@ class Conversation < ApplicationRecord
     end
     return false
   end
+
+  def is_admin(participant)
+    if participant.sysadmin
+      return true
+    end  
+  end
   
 end

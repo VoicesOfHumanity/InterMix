@@ -16,6 +16,8 @@
   
 		<%= f.input :fullname, as: :string, label: 'Long name' %>
     
+    <%= f.input :active, label: "Active/Public" %>	
+    
     <li class="text input optional" id="community_description_input"><label for="community_description" class="label">Description</label><textarea rows="2" id="community_description" name="community[description]"><%= @community.description %></textarea><br><label>&nbsp;</label>(basic HTML ok)
     </li>
 

@@ -73,6 +73,17 @@ class Community < ActiveRecord::Base
     return ''
   end
   
+  def is_admin(participant)
+    if participant.sysadmin
+      return true
+    else
+      admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", self.id, participant.id]).first
+      if admin
+        return true
+      end
+    end  
+  end
+  
   def to_liquid
       {'id'=>id,'tagname'=>tagname,'description'=>description,'fullname'=>fullname, 'name'=>name}
   end

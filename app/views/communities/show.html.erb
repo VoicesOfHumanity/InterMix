@@ -3,6 +3,10 @@
 
 <h3><%=raw @community.fullname %></h3>
 
+<% if not @community.active -%>
+<p><b>NOT active/public. Only visible to admin.</b></p>
+<% end -%>
+
 <p><b>Short Name:</b> <%= @community.tagname %>&nbsp;&nbsp;
 <%
 prof_nation = false

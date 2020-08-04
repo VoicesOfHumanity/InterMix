@@ -22,6 +22,14 @@
   </div>
 
   <div class="field">
+    <%= form.label :active, "Active/Public" %>
+    <%= form.text_field :active %>
+  </div>
+    
+  <%= f.input :active, label: "Active/Public" %>	
+  
+
+  <div class="field">
     <%= form.label :description %>
     <%= form.text_area :description %>
   </div>
