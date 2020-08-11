@@ -156,7 +156,8 @@ class DialogsController < ApplicationController
       session.delete(:messtag)
       session.delete(:nvaction)
       session.delete(:geo_level)
-      # gender and aga?
+      session.delete(:age)
+      session.delete(:gender)
       session.delete(:datetype)
       session.delete(:datefixed)
       session.delete(:datefrom)

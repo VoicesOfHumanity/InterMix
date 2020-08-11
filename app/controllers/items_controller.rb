@@ -1853,6 +1853,12 @@ class ItemsController < ApplicationController
       
       if crit[:network_id].to_i > 0
         @network = Network.find_by_id(crit[:network_id])
+        if @network.gender.to_i > 0
+          crit[:gender] = @network.gender
+        end
+        if @network.age.to_i > 0
+          crit[:age] = @network.age
+        end
       end
                     
       @dialog_id = VOH_DISCUSSION_ID    
