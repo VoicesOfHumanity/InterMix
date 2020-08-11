@@ -45,49 +45,15 @@
     <tr><td class="label"><%= metamap.name %></td><td><%= info ? (info[3].to_s!='' ? info[3] : info[2]) : '???' %></td></tr>
   <% end -%>
 <% end -%>
-<% if false -%>
-<% if @participant.indigenous -%>
-<tr><td class="label">Indigenous:</td><td>yes</td></tr>	
-<% end -%>
-<% if @participant.other_minority -%>
-<tr><td class="label">Other Minority:</td><td>yes</td></tr>	
-<% end -%>
-<% if @participant.veteran -%>
-<tr><td class="label">Veteran:</td><td>yes</td></tr>	
-<% end -%>
-<% if @participant.interfaith -%>
-<tr><td class="label">Interfaith:</td><td>yes</td></tr>	
-<% end -%>
-<% if @participant.refugee -%>
-<tr><td class="label">Refugee:</td><td>yes</td></tr>	
-<% end -%>
-<% end -%>
 <tr><td class="label" id="communities">Communities:</td><td>
-  <%=raw @participant.show_tag_list(true,true) %>
-  <% if false -%>
-    <% DEFAULT_COMMUNITIES.each do |tag,desc| -%>
-      <% if @participant.tag_list.include?(tag) -%>
-        <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= tag %>"><%= desc %></a><br>
-      <% end -%>
-    <% end -%>
-  <% end -%>
+  <%=raw @participant.show_tag_list(true,true,false,current_participant) %>
 </td></tr>
 
 <% if false -%>
 <tr><td class="label">Custom Tags:</td><td><%=raw @participant.show_tag_list(true) %></td></tr>	
 <% end -%>
 
-<% if false -%>
-<tr><td class="label">Groups:</td><td>
-<% if @participant.groups.length == 0 -%>
-	none
-<% else -%>
-	<% for group in @participant.groups -%>
-		<a href="/groups/<%= group.id %>/forum"><%= group.name %></a><br>
-	<% end -%>
-<% end -%>	
-</td></tr>	
-<% end -%>
+
 
 
 </table>

@@ -334,14 +334,21 @@ class Participant < ActiveRecord::Base
     ( self.followers + self.idols ).uniq
   end    
   
-  def show_tag_list(with_links=false,include_check=false,show_result=false)
+  def show_tag_list(with_links=false,include_check=false,show_result=false, for_participant=nil)
     xlist = ''
     tags.each do |tag|
       if include_check or not DEFAULT_COMMUNITIES.keys.include?(tag.to_s)
         xlist += ', ' if xlist != ''
         xlist += '@'
         if with_links
-          url = "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{tag.name}"
+          if for_participant
+            com = Community.find_by_tagname(tag.name)
+          end
+          if for_participant and com and com.go_to_conversation(for_participant) != ''
+            url = "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{com.go_to_conversation(for_participant)}&comtag=#{tag.name}"
+          else
+            url = "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{tag.name}"
+          end
           if show_result
             url += "&show_result=1"
           end
