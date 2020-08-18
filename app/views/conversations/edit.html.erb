@@ -14,6 +14,25 @@
     <%= f.input :active, label: "Active/Public" %>	
     
 		<%= f.input :description %>
+    
+    <li class="select input optional" id="conversation_topics_input">
+      <div style="width:25%;float:left;font-weight:bold">Topics</div>
+      <div style="width:75%;float:left">
+        <select id="comlist">
+          <% for com in Community.all -%>
+            <option><%= com.tagname %></option>
+          <% end -%>
+        </select><br>
+        <input type="button" value="add" onclick="topic('add')">
+        <input type="button" value="remove" onclick="topic('remove')">
+        <input type="button" value="default" onclick="topic('default')"><br>
+        List: <span id="topic_list_show"><%= @conversation.topic_list %></span><br>
+        Default: <span id="topic_default_show"><%= @conversation.default_topic %></span>
+      </div>
+    </li> 
+    
+    <input type="hidden" name="topic_list" id="topic_list" value="<%= @conversation.topic_list %>">
+    <input type="hidden" name="conversation[default_topic]" id="default_topic" value="<%= @conversation.default_topic %>">
 
 		<% f.input :front_template, :label => "Front Page template" %>
 		<li class="text optional" id="conversation_front_template_input">
@@ -41,3 +60,51 @@
 <%= link_to 'Show', @conversation %> |
 <%= link_to 'Back', conversations_path %>
 <% end -%>
+
+<script>
+  function topic(act) {
+    var tag = $('#comlist').val();
+    if ($('#topic_list').val()=='') {
+      var topic_arr = []; 
+    } else {
+      var topic_arr = $('#topic_list').val().split(", ");
+    }
+    var default_topic = $('#default_topic').val(); 
+    if (act=='add') {
+      if (!topic_arr.includes(tag)) {
+        topic_arr.push(tag);
+      }
+    } else if (act=='remove') {
+      var new_array = [];
+      for (var i = 0; i < topic_arr.length; i++) {
+        var eltag = topic_arr[i];
+        if (eltag != tag) {
+          new_array.push(eltag);
+        }
+      }
+      topic_arr = new_array;
+    } else if (act=='default') {
+      if (default_topic == tag) {
+        default_topic = '';
+      } else {
+        default_topic = tag;
+        var new_array = [];
+        for (var i = 0; i < topic_arr.length; i++) {
+          var eltag = topic_arr[i];
+          if (eltag != tag) {
+            new_array.push(eltag);
+          }
+        }
+        topic_arr = new_array;
+        if (!topic_arr.includes(tag)) {
+          topic_arr.unshift(tag);
+        }
+      }
+    }
+    var topic_list_txt = topic_arr.join(', ');
+    $('#topic_list').val(topic_list_txt);
+    $('#topic_list_show').html(topic_list_txt);
+    $('#default_topic').val(default_topic);
+    $('#topic_default_show').html(default_topic);
+  }
+</script>

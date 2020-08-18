@@ -16,10 +16,10 @@ class Community < ActiveRecord::Base
   attr_accessor :activity
   
   def name
-    if self.fullname
+    if self.fullname.to_s != ''
       self.fullname
     else
-      self.tagname
+      self.tagname.capitalize
     end
   end
   

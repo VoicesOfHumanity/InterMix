@@ -3,6 +3,8 @@ class Conversation < ApplicationRecord
   has_many :communities, :through => :conversation_communities
   has_many :items
   
+  serialize :topics
+  
   attr_accessor :activity
   attr_accessor :perspective
   attr_accessor :perspectives
@@ -28,6 +30,15 @@ class Conversation < ApplicationRecord
     if participant.sysadmin
       return true
     end  
+  end
+  
+  def topic_list
+    if self.topics and self.topics.class.name == 'Array'
+      if self.topics.length > 0
+        return self.topics.uniq.join(', ')
+      end
+    end
+    return ''
   end
   
 end

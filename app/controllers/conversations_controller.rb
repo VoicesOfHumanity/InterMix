@@ -146,6 +146,14 @@ class ConversationsController < ApplicationController
     @conversation = Conversation.new(conversation_params)
 
     if @conversation.save
+      
+      if params[:topic_list]
+        topic_list = params[:topic_list]
+        @conversation.topics_will_change!
+        @conversation.topics = topic_list.split(', ')
+        @conversation.save
+      end
+      
       redirect_to @conversation, notice: 'Conversation was successfully created.'
     else
       render :new
@@ -155,6 +163,14 @@ class ConversationsController < ApplicationController
   # PATCH/PUT /conversations/1
   def update
     if @conversation.update(conversation_params)
+      
+      if params[:topic_list]
+        topic_list = params[:topic_list]
+        @conversation.topics_will_change!
+        @conversation.topics = topic_list.split(', ')
+        @conversation.save
+      end
+      
       redirect_to @conversation, notice: 'Conversation was successfully updated.'
     else
       render :edit
@@ -190,7 +206,7 @@ class ConversationsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def conversation_params
-      params.require(:conversation).permit(:name, :shortname, :description, :front_template, :together_apart, :active)
+      params.require(:conversation).permit(:name, :shortname, :description, :front_template, :together_apart, :active, :default_topic)
     end
     
     def check_is_admin

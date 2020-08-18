@@ -1594,6 +1594,9 @@ class Item < ActiveRecord::Base
       #title += " | #{@conversation.name}" if @conversation
       items = items.where("intra_com='public'")
       items = items.where("intra_conv='public' or intra_conv='#{@conversation.shortname}'")
+      if crit[:topic].to_s != ''
+        @topic = crit[:topic]
+      end
     else
       items = items.where("intra_conv='public'")        
     end

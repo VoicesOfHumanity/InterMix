@@ -1693,6 +1693,9 @@ class ItemsController < ApplicationController
       session[:comtag] = crit[:comtag]
       session[:messtag] = crit[:messtag]
       
+      crit[:topic] = params[:topic].to_s
+      @topic = crit[:topic]
+      
       nvaction_changed = false
       if params.has_key?(:nvaction) 
         crit[:nvaction] = (params[:nvaction].to_i == 1) ? true : false
@@ -2236,6 +2239,15 @@ class ItemsController < ApplicationController
           @suggestedtopic = "Human Unity and Diversity"
         else
           @suggestedtopic = session.has_key?(:suggestedtopic) ? session[:suggestedtopic] : ""
+        end
+        
+        if @topic.to_s != ''
+          com = Community.find_by_tagname(@topic)
+          if com
+            @topic_title = com.name
+          else
+            @topic_title = '???'
+          end
         end
 
         @crit = crit
