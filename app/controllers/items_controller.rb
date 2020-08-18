@@ -408,6 +408,7 @@ class ItemsController < ApplicationController
     logger.info("items#new @comtag:#{@comtag} @messtag:#{@messtag}") 
     @meta_3 = params[:meta_3].to_i    # gender
     @meta_5 = params[:meta_5].to_i    # age
+    @topic = params[:topic].to_s
     
     if @item.reply_to.to_i > 0
       @olditem = Item.find_by_id(@item.reply_to)
@@ -432,6 +433,7 @@ class ItemsController < ApplicationController
     # WHERE? HOW?
        
     @item.conversation_id = @conversation_id   
+    @item.topic = @topic
     
     if params[:group_id].to_i > 0
       @item.group_id = params[:group_id] 
@@ -594,6 +596,11 @@ class ItemsController < ApplicationController
             end
           end
         end
+        
+        if @topic.to_s != ''
+          tags << @topic
+        end
+        
       end
       
     elsif @network_id > 0
@@ -928,6 +935,11 @@ class ItemsController < ApplicationController
         @item.together_apart = @conversation.together_apart
       end
       
+      if @item.topic.to_s != ''
+        # If there's a topic, add the poster to the matching community        
+        current_participant.tag_list.add(@item.topic)
+        current_participant.save
+      end
     end
     
     if @item.reply_to.to_i > 0
@@ -2820,7 +2832,7 @@ class ItemsController < ApplicationController
   end
   
   def item_params
-    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply, :representing_com)
+    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply, :representing_com, :topic)
   end
     
 end

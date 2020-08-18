@@ -69,6 +69,7 @@
           <input type="radio" name="topic_radio" value="<%= topic %>" <%= (topic == @topic or (@topic.to_s == '' and topic == @conversation.default_topic.to_s)) ? "checked" : "" %> onclick="per_reload()"><%=topic %><br>
         <% end -%>
       </div>
+      <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     <% end -%>
     
     <div style="margin: 20px 0 0 0;">

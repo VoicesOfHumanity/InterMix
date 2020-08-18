@@ -263,6 +263,10 @@ function newitem(token) {
       var meta_5 = $("input[name='meta_5']:checked").val();
       pars += '&meta_5='+meta_5;
   }
+  if ($("input[name='topic_radio']").length) {
+      var topic = $("input[name='topic_radio']:checked").val();
+      pars += '&topic='+topic;
+  }
   pars += "&nvaction="+(nvaction_on ? 1 : 0);
   pars += "&authenticity_token="+token;
   if ($('#conversation_id')) {
