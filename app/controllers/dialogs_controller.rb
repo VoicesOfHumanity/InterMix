@@ -88,8 +88,12 @@ class DialogsController < ApplicationController
 
     if params.has_key?(:conv)
       @in = 'conversation'
-      @section = 'conversations'
       @conv = params[:conv]
+      if @conv == INT_CONVERSATION_CODE 
+        @section = 'nations'
+      else
+        @section = 'conversations'
+      end
       @comtag = params[:comtag] if params.has_key?(:comtag)  # might be a - to leave the conversation
       # Conversations should have conv and comtag specifed in the URL. At first there might only be a conv and no comtag
       logger.info("dialogs#slider in conversation #{@conv}")

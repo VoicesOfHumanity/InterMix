@@ -93,4 +93,4 @@ VOH_DISCUSSION_ID = 5
 VOL_LOGO = "/images/data/dialogs/logos/7/original_blacksheep1S.jpg"
 
 INT_CONVERSATION_ID = 3
-
+INT_CONVERSATION_CODE = 'international'
