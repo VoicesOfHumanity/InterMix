@@ -65,6 +65,16 @@ class Participant < ActiveRecord::Base
     return "\"#{first_name.to_s} #{last_name.to_s}\" <#{email}>"
   end
   
+  def show_country2
+    if self.country_code2 == '_I'
+      'Indigenous peoples'
+    elsif self.geocountry2
+      self.geocountry2.name
+    else
+      self.country_code2
+    end
+  end
+  
   def self.tags
     tag_counts.collect {|t| t.name}.join(', ')  
   end

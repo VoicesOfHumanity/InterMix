@@ -28,7 +28,7 @@
 <tr><td class="label">State:</td><td><%= @participant.geoadmin1.name if @participant.geoadmin1 %></td></tr>	
 <tr><td class="label">Country:</td><td><%= @participant.geocountry ? @participant.geocountry.name : @participant.country_code %></td></tr>	
 <% if @participant.country_code2.to_s != '' -%>
-<tr><td class="label">2nd Country:</td><td><%= @participant.geocountry2 ? @participant.geocountry2.name : @participant.country_code2 %></td></tr>	
+<tr><td class="label">2nd Country:</td><td><%= @participant.show_country2 %></td></tr>	
 <% end -%>
 <tr><td class="label">Phone:</td><td><%= @participant.phone %></td></tr>	
 <tr><td class="label">Metropolitan Area:</td><td><%= @participant.metro_area ?  @participant.metro_area.name : @participant.metropolitan_area %></td></tr>

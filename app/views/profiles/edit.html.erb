@@ -56,7 +56,7 @@
   	<%= f.input :zip, :required => false %>
     <li class="select input optional" id="participant_country_code2_input">
       <label for="participant_country_code2" class="label">2nd Country</label>
-      <%= select_tag "participant[country_code2]", options_from_collection_for_select(Geocountry.order(:extrasort,:name).select([:name,:iso]),'iso','name',(@participant.country_code2)), include_blank: "* choose *", id: "participant_country_code2_input"%>
+      <%= select_tag "participant[country_code2]", options_for_select([['* choose *',''], ['Indigenous peoples','_I']] + Geocountry.order(:extrasort,:name).collect{|c| [c.name,c.iso]}, @participant.country_code2), id: "participant_country_code2_input" %>
     </li>
 		<%= f.input :phone, :required => false %>
 		<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false, prompt: "* choose *" %>

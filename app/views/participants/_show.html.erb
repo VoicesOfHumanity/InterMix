@@ -8,7 +8,7 @@
 <tr><td class="left">Address2:</td><td><%= @participant.address2 %></td></tr>	
 <tr><td class="left">City:</td><td><%= @participant.city %></td></tr>	
 <tr><td class="left">State:</td><td><%= @participant.state_name %></td></tr>	
-<tr><td class="left">Country:</td><td><%= @participant.country_name %></td></tr>	
+<tr><td class="left">Country:</td><td><%= @participant.country_name ? @participant.country_name : @participant.country_code %></td></tr>	
 <tr><td class="left">Zip:</td><td><%= @participant.zip %></td></tr>	
 <tr><td class="left">Phone:</td><td><%= @participant.phone %></td></tr>	
 <tr><td class="left">Metropolitan Area:</td><td><%= @participant.metropolitan_area %></td></tr>	
