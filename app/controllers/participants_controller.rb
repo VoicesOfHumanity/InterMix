@@ -149,11 +149,18 @@ class ParticipantsController < ApplicationController
     end   
     if @participant.country_code2.to_s != ""
       #-- Fill in the second country name
-      geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
-      @participant.country_name2 = geocountry2.name
-      community = Community.where(context: 'nation', context_code: geocountry2.iso3).first
-      if community
-        @participant.tag_list.add(community.tagname)
+      if @participant.country_code2 == '_I'
+        @participant.country_name2 = "Indigenous peoples"
+        @participant.tag_list.add("indigenous")
+      else
+        geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
+        if geocountry2
+          @participant.country_name2 = geocountry2.name
+        end
+        community = Community.where(context: 'nation', context_code: geocountry2.iso3).first
+        if community
+          @participant.tag_list.add(community.tagname)
+        end
       end
     end   
     if @participant.admin2uniq.to_s != ""  

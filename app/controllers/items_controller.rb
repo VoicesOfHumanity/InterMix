@@ -1670,6 +1670,12 @@ class ItemsController < ApplicationController
     # group_level: current, my, all groups. 
   
     # indigenous, other minority, veteran, *interfaith*, refugee
+    
+    # There are three different sections:
+    # top_posts, forum, and results
+    # top_posts has top_posts == 1
+    # forum has show_results == 0
+    # results (voices of humanity) has show_results == 1
 
     crit = {}
     show_result = nil
@@ -1683,6 +1689,8 @@ class ItemsController < ApplicationController
       
       show_result = (params[:show_result].to_i == 1)
       @show_result = show_result
+      top_posts = (params[:top_posts].to_i == 1)
+      @top_posts = top_posts
       whatchanged = params[:whatchanged].to_s
     
       @in = params['in'].to_s
@@ -1904,7 +1912,10 @@ class ItemsController < ApplicationController
 
       @data = {}  
   
-      if show_result
+      if top_posts
+        # Select one post
+        
+      elsif show_result
         # If we're showing results, then add up results for the required gender and age combinations
         # We will go through the overall items and ratings we have, and put them in those several buckets
         # Then we will add up the results in each of those buckets

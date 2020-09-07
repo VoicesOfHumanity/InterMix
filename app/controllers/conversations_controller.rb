@@ -1,7 +1,7 @@
 class ConversationsController < ApplicationController
 
 	layout "front"
-  before_action :set_conversation, only: [:show, :edit, :update, :destroy, :change_perspective]
+  before_action :set_conversation, only: [:show, :edit, :update, :destroy, :change_perspective, :top_posts]
   before_action :authenticate_user_from_token!, except: [:join, :front, :fronttag]
   before_action :authenticate_participant!, except: [:join, :front, :fronttag]
   before_action :check_is_admin, except: [:index, :join, :front, :fronttag]
@@ -195,6 +195,22 @@ class ConversationsController < ApplicationController
         render plain: "ok"
       end
     end
+  end
+  
+  def top_posts
+    @section = 'conversations'
+    
+    # Stuff that's needed because we show the menu from the slider
+    @dialog_id = VOH_DISCUSSION_ID
+    @dialog = Dialog.includes(:creator).find(@dialog_id)
+    @dsection = 'info'
+    
+    @conversations.communities.each do |com|
+      
+      
+    end
+    
+        
   end
 
   private

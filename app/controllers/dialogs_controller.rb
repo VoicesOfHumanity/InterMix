@@ -62,6 +62,7 @@ class DialogsController < ApplicationController
     @dialog_id = VOH_DISCUSSION_ID
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
+    @top_posts = params[:top_posts].to_i
     @network_id = params[:network_id].to_i
     
     comtag_before = session.has_key?(:comtag) ? session[:comtag] : ''
@@ -115,7 +116,9 @@ class DialogsController < ApplicationController
       logger.info("dialogs#slider in main")
     end
 
-    if @show_result == 1
+    if @top_posts == 1
+      @dsection = 'top'
+    elsif @show_result == 1
       @dsection = 'meta'
     else
       @dsection = 'list'

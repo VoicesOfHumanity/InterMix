@@ -120,6 +120,10 @@ class NetworksController < ApplicationController
         end
         @network.communityarray = comarray
         @network.save
+        
+        # Find and mark any existing messages that fit the criteria
+        
+        
       end     
       #redirect_to @network, notice: 'Network was successfully created.'
       redirect_to '/networks/my', notice: 'Network was successfully created.'
