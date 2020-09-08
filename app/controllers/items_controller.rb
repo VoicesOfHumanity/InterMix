@@ -1909,11 +1909,37 @@ class ItemsController < ApplicationController
       
       @title = ""
       crit[:show_result] = show_result
+      crit[:top_posts] = top_posts
+      logger.info("items#geoslider_update show_results:#{crit[:show_result]} top_posts:#{crit[:top_posts]}")
 
       @data = {}  
   
-      if top_posts
-        # Select one post
+      if top_posts and @conversation and @conversation.together_apart == 'apart'
+        # Select one post for each community
+        
+        for com in @conversation.communities
+
+          crit[:comtag] = com.tagname
+
+          items,ratings,@title = Item.get_items(crit,current_participant)
+          @itemsproc, @extras = Item.get_itemsproc(items,ratings,current_participant.id)
+          @sortby = '*value*'
+          @items = Item.get_sorted(items,@itemsproc,@sortby,false)
+          if @items.length > 0 and ratings.length > 0
+            if @itemsproc.has_key?(@items[0].id) and @itemsproc[@items[0].id]['votes'] > 0 and @itemsproc[@items[0].id]['value'] > 0
+              item = @items[0]
+              iproc = @itemsproc[item.id]
+            end
+          end
+          
+        
+          @data[com.tagname] = {name: com.fullname, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras}
+        
+        end
+        
+        @crit = crit
+    
+        render :partial=>'top_posts'
         
       elsif show_result
         # If we're showing results, then add up results for the required gender and age combinations

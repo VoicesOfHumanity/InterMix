@@ -31,7 +31,7 @@
     <input type="hidden" id="datefixed" value="<%= @datefixed %>">
     <input type="hidden" id="datefrom" value="<%= @datefrom %>">
     <input type="hidden" id="comtag" value="<%= @comtag %>">
-    <input type="hidden" id="messtag" value="<%= @messtag %>">
+    <input type="hidden" id="messtag" value="<%= @messtag %>">    
     
   </div>
 
@@ -207,6 +207,7 @@
 <input type="hidden" name="batch_size" id="batch_size" value="<%= (@batch_size || 4).to_i %>">
 <input type="hidden" id="from" name="from" value="geoslider">
 <input type="hidden" id="insection" name="insection" value="<%= @in %>">
+<input type="hidden" name="top_posts" id="top_posts" value="<%= @top_posts.to_i %>">
 
 <div id="newforumitem" class="newforumitem" style="display:none"></div>
 
@@ -249,7 +250,7 @@ $(function() {
 });
 var messtag_changed = false;
 function per_reload(first,num,whatchanged,page,go_item) {
-  console.log('whatchanged:'+whatchanged);
+  console.log('per_reload() whatchanged:'+whatchanged);
 	if (editingid>0) {
 	    alert("Please save or cancel the edit that is in progress");
 	    return;
@@ -317,6 +318,7 @@ function per_reload(first,num,whatchanged,page,go_item) {
   var showfollow = <%= params[:showfollow].to_i == 1 ? 1 : 0 %>;
   
   var show_result = $('input[name=show_result]:checked').val();
+  var top_posts = $('#top_posts').val();
   //checkbox
   //var meta_3 = $("input[name='meta_3[]']:checked").map(function(){
   //  return $(this).val();
@@ -359,7 +361,7 @@ function per_reload(first,num,whatchanged,page,go_item) {
   }
   var nvaction = nvaction_on ? 1 : 0
   $('#newthreadbutton').prop('disabled', false);
-  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic}
+  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic}
   
   //nvaction_included: (nvaction_included ? 1 : 0),
   

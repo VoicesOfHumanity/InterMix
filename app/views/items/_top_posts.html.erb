@@ -1,0 +1,66 @@
+<h3>Top Posts: <%=raw @title %>
+<% if @conversation %>
+  <br>My Perspective: <%= @perspective %>
+  <% if @community_list and @community_list.length > 1 -%>
+    &nbsp;&nbsp;
+    <%= select_tag "chg_com", options_for_select([['Change Perspective','']]+@community_list), :onchange => 'chg_community()' %>
+  <% end -%>
+  <% if @topic.to_s != '' -%>
+    <br>Topic: <%= @topic_title || @topic.capitalize %>
+  <% end -%>
+<% end -%>  
+</h3>
+
+<% if @period -%>
+<p>These posts are for the period "<%= @period.name %>"</p>
+<% end -%>
+
+<div style="border:1px solid #000;padding:0px 0 0 0;margin-bottom:20px;display:<%= @showing_options=='more' ? 'block' : 'none' %>" id="options_top">
+  <%= render partial: 'items/geoslider_result_options', locals: {num: 1} %>
+</div>
+
+<% if params[:showratings].to_i == 1 -%>
+<p>crit: <%= @crit.inspect %></p>
+<% end -%>
+
+<% @data.each do |name,info| -%>
+  <h3><%= info[:name ]%></h3>
+    
+  <% if info[:item] -%>
+    <% if params[:showratings].to_i == 1 -%>
+      <p>[winner out of <%= info[:itemcount] %> items and <%= info[:ratingcount]%> ratings:]</p>
+    <% end -%>
+    <div class="forumitem forumitemplain forummain forum1">
+      <%= render :partial => "items/item", :locals => { :item => info[:item], :itemproc=>info[:iproc], :is_reply=>false, :from=>'result', :odd_or_even=>1, :top=>0, :exp_item_id=>0 } %>
+        <div>
+        <% if false -%>
+        [<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result">see all in the forum list</a>]
+        <% end -%>
+      </div>
+		</div>
+    <% if params[:showratings].to_i == 1 and @extras and @extras.has_key?('regression') -%>
+    <div>
+    Regression: <%=raw info[:extras]['regression'] -%><br>
+    </div>
+    <% end -%>
+  <% elsif params[:showratings].to_i == 1 -%>
+    <p>[no winner out of <%= info[:itemcount] %> items and <%= info[:ratingcount]%> ratings]</p>   
+  <% else -%>
+    <p>[no winner]</p>
+  <% end -%>
+
+<% end -%>
+
+<div style="border:1px solid #000;padding:0px 0 0 0;margin-bottom:20px;" id="options_bottom">
+  <%= render partial: 'items/geoslider_result_options', locals: {num: 2} %>
+</div>
+
+<script>
+var showing_period_id = <%= @period ? @period.id : 0 %>;
+if ($('#period_id').length && $('#period_id').val()!=showing_period_id) {
+  $('#period_id').val(showing_period_id);
+}
+$('.thumbupdown').hover(function(){thumbhover(this,'in')},function(){thumbhover(this,'out')});
+var page = 1;
+var show_result = <%= @show_result ? 1 : 0 %>;
+</script>
