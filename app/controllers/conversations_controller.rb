@@ -71,6 +71,7 @@ class ConversationsController < ApplicationController
   # GET /conversations/1
   def show
     @section = 'conversations'
+    @in = 'conversation'
     
     # Stuff that's needed because we show the menu from the slider
     @dialog_id = VOH_DISCUSSION_ID
@@ -134,6 +135,7 @@ class ConversationsController < ApplicationController
   # GET /conversations/1/edit
   def edit
     @section = 'conversations'
+    @in = 'conversation'
 
     # Stuff that's needed because we show the menu from the slider
     @dialog_id = VOH_DISCUSSION_ID

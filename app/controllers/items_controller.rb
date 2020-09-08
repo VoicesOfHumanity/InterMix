@@ -1762,9 +1762,9 @@ class ItemsController < ApplicationController
         if @in == 'conversation'
           together_apart = (moon_rec.new_or_full == 'full') ? 'apart' : 'together'
           drange = "#{together_apart} #{dstart} - #{dend}"
-          if today > xstart.to_date.strftime('%Y-%m-%d') and today <= xend.to_date.strftime('%Y-%m-%d')
-            @datefixed = xrange
-          end
+          #if today > xstart.to_date.strftime('%Y-%m-%d') and today <= xend.to_date.strftime('%Y-%m-%d')
+          #  @datefixed = xrange
+          #end
         else
           drange = "#{moon_rec.new_or_full} moon #{dstart} - #{dend}"
         end
