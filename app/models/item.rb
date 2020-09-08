@@ -1635,6 +1635,7 @@ class Item < ActiveRecord::Base
       # representing_com messages can only be seen if one is in that comtag
       if @conversation.together_apart == 'apart'
         if crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+          logger.info("item#get_items limit to representing_com:#{crit[:comtag].downcase}")
           items = items.where("representing_com='public' or lower(representing_com)='#{crit[:comtag].downcase}'")
         else
           items = items.where("representing_com='public'")        
