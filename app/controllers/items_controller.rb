@@ -1737,6 +1737,7 @@ class ItemsController < ApplicationController
       @datetype = params[:datetype].to_s    # fixed or range
       @datefixed = params[:datefixed].to_s  # day, week, month, [moon ranges, like 2016-03-08_2017-06-23]
       @datefrom = params[:datefrom].to_s    # [date]
+      @together_apart = ""
 
       #MOONS = {
       #  '2016-03-08_2017-06-23' => "March 8, 2016 - June 23, 2017",
@@ -1811,6 +1812,11 @@ class ItemsController < ApplicationController
           xarr = @datefixed.split('_')
           @datefromuse = xarr[0]
           @datefromto = xarr[1]
+          for moon in @moons
+            if moon[1] == @datefixed 
+              @together_apart = moon[0].partition(" ").first.capitalize
+            end
+          end
         end
         logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype} datefixed:#{@datefixed}")
       else

@@ -14,8 +14,8 @@ else
   FACEBOOK_APP_ID          = '151526481561013'
   FACEBOOK_API_SECRET      = '3653366f2b6d4778e09db3d666d1fedf'
   VOL_LOGO = "/images/data/photos/7/67.jpg"
-  INT_CONVERSATION_ID = 1
-  INT_CONVERSATION_CODE = 'UNgoals4cities'
+  INT_CONVERSATION_ID = 2
+  INT_CONVERSATION_CODE = 'international'
 end
 
 DATADIR = '/home/apps/intermix/shared/data'

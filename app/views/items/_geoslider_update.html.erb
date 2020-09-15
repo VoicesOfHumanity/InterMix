@@ -137,4 +137,11 @@ var show_result = <%= @show_result ? 1 : 0 %>;
   var about_link =  '<%= ( @community and @comtag.to_s!='' and @comtag!='*my*' ) ? "/communities/#{@community.id}" : "/dialogs/#{VOH_DISCUSSION_ID}/view" %>';
 <% end -%>
 $('#about_a').attr('href',about_link);
+<% if @conversation -%>
+  <% txt = @conversation.name %>
+  <% if @datetype == 'fixed' and @together_apart != '' %>
+    <% txt += " - #{@together_apart}" %>
+  <% end %>
+  $('#top_forum_header').html("<%= txt %>");
+<% end -%>
 </script>
