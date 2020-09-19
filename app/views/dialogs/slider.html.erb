@@ -200,7 +200,7 @@
 <input type="hidden" name="conversation_id" id="conversation_id" value="<%= @conversation_id %>">
 <input type="hidden" name="dialog_id" id="dialog_id" value="<%= @dialog_id %>">
 <input type="hidden" name="in_dialog_id" id="in_dialog_id" value="<%= @dialog_id %>">
-<input type="hidden" id="in_conversation" value="<%= @in_conversation ? 1 : 0 %>">
+<input type="hidden" id="in_conversation" value="<%= @conversation_id.to_i > 0 ? 1 : 0 %>">
 <input type="hidden" id="perspective" value="<%= @perspective.to_s %>">
 <input type="hidden" name="geo_level" id="geo_level" value="1">
 <input type="hidden" name="batch_level" id="batch_level" value="<%= (@batch_level || 1).to_i %>">
@@ -208,6 +208,11 @@
 <input type="hidden" id="from" name="from" value="geoslider">
 <input type="hidden" id="insection" name="insection" value="<%= @in %>">
 <input type="hidden" name="top_posts" id="top_posts" value="<%= @top_posts.to_i %>">
+
+<input type="hidden" id="cur_moon_new_new" value='<%= @cur_moon_new_new %>'>
+<input type="hidden" id="cur_moon_full_full" value='<%= @cur_moon_full_full %>'>
+<input type="hidden" id="cur_moon_new_full" value='<%= @cur_moon_new_full %>'>
+<input type="hidden" id="cur_moon_full_new" value='<%= @cur_moon_full_new %>'>
 
 <div id="newforumitem" class="newforumitem" style="display:none"></div>
 

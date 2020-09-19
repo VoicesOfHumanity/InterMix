@@ -1677,6 +1677,11 @@ class ItemsController < ApplicationController
     # forum has show_results == 0
     # results (voices of humanity) has show_results == 1
 
+    @cur_moon_new_new = session[:cur_moon_new_new]
+    @cur_moon_full_full = session[:cur_moon_full_full]
+    @cur_moon_new_full = session[:cur_moon_new_full]
+    @cur_moon_full_new = session[:cur_moon_full_new]
+
     crit = {}
     show_result = nil
     rootonly = nil
@@ -1770,7 +1775,7 @@ class ItemsController < ApplicationController
           drange = "#{moon_rec.new_or_full} moon #{dstart} - #{dend}"
         end
         if @in == 'conversation'
-          if xstart >= month6ago
+          if xstart >= month6ago and xstart <=today
             @moons << [drange,xrange]
           end       
         elsif xstart <= today
@@ -1778,7 +1783,12 @@ class ItemsController < ApplicationController
         end
         xstart = xend
       end
-      if @in == 'conversation' and @datefixed != ''
+      if @in == 'conversation' and @datefixed == ''
+        if @cur_moon_new_full != ''
+          @datefixed = @cur_moon_new_full
+        elsif @cur_moon_new_full != ''
+          @datefixed = @cur_moon_new_full
+        end
       elsif @datetype == 'fixed' and nvaction_changed
         @datefixed = 'month'
       end

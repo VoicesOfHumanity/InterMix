@@ -65,6 +65,11 @@ class DialogsController < ApplicationController
     @top_posts = params[:top_posts].to_i
     @network_id = params[:network_id].to_i
     
+    @cur_moon_new_new = session[:cur_moon_new_new]
+    @cur_moon_full_full = session[:cur_moon_full_full]
+    @cur_moon_new_full = session[:cur_moon_new_full]
+    @cur_moon_full_new = session[:cur_moon_full_new]
+    
     comtag_before = session.has_key?(:comtag) ? session[:comtag] : ''
 
     @conv = ''
@@ -151,6 +156,13 @@ class DialogsController < ApplicationController
     @messtag = ''
     @datetype = 'fixed'
     @datefixed = 'month'
+    if @in == 'conversation'
+      if @cur_moon_new_full != ''
+        @datefixed = @cur_moon_new_full
+      elsif @cur_moon_new_full != ''
+        @datefixed = @cur_moon_new_full
+      end      
+    end
     @datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
     @sortby = (@in == 'main' ? 'items.id desc' : '*value*')
     @threads = 'flat'

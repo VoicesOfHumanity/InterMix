@@ -619,6 +619,20 @@ function saveitem() {
 					replyingid = 0;
 					editingid = 0;
 					in_new_item = 0;
+          
+          if ($('#in_conversation').val()=="1") {
+            var cur_moon_new_full = $('#cur_moon_new_full').val();
+            var cur_moon_full_new = $('#cur_moon_full_new').val();
+            if (cur_moon_new_full != '') {
+              var cur_moon = cur_moon_new_full;            
+            } else {
+              var cur_moon = cur_moon_full_new;
+            }
+            console.log("current moon: "+cur_moon);
+            $("#datefixed2").val(cur_moon);
+            $("#datefixed").val(cur_moon);
+          }
+          
 					per_reload();
 					//window.location.hash = '#item_' + results['item_id'];
 				} else if (results['item_id']) {

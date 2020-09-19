@@ -679,6 +679,64 @@ class ApplicationController < ActionController::Base
       if not session.has_key?(:global_got) or session[:global_got] < Time.now.to_i - 3600
         session[:global_got] = Time.now.to_i
         session[:moderated_communities] = Community.where(moderated: true).collect {|r| r.tagname }
+        # Figure out what moon phase we're in
+        # We need the new-new moon period (for default order out of chaos)
+        # full-full period when Non-violent action is on
+        # new-full apart for conversation
+        # full-new together for conversation
+        
+        cur_moon_new_new = nil
+        cur_moon_full_full = nil
+        cur_moon_new_full = nil
+        cur_moon_full_new = nil
+        
+        last_start_full = nil
+        last_start_new = nil
+        
+        month3ago = (Date.today-90).strftime("%Y-%m-%d")
+        today = Time.now.strftime("%Y-%m-%d")
+        cutoff = 1.month.from_now
+        
+        xstart = month3ago
+        moon_recs = Moon.where("mdate>='#{month3ago}' and mdate<='#{cutoff}'").order(:mdate)
+        for moon_rec in moon_recs
+          xend = moon_rec['mdate'].strftime('%Y-%m-%d')
+          xrange = "#{xstart}_#{xend}"
+          
+          if moon_rec.new_or_full == 'full' and today <= xend and today >= last_start_full
+            cur_moon_full_full = "#{last_start_full}_#{xend}"
+          end
+          if moon_rec.new_or_full == 'new' and today <= xend and today >= last_start_new
+            cur_moon_new_new = "#{last_start_new}_#{xend}"
+          end
+          if moon_rec.new_or_full == 'full' and today <= xend and today >= last_start_new
+            #logger.info("new_full")
+            cur_moon_new_full = "#{last_start_new}_#{xend}"
+          elsif moon_rec.new_or_full == 'full'
+            #logger.info("full moon, but not true that today(#{today})<=#{xend} and today>=#{last_start_new}")
+          end
+          if moon_rec.new_or_full == 'new' and today <= xend and today >= last_start_full
+            cur_moon_full_new = "#{last_start_full}_#{xend}"
+          end
+                      
+          if moon_rec.new_or_full == 'full'
+            last_start_full = moon_rec['mdate'].strftime('%Y-%m-%d')
+            #logger.info("last_start_full:#{last_start_full}")
+          else  
+            last_start_new = moon_rec['mdate'].strftime('%Y-%m-%d')
+            #logger.info("last_start_new:#{last_start_new}")
+          end
+          
+          xstart = xend
+        end
+        #logger.info("cur_moon_new_new: #{cur_moon_new_new}")
+        #logger.info("cur_moon_full_full: #{cur_moon_full_full}")
+        #logger.info("cur_moon_new_full: #{cur_moon_new_full}")
+        #logger.info("cur_moon_full_new: #{cur_moon_full_new}")
+        session[:cur_moon_new_new] = cur_moon_new_new
+        session[:cur_moon_full_full] = cur_moon_full_full
+        session[:cur_moon_new_full] = cur_moon_new_full
+        session[:cur_moon_full_new] = cur_moon_full_new
       end
     end
     
