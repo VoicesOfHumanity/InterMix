@@ -247,6 +247,27 @@ class DialogsController < ApplicationController
       @conversation = Conversation.find_by_shortname(@conv)
       @conversation_id = @conversation ? @conversation.id : 0
     end
+    
+    if @in == 'conversation' and @conversation and @conversation.id == INT_CONVERSATION_ID
+      #-- If we're going to the international conversation, make sure they're a member of their country community
+      country = nil
+      if current_participant.country_code and current_participant.country_code.to_s != ''
+        country = Geocountry.where(iso: current_participant.country_code).first
+      end
+      if not country and current_participant.country_name and current_participant.country_name.to_s != ''
+        country = Geocountry.where(name: current_participant.country_name).first
+      end
+      if country
+        community = Community.where(context: 'nation', context_code: country.iso3).first
+        if community
+          if not current_participant.tag_list_downcase.include?(community.tagname.downcase)
+            current_participant.tag_list.add(community.tagname)
+            current_participant.save!
+          end
+        end
+      end
+    end
+    
     @communities = []
     if @conversation
       # If the user is in several communities in the conversation
