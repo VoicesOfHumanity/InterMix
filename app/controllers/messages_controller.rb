@@ -112,6 +112,7 @@ class MessagesController < ApplicationController
   def create
     @from = params[:from] || ''
     @response_to_id = params[:response_to_id].to_i
+    @content = params[:message][:message]
     if params[:message][:to_group_id].to_i > 0
       #-- A message to all members of a group who allow it
       tosend = messsent = emailsent = 0
@@ -124,7 +125,8 @@ class MessagesController < ApplicationController
         @message.to_participant_id = group_participant.participant.id if group_participant.participant
         @message.to_group_id = params[:message][:to_group_id]
         @message.subject = params[:message][:subject]
-        @message.message = params[:message][:message]  
+        @recipient = Participant.find_by_id(@message.to_participant_id)
+        @message.message = process_content(@content, @recipient)
         if @message.save     
           messsent += 1
           if group_participant.participant and group_participant.participant.private_email == 'instant'
@@ -142,8 +144,11 @@ class MessagesController < ApplicationController
       render plain: "#{messsent} of #{tosend} messages sent. #{emailsent} sent by e-mail"
     else
       @message = Message.new(message_params)
+      @recipient = Participant.find_by_id(@message.to_participant_id)
+      @content = @message.message
       @message.from_participant_id = current_participant.id
       @message.sendmethod = 'web'
+      @message.message = process_content(@content, @recipient)
       @message.sent_at = Time.now
       if @message.save
         @recipient = Participant.find_by_id(@message.to_participant_id) 
@@ -186,6 +191,20 @@ class MessagesController < ApplicationController
 #  end
 
   private
+
+  def process_content(content, recipient)
+    # add auth_token to some links like:
+    # https://voh.intermix.org/dialogs/7/slider?conv=international
+    content.gsub!(%r{//.*?#{ROOTDOMAIN}/[^"')<,:;\s]+}) { |s|
+      if s =~ /auth_token=/
+        s
+      else  
+        s += (s =~ /\?/) ? "&" : "?"
+        s += "auth_token=#{recipient.authentication_token}"
+      end  
+    }
+    return(content)
+  end
 
   def message_params
     params.require(:message).permit(
