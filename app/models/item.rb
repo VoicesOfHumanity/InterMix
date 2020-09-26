@@ -10,7 +10,9 @@ class Item < ActiveRecord::Base
   
   has_many :item_subscribes
   has_many :subscribers, class_name: "Participant", :through => :item_subscribes
-    
+  
+  belongs_to :orig_item, class_name: "Item", foreign_key: :reply_to, optional: true
+  
   serialize :oembed_response
   
   #-- We store the result of the voting_ok check in attributes. Is it ok? Explanation? For what user?
@@ -1505,7 +1507,7 @@ class Item < ActiveRecord::Base
       plist = Participant.tagged_with(network_comtags).collect {|p| p.id}.join(',')
       if plist != ''
         items = items.where("participants.id in (#{plist})")
-        items = items.where("intra_com='public'")            
+        items = items.where("items.intra_com='public'")            
       else
         items = items.where("1=0")
       end
@@ -1592,12 +1594,12 @@ class Item < ActiveRecord::Base
       #ratings = ratings.where("participants.indigenous=1")
       @conversation = Conversation.find_by_id(crit[:conversation_id])
       #title += " | #{@conversation.name}" if @conversation
-      items = items.where("intra_com='public'")
-      items = items.where("intra_conv='public' or intra_conv='#{@conversation.shortname}'")
+      items = items.where("items.intra_com='public'")
+      items = items.where("items.intra_conv='public' or items.intra_conv='#{@conversation.shortname}'")
       if crit[:topic].to_s != ''
         @topic = crit[:topic]
         items = items.where(topic: @topic)
-      end
+      end        
     else
       items = items.where("intra_conv='public'")        
     end
@@ -1636,10 +1638,18 @@ class Item < ActiveRecord::Base
       if @conversation.together_apart == 'apart'
         if crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
           logger.info("item#get_items limit to representing_com:#{crit[:comtag].downcase}")
-          items = items.where("representing_com='public' or lower(representing_com)='#{crit[:comtag].downcase}'")
+          items = items.where("items.representing_com='public' or lower(items.representing_com)='#{crit[:comtag].downcase}'")
         else
-          items = items.where("representing_com='public'")        
+          items = items.where("items.representing_com='public'")        
+        end    
+        
+        if crit[:conversation_id] == INT_CONVERSATION_ID and @conversation.together_apart == 'apart'
+          # If we're in The Nations, in apart mode, don't show comments from other nations
+          #items = items.joins("left ")
+          items = items.where("items.representing_com!=''")
+          items = items.joins("left join items o on (items.reply_to=o.id)").where("items.reply_to=0 or o.representing_com=items.representing_com")    
         end
+            
       end  
       # What about this now??
       #if @conversation.together_apart == 'together'
@@ -1671,7 +1681,7 @@ class Item < ActiveRecord::Base
       end      
       
       # show items from members of any of my groups
-      items = items.where("intra_com='public' or intra_com in (#{comtag_list})")
+      items = items.where("items.intra_com='public' or items.intra_com in (#{comtag_list})")
       
     elsif crit[:comtag].to_s != ''
       title += " | @#{crit[:comtag]}"
@@ -1695,13 +1705,13 @@ class Item < ActiveRecord::Base
       end
 
       # Show items that either are public, or specifically for this community
-      items = items.where("intra_com='public' or intra_com='@#{crit[:comtag]}'")
+      items = items.where("items.intra_com='public' or items.intra_com='@#{crit[:comtag]}'")
 
     #elsif crit[:posted_by].to_i == 0 and not (crit.has_key?(:from) and crit[:from] == 'mail')
     elsif crit[:posted_by].to_i == 0
       
       # show only public items, if there's no community specified, unless we're seeing somebody's wall, or it is a bulk mailing
-      items = items.where("intra_com='public'")
+      items = items.where("items.intra_com='public'")
       
     end
     
@@ -1741,7 +1751,7 @@ class Item < ActiveRecord::Base
       items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
       items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation")
     end
-    
+        
     #puts("sql: #{items.to_sql}")
   
     logger.info("item#get_items #{items.length if items} items and #{ratings.length if ratings} ratings")

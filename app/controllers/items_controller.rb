@@ -528,7 +528,30 @@ class ItemsController < ApplicationController
         tags = tags + get_tags_from_html(@olditem.html_content)
         tags_downcase = get_tags_from_html(@olditem.html_content,true)
 
-        @item.representing_com = @olditem.representing_com
+        if @item.conversation_id > 0 and @item.conversation_id == INT_CONVERSATION_ID and @conversation and @conversation.together_apart == 'apart'
+          country = nil
+          community = nil
+          if current_participant.country_code and current_participant.country_code.to_s != ''
+            country = Geocountry.where(iso: current_participant.country_code).first
+          end
+          if not country and current_participant.country_name and current_participant.country_name.to_s != ''
+            country = Geocountry.where(name: current_participant.country_name).first
+          end
+          if country
+            community = Community.where(context: 'nation', context_code: country.iso3).first
+            if community
+              if not current_participant.tag_list_downcase.include?(community.tagname.downcase)
+                current_participant.tag_list.add(community.tagname)
+                current_participant.save!
+              end
+            end
+          end
+          if community
+            @item.representing_com = community.tagname
+          end
+        else
+          @item.representing_com = @olditem.representing_com
+        end
         
         #logger.info("items#new replying. Existing @comtag:#{@comtag}")
         @comtag = @olditem.intra_com if @olditem.intra_com and @olditem.intra_com != 'public'
