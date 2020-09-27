@@ -496,6 +496,8 @@ class ItemsController < ApplicationController
           if @olditem.posted_by == current_participant.id
             # The author always gets the same conversation
             @item.conversation_id = @olditem.conversation_id
+            # and topic
+            @item.topic = @olditem.topic
           #elsif @is_com_member and @in_conversation
           #@item.conversation_id = @conversation_id
           else
@@ -503,10 +505,12 @@ class ItemsController < ApplicationController
             if not @conversation or @conversation.id != @olditem.conversation_id
               @conversation = Conversation.find_by_id(@olditem.conversation_id)
             end
+            responder_is_in_conversation = false
             if @conversation
               for com in @conversation.communities
                 if current_participant.tag_list_downcase.include?(com.tagname.downcase)
                   @item.conversation_id = @olditem.conversation_id
+                  responder_is_in_conversation = true
                   break
                 end
               end
@@ -529,6 +533,7 @@ class ItemsController < ApplicationController
         tags_downcase = get_tags_from_html(@olditem.html_content,true)
 
         if @item.conversation_id > 0 and @item.conversation_id == INT_CONVERSATION_ID and @conversation and @conversation.together_apart == 'apart'
+          # In The Nations
           country = nil
           community = nil
           if current_participant.country_code and current_participant.country_code.to_s != ''
@@ -551,6 +556,13 @@ class ItemsController < ApplicationController
           end
         else
           @item.representing_com = @olditem.representing_com
+        end
+
+        if @olditem.conversation_id.to_i > 0 and @olditem.representing_com.to_s != ''
+          # Keep the topic only if the responder is NOT in the same community
+          if not current_participant.tag_list_downcase.include?(@olditem.representing_com)
+            @item.topic = @olditem.topic
+          end
         end
         
         #logger.info("items#new replying. Existing @comtag:#{@comtag}")
