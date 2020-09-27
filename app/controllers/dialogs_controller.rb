@@ -100,7 +100,12 @@ class DialogsController < ApplicationController
       else
         @section = 'conversations'
       end
-      @comtag = params[:comtag] if params.has_key?(:comtag)  # might be a - to leave the conversation
+      if params.has_key?(:comtag)
+        # might be a - to leave the conversation
+        @comtag = params[:comtag]
+      else
+        @comtag = ''
+      end
       # Conversations should have conv and comtag specifed in the URL. At first there might only be a conv and no comtag
       logger.info("dialogs#slider in conversation #{@conv}")
     elsif params.has_key?(:network_id)
@@ -242,6 +247,8 @@ class DialogsController < ApplicationController
           end
         end
       end
+      # There are no message tags in conversations
+      @messtag = ''
     end
     if @conv != '' and @conv != '-'
       @conversation = Conversation.find_by_shortname(@conv)
@@ -264,6 +271,12 @@ class DialogsController < ApplicationController
             current_participant.tag_list.add(community.tagname)
             current_participant.save!
           end
+        end
+        @perspective = community.tagname
+        session["cur_perspective_#{@conversation.id}"] = @perspective
+        @is_conv_member = true
+        if @conversation.together_apart == 'apart'
+          @comtag = community.tagname
         end
       end
     end
@@ -340,7 +353,7 @@ class DialogsController < ApplicationController
       redirect_to url
       return      
       
-    elsif @in == 'conversation' and @conv != '-' and @conversation
+    elsif @in == 'conversation' and @conv != '-' and @conversation and @conversation.id != INT_CONVERSATION_ID
       #-- In a conversation, they also need a community/perspective, if there is a suitable one      
       logger.info("dialogs#slider check for conversation perspective")
       @perspective = ''

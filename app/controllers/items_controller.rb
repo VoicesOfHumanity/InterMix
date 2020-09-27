@@ -611,6 +611,7 @@ class ItemsController < ApplicationController
             tags << @conv_own_coms.keys[0]
           end
         end
+        logger.info("itmes#new @conv_own_coms:#{@conv_own_coms} is @comtag:#{@comtag} in there? #{@conv_own_coms.has_key?(@comtag)}")
         if @comtag and @conv_own_coms.has_key?(@comtag)
           @item.representing_com = @comtag
           if not tags_downcase.include? @comtag.downcase
