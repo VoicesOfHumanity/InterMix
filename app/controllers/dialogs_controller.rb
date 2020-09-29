@@ -256,29 +256,71 @@ class DialogsController < ApplicationController
     end
     
     if @in == 'conversation' and @conversation and @conversation.id == INT_CONVERSATION_ID
-      #-- If we're going to the international conversation, make sure they're a member of their country community
-      country = nil
+      #-- If we're going to the international conversation, make sure they're a member of their country communities
+      country1 = nil
+      country2 = nil
+      country1_tag = ''
+      country2_tag = ''
       if current_participant.country_code and current_participant.country_code.to_s != ''
-        country = Geocountry.where(iso: current_participant.country_code).first
+        country1 = Geocountry.where(iso: current_participant.country_code).first
       end
-      if not country and current_participant.country_name and current_participant.country_name.to_s != ''
-        country = Geocountry.where(name: current_participant.country_name).first
+      if not country1 and current_participant.country_name and current_participant.country_name.to_s != ''
+        country1 = Geocountry.where(name: current_participant.country_name).first
       end
-      if country
-        community = Community.where(context: 'nation', context_code: country.iso3).first
+      if country1
+        community = Community.where(context: 'nation', context_code: country1.iso3).first
         if community
+          country1_tag = community.tagname
           if not current_participant.tag_list_downcase.include?(community.tagname.downcase)
-            current_participant.tag_list.add(community.tagname)
+            current_participant.tag_list.add(country1_tag)
             current_participant.save!
           end
-        end
-        @perspective = community.tagname
-        session["cur_perspective_#{@conversation.id}"] = @perspective
-        @is_conv_member = true
-        if @conversation.together_apart == 'apart'
-          @comtag = community.tagname
+        else
+          logger.info("dialogs#slider nation community #{country1.iso3} not found")
         end
       end
+
+      if current_participant.country_code2.to_s == '_I'
+        country2_tag = 'indigenous'
+        if not current_participant.tag_list_downcase.include?('indigenous')
+          current_participant.country_name2 = "Indigenous peoples"
+          current_participant.tag_list.add("indigenous")
+          current_participant.save!     
+        end
+      else
+        if current_participant.country_code2 and current_participant.country_code2.to_s != ''
+          country2 = Geocountry.where(iso: current_participant.country_code2).first
+        end
+        if not country2 and current_participant.country_name2 and current_participant.country_name2.to_s != ''
+          country2 = Geocountry.where(name: current_participant.country_name2).first
+        end
+        if country2
+          community = Community.where(context: 'nation', context_code: country2.iso3).first
+          if community
+            country2_tag = community.tagname
+            if not current_participant.tag_list_downcase.include?(community.tagname.downcase)
+              current_participant.tag_list.add(country2_tag)
+              current_participant.save!
+            end
+          else
+            logger.info("dialogs#slider nation community #{country2.iso3} not found")
+          end
+        end
+      end
+      
+      if @comtag != '' and @comtag == country1_tag
+        @perspective = @comtag
+      elsif @comtag != '' and @comtag == country2_tag
+        @perspective = @comtag
+      else
+        @comtag = country1_tag
+        @perspective = @comtag
+      end
+      session["cur_perspective_#{@conversation.id}"] = @perspective
+      @is_conv_member = true
+      
+      logger.info("dialogs#slider perspective set to #{@perspective} in international conversation")
+      
     end
     
     @communities = []
