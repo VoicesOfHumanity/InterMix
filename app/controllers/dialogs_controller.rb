@@ -161,11 +161,17 @@ class DialogsController < ApplicationController
     @messtag = ''
     @datetype = 'fixed'
     @datefixed = 'month'
+    logger.info("dialogs#slider datefixed initial default: #{@datefixed}")
     if @in == 'conversation'
-      if @cur_moon_new_full != ''
+      logger.info("dialogs#slider @cur_moon_new_full:#{@cur_moon_new_full} @cur_moon_full_new:#{@cur_moon_full_new}")
+      if @cur_moon_new_full.to_s != ''
         @datefixed = @cur_moon_new_full
-      elsif @cur_moon_new_full != ''
-        @datefixed = @cur_moon_new_full
+        logger.info("dialogs#slider datefixed set to #{@cur_moon_new_full} based on @cur_moon_new_full")
+      elsif @cur_moon_full_new.to_s != ''
+        @datefixed = @cur_moon_full_new
+        logger.info("dialogs#slider datefixed set to #{@cur_moon_full_new} based on @cur_moon_full_new")
+      else
+        logger.info("dialogs#slider neither @cur_moon_new_full nor @cur_moon_full_new are set")
       end      
     end
     @datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
@@ -195,6 +201,7 @@ class DialogsController < ApplicationController
       @nvaction = session[:nvaction] if session.has_key?(:nvaction)
       @datetype = session[:datetype] if session.has_key?(:datetype)
       @datefixed = session[:datefixed] if session.has_key?(:datefixed)
+      logger.info("dialogs#slider datefixed set from session to: #{@datefixed}")
       @datefrom = session[:datefrom] if session.has_key?(:datefrom)
       @sortby = session[:list_sortby] if session.has_key?(:list_sortby)
       @threads = session[:list_threads] if session.has_key?(:list_threads)
@@ -221,6 +228,7 @@ class DialogsController < ApplicationController
     session[:geo_level] = @geo_level
     session[:datetype] = @datetype
     session[:datefixed] = @datefixed
+    logger.info("dialogs#slider session[:datefixed] set to #{@datefixed}")
     session[:datefrom] = @datefrom
     session[:list_sortby] = @sortby
     session[:list_threads] = @threads
