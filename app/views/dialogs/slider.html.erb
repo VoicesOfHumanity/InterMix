@@ -64,7 +64,7 @@
     <% if @in == 'conversation' and @conversation.topics.class.name == 'Array' -%>
     <div style="margin: 20px 0 0 0;">
         <b>Topic:</b><br>
-        <input type="radio" name="topic_radio" value="" <%= @topic.to_s == '' and @conversation.default_topic.to_s == '' ? "checked" : "" %> onclick="per_reload()">any topic<br>
+        <input type="radio" name="topic_radio" value="" <%= (@topic.to_s == '*' or (@topic.to_s == '' and @conversation.default_topic.to_s == '')) ? "checked" : "" %> onclick="per_reload()">any topic<br>
         <% @conversation.topics.each do |topic| -%>
           <input type="radio" name="topic_radio" value="<%= topic %>" <%= (topic == @topic or (@topic.to_s == '' and topic == @conversation.default_topic.to_s)) ? "checked" : "" %> onclick="per_reload()"><%=topic %><br>
         <% end -%>
@@ -208,6 +208,7 @@
 <input type="hidden" id="from" name="from" value="geoslider">
 <input type="hidden" id="insection" name="insection" value="<%= @in %>">
 <input type="hidden" name="top_posts" id="top_posts" value="<%= @top_posts.to_i %>">
+<input type="hidden" name="is_first" id="is_first" value="<%= @is_first ? '1' : '0' %>">
 
 <input type="hidden" id="cur_moon_new_new" value='<%= @cur_moon_new_new %>'>
 <input type="hidden" id="cur_moon_full_full" value='<%= @cur_moon_full_full %>'>
@@ -324,6 +325,7 @@ function per_reload(first,num,whatchanged,page,go_item) {
   
   var show_result = $('input[name=show_result]:checked').val();
   var top_posts = $('#top_posts').val();
+  var is_first = $('#is_first').val();
   //checkbox
   //var meta_3 = $("input[name='meta_3[]']:checked").map(function(){
   //  return $(this).val();
@@ -366,7 +368,7 @@ function per_reload(first,num,whatchanged,page,go_item) {
   }
   var nvaction = nvaction_on ? 1 : 0
   $('#newthreadbutton').prop('disabled', false);
-  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic}
+  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic, is_first: is_first}
   
   //nvaction_included: (nvaction_included ? 1 : 0),
   

@@ -1,3 +1,6 @@
+<% if @is_first and @conversation and @topic.to_s != '' and @conversation.default_topic.to_s != '' and @topic == @conversation.default_topic and @items_length == 0%>
+  <script>window.location.href = "/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&topic=*"</script>
+<% end %>
 <h3><%=raw @title %>
 <% if @conversation %>
   <br>My Perspective: <%= @perspective %>
@@ -100,6 +103,7 @@ Regression: <%=raw @extras['regression'] -%><br>
 <%= raw %(<a href="javascript:gotopage(#{@items.total_pages})">&gt;&gt;</a>) if @items.respond_to?('total_pages') and @items.total_pages.to_i>1 and @items.current_page<@items.total_pages %>
 
 <script>
+$("#is_first").val('0');
 $("#geo_level").val(<%= @geo_level %>);
 $("#group_level").val(<%= @group_level %>);
 <% if false -%>

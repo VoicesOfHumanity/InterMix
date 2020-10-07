@@ -1736,6 +1736,8 @@ class ItemsController < ApplicationController
     
       @in = params['in'].to_s
       crit['in'] = @in
+      
+      @is_first = (params[:is_first].to_i == 1)
     
       geo_level = params[:geo_level].to_i
       session[:geo_level] = geo_level

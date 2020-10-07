@@ -64,6 +64,8 @@ class DialogsController < ApplicationController
     @show_result = params[:show_result].to_i
     @top_posts = params[:top_posts].to_i
     @network_id = params[:network_id].to_i
+    @topic = params[:topic].to_s
+    logger.info("dialogs#slider topic:#{@topic}")
     
     @cur_moon_new_new = session[:cur_moon_new_new]
     @cur_moon_full_full = session[:cur_moon_full_full]
@@ -140,6 +142,7 @@ class DialogsController < ApplicationController
     else
       is_new = false
     end
+    @is_first = is_new
     
     # Certain things might be remembered as a cookie, when we move between tabs, but should be reset if we go to another section:
     # comtag (only in main forum)
