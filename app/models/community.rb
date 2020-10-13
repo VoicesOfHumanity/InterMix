@@ -39,6 +39,21 @@ class Community < ActiveRecord::Base
     end
   end
   
+  def activity_count_for_conversation(conversation, period)
+    # period would be something like 2016-03-08_2017-06-23
+    xarr = period.split('_')
+    dstart = xarr[0]
+    dend = xarr[1]
+    
+    plist = Participant.tagged_with(self.tagname).collect {|p| p.id}.join(',')
+    if plist != ''
+      items = Item.includes(:participant).references(:participant).where("participants.id in (#{plist})").where(conversation_id: conversation.id)
+      items = items.tagged_with(self.tagname).where('items.created_at >= ?', dstart).where('items.created_at <= ?', dend).count
+    else
+      return 0
+    end
+  end
+  
   def geo_counts
     members = Participant.tagged_with(self.tagname)
     nations = {}

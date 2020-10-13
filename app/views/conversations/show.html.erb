@@ -62,7 +62,7 @@
         <% if false -%>
       	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
         <% end -%>
-      	<td><%= com.activity_count %></td>
+      	<td><%= com.activity_count_for_conversation(@conversation,@cur_period) %></td>
       	<td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a></td>
       	<td>
               <%

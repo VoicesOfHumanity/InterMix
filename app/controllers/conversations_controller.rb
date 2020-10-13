@@ -78,6 +78,16 @@ class ConversationsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @dsection = 'info'
     
+    @cur_moon_new_new = session[:cur_moon_new_new]
+    @cur_moon_full_full = session[:cur_moon_full_full]
+    @cur_moon_new_full = session[:cur_moon_new_full]
+    @cur_moon_full_new = session[:cur_moon_full_new]
+    if @cur_moon_new_full.to_s != ''
+      @cur_period = @cur_moon_new_full
+    elsif @cur_moon_full_new.to_s != ''
+      @cur_period = @cur_moon_full_new
+    end
+    
     @perspectives = {}
     if params[:perspective].to_s != ''
       @cur_perspective = params[:perspective]
