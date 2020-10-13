@@ -14,6 +14,13 @@ class Admin::CommunitiesController < ApplicationController
     community_id = params[:community_id].to_i
 
     @context = params[:context].to_s
+    
+    @major = params[:major].to_i == 1
+    @more = params[:more].to_i == 1
+    @ungoals = params[:ungoals].to_i == 1
+    @sustdev = params[:sustdev].to_i == 1
+    @bold = params[:bold].to_i == 1
+    
     @per_page = (params[:per_page] || 30).to_i
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
@@ -26,6 +33,21 @@ class Admin::CommunitiesController < ApplicationController
     xcond = "1=1"
     if @context != '*'
       xcond = "context='#{@context}'"
+    end
+    if @major
+      xcond += " and major=1"
+    end
+    if @more
+      xcond += " and more=1"
+    end
+    if @ungoals
+      xcond += " and ungoals=1"
+    end
+    if @sustdev
+      xcond += " and sustdev=1"
+    end
+    if @bold
+      xcond += " and bold=1"
     end
 
     if community_id>0
