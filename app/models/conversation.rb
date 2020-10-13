@@ -9,10 +9,19 @@ class Conversation < ApplicationRecord
   attr_accessor :perspective
   attr_accessor :perspectives
   
-  def activity_count
+  def activity_count(period='')
     #-- Count the number of messages in the conversation in the past month 
-    #Item.where("intra_com='@#{self.tagname}'").where('created_at > ?', 31.days.ago).count    
-    Item.where("conversation_id=#{self.id}").where('created_at > ?', 31.days.ago).count
+    #Item.where("conversation_id=#{self.id}").where('created_at > ?', 31.days.ago).count
+    # period would be something like 2016-03-08_2017-06-23
+    if period
+      xarr = period.split('_')
+      dstart = xarr[0]
+      dend = xarr[1]
+      xcount = Item.where("conversation_id=#{self.id}").where('items.created_at >= ?', dstart).where('items.created_at <= ?', dend).count
+    else
+      xcount = Item.where("conversation_id=#{self.id}").where('created_at > ?', 31.days.ago).count      
+    end
+    xcount
   end
   
   def is_member_of(p)

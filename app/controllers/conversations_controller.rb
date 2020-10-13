@@ -14,6 +14,8 @@ class ConversationsController < ApplicationController
     @csection = 'my' if @csection == ''
     @sort = params[:sort] || 'activity'
     
+    @cur_period = get_current_conv_period
+    
     conversations = []
     if @csection == 'my'
       conversations2 = Conversation.all
@@ -32,7 +34,8 @@ class ConversationsController < ApplicationController
     
     @conversations = []
     conversations.uniq.each do |conversation|
-      conversation.activity = conversation.activity_count
+      conversation.activity = conversation.activity_count(@cur_period)
+      
       # Pick an appropriate perspective
       perspectives = {}    
       for com in conversation.communities
@@ -78,16 +81,8 @@ class ConversationsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @dsection = 'info'
     
-    @cur_moon_new_new = session[:cur_moon_new_new]
-    @cur_moon_full_full = session[:cur_moon_full_full]
-    @cur_moon_new_full = session[:cur_moon_new_full]
-    @cur_moon_full_new = session[:cur_moon_full_new]
-    if @cur_moon_new_full.to_s != ''
-      @cur_period = @cur_moon_new_full
-    elsif @cur_moon_full_new.to_s != ''
-      @cur_period = @cur_moon_full_new
-    end
-    
+    @cur_period = get_current_conv_period
+        
     @perspectives = {}
     if params[:perspective].to_s != ''
       @cur_perspective = params[:perspective]
@@ -252,6 +247,20 @@ class ConversationsController < ApplicationController
         #  @is_moderator = true
         #end
       end
+    end
+    
+    def get_current_conv_period
+      @cur_period = ""
+      @cur_moon_new_new = session[:cur_moon_new_new]
+      @cur_moon_full_full = session[:cur_moon_full_full]
+      @cur_moon_new_full = session[:cur_moon_new_full]
+      @cur_moon_full_new = session[:cur_moon_full_new]
+      if @cur_moon_new_full.to_s != ''
+        @cur_period = @cur_moon_new_full
+      elsif @cur_moon_full_new.to_s != ''
+        @cur_period = @cur_moon_full_new
+      end
+      return @cur_period
     end
     
 end
