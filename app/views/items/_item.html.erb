@@ -187,6 +187,16 @@ end
 	<% end -%>
 	
 	
+  <% if item.conversation_id.to_i > 0 -%>
+    <div class="conversation_info">This item was posted by a member of #<%= item.representing_com.to_s != '' ? item.representing_com : '???' %>
+      <% if item.reply_to.to_i > 0 and item.orig_item -%>
+      as a comment on a #<%= item.orig_item.representing_com.to_s !='' ? item.orig_item.representing_com : '???' %> item
+      <% end -%>
+      in the <%= item.conversation.name %> conversation
+      in <%= item.conversation.together_apart %> mode        
+    </div>
+  <% end -%>
+  
 	<div class="iteminfo" id="iteminfo_<%= item.id %>">
     <div class="iteminfopic">
     <% if item.participant and item.participant.picture.exists? then -%>
@@ -216,7 +226,7 @@ end
 		<a href="/participant/<%= item.posted_by %>/wall"><%= item.participant ? item.participant.name : item.posted_by %></a>
 		<% end -%>
   	</div>
-		
+		    
 		<% if @show_meta and item.participant and item.participant.metamap_node_participants and (((item.dialog and (@from.to_s == 'dialog' or @from.to_s == 'result') and item.period and item.period_id != item.dialog.current_period) or not item.period or not item.is_first_in_thread) or (@from.to_s != 'dialog' and @from.to_s != 'result')) -%>
 		<div class="iteminfotxt">
 		  (<%= item.participant.metamap_node_participants.collect{|mnp| mnp.metamap_node.name}.join('|') %>)

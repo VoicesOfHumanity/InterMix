@@ -355,6 +355,12 @@ div.forumitem div.item_expand:hover {
 	background-color: #ff9;	
 }
 
+div.forumitem div.conversation_info {
+	color: #999;
+  font-size: 90%;
+	clear: both;
+  padding-bottom: 10px;
+}
 div.forumitem div.iteminfo {
 	color: #999;
 	min-height: 18px;
