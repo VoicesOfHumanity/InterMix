@@ -629,6 +629,8 @@ function saveitem() {
               var cur_moon = cur_moon_full_new;
             }
             console.log("current moon: "+cur_moon);
+            $("#datetype2_fixed").prop("checked", true)
+            $("#datetype_fixed").prop("checked", true)
             $("#datefixed2").val(cur_moon);
             $("#datefixed").val(cur_moon);
           }
