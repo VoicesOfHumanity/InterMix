@@ -281,6 +281,10 @@ function per_reload(first,num,whatchanged,page,go_item) {
     go_item = 0;
   }
   
+  if (whatchanged=='datefixed') {
+    $("#datetype2_fixed").prop("checked", true);
+    $("#datetype_fixed").prop("checked", true);
+  }
 
  	$('#per_main').css('opacity','0.5');
   cur_comtag = $("input[name='comtag_radio']:checked").val();
