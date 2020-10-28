@@ -326,9 +326,10 @@ class DialogsController < ApplicationController
         @perspective = @comtag
         logger.info("dialogs#slider perspective set to #{@perspective} in international conversation, from @comtag, same as country2")
       else
+        was_comtag = @comtag
         @comtag = country1_tag
         @perspective = @comtag
-        logger.info("dialogs#slider perspective set to #{@perspective} (country1) in international conversation, because it was something else")
+        logger.info("dialogs#slider perspective set to #{@perspective} (country1) in international conversation, because it was something else (#{was_comtag})")
       end
       session["cur_perspective_#{@conversation.id}"] = @perspective
       @is_conv_member = true
