@@ -321,16 +321,18 @@ class DialogsController < ApplicationController
       
       if @comtag != '' and @comtag == country1_tag
         @perspective = @comtag
+        logger.info("dialogs#slider perspective set to #{@perspective} in international conversation, from @comtag, same as country1")
       elsif @comtag != '' and @comtag == country2_tag
         @perspective = @comtag
+        logger.info("dialogs#slider perspective set to #{@perspective} in international conversation, from @comtag, same as country2")
       else
         @comtag = country1_tag
         @perspective = @comtag
+        logger.info("dialogs#slider perspective set to #{@perspective} (country1) in international conversation, because it was something else")
       end
       session["cur_perspective_#{@conversation.id}"] = @perspective
       @is_conv_member = true
       
-      logger.info("dialogs#slider perspective set to #{@perspective} in international conversation")
       
     end
     
