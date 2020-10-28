@@ -330,12 +330,12 @@ class DialogsController < ApplicationController
       else
         @comtag = country1_tag
         @perspective = @comtag
-        logger.info("dialogs#slider perspective set to #{@perspective} (country1) in international conversation, because it was something else (#{was_comtag})")
+        logger.info("dialogs#slider perspective set to #{@perspective} (country1) in international conversation, because it was something else (#{was_comtag}). Redirecting.")
         if @comtag != was_comtag
           url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
           url += "&show_result=1" if @show_result == 1
-          #redirect_to url
-          #return
+          redirect_to url
+          return
         end
       end
       session["cur_perspective_#{@conversation.id}"] = @perspective

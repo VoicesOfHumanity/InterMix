@@ -1,5 +1,7 @@
 <% if @is_first and @conversation and @topic.to_s != '' and @conversation.default_topic.to_s != '' and @topic == @conversation.default_topic and @items_length == 0%>
-  <script>window.location.href = "/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&topic=*"</script>
+  <% url = "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{@conversation.shortname}&topic=*" %>
+  <% url += "&comtag=#{@comtag}" if @comtag != '' %>
+  <script>window.location.href = <%= url %></script>
 <% end %>
 <h3><%=raw @title %>
 <% if @conversation %>
