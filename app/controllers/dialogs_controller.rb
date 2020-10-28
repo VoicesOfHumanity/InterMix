@@ -319,6 +319,7 @@ class DialogsController < ApplicationController
         end
       end
       
+      was_comtag = @comtag
       if @comtag != '' and @comtag == country1_tag
         @perspective = @comtag
         logger.info("dialogs#slider perspective set to #{@perspective} in international conversation, from @comtag, same as country1")
@@ -326,14 +327,18 @@ class DialogsController < ApplicationController
         @perspective = @comtag
         logger.info("dialogs#slider perspective set to #{@perspective} in international conversation, from @comtag, same as country2")
       else
-        was_comtag = @comtag
         @comtag = country1_tag
         @perspective = @comtag
         logger.info("dialogs#slider perspective set to #{@perspective} (country1) in international conversation, because it was something else (#{was_comtag})")
+        if @comtag != was_comtag
+          url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
+          url += "&show_result=1" if @show_result == 1
+          redirect_to url
+          return
+        end
       end
       session["cur_perspective_#{@conversation.id}"] = @perspective
       @is_conv_member = true
-      
       
     end
     
