@@ -82,58 +82,22 @@
       <div style="width:25%;float:left;font-weight:bold">Communities<br>check to join</div>
       <div style="width:75%;float:left">
         <% for com in @major_communities -%>  
-        <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
-        <input type="checkbox" id="check_<%= com.tagname %>_mc" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <%= com.fullname %><br>
+          <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
+          <input type="checkbox" id="check_<%= com.tagname %>_mc" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <%= com.fullname %><br>
         <% end -%>  
         [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>  
         <div id="more_com" style="display:none">  
         <% for com in @ungoals_communities -%>  
-        <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
-        <input type="checkbox" id="check_<%= com.tagname %>_ug" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+          <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
+          <input type="checkbox" id="check_<%= com.tagname %>_ug" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
         <% end -%>  
         <% for com in @sustdev_communities -%>  
-        <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
-        <input type="checkbox" id="check_<%= com.tagname %>_sd" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
+          <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
+          <input type="checkbox" id="check_<%= com.tagname %>_sd" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
         <% end -%>  
       </div>  
-        
-        <% if false -%>
-          <% GLOBAL_COMMUNITIES.each do |tag| -%>
-            <% checked = @participant.tag_list_downcase.include?(tag) ? 'checked' : '' %>
-            <input type="checkbox" id="check_<%= tag %>_gc" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
-          <% end -%>
-          [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>
-          <div id="more_com" style="display:none">
-            <% UNGOAL_COMMUNITIES.each do |tag| -%>
-              <% b = BOLD_COMMUNITIES.include?(tag) %>
-              <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
-              <input type="checkbox" id="check_<%= tag %>_ug" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
-            <% end -%>
-            <% SUSTDEV_COMMUNITIES.each do |tag| -%>
-              <% b = BOLD_COMMUNITIES.include?(tag) %>        
-              <% checked = @participant.tag_list.include?(tag) ? 'checked' : '' %>
-              <input type="checkbox" id="check_<%= tag %>_sd" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check" <%= checked %>> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
-            <% end -%>
-          <% end -%>
-      </div>
     </li>  
-    
-    <% if false -%>
-    <li class="select required">
-      <label class="label">My custom community tags</label>
-      <select size="5" id="comtags" style="width: 150px;float:left">
-        <% for tag in @participant.tag_list -%>
-          <% if not DEFAULT_COMMUNITIES.keys.include?(tag) -%>
-          <option><%= tag %></option>
-          <% end -%>
-        <% end -%>
-      </select>
-      <div style="width: 160px;float:left;padding: 0 0 0 5px">
-        <input type="button" value="&lt; add" onclick="addtag()"> <input type="text" style="width: 100px" id="tag2add" maxlength="14"><br>
-        <input type="button" value="&gt; remove" onclick="remtag()">
-      </div>
-    </li>
-    <% end -%>   
+
       
 	<% end %>
 	<br>
