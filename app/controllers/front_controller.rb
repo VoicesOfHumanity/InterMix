@@ -1184,6 +1184,8 @@ class FrontController < ApplicationController
         else    
           @content += "<p>Thank you for confirming! You can now go to: <a href=\"//#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider\">https://#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider</a> to see the messages. You are already logged in.</p>"
         end
+        redirect_to "/"
+        return
       elsif @group  
         cdata['domain'] = "#{@group.shortname}.#{ROOTDOMAIN}" if @group.shortname.to_s != ""
         cdata['logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
@@ -1201,11 +1203,14 @@ class FrontController < ApplicationController
       else
         @content += "<p>Thank you for confirming! You can now go to: <a href=\"//#{BASEDOMAIN}/\">https://#{BASEDOMAIN}/</a>. You are already logged in.</p>"
       end
+      redirect_to "/"
+      return
     else
       @content += "not recognized"
     end
-    
+
     render :action=>:confirm, :layout=>'front'
+    
   end  
   
   def fbjoinlink
