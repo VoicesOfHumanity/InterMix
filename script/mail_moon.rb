@@ -293,6 +293,14 @@ for p in participants
         itext += "<div>"
         itext += item.html_with_auth(p)
         itext += "</div>"
+
+        if item.conversation_id.to_i > 0
+          itext += "<p>This item was posted by a member of ##{ item.representing_com.to_s != '' ? item.representing_com : '???' }"
+          if item.reply_to.to_i > 0 and item.orig_item
+            itext += " as a comment on a ##{ item.orig_item.representing_com.to_s !='' ? item.orig_item.representing_com : '???' } item"
+          end
+          itext += " in the #{ item.conversation.name } conversation in #{ item.conversation.together_apart } mode.</p>"
+        end
       
         itext += "<p>by "
 

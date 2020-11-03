@@ -621,12 +621,6 @@ class ItemsController < ApplicationController
         
         if @conversation.together_apart != ''
           if @item.reply_to.to_i > 0
-            if @olditem.together_apart.to_s != ''
-              if not tags_downcase.include? @olditem.together_apart.downcase
-                tags << @olditem.together_apart
-              end
-            end
-          else
             if not tags_downcase.include? @conversation.together_apart.downcase
               tags << @conversation.together_apart
             end

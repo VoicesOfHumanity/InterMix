@@ -442,6 +442,14 @@ class Item < ActiveRecord::Base
       itext += "<div>"
       itext += content
       itext += "</div>"
+            
+      if self.conversation_id.to_i > 0
+        itext += "<p>This item was posted by a member of ##{ self.representing_com.to_s != '' ? self.representing_com : '???' }"
+        if self.reply_to.to_i > 0 and self.orig_item
+          itext += " as a comment on a ##{ self.orig_item.representing_com.to_s !='' ? self.orig_item.representing_com : '???' } item"
+        end
+        itext += " in the #{ self.conversation.name } conversation in #{ self.conversation.together_apart } mode.</p>"
+      end
       
       itext += "<p>by "
 
