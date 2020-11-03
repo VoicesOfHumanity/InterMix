@@ -2138,8 +2138,9 @@ class FrontController < ApplicationController
       end
 
       @major_communities = Community.where(major: true).order(:fullname)
-      @ungoals_communities = Community.where(ungoals: true).order(:fullname)
-      @sustdev_communities = Community.where(sustdev: true).order(:fullname)
+      @more_communities = Community.where(more: true).order(:fullname)
+      #@ungoals_communities = Community.where(ungoals: true).order(:fullname)
+      #@sustdev_communities = Community.where(sustdev: true).order(:fullname)
       
       if @comtag
         @comname = @comtag
@@ -2151,18 +2152,12 @@ class FrontController < ApplicationController
           for com in @major_communities
             @comfound = true if com.tagname == @comtag 
           end
-          for com in @ungoals_communities
+          for com in @more_communities
             if com.tagname == @comtag
               @comfound = true  
               @cominmore = true
             end
           end
-          for com in @sustdev_communities
-            if com.tagname == @comtag
-              @comfound = true  
-              @cominmore = true
-            end
-          end          
         end
       else
         @community = nil  

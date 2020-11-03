@@ -65,13 +65,10 @@
     <% end -%>  
     [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>  
     <div id="more_com" style="display:none">  
-    <% for com in @ungoals_communities -%>  
+    <% for com in @more_communities -%>  
     <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"<%= @comtag.to_s==com.tagname or (@tag_list and @tag_list.include?(com.tagname)) ? ' checked' : '' %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
     <% end -%>  
-    <% for com in @sustdev_communities -%>  
-    <input type="checkbox" id="check_<%= com.tagname %>" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check"<%= @comtag.to_s==com.tagname or (@tag_list and @tag_list.include?(com.tagname)) ? ' checked' : '' %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
-    <% end -%>  
-    </div>  
+  </div>  
       
     <% if false -%>  
     <% GLOBAL_COMMUNITIES.each do |tag| -%>

@@ -87,13 +87,9 @@
         <% end -%>  
         [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>  
         <div id="more_com" style="display:none">  
-        <% for com in @ungoals_communities -%>  
+        <% for com in @more_communities -%>  
           <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
           <input type="checkbox" id="check_<%= com.tagname %>_ug" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
-        <% end -%>  
-        <% for com in @sustdev_communities -%>  
-          <% checked = @participant.tag_list_downcase.include?(com.tagname.downcase) ? 'checked' : '' %>
-          <input type="checkbox" id="check_<%= com.tagname %>_sd" name="check[<%= com.tagname %>]" value="1" data-tag="<%= com.tagname %>" class="com_check" <%= checked %>> <% if com.bold %><b><% end %><%= com.fullname %><% if com.bold %></b><% end %><br>
         <% end -%>  
       </div>  
     </li>  
