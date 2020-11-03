@@ -16,7 +16,7 @@
       <% else -%>
     	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
       <% end -%>  
-    	<td><%= com.activity %> Active:<%= com.active %></td>
+    	<td><%= com.activity %></td>
     	<td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ?  com.fullname : com.tagname %></a></td>
     	<td>
         <%
