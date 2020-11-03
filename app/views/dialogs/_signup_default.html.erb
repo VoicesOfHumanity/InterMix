@@ -144,7 +144,7 @@ function savetags() {
 function chgcountry() {
 	$('#profile_edit').css('opacity','0.5');
 	$.getJSON("/front/getadmin1s",{country_code: $("#country_code").val()}, function(j){
-	  var options = '<option>* choose *</option>';
+	  var options = '<option value="">* choose *</option>';
 	  for (var i = 0; i < j.length; i++) {
 	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
 	  }
@@ -153,7 +153,7 @@ function chgcountry() {
     $("select#city").html('');
     $("#participant_zip").val('');
 		$.getJSON("/front/getmetro",{country_code: $("#country_code").val()}, function(j){
-	    var options = '<option>* choose *</option>';
+	    var options = '<option value="">* choose *</option>';
 	    for (var i = 0; i < j.length; i++) {
 	      options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
 	    }

@@ -46,7 +46,7 @@
 		<%= f.input :address1, :required => false %>
 		<%= f.input :address2, :required => false %>
 		<%= f.input :country_code, :label => "Country of Residence", :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, prompt: "* choose *", :input_html =>{:onchange=>"chgcountry()"} %>
-		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]}, prompt: "* choose *", :input_html =>{:onchange=>"chgstate()"} %>  
+		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>[['* choose *','']]+Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]}, prompt: "* choose *", :input_html =>{:onchange=>"chgstate()"} %>  
 
 		<%= f.input :city, :label => "City", :as => :select, :required => false, :collection =>Geoname.where(admin1_code: adminuniq_part(@participant.admin1uniq), country_code: @participant.country_code,fclasscode: 'P.PPL').order(:name).select([:name,:id]).collect {|r| r.name}, prompt: "* choose *", :input_html =>{:onchange=>"chgcity()"} %>  
     <li>
@@ -59,7 +59,7 @@
       <%= select_tag "participant[country_code2]", options_for_select([['* choose *',''], ['Indigenous peoples','_I']] + Geocountry.order(:extrasort,:name).collect{|c| [c.name,c.iso]}, @participant.country_code2), id: "participant_country_code2_input" %>
     </li>
 		<%= f.input :phone, :required => false %>
-		<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false, prompt: "* choose *" %>
+		<%= f.input :metro_area_id, :as => :select, :collection => [['* choose *','']]+@metro_areas, :required => false, prompt: "* choose *" %>
 		<%= f.input :bioregion, :required => false %>
 		<%= f.input :political, :required => false, :label => 'Political Affiliation' %>
 		<%= f.input :faith_tradition, :required => false %>
@@ -160,7 +160,7 @@ var cur_metroarea = '<%= @participant.metro_area_id %>'
 function chgcountry() {
 	$('#profile_edit').css('opacity','0.5');
   	$.getJSON("/front/getadmin1s",{country_code: $("#participant_country_code").val()}, function(j){
-	  var options = '';
+	  var options = '<option value="">* Choose *</option>';
 	  for (var i = 0; i < j.length; i++) {
 	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
 	  }
@@ -170,7 +170,7 @@ function chgcountry() {
     $("select#participant_city").html('');
     $("#participant_zip").val('');
 		$.getJSON("/front/getmetro",{country_code: $("#participant_country_code").val()}, function(j){
-	    var options = '';
+	    var options = '<option value="">* Choose *</option>';
 	    for (var i = 0; i < j.length; i++) {
 	      options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
 	    }
