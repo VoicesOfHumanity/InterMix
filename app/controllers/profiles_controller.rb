@@ -821,6 +821,7 @@ class ProfilesController < ApplicationController
       end
     elsif @participant.country_code2.to_s == "" and @old_country_code2 != "" and @old_country_code2 != @participant.country_code
       logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> [blank]")
+      @participant.country_name2 = ''
       ogeocountry = Geocountry.find_by_iso(@old_country_code2)
       if ogeocountry
         ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
