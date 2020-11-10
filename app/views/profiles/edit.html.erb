@@ -54,11 +54,13 @@
     </li>
     
   	<%= f.input :zip, :required => false %>
+    
     <li class="select input optional" id="participant_country_code2_input">
       <label for="participant_country_code2" class="label">2nd Country</label>
       <%= select_tag "participant[country_code2]", options_for_select([['* choose *',''], ['Indigenous peoples','_I']] + Geocountry.order(:extrasort,:name).collect{|c| [c.name,c.iso]}, @participant.country_code2), id: "participant_country_code2_input" %>
     </li>
-		<%= f.input :phone, :required => false %>
+		
+    <%= f.input :phone, :required => false %>
 		<%= f.input :metro_area_id, :as => :select, :collection => [['* choose *','']]+@metro_areas, :required => false, prompt: "* choose *" %>
 		<%= f.input :bioregion, :required => false %>
 		<%= f.input :political, :required => false, :label => 'Political Affiliation' %>

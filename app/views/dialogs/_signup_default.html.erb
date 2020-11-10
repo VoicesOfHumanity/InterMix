@@ -20,11 +20,6 @@
 <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />	
 <table style="background-color:#fff;margin-left:auto;margin-right:auto;width:680px">    
 
-{% if false %} 
-<tr><td>Subject</td><td><input type="text" name="subject" value="{{ subject }}" size="48" style="width:600px"></td></tr>
-<tr><td>Message</td><td><textarea name="message" class="editor" cols="80" rows="6" style="width:600px;height:200px">{% if message == empty %}Dear Friends,{% else %}{{ message }}{% endif %}
-</textarea></td></tr>  
-{% endif %} 
 
 <tr><td>*Your Name</td><td><input type="text" name="name" value="{{ name }}" size="30" style="width:200px"></td></tr>    
 <tr><td>*E-mail</td><td><input type="text" name="email" value="{{ email }}" size="30" style="width:200px"></td></tr>    
@@ -32,27 +27,37 @@
 
 <tr><td>*Country of Residence</td><td><select name="country_code" id="country_code" onchange="chgcountry()"><option value="">* choose *</option><% for country in @countries %><option value="<%= country.iso %>"<% if country.iso == @country_code %> selected="selected"<% end %>><%= country.name %></option><% end %></select></td></tr>
 
+{% for m in meta %}
+  {% if m.id == 3 %}
+    <tr><td>*{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
+  {% endif %}
+{% endfor %}
+
+{% for m in meta %}
+  {% if m.id == 5 %}
+    <tr><td>*{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
+  {% endif %}
+{% endfor %}
+
+<tr><td colspan="2">
+  <input type="submit" value="Register!" onclick="savetags();return(true)">  
+
+  <p><b><br><span style="color: DarkRed;">A confirmation email will be sent. Be sure to respond to that email.</span></b> The confirmation link will take you online to the {{ dialog.name }} discussion where you can participate as a member of <i>{{ group.name }}</i>.</p>
+
+  <hr>
+
+  <p>The following information may be provided later on your profile page:</p>
+
+</td></tr>
+
 <tr><td>State/Region</td><td><select name="admin1uniq" id="admin1uniq" onchange="chgstate()"></select></td></tr>
     
 <tr><td>Metro Area</td><td><select name="metro_area_id" id="metro_area_id"></select></td></tr>
 
 <tr><td>City</td><td><select name="city" id="city" onchange="chgcity()"></select></td></tr>
-<% if false -%>
-<tr><td>City</td><td><input type="text" name="city" value="" size="30" style="width:200px"></td></tr>    
-<tr><td>County</td><td><select name="admin2uniq" id="admin2uniq"></select></td></tr>
-<% end -%>
 
-{% for m in meta %}
-<tr><td>*{{ m.name }}</td><td><select name="meta_{{ m.id }}">{% for node in m.nodes %}<option value="{{ node.id }}"{% if node.id == m.val %} selected="selected"{% endif %}>{{ node.name }}</option>{% endfor %}</select></td></tr>
-{% endfor %}
+<tr><td>2nd Country</td><td><select name="country_code2" id="country_code2"><option value="">* choose *</option><option value="_I">Indigenous peoples</option><% for country in @countries %><option value="<%= country.iso %>"<% if country.iso == @country_code %> selected="selected"<% end %>><%= country.name %></option><% end %></select></td></tr>
 
-<% if false -%>
-<tr><td>Indigenous</td><td><input type="checkbox" name="indigenous" value="1"<%= @indigenous.to_i==1 ? "checked" : "" %>> check here if you identify with an indigenous people or tribe</td></tr>
-<tr><td>Other Minority</td><td><input type="checkbox" name="other_minority" value="1"<%= @other_minority.to_i==1 ? "checked" : "" %>> check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country</td></tr>
-<tr><td>Veteran</td><td><input type="checkbox" name="veteran" value="1"<%= @veteran.to_i==1 ? "checked" : "" %>> check here if you are a veteran</td></tr>
-<tr><td>Interfaith</td><td><input type="checkbox" name="interfaith" value="1"<%= @interfaith.to_i==1 ? "checked" : "" %>> check here if you identify as interfaith</td></tr>
-<tr><td>Refugee</td><td><input type="checkbox" name="refugee" value="1"<%= @refugee.to_i==1 ? "checked" : "" %>> check here if you identify as a refugee</td></tr>
-<% end -%>
 
 <tr>
   <td style="vertical-align:top">Communities<br>check to join</td>
@@ -70,33 +75,15 @@
     <% end -%>  
   </div>  
       
-    <% if false -%>  
-    <% GLOBAL_COMMUNITIES.each do |tag| -%>
-      <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"<%= @comtag.to_s==tag ? ' checked' : '' %>> <%= DEFAULT_COMMUNITIES[tag] %><br>
-    <% end -%>
-    [<a href="#" onclick="more_less();return(false)" id="more_less_com">More Communities</a>]<br>
-    <div id="more_com" style="display:none">
-      <% UNGOAL_COMMUNITIES.each do |tag| -%>
-        <% b = BOLD_COMMUNITIES.include?(tag) %>
-        <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
-      <% end -%>
-      <% SUSTDEV_COMMUNITIES.each do |tag| -%>
-        <% b = BOLD_COMMUNITIES.include?(tag) %>        
-        <input type="checkbox" id="check_<%= tag %>" name="check[<%= tag %>]" value="1" data-tag="<%= tag %>" class="com_check"> <% if b %><b><% end %><%= DEFAULT_COMMUNITIES[tag] %><% if b %></b><% end %><br>
-      <% end -%>
-    </div>
-    <% end -%>
-    
   </td>
 </tr> 
 
 </table>
-<input type="submit" value="Register!" onclick="savetags();return(true)">  
 <input type="hidden" id="tag_list" name="participant[tag_list]" value="">
 <input type="hidden" id="comtag" name="comtag" value="<%= @comtag %>">
 </form>
 
-<p><b><br><span style="color: DarkRed;">A confirmation email will be sent. Be sure to respond to that email.</span></b> The confirmation link will take you online to the {{ dialog.name }} discussion where you can participate as a member of <i>{{ group.name }}</i>.</p>
+
 
 <p><b>Important: </b>If the confirmation email does not arrive within a few minutes, please check your spam folder.</p>
 
