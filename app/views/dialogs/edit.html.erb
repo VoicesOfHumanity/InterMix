@@ -100,8 +100,9 @@
 		<%= f.input :names_visible_general,:label=>"Should names be visible?" ,:as=>:boolean %>
 		<%= f.input :posting_open,:label=>"Open for posting?" ,:as=>:boolean %>
 		<%= f.input :voting_open,:label=>"Open for voting?" ,:as=>:boolean %>
+    <% if false -%>
 		<%= f.input :current_period, :as => :select, :collection =>[['*none*',0]]+@dialog.periods.collect{|c| ["#{c.period_number.to_i>0 ? "##{c.period_number}: " : ""}#{c.startdate}-#{c.endposting}/#{c.endrating}: #{c.name}",c.id]} %>		
-    
+    <% end -%>
 		<%= f.input :default_datetype, label: "Default date option type", as: :select, collection: [["In last...",'fixed'],["Since...",'range']]  %>
     <%= f.input :default_datefixed, label: "In last...", as: :select, collection: ['month','week','day'] %>
     <%= f.input :default_datefrom, label: "Since..." %>
@@ -140,8 +141,7 @@
 <% end -%>
 </p>
 
-
-
+<% if false -%>
 <p><br><b>Decision Periods:</b><ul>
 <% for period in @dialog.periods -%>
 	<li>#<%= period.period_number.to_i %>: <a href="/dialogs/<%= @dialog.id %>/period_edit?period_id=<%= period.id %>"><%= period.startdate %> - <%= period.endposting -%>/<%= period.endrating %>: <%= period.name %></a> <%= period.crosstalk if period.crosstalk and period.crosstalk != 'none' %></li>
@@ -149,6 +149,7 @@
 </ul>	
 <a href="/dialogs/<%= @dialog.id %>/period_edit?period_id=0">Add a period</a>	
 </p>
+<% end -%>
 
 <p>Save any changes for the discussion above before adding or editing periods</p>
 

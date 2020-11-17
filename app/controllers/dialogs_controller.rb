@@ -152,9 +152,9 @@ class DialogsController < ApplicationController
     # geo_level
     # gender?
     # age?
-    # datetype
+    # -datetype
     # datefixed
-    # datefrom
+    # -datefrom
     # sortby
     # threads
   
@@ -178,7 +178,7 @@ class DialogsController < ApplicationController
         logger.info("dialogs#slider neither @cur_moon_new_full nor @cur_moon_full_new are set")
       end      
     end
-    @datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
+    #@datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
     @sortby = (@in == 'main' ? 'items.id desc' : '*value*')
     @threads = 'flat'
     @perspective = ''
@@ -203,10 +203,10 @@ class DialogsController < ApplicationController
       @comtag = session[:comtag].to_s if session.has_key?(:comtag) and @in == 'main' and @comtag == ''
       @messtag = session[:messtag].to_s if session.has_key?(:messtag)
       @nvaction = session[:nvaction] if session.has_key?(:nvaction)
-      @datetype = session[:datetype] if session.has_key?(:datetype)
+      #@datetype = session[:datetype] if session.has_key?(:datetype)
       @datefixed = session[:datefixed] if session.has_key?(:datefixed)
       logger.info("dialogs#slider datefixed set from session to: #{@datefixed}")
-      @datefrom = session[:datefrom] if session.has_key?(:datefrom)
+      #@datefrom = session[:datefrom] if session.has_key?(:datefrom)
       @sortby = session[:list_sortby] if session.has_key?(:list_sortby)
       @threads = session[:list_threads] if session.has_key?(:list_threads)
     end
@@ -230,10 +230,10 @@ class DialogsController < ApplicationController
     session[:messtag] = @messtag
     session[:nvaction] = @nvaction
     session[:geo_level] = @geo_level
-    session[:datetype] = @datetype
+    #session[:datetype] = @datetype
     session[:datefixed] = @datefixed
     logger.info("dialogs#slider session[:datefixed] set to #{@datefixed}")
-    session[:datefrom] = @datefrom
+    #session[:datefrom] = @datefrom
     session[:list_sortby] = @sortby
     session[:list_threads] = @threads
 
@@ -492,18 +492,18 @@ class DialogsController < ApplicationController
     end
         
     @showing_options = 'less'
-    if @show_result.to_i > 0 and @dialog.default_datetype.to_s != '' and @datetype != @dialog.default_datetype
-      @showing_options = 'more'
-    end  
+    #if @show_result.to_i > 0 and @dialog.default_datetype.to_s != '' and @datetype != @dialog.default_datetype
+    #  @showing_options = 'more'
+    #end  
     if @show_result.to_i > 0 and @dialog.default_datefixed.to_s != '' and @datefixed != @dialog.default_datefixed
       @showing_options = 'more'
     end  
-    if @show_result.to_i > 0 and @dialog.default_datefrom.to_s != '' and @datefrom != @dialog.default_datefrom
-      @showing_options = 'more'
-    end  
+    #if @show_result.to_i > 0 and @dialog.default_datefrom.to_s != '' and @datefrom != @dialog.default_datefrom
+    #  @showing_options = 'more'
+    #end  
 
     #@datefrom = session.has_key?(:datefrom) ? session[:datefrom] : Date.today.beginning_of_month.strftime('%Y-%m-%d')
-    logger.info("dialogs#slider datetype:#{@datetype} datefixed:#{@datefixed} datefrom:#{@datefrom}")    
+    logger.info("dialogs#slider datefixed:#{@datefixed}")    
     
     @previous_messages = Item.where("posted_by=? and dialog_id=? and (reply_to is null or reply_to=0)",current_participant.id,@dialog.id).count
 

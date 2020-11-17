@@ -27,9 +27,7 @@
   
     <input type="hidden" id="sortby" value="<%= @sortby %>">
     <input type="hidden" id="threads" value="<%= @threads %>">
-    <input type="hidden" id="datetype" value="<%= @datetype %>">
     <input type="hidden" id="datefixed" value="<%= @datefixed %>">
-    <input type="hidden" id="datefrom" value="<%= @datefrom %>">
     <input type="hidden" id="comtag" value="<%= @comtag %>">
     <input type="hidden" id="messtag" value="<%= @messtag %>">    
     
@@ -280,11 +278,6 @@ function per_reload(first,num,whatchanged,page,go_item) {
   if (go_item === undefined) {
     go_item = 0;
   }
-  
-  if (whatchanged=='datefixed') {
-    $("#datetype2_fixed").prop("checked", true);
-    $("#datetype_fixed").prop("checked", true);
-  }
 
  	$('#per_main').css('opacity','0.5');
   cur_comtag = $("input[name='comtag_radio']:checked").val();
@@ -345,34 +338,22 @@ function per_reload(first,num,whatchanged,page,go_item) {
   if (first) {
     var threads = $('#threads').val();
     var sortby = $('#sortby').val();    
-    var datetype = $('#datetype').val(); 
     var datefixed = $('#datefixed').val();   
-    var datefrom = $('#datefrom').val();    
   } else {
     var threads = $('#threads'+num).val();
     var sortby = $('#sortby'+num).val();
-    var datetype = $('#datetype').val(); 
-    var sel = $("input[type='radio'][name='datetype"+num+"']:checked");
-    if (sel.length > 0) {
-        datetype = sel.val();
-    }
     var datefixed = $('#datefixed'+num).val();
-    var datefrom = $('#datefrom'+num).val();
     var othernum = (num==2) ? 1 : 2;
     $('#threads'+othernum).val(threads);
     $('#sortby'+othernum).val(sortby);
-    $('#datetype'+othernum).val(datetype);
     $('#datefixed'+othernum).val(datefixed);
-    $('#datefrom'+othernum).val(datefrom);
     $('#threads').val(threads);
     $('#sortby').val(sortby);
-    $('#datetype').val(datetype);
     $('#datefixed').val(datefixed);
-    $('#datefrom').val(datefrom);
   }
   var nvaction = nvaction_on ? 1 : 0
   $('#newthreadbutton').prop('disabled', false);
-  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datetype: datetype, datefixed: datefixed, datefrom: datefrom, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic, is_first: is_first}
+  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datefixed: datefixed, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic, is_first: is_first}
   
   //nvaction_included: (nvaction_included ? 1 : 0),
   

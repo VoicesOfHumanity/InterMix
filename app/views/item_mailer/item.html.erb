@@ -5,18 +5,6 @@
 </head>
 <body>
 
-<p>
-<b>Getting Started, 123</b>
-<ol>
-<li>Read down the online <a href="https://<%= BASEDOMAIN %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>">Forum</a> list.</li>
-<li>Vote thumbs up or thumbs down on items you particularly like or dislike.</li>
-<li>Use the "Add my voice" button to start a new topic or click the "Add Comment" link to reply to one of the items.</li>
-</ol>
-<b>To block all emails, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a></b>.
-</p>
-
-<hr/>
-
 <div>
 <%=raw @message %>
 </div>
@@ -28,6 +16,15 @@
 <p id="footer">
 	<a href="https://<%= BASEDOMAIN %>/items/<%= @cdata['item'].id.to_i %>/view?auth_token=<%= @cdata['recipient'].authentication_token %>#reply">One Click reply</a>.
     <a href="https://<%= BASEDOMAIN %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>&auth_token=<%= @cdata['recipient'].authentication_token %>">Go online to The Nations Apart and Together conversation</a>.
+</p>
+
+<p>
+<b>Getting Started, 123</b>
+<ol>
+<li>Read down the online <a href="https://<%= BASEDOMAIN %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider?auth_token=<%= @cdata['recipient'].authentication_token %>">Forum</a> list.</li>
+<li>Vote thumbs up or thumbs down on items you particularly like or dislike.</li>
+<li>Use the "Add my voice" button to start a new topic or click the "Add Comment" link to reply to one of the items.</li>
+</ol>
 </p>
 
 <% if @cdata and @cdata['logo'].to_s != '' -%>	

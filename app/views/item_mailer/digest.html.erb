@@ -5,6 +5,17 @@
 </head>
 <body>
 
+
+<hr/>
+
+<div>
+<%=raw @message %>
+</div>
+
+<hr style="clear:both">
+
+<p><a href="https://<%= BASEDOMAIN %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>&auth_token=<%= @cdata['recipient'].authentication_token %>">Go online to The Nations Apart and Together conversation</a></p>
+
 <p>
 <b>Getting Started, 123</b>
 <ol>
@@ -14,17 +25,6 @@
 </ol>
 <b>To block all emails, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a></b>.
 </p>
-
-<hr/>
-
-
-<div>
-<%=raw @message %>
-</div>
-
-<hr style="clear:both">
-
-<p><a href="https://<%= BASEDOMAIN %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>&auth_token=<%= @cdata['recipient'].authentication_token %>">Go online to The Nations Apart and Together conversation</a></p>
 
 <br>
 <% if @cdata and @cdata['logo'].to_s != '' -%>	

@@ -1771,9 +1771,10 @@ class ItemsController < ApplicationController
         #end
       end
     
-      @datetype = params[:datetype].to_s    # fixed or range
-      @datefixed = params[:datefixed].to_s  # day, week, month, [moon ranges, like 2016-03-08_2017-06-23]
-      @datefrom = params[:datefrom].to_s    # [date]
+      #@datetype = params[:datetype].to_s    # fixed or range
+      @datetype = 'fixed'
+      @datefixed = params[:datefixed].to_s  # day, week, month, year, all, [moon ranges, like 2016-03-08_2017-06-23]
+      #@datefrom = params[:datefrom].to_s    # [date]
       @together_apart = ""
 
       #MOONS = {
@@ -1839,9 +1840,9 @@ class ItemsController < ApplicationController
       #  crit[:comtag] = check
       #end
     
-      session[:datetype] = @datetype.dup
+      #session[:datetype] = @datetype.dup
       session[:datefixed] = @datefixed.dup
-      session[:datefrom] = @datefrom.dup
+      #session[:datefrom] = @datefrom.dup
       @datefromto = ''
       if @datetype == 'fixed'
         if @datefixed == 'day'
@@ -1850,6 +1851,10 @@ class ItemsController < ApplicationController
           @datefromuse = (Date.today - 7).to_s
         elsif @datefixed == 'month'
           @datefromuse = (Date.today - 30).to_s
+        elsif @datefixed == 'year'
+          @datefromuse = (Date.today - 365).to_s
+        elsif @datefixed == 'all' or @datefixed == '*' or @datefixed == ''
+          @datefromuse = (Date.today - 7000).to_s
         elsif /_/ =~ @datefixed   
           xarr = @datefixed.split('_')
           @datefromuse = xarr[0]
@@ -1861,9 +1866,9 @@ class ItemsController < ApplicationController
           end
         end
         logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype} datefixed:#{@datefixed}")
-      else
-        @datefromuse = @datefrom.dup    
-        logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype}")
+      #else
+      #  @datefromuse = @datefrom.dup    
+      #  logger.info("items#geoslider_update set datefrom to #{@datefromuse} based on datetype:#{@datetype}")
       end
       crit[:datefromuse] = @datefromuse.dup
       crit[:datefromto] = @datefromto.dup
