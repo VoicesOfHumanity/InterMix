@@ -8,6 +8,21 @@
 
 <table style="width:595px">
 <tr><th>Forum</th><th>Activity</th><th>More Information</th><th>&nbsp;</th></tr>	
+<% if @csection == 'nations' -%>
+  <% for com in @prof_nations -%>
+      <tr>
+        <% if com.go_to_conversation(current_participant) != '' -%>
+      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= com.go_to_conversation(current_participant) %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
+        <% else -%>
+      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
+        <% end -%>  
+      	<td><%= com.activity %></td>
+      	<td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ?  com.fullname : com.tagname %></a></td>
+      	<td>in&nbsp;profile</td>
+      </tr>
+  <% end -%>
+  <tr><td>&nbsp;</td></tr>
+<% end -%>
 <% for com in @communities -%>
   <% if com.active or (@csection == 'my' and com.is_admin(current_participant)) -%>
     <tr>
@@ -30,8 +45,10 @@
         %>
         <% if prof_nation -%>
           in&nbsp;profile
+        <% elsif com.context != 'nation' %>  
+          <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>          
         <% else -%>
-          <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>
+          -
         <% end -%>
       </td>
     </tr>

@@ -40,7 +40,25 @@ class CommunitiesController < ApplicationController
       communities = Community.where(is_sub: false, ungoals: true)
       @csection = 'un' 
     elsif params[:which].to_s == 'nations'  
-      communities = Community.where(is_sub: false, context: 'nation')
+      @prof_nations = []
+      communities = []
+      geo1 = ''
+      geo2 = ''
+      geocountry = Geocountry.find_by_iso(current_participant.country_code)
+      geo1 = geocountry.iso3 if geocountry
+      if current_participant.country_code2 != ''
+        geocountry = Geocountry.find_by_iso(current_participant.country_code2)
+        geo2 = geocountry.iso3 if geocountry
+      end
+      coms = Community.where(is_sub: false, context: 'nation')
+      for com in coms
+        if com.context_code != '' and (com.context_code == geo1 or com.context_code == geo2)
+          com.activity = com.activity_count
+          @prof_nations << com
+        else
+          communities << com
+        end
+      end
       @csection = 'nations' 
     elsif params[:which].to_s == 'other'  
       communities = Community.where(is_sub: false, major: false, ungoals: false, more: true).where.not(context: 'nation')
