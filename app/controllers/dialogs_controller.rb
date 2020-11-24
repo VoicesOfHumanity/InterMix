@@ -465,6 +465,10 @@ class DialogsController < ApplicationController
       if @comtag == ''
         @perspective = 'outsider'
       end
+      if @perspective == 'outsider'
+        redirect_to "/conversations/#{@conversation.id}"
+        return
+      end
     end
     
     @geo_levels = [
