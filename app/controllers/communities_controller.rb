@@ -506,8 +506,12 @@ class CommunitiesController < ApplicationController
     @last_name = params[:last_name].to_s
     @gender = params[:gender].to_i
     @age = params[:age].to_i
-    @nation = params[:nation].to_i
+    #@nation = params[:nation].to_i
+    @country_code = params[:country_code].to_s
+    @admin1uniq = params[:admin1uniq].to_s
+    @admin2uniq = params[:admin2uniq].to_s
     @city = params[:city].to_s
+    @country_code2 = params[:country_code2].to_s    
     flash[:notice] = ''
     flash.now[:alert] = ""
     if @email == ""
@@ -522,11 +526,8 @@ class CommunitiesController < ApplicationController
     if @age == 0
       flash.now[:alert] += 'age missing<br>'
     end
-    if @nation == 0
-      flash.now[:alert] += 'nation missing<br>'
-    end
-    if @city == ""
-      flash.now[:alert] += 'city missing<br>'
+    if @country_code == ''
+      flash.now[:alert] += 'country missing<br>'
     end
     if flash.now[:alert] != ''
       #redirect_to action: :members
@@ -557,10 +558,14 @@ class CommunitiesController < ApplicationController
     participant.last_name = @last_name
     participant.email = @email
     participant.city = @city
-    if @nation == 395
-      participant.country_code = 'US'
-      participant.country_name = 'United States'
-    end
+    #if @nation == 395
+    #  participant.country_code = 'US'
+    #  participant.country_name = 'United States'
+    #end
+    participant.country_code = @country_code
+    participant.country_code2 = @country_code2
+    participant.admin1uniq = @admin1uniq
+    participant.admin2uniq = @admin2uniq
     password = ''.dup
     3.times do
       conso = 'bcdfghkmnprstvw'[rand(15)]
@@ -618,7 +623,7 @@ class CommunitiesController < ApplicationController
     else
       flash.now[:alert] += "problem adding #{email} as member<br>"
       render action: :members
-      exit
+      return
     end
 
     redirect_to action: :members
@@ -878,6 +883,8 @@ class CommunitiesController < ApplicationController
       [1,'My&nbsp;City/Town']
     ]
     @geo_level = 6 if not @geo_level
+    
+    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
     
   end
 

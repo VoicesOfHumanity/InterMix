@@ -43,11 +43,12 @@
 </div>
 
 <% if @is_admin -%>
-  <div style="clear:both">
+  <div style="clear:both" id="add_member_div">
   <p><br><a href="#" onclick="add_member();return false">Add existing member</a>: <%= select_tag :new_member, options_from_collection_for_select(@participants, "id", "name") %> </p>
   <% if @is_super -%>
     <form action="/communities/<%= @community.id %>/import_member" method="post">
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <%= hidden_field_tag :admin2uniq, "" %>
     <p id="new_member">
     Add new member:<br>
     email: <input type="text" name="email" value="<%= @email %>">&nbsp; &nbsp;
@@ -64,13 +65,15 @@
     <option value="<%= rec.id %>"<%= xselected %>><%= rec.name %></option>
     <% end %>
     </select><br>
-    nation: <select name="nation"><option value="0">* select *</option>
-    <% MetamapNode.where(metamap_id: 4).order(:sortorder).each do |rec| %>
-    <% xselected = rec.id == @nation.to_i ? ' selected': '' %>
-    <option value="<%= rec.id %>"<%= xselected %>><%= rec.name %></option>
-    <% end %>
-    </select>&nbsp; &nbsp;
-    city: <input type="text" name="city" value="<%= @city %>"><br>
+        
+    country: <select name="country_code" id="country_code" onchange="chgcountry()"><option value="">* choose *</option><% for country in @countries %><option value="<%= country.iso %>"<% if country.iso == @country_code %> selected="selected"<% end %>><%= country.name %></option><% end %></select><br>
+    
+    state/region: <select name="admin1uniq" id="admin1uniq" onchange="chgstate()"></select><br>
+    
+    city: <select name="city" id="city" onchange="chgcity()"></select><br>
+
+    2nd country: <select name="country_code2" id="country_code2"><option value="">* choose *</option><option value="_I">Indigenous peoples</option><% for country in @countries %><option value="<%= country.iso %>"<% if country.iso == @country_code %> selected="selected"<% end %>><%= country.name %></option><% end %></select><br>
+
     <input type="submit" value="Add">
     </p>
     </form>
@@ -115,6 +118,57 @@ function add_member() {
       $('#memlist').css('opacity','1.0');
      }
    });		
+}
+function chgcountry() {
+	$('#add_member_div').css('opacity','0.5');
+	$.getJSON("/front/getadmin1s",{country_code: $("#country_code").val()}, function(j){
+	  var options = '<option value="">* choose *</option>';
+	  for (var i = 0; i < j.length; i++) {
+	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	  }
+	  $("select#admin1uniq").html(options);    
+    $("select#admin2uniq").html('');
+    $("select#city").html('');
+    $("#participant_zip").val('');
+		$.getJSON("/front/getmetro",{country_code: $("#country_code").val()}, function(j){
+	    var options = '<option value="">* choose *</option>';
+	    for (var i = 0; i < j.length; i++) {
+	      options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	    }
+	    $("select#metro_area_id").html(options);
+		})
+			
+		$('#add_member_div').css('opacity','1.0');
+	})
+}
+function chgstate() {
+	$('#add_member_div').css('opacity','0.5');
+	//$.getJSON("/front/getadmin2s",{country_code: $("#country_code").val(), admin1uniq: $("#admin1uniq").val()}, function(j){
+	//  var options = '<option>* choose *</option>';
+	//  for (var i = 0; i < j.length; i++) {
+	//    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
+	//  }
+	//  $("select#admin2uniq").html(options);
+	//	$('#profile_edit').css('opacity','1.0');
+	//})
+	$.getJSON("/front/getcities",{country_code: $("#country_code").val(), admin1uniq: $("#admin1uniq").val()}, function(j){
+	  var options = '';
+	  for (var i = 0; i < j.length; i++) {
+	    options += '<option value="' + j[i] + '">' + j[i] + '</option>';
+	  }
+	  $("select#city").html(options);
+		$('#add_member_div').css('opacity','1.0');
+	})
+}
+function chgcity() {
+  // Look up the county from the city
+	$('#add_member_div').css('opacity','0.5');
+	$.getJSON("/front/getadmin2_from_city",{country_code: $("#country_code").val(), admin1uniq: $("#admin1uniq").val(), city_name: $("#city").val()}, function(j){
+    var admin2uniq = j[0];
+    var county_name = j[1];
+    $("#admin2uniq").val(admin2uniq);
+		$('#add_member_div').css('opacity','1.0');
+	})
 }
 list2();
 </script>
