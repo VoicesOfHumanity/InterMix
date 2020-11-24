@@ -201,6 +201,7 @@ function newitem(token) {
 	    alert("Please save or cancel the new thread that is in progress");
 	    return;
 	}
+  $('#right_sidebar').css('opacity','0.4');
 	curid = 0;
 	in_new_item = 1;
 	// Grey out all reply links
@@ -461,6 +462,7 @@ function canceledit(id) {
 	$('.reply_link').each(function(i,obj) {
 	    $(this).css('opacity','1.0');
 	});
+  $('#right_sidebar').css('opacity','1.0');
 }
 function deleteitem() {
     if (!confirm("Do you really want to delete this item?")) {
@@ -655,6 +657,7 @@ function saveitem() {
 				$('.reply_link').each(function(i,obj) {
 					$(this).css('opacity','1.0');
 				});
+        $('#right_sidebar').css('opacity','1.0');
 				replyingid = 0;
 				editingid = 0;
 				in_new_item = 0;
