@@ -6,7 +6,7 @@
     <tr>
       <td style="text-align:right;vertical-align:top;background-color:transparent">Date range:</td>
       <td style="background-color:transparent">
-          <%= select_tag "datefixed#{num}", options_for_select([["In last 24 hours",'day'],["In last week",'week'],["In last month",'month'],['In last year','year'],['All time','all']]+@moons,@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>
+          <%= select_tag "datefixed#{num}", options_for_select([["In last 24 hours",'day'],["In last week",'week'],["In last month",'month'],['In last year','year'],['All','all']]+@moons,@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>
       </td>
     </tr>
     <% if false -%>
