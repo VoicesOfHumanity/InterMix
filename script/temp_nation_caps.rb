@@ -69,16 +69,16 @@ for com in coms
   tagrec = Tag.find_by_name(oldshort)
   if tagrec
     puts "    updating Tag"
-    #tagrec.name = newshort
-    #tagrec.save
+    tagrec.name = newshort
+    tagrec.save
   else
     puts "    CAN'T FIND TAG #{oldshort}"  
   end
   
   if com.tagname != newshort
     puts "    updating community"
-    #com.tagname = newshort
-    #com.save
+    com.tagname = newshort
+    com.save
   end
   
 end

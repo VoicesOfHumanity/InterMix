@@ -737,7 +737,8 @@ class ItemsController < ApplicationController
       #-- Fill in some default message tags
       tags << 'nvaction' if @nvaction
       if @item.reply_to.to_i > 0 and @olditem
-        tags.concat @olditem.tag_list_downcase
+        #tags.concat @olditem.tag_list_downcase
+        tags.concat @olditem.tag_list
       end
       logger.info("items#new tags:#{tags.inspect}") 
       if @meta_3 == 207
