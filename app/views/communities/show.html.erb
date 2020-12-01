@@ -19,6 +19,7 @@ end
 %>
 <% if prof_nation -%>
   [in&nbsp;profile]
+<% elsif @community.context=='nation' -%>  
 <% else -%>
     <button onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
 <% end -%>

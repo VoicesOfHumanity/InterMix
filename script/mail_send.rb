@@ -208,8 +208,29 @@ for p in participants
         top = item
       else
         top = Item.find_by_id(item.first_in_thread) 
+        if top.posted_by == p.id
+          # If this is the thread author, send it to them
+          puts "    this is the thread author, so they would get it" if testonly
+          send_it = true
+        end
       end
-   
+
+      if item.reply_to.to_i > 0 and item.comment_email_to == 'author'
+        # It is a reply that should only go to the author
+        if top
+          if top.posted_by != p.id
+            send_it = false
+          end
+        end
+      elsif item.reply_to.to_i > 0 and item.comment_email_to == 'community'
+        if item.representing_com.to_s != ''
+          #-- Skip anybody who doesn't have the same tag as the perspective
+          if not p.tag_list_downcase.include?(item.representing_com.downcase)
+            send_it = false
+          end
+        end
+      end
+         
       item_subscribe = ItemSubscribe.where(item_id: top.id, participant_id: p.id).first
       if item_subscribe
         # If there's a specific follow record, that overrides anything else

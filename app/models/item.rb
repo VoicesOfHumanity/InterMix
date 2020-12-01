@@ -271,46 +271,52 @@ class Item < ActiveRecord::Base
 
     participants = []   
     got_participants = {}
+    allpeople = []
         
     # mycom: will go to people who share any community with the author and who has any community tag matching a message tag
     
-    allpeople = Participant.where(status: 'active').where("mycom_email='instant' or othercom_email='instant'")
-    for person in allpeople
-      hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.tag_list_downcase.include?(t) } )
-      hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.participant.tag_list_downcase.include?(t) } )
-      if person.id == 6 or person.id == 1867
-        logger.info("Item#emailit person #{person.id}: hasmessmatch:#{hasmessmatch} with item #{self.id}")
-        logger.info("Item#emailit person #{person.id}: hascommatch:#{hascommatch} with person #{self.participant.id}")
+    if self.reply_to.to_i == 0 or self.comment_email_to != 'author'
+      # If this is not a comment, or the comment goes to public or community, select based on people's settings
+    
+      allpeople = Participant.where(status: 'active').where("mycom_email='instant' or othercom_email='instant'")
+      for person in allpeople
+        hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.tag_list_downcase.include?(t) } )
+        hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.participant.tag_list_downcase.include?(t) } )
+        if person.id == 6 or person.id == 1867
+          logger.info("Item#emailit person #{person.id}: hasmessmatch:#{hasmessmatch} with item #{self.id}")
+          logger.info("Item#emailit person #{person.id}: hascommatch:#{hascommatch} with person #{self.participant.id}")
+        end
+        person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with person #{self.participant.id}. "
+        if hasmessmatch and hascommatch and person.mycom_email == 'instant'
+          person.explanation += "Match, and person.mycom_email is instant. "
+          participants << person
+          got_participants[person.id] = true
+        elsif not (hasmessmatch and hascommatch) and person.othercom_email == 'instant'
+          person.explanation += "Mismatch, and person.othercom_email is instant. "
+          participants << person
+          got_participants[person.id] = true
+        end      
       end
-      person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with person #{self.participant.id}. "
-      if hasmessmatch and hascommatch and person.mycom_email == 'instant'
-        person.explanation += "Match, and person.mycom_email is instant. "
-        participants << person
-        got_participants[person.id] = true
-      elsif not (hasmessmatch and hascommatch) and person.othercom_email == 'instant'
-        person.explanation += "Mismatch, and person.othercom_email is instant. "
-        participants << person
-        got_participants[person.id] = true
-      end      
+      logger.info("Item#emailit #{participants.length} recipients based on community settings")
+
+      if self.intra_com == 'public'
+      elsif self.intra_com.to_s != ''
+        # It is for a particular community only. Remove anybody who's not a member
+        tagname = self.intra_com[1,50]
+        for person in allpeople
+          if not person.tag_list_downcase.include?(tagname.downcase)
+            participants.delete(person)
+          end
+        end  
+      end   
+
     end
-    logger.info("Item#emailit #{participants.length} recipients based on community settings")
     
     if self.is_first_in_thread
       top = self
     else
       top = Item.find_by_id(self.first_in_thread) 
     end
-    
-    if self.intra_com == 'public'
-    elsif self.intra_com.to_s != ''
-      # It is for a particular community only. Remove anybody who's not a member
-      tagname = self.intra_com[1,50]
-      for person in allpeople
-        if not person.tag_list_downcase.include?(tagname.downcase)
-          participants.delete(person)
-        end
-      end  
-    end    
 
     # Root author should get anything in the thread, so make sure they're on the list
     if top and top.posted_by.to_i > 0 and not got_participants.has_key?(top.posted_by.to_i)
@@ -319,6 +325,25 @@ class Item < ActiveRecord::Base
         author.explanation = "This is the thread author. "
         participants << author
         got_participants[author.id] = true
+      end
+    end
+    
+    if self.reply_to.to_i > 0 and self.comment_email_to == 'author'
+      #-- It is a comment, and it is to the author only
+      #-- Do nothing, as we just added the author to the otherwise empty list of participants
+    elsif self.reply_to.to_i > 0 and self.comment_email_to == 'community'
+      #-- It is a comment, only to email to the community
+      if self.intra_com.to_s != ''
+        #-- Already intra community only, so it has already been done
+      elsif self.representing_com.to_s != ''
+        #-- Otherwise we go by their perspective, if any
+        #-- Remove anybody who doesn't have the same
+        tagname = self.representing_com
+        for person in allpeople
+          if not person.tag_list_downcase.include?(tagname.downcase)
+            participants.delete(person)
+          end
+        end          
       end
     end
     

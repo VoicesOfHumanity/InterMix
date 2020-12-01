@@ -273,13 +273,21 @@ class Participant < ActiveRecord::Base
         # A value has been selected for this metamap for this user
         mnp = mnps[0]
         metamap_node_id = mnp.metamap_node_id
-        name = mnp.metamap_node.name
-        name_as_group = mnp.metamap_node.name_as_group
-        if m.binary
-          # For binary metamaps, where there's only a yes and a no value possible, return the binary value, rather than the node id
-          metamap_nodes[metamap_id] = [metamap_name, mnp.metamap_node.binary_on, name, name_as_group]
+        if mnp.metamap_node
+          name = mnp.metamap_node.name
+          name_as_group = mnp.metamap_node.name_as_group
+          if m.binary
+            # For binary metamaps, where there's only a yes and a no value possible, return the binary value, rather than the node id
+            metamap_nodes[metamap_id] = [metamap_name, mnp.metamap_node.binary_on, name, name_as_group]
+          else
+            metamap_nodes[metamap_id] = [metamap_name, metamap_node_id, name, name_as_group]
+          end
         else
-          metamap_nodes[metamap_id] = [metamap_name, metamap_node_id, name, name_as_group]
+          if m.binary
+            metamap_nodes[metamap_id] = [metamap_name, false, '', '']
+          else
+            metamap_nodes[metamap_id] = [metamap_name, 0, '', '']
+          end          
         end
       else
         # Nothing filled in for this metamap for this user
