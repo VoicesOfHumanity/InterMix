@@ -50,6 +50,11 @@ for com in coms
   if fix.has_key?(iso3)
     newshort = fix[iso3]
     puts " -> manual: #{newshort}"
+    
+  elsif com.tagname == 'indigenous' or com.tagname == 'Indigenous' or com.tagname == 'IndigenousPeoples'
+    newshort = 'Indigenous'
+    puts " -> manual: #{newshort}"
+    
   else
     #orig_lower = com.fullname.gsub(' ','').downcase
     
