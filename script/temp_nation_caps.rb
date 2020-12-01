@@ -34,6 +34,7 @@ fix = {
 'TCA' => 'TurksAndCaicos',
 'ARE' => 'UAEmirates',
 'UMI' => 'USMinorIsles',
+'USA' => 'UnitedStates',
 'VIR' => 'USVirginIsles',
 'WLF' => 'WallisFutuna',
 }
