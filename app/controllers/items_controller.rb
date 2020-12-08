@@ -1718,6 +1718,7 @@ class ItemsController < ApplicationController
     rootonly = nil
 
     1.times do |redocount|
+      logger.info("items#geoslider_update redocount:#{redocount}")
       
       @per_page = (params[:per_page] || 11).to_i
       @page = ( params[:page] || 1 ).to_i
