@@ -166,6 +166,7 @@ Rails.application.routes.draw do
   get 'communities/my', to: 'communities#index', action: :index, which: 'my'
   get 'communities/human', to: 'communities#index', action: :index, which: 'human'
   get 'communities/un', to: 'communities#index', action: :index, which: 'un'
+  get 'communities/cities', to: 'communities#index', action: :index, which: 'cities'
   get 'communities/nations', to: 'communities#index', action: :index, which: 'nations'
   get 'communities/other', to: 'communities#index', action: :index, which: 'other'
   resources :communities do

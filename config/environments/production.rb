@@ -7,6 +7,8 @@ if (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ 
   VOL_LOGO = "/images/data/photos/7/67.jpg"
   INT_CONVERSATION_ID = 1
   INT_CONVERSATION_CODE = 'international'
+  CITY_CONVERSATION_ID = 5
+  CITY_CONVERSATION_CODE = 'cities'
 else
   BASEDOMAIN = 'voh.intermix.org'
   ROOTDOMAIN = 'intermix.org'
@@ -16,6 +18,8 @@ else
   VOL_LOGO = "/images/data/photos/7/67.jpg"
   INT_CONVERSATION_ID = 2
   INT_CONVERSATION_CODE = 'international'
+  CITY_CONVERSATION_ID = 3
+  CITY_CONVERSATION_CODE = 'cities'
 end
 
 DATADIR = '/home/apps/intermix/shared/data'

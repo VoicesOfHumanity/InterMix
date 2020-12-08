@@ -121,6 +121,9 @@
         
         
                 <li class="menu"><a class="<%= 'selected' if @section=='conversations' %>" href="/conversations">Apart & Together</a></li>
+                <% if Conversation.find_by_id(CITY_CONVERSATION_ID).active -%>
+                <li class="menu"><a class="<%= 'selected' if @section=='cities' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= CITY_CONVERSATION_CODE %>">The Cities</a></li>
+                <% end -%>
                 <% if Conversation.find_by_id(INT_CONVERSATION_ID).active -%>
                 <li class="menu"><a class="<%= 'selected' if @section=='nations' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>">The Nations</a></li>
                 <% end -%>

@@ -94,3 +94,7 @@ VOL_LOGO = "/images/data/dialogs/logos/7/original_blacksheep1S.jpg"
 
 INT_CONVERSATION_ID = 3
 INT_CONVERSATION_CODE = 'international'
+
+CITY_CONVERSATION_ID = 4
+CITY_CONVERSATION_CODE = 'cities'
+

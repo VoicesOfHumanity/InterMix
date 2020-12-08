@@ -39,6 +39,9 @@ class CommunitiesController < ApplicationController
     elsif params[:which].to_s == 'un'  
       communities = Community.where(is_sub: false, ungoals: true)
       @csection = 'un' 
+    elsif params[:which].to_s == 'cities'  
+      communities = Community.where(context: 'city')
+      @csection = 'cities'                  
     elsif params[:which].to_s == 'nations'  
       @prof_nations = []
       communities = []
@@ -61,7 +64,7 @@ class CommunitiesController < ApplicationController
       end
       @csection = 'nations' 
     elsif params[:which].to_s == 'other'  
-      communities = Community.where(is_sub: false, major: false, ungoals: false, more: true).where.not(context: 'nation')
+      communities = Community.where(is_sub: false, major: false, ungoals: false, more: true).where.not(context: 'nation').where.not(context: 'city')
       @csection = 'other'            
     else
       #-- My communities
