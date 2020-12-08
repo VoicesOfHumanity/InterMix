@@ -1717,7 +1717,7 @@ class ItemsController < ApplicationController
     show_result = nil
     rootonly = nil
 
-    1.times do
+    1.times do |redocount|
       
       @per_page = (params[:per_page] || 11).to_i
       @page = ( params[:page] || 1 ).to_i
@@ -2279,7 +2279,7 @@ class ItemsController < ApplicationController
           params[:datetype] = 'range'
           params[:datefrom] = '2016-03-08'
           logger.info("items#geoslider_update no posts in last month, set date to range from 2016-03-08")
-          redo
+          redo if redocount <=2
         end
     
         # Add up results for those items and those ratings, to show in the item summaries in the listing

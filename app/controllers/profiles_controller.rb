@@ -762,6 +762,10 @@ class ProfilesController < ApplicationController
     if updated_country_code and not updated_zip
       @participant.zip = ''
     end
+    if @participant.city.to_s != ""
+      
+      
+    end
     if @participant.country_code.to_s != ""
       #-- Fill in the country name
       geocountry = Geocountry.find_by_iso(@participant.country_code)
