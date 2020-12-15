@@ -1734,15 +1734,17 @@ class Item < ActiveRecord::Base
           prof_nation = true
         end
       end
-      if com.context == 'nation'
-        if prof_nation
-          title += " in&nbsp;profile"
-        end
-      else
-        if has_tag
-          title += " <input type=\"button\" value=\"leave\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+      if com
+        if com.context == 'nation'
+          if prof_nation
+            title += " in&nbsp;profile"
+          end
         else
-          title += " <input type=\"button\" value=\"join\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+          if has_tag
+            title += " <input type=\"button\" value=\"leave\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+          else
+            title += " <input type=\"button\" value=\"join\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+          end
         end
       end
       plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
