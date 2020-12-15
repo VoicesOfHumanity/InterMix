@@ -763,5 +763,19 @@ class ApplicationController < ActionController::Base
       end
       return tagmatches2
     end
+    
+    def adminuniq_part(xuniq, pos=1)
+      # given an admin1uniq or admin2uniq like DK.17, get one part, separated by period, starting with zero
+      if not xuniq
+        return ''
+      else
+        xarr = xuniq.split('.')
+        if xarr.length > pos
+          return xarr[pos]
+        else
+          return xuniq
+        end
+      end
+    end        
         
 end

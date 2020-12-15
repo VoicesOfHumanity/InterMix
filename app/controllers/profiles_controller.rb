@@ -117,6 +117,7 @@ class ProfilesController < ApplicationController
     @oldparticipant = @participant.dup
     @old_country_code = @participant.country_code.clone
     @old_country_code2 = @participant.country_code2.clone
+    @old_city_uniq = @participant.city_uniq.clone
     @goto = params[:goto]  # Maybe a (forum) link to continue to after saving
         
     @participant.has_participated = true
@@ -726,6 +727,7 @@ class ProfilesController < ApplicationController
     if @participant.country_code != @oldparticipant.country_code
       updated_country_code = true
       @participant.country_name = ''
+      @participant.country_iso3 = ''
     end
     if @participant.admin1uniq != @oldparticipant.admin1uniq
       updated_admin1 = true
@@ -763,14 +765,35 @@ class ProfilesController < ApplicationController
       @participant.zip = ''
     end
     if @participant.city.to_s != ""
-      
-      
+      #-- Fill in city unique code, which is admin1uniq_cityname, e.g. BY.01_Akhova
+      geoname = Geoname.where(name: @participant.city, country_code: @participant.country_code, admin1_code: adminuniq_part(@participant.admin1uniq), fclasscode: 'P.PPL')
+      if geoname
+        @participant.city_uniq = "#{@participant.admin1uniq}_#{@participant.city}"
+        # Create/Join city community
+        community = Community.where(context: 'city', context_code: @participant.city_uniq).first
+        if not community          
+          logger.info("profiles#geoupdate creating city community #{@participant.city_uniq}")
+          community = Community.create(tagname: @participant.city, context: 'city', context_code: @participant.city_uniq, fullname: @participant.city)
+        end
+        if community
+          @participant.tag_list.add(community.tagname)
+        end
+        if @old_city_uniq.to_s != '' and @old_city_uniq != @participant.city_uniq
+          # Leave the previous community
+          logger.info("profiles#geoupdate city_uniq #{@old_city_uniq} -> #{@participant.city_uniq}")
+          ocommunity = Community.where(context: 'city', context_code: @old_city_uniq).first
+          if ocommunity
+            @participant.tag_list.remove(ocommunity.tagname)
+          end
+        end
+      end
     end
     if @participant.country_code.to_s != ""
       #-- Fill in the country name
       geocountry = Geocountry.find_by_iso(@participant.country_code)
       if geocountry
         @participant.country_name = geocountry.name
+        @participant.country_iso3 = geocountry.iso3
         community = Community.where(context: 'nation', context_code: geocountry.iso3).first
         if community
           #logger.info("profiles#geoupdate adding #{community.tagname} to tag_list")
@@ -792,6 +815,7 @@ class ProfilesController < ApplicationController
       #-- Fill in the second country name
       if @participant.country_code2.to_s == '_I'
         @participant.country_name2 = 'Indigenous peoples'
+        @participant.country2_iso3 = ''        
         community2 = Community.where(context: 'nation', context_code: '__I').first
         if not community2
           community2 = Community.create(tagname: 'indigenous', context: 'nation', context_code: '__I', fullname: 'Indigenous peoples')
@@ -801,6 +825,7 @@ class ProfilesController < ApplicationController
         geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
         if geocountry2
           @participant.country_name2 = geocountry2.name
+          @participant.country2_iso3 = geocountry2.iso3      
           community2 = Community.where(context: 'nation', context_code: geocountry2.iso3).first
           if community2
             @participant.tag_list.add(community2.tagname)            
@@ -900,7 +925,7 @@ class ProfilesController < ApplicationController
     :first_name, :last_name, :title, :self_description, :address1, :address2, :city, :admin2uniq, :country_code, :country_name, :country_code2, :country_name2, :admin1uniq, :state_code, :state_name, :county_code, :county_name, :zip, :phone,
     :latitude, :longitude, :timezone, :timezone_offset, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :email, :visibility,
     :wall_visibility, :item_to_forum, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :forum_email, :group_email, :subgroup_email, :private_email, :system_email, :no_email, :handle,
-    :indigenous, :other_minority, :veteran, :interfaith, :refugee, :tag_list, :mycom_email, :othercom_email
+    :indigenous, :other_minority, :veteran, :interfaith, :refugee, :tag_list, :mycom_email, :othercom_email, :city_uniq, :country_iso3, :country2_iso3
     )
   end
 
