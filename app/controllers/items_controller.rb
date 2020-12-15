@@ -2276,11 +2276,15 @@ class ItemsController < ApplicationController
         items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
 
         #if @num_all_posts == 0 and @first == 1 and @datetype == 'fixed' and @datefixed == 'month'
-        if items.length == 0 and @datetype == 'fixed' and @datefixed == 'month'
+        if items.length == 0 and @datetype == 'fixed' and @datefixed != 'all'
           #-- If there are no posts in the last month, change to since the beginning
-          params[:datetype] = 'range'
-          params[:datefrom] = '2016-03-08'
-          logger.info("items#geoslider_update no posts in last month, set date to range from 2016-03-08")
+          #params[:datetype] = 'range'
+          #params[:datefrom] = '2016-03-08'
+          @datetype = 'fixed'
+          @datefixed = 'all'
+          params[:datetype] = 'fixed'
+          params[:datefixed] = 'all'
+          logger.info("items#geoslider_update no posts in last month, set to all")
           if redocount < 1
             redocount += 1
             redo
