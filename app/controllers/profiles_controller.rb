@@ -279,7 +279,7 @@ class ProfilesController < ApplicationController
       if @subsection == 'settings'
        flash.now[:notice] += "OK New Settings have been saved.<br>"
       else
-        flash.now[:notice] += "Profile has been updated.<br>"
+        flash.now[:notice] += "Your profile has been updated.<br>"
       end
       
       if emailchanged
@@ -301,15 +301,15 @@ class ProfilesController < ApplicationController
       #-- Update the setting for whether required fields were entered or not
       session[:has_required] = @participant.has_required
       
-      if @goto.to_s != ''
-        redirect_to @goto and return
-      elsif session.has_key?(:comtag)
-        comtag = session[:comtag]
-        redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{comtag}" and return
-      else        
+      #if @goto.to_s != ''
+      #  redirect_to @goto and return
+      #elsif session.has_key?(:comtag)
+      #  comtag = session[:comtag]
+      #  redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{comtag}" and return
+      #else        
         @subsection = 'view'
         render :action=>'index' and return
-      end
+      #end
     else
       @subsection = 'edit'
       render :action => "edit" and return
