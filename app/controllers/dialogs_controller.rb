@@ -240,7 +240,7 @@ class DialogsController < ApplicationController
     # Get some objects we might need
     if @comtag != '' and @comtag != '-' and not @community
       @community = Community.find_by_tagname(@comtag)
-      @community_id = @community.id      
+      @community_id = @community.id if @community    
     end    
     @conversations = []
     #if @community

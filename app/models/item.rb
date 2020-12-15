@@ -1725,11 +1725,25 @@ class Item < ActiveRecord::Base
         if tag == crit[:comtag].downcase
           has_tag = true
         end
+      end      
+      com = Community.find_by_tagname(crit[:comtag])
+      prof_nation = false
+      if com and com.context=='nation'
+        geocountry = Geocountry.find_by_iso3(com.context_code)
+        if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
+          prof_nation = true
+        end
       end
-      if has_tag
-        title += " <input type=\"button\" value=\"leave\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+      if com.context == 'nation'
+        if prof_nation
+          title += " in&nbsp;profile"
+        end
       else
-        title += " <input type=\"button\" value=\"join\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+        if has_tag
+          title += " <input type=\"button\" value=\"leave\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+        else
+          title += " <input type=\"button\" value=\"join\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+        end
       end
       plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
       if plist != ''
