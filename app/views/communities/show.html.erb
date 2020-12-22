@@ -10,23 +10,24 @@
 <p><b>Short Name:</b> <%= @community.tagname %>&nbsp;&nbsp;
 <%
 prof_nation = false
+prof_city = false
 if @community.context=='nation'
   geocountry = Geocountry.find_by_iso3(@community.context_code)
   if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
     prof_nation = true
   end
+elsif @community.context=='city'
+  if current_participant.city_uniq != '' and @community.context_code == current_participant.city_uniq
+    prof_city = true
+  end
 end
 %>
-<% if prof_nation -%>
+<% if prof_nation or prof_city -%>
   [in&nbsp;profile]
-<% elsif @community.context=='nation' -%>  
+<% elsif @community.context=='nation' or @community.context=='city' -%>  
 <% else -%>
     <button onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
 <% end -%>
-    
-    
-    
-
 </p>
 
 <% if @community.is_sub -%>

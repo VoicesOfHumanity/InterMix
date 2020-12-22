@@ -1733,10 +1733,18 @@ class Item < ActiveRecord::Base
         if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
           prof_nation = true
         end
+      elsif com and com.context=='city'
+        if current_participant.city_uniq != '' and com.context_code == current_participant.city_uniq
+          prof_city = true
+        end
       end
       if com
         if com.context == 'nation'
           if prof_nation
+            title += " in&nbsp;profile"
+          end
+        elsif com.context == 'city'
+          if prof_city
             title += " in&nbsp;profile"
           end
         else

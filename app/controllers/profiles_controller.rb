@@ -766,14 +766,15 @@ class ProfilesController < ApplicationController
     end
     if @participant.city.to_s != ""
       #-- Fill in city unique code, which is admin1uniq_cityname, e.g. BY.01_Akhova
-      geoname = Geoname.where(name: @participant.city, country_code: @participant.country_code, admin1_code: adminuniq_part(@participant.admin1uniq), fclasscode: 'P.PPL')
+      geoname = Geoname.where(name: @participant.city, country_code: @participant.country_code, admin1_code: adminuniq_part(@participant.admin1uniq), fclasscode: 'P.PPL').first
       if geoname
         @participant.city_uniq = "#{@participant.admin1uniq}_#{@participant.city}"
         # Create/Join city community
         community = Community.where(context: 'city', context_code: @participant.city_uniq).first
-        if not community          
+        if not community        
+          tagname = @participant.city.gsub(/[^0-9A-za-z_]/i,'')  
           logger.info("profiles#geoupdate creating city community #{@participant.city_uniq}")
-          community = Community.create(tagname: @participant.city, context: 'city', context_code: @participant.city_uniq, fullname: @participant.city)
+          community = Community.create(tagname: tagname, context: 'city', context_code: @participant.city_uniq, fullname: @participant.city)
         end
         if community
           @participant.tag_list.add(community.tagname)

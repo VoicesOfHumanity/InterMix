@@ -22,7 +22,22 @@
       </tr>
   <% end -%>
   <tr><td>&nbsp;</td></tr>
+<% elsif @csection == 'cities' -%>
+  <% for com in @prof_cities -%>
+      <tr>
+        <% if com.go_to_conversation(current_participant) != '' -%>
+      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= com.go_to_conversation(current_participant) %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
+        <% else -%>
+      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
+        <% end -%>  
+      	<td><%= com.activity %></td>
+      	<td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ?  com.fullname : com.tagname %></a></td>
+      	<td>in&nbsp;profile</td>
+      </tr>
+  <% end -%>
+  <tr><td>&nbsp;</td></tr>  
 <% end -%>
+
 <% for com in @communities -%>
   <% if com.active or (@csection == 'my' and com.is_admin(current_participant)) -%>
     <tr>
@@ -45,7 +60,7 @@
         %>
         <% if prof_nation -%>
           in&nbsp;profile
-        <% elsif com.context != 'nation' %>  
+        <% elsif com.context != 'nation' and com.context != 'city' %>  
           <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>          
         <% else -%>
           -

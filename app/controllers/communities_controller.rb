@@ -40,8 +40,18 @@ class CommunitiesController < ApplicationController
       communities = Community.where(is_sub: false, ungoals: true)
       @csection = 'un' 
     elsif params[:which].to_s == 'cities'  
-      communities = Community.where(context: 'city')
-      @csection = 'cities'                  
+      @prof_cities = []
+      communities = []
+      coms = Community.where(context: 'city')
+      for com in coms
+        if current_participant.city_uniq != '' and com.context_code == current_participant.city_uniq
+          com.activity = com.activity_count
+          @prof_cities << com
+        else
+          communities << com
+        end
+      end
+      @csection = 'cities'
     elsif params[:which].to_s == 'nations'  
       @prof_nations = []
       communities = []
