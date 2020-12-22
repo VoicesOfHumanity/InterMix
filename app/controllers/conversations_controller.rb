@@ -92,7 +92,23 @@ class ConversationsController < ApplicationController
       @cur_perspective = ''
     end
     
-    @communities = @conversation.communities
+    if @conversation.id == CITY_CONVERSATION_ID  
+      @prof_cities = []
+      communities = []
+      coms = @conversation.communities
+      for com in coms
+        if current_participant.city_uniq != '' and com.context_code == current_participant.city_uniq
+          com.activity = com.activity_count
+          @prof_cities << com
+        else
+          communities << com
+        end
+      end
+      @communities = communities
+    else
+      @communities = @conversation.communities      
+    end
+    
     for com in @communities
       if current_participant.tag_list_downcase.include?(com.tagname.downcase)
         @perspectives[com.tagname] = com.fullname
@@ -111,20 +127,25 @@ class ConversationsController < ApplicationController
     
     # sort communities
     @communities = @communities.to_a
-    @communities.sort! do |a, b|
-      if b.tagname == @cur_perspective
-        1
-      elsif b.tagname != @cur_perspective and @perspectives.has_key?(a.tagname)
-        -1
-      elsif @perspectives.has_key?(b.tagname) and !@perspectives.has_key?(a.tagname)
-        1
-      elsif @perspectives.has_key?(a.tagname) and !@perspectives.has_key?(b.tagname)
-        -1
-      else
-        a.tagname <=> b.tagname
+    if @conversation.id == CITY_CONVERSATION_ID
+      @communities.sort! { |a,b| [b.send('activity'),a.send('tagname')] <=> [a.send('activity'),b.send('tagname')] }
+      @communities = @communities[0..20]
+    else
+      @communities.sort! do |a, b|
+        if b.tagname == @cur_perspective
+          1
+        elsif b.tagname != @cur_perspective and @perspectives.has_key?(a.tagname)
+          -1
+        elsif @perspectives.has_key?(b.tagname) and !@perspectives.has_key?(a.tagname)
+          1
+        elsif @perspectives.has_key?(a.tagname) and !@perspectives.has_key?(b.tagname)
+          -1
+        else
+          a.tagname <=> b.tagname
+        end
       end
     end
-    
+        
   end
 
   # GET /conversations/new

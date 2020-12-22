@@ -59,6 +59,18 @@
 
   <table style="width:595px">
   <tr><!--<th>Forum</th>--><th>Activity</th><th>More Information</th><th>&nbsp;</th></tr>	
+  
+  <% if @conversation.id == CITY_CONVERSATION_ID -%>
+    <% for com in @prof_cities -%>
+        <tr>
+          <td><%= com.activity_count_for_conversation(@conversation,@cur_period) %></td>
+          <td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a></td>
+          <td>in&nbsp;profile</td>
+        </tr>
+    <% end -%>
+    <tr><td>&nbsp;</td></tr>  
+  <% end -%>
+  
   <% for com in @communities -%>
     <% if com.active -%>
       <tr>
@@ -79,7 +91,7 @@
               %>
               <% if prof_nation -%>
                 in&nbsp;profile
-              <% elsif com.context != 'nation' %>
+              <% elsif com.context != 'nation' and com.context != 'city' %>
                   <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>            
               <% end -%>
           </td>

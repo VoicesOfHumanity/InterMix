@@ -3,6 +3,8 @@ require File.dirname(__FILE__)+'/cron_helper'
 
 puts "Create communities from cities that have been selected *****************"
 
+conversation = Conversation.find_by_id(CITY_CONVERSATION_ID)
+
 participants = Participant.where(status: 'active')
 for p in participants
   next if p.city.to_s == '' or p.admin1uniq.to_s == ''
@@ -22,6 +24,7 @@ for p in participants
     if community
       puts "  adding to community #{p.city_uniq}"
       p.tag_list.add(community.tagname)
+      conversation.communities << community
     end
     p.save
   else

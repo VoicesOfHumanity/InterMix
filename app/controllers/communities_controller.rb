@@ -111,6 +111,8 @@ class CommunitiesController < ApplicationController
       logger.info("communities#index sort by #{@sort} after the fact")
       @communities.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
     end
+    
+    @communities = @communities[0..20]
        
     @sort = sort 
     

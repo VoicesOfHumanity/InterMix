@@ -778,6 +778,8 @@ class ProfilesController < ApplicationController
         end
         if community
           @participant.tag_list.add(community.tagname)
+          conversation = Conversation.find_by_id(CITY_CONVERSATION_ID)
+          conversation.communities << community
         end
         if @old_city_uniq.to_s != '' and @old_city_uniq != @participant.city_uniq
           # Leave the previous community
