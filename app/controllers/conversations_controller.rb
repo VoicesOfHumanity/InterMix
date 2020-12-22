@@ -73,7 +73,14 @@ class ConversationsController < ApplicationController
 
   # GET /conversations/1
   def show
-    @section = 'conversations'
+    if @conversation.id == INT_CONVERSATION_ID
+      @section = 'nations'
+    elsif @conversation.id == CITY_CONVERSATION_ID
+      @section = 'cities'
+    else
+      @section = 'conversations'
+    end
+
     @in = 'conversation'
     
     # Stuff that's needed because we show the menu from the slider
@@ -165,7 +172,13 @@ class ConversationsController < ApplicationController
 
   # GET /conversations/1/edit
   def edit
-    @section = 'conversations'
+    if @conversation.id == INT_CONVERSATION_ID
+      @section = 'nations'
+    elsif @conversation.id == CITY_CONVERSATION_ID
+      @section = 'cities'
+    else
+      @section = 'conversations'
+    end
     @in = 'conversation'
 
     # Stuff that's needed because we show the menu from the slider

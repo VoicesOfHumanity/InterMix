@@ -99,6 +99,8 @@ class DialogsController < ApplicationController
       @conv = params[:conv]
       if @conv == INT_CONVERSATION_CODE 
         @section = 'nations'
+      elsif @conv == CITY_CONVERSATION_CODE
+        @section = 'cities'  
       else
         @section = 'conversations'
       end
