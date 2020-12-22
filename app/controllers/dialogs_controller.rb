@@ -176,7 +176,7 @@ class DialogsController < ApplicationController
         logger.info("dialogs#slider datefixed set to #{@cur_moon_full_new} based on @cur_moon_full_new")
       else
         logger.info("dialogs#slider neither @cur_moon_new_full nor @cur_moon_full_new are set")
-      end      
+      end
     end
     #@datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
     @sortby = (@in == 'main' ? 'items.id desc' : '*value*')
@@ -265,6 +265,9 @@ class DialogsController < ApplicationController
     if @conv != '' and @conv != '-'
       @conversation = Conversation.find_by_shortname(@conv)
       @conversation_id = @conversation ? @conversation.id : 0
+      if @conversation.id == CITY_CONVERSATION_ID 
+        @geo_level = 1
+      end      
     end
     
     if @in == 'conversation' and @conversation and @conversation.id == INT_CONVERSATION_ID
