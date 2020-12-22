@@ -100,6 +100,7 @@ class ConversationsController < ApplicationController
         if current_participant.city_uniq != '' and com.context_code == current_participant.city_uniq
           com.activity = com.activity_count
           @prof_cities << com
+          @cur_perspective = com.tagname
         else
           communities << com
         end
@@ -109,9 +110,13 @@ class ConversationsController < ApplicationController
       @communities = @conversation.communities      
     end
     
-    for com in @communities
-      if current_participant.tag_list_downcase.include?(com.tagname.downcase)
-        @perspectives[com.tagname] = com.fullname
+    if @conversation.id == CITY_CONVERSATION_ID
+      @perspectives = [@cur_perspective]
+    else
+      for com in @communities
+        if current_participant.tag_list_downcase.include?(com.tagname.downcase)
+          @perspectives[com.tagname] = com.fullname
+        end
       end
     end
     
