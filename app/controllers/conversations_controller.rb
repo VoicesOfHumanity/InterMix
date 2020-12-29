@@ -95,13 +95,22 @@ class ConversationsController < ApplicationController
     @perspectives = {}
     if params[:perspective].to_s != ''
       @cur_perspective = params[:perspective]
-    elsif session.has_key?("cur_perspective_#{@conversation_id}")
+    elsif session.has_key?("cur_perspective_#{@conversation_id}") and @conversation.id != CITY_CONVERSATION_ID
       @cur_perspective = session["cur_perspective_#{@conversation_id}"]
     else
       @cur_perspective = ''
     end
     
     if @conversation.id == CITY_CONVERSATION_ID  
+      if current_participant.city_uniq.to_s != ''
+        @perspective = 'outsider'
+        for com in @conversation.communities
+          if com.context_code == current_participant.city_uniq
+            @perspective = com.tagname
+            @perspectives = {com.tagname => com.fullname}
+          end
+        end
+      end
       @prof_cities = []
       communities = []
       coms = @conversation.communities
@@ -119,9 +128,7 @@ class ConversationsController < ApplicationController
       @communities = @conversation.communities      
     end
     
-    if @conversation.id == CITY_CONVERSATION_ID
-      @perspectives = [@cur_perspective]
-    else
+    if @conversation.id != CITY_CONVERSATION_ID
       for com in @communities
         if current_participant.tag_list_downcase.include?(com.tagname.downcase)
           @perspectives[com.tagname] = com.fullname

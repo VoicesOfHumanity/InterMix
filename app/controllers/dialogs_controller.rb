@@ -429,15 +429,23 @@ class DialogsController < ApplicationController
       @is_conv_member = false
       if @comtag == ""
         # Does the user already have a reasonable perspective?
-        if @perspectives.length == 0
+        if @conversation.id == CITY_CONVERSATION_ID and current_participant.city_uniq.to_s != ''
           @perspective = 'outsider'
-        elsif session.has_key?("cur_perspective_#{@conversation.id}") and session["cur_perspective_#{@conversation.id}"] != ''
+          for com in @perspectives
+            if com.context_code == current_participant.city_uniq
+              @perspective = com.tagname
+              @perspectives = [com]
+            end
+          end
+        elsif @perspectives.length == 1 and @conversation.id != CITY_CONVERSATION_ID
+            #@comtag = @perspectives.keys[0]
+            @comtag = @perspectives[0].tagname
+            logger.info("dialogs#slider perspective from only available: #{@comtag} for #{@conversation.shortname}")
+        elsif @perspectives.length == 0
+          @perspective = 'outsider'
+        elsif session.has_key?("cur_perspective_#{@conversation.id}") and session["cur_perspective_#{@conversation.id}"] != '' and @conversation.id != CITY_CONVERSATION_ID
           @comtag = session["cur_perspective_#{@conversation.id}"]
           logger.info("dialogs#slider perspective from cookie: #{@comtag} for #{@conversation.shortname}")
-        elsif @perspectives.length == 1
-          #@comtag = @perspectives.keys[0]
-          @comtag = @perspectives[0].tagname
-          logger.info("dialogs#slider perspective from only available: #{@comtag} for #{@conversation.shortname}")
         else
           #@comtag = @perspectives.keys[0]
           @comtag = @perspectives[0].tagname

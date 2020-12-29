@@ -790,6 +790,16 @@ class ProfilesController < ApplicationController
           end
         end
       end
+    elsif @old_city_uniq != ''
+      # Leave the previous community
+      logger.info("profiles#geoupdate city_uniq #{@old_city_uniq} -> [blank]")
+      ocommunity = Community.where(context: 'city', context_code: @old_city_uniq).first
+      if ocommunity
+        @participant.tag_list.remove(ocommunity.tagname)
+      end
+      @participant.city_uniq = ''
+    else
+      @participant.city_uniq = ''
     end
     if @participant.country_code.to_s != ""
       #-- Fill in the country name
