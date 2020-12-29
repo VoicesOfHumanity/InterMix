@@ -347,7 +347,13 @@ class DialogsController < ApplicationController
       end
       session["cur_perspective_#{@conversation.id}"] = @perspective
       @is_conv_member = true
-      
+
+    elsif @in == 'conversation' and @conversation and @conversation.id == CITY_CONVERSATION_ID
+        #-- If we're going to the city conversation, send them to their profile if they don't have one        
+        flash.alert = "You must provide your city to take part in The Cities conversation. To select a city you may need to provide your Province or State."
+        url = "/me/profile/edit"
+        redirect_to url
+        return
     end
     
     @communities = []
