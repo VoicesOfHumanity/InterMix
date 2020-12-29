@@ -6,9 +6,11 @@ if (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ 
   FACEBOOK_API_SECRET      = '03a98fc919e2ea25970367510d0c9b01'
   VOL_LOGO = "/images/data/photos/7/67.jpg"
   INT_CONVERSATION_ID = 1
-  INT_CONVERSATION_CODE = 'international'
+  INT_CONVERSATION_CODE = 'The_Nations'
   CITY_CONVERSATION_ID = 5
-  CITY_CONVERSATION_CODE = 'cities'
+  CITY_CONVERSATION_CODE = 'The_Cities'
+  UNGOALS_CONVERSATION_ID = 4
+  UNGOALS_CONVERSATION_CODE = 'The_UN_Goals'
 else
   BASEDOMAIN = 'voh.intermix.org'
   ROOTDOMAIN = 'intermix.org'
@@ -17,9 +19,11 @@ else
   FACEBOOK_API_SECRET      = '3653366f2b6d4778e09db3d666d1fedf'
   VOL_LOGO = "/images/data/photos/7/67.jpg"
   INT_CONVERSATION_ID = 2
-  INT_CONVERSATION_CODE = 'international'
+  INT_CONVERSATION_CODE = 'The_Nations'
   CITY_CONVERSATION_ID = 3
-  CITY_CONVERSATION_CODE = 'cities'
+  CITY_CONVERSATION_CODE = 'The_Cities'
+  UNGOALS_CONVERSATION_ID = 1
+  UNGOALS_CONVERSATION_CODE = 'The_UN_Goals'
 end
 
 DATADIR = '/home/apps/intermix/shared/data'

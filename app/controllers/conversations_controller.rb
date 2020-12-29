@@ -77,6 +77,8 @@ class ConversationsController < ApplicationController
       @section = 'nations'
     elsif @conversation.id == CITY_CONVERSATION_ID
       @section = 'cities'
+    elsif @conversation.id == UNGOALS_CONVERSATION_ID
+      @section = 'ungoals'
     else
       @section = 'conversations'
     end
@@ -176,6 +178,8 @@ class ConversationsController < ApplicationController
       @section = 'nations'
     elsif @conversation.id == CITY_CONVERSATION_ID
       @section = 'cities'
+    elsif @conversation.id == UNGOALS_CONVERSATION_ID
+      @section = 'ungoals'
     else
       @section = 'conversations'
     end

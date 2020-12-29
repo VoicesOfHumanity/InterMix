@@ -97,10 +97,12 @@ class DialogsController < ApplicationController
     if params.has_key?(:conv)
       @in = 'conversation'
       @conv = params[:conv]
-      if @conv == INT_CONVERSATION_CODE 
+      if @conv == INT_CONVERSATION_CODE
         @section = 'nations'
       elsif @conv == CITY_CONVERSATION_CODE
-        @section = 'cities'  
+        @section = 'cities'
+      elsif @conv == UNGOALS_CONVERSATION_CODE
+        @section = 'ungoals'
       else
         @section = 'conversations'
       end
@@ -267,7 +269,7 @@ class DialogsController < ApplicationController
     if @conv != '' and @conv != '-'
       @conversation = Conversation.find_by_shortname(@conv)
       @conversation_id = @conversation ? @conversation.id : 0
-      if @conversation.id == CITY_CONVERSATION_ID 
+      if @conversation_id == CITY_CONVERSATION_ID 
         @geo_level = 1
       end      
     end

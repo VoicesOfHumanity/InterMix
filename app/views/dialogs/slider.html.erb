@@ -59,7 +59,7 @@
       <% end -%>
     <% end -%>
     
-    <% if @in == 'conversation' and @conversation.topics.class.name == 'Array' -%>
+    <% if @in == 'conversation' and @conversation and @conversation.topics.class.name == 'Array' -%>
     <div style="margin: 20px 0 0 0;">
         <b>Topic:</b><br>
         <input type="radio" name="topic_radio" value="" <%= (@topic.to_s == '*' or (@topic.to_s == '' and @conversation.default_topic.to_s == '')) ? "checked" : "" %> onclick="per_reload()">any topic<br>

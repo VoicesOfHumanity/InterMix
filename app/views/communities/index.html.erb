@@ -8,7 +8,7 @@
 
 <table style="width:595px">
 <tr><th>Forum</th><th>Activity</th><th>More Information</th><th>&nbsp;</th></tr>	
-<% if @csection == 'nations' -%>
+<% if @csection == INT_CONVERSATION_CODE -%>
   <% for com in @prof_nations -%>
       <tr>
         <% if com.go_to_conversation(current_participant) != '' -%>
@@ -22,7 +22,7 @@
       </tr>
   <% end -%>
   <tr><td>&nbsp;</td></tr>
-<% elsif @csection == 'cities' -%>
+<% elsif @csection == CITY_CONVERSATION_CODE -%>
   <% for com in @prof_cities -%>
       <tr>
         <% if com.go_to_conversation(current_participant) != '' -%>
