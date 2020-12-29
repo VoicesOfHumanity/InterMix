@@ -64,6 +64,7 @@ class DialogsController < ApplicationController
     @show_result = params[:show_result].to_i
     @top_posts = params[:top_posts].to_i
     @network_id = params[:network_id].to_i
+    @period = params[:period].to_s    # Mostly matches datefixed, but not quite. To control the period, particularly for linking to results
     @topic = params[:topic].to_s
     logger.info("dialogs#slider topic:#{@topic}")
     
@@ -182,6 +183,23 @@ class DialogsController < ApplicationController
         logger.info("dialogs#slider neither @cur_moon_new_full nor @cur_moon_full_new are set")
       end
     end
+    if @period.to_s != ""
+      # Override the period based on a parameter. Mostly used for results
+      if @period == 'cur_moon'
+        if @cur_moon_new_full.to_s != ''
+          @datefixed = @cur_moon_new_full
+        elsif @cur_moon_full_new.to_s != ''
+          @datefixed = @cur_moon_full_new
+        end        
+        logger.info("dialogs#slider datefixed set to #{@datefixed} as cur_moon")
+      elsif @period == 'recent_moon'
+        
+        
+      elsif ['day', 'week', 'month', 'year', 'all'].includes? @period 
+        @datefixed = @period
+      end
+    end
+    
     #@datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
     @sortby = (@in == 'main' ? 'items.id desc' : '*value*')
     @threads = 'flat'
@@ -349,11 +367,13 @@ class DialogsController < ApplicationController
       @is_conv_member = true
 
     elsif @in == 'conversation' and @conversation and @conversation.id == CITY_CONVERSATION_ID
-        #-- If we're going to the city conversation, send them to their profile if they don't have one        
-        flash.alert = "You must provide your city to take part in The Cities conversation. To select a city you may need to provide your Province or State."
-        url = "/me/profile/edit"
-        redirect_to url
-        return
+        #-- If we're going to the city conversation, send them to their profile if they don't have one   
+        if current_participant.city_uniq.to_s == ''   
+          flash.alert = "You must provide your city to take part in The Cities conversation. To select a city you may need to provide your Province or State."
+          url = "/me/profile/edit"
+          redirect_to url
+          return
+        end
     end
     
     @communities = []

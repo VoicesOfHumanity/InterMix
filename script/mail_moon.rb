@@ -267,6 +267,11 @@ for p in participants
   etext += "<p>" + @moon.top_text + "</p>" if @moon.top_text.to_s != ''
   etext += "<hr/>"
   
+  #etext += "<p><a href=\"https://#{domain}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{INT_CONVERSATION_CODE}&show_result=1\">See the top rated messages from \"The Nations]\" conversation</a></p>"
+  #etext += "<p><a href=\"https://#{domain}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{CITY_CONVERSATION_CODE}&show_result=1\">See the top rated messages from \"The Cities]\" conversation</a></p>"
+  
+  etext += "<hr/>"
+  
   next if @data.length == 0
 
   @data.each do |name,info|

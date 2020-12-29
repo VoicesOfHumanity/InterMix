@@ -689,6 +689,8 @@ class ApplicationController < ActionController::Base
         cur_moon_full_full = nil
         cur_moon_new_full = nil
         cur_moon_full_new = nil
+        cur_half_moon = nil
+        last_half_moon = nil
         
         last_start_full = nil
         last_start_new = nil
@@ -736,7 +738,13 @@ class ApplicationController < ActionController::Base
         session[:cur_moon_new_new] = cur_moon_new_new
         session[:cur_moon_full_full] = cur_moon_full_full
         session[:cur_moon_new_full] = cur_moon_new_full
-        session[:cur_moon_full_new] = cur_moon_full_new
+        session[:cur_moon_full_new] = cur_moon_full_new        
+        if cur_moon_new_full
+          cur_half_moon = cur_moon_new_full
+        elsif cur_moon_full_new
+          cur_half_moon = cur_moon_full_new
+        end
+        session[:cur_half_moon] = cur_half_moon
       end
     end
     
