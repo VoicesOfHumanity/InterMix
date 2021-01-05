@@ -114,11 +114,13 @@ class ConversationsController < ApplicationController
       @prof_cities = []
       communities = []
       coms = @conversation.communities
+      logger.info("conversations#show #{coms.length} communities total")
       for com in coms
         if current_participant.city_uniq != '' and com.context_code == current_participant.city_uniq
           com.activity = com.activity_count
           @prof_cities << com
           @cur_perspective = com.tagname
+          logger.info("conversations#show adding #{com.tagname} to prof_cities")
         else
           communities << com
         end

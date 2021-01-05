@@ -779,7 +779,10 @@ class ProfilesController < ApplicationController
         if community
           @participant.tag_list.add(community.tagname)
           conversation = Conversation.find_by_id(CITY_CONVERSATION_ID)
-          conversation.communities << community
+          conversation_community = ConversationCommunity.where(conversation_id: conversation.id, community_id: community.id).first
+          if not conversation_community
+            conversation.communities << community
+          end
         end
         if @old_city_uniq.to_s != '' and @old_city_uniq != @participant.city_uniq
           # Leave the previous community
