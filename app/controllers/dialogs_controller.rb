@@ -461,8 +461,10 @@ class DialogsController < ApplicationController
             if com.context_code == current_participant.city_uniq
               @perspective = com.tagname
               @perspectives = [com]
+              @comtag = @perspective
             end
           end
+          logger.info("dialogs#slider city perspective: #{@perspective} comtag: #{@comtag}")
         elsif @perspectives.length == 1 and @conversation.id != CITY_CONVERSATION_ID
             #@comtag = @perspectives.keys[0]
             @comtag = @perspectives[0].tagname
@@ -479,6 +481,7 @@ class DialogsController < ApplicationController
         end
         if @comtag != '' and current_participant.tag_list_downcase.include?(@comtag.downcase)
           @perspective = @comtag
+          logger.info("dialogs#slider redirecting to conversation with comtag: #{@perspective}")
           url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
           url += "&show_result=1" if @show_result == 1
           redirect_to url
@@ -507,6 +510,7 @@ class DialogsController < ApplicationController
         @perspective = 'outsider'
       end
       if @perspective == 'outsider'
+        logger.info("dialogs#slider redirecting to conversation about, because outsider")
         redirect_to "/conversations/#{@conversation.id}"
         return
       end
