@@ -1676,6 +1676,10 @@ class Item < ActiveRecord::Base
     end
     logger.info("item#get_items title:#{title}")
     
+    if crit['in'] == 'main'
+      items = items.where("(comment_email_to!='author' or is_first_in_thread=1)")
+    end
+    
     # tags
     if crit['in'] == 'conversation' and @conversation
       # Tags in a conversation are treated a bit differently      
