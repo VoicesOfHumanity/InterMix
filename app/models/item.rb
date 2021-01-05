@@ -329,8 +329,19 @@ class Item < ActiveRecord::Base
     end
     
     if self.reply_to.to_i > 0 and self.comment_email_to == 'author'
-      #-- It is a comment, and it is to the author only
-      #-- Do nothing, as we just added the author to the otherwise empty list of participants
+      #-- It is a comment, and it is to the author only (of the message we reply to)
+      if self.orig_item and top and self.orig_item.posted_by != top.posted_by
+        if not got_participants.has_key? self.orig_item.posted_by
+          author = Participant.find_by_id(self.orig_item.posted_by)
+          if author
+            author.explanation = "This is the author of the message replied to, and comments are set to go to the author. "
+            participants << author
+            got_participants[author.id] = true
+          end
+        end
+      else  
+        #-- Do nothing, as we just added the thread author to the otherwise empty list of participants
+      end
     elsif self.reply_to.to_i > 0 and self.comment_email_to == 'community'
       #-- It is a comment, only to email to the community
       if self.intra_com.to_s != ''
