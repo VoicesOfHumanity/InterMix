@@ -34,7 +34,7 @@ class CommunitiesController < ApplicationController
       communities = Community.where(is_sub: false)
       @csection = 'all' 
     elsif params[:which].to_s == 'human'  
-      communities = Community.where(is_sub: false, major: true)
+      communities = Community.where(is_sub: false, more: true)
       @csection = 'human' 
     elsif params[:which].to_s == 'un'  
       communities = Community.where(is_sub: false, ungoals: true)
