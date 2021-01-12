@@ -84,9 +84,9 @@ class ApplicationController < ActionController::Base
     elsif @admin1uniq != ""
       xarr = @admin1uniq.split('.')
       admin1_code = xarr[1]
-      res = [''] + Geoname.where(country_code: @country_code, admin1_code: admin1_code, fclasscode: 'P.PPL').order("name").collect {|r| r.name}
+      res = [''] + Geoname.select(:name).distinct.where(country_code: @country_code, admin1_code: admin1_code, fclasscode: 'P.PPL').order("name").collect {|r| r.name}
     elsif @country_code != ""
-      res = [''] + Geoname.where(country_code: @country_code, fclasscode: 'P.PPL').order("name").collect {|r| r.name}
+      res = [''] + Geoname.select(:name).distinct.where(country_code: @country_code, fclasscode: 'P.PPL').order("name").collect {|r| r.name}
     end
     render json: res
   end  
