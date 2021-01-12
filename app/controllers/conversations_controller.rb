@@ -113,6 +113,7 @@ class ConversationsController < ApplicationController
       end
       @prof_cities = []
       communities = []
+      got_com = {}
       coms = @conversation.communities
       logger.info("conversations#show #{coms.length} communities total")
       for com in coms
@@ -122,7 +123,10 @@ class ConversationsController < ApplicationController
           @cur_perspective = com.tagname
           logger.info("conversations#show adding #{com.tagname} to prof_cities")
         else
-          communities << com
+          if not got_com.has_key?(com.tagname)
+            communities << com
+            got_com[com.tagname] = true
+          end
         end
       end
       @communities = communities
