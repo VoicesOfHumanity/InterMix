@@ -199,7 +199,7 @@ if (CKEDITOR.instances['item_html_content']) {
   	</div>
     </li>
 
-    <li class="text optional" id="item_short_content_input"><label for="item_short_content" style="width: 500px">Short summary / twitter version (<span id="charsused">0</span> of 240 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px;font-size:15px"><%= @item.short_content %></textarea></li>
+    <li class="text optional" id="item_short_content_input"><label for="item_short_content" style="width: 500px">Short summary / twitter version (<span id="charsused">0</span> of 240 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px;font-size:15px" disabled="disabled"><%= @item.short_content %></textarea></li>
 
 		<% if false -%>
     <li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Tags</label><input id="item_tag_list" name="item[tag_list]" size="80" type="text" value="" /></li>
@@ -253,6 +253,8 @@ console.log('_edit');
 	}
 //});
 var short_updated = <%= (@item.id.to_i > 0 or flash[:alert].to_s !="" or @item.media_type != 'text') ? "true" : "false" %>;
+var short_allowed = false;
+var editor_change_first = true;
 function editor_change() {
 	var htmlval = CKEDITOR.instances['item_html_content'].getData();
 	var plainval = $.trim(strip(htmlval));
@@ -260,6 +262,11 @@ function editor_change() {
 		html_to_short(htmlval,plainval);
 	}
 	mess_characters(htmlval,plainval);
+  if (!short_allowed && !editor_change_first && plainval != '') {
+    $('#item_short_content').prop("disabled", false );
+    short_allowed = true;
+  }
+  editor_change_first = false;
 }
 var cur_media_type = $('#item_media_type').val();
 mediachange(cur_media_type);
