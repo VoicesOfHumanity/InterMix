@@ -183,22 +183,6 @@ class DialogsController < ApplicationController
         logger.info("dialogs#slider neither @cur_moon_new_full nor @cur_moon_full_new are set")
       end
     end
-    if @period.to_s != ""
-      # Override the period based on a parameter. Mostly used for results
-      if @period == 'cur_moon'
-        if @cur_moon_new_full.to_s != ''
-          @datefixed = @cur_moon_new_full
-        elsif @cur_moon_full_new.to_s != ''
-          @datefixed = @cur_moon_full_new
-        end        
-        logger.info("dialogs#slider datefixed set to #{@datefixed} as cur_moon")
-      elsif @period == 'recent_moon'
-        
-        
-      elsif ['day', 'week', 'month', 'year', 'all'].includes? @period 
-        @datefixed = @period
-      end
-    end
     
     #@datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
     @sortby = (@in == 'main' ? 'items.id desc' : '*value*')
@@ -244,6 +228,26 @@ class DialogsController < ApplicationController
     end
     if params.has_key?(:nvaction)
       @nvaction = (params[:nvaction].to_i == 1) ? true : false
+    end
+    
+    if @period.to_s != ""
+      # Override the period based on a parameter. Mostly used for results
+      if @period == 'cur_moon'
+        if @cur_moon_new_full.to_s != ''
+          @datefixed = @cur_moon_new_full
+        elsif @cur_moon_full_new.to_s != ''
+          @datefixed = @cur_moon_full_new
+        end        
+        logger.info("dialogs#slider datefixed set to #{@datefixed} as cur_moon")
+      elsif @period == 'recent_moon'
+        # We might not need that after all
+        # 2020-10-16_2020-10-31        
+      elsif ['day', 'week', 'month', 'year', 'all'].include? @period 
+        @datefixed = @period
+      else
+        @datefixed = @period
+        logger.info("dialogs#slider datefixed set to #{@datefixed} literally")
+      end
     end
     
     # Remember our current settings, mainly for going back and forth between tabs

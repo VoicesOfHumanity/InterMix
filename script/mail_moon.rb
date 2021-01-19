@@ -76,13 +76,17 @@ crit = {}
 
 crit[:from] = 'mail'
 
-# Get the period
+# Get the period. NB: That's a full moon month, not a half month
 @datefrom = @moon.previous_date
+@datefrom_short = @moon.previous_date_half
 @dateto = @moon.mdate
 
 crit[:datefromuse] = @datefrom
 crit[:datefromto] = @dateto
 puts "Using period #{@datefrom} - #{@dateto}" 
+
+moonrange_long = "#{@datefrom}_#{@dateto}"
+moonrange_short = "#{@datefrom_short}_#{@dateto}"    # This is how we store it in the moons table
 
 #-- Whichever day (today or yesterday) is the new/full moon, use that
 
@@ -264,12 +268,11 @@ for p in participants
   participant = p
   
   etext = ""  
-  etext += "<p>" + @moon.top_text + "</p>" if @moon.top_text.to_s != ''
+  etext += "<p><a href=\"https://#{domain}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{INT_CONVERSATION_CODE}&period=#{moonrange_short}&show_result=1&auth_token=#{p.authentication_token}\">See the top rated messages from \"The Nations\" conversation</a></p>"
+  etext += "<p><a href=\"https://#{domain}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{CITY_CONVERSATION_CODE}&period=#{moonrange_short}&show_result=1&auth_token=#{p.authentication_token}\">See the top rated messages from \"The Cities\" conversation</a></p>"
   etext += "<hr/>"
   
-  #etext += "<p><a href=\"https://#{domain}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{INT_CONVERSATION_CODE}&show_result=1\">See the top rated messages from \"The Nations]\" conversation</a></p>"
-  #etext += "<p><a href=\"https://#{domain}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{CITY_CONVERSATION_CODE}&show_result=1\">See the top rated messages from \"The Cities]\" conversation</a></p>"
-  
+  etext += "<p>" + @moon.top_text + "</p>" if @moon.top_text.to_s != ''  
   etext += "<hr/>"
   
   next if @data.length == 0

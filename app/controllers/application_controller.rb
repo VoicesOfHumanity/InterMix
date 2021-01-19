@@ -692,6 +692,9 @@ class ApplicationController < ActionController::Base
         cur_half_moon = nil
         last_half_moon = nil
         
+        cur_period = nil
+        recent_period = nil
+        
         last_start_full = nil
         last_start_new = nil
         
@@ -704,6 +707,12 @@ class ApplicationController < ActionController::Base
         for moon_rec in moon_recs
           xend = moon_rec['mdate'].strftime('%Y-%m-%d')
           xrange = "#{xstart}_#{xend}"
+          
+          # maybe this would be simpler than the convoluted way below. To be examined
+          if today >= xstart and today <= xend
+            recent_period = cur_period
+            cur_period = xrange
+          end
           
           if moon_rec.new_or_full == 'full' and today <= xend and today >= last_start_full
             cur_moon_full_full = "#{last_start_full}_#{xend}"

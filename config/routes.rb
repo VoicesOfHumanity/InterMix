@@ -152,6 +152,9 @@ Rails.application.routes.draw do
 
   #mount Ckeditor::Engine => "/ckeditor"
 
+  # well-known protocols for activitypub, etc
+  get '.well-known/webfinger', to: 'well_known/webfinger#show', as: :webfinger
+
   get '/participants/auth/:provider/callback' => 'authentications#create'
   post '/participants/auth/:provider/callback' => 'authentications#create'
   resources :authentications

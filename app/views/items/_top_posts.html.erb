@@ -1,10 +1,5 @@
 <h3>Top Posts: <%=raw @title %>
 <% if @conversation %>
-  <br>My Perspective: <%= @perspective %>
-  <% if @community_list and @community_list.length > 1 -%>
-    &nbsp;&nbsp;
-    <%= select_tag "chg_com", options_for_select([['Change Perspective','']]+@community_list), :onchange => 'chg_community()' %>
-  <% end -%>
   <% if @topic.to_s != '' -%>
     <br>Topic: <%= @topic_title || @topic.capitalize %>
   <% end -%>

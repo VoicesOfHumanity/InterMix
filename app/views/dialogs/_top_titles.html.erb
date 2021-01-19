@@ -26,7 +26,7 @@
   - <%= @conversation.name %>
   <% end -%>
   - Admin
-<% elsif @dsection == 'list' and @conversation and @conversation.name.to_s != '' -%>
+<% elsif (@dsection == 'list' or @dsection == 'top') and @conversation and @conversation.name.to_s != '' -%>
   - <span id="top_forum_header"><%= @conversation.name if @conversation %> - <%=  @conversation.together_apart.capitalize %></span> 
 <% elsif @dsection == 'list' -%>
   - <span id="top_forum_header"><%= @nvaction ? 'Nonviolent Action Forum' : 'Forum' %></span>
