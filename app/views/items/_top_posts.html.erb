@@ -19,31 +19,32 @@
 <% end -%>
 
 <% @data.each do |name,info| -%>
-  <h3><%= info[:name ]%></h3>
+  <% if info[:item] and params[:showratings].to_i != 1 -%>
+    <h3><%= info[:name ]%></h3>
     
-  <% if info[:item] -%>
-    <% if params[:showratings].to_i == 1 -%>
-      <p>[winner out of <%= info[:itemcount] %> items and <%= info[:ratingcount]%> ratings:]</p>
-    <% end -%>
-    <div class="forumitem forumitemplain forummain forum1">
-      <%= render :partial => "items/item", :locals => { :item => info[:item], :itemproc=>info[:iproc], :is_reply=>false, :from=>'result', :odd_or_even=>1, :top=>0, :exp_item_id=>0 } %>
-        <div>
-        <% if false -%>
-        [<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result">see all in the forum list</a>]
-        <% end -%>
+    <% if info[:item] -%>
+      <% if params[:showratings].to_i == 1 -%>
+        <p>[winner out of <%= info[:itemcount] %> items and <%= info[:ratingcount]%> ratings:]</p>
+      <% end -%>
+      <div class="forumitem forumitemplain forummain forum1">
+        <%= render :partial => "items/item", :locals => { :item => info[:item], :itemproc=>info[:iproc], :is_reply=>false, :from=>'result', :odd_or_even=>1, :top=>0, :exp_item_id=>0 } %>
+          <div>
+          <% if false -%>
+          [<a href="/dialogs/<%= @dialog_id %>/forum?<%=raw @period_id > 0 ? "period_id=#{@period_id}&amp;" : "" %>sortby=*value*&amp;threads=root&amp;from=result">see all in the forum list</a>]
+          <% end -%>
+        </div>
+  		</div>
+      <% if params[:showratings].to_i == 1 and @extras and @extras.has_key?('regression') -%>
+      <div>
+      Regression: <%=raw info[:extras]['regression'] -%><br>
       </div>
-		</div>
-    <% if params[:showratings].to_i == 1 and @extras and @extras.has_key?('regression') -%>
-    <div>
-    Regression: <%=raw info[:extras]['regression'] -%><br>
-    </div>
+      <% end -%>
+    <% elsif params[:showratings].to_i == 1 -%>
+      <p>[no winner out of <%= info[:itemcount] %> items and <%= info[:ratingcount]%> ratings]</p>   
+    <% else -%>
+      <p>[no winner]</p>
     <% end -%>
-  <% elsif params[:showratings].to_i == 1 -%>
-    <p>[no winner out of <%= info[:itemcount] %> items and <%= info[:ratingcount]%> ratings]</p>   
-  <% else -%>
-    <p>[no winner]</p>
   <% end -%>
-
 <% end -%>
 
 <div style="border:1px solid #000;padding:0px 0 0 0;margin-bottom:20px;" id="options_bottom">
