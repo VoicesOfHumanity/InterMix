@@ -154,6 +154,10 @@ Rails.application.routes.draw do
 
   # well-known protocols for activitypub, etc
   get '.well-known/webfinger', to: 'well_known/webfinger#show', as: :webfinger
+  
+  # activitypub
+  post 'acct/:acct_id/inbox', to: 'activitypub#inbox'
+  get 'acct/:acct_id', to: 'activitypub#acct'
 
   get '/participants/auth/:provider/callback' => 'authentications#create'
   post '/participants/auth/:provider/callback' => 'authentications#create'

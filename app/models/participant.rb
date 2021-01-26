@@ -53,6 +53,8 @@ class Participant < ActiveRecord::Base
   has_attached_file :picture, :styles => { :medium => "300x300>", :thumb => "50x50#" }, :path => "#{DATADIR}/:class/:attachment/:id/:style_:basename.:extension", :url => "/images/data/:class/:attachment/:id/:style_:basename.:extension"
   validates_attachment_content_type :picture, :content_type => /\Aimage\/.*\Z/
   
+  after_save :check_account_uniq
+  
   attr_accessor :activity   # Used for fx activity in a group, to sort by
   
   def name
@@ -378,8 +380,47 @@ class Participant < ActiveRecord::Base
     end
     xlist
   end
+  
+  def generate_account_uniq
+    # Construct a unique identifier, mainly to use with ActivePub. Will be combined with the server domain name
+    first_name = self.first_name ? self.first_name.strip.downcase : ''
+    last_name = self.last_name ? self.last_name.strip.downcase : ''
+  
+    first_init = ''
+    second_init = ''
+  
+    if first_name.length > 0
+      first_init = first_name[0]
+    elsif last_name.length > 0
+      first_init = last_name[1]    
+    end
+    if last_name.length > 0
+      second_init = last_name[0]
+    elsif first_name.length > 0
+      second_init = first_name[1]
+    end
+  
+    account_uniq = "#{first_init}#{second_init}#{self.id}"
+    
+    return account_uniq
+  end
       
   private
+  
+  def check_account_uniq
+    # After saving, check if we have a unique account identifier
+    if self.account_uniq != '' and self.account_uniq_full != ''
+      return
+    end
+    self.account_uniq = self.generate_account_uniq
+    if BASEDOMAIN.include? ":"
+      self.account_uniq_full = "#{self.account_uniq}@#{ROOTDOMAIN}"
+    else
+      # Preferable
+      self.account_uniq_full = "#{self.account_uniq}@#{BASEDOMAIN}"
+    end
+    self.save
+  end
   
   def generate_authentication_token
     loop do

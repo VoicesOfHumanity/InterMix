@@ -38,6 +38,9 @@
 
 <tr><td class="label">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %> GMT</td></tr>	
 <tr><td class="label">Member #:</td><td><%= @participant.id %></td></tr>	
+
+<tr><td class="label">Fediverse ID:</td><td><%= @participant.account_uniq_full ? @participant.account_uniq_full : 'none' %></td></tr>	
+
 <% @participant.metamaps.each do |metamap| -%>
   <% if metamap.global_default -%>
     <% metamap_nodes = @participant.metamap_nodes_h %>
