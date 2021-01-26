@@ -1,3 +1,5 @@
+require 'will_paginate/array'
+
 class CommunitiesController < ApplicationController
  
 	layout "front"
@@ -111,9 +113,14 @@ class CommunitiesController < ApplicationController
       logger.info("communities#index sort by #{@sort} after the fact")
       @communities.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
     end
-    
-    @communities = @communities[0..20]
-       
+
+    @perscr = (params[:perscr] || 20).to_i
+    @page = ( params[:page] || 1 ).to_i
+    @page = 1 if @page < 1
+
+    #@communities = @communities[0..20]
+    @communities = @communities.paginate :page=>@page, :per_page => @perscr 
+          
     @sort = sort 
     
   end  
