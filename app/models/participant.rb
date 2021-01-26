@@ -156,7 +156,7 @@ class Participant < ActiveRecord::Base
     #-- Has the required profile fields and meta tags been entered for this participant?
     ok = true
     exp = ''
-    if first_name.to_s == '' or last_name == ''
+    if first_name.to_s == ''
       ok = false
       exp = "name"
     elsif country_code.to_s == ''
@@ -412,7 +412,9 @@ class Participant < ActiveRecord::Base
     if self.account_uniq != '' and self.account_uniq_full != ''
       return
     end
-    self.account_uniq = self.generate_account_uniq
+    if self.account_uniq.to_s == ''
+      self.account_uniq = self.generate_account_uniq
+    end
     if BASEDOMAIN.include? ":"
       self.account_uniq_full = "#{self.account_uniq}@#{ROOTDOMAIN}"
     else

@@ -493,9 +493,14 @@ class FrontController < ApplicationController
       @first_name = params[:first_name].to_s
     else
       narr = @name.split(' ')
-      @last_name = narr[narr.length-1]
-      @first_name = ''
-      @first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
+      if narr.length > 1
+        @last_name = narr[narr.length-1]
+        @first_name = ''
+        @first_name = narr[0,narr.length-1].join(' ')
+      else
+        @first_name = @name.strip
+        @last_name = ""
+      end
     end
         
     @participant = Participant.find_by_email(@email) 
