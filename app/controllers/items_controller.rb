@@ -2759,7 +2759,7 @@ class ItemsController < ApplicationController
       #urls = @item.html_content.scan(URI.regexp)
       urls = URI.extract(@item.html_content,['http','https'])
       logger.info("items#itemprocess found #{urls.length} links")
-      if urls.length > 0
+      if urls.length > 0 and not urls[0].include? "intermix"
         url = urls[0]
         #logger.info("items#itemprocess found url: &gt;&gt;#{url}&lt;&lt;")
         begin
