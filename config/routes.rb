@@ -156,8 +156,11 @@ Rails.application.routes.draw do
   get '.well-known/webfinger', to: 'well_known/webfinger#show', as: :webfinger
   
   # activitypub
-  post 'acct/:acct_id/inbox', to: 'activitypub#inbox'
-  get 'acct/:acct_id', to: 'activitypub#acct'
+  post 'acct/:acct_id/inbox.json', to: 'activitypub#inbox'
+  get 'acct/:acct_id', to: 'activitypub#account_info'
+  get 'acct/:acct_id/feed.json', to: 'activitypub#feed'
+  get 'acct/:acct_id/key.json', to: 'activitypub#account_key'
+
 
   get '/participants/auth/:provider/callback' => 'authentications#create'
   post '/participants/auth/:provider/callback' => 'authentications#create'

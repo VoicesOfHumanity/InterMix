@@ -1,3 +1,5 @@
+require 'openssl'
+
 class ProfilesController < ApplicationController
   
   layout "front"
@@ -269,6 +271,13 @@ class ProfilesController < ApplicationController
     if @participant.save
 
       geoupdate
+      
+      if @participant.private_key.to_s == ''
+        rsa_key = OpenSSL::PKey::RSA.new(2048)
+        @participant.private_key = rsa_key.to_pem
+        @participant.public_key = rsa_key.public_key.to_pem
+        @participant.save
+      end
       
       if @participant.twitter_username == '' and @participant.twitter_oauth_token != ''
         @participant.twitter_oauth_token = ''

@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 #require 'ostruct'
+require 'openssl'
 
 class FrontController < ApplicationController
 
@@ -591,6 +592,13 @@ class FrontController < ApplicationController
       render :action=>:dialogjoinform
       return
     end  
+
+    if @participant.private_key.to_s == ''
+      rsa_key = OpenSSL::PKey::RSA.new(2048)
+      @participant.private_key = rsa_key.to_pem
+      @participant.public_key = rsa_key.public_key.to_pem
+      @participant.save
+    end
 
     #@participant.groups << @group if not @participant.groups.include?(@group)
     @group_participant = GroupParticipant.new(:group_id=>@group.id,:participant_id=>@participant.id)
