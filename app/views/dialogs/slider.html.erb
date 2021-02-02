@@ -167,23 +167,6 @@
         <% end %>
       <% end %>
     </div>
-  
-    <% if false %>
-    <div style="margin: 20px 0 0 0;">
-      <input type="checkbox" id="indigenous" value="1" onclick="per_reload()"<% if @indigenous %> checked<% end %>>Indigenous<br>
-      <input type="checkbox" id="other_minority" value="1" onclick="per_reload()"<% if @other_minority %> checked<% end %>>Other Minority<br>
-      <input type="checkbox" id="veteran" value="1" onclick="per_reload()"<% if @veteran %> checked<% end %>>Veteran<br>
-      <input type="checkbox" id="interfaith" value="1" onclick="per_reload()"<% if @interfaith %> checked<% end %>>Interfaith<br>
-      <input type="checkbox" id="refugee" value="1" onclick="per_reload()"<% if @refugee %> checked<% end %>>Refugee<br>
-    </div>    
-    <div style="margin: 20px 0 0 0;">
-      <% DEFAULT_COMMUNITIES.each do |tag,desc| -%>
-        <% if current_participant.tag_list.include?(tag) -%>
-          <input type="checkbox" id="check_<%= tag %>" data-tag="<%= tag %>" value="1" class="com_check" onclick="per_reload()"<% if false %> checked<% end %>><%= desc %><br>
-        <% end -%>
-      <% end -%>
-    </div>
-    <% end %>
 
     <div style="display:none;margin: 20px 0 0 0;">
       <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Listing<br>
