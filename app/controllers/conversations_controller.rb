@@ -9,9 +9,12 @@ class ConversationsController < ApplicationController
   # GET /conversations
   def index
     # Show a list of conversations
-    @section = 'conversations'
+
+    #@section = 'conversations'
+    @section = 'communities'
     @csection = params[:csection].to_s
     @csection = 'my' if @csection == ''
+        
     @sort = params[:sort] || 'activity'
     
     @cur_period = get_current_conv_period

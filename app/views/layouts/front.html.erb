@@ -95,32 +95,27 @@
 			<ul class="mainmenu">
 				
 			<% if not participant_signed_in? %>
-			<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Order out of Chaos</a></li>
-      <% elsif session[:dialog_id].to_i > 0 -%>  
-      <% vohdom = Rails.env!='development' ? "//voh.#{ROOTDOMAIN}" : '' %>
-			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dialog_id and @dialog_id.to_i==VOH_DISCUSSION_ID.to_i) %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li>
-      <% elsif true -%>
-      <% vohdom = Rails.env!='development' ? "//voh.#{ROOTDOMAIN}" : '' %>
-      <li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li> 		
-      <% elsif session[:dialog_id].to_i > 0 -%>
-			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dsection.to_s!='index') %>" href="/dialogs/<%= session[:dialog_id] %>/slider">Home</a></li>
+			    <li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Order out of Chaos</a></li>
+            <% elsif session[:dialog_id].to_i > 0 -%>  
+                <% vohdom = Rails.env!='development' ? "//voh.#{ROOTDOMAIN}" : '' %>
+			    <li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dialog_id and @dialog_id.to_i==VOH_DISCUSSION_ID.to_i) %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li>
+            <% elsif true -%>
+                <% vohdom = Rails.env!='development' ? "//voh.#{ROOTDOMAIN}" : '' %>
+                <li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li> 		
+            <% elsif session[:dialog_id].to_i > 0 -%>
+			    <li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dsection.to_s!='index') %>" href="/dialogs/<%= session[:dialog_id] %>/slider">Home</a></li>
 			<% elsif session[:group_id].to_i > 0 -%>
-			<li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='groups' and @gsection.to_s!='index') %>" href="/groups/<%= session[:group_id] %>/forum">Home</a></li>
+			    <li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='groups' and @gsection.to_s!='index') %>" href="/groups/<%= session[:group_id] %>/forum">Home</a></li>
 			<% else %>
-			<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Home</a></li>
+			    <li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Home</a></li>
 			<% end -%>
 								
 			<% if participant_signed_in? -%>
-        <% if false -%>
-          <% if session[:group_id].to_i > 0 -%>
-            <% grpdom = Rails.env!='development' ? "//#{session[:group_prefix]}.#{ROOTDOMAIN}" : '' %>
-  			    <li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='forum') %>" href="<%= grpdom %>/groups/<%= session[:group_id] %>/forum">Current Group</a></li>
-          <% end -%>
-  			  <li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='index') or (@section=='dialogs' and @dsection=='index') %>" href="/groups">Other Groups</a></li>	
-        <% end -%>
-        
-        
-                <li class="menu"><a class="<%= 'selected' if @section=='conversations' %>" href="/conversations">Apart & Together</a></li>
+            
+            	<li class="menu"><a class="<%= 'selected' if (@section=='profile' or @section=='wall' or @section=='messages' or @section=='people') %>" href="/me/profile">Me &amp; My Friends</a></li>
+                
+				<li class="menu"><a class="<%= 'selected' if @section=='communities' %>" href="/communities">Communities</a></li>
+                
                 <% city_conv = Conversation.find_by_id(CITY_CONVERSATION_ID) %>
                 <% if city_conv and city_conv.active -%>
                 <li class="menu"><a class="<%= 'selected' if @section=='cities' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= CITY_CONVERSATION_CODE %>">The Cities</a></li>
@@ -132,83 +127,12 @@
                 <% if un_conv and un_conv.active -%>
                 <li class="menu"><a class="<%= 'selected' if @section=='ungoals' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= UNGOALS_CONVERSATION_CODE %>">The UN Goals</a></li>
                 <% end -%>
-                
-				<li class="menu"><a class="<%= 'selected' if @section=='communities' %>" href="/communities">Communities</a></li>
-		
-				<li class="menu"><a class="<%= 'selected' if (@section=='profile' or @section=='wall' or @section=='messages' or @section=='people') %>" href="/me/profile">Me &amp; My Friends</a></li>
+                		
 			<% end -%>
-				
-				
-				
-				
-				
-			<% if false %>
+			
+		    <%= render 'devise/menu/login_items' %>
+		    <%= render 'devise/menu/registration_items' %>
 
-				<li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Home</a></li>
-			
-				<% if participant_signed_in? -%>
-					<% if session[:is_anyadmin] -%>
-						<% showingfull = true -%>
-					<% else -%>
-						<% showingfull = false -%>			
-					<% end -%>
-
-					<% if false -%>
-					<li class="menu full"><a  class="<%= 'selected' if @section=='forum' %>" href="/forum">Forum</a></li>
-					<li class="menu full"><a  class="<%= 'selected' if @section=='photos' %>" href="/photos">Photos</a></li>
-					<% end -%>
-				
-					<% if true or not (@section=='groups' or @section=='dialogs') -%>
-	  				<% if session[:dialog_id].to_i > 0 -%>
-	  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s!='index' %>" href="/dialogs/<%= session[:dialog_id] %>/slider">Forum List</a></li>
-	  				<% elsif session[:group_id].to_i > 0 -%>
-	  				<li class="menu"><a class="<%= 'selected' if @section=='groups' and @gsection.to_s!='index' %>" href="/groups/<%= session[:group_id] %>/forum">Forum List</a></li>
-	  				<% end -%>
-					<% end -%>
-				
-					<li class="menu"><a class="<%= 'selected' if (@section=='groups' and @gsection.to_s=='index') or (@section=='dialogs' and @dsection=='index') %>" href="/groups">Groups</a></li>
-					<% if false -%>
-	  				<% if not showingfull and session[:dialog_id].to_i > 0 -%>
-	  				<li class="menu"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s=='index' %>" href="/dialogs/<%= session[:dialog_id] %>/slider">Discussion</a></li>
-	  				<% elsif session[:group_id].to_i > 0 -%>
-	  				<li class="menu<%= ' full' if session[:dialog_id].to_i==0 and session[:group_id].to_i==0 %>"><a class="<%= 'selected' if @section=='dialogs' and @dsection.to_s=='index' %>" href="/dialogs">Discussions</a></li>				
-	  				<% else -%>
-	  				<% end -%>
-					<% end -%>
-				
-					<% if false and session[:dialog_id].to_i > 0 -%>
-					<li class="menu"><a class="<%= 'selected' if @section=='results' %>" href="/voting_results">Decision Results</a></li>
-					<% end -%>
-					
-					<% if false -%>
-					<li class="menu full"><a  class="<%= 'selected' if @section=='people' %>" href="/people">People</a></li>
-					<% end -%>
-					<li class="menu"><a  class="<%= 'selected' if @section=='friends' %>" href="/me/friends">Friends</a></li>
-					<li class="menu"><a  class="<%= 'selected' if @section=='messages' %>" href="/messages">Messages</a></li>
-					<li class="menu"><a  class="<%= 'selected' if @section=='wall' %>" href="/me/wall">Wall</a></li>			
-				
-				<% end -%>
-			
-				<% if participant_signed_in? -%>
-					<li class="menu"><a class="<%= 'selected' if @section=='profile' %>" href="/me/profile">Profile</a></li>
-				<% end -%>
-			
-			
-			<% end %>
-			
-		  <%= render 'devise/menu/login_items' %>
-		  <%= render 'devise/menu/registration_items' %>
-			<% if participant_signed_in? and (session[:dialog_id].to_i>0 or session[:group_id].to_i>0) %>
-				<li class="moreless" style="display:none">
-					<a href="#" onclick="menumoreless();return false" id="morelesslink">
-				<% if showingfull -%>
-					- less -
-				<% else -%>
-					- more -
-				<% end -%>
-					</a>
-				</li>
-			<% end -%>
 			</ul>
 			
 			<div class="sidebarbox">
@@ -304,26 +228,6 @@
 </html>
 <% if participant_signed_in? %>
 <script>
-var showingfull = true;
-<% if not showingfull -%>
-menumoreless();
-<% end -%>
-function menumoreless() {
-	if (showingfull) {
-		$('ul.mainmenu li.full').hide();
-		$('#morelesslink').html("- more -")
-		showingfull = false;
-	} else {
-		$('ul.mainmenu li.full').show();
-		$('#morelesslink').html("- less -")
-		showingfull = true;
-	}
-	$.ajax({
-	  type: 'GET',
-	  url: '/front/setsess',
-	  data: "fullmenu="+showingfull
-	});	
-}
 function whereami() {
     $('#whereami').tooptipster();
     $('#whereami').tooltipster('show');
