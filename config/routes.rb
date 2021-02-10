@@ -153,13 +153,15 @@ Rails.application.routes.draw do
   #mount Ckeditor::Engine => "/ckeditor"
 
   # well-known protocols for activitypub, etc
-  get '.well-known/webfinger', to: 'well_known/webfinger#show', as: :webfinger
+  get '.well-known/webfinger', to: 'well_known#webfinger'
+  get '.well-known/host-meta', to: 'well_known#hostmeta'
+  get '.well-known/nodeinfo', to: 'well_known#nodeinfo'
   
   # activitypub
-  post 'acct/:acct_id/inbox.json', to: 'activitypub#inbox'
-  get 'acct/:acct_id', to: 'activitypub#account_info'
-  get 'acct/:acct_id/feed.json', to: 'activitypub#feed'
-  get 'acct/:acct_id/key.json', to: 'activitypub#account_key'
+  post 'u/:acct_id/inbox.json', to: 'activitypub#inbox'
+  get 'u/:acct_id', to: 'activitypub#account_info'
+  get 'u/:acct_id/feed.json', to: 'activitypub#feed'
+  get 'u/:acct_id/key.json', to: 'activitypub#account_key'
 
 
   get '/participants/auth/:provider/callback' => 'authentications#create'

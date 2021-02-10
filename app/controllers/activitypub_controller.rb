@@ -3,7 +3,7 @@ require 'openssl'
 class ActivitypubController < ApplicationController
 
   def account_info
-    # Show info for a user, after accessing something like: https://intermix.test:3002/acct/ff1888
+    # Show info for a user, after accessing something like: https://intermix.test:3002/u/ff1888
     # This is an ActivePub Actor object
     # Should look something like:
     #{
@@ -39,20 +39,23 @@ class ActivitypubController < ApplicationController
     #   "https://kenzoishii.example.com/image/165987aklre4"
     # ]
     # }
+    # Good compatibility hints:
+    # https://flak.tedunangst.com/post/the-activity-person-examined
+
     
     account_uniq = params[:acct_id]
 
     @account = Participant.find_by_account_uniq(account_uniq)
 
-    @account_url = "https://#{BASEDOMAIN}/acct/#{@account.account_uniq}"
+    @account_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}"
     
-    @inbox_url = "https://#{BASEDOMAIN}/acct/#{@account.account_uniq}/inbox.json"
-    @outbox_url = "https://#{BASEDOMAIN}/acct/#{@account.account_uniq}/feed.json"
+    @inbox_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}/inbox"
+    @outbox_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}/feed.json"
     
-    @following_url = "https://#{BASEDOMAIN}/acct/#{@account.account_uniq}/following.json"
-    @followers_url = "https://#{BASEDOMAIN}/acct/#{@account.account_uniq}/followers.json"
+    @following_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}/following.json"
+    @followers_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}/followers.json"
 
-    @liked_url = "https://#{BASEDOMAIN}/acct/#{@account.account_uniq}/liked.json"
+    @liked_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}/liked.json"
     
     @icon_url = ""
     if @account.picture.exists?
@@ -67,15 +70,22 @@ class ActivitypubController < ApplicationController
       	],
         "type" => "Person",
         "id" => @account_url,
+        "url" => @account_url,
         "preferredUsername" => @account.account_uniq,
+        "name" => @account.account_uniq,
+        "summary" => "VoH user",
         "inbox" => @inbox_url,
         "outbox" => @outbox_url,
         "following" => @following_url,
         "followers" => @followers_url,
         "liked" => @liked_url,
-        "icon" => @icon_url,
+        "icon" => {
+          "mediaType" => "image/jpeg",
+          "type" => "icon",
+          "url" => @icon_url
+        },
         "publicKey" => {
-          "id" => "#{@account_url}/key.json",
+          "id" => "#{@account_url}#key",
           "owner" => @account_url,
           "publicKeyPem" => @account.public_key
         } 
@@ -106,10 +116,11 @@ class ActivitypubController < ApplicationController
     #  "owner": "https://payswarm.example.com/i/bob",
     #  "publicKeyPem": "-----BEGIN PRIVATE KEY-----\nMIIBG0BA...OClDQAB\n-----END PRIVATE KEY-----\n"
     #}
+    # Seems that it is a problem when it is in a separate URL, so not sure if this will be used
 
     account_uniq = params[:acct_id]
     @account = Participant.find_by_account_uniq(account_uniq)
-    @account_url = "https://#{BASEDOMAIN}/acct/#{@account.account_uniq}"
+    @account_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}"
     
     results = {
       "@context" => "https://w3id.org/security/v1",
