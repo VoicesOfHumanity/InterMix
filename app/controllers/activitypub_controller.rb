@@ -91,6 +91,10 @@ class ActivitypubController < ApplicationController
         } 
     }
     
+    # Possible more things to include, from Mastodon:
+    #"discoverable" => true,
+    #"suspended" => false,
+    
     results_json = results.to_json
     
     expires_in 3.days, public: true
