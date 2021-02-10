@@ -16,6 +16,8 @@ nowtime = now.strftime("%H:%M")
 
 puts "Now: date:#{nowdate} Time:#{nowtime}" 
 
+is_full_or_new_moon_today = false
+
 # Find the currently active period
 moon = Moon.where("mdate<='#{nowdate}'").order(mdate: :desc).first
 if moon
@@ -29,6 +31,11 @@ if moon
 
   sys.moon_startdate = DateTime.parse(datetimestr)
   puts "Start datetime: #{sys.moon_startdate}"
+  
+  if mdate == nowdate
+    puts "Today is a moon day"
+    is_full_or_new_moon_today = true
+  end
   
   sys.cur_moon_id = moon.id
   
@@ -54,9 +61,14 @@ if moon
 
   moon_enddate = DateTime.parse(datetimestr)
   puts "Start datetime: #{sys.moon_startdate}"
+  
+  if mdate == nowdate
+    puts "Today is a moon day"
+    is_full_or_new_moon_today = true
+  end
 else
   puts "Found no next moon record"
-  # User either start + 14 days, or, if that is in the past, the end of today
+  # Use either start + 14 days, or, if that is in the past, the end of today
   moon_enddate = sys.moon_startdate + 14.days
   if moon_enddate < now
     moon_enddate = now.end_of_day
@@ -70,15 +82,18 @@ puts "End datetime: #{sys.moon_enddate}"
 sys.save!
 puts "Updated system record"
 
-puts "Updating all conversations"
-conversations = Conversation.all
-for conversation in conversations
-  if conversation.together_apart != sys.together_apart
-    puts "Updating #{conversation.shortname} #{conversation.together_apart}->#{sys.together_apart}"
-    conversation.together_apart = sys.together_apart
-    conversation.save
+if is_full_or_new_moon_today
+  puts "Since today is a new/full moon day, leave it to moon mailing script to update together/apart for conversations"
+else
+  puts "Updating all conversations"
+  conversations = Conversation.all
+  for conversation in conversations
+    if conversation.together_apart != sys.together_apart
+      puts "Updating #{conversation.shortname} #{conversation.together_apart}->#{sys.together_apart}"
+      conversation.together_apart = sys.together_apart
+      conversation.save
+    end
   end
 end
-
 
 

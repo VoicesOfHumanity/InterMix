@@ -387,3 +387,15 @@ else
 end
 
 puts "#{numsent} daily messages sent. #{numerror} errors"
+
+sys = SysDatum.order(:id).first
+puts "Updating all conversations to #{sys.together_apart} mode"
+conversations = Conversation.all
+for conversation in conversations
+  if conversation.together_apart != sys.together_apart
+    puts "Updating #{conversation.shortname} #{conversation.together_apart}->#{sys.together_apart}"
+    conversation.together_apart = sys.together_apart
+    conversation.save
+  end
+end
+
