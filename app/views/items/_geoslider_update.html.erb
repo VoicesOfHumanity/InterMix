@@ -145,8 +145,8 @@ var show_result = <%= @show_result ? 1 : 0 %>;
 $('#about_a').attr('href',about_link);
 <% if @conversation -%>
   <% txt = @conversation.name %>
-  <% if @datetype == 'fixed' and @together_apart != '' %>
-    <% txt += " - #{@together_apart}" %>
+  <% if @conversation.together_apart != '' %>
+    <% txt += " - #{@conversation.together_apart}" %>
   <% end %>
   $('#top_forum_header').html("<%= txt %>");
 <% end -%>
