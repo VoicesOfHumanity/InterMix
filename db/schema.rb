@@ -10,7 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_30_152938) do
+ActiveRecord::Schema.define(version: 2021_02_14_231138) do
+
+  create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "path"
+    t.text "request_body"
+    t.text "request_headers"
+    t.string "request_method"
+    t.string "request_content_type"
+    t.string "user_agent"
+    t.string "remote_ip"
+    t.string "our_function"
+    t.boolean "processed", default: false
+    t.text "response_body"
+    t.string "account_uniq", limit: 12, default: ""
+    t.integer "participant_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["our_function"], name: "index_api_requests_on_our_function"
+    t.index ["participant_id"], name: "index_api_requests_on_participant_id"
+    t.index ["remote_ip"], name: "index_api_requests_on_remote_ip"
+    t.index ["user_agent"], name: "index_api_requests_on_user_agent"
+  end
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "participant_id"

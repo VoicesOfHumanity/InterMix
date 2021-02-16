@@ -128,7 +128,10 @@
           <% end -%>
         <% end -%>
       <% end %>
-      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">#<input type="text" id="messtag_other" size="10" maxlength="14">
+      <% if false -%>
+      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">
+      <% end -%>
+      <div style="padding-left: 8px">& #<input type="text" id="messtag_other" size="10" maxlength="14" onchange="per_reload(false,1,'messtag_other')"></div>
       <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     </div>
 
@@ -282,17 +285,18 @@ function per_reload(first,num,whatchanged,page,go_item) {
         xfound = true;
       }
     });
-    if (!xfound) {
-      $('#messtag_other').val(cur_comtag);
-      $("input[name=messtag_radio][value='*other*']").prop('checked', true);
-    }
+    //if (!xfound) {
+    //  $('#messtag_other').val(cur_comtag);
+    //  $("input[name=messtag_radio][value='*other*']").prop('checked', true);
+    //}
   }  
 
   cur_messtag = $("input[name='messtag_radio']:checked").val();
+  messtag_other = $('#messtag_other').val();
   
-  if (cur_messtag == '*other*') {
-    cur_messtag = $('#messtag_other').val();
-  }
+  //if (cur_messtag == '*other*') {
+  //  cur_messtag = $('#messtag_other').val();
+  //}
   if (cur_messtag == '') {
     $("input[name=messtag_radio][value='']").prop('checked', true);
   }
@@ -336,7 +340,7 @@ function per_reload(first,num,whatchanged,page,go_item) {
   }
   var nvaction = nvaction_on ? 1 : 0
   $('#newthreadbutton').prop('disabled', false);
-  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datefixed: datefixed, comtag: comtag, messtag: messtag, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic, is_first: is_first}
+  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datefixed: datefixed, comtag: comtag, messtag: messtag, messtag_other: messtag_other, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic, is_first: is_first}
   
   //nvaction_included: (nvaction_included ? 1 : 0),
   

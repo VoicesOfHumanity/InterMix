@@ -2,6 +2,8 @@ require 'openssl'
 
 class ActivitypubController < ApplicationController
 
+  before_action :record_request
+
   def account_info
     # Show info for a user, after accessing something like: https://intermix.test:3002/u/ff1888
     # This is an ActivePub Actor object
@@ -46,6 +48,13 @@ class ActivitypubController < ApplicationController
     account_uniq = params[:acct_id]
 
     @account = Participant.find_by_account_uniq(account_uniq)
+    if not @account
+      render plain: "Unknown account #{account_uniq}", status: :not_found
+      return
+    elsif @account.status != 'active'
+      render plain: "The account #{account_uniq} is not active", status: :forbidden
+      return
+    end
 
     @account_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}"
     
@@ -97,6 +106,8 @@ class ActivitypubController < ApplicationController
     
     results_json = results.to_json
     
+    record_response(results_json)
+    
     expires_in 3.days, public: true
     render json: results_json, content_type: 'application/jrd+json'
   end
@@ -136,10 +147,47 @@ class ActivitypubController < ApplicationController
     
     results_json = results.to_json
     
+    record_response(results_json)
+
     expires_in 3.days, public: true
     render json: results_json, content_type: 'application/jrd+json'
-  end  
-
+  end
+  
+  def unknown_target
+    # Anything we don't seem to know what to do with
+    logger.info("activitypub#record_request unknown target")
+    render plain: "I don't know what to do with that", status: :bad_request
+    return
+  end
+  
+  private
+  
+  def record_request
+    # Record what we're receiving. Later, we can add our response
+    begin
+      @api_request = ApiRequest.create(
+        request_headers: request.env.select {|k,v| k =~ /^HTTP_/ and ! k.starts_with?("HTTP_COOKIE")}.to_json,
+        request_content_type: request.format,
+        request_method: request.method,
+        remote_ip: request.remote_ip,
+        path: request.fullpath,
+        user_agent: request.headers.key?('User-Agent') ? request.headers['User-Agent'] : '',
+        request_body: request.body.read,
+        account_uniq: params.key?(:acct_id) ? params[:acct_id] : '',
+        our_function: action_name
+      )
+    rescue Exception => e
+      logger.info("activitypub#record_request error: #{e}")
+    end
+  end
+  
+  def record_response(results_json)
+    # update the record with the results, if any
+    @api_request.response_body = results_json
+    @api_request.participant_id = @account.id if @account
+    @api_request.processed = true
+    @api_request.save
+  end
 
 end
 

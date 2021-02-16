@@ -1750,6 +1750,7 @@ class ItemsController < ApplicationController
     
       crit[:comtag] = params[:comtag].to_s     # Might be blank, *my*, or a tag
       crit[:messtag] = params[:messtag].to_s
+      crit[:messtag_other] = params[:messtag_other].to_s
       session[:comtag] = crit[:comtag]
       session[:messtag] = crit[:messtag]
       

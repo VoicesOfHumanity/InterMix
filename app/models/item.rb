@@ -1793,7 +1793,11 @@ class Item < ActiveRecord::Base
     elsif crit[:messtag].to_s != ''
       title += " | ##{crit[:messtag]}"
       items = items.tagged_with(crit[:messtag])      
-    end    
+    end
+    if crit[:messtag_other].to_s != ''
+      title += " | ##{crit[:messtag_other]}"
+      items = items.tagged_with(crit[:messtag_other])            
+    end
     
     if crit.has_key?(:nvaction) and crit[:nvaction] === true
       items = items.tagged_with('nvaction')      
