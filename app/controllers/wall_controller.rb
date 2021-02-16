@@ -12,7 +12,9 @@ class WallController < ApplicationController
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@participant_id)
     @sortby = params[:sortby] || "items.id desc"
-    @perscr = params[:perscr].to_i || 25
+    @perscr = params[:perscr].to_i || 10
+    @page = params[:page].to_i
+    @page = 1 if @page <= 0
     
     #@items = Item.scoped
     #@items = @items.where(:posted_by => @participant_id)
@@ -33,6 +35,8 @@ class WallController < ApplicationController
     items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
     @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
     @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
+       
+    @items = @items.paginate page: @page, per_page: 10  
        
     update_last_url
   end  

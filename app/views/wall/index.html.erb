@@ -33,3 +33,9 @@
 <div id="itemlist">
 <%= render(:partial => 'items/list')%>
 </div>
+
+<script>
+function gotopage(page) {
+  window.location = '/me/wall?page=' + page;
+}
+</script>
