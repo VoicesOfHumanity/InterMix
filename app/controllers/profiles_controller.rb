@@ -408,11 +408,13 @@ class ProfilesController < ApplicationController
   
   def picupload
     @participant_id = current_participant.id
+    result = {'files' => []}
     original_filename = params[:uploadfile].original_filename.to_s
     if original_filename != ""
       # http://wiki.rubyonrails.org/rails/pages/HowtoUploadFiles
       #params[:uploadfile].original_filename
       #params[:uploadfile].content_type
+      fileresult = {'name' => original_filename}
       tempfilepath = "/tmp/#{original_filename}"
       tempfilepath2 = "/tmp/#{@participant_id}_2.jpg"
       f = File.new(tempfilepath, "wb")
@@ -422,6 +424,7 @@ class ProfilesController < ApplicationController
         @photo = Photo.new(:participant_id=>@participant_id,:filename=>original_filename,:caption=>params[:caption])
         @photo.save!
         
+        @picurl = "/images/data/photos/#{@participant_id}"
         @picdir = "#{DATADIR}/photos/#{@participant_id}"
         `mkdir "#{@picdir}"` if not File.exist?(@picdir)
         @bigfilepath = "#{@picdir}/#{@photo.id}.jpg"
@@ -481,17 +484,27 @@ class ProfilesController < ApplicationController
           @photo.height = iheight if iheight
           @photo.filetype = original_filename.split('.').last
           @photo.save
-        
+          
+          fileresult['size'] = @photo.filesize    
+          fileresult['url'] = "#{@picdir}/#{@photo.id}.jpg"  
+        else
+          logger.info("profiles#picupload #{@bigfilepath} not found")
+          fileresult['error'] = "Converted file not found"
         end
-        
-      end  
+      else  
+        fileresult['error'] = "Uploaded file not found"
+      end
+    else
+      fileresult['error'] = "Uploaded file not found"      
     end
+    result['files'] << fileresult
     #responds_to_parent do
     #  render :update do |page|
     #    page << %(uploadpicturedone();)
     #  end
     #end  
-    render plain: %s(<script>window.parent.uploadpicturedone();</script>)  
+    #render plain: %s(<script>window.parent.uploadpicturedone();</script>)  
+    render :json=>result, :layout=>false
   end  
   
   def picdelete

@@ -3,6 +3,7 @@ require 'openssl'
 class ActivitypubController < ApplicationController
 
   before_action :record_request
+  before_action :get_account 
 
   def account_info
     # Show info for a user, after accessing something like: https://intermix.test:3002/u/ff1888
@@ -43,18 +44,6 @@ class ActivitypubController < ApplicationController
     # }
     # Good compatibility hints:
     # https://flak.tedunangst.com/post/the-activity-person-examined
-
-    
-    account_uniq = params[:acct_id]
-
-    @account = Participant.find_by_account_uniq(account_uniq)
-    if not @account
-      render plain: "Unknown account #{account_uniq}", status: :not_found
-      return
-    elsif @account.status != 'active'
-      render plain: "The account #{account_uniq} is not active", status: :forbidden
-      return
-    end
 
     @account_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}"
     
@@ -117,8 +106,42 @@ class ActivitypubController < ApplicationController
   end
   
   def feed
-    # The outbox. A users posts.
+    # The outbox. A user's public posts.
     
+  end
+  
+  def following
+    # Who this user is following
+    follows_list = []
+    follows = Follow.where(following_id: @account.id)
+    for f in follows
+      if f.followed_id.to_i > 0 and f.idol
+        # An internal user
+        followed_fulluniq = f.idol.account_uniq_full
+      elsif f.followed_fulluniq.to_s != ''
+        followed_fulluniq = f.followed_fulluniq
+      else
+        continue
+      end        
+      follows_list << followed_fulluniq
+    end    
+  end
+  
+  def followers
+    # Who follows this user
+    follower_list = []
+    followers = Follow.where(followed_id: @account.id)
+    for f in followers
+      if f.following_id.to_i > 0 and f.follower
+        # An internal user
+        following_fulluniq = f.follower.account_uniq_full
+      elsif f.followed_fulluniq.to_s != ''
+        following_fulluniq = f.followed_fulluniq
+      else
+        continue
+      end        
+      follower_list << following_fulluniq            
+    end
   end
   
   def account_key
@@ -133,8 +156,6 @@ class ActivitypubController < ApplicationController
     #}
     # Seems that it is a problem when it is in a separate URL, so not sure if this will be used
 
-    account_uniq = params[:acct_id]
-    @account = Participant.find_by_account_uniq(account_uniq)
     @account_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}"
     
     results = {
@@ -162,6 +183,20 @@ class ActivitypubController < ApplicationController
   
   private
   
+  def get_account
+    @account_uniq = params[:acct_id]
+    @account = Participant.find_by_account_uniq(@account_uniq)
+    if not @account
+      render plain: "Unknown account #{account_uniq}", status: :not_found
+      return
+    elsif @account.status != 'active'
+      render plain: "The account #{account_uniq} is not active", status: :forbidden
+      return
+    end
+    @account_id = @account.id
+    @participant_id = @account_id
+  end
+  
   def record_request
     # Record what we're receiving. Later, we can add our response
     begin
@@ -187,6 +222,40 @@ class ActivitypubController < ApplicationController
     @api_request.participant_id = @account.id if @account
     @api_request.processed = true
     @api_request.save
+  end
+  
+  def deliver_post(from_id, to_actor)
+    # Send a post to somebody's inbox. Probably sign_and_send instead of this
+    # We'd first need to figure out their inbox
+    
+
+    document      = File.read('create-hello-world.json')
+    date          = Time.now.utc.httpdate
+    keypair       = OpenSSL::PKey::RSA.new(File.read('private.pem'))
+    signed_string = "(request-target): post /inbox\nhost: mastodon.social\ndate: #{date}"
+    signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest::SHA256.new, signed_string))
+    header        = 'keyId="https://my-example.com/actor",headers="(request-target) host date",signature="' + signature + '"'
+
+    HTTP.headers({ 'Host': 'mastodon.social', 'Date': date, 'Signature': header })
+        .post('https://mastodon.social/inbox', body: document)
+    
+  end
+  
+  def follow_account
+    # Follow somebody
+    #POST /@alice/outbox HTTP/1.1
+    #Host: social.example.com
+    #Content-Type: application/activity+json
+    #{
+    #  "type": "Follow",
+    #  "object": "https://social.example.com/@bob"
+    #}
+    
+  end
+  
+  def sign_and_send(from_id, to_actor, object)
+    # Send something to a remote user's inbox
+    
   end
 
 end

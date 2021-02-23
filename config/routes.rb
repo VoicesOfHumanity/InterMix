@@ -162,6 +162,8 @@ Rails.application.routes.draw do
   get 'u/:acct_id', to: 'activitypub#account_info'
   get 'u/:acct_id/feed.json', to: 'activitypub#feed'
   get 'u/:acct_id/key.json', to: 'activitypub#account_key'
+  get 'u/:acct_id/following.json', to: 'activitypub#following'
+  get 'u/:acct_id/followers.json', to: 'activitypub#followers'
   get 'u/:acct_id/*other', to: 'activitypub#unknown_target'
   post 'u/:acct_id/*other', to: 'activitypub#unknown_target'
 

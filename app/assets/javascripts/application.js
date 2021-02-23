@@ -27,6 +27,7 @@
 //= require jquery.simplemodal-1.4.4.js
 //= require jquery.treeview.js
 //= require jquery.tooltipster.min.js
+//= require jquery.fileupload.js
 //= require_tree .
 
 
