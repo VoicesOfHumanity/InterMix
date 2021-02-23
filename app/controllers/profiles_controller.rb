@@ -16,6 +16,7 @@ class ProfilesController < ApplicationController
   def profile
     #-- show your own profile
     @section = 'profile'
+    @psection = 'profile'
     @subsection = 'view'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.includes(:metro_area).find(@participant_id)
@@ -25,6 +26,7 @@ class ProfilesController < ApplicationController
   
   def edit
     @section = 'profile'
+    @psection = 'profile'
     @subsection = 'edit'
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find_by_id(@profile_id)
@@ -63,6 +65,7 @@ class ProfilesController < ApplicationController
 
   def settings
     @section = 'profile'
+    @psection = 'profile'
     @subsection = 'settings'
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@profile_id)
@@ -82,6 +85,7 @@ class ProfilesController < ApplicationController
   def missingmeta
     #-- A screen for filling in any missing (mainly) meta information we need. That's normally used right after a Facebook signup
     @section = 'profile'
+    @psection = 'profile'
     @subsection = 'meta'
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find_by_id(@profile_id)
@@ -112,6 +116,7 @@ class ProfilesController < ApplicationController
   
   def update
     @section = 'profile'
+    @psection = 'profile'
     @subsection = params[:subsection].to_s
     @profile_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@profile_id)
@@ -393,6 +398,7 @@ class ProfilesController < ApplicationController
   def photos
     #-- Show your own pictures
     @section = 'profile'
+    @psection = 'profile'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@participant_id)
     @photos = Photo.where(:participant_id=>@participant_id)
@@ -657,7 +663,7 @@ class ProfilesController < ApplicationController
   def invite
     #-- Invite screen
     @section = 'profile'
-    @psection = 'invite'
+    @psection = 'mail'
     @messtext = ''
     @participant = Participant.includes(:idols).find(current_participant.id)  
     @members = Participant.order("first_name,last_name")  

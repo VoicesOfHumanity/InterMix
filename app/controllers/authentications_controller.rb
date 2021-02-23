@@ -5,6 +5,7 @@ class AuthenticationsController < ApplicationController
 	layout "front"
   
   def index
+    @section = 'profile'
     group_id,dialog_id = get_group_dialog_from_subdomain
     if dialog_id.to_i > 0 and not @dialog
       @dialog = Dialog.find_by_id(dialog_id)

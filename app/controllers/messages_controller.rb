@@ -73,6 +73,7 @@ class MessagesController < ApplicationController
 
   def new
     #-- New message
+    @psection = 'mail'
     @from = params[:from] || ''
     @response_to_id = params[:response_to_id].to_i
     @to_participant_id = params[:to_participant_id].to_i
@@ -103,6 +104,7 @@ class MessagesController < ApplicationController
 
   def edit
     #-- screen for a editing a message
+    @psection = 'mail'
     @from = params[:from] || ''
     @message_id = params[:id]
     @message = Message.find(@message_id)
@@ -110,6 +112,7 @@ class MessagesController < ApplicationController
   end  
   
   def create
+    @psection = 'mail'
     @from = params[:from] || ''
     @response_to_id = params[:response_to_id].to_i
     @content = params[:message][:message]
@@ -172,6 +175,7 @@ class MessagesController < ApplicationController
   end  
   
   def show
+    @psection = 'mail'
     @inout = params[:inout]
     @message_id = params[:id]
     @message = Message.includes(:sender,:recipient,:group).find(@message_id)

@@ -51,6 +51,7 @@ class PeopleController < ApplicationController
     #-- List people that a certain user follows or are followed by
     @section = 'people'
     @psection = 'friends'
+    @psection = 'mail'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.includes(:followers,:idols).find(@participant_id)
     
