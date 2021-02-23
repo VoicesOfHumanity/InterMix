@@ -84,7 +84,7 @@ var deletepix = function() {
   pars += "&authenticity_token=<%= form_authenticity_token %>";
   $('#photosdiv').css('opacity','0.5');
 	$.ajax({
-    type: "GET",
+    type: "POST",
     data: pars,
     url: "/me/picdelete",
     complete: function(t){	
