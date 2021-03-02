@@ -43,3 +43,8 @@
 </ul>
 
 <% end -%>
+
+<form action="/activitypub/follow_account" method="post">
+<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+<p>Follow a remote Fediverse user: <input type="text" name="fedfollow" size="20"></p>
+</form>

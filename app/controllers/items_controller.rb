@@ -1780,6 +1780,24 @@ class ItemsController < ApplicationController
       @datefixed = params[:datefixed].to_s  # day, week, month, year, all, [moon ranges, like 2016-03-08_2017-06-23]
       #@datefrom = params[:datefrom].to_s    # [date]
       @together_apart = ""
+      
+      @conversation_id = crit[:conversation_id].to_i
+      @in_conversation = (params[:in_conversation].to_i == 1) ? true : false
+      if @conversation_id.to_i > 0
+        @conversation = Conversation.find_by_id(@conversation_id)
+        #if @conversation
+        #  # Check if the user is in any community in the conversation
+        #  for com in @conversation.communities
+        #    if current_participant.tag_list.include?(com.tagname)
+        #      @in_conversation = true
+        #    end
+        #  end
+        #end        
+        @perspective = params[:perspective]
+        if @conversation.together_apart == 'apart'
+          crit[:perspective] = @perspective
+        end
+      end
 
       #MOONS = {
       #  '2016-03-08_2017-06-23' => "March 8, 2016 - June 23, 2017",
@@ -1813,7 +1831,13 @@ class ItemsController < ApplicationController
         end
         if @in == 'conversation'
           if xstart >= month6ago and xstart <=today
-            @moons << [drange,xrange]
+            if @conversation.together_apart == 'apart'
+              if together_apart == 'apart'
+                @moons << [drange,xrange]                
+              end
+            else
+              @moons << [drange,xrange]
+            end
           end       
         elsif xstart <= today
           @moons << [drange,xrange]
@@ -1879,25 +1903,6 @@ class ItemsController < ApplicationController
     
       # NB try to avoid this: items.created_at >= 'Y-m-d 00:00:00'
       
-      @conversation_id = crit[:conversation_id].to_i
-      @in_conversation = (params[:in_conversation].to_i == 1) ? true : false
-      if @conversation_id.to_i > 0
-        @conversation = Conversation.find_by_id(@conversation_id)
-        #if @conversation
-        #  # Check if the user is in any community in the conversation
-        #  for com in @conversation.communities
-        #    if current_participant.tag_list.include?(com.tagname)
-        #      @in_conversation = true
-        #    end
-        #  end
-        #end        
-        @perspective = params[:perspective]
-        if @conversation.together_apart == 'apart'
-          crit[:perspective] = @perspective
-        end
-      end
-      
-
       @comtag = ""
       if crit[:comtag] != '' and crit[:comtag] != '*my*'
         @comtag = crit[:comtag]

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_16_221230) do
+ActiveRecord::Schema.define(version: 2021_03_02_192336) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -283,6 +283,8 @@ ActiveRecord::Schema.define(version: 2021_02_16_221230) do
     t.string "int_ext", default: "int"
     t.string "following_fulluniq"
     t.string "followed_fulluniq"
+    t.integer "followed_remote_actor_id"
+    t.integer "following_remote_actor_id"
     t.index ["followed_fulluniq", "following_fulluniq"], name: "index_follows_on_followed_fulluniq_and_following_fulluniq", length: { followed_fulluniq: 30, following_fulluniq: 10 }
     t.index ["followed_id", "following_id"], name: "index_follows_on_followed_id_and_following_id"
     t.index ["following_fulluniq", "followed_fulluniq"], name: "index_follows_on_following_fulluniq_and_followed_fulluniq", length: { following_fulluniq: 30, followed_fulluniq: 10 }
@@ -911,6 +913,26 @@ ActiveRecord::Schema.define(version: 2021_02_16_221230) do
     t.index ["group_id", "id"], name: "index_ratings_on_group_id_and_id"
     t.index ["item_id", "id"], name: "index_ratings_on_item_id_and_id"
     t.index ["participant_id", "id"], name: "index_ratings_on_participant_id_and_id"
+  end
+
+  create_table "remote_actors", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "account"
+    t.string "account_url"
+    t.text "json_got"
+    t.string "username"
+    t.string "name"
+    t.text "summary"
+    t.string "inbox_url"
+    t.string "outbox_url"
+    t.string "icon_url"
+    t.string "image_url"
+    t.text "public_key"
+    t.datetime "last_fetch"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account"], name: "index_remote_actors_on_account", length: 30
+    t.index ["account_url"], name: "index_remote_actors_on_account_url"
+    t.index ["name"], name: "index_remote_actors_on_name"
   end
 
   create_table "sys_data", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
