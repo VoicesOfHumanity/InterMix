@@ -354,13 +354,13 @@ class ActivitypubController < ApplicationController
             remote_actor.summary = data['summary'] if data.has_key?('summary')
             remote_actor.inbox_url = data['inbox'] if data.has_key?('inbox')
             remote_actor.outbox_url = data['outbox'] if data.has_key?('outbox')
-            if data.has_key?('publicKey') and data['publicKey'].class == Hash and data['publicKey'.has_key?('publicKeyPem')              
+            if data.has_key?('publicKey') and data['publicKey'].class == Hash and data['publicKey'].has_key?('publicKeyPem')              
               remote_actor.public_key = data['publicKey']['publicKeyPe']
             end
-            if data.has_key?('icon') and data['icon'].class == Hash and data['icon'.has_key?('url')
+            if data.has_key?('icon') and data['icon'].class == Hash and data['icon'].has_key?('url')
               remote_actor.icon_url = data['icon']['url']
             end
-            if data.has_key?('image') and data['image'].class == Hash and data['image'.has_key?('url')
+            if data.has_key?('image') and data['image'].class == Hash and data['image'].has_key?('url')
               remote_actor.image_url = data['image']['url']
             end
             remote_actor.last_fetch = Time.now
