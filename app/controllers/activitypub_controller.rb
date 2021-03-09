@@ -196,11 +196,11 @@ class ActivitypubController < ApplicationController
     from_id = current_participant.id
     
     # Should probably accept either an email like identifier ming@social.coop or the url https://social.coop/users/ming
-    to_actor = normalize_actor(params[:fedfollow])    # something like ming@social.coop
+    # but for now, only the one that looks like an email
+    to_actor = normalize_actor(params[:fedfollow])
     
-    valid_email_regex = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
     if to_actor == ""
-      flash[:alert] = "You didn't enter anything"
+      flash[:alert] = "You didn't enter anything that looked like a Fediverse ID/address"
       redirect_to = 'me/friends'
       return
     #elsif not to_actor =~ URI::MailTo::EMAIL_REGEXP
@@ -210,28 +210,60 @@ class ActivitypubController < ApplicationController
     end
     
     # something like https://social.coop/users/ming
-    if to_actor[0..4] == 'http'
-      actor_url = to_actor
-    elsif not to_actor =~ URI::MailTo::EMAIL_REGEXP
+    #if to_actor[0..4] == 'http'
+    #  actor_url = to_actor
+    #elsif not to_actor =~ URI::MailTo::EMAIL_REGEXP
+    #  flash[:alert] = "That doesn't look like a valid address"
+    #  redirect_to = 'me/friends'
+    #  return 
+    #else
+    #  actor_url = get_actor_url_by_webfinger(to_actor)
+    #end
+    #flash[:notice] = "Remote url: #{actor_url}"
+    #logger.info "activitypub#follow_account remote url: #{actor_url}"
+
+    if not to_actor =~ URI::MailTo::EMAIL_REGEXP
       flash[:alert] = "That doesn't look like a valid address"
       redirect_to = 'me/friends'
       return 
-    else
-      actor_url = get_actor_url_by_webfinger(to_actor)
     end
-    flash[:notice] = "Remote url: #{actor_url}"
-    logger.info "activitypub#follow_account remote url: #{actor_url}"
+    
+    remote_actor = get_remote_actor(to_actor)
+    if not remote_actor
+      flash[:alert] = "We didn't succeed in looking up that address"
+      redirect_to = 'me/friends'
+      return
+    end
+    
+    if remote_actor
+      flash[:notice] = "Yay, it worked!"
+      redirect_to = 'me/friends'
+      return
+    end
     
     object = {
       "type": "Follow",
-      "object": actor_url
+      "object": remote_actor.account_url
     }
     
-    #sign_and_send(from_id, to_actor, object)
+    sign_and_send(current_participant.id, remote_actor, object)
+    
+    follow = Follow.where(following_id: current_participant.id, followed_fulluniq: to_actor).first
+    if not follow
+      Follow.create(
+        following_id: current_participant.id,
+        followed_fulluniq: to_actor,
+        int_ext: 'ext'
+      )
+    end
+    follow.followed_remote_actor_id = remote_actor.id
+    follow.save
     
     flash[:notice] = "Follow request sent"
     redirect_to = 'me/friends'
     return
+    
+    render plain: "done"
   end
   
   private
@@ -294,25 +326,40 @@ class ActivitypubController < ApplicationController
     
   end
     
-  def sign_and_send(from_id, to_actor_url, object)
+  def sign_and_send(from_id, to_remote_actor, object)
     # Send something to a remote user's inbox
     # inspired by https://glitch.com/edit/#!/glib-cheerful-addition?path=routes%2Finbox.js%3A1%3A0
     # and https://blog.joinmastodon.org/2018/06/how-to-implement-a-basic-activitypub-server/
+    # We're signing the message with the private key of the sender
     
-    to_actor_inbox = get_actor_inbox_from_url(to_actor_url)
-    if not to_actor_inbox or not to_actor_inbox =~ /^http/
-      logger.info "activitypub#sign_and_send No inbox URL for #{to_actor_url}"
-      return
+    inbox_url = to_remote_actor.inbox_url
+    if not inbox_url or not inbox_url =~ /^http/
+      logger.info "activitypub#sign_and_send No inbox URL for #{to_remote_actor.account}"
+      return false
     end
-    logger.info "activitypub#sign_and_send inbox url: #{to_actor_inbox}"
+    logger.info "activitypub#sign_and_send inbox url: #{inbox_url}"
     
+    if from_id != current_participant.id
+      from_user = Participant.find_by_id(from_id)
+    else
+      from_user = current_participant
+    
+    private_key = OpenSSL::PKey::RSA.new(from_user.private_key)
+    
+    uri = URI(inbox_url)
+    inbox_host = uri.host
+    inbox_path = uri.path
+    
+    key_id = "https://#{BASEDOMAIN}/u/#{from_user.account_uniq}#key"
+       
     date          = Time.now.utc.httpdate
-    signed_string = "(request-target): post /users/ming/inbox\nhost: social.coop\ndate: #{date}"
+    signed_string = "(request-target): post #{inbox_path}\nhost: #{inbox_host}\ndate: #{date}"
     signature     = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, signed_string))
-    header        = 'keyId="https://intermix.cr8.com/ff2602#key",headers="(request-target) host date",signature="' + signature + '"'
+    header        = 'keyId="' + key_id + '",headers="(request-target) host date",signature="' + signature + '"'
 
-    HTTP.headers({ 'Host': 'social.coop', 'Date': date, 'Signature': header }).post('https://social.coop/users/ming/inbox', body: document)
+    HTTP.headers({ 'Host': inbox_host, 'Date': date, 'Signature': header }).post(inbox_url, body: object.to_json)
     
+    return true
   end
 
   def normalize_actor(actor_uniq)
@@ -327,19 +374,74 @@ class ActivitypubController < ApplicationController
     remote_actor = RemoteActor.find_by_account(actor_uniq)
     if remote_actor and remote_actor.last_fetch >= Date.today - 7
       get_new = false
+      logger.info("activitypub#get_remote_actor already have recent info for #{actor_uniq}")
     else
       get_new = true
+      if remote_actor
+        logger.info("activitypub#get_remote_actor we have info for #{actor_uniq}, but not recent enough")
+      else
+        logger.info("activitypub#get_remote_actor we have no info for #{actor_uniq}")
+      end
     end    
     if get_new
       actor_url = get_actor_url_by_webfinger(actor_uniq)
       if actor_url.to_s != ''
-        response = HTTP.get(actor_url)
+
+        logger.info("activitypub#get_remote_actor getting #{actor_url}")
+
+        try_again = true
+        redirect_count = 0
+        while try_again and redirect_count <= 3      
+          uri = URI.parse(actor_url)
+        
+          req = Net::HTTP::Get.new(uri.path)
+          req['Accept'] = "application/json"
+          req['User-Agent'] = "InterMix VoH"
+
+          response = nil
+          response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+            http.request(req)
+          end
+
+          if response
+            logger.info("activitypub#get_remote_actor response: #{response.code}")
+          else
+            logger.info("activitypub#get_remote_actor no reponse")
+            return nil
+          end
+          
+          # Mastodon redirects https://social.coop/users/ming to https://social.coop/@ming
+          
+          if response.code.to_i == 301 or response.code.to_i == 302
+            actor_url = response['location']
+            logger.info("activitypub#get_remote_actor redirecting to #{actor_url}")
+            redirect_count += 1
+            if redirect_count >= 3
+              try_again = false
+              break
+            end
+          else
+            try_again = false
+            break
+          end        
+        end
+        
+        if not response
+          logger.info("activitypub#get_remote_actor no reponse")
+          return nil          
+        elsif response.code.to_i == 301 or response.code.to_i == 302
+          logger.info("activitypub#get_remote_actor too many redirections")
+          return nil
+        end
+        
         if response.code.to_i == 200
-          body = response.body        
+          body = response.body
+          #logger.info("activitypub#get_remote_actor body: #{body}")     
           begin
             data = JSON.parse(body)
           rescue
             logger.info("activitypub#get_remote_actor couldn't read any json data}")
+            return nil
           end
           if data and data.has_key? 'inbox'
             if not remote_actor
@@ -367,13 +469,16 @@ class ActivitypubController < ApplicationController
             remote_actor.save   
           else
             logger.info("activitypub#get_remote_actor unexpected json data}")
+            return nil
           end
         else
-          logger.info("acitivitypub#get_remote_actor got response code #{response.code} to #{wurl}")
+          logger.info("activitypub#get_remote_actor got response code #{response.code} to #{actor_url}")
+          #logger.info("activitypub#get_remote_actor body:#{response.body}")
+          return nil
         end
       end
     end
-    remote_actor
+    return remote_actor
   end
   
   def get_actor_url_by_webfinger(actor_addr)

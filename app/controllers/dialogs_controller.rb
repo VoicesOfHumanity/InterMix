@@ -72,6 +72,7 @@ class DialogsController < ApplicationController
     @cur_moon_full_full = session[:cur_moon_full_full]
     @cur_moon_new_full = session[:cur_moon_new_full]
     @cur_moon_full_new = session[:cur_moon_full_new]
+    @cur_half_moon = session[:cur_half_moon]
     
     comtag_before = session.has_key?(:comtag) ? session[:comtag] : ''
 

@@ -310,6 +310,7 @@ Rails.application.routes.draw do
     get :list_comments_simple, :on => :member
     get :geoslider, :on => :collection
     get :geoslider_update, :on => :collection
+    post :geoslider_update, :on => :collection
     get :follow, on: :member
     get :unfollow, on: :member
     post :list_api, on: :collection

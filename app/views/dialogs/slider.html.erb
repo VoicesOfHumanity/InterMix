@@ -198,6 +198,8 @@
 <input type="hidden" id="cur_moon_full_full" value='<%= @cur_moon_full_full %>'>
 <input type="hidden" id="cur_moon_new_full" value='<%= @cur_moon_new_full %>'>
 <input type="hidden" id="cur_moon_full_new" value='<%= @cur_moon_full_new %>'>
+<input type="hidden" id="cur_half_moon" value='<%= @cur_half_moon %>'>
+<input type="hidden" id="lastmoon" value='<%= @lastmoon %>'>
 
 <div id="newforumitem" class="newforumitem" style="display:none"></div>
 
@@ -239,6 +241,7 @@ $(function() {
   }
 });
 var messtag_changed = false;
+var add_after_reload = false;
 function per_reload(first,num,whatchanged,page,go_item) {
   console.log('per_reload() whatchanged:'+whatchanged);
 	if (editingid>0) {
@@ -340,7 +343,7 @@ function per_reload(first,num,whatchanged,page,go_item) {
   }
   var nvaction = nvaction_on ? 1 : 0
   $('#newthreadbutton').prop('disabled', false);
-  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datefixed: datefixed, comtag: comtag, messtag: messtag, messtag_other: messtag_other, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic, is_first: is_first}
+  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datefixed: datefixed, comtag: comtag, messtag: messtag, messtag_other: messtag_other, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic, is_first: is_first, authenticity_token: '<%= form_authenticity_token %>'}
   
   //nvaction_included: (nvaction_included ? 1 : 0),
   
@@ -356,18 +359,21 @@ function per_reload(first,num,whatchanged,page,go_item) {
     data['whatchanged'] = whatchanged;
   }
 	$.ajax({
-    type: 'GET',
+    type: 'POST',
 	  url: '/items/geoslider_update',
 	  data: data,
 	  complete: function(t){ 
-    $('#per_main').css('opacity','1.0');
-	  $('#per_main').html(t.responseText);
-    $('#maincontent').height( $('#per_main').height()+95 );
-		if (go_item>0) {
-			location.href = "#"+go_item;
-		} else {
-      	$(window).scrollTop(0);
-		}
+      $('#per_main').css('opacity','1.0');
+  	  $('#per_main').html(t.responseText);
+      $('#maincontent').height( $('#per_main').height()+95 );
+  		if (go_item>0) {
+  			location.href = "#"+go_item;
+  		} else {
+        	$(window).scrollTop(0);
+  		}
+      if (add_after_reload) {
+        newitem('<%= form_authenticity_token %>');
+      }
 	  }
 	});	
 }

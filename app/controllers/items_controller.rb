@@ -1829,14 +1829,17 @@ class ItemsController < ApplicationController
         else
           drange = "#{moon_rec.new_or_full} moon #{dstart} - #{dend}"
         end
+        @lastmoon = ''
         if @in == 'conversation'
           if xstart >= month6ago and xstart <=today
             if @conversation.together_apart == 'apart'
               if together_apart == 'apart'
-                @moons << [drange,xrange]                
+                @moons << [drange,xrange]
+                @lastmoon = xrange           
               end
             else
               @moons << [drange,xrange]
+              @lastmoon = xrange
             end
           end       
         elsif xstart <= today
@@ -1845,10 +1848,12 @@ class ItemsController < ApplicationController
         xstart = xend
       end
       if @in == 'conversation' and @datefixed == ''
+        # together phase starts on a full moon?
+        # apart phase starts on a new moon?
         if @cur_moon_new_full != ''
           @datefixed = @cur_moon_new_full
-        elsif @cur_moon_new_full != ''
-          @datefixed = @cur_moon_new_full
+        elsif @cur_moon_full_new != ''
+          @datefixed = @cur_moon_full_new
         end
       elsif @datetype == 'fixed' and nvaction_changed
         @datefixed = 'month'

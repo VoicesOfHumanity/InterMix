@@ -201,6 +201,24 @@ function newitem(token) {
 	    alert("Please save or cancel the new thread that is in progress");
 	    return;
 	}
+  if ($('#conversation_id').val() != '' && $('#conversation_id').val() != 'all' && !add_after_reload) {
+    var cur_half_moon = $('#cur_half_moon').val();
+    console.log("In a conversation. cur_half_moon:"+cur_half_moon)
+    if (cur_half_moon && cur_half_moon != '') {
+      var datefixed = $('#datefixed1').val();
+      console.log("datefixed: "+datefixed);
+      if (datefixed != cur_half_moon) {
+        $("#datefixed2").val(cur_half_moon);
+        $("#datefixed1").val(cur_half_moon);
+        $("#datefixed").val(cur_half_moon);
+        console.log('setting to current moon phase: '+cur_half_moon);
+        add_after_reload = true;
+        per_reload(false,1,'datefixed')
+        return;
+      }
+    }
+  }
+  add_after_reload = false;
   $('#right_sidebar').css('opacity','0.4');
 	curid = 0;
 	in_new_item = 1;
