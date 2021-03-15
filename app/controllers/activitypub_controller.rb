@@ -224,20 +224,18 @@ class ActivitypubController < ApplicationController
 
     if not to_actor =~ URI::MailTo::EMAIL_REGEXP
       flash[:alert] = "That doesn't look like a valid address"
-      redirect_to = 'me/friends'
-      return 
+      respond_to do |format|
+       format.html {redirect_to '/me/friends'}
+      end
+      return
     end
     
     remote_actor = get_remote_actor(to_actor)
     if not remote_actor
       flash[:alert] = "We didn't succeed in looking up that address"
-      redirect_to = 'me/friends'
-      return
-    end
-    
-    if remote_actor
-      flash[:notice] = "Yay, it worked!"
-      redirect_to = 'me/friends'
+      respond_to do |format|
+       format.html {redirect_to '/me/friends'}
+      end
       return
     end
     
@@ -248,9 +246,10 @@ class ActivitypubController < ApplicationController
     
     sign_and_send(current_participant.id, remote_actor, object)
     
+    logger.info("activitypub#follow_account add follower record")
     follow = Follow.where(following_id: current_participant.id, followed_fulluniq: to_actor).first
     if not follow
-      Follow.create(
+      follow = Follow.create(
         following_id: current_participant.id,
         followed_fulluniq: to_actor,
         int_ext: 'ext'
@@ -260,10 +259,10 @@ class ActivitypubController < ApplicationController
     follow.save
     
     flash[:notice] = "Follow request sent"
-    redirect_to = 'me/friends'
-    return
-    
-    render plain: "done"
+    respond_to do |format|
+     format.html {redirect_to '/me/friends'}
+    end
+
   end
   
   private
@@ -343,6 +342,7 @@ class ActivitypubController < ApplicationController
       from_user = Participant.find_by_id(from_id)
     else
       from_user = current_participant
+    end
     
     private_key = OpenSSL::PKey::RSA.new(from_user.private_key)
     
@@ -457,7 +457,7 @@ class ActivitypubController < ApplicationController
             remote_actor.inbox_url = data['inbox'] if data.has_key?('inbox')
             remote_actor.outbox_url = data['outbox'] if data.has_key?('outbox')
             if data.has_key?('publicKey') and data['publicKey'].class == Hash and data['publicKey'].has_key?('publicKeyPem')              
-              remote_actor.public_key = data['publicKey']['publicKeyPe']
+              remote_actor.public_key = data['publicKey']['publicKeyPem']
             end
             if data.has_key?('icon') and data['icon'].class == Hash and data['icon'].has_key?('url')
               remote_actor.icon_url = data['icon']['url']

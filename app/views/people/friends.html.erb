@@ -14,15 +14,21 @@
 
 <h3>Followers:</h3>
 
-<% if !@participant.followers or !@participant.followers.class==Array or @participant.followers.length==0 -%>
+<% if !@participant.followers or !@participant.followers.class!=Array or @participant.followers.length==0 -%>
 
 <p>None</p>
 
 <% else -%>
 
 <ul>
-<% @participant.followers.each do |person| %>
-		<li><a href="/participant/<%= person.id %>/profile"><%= person.name %></a></li>
+<% @participant.followers.each do |f| %>
+  <% if f.int_ext = 'ext' -%>
+    <% remote_actor = f.remote_follower %>
+    <li><%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></li>
+  <% else -%>
+    <% person = f.follower %>
+		<li><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></li>
+  <% end -%>
 <% end %>
 </ul>
 
@@ -30,15 +36,21 @@
 
 <h3>Follows:</h3>
 
-<% if !@participant.idols or !@participant.idols.class==Array or @participant.idols.length==0 -%>
+<% if !@participant.followings or @participant.followings.length==0 -%>
 
 <p>None</p>
 
 <% else -%>
 
 <ul>
-<% @participant.idols.each do |person| %>
-		<li><a href="/participant/<%= person.id %>/profile"><%= person.name %></a></li>
+<% @participant.followings.each do |f| %>
+  <% if f.int_ext = 'ext' -%>
+    <% remote_actor = f.remote_idol %>
+    <li><%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></li>
+  <% else -%>
+    <% person = f.idol %>
+		<li><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></li>
+  <% end -%>
 <% end %>
 </ul>
 
