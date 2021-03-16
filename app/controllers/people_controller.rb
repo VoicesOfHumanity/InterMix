@@ -90,7 +90,10 @@ class PeopleController < ApplicationController
     @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
     @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
        
-    update_last_url  
+    update_last_url
+    
+    @items = @items.paginate page: @page, per_page: 10  
+      
   end
   
   def follow

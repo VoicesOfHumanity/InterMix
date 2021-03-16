@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_02_192336) do
+ActiveRecord::Schema.define(version: 2021_03_16_011446) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -31,6 +31,24 @@ ActiveRecord::Schema.define(version: 2021_03_02_192336) do
     t.index ["participant_id"], name: "index_api_requests_on_participant_id"
     t.index ["remote_ip"], name: "index_api_requests_on_remote_ip"
     t.index ["user_agent"], name: "index_api_requests_on_user_agent"
+  end
+
+  create_table "api_sends", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "participant_id"
+    t.integer "remote_actor_id"
+    t.string "to_url"
+    t.string "request_method"
+    t.text "request_headers"
+    t.text "request_object"
+    t.integer "response_code"
+    t.text "response_body"
+    t.string "our_function"
+    t.boolean "processed", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["our_function"], name: "index_api_sends_on_our_function"
+    t.index ["participant_id"], name: "index_api_sends_on_participant_id"
+    t.index ["remote_actor_id"], name: "index_api_sends_on_remote_actor_id"
   end
 
   create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|

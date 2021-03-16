@@ -22,7 +22,7 @@
 
 <ul>
 <% @participant.followers.each do |f| %>
-  <% if f.int_ext = 'ext' -%>
+  <% if f.int_ext == 'ext' -%>
     <% remote_actor = f.remote_follower %>
     <li><%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></li>
   <% else -%>
@@ -44,7 +44,7 @@
 
 <ul>
 <% @participant.followings.each do |f| %>
-  <% if f.int_ext = 'ext' -%>
+  <% if f.int_ext == 'ext' -%>
     <% remote_actor = f.remote_idol %>
     <li><%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></li>
   <% else -%>

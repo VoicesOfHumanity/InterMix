@@ -244,7 +244,7 @@ class ActivitypubController < ApplicationController
       "object": remote_actor.account_url
     }
     
-    sign_and_send(current_participant.id, remote_actor, object)
+    sign_and_send(current_participant.id, remote_actor, object, 'follow_account')
     
     logger.info("activitypub#follow_account add follower record")
     follow = Follow.where(following_id: current_participant.id, followed_fulluniq: to_actor).first
@@ -325,7 +325,7 @@ class ActivitypubController < ApplicationController
     
   end
     
-  def sign_and_send(from_id, to_remote_actor, object)
+  def sign_and_send(from_id, to_remote_actor, object, our_function)
     # Send something to a remote user's inbox
     # inspired by https://glitch.com/edit/#!/glib-cheerful-addition?path=routes%2Finbox.js%3A1%3A0
     # and https://blog.joinmastodon.org/2018/06/how-to-implement-a-basic-activitypub-server/
@@ -355,9 +355,25 @@ class ActivitypubController < ApplicationController
     date          = Time.now.utc.httpdate
     signed_string = "(request-target): post #{inbox_path}\nhost: #{inbox_host}\ndate: #{date}"
     signature     = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, signed_string))
-    header        = 'keyId="' + key_id + '",headers="(request-target) host date",signature="' + signature + '"'
+    sig_header    = 'keyId="' + key_id + '",headers="(request-target) host date",signature="' + signature + '"'
 
-    HTTP.headers({ 'Host': inbox_host, 'Date': date, 'Signature': header }).post(inbox_url, body: object.to_json)
+    headers = { 'Host': inbox_host, 'Date': date, 'Signature': sig_header }
+
+    @api_send = ApiSend.create(
+      participant_id: from_user.id,
+      remote_actor_id: to_remote_actor.id,
+      to_url: inbox_url,
+      request_method: 'post',
+      request_headers: headers,
+      request_object: object,
+      our_function: our_function
+    )
+
+    res = HTTP.headers(headers).post(inbox_url, body: object.to_json)
+    
+    @api_send.response_code = res.code
+    @api_send.response_body = res.body
+    @api_send.save
     
     return true
   end
