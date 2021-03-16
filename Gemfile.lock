@@ -142,7 +142,7 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
-    json (2.3.0)
+    json (2.5.1)
     jwt (2.1.0)
     libv8 (3.16.14.19)
     link_thumbnailer (3.3.2)
@@ -219,6 +219,7 @@ GEM
     omniauth-twitter (1.4.0)
       omniauth-oauth (~> 1.1)
       rack
+    openssl (2.2.0)
     orm_adapter (0.5.0)
     paperclip (6.1.0)
       activemodel (>= 4.2.0)
@@ -226,7 +227,7 @@ GEM
       mime-types
       mimemagic (~> 0.3.0)
       terrapin (~> 0.6.0)
-    postmark (1.21.1)
+    postmark (1.21.3)
       json
     postmark-rails (0.20.0)
       actionmailer (>= 3.0.0)
@@ -402,6 +403,7 @@ DEPENDENCIES
   omniauth-google-oauth2
   omniauth-openid
   omniauth-twitter
+  openssl
   paperclip
   postmark
   postmark-rails

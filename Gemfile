@@ -11,6 +11,8 @@ gem 'rake'
 
 gem 'rack-cors', :require => 'rack/cors'
 
+gem "openssl"
+
 gem 'mysql2'
 #gem 'mysql2', '~> 0.3.18'
 #gem 'mysql2', '~> 0.4.2'
