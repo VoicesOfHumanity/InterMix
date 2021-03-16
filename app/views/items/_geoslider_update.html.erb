@@ -26,6 +26,10 @@
   <%= render partial: 'items/geoslider_options', locals: {num: 1} %>
 </div>
 
+<% if @items.length == 0 and @conversation and @conversation.together_apart == 'apart' and @datefixed == @cur_half_moon -%>
+<p>No messages have been posted yet here for the current Apart phase of this conversation. To be the first, click the Add My Voice button to the right.</p>
+<% end -%>
+
 <% x = 0 %>
 <% odd_or_even = 0 %>
 <% for item in @items -%>

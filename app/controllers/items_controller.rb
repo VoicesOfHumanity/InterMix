@@ -620,11 +620,11 @@ class ItemsController < ApplicationController
         end
         
         if @conversation.together_apart != ''
-          if @item.reply_to.to_i > 0
-            if not tags_downcase.include? @conversation.together_apart.downcase
-              tags << @conversation.together_apart
-            end
+          #if @item.reply_to.to_i > 0
+          if not tags_downcase.include? @conversation.together_apart.downcase
+            tags << @conversation.together_apart
           end
+          #end
         end
         
         if @topic.to_s != ''
@@ -1712,6 +1712,7 @@ class ItemsController < ApplicationController
     @cur_moon_full_full = session[:cur_moon_full_full]
     @cur_moon_new_full = session[:cur_moon_new_full]
     @cur_moon_full_new = session[:cur_moon_full_new]
+    @cur_half_moon = session[:cur_half_moon]
 
     crit = {}
     show_result = nil
@@ -2287,7 +2288,7 @@ class ItemsController < ApplicationController
         items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
 
         #if @num_all_posts == 0 and @first == 1 and @datetype == 'fixed' and @datefixed == 'month'
-        if items.length == 0 and @datetype == 'fixed' and @datefixed != 'all'
+        if items.length == 0 and @datefixed != 'all' and (not @conversation or @conversation.together_apart != 'apart')
           #-- If there are no posts in the last month, change to since the beginning
           #params[:datetype] = 'range'
           #params[:datefrom] = '2016-03-08'
