@@ -1,0 +1,2 @@
+class ItemThumb < ApplicationRecord
+end

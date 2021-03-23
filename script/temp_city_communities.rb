@@ -11,7 +11,7 @@ for p in participants
   
   puts "##{p.id} : #{p.email} : #{p.city}"
   
-  geoname = Geoname.where(name: p.city, country_code: p.country_code, admin1_code: adminuniq_part(p.admin1uniq), fclasscode: 'P.PPL').first
+  geoname = Geoname.where(name: p.city, country_code: p.country_code, admin1_code: adminuniq_part(p.admin1uniq)).where("fclasscode like 'P.PPL%'").first
   if geoname
     p.city_uniq = "#{p.admin1uniq}_#{p.city}"
     # Create/Join city community

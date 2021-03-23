@@ -84,6 +84,8 @@ gem 'responds_to_parent'
 
 gem 'deep_cloneable'
 
+gem 'down'
+
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'

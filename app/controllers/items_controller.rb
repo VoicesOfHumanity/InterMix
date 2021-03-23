@@ -1,4 +1,5 @@
 require 'will_paginate/array'
+require "down"
 
 class ItemsController < ApplicationController
 
@@ -2785,22 +2786,136 @@ class ItemsController < ApplicationController
           linktitle = linkobj.title.to_s
           if linkurl != ''
             if linkimg != ''
-              @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"200\" title=\"#{linktitle}\" alt=\"article thumbnail\"></a>"
+              thumb_id = getthumb(linkimg)
+              if thumb_id.to_i > 0
+                @item.thumb_id = thumb_id
+                our_url = "/images/data/itemthumbs/#{thumb_id}/thumb.jpg"
+                @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{our_url}\" width=\"200\" title=\"#{linktitle}\" alt=\"article thumbnail\"></a>"
+                linkimg = our_url
+              else
+                 #@item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\"><img src=\"#{linkimg}\" width=\"200\" title=\"#{linktitle}\" alt=\"article thumbnail\"></a>"   
+                 @item.embed_code = ""  
+                 linkimg = ""           
+              end
             else
-              @item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\">#{linktitle}</a>"
+              #@item.embed_code = "<a href=\"#{linkurl}\" target=\"_blank\">#{linktitle}</a>"
             end
-            @item.oembed_response = {
-              'url': linkurl,
-              'img': linkimg,
-              'title': linktitle,
-              'description': linkobj.description,
-              'favicon': linkobj.favicon              
-            }
+            if linkimg != ""
+              @item.oembed_response = {
+                'url': linkurl,
+                'img': linkimg,
+                'title': linktitle,
+                'description': linkobj.description,
+                'favicon': linkobj.favicon              
+              }
+            else
+              @item.oembed_response = ""
+            end
           end
         end
       end
     end
   end  
+  
+  def getthumb(original_url)
+    # try to grab a picture from an article, and make it our own
+    # First see if we maybe already have it
+    thumb = ItemThumb.where(original_url: original_url).first
+    if thumb and thumb.our_path.to_s != ''
+      return thumb.id
+    else
+      #tempfilepath = "/tmp/#{current_participant.id}_#{Time.now.to_i}"
+
+      logger.info("items#getthumb grabbing:#{original_url}")      
+      
+      tempfile = Down.download(original_url)
+
+      if not tempfile
+        logger.info("items#getthumb didn't get a file")
+        return 0
+      end
+
+      logger.info("items#getthumb downloaded to:#{tempfile.path} original:#{tempfile.original_filename}")      
+      tempfilepath = tempfile.path
+      
+      if not File.exist?(tempfilepath)
+        logger.info("items#getthumb no file found at #{tempfilepath}")
+        return
+      end  
+
+      if not thumb
+        thumb = ItemThumb.create(original_url: original_url)
+      end
+      thumb_id = thumb.id
+      logger.info("items#getthumb thumb_id:#{thumb_id}")
+
+      picdir = "#{DATADIR}/itemthumbs/#{thumb_id}"
+      `mkdir "#{picdir}"` if not File.exist?(picdir)
+      bigfilepath = "#{picdir}/big.jpg"
+      thumbfilepath = "#{picdir}/thumb.jpg"
+
+      logger.info("items#getthumb converting #{tempfilepath} to #{bigfilepath}") 
+      p = nil
+      begin
+        p = Magick::Image.read("#{tempfilepath}").first
+        if p
+          p.change_geometry('800x800') { |cols, rows, img| img.resize!(cols, rows) }
+          p.write("#{bigfilepath}")
+        end
+      rescue
+      end
+      
+      if p and File.exist?(bigfilepath)
+
+    		bigpicsize = File.stat("#{bigfilepath}").size
+        iwidth = iheight = 0
+        begin
+          open("#{bigfilepath}", "rb") do |fh|
+            iwidth,iheight = ImageSize.new(fh.read).get_size
+          end
+        rescue
+        end  
+        logger.info("items#getthumb size:#{bigpicsize} dim:#{iwidth}x#{iheight}")
+      
+        #-- Construct a thumb image 200x200
+        #`rm -f #{tempfilepath2}` if File.exist?(tempfilepath2)
+      
+        if iwidth.to_i >= iheight.to_i and iheight.to_i > 0
+          p.change_geometry('1000x200') { |cols, rows, img| img.resize!(cols, rows) }
+        else
+          p.change_geometry('200x1000') { |cols, rows, img| img.resize!(cols, rows) }
+        end
+        #p.write("#{tempfilepath2}")
+
+        #if File.exist?(tempfilepath2)
+          #p = Magick::Image.read("#{tempfilepath}").first
+          if iwidth.to_i >= iheight.to_i and iheight.to_i > 0
+            #-- If it is a landscape picture, get the middle part
+            width = iwidth * 200 / iheight
+            offset = ((width - 200) / 2).to_i
+            icon = p.crop(offset, 0, 200, 200)
+          else
+            #-- If it is a portrait picture, get the top part
+            icon = p.crop(0, 0, 200, 200)
+          end
+          icon.write("#{thumbfilepath}")
+        #end
+      
+        p.destroy! if p
+        icon.destroy! if icon
+      
+        `rm -f #{tempfilepath}`
+      
+        thumb.our_path = "/images/data/itemthumbs/#{thumb_id}/thumb.jpg"      
+        thumb.save!
+
+        return thumb.id
+      else
+        logger.info("items#getthumb #{bigfilepath} not found")
+        return 0
+      end
+    end
+  end
   
   def itempicupload
     #-- Put any uploaded or grabbed picture in the right place

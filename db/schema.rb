@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_16_011446) do
+ActiveRecord::Schema.define(version: 2021_03_16_220702) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -567,6 +567,14 @@ ActiveRecord::Schema.define(version: 2021_03_16_011446) do
     t.index ["participant_id", "item_id"], name: "index_item_subscribes_on_participant_id_and_item_id"
   end
 
+  create_table "item_thumbs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "original_url"
+    t.string "our_path"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["original_url"], name: "index_item_thumbs_on_original_url", length: 35
+  end
+
   create_table "items", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "item_type", default: "message"
     t.string "media_type", default: "text"
@@ -595,6 +603,7 @@ ActiveRecord::Schema.define(version: 2021_03_16_011446) do
     t.decimal "controversy", precision: 6, scale: 2, default: "0.0"
     t.text "oembed_response"
     t.text "embed_code"
+    t.integer "thumb_id"
     t.boolean "has_picture", default: false
     t.string "posted_via", default: "web"
     t.integer "reply_to"

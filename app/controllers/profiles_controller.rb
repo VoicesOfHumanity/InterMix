@@ -794,7 +794,7 @@ class ProfilesController < ApplicationController
     end
     if @participant.city.to_s != ""
       #-- Fill in city unique code, which is admin1uniq_cityname, e.g. BY.01_Akhova
-      geoname = Geoname.where(name: @participant.city, country_code: @participant.country_code, admin1_code: adminuniq_part(@participant.admin1uniq), fclasscode: 'P.PPL').first
+      geoname = Geoname.where(name: @participant.city, country_code: @participant.country_code, admin1_code: adminuniq_part(@participant.admin1uniq)).where("fclasscode like 'P.PPL%'").first
       if geoname
         @participant.city_uniq = "#{@participant.admin1uniq}_#{@participant.city}"
         # Create/Join city community

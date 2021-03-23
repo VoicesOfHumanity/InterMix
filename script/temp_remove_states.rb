@@ -10,7 +10,7 @@ remove = 0
 for admin1 in admin1s do
   country_code = admin1.country_code
   admin1_code = admin1.admin1_code
-  cities = Geoname.where(country_code: country_code, admin1_code: admin1_code, fclasscode: 'P.PPL')
+  cities = Geoname.where(country_code: country_code, admin1_code: admin1_code).where("fclasscode like 'P.PPL%'")
   if cities.length == 0
     remove += 1
     puts "#{country_code}:#{admin1_code}:#{admin1.name} REMOVE"

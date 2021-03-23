@@ -3244,7 +3244,9 @@ class Item < ActiveRecord::Base
   
   def get_preview
     #-- If there's any info from link_thumbnailer, or similar, construct a preview to show as a thumbnail
-    if self.oembed_response and self.oembed_response.has_key?(:img)
+    if self.embed_code
+      return self.embed_code
+    elsif self.oembed_response and self.oembed_response.has_key?(:img)
       linkurl = self.oembed_response[:url]
       linkimg = self.oembed_response[:img]
       linktitle = self.oembed_response[:title]
