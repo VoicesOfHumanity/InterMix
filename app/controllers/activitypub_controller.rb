@@ -353,11 +353,12 @@ class ActivitypubController < ApplicationController
     key_id = "https://#{BASEDOMAIN}/u/#{from_user.account_uniq}#key"
        
     date          = Time.now.utc.httpdate
-    signed_string = "(request-target): post #{inbox_path}\nhost: #{inbox_host}\ndate: #{date}"
+    digest        = Base64.strict_encode64((OpenSSL::Digest::SHA256.new).digest(object))
+    signed_string = "(request-target): post #{inbox_path}\nhost: #{inbox_host}\ndate: #{date}\ndigest: SHA-256=#{digest}"
     signature     = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, signed_string))
-    sig_header    = 'keyId="' + key_id + '",headers="(request-target) host date",signature="' + signature + '"'
+    sig_header    = 'keyId="' + key_id + '",headers="(request-target) host date digest",signature="' + signature + '"'
 
-    headers = { 'Host': inbox_host, 'Date': date, 'Signature': sig_header }
+    headers = { 'Host': inbox_host, 'Date': date, 'Signature': sig_header, 'digest': "SHA-256="+digest }
 
     @api_send = ApiSend.create(
       participant_id: from_user.id,
