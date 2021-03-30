@@ -906,7 +906,7 @@ class CommunitiesController < ApplicationController
     ]
     @geo_level = 6 if not @geo_level
     
-    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
+    @countries = Geocountry.order(:name).select([:name,:iso])
     
   end
 

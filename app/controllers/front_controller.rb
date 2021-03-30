@@ -2090,7 +2090,7 @@ class FrontController < ApplicationController
   def prepare_join
     @section = 'join'
     @email = params[:email]
-    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
+    @countries = Geocountry.order(:name).select([:name,:iso])
     @meta = []
     @metamaps = Metamap.where(:global_default=>true)
     for metamap in @metamaps
@@ -2113,7 +2113,7 @@ class FrontController < ApplicationController
   
   def prepare_djoin
     @section = 'join'
-    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
+    @countries = Geocountry.order(:name).select([:name,:iso])
     @content = "<p>No discussion was recognized</p>"
     if @dialog.logo.exists?
       @logo = "//#{BASEDOMAIN}#{@dialog.logo.url}"
@@ -2207,7 +2207,7 @@ class FrontController < ApplicationController
   
   def prepare_gjoin
     @section = 'join'
-    @countries = Geocountry.order(:extrasort,:name).select([:name,:iso])
+    @countries = Geocountry.order(:name).select([:name,:iso])
     @content = "<p>No group was recognized</p>"
     @logo = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     @meta = []

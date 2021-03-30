@@ -34,7 +34,7 @@
 <% end -%>
 
 <% if @participant.country_code.to_s == '' -%>
-<%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
+<%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
 <% ok = false %>
 <% end -%>
 

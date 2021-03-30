@@ -45,7 +45,7 @@
 		<%= f.input :self_description, :as=>:text, :required => false %>
 		<%= f.input :address1, :required => false %>
 		<%= f.input :address2, :required => false %>
-		<%= f.input :country_code, :label => "Country of Residence", :as => :select, :collection =>Geocountry.order(:extrasort,:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, prompt: "* choose *", :input_html =>{:onchange=>"chgcountry()"} %>
+		<%= f.input :country_code, :label => "Country of Residence", :as => :select, :collection =>Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, prompt: "* choose *", :input_html =>{:onchange=>"chgcountry()"} %>
 		<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>[['* choose *','']]+Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]}, prompt: "* choose *", :input_html =>{:onchange=>"chgstate()"} %>  
 
 		<%= f.input :city, :label => "City", :as => :select, :required => false, :collection =>Geoname.where(admin1_code: adminuniq_part(@participant.admin1uniq), country_code: @participant.country_code).where("fclasscode like 'P.PPL%'").order(:name).select("distinct(name)").collect {|r| r.name}, prompt: "* choose *", :input_html =>{:onchange=>"chgcity()"} %>  
@@ -57,7 +57,7 @@
     
     <li class="select input optional" id="participant_country_code2_input">
       <label for="participant_country_code2" class="label">2nd Country</label>
-      <%= select_tag "participant[country_code2]", options_for_select([['* choose *',''], ['Indigenous peoples','_I']] + Geocountry.order(:extrasort,:name).collect{|c| [c.name,c.iso]}, @participant.country_code2), id: "participant_country_code2_input" %>
+      <%= select_tag "participant[country_code2]", options_for_select([['* choose *',''], ['Indigenous peoples','_I']] + Geocountry.order(:name).collect{|c| [c.name,c.iso]}, @participant.country_code2), id: "participant_country_code2_input" %>
     </li>
 		
     <%= f.input :phone, :required => false %>
