@@ -1,16 +1,8 @@
 <%= render(:partial => 'menu')%>
 
-<% if @participant.new_signup %>
+<h3>Required Information</h3>
+<p>To participate in Voices of Humanity, you must first provide your first name, country of residence and gender and age identities. Fill in the missing information and click the Save button below.</p>
 
-<h3>Signup Success!</h3>
-<p>We just need a little bit of extra information for your profile</p>
-
-<% else -%>
-
-<h3>Profile Update</h3>
-<p>We need a little bit of extra information for your profile</p>
-
-<% end -%>
 
 <% ok = true %>
 
@@ -22,80 +14,58 @@
 
 <%= f.inputs do %>
 
-<% if @participant.first_name.to_s == '' or @participant.last_name == '' -%>
-<%= f.input :first_name, :required => true %>
-<%= f.input :last_name, :required => true %>
-<% ok = false %>
-<% end -%>
-
-<% if @participant.city.to_s == '' -%>
-<%= f.input :city, :required => false %>
-<% ok = false %>
-<% end -%>
-
-<% if @participant.country_code.to_s == '' -%>
-<%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
-<% ok = false %>
-<% end -%>
-
-<% if @participant.admin1uniq.to_s == '' -%>
-<%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]} %>
-<% ok = false %>
-<% end -%>
-
-<% if @participant.metro_area_id.to_i == 0 -%>
-<%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false %>
-<% ok = false %>
-<% end -%>
-
-<% metamap_nodes = @participant.metamap_nodes_h %>
-<% @participant.metamaps_h.each do |metamap_id,metamap_name| -%>
-  <% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
-  <% if not info or info[1].to_i ==0 -%>  
-    <li class="select required" id="meta_#{metamap_id}_input">
-    	<div style="width:25%;float:left;font-weight:bold"><%= metamap_name %><%= '*' if metamap_id==3 or metamap_id==5 %></div>
-    	<div style="width:75%;float:left">
-    		<%= select_tag "meta[#{metamap_id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap_id),'id','name',(info ? info[1] : 0)), :id=>"meta_#{metamap_id}"%>
-    	</div>
-    </li>		
+  <% if @participant.first_name.to_s == '' or @participant.last_name == '' -%>
+    <%= f.input :first_name, :required => true %>
+    <%= f.input :last_name, :required => true %>
     <% ok = false %>
   <% end -%>
-<% end -%>
 
-<% ok = false %>
-<div style="display:inline;position:relative;top:20px"><b>Indigenous</b></div>
-<% ind_checked = {}; ind_checked[:checked] = 'checked' if @participant.indigenous %>
-<%= f.input :indigenous, :as => :boolean, :label=>"check here if you identify with an indigenous people or tribe", :input_html => ind_checked %>
-<div style="display:inline;position:relative;top:20px"><b>Other Minority</b></div>
-<% min_checked = {}; min_checked[:checked] = 'checked' if @participant.other_minority %>
-<%= f.input :other_minority, :as => :boolean, :label=>"check here if you identify with a disadvantaged national, ethnic, racial or religious minority in your country", :input_html => min_checked %>
-<div style="display:inline;position:relative;top:20px"><b>Veteran</b></div>
-<% vet_checked = {}; vet_checked[:checked] = 'checked' if @participant.veteran %>
-<%= f.input :veteran, :as => :boolean, :label=>"check here if you are a veteran", :input_html => vet_checked %>		
-<div style="display:inline;position:relative;top:20px"><b>Interfaith</b></div>
-<% int_checked = {}; int_checked[:checked] = 'checked' if @participant.interfaith %>
-<%= f.input :interfaith, :as => :boolean, :label=>"check here if you identify as interfaith", :input_html => int_checked %>		
-<div style="display:inline;position:relative;top:20px"><b>Refugee</b></div>
-<% ref_checked = {}; ref_checked[:checked] = 'checked' if @participant.refugee %>
-<%= f.input :refugee, :as => :boolean, :label=>"check here if you identify as a refugee", :input_html => ref_checked %>		
+  <% if @participant.city.to_s == '' -%>
+    <%= f.input :city, :required => false %>
+    <% ok = false %>
+  <% end -%>
 
+  <% if @participant.country_code.to_s == '' -%>
+    <%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
+    <% ok = false %>
+  <% end -%>
+
+  <% if @participant.admin1uniq.to_s == '' -%>
+    <%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]} %>
+    <% ok = false %>
+  <% end -%>
+
+  <% if @participant.metro_area_id.to_i == 0 -%>
+    <%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false %>
+    <% ok = false %>
+  <% end -%>
+
+  <% metamap_nodes = @participant.metamap_nodes_h %>
+  <% @participant.metamaps_h.each do |metamap_id,metamap_name| -%>
+    <% info = metamap_nodes[metamap_id] if metamap_nodes[metamap_id] %>
+    <% if not info or info[1].to_i ==0 -%>  
+      <li class="select required" id="meta_#{metamap_id}_input">
+      	<div style="width:25%;float:left;font-weight:bold"><%= metamap_name %><%= '*' if metamap_id==3 or metamap_id==5 %></div>
+      	<div style="width:75%;float:left">
+      		<%= select_tag "meta[#{metamap_id}]",raw('<option value="0">* choose *</option>')+ options_from_collection_for_select(MetamapNode.where(:metamap_id=>metamap_id),'id','name',(info ? info[1] : 0)), :id=>"meta_#{metamap_id}"%>
+      	</div>
+      </li>		
+      <% ok = false %>
+    <% end -%>
+  <% end -%>
+
+<% end %>
 
 <% if ok -%>
-<p>Actually, never mind, everything is in order, so just <a href="<%= @forum_link %>">click here to go to the list</a>.</p>
+<p>Seems like no information is missing, so just click Save</p>
 <% end -%>
 
-<% end %>
+<p><input type="submit" value="Save" /></p>
+  
+<p>When you click the Save button, you will be taken to your full profile in edit mode so you can add additional information.</p>
 
-	<p><br>
-	  <% if ok -%>
-		<% elsif @forum_link.to_s != '' -%>
-	  <input type="button" value="Save and go to list" onclick="$('#goto').val($('#forum_link').val());$('#profile_edit').submit();" />
-	  <% else -%>
-	  <input type="submit" value="Save" />	  
-		<% end -%>
-	<br><br></p>
+<% end -%>
 
-<% end %>
 
 <script>
 var curid1 = 0;
