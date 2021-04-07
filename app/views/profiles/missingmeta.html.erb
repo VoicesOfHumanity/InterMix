@@ -3,20 +3,22 @@
 <h3>Required Information</h3>
 <p>To participate in Voices of Humanity, you must first provide your first name, country of residence and gender and age identities. Fill in the missing information and click the Save button below.</p>
 
+<p>Items marked with an asterisk are required.</p>
+
 
 <% ok = true %>
 
 <%= semantic_form_for :participant, :url => '/me/profile/update', :html=>{:id=>"profile_edit"} do |f| %>
 
 <input type="hidden" id="forum_link" name="forum_link" value="<%= @forum_link %>">
-<input type="hidden" id="goto" name="goto" value="">
+<input type="hidden" id="goto" name="goto" value="/me/profile/edit">
 <input type="hidden" id="subsection" name="subsection" value="<%= @subsection %>">
 
 <%= f.inputs do %>
 
-  <% if @participant.first_name.to_s == '' or @participant.last_name == '' -%>
+  <% if @participant.first_name.to_s == '' -%>
     <%= f.input :first_name, :required => true %>
-    <%= f.input :last_name, :required => true %>
+    <%= f.input :last_name, :required => false, label: "Family name" %>
     <% ok = false %>
   <% end -%>
 
@@ -35,7 +37,7 @@
     <% ok = false %>
   <% end -%>
 
-  <% if @participant.metro_area_id.to_i == 0 -%>
+  <% if false and @participant.metro_area_id.to_i == 0 -%>
     <%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false %>
     <% ok = false %>
   <% end -%>
@@ -56,13 +58,15 @@
 
 <% end %>
 
+<br>
+
 <% if ok -%>
-<p>Seems like no information is missing, so just click Save</p>
+<p>Seems like no information is missing, after all<br></p>
 <% end -%>
 
-<p><input type="submit" value="Save" /></p>
+<p><br><input type="submit" value="Save" /></p>
   
-<p>When you click the Save button, you will be taken to your full profile in edit mode so you can add additional information.</p>
+<p><br>When you click the Save button, you will be taken to your full profile in edit mode so you can add additional information.</p>
 
 <% end -%>
 

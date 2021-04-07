@@ -28,7 +28,7 @@
 	</li>		
 
 		<%= f.input :first_name, :required => true %>
-		<%= f.input :last_name, :required => false %>
+		<%= f.input :last_name, :required => false, label: "Family name" %>
 		<%= f.input :title, :required => false %>
     <%= f.input :picture, :as=>:file, :required => false %>
     
