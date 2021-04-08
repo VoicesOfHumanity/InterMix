@@ -327,6 +327,40 @@ class ProfilesController < ApplicationController
       render :action => "edit" and return
     end
   end
+  
+  def password
+    @section = 'profile'
+    @psection = 'profile'
+    @subsection = 'password'
+    @profile_id = ( params[:id] || current_participant.id ).to_i
+    @participant = Participant.find(@profile_id) 
+    update_last_url
+  end
+    
+  def update_password
+    old_pass = params[:old_pass].to_s
+    new_pass = params[:new_pass].to_s
+    new_pass_confirm = params[:new_pass_confirm].to_s
+    flash[:alert] = ""
+    flash[:notice] = ""
+    if new_pass != ''
+      if old_pass == ''
+        flash[:alert] += "Please enter your old password if you want to change it."
+      elsif not current_participant.valid_password?(old_pass)
+        flash[:alert] += "That doesn't seem to be the right password."
+      elsif new_pass_confirm == ''
+        flash[:alert] += "Please enter the new password a second time if you want to change it."
+      elsif new_pass_confirm != new_pass
+        flash[:alert] += "The two passwords don't match."
+      else  
+        current_participant.password = new_pass
+        current_participant.save
+        flash.now[:notice] = "Password changed."
+        redirect_to '/me/profile' and return
+      end
+      redirect_to '/me/profile/password' and return
+    end    
+  end  
     
   def api_get_user_info
     #-- Return basic user information for the settings screen on app

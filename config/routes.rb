@@ -379,6 +379,8 @@ Rails.application.routes.draw do
   get 'me/profile/meta' => 'profiles#missingmeta'
   get 'me/profile/settings' => 'profiles#settings'
   post 'me/profile/update' => 'profiles#update'
+  get 'me/profile/password' => 'profiles#password'
+  post 'me/profile/update_password' => 'profiles#update_password'  
   get 'me/wall' => 'wall#index'
   get 'me/photos' => 'profiles#photos'
   get 'me/photolist' => 'profiles#photolist'
