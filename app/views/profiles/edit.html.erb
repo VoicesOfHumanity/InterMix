@@ -19,13 +19,6 @@
 
 	<%= f.input :email, :label => "Email", :required => true %>	
 
-	<li class="select required" id="passwordli">
-		<div style="width:25%;float:left;font-weight:bold">Password Change</div>
-		<div style="width:75%;float:left">
-			Existing password: <%= password_field_tag :old_pass, '', :maxlength => 15, :size => 15 %><br>
-			New password: <%= password_field_tag :new_pass, '', :maxlength => 15, :size => 15 %> (case sensitive)<br>Repeat new password: <%= password_field_tag :new_pass_confirm, '', :maxlength => 15, :size => 15 %>
-		</div>
-	</li>		
 
 		<%= f.input :first_name, :required => true %>
 		<%= f.input :last_name, :required => false, label: "Family name" %>

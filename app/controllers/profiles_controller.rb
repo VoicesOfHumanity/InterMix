@@ -152,25 +152,6 @@ class ProfilesController < ApplicationController
       end  
     end  
 
-    old_pass = params[:old_pass].to_s
-    new_pass = params[:new_pass].to_s
-    new_pass_confirm = params[:new_pass_confirm].to_s
-    if new_pass != ''
-      if old_pass == ''
-        flash.now[:alert] += "Please enter your old password if you want to change it."
-      elsif not current_participant.valid_password?(old_pass)
-        flash.now[:alert] += "That doesn't seem to be the right password."
-      elsif new_pass_confirm == ''
-        flash.now[:alert] += "Please enter the new password a second time if you want to change it."
-      elsif new_pass_confirm != new_pass
-        flash.now[:alert] += "The two passwords don't match."
-      else  
-        @participant.password = new_pass
-        @participant.save
-        flash.now[:notice] = "Password changed."
-      end
-    end
-    
     @participant.assign_attributes(participant_params) if params[:participant]
     
     @participant.old_email = old_email if emailchanged
