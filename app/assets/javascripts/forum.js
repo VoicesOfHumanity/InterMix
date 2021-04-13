@@ -189,7 +189,7 @@ var gotopage = function(page) {
 		}
 	});	
 }
-function newitem(token) {
+function newitem(token, media_type) {
   console.log('newitem');
 	if (editingid>0) {
 	    alert("Please save or cancel the edit that is in progress");
@@ -201,6 +201,9 @@ function newitem(token) {
 	    alert("Please save or cancel the new thread that is in progress");
 	    return;
 	}
+  if (media_type == undefined) {
+    media_type = 'text';
+  }  
   if ($('#conversation_id').val() != '' && $('#conversation_id').val() != 'all' && !add_after_reload) {
     var cur_half_moon = $('#cur_half_moon').val();
     console.log("In a conversation. cur_half_moon:"+cur_half_moon)
@@ -298,7 +301,8 @@ function newitem(token) {
   } else {
     pars += "&network_id="+network_id;
   }
-	$.ajax({
+  pars += "&media_type="+media_type;
+  $.ajax({
 		type: "GET",
 		cache: false,
 		url: '/items/new?xtime=' + (new Date()).getTime(),

@@ -396,7 +396,10 @@ class ItemsController < ApplicationController
     #-- screen for a new item, either new thread or a reply
     @from = params[:from] || ''
     @reply_to = params[:reply_to].to_i
-    @item = Item.new(:media_type=>'text',:link=>'https://',:reply_to=>@reply_to,html_content: '')
+    
+    @media_type = params[:media_type] if params[:media_type].to_s != ''
+    @item = Item.new(:media_type=>@media_type,:link=>'https://',:reply_to=>@reply_to,html_content: '')    
+    
     @item.geo_level = params[:geo_level] if params[:geo_level].to_s != ''
     @items_length = params[:items_length].to_i
     @subgroup = params[:subgroup].to_s
@@ -410,6 +413,7 @@ class ItemsController < ApplicationController
     @meta_3 = params[:meta_3].to_i    # gender
     @meta_5 = params[:meta_5].to_i    # age
     @topic = params[:topic].to_s
+
     
     if @item.reply_to.to_i > 0
       @olditem = Item.find_by_id(@item.reply_to)
@@ -417,18 +421,6 @@ class ItemsController < ApplicationController
     
     @in_conversation =  (@conversation_id > 0)
     @in_network =  (@network_id > 0)
-      
-    if false and @conversation_id == 0
-      # Check if the user is in a community that is in a conversation. If so, count it for that conversation
-      # Eh, but which one if there are several?
-      for com_tag in current_participant.tag_list_downcase
-        community = Community.find_by_tagname(com_tag)
-        if community.conversations and community.conversations.length > 0
-          @conversation_id = community.conversations[0].id
-          break
-        end
-      end
-    end
 
     # NB: If not in other conversation, if one of the other of the user's nations is tagged, including in international conversation
     # WHERE? HOW?
@@ -915,13 +907,19 @@ class ItemsController < ApplicationController
     @item.item_type = 'message'
     @item.posted_by = current_participant.id
     @item.geo_level = params[:geo_level] if params[:geo_level]
+    @item.html_content = "" if not @item.html_content
     @comtag = params[:comtag] if params.has_key?(:comtag)
+    @item.media_type = params[:media_type] if params[:media_type].to_s != ''
 
     if current_participant.status != 'active'
       #-- Make sure this is an active member
       results = {'error'=>true,'message'=>"Your membership is not active",'item_id'=>0}        
       render :json=>results, :layout=>false
       return
+    end
+    
+    if @item.html_content == "" and @item.short_content != ""
+      @item.html_content = @item.short_content
     end
 
     tags_in_html = get_tags_from_html(@item.html_content,true)
@@ -1071,7 +1069,7 @@ class ItemsController < ApplicationController
       render :partial=>'edit', :layout=>false
       return
     
-    elsif @item.save
+    elsif @item.save!
       if @item.is_first_in_thread
         @item.first_in_thread = @item.id    
         @item.save    

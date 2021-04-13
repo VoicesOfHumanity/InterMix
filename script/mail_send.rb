@@ -278,7 +278,9 @@ for p in participants
       itext += "<div>"
       if item.media_type == 'video' or item.media_type == 'audio'
         itext += "<a href=\"#{item.link}\" target=\"_blank\">#{item.media_type}</a>"
-        itext += "<br>#{item.short_content.to_s}</div>"
+        itext += "<br>#{item.short_content.to_s}"
+      elsif item.media_type == 'question'
+        itext += item.short_content  
       else
         itext += item.html_with_auth(p)
       end

@@ -151,7 +151,7 @@ EMAIL_PREFS_TEXT = {'instant'=>'E-mail each one right away','daily'=>'E-mail in 
 ITEM_TYPES = ['message']
 RATING_TYPES = ['AllRatings','ElectionRating']
 SECTIONS = ['home','forum','wall','profile']
-MEDIA_TYPES = ['text','picture','video','audio','link']
+MEDIA_TYPES = ['text','question','picture','video','audio','link']
 METAMAP_VOTE_OWN = ['mainly', 'only', 'never']
 METAMAP_VOTE_OWN_TEXT = {'mainly'=>"Primarily vote on own category's posts", 'only'=>"Only vote on own category's posts", 'never'=>"Can't vote on own category's posts"}
 DIALOG_GROUP_STATUS = ['','apply','approved','denied']

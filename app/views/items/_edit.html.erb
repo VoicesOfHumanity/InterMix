@@ -33,118 +33,83 @@ if (CKEDITOR.instances['item_html_content']) {
 <fieldset class="inputs"><ol>
         <li class="hidden optional" id="item_media_type_input"><input id="item_media_type" name="item[media_type]" type="hidden" value="<%= @item.media_type.to_s!='' ? @item.media_type : 'text' %>" /></li>
 
-		<li><label>Media</label>
-		<% xarr = ['text','picture','video','audio','link'] -%>
-		<% xarr = ['text','video','audio'] -%>
-		<% x = 0 -%>
-		<% for xi in xarr -%>
-			<span id="<%= "media_#{xi}" %>"><%= link_to_function xi, "mediachange('#{xi}')" %></span>
-			<%= " | " if x < xarr.length - 1 -%>
-			<% x += 1 -%>
-		<% end -%>
-		</li>
-
-    <% if false and @item.geo_level.to_s != '' -%>
-      <li class="text optional" id="item_geo_level"><label for="item_geo_level">Perspective</label>
-        <%= select :item, :geo_level, GEO_LEVEL_DESC.each {|level,title| [title,level]} %>
-      </li>
-  		<li class="select optional" id="item_group_id_input"><label for="item_group_id">Group</label>
-  			<%= @item.group.name if @item.group %>
+    <% if @item.media_type == 'question' -%>
+      <%= hidden_field :item, :media_type %>
+    <% else -%>
+  		<li><label>Media</label>
+  		<% xarr = ['text','picture','video','audio','link'] -%>
+  		<% xarr = ['text','question','video','audio'] -%>
+  		<% x = 0 -%>
+  		<% for xi in xarr -%>
+  			<span id="<%= "media_#{xi}" %>"><%= link_to_function xi, "mediachange('#{xi}')" %></span>
+  			<%= " | " if x < xarr.length - 1 -%>
+  			<% x += 1 -%>
+  		<% end -%>
   		</li>	
     <% end -%>
 
-		<% if false -%>
-		<li class="select optional" id="item_group_id_input"><label for="item_group_id">To</label>
-			<%= select :item, :group_id, [['*everybody wall/forum*',0],['*my wall*',-1]]+@groupsin.collect{|c| ["Group: #{c.group.name}",c.group.id]} %>
-		</li>	
-		<% end -%>
-		
-		<% if false and @item.dialog_id.to_i > 0 -%>
-		<li class="string optional" id="dialog_name"><label for="dialog_name">Discussion</label>
-				<%= @dialog_name %>
-		</li>
-		<% end -%>
-
-    <% if false -%>
-		<% if @item.dialog_id.to_i > 0 -%>
-			<li class="select optional" id="item_group_id_input"><label for="item_group_id">Group</label>
-			<%= select :item, :group_id, @dialoggroupsin.collect{|g| [g.name,g.id]} %>
-			</li>						
-		<% elsif @from == 'group' -%>
-			<li class="select optional" id="item_group_id_input"><label for="item_group_id">Group</label>
-			<%= @group.name if @group %>
-			</li>
-		<% end -%>
-    <% end -%>
-		
-
-		<li class="string optional" id="item_subject_input"><label for="item_subject">Subject</label><input id="item_subject" maxlength="255" name="item[subject]" size="50" type="text" value="<%= @item.subject %>" /></li>
+		<li class="string optional" id="item_subject_input"><label for="item_subject"><% if @item.media_type=='question' %>Question<% else %>Subject<% end %></label><input id="item_subject" maxlength="255" name="item[subject]" size="50" type="text" value="<%= @item.subject %>" /></li>
 
 
-		<% if false -%>
-		<li id="uploadli" style="<%= @item.media_type!='picture' ? 'display:none' : '' %>">
-			<div id="mediatitle1" style="width:25%;float:left"><b>Upload file</b></div>
-			<div style="width:75%;float:left">
-				<div id="uploaddiv">
-					<input type="file" id="uploadfile" name="uploadfile" />
-				</div>						
-		</li>			
-		<% end -%>
 		<li id="uploadli" style="<%= @item.media_type!='picture' ? 'display:none' : '' %>">
 			<div id="mediatitle1" style="width:25%;float:left"><b>Include your picture</b></div>
 			<div style="width:75%;float:left">
 				<%= select_tag :photo_id, options_for_select([['',0]]+Photo.where(:participant_id=>current_participant.id).collect{|p| ["#{p.filename} (#{p.width}x#{p.height})",p.id]}) %> <img src="/images/question-mark.png" class="tooltip" id="photo_id_q" width="16" height="16" title="To include a picture from your computer you must first go to your profile, click the “photos” link there and upload the image." alt="questionmark">
 			</div>						
-		</li>			
-		<li>
-			<div style="width:75%;float:left"><b><span id="mediatitle2"><%= 
-			if @item.media_type == 'link'
-				"Link URL"
-			elsif @item.media_type =='audio'
-				"Audio URL"
-			elsif @item.media_type =='video'
-				"Video URL"
-			elsif @item.media_type == 'picture'
-				"or grab from URL"
-			elsif @item.reply_to.to_i>0
-				"Reply"
-			else
-				"Message" 
-			end
-			%></span>
+    </li>
+    <% if @item.media_type != 'question' -%>
+  		<li>
+  			<div style="width:75%;float:left"><b><span id="mediatitle2"><%= 
+  			if @item.media_type == 'link'
+  				"Link URL"
+  			elsif @item.media_type =='audio'
+  				"Audio URL"
+  			elsif @item.media_type =='video'
+  				"Video URL"
+  			elsif @item.media_type == 'picture'
+  				"or grab from URL"
+  			elsif @item.reply_to.to_i>0
+  				"Reply"
+  			else
+  				"Message" 
+  			end
+  			%></span>
 			
-			<% plain_content = strip_tags(@item.html_content.to_s) %>
-			<% if @item.media_type != "text" -%>
-			<% elsif @max_words.to_i > 0 and @max_characters.to_i > 0 #and @item.reply_to.to_i == 0 -%>
-			(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> of <%= @max_words.to_i %> words,
-			<span id="item_long_length"><%= @item.html_content ? @item.html_content.length : 0 %></span> of <%= @max_characters.to_i %> char)
+  			<% plain_content = strip_tags(@item.html_content.to_s) %>
+  			<% if @item.media_type != "text" -%>
+  			<% elsif @max_words.to_i > 0 and @max_characters.to_i > 0 #and @item.reply_to.to_i == 0 -%>
+  			(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> of <%= @max_words.to_i %> words,
+  			<span id="item_long_length"><%= @item.html_content ? @item.html_content.length : 0 %></span> of <%= @max_characters.to_i %> char)
 			
-			<% elsif @max_words.to_i > 0 and @item.reply_to.to_i == 0 -%>
-			(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> of <%= @max_words.to_i %> words)
+  			<% elsif @max_words.to_i > 0 and @item.reply_to.to_i == 0 -%>
+  			(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> of <%= @max_words.to_i %> words)
 						
-			<% elsif @max_characters.to_i > 0 and @item.reply_to.to_i == 0 -%>
-			(<span id="item_long_length"><%= @item.html_content ? @item.html_content.length : 0 %></span> of <%= @max_characters.to_i %> char)
+  			<% elsif @max_characters.to_i > 0 and @item.reply_to.to_i == 0 -%>
+  			(<span id="item_long_length"><%= @item.html_content ? @item.html_content.length : 0 %></span> of <%= @max_characters.to_i %> char)
 			
-			<% elsif not @item.reply_to or @item.reply_to.to_i==0 -%>
-			(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> words, <span id="item_long_length"><%= plain_content.length %></span> char)
-			<% end -%>
+  			<% elsif not @item.reply_to or @item.reply_to.to_i==0 -%>
+  			(<span id="item_long_words"><%= plain_content.scan(/(\w|-)+/).size %></span> words, <span id="item_long_length"><%= plain_content.length %></span> char)
+  			<% end -%>
 			
-			</b></div>
-			<div style="width:75%;float:left;clear:left;">
-				<div id="textdiv" style="<%= @item.media_type!='text' ? 'display:none' : '' %>">
-				<% "ckeditor_textarea( :item, :html_content, :ajax => true, :width=>'97%', :height=>'250', :toolbar=>'Basic' )" %> 
-				<%= cktext_area(:item, :html_content, :ckeditor => {:ajax => true, :width=>(@item.reply_to.to_i>0 ? 500 : 516), :height=>'250', :toolbar=>'Custom'}) %>
-				</div>
-				<div id="linkdiv" style="<%= @item.media_type=='text' ? 'display:none' : '' %>">
-				<input id="item_link" maxlength="255" name="item[link]" value="<%= @item.link %>" size="50" type="text" /> 
-				</div>
-			</div>
-		</li>
+  			</b></div>
+  			<div style="width:75%;float:left;clear:left;">
+  				<div id="textdiv" style="<%= @item.media_type!='text' ? 'display:none' : '' %>">
+  				<% "ckeditor_textarea( :item, :html_content, :ajax => true, :width=>'97%', :height=>'250', :toolbar=>'Basic' )" %> 
+  				<%= cktext_area(:item, :html_content, :ckeditor => {:ajax => true, :width=>(@item.reply_to.to_i>0 ? 500 : 516), :height=>'250', :toolbar=>'Custom'}) %>
+  				</div>
+  				<div id="linkdiv" style="<%= @item.media_type=='text' ? 'display:none' : '' %>">
+  				<input id="item_link" maxlength="255" name="item[link]" value="<%= @item.link %>" size="50" type="text" /> 
+  				</div>
+  			</div>
+  		</li>
+    <% end -%>
     
     <li>
   	<div style="width:70%;float:left">
-  	  <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
-  	  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
+      <% if @item.media_type != 'question' -%>
+  	    <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
+  	    <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
+      <% end -%>
 	 
   	  <% intra_options = [['Public','public']] %>
   	  <% def_intra = @item.intra_com ? @item.intra_com : 'public' %>		  
@@ -158,24 +123,9 @@ if (CKEDITOR.instances['item_html_content']) {
     	  <select name="item[intra_com]" id="item_intra_com">
     	  <%= options_for_select(intra_options,def_intra) %>
     	  </select>
-  	  <% end -%>
+  	  <% end -%>      
       
-      <% if false -%>
-    	  <% intra_conv_options = [['Public','public']] %>
-    	  <% intra_conv_options << ["This Conversation Only","#{@conv}"] if (@conv.to_s != '' and @conv != 'my' and @conv != '@my' and @conv != '*my*') %>
-    	  <% if intra_conv_options.length > 1 -%>
-      	  <select name="item[intra_conv]" id="item_intra_conv">
-      	  <% def_intra_conv = @item.intra_conv ? @item.intra_conv : 'public' %>		  
-      	  <%= options_for_select(intra_conv_options,def_intra_conv) %>
-      	  </select>
-    	  <% end -%>
-      <% end -%>
-      
-      <% if false and @conversation and @conversation.together_apart == 'apart' and @conv_own_coms and @item.reply_to.to_i == 0 -%>
-  	    Representing: <select name="item[representing_com]" id="item_representing_com">
-    	    <%= options_for_select([['Public','public']]+@conv_own_coms.invert.to_a, @item.representing_com) %>
-  	    </select>
-      <% elsif @item.representing_com.to_s != '' -%>
+      <% if @item.representing_com.to_s != '' -%>
         <input type="hidden" name="item[representing_com]" id="item_representing_com" value="<%= @item.representing_com %>">
       <% end -%>
       
@@ -199,21 +149,15 @@ if (CKEDITOR.instances['item_html_content']) {
   	</div>
     </li>
 
-    <li class="text optional" id="item_short_content_input"><label for="item_short_content" style="width: 500px">Short summary / twitter version (<span id="charsused">0</span> of 240 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px;font-size:15px" disabled="disabled"><%= @item.short_content %></textarea></li>
+    <li class="text optional" id="item_short_content_input"><label for="item_short_content" style="width: 500px"><% if @item.media_type == 'question' %>Optional Explanation<% else %>Short summary / twitter version<% end %> (<span id="charsused">0</span> of 240 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px;font-size:15px" disabled="disabled"><%= @item.short_content %></textarea></li>
 
-		<% if false -%>
-    <li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Tags</label><input id="item_tag_list" name="item[tag_list]" size="80" type="text" value="" /></li>
-		<% end -%>
-		<% if @item.dialog_id.to_i == 0 and @item.reply_to.to_i == 0 and @group and @group.group_subtags.length > 0 -%>
-		<li class="string optional" id="item_tag_list_input"><label for="item_tag_list">Subgroup(s)</label>
-		  <%= @item.subgroup_list.to_s %>
-		  <% if @group.group_subtags.length > @item.subgroup_list.length -%>
-		  + <select id="subgroup_add" name="subgroup_add">
-		  <%= options_for_select([['','']] + @group.group_subtags.collect{|s| @item.subgroup_list.include?(s.tag) ? nil : [s.tag,s.tag]}.compact,@subgroup_add.to_s) %>  
-		  </select>
-		  <% end -%>
-		</li>  
-		<% end -%>
+    <% if @item.media_type == 'question' -%>
+      <li>
+  	    <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
+  	    <input type="button" value="Save" onclick="saveitem()" />
+      </li>
+    <% end -%>
+
 
 </ol></fieldset>
 
@@ -235,6 +179,7 @@ console.log('_edit');
 //console.log('after editor replace')
 
 //$(document).ready(function() {
+<% if @item.media_type != 'question' -%>
 	if (!CKEDITOR.instances) {
 		alert('CKEDITOR: ' + JSON.stringify(CKEDITOR));
 	} else if (!('item_html_content' in CKEDITOR.instances)) {
@@ -251,6 +196,7 @@ console.log('_edit');
       CKEDITOR.instances['item_html_content'].focus();
 		});
 	}
+<% end -%>  
 //});
 var short_updated = <%= (@item.id.to_i > 0 or flash[:alert].to_s !="" or @item.media_type != 'text') ? "true" : "false" %>;
 var short_allowed = false;
@@ -270,7 +216,12 @@ function editor_change() {
 }
 var cur_media_type = $('#item_media_type').val();
 mediachange(cur_media_type);
+<% if @item.media_type != 'question' -%>
 editor_change();
+<% else -%>
+$('#item_short_content').prop("disabled", false );
+short_allowed = true;
+<% end -%>
 if ('#photo_id_q') {
 	$('#photo_id_q').tooltipster({
 		trigger: 'hover'

@@ -38,6 +38,7 @@
     <p>
         <% if (not @conversation) or (@conversation and @is_conv_member) %>
           <input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
+          <input type="button" value="Add My Question" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>','question')">
     		<% end -%>
         
         <% if @showing_options == 'more' -%>
