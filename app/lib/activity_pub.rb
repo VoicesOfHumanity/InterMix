@@ -74,7 +74,7 @@ module ActivityPub
     end
     logger.info "activitypub#sign_and_send inbox url: #{inbox_url}"
     
-    if not current_participant or from_id != current_participant.id
+    if not defined?(current_participant) or from_id != current_participant.id
       from_user = Participant.find_by_id(from_id)
     else
       from_user = current_participant
