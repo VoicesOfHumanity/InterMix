@@ -16,6 +16,7 @@ module ActivityPub
   
   def record_request
     # Record what we're receiving. Later, we can add our response
+    logger = @logger if @logger and not logger
     begin
       @api_request = ApiRequest.create(
         request_headers: request.env.select {|k,v| k =~ /^HTTP_/ and ! k.starts_with?("HTTP_COOKIE")}.to_json,
@@ -63,6 +64,8 @@ module ActivityPub
     # inspired by https://glitch.com/edit/#!/glib-cheerful-addition?path=routes%2Finbox.js%3A1%3A0
     # and https://blog.joinmastodon.org/2018/06/how-to-implement-a-basic-activitypub-server/
     # We're signing the message with the private key of the sender
+    
+    logger = @logger if @logger and not logger
     
     inbox_url = to_remote_actor.inbox_url
     if not inbox_url or not inbox_url =~ /^http/
@@ -121,6 +124,7 @@ module ActivityPub
   
   def get_remote_actor(actor_uniq)
     # Get information about a remote account, either by asking, or from our cache
+    logger = @logger if @logger and not logger
     remote_actor = RemoteActor.find_by_account(actor_uniq)
     if remote_actor and remote_actor.last_fetch >= Date.today - 7
       get_new = false
@@ -234,6 +238,7 @@ module ActivityPub
   def get_actor_url_by_webfinger(actor_addr)
     # Get an address like ming@social.coop and return a url id like https://social.coop/users/ming
     # We need to do a webfinger lookup to the remote server to get that
+    logger = @logger if @logger and not logger
     
     actor_url = ''
     
