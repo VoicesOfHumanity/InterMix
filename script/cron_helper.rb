@@ -18,4 +18,6 @@ ActionController::Base.logger                  = logger
 ApplicationController.allow_forgery_protection = false
 #reload!
 
-#logger.info("cron_helper")
+logger.info("cron_helper")
+
+@logger = logger
