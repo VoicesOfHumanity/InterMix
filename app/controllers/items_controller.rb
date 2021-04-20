@@ -2781,6 +2781,7 @@ class ItemsController < ApplicationController
         if linkobj
           linkurl = linkobj.url.to_s
           linkimg = linkobj.images.first ? linkobj.images.first.src.to_s : ''
+          logger.info("items#itemprocess found linkurl: #{linkurl} images:#{linkobj.images.length} linkimg:#{linkimg}")
           linktitle = linkobj.title.to_s
           if linkurl != ''
             if linkimg != ''
