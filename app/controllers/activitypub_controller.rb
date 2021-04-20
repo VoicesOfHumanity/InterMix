@@ -192,8 +192,11 @@ class ActivitypubController < ApplicationController
     #Host: social.example.com
     #Content-Type: application/activity+json
     #{
-    #  "type": "Follow",
-    #  "object": "https://social.example.com/@bob"
+	  #"@context": "https://www.w3.org/ns/activitystreams",
+	  #"id": "https://my-example.com/my-first-follow",
+	  #"type": "Follow",
+	  #"actor": "https://my-example.com/actor",
+	  #"object": "https://mastodon.social/users/Mastodon"
     #}
     
     from_id = current_participant.id
@@ -242,17 +245,6 @@ class ActivitypubController < ApplicationController
       return
     end
     
-    object = {
-      "@context": [
-            "https://www.w3.org/ns/activitystreams",
-            "https://w3id.org/security/v1"
-          ],
-      "type": "Follow",
-      "object": remote_actor.account_url
-    }
-    
-    sign_and_send(current_participant.id, remote_actor, object, 'follow_account')
-    
     logger.info("activitypub#follow_account add follower record")
     follow = Follow.where(following_id: current_participant.id, followed_fulluniq: to_actor).first
     if not follow
@@ -263,8 +255,24 @@ class ActivitypubController < ApplicationController
       )
     end
     follow.followed_remote_actor_id = remote_actor.id
-    follow.save
+    follow.save    
     
+    # Hm, what are we going to do here
+    unique_follow_id = "https://#{BASEDOMAIN}/f_#{current_participant.id}_#{follow.id}"
+    
+    object = {
+      "@context": [
+            "https://www.w3.org/ns/activitystreams",
+            "https://w3id.org/security/v1"
+          ],
+      "type": "Follow",
+      "id": unique_follow_i,
+      "actor": current_participant.activitypub_url,
+      "object": remote_actor.account_url
+    }
+    
+    sign_and_send(current_participant.id, remote_actor, object, 'follow_account')
+        
     flash[:notice] = "Follow request sent"
     respond_to do |format|
      format.html {redirect_to '/me/friends'}

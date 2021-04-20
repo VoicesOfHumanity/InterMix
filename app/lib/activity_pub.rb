@@ -71,7 +71,7 @@ module ActivityPub
     end
     logger.info "activitypub#sign_and_send inbox url: #{inbox_url}"
     
-    if from_id != current_participant.id
+    if not current_participant or from_id != current_participant.id
       from_user = Participant.find_by_id(from_id)
     else
       from_user = current_participant
@@ -294,6 +294,7 @@ module ActivityPub
   def respond_to_follow
     #-- Answer a follow request from the outside. We'll probably want to do that automatically right away
     
+    participant_id = 2602                         # current_participant.id
     to_actor = "ming@social.coop"                 # ming@social.coop
     remote_actor = get_remote_actor(to_actor)      
     remote_actor_url = remote_actor.account_url   # https://intermix.cr8.com/u/ff2602
@@ -311,7 +312,7 @@ module ActivityPub
       "object": remote_actor_url
     }
         
-    sign_and_send(current_participant.id, remote_actor, object, 'respond_to_follow')
+    sign_and_send(participant_id, remote_actor, object, 'respond_to_follow')
     
   end
     

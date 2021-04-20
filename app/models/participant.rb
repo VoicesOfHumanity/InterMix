@@ -67,6 +67,10 @@ class Participant < ActiveRecord::Base
     return "\"#{first_name.to_s} #{last_name.to_s}\" <#{email}>"
   end
   
+  def activitypub_url
+    return "https://#{BASEDOMAIN}/u/#{self.account_uniq}"
+  end
+  
   def show_country2
     if self.country_code2 == '_I'
       'Indigenous peoples'
