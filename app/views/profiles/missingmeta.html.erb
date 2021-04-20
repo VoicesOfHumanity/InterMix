@@ -22,23 +22,19 @@
     <% ok = false %>
   <% end -%>
 
-  <% if @participant.city.to_s == '' -%>
-    <%= f.input :city, :required => false %>
-    <% ok = false %>
-  <% end -%>
 
-  <% if @participant.country_code.to_s == '' -%>
+  <% if @participant.country_code.to_s == '' or @participant.admin1uniq.to_s == '' or @participant.city.to_s == '' -%>
     <%= f.input :country_code, :label => "Country", :as => :select, :collection =>Geocountry.order(:name).select([:name,:iso]).collect{|r| [r.name,r.iso]}, :input_html =>{:onchange=>"chgcountry()"} %>
     <% ok = false %>
   <% end -%>
 
-  <% if @participant.admin1uniq.to_s == '' -%>
-    <%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]} %>
+  <% if @participant.admin1uniq.to_s == '' or @participant.city.to_s == '' -%>
+    <%= f.input :admin1uniq, :label => "State/Region", :as => :select, :required => false, :collection =>Geoadmin1.where(:country_code=>@participant.country_code).order(:name).select([:name,:admin1uniq]).collect {|r| [r.name,r.admin1uniq]}, :input_html =>{:onchange=>"chgstate()"} %>
     <% ok = false %>
   <% end -%>
 
-  <% if false and @participant.metro_area_id.to_i == 0 -%>
-    <%= f.input :metro_area_id, :as => :select, :collection => @metro_areas, :required => false %>
+  <% if @participant.city.to_s == '' -%>
+	  <%= f.input :city, :label => "City", :as => :select, :required => false, :collection =>Geoname.where(admin1_code: adminuniq_part(@participant.admin1uniq), country_code: @participant.country_code).where("fclasscode like 'P.PPL%'").order(:name).select("distinct(name)").collect {|r| r.name}, prompt: "* choose *", :input_html =>{:onchange=>"chgcity()"} %>  
     <% ok = false %>
   <% end -%>
 
@@ -84,16 +80,29 @@ function chgcountry() {
 	  for (var i = 0; i < j.length; i++) {
 	    options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
 	  }
-	  $("select#participant_admin1uniq").html(options);
-
-		$.getJSON("/front/getmetro",{country_code: $("#participant_country_code").val()}, function(j){
-	    var options = '';
-	    for (var i = 0; i < j.length; i++) {
-	      options += '<option value="' + j[i].val + '">' + j[i].txt + '</option>';
-	    }
-	    $("select#participant_metro_area_id").html(options);
-		})
-			
+	  $("select#participant_admin1uniq").html(options);			
+		$('#profile_edit').css('opacity','1.0');
+	})
+}
+function chgstate() {
+	$('#profile_edit').css('opacity','0.5');
+	$.getJSON("/front/getcities",{country_code: $("#participant_country_code").val(), admin1uniq: $("#participant_admin1uniq").val()}, function(j){
+	  var options = '';
+	  for (var i = 0; i < j.length; i++) {
+	    options += '<option value="' + j[i] + '">' + j[i] + '</option>';
+	  }
+	  $("select#participant_city").html(options);
+		$('#profile_edit').css('opacity','1.0');
+	})
+}
+function chgcity() {
+  // Look up the county from the city
+	$('#profile_edit').css('opacity','0.5');
+	$.getJSON("/front/getadmin2_from_city",{country_code: $("#participant_country_code").val(), admin1uniq: $("#participant_admin1uniq").val(), city_name: $("#participant_city").val()}, function(j){
+    var participant_admin2uniq = j[0];
+    var county_name = j[1];
+    //$("#participant_admin2uniq").val(participant_admin2uniq);
+    //$('#county_name').html(county_name);
 		$('#profile_edit').css('opacity','1.0');
 	})
 }
