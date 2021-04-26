@@ -28,7 +28,13 @@ class AuthenticationsController < ApplicationController
       # Logging in with existing authorization that we already knew about
       flash[:notice] = "Signed in successfully."
       logger.info("authentications#create signed in")
-      sign_in_and_redirect(:participant, authentication.participant)
+      #sign_in_and_redirect(:participant, authentication.participant)
+      sign_in(:participant, authentication.participant)
+      if not @participant.has_required
+        redirect_to '/me/profile/meta' and return
+      else
+        redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider" and return
+      end
     elsif current_participant
       # Adding an authorization, while already logged in
       current_participant.authentications.create!(:provider => omniauth['provider'], :uid => omniauth['uid'])

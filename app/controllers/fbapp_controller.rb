@@ -207,7 +207,15 @@ class FbappController < ApplicationController
         flash[:notice] = "Signed in successfully."
         logger.info("authentications#create signed in")
         @newlogin = true
-        sign_in_and_redirect(:participant, authentication.participant)
+                
+        #sign_in_and_redirect(:participant, authentication.participant)
+        sign_in(:participant, authentication.participant)
+        if not @participant.has_required
+          redirect_to '/me/profile/meta' and return
+        else
+          redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider" and return
+        end
+        
       end
     end
     
