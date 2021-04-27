@@ -161,7 +161,7 @@ end
   <% elsif item.media_type == 'question' -%>
 		
 		<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)"></div>
-		<div id="shortcontent_<%= item.id %>"><p><%=raw clean_links(sanitizethis(item.short_content)) %></p></div>
+		<div id="shortcontent_<%= item.id %>"><p><%=raw active_links(item.short_content) %></p></div>
     <div id="htmlcontent_<%= item.id %>" style="display:none"></div>
         
 	<% else -%>
