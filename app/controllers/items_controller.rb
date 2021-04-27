@@ -2841,6 +2841,23 @@ class ItemsController < ApplicationController
         logger.info("items#getthumb no file found at #{tempfilepath}")
         return
       end  
+      
+  		gotpicsize = File.stat("#{tempfilepath}").size
+      gotwidth = 0
+      gotheight = 0
+      begin
+        open("#{tempfilepath}", "rb") do |fh|
+          gotwidth,gotheight = ImageSize.new(fh.read).get_size
+        end
+      rescue
+        logger.info("items#getthumb couldn't get image size for #{tempfilepath}")           
+      end    
+      logger.info("items#getthumb got size #{gotpicsize}bytes dimensions:#{gotwidth}x#{gotheight}")   
+
+      if gotpicsize < 1000
+        logger.info("items#getthumb image #{tempfilepath} is too small")
+        return
+      end  
 
       if not thumb
         thumb = ItemThumb.create(original_url: original_url)
