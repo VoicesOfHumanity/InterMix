@@ -16,7 +16,6 @@ module ActivityPub
   
   def record_request
     # Record what we're receiving. Later, we can add our response
-    logger = @logger if @logger and not logger
     begin
       @api_request = ApiRequest.create(
         request_headers: request.env.select {|k,v| k =~ /^HTTP_/ and ! k.starts_with?("HTTP_COOKIE")}.to_json,
@@ -30,7 +29,7 @@ module ActivityPub
         our_function: action_name
       )
     rescue Exception => e
-      logger.info("activitypub#record_request error: #{e}")
+      Rails.logger.info("activitypub#record_request error: #{e}")
     end
   end
   
@@ -65,14 +64,12 @@ module ActivityPub
     # and https://blog.joinmastodon.org/2018/06/how-to-implement-a-basic-activitypub-server/
     # We're signing the message with the private key of the sender
     
-    logger = @logger if @logger and not logger
-    
     inbox_url = to_remote_actor.inbox_url
     if not inbox_url or not inbox_url =~ /^http/
-      logger.info "activitypub#sign_and_send No inbox URL for #{to_remote_actor.account}"
+      Rails.logger.info "activitypub#sign_and_send No inbox URL for #{to_remote_actor.account}"
       return false
     end
-    logger.info "activitypub#sign_and_send inbox url: #{inbox_url}"
+    Rails.logger.info "activitypub#sign_and_send inbox url: #{inbox_url}"
     
     if not defined?(current_participant) or from_id != current_participant.id
       from_user = Participant.find_by_id(from_id)
@@ -124,24 +121,33 @@ module ActivityPub
   
   def get_remote_actor(actor_uniq)
     # Get information about a remote account, either by asking, or from our cache
-    logger = @logger if @logger and not logger
+    #puts logger.class
+    #puts "#{logger.class.to_s}!=#{'ActiveSupport::Logger'} ??? #{logger.class.to_s != 'ActiveSupport::Logger'}" 
+    #puts "same as: #{logger.class != ActiveSupport::Logger}"
+    #puts "logger.class != ActiveSupport::Logger and @logger : #{logger.class != ActiveSupport::Logger and @logger}"
+    #if logger.class != ActiveSupport::Logger and @logger
+    #  puts "setting a std logger"
+    #  logger = @logger if @logger
+    #end
+    #logger = @logger if @logger and logger.class != ActiveSupport::Logger
+    #puts "logger class is now: #{logger.class}"
     remote_actor = RemoteActor.find_by_account(actor_uniq)
     if remote_actor and remote_actor.last_fetch >= Date.today - 7
       get_new = false
-      logger.info("activitypub#get_remote_actor already have recent info for #{actor_uniq}")
+      Rails.logger.info("activitypub#get_remote_actor already have recent info for #{actor_uniq}")
     else
       get_new = true
       if remote_actor
-        logger.info("activitypub#get_remote_actor we have info for #{actor_uniq}, but not recent enough")
+        Rails.logger.info("activitypub#get_remote_actor we have info for #{actor_uniq}, but not recent enough")
       else
-        logger.info("activitypub#get_remote_actor we have no info for #{actor_uniq}")
+        Rails.logger.info("activitypub#get_remote_actor we have no info for #{actor_uniq}")
       end
     end    
     if get_new
       actor_url = get_actor_url_by_webfinger(actor_uniq)
       if actor_url.to_s != ''
 
-        logger.info("activitypub#get_remote_actor getting #{actor_url}")
+        Rails.logger.info("activitypub#get_remote_actor getting #{actor_url}")
 
         try_again = true
         redirect_count = 0
@@ -158,9 +164,9 @@ module ActivityPub
           end
 
           if response
-            logger.info("activitypub#get_remote_actor response: #{response.code}")
+            Rails.logger.info("activitypub#get_remote_actor response: #{response.code}")
           else
-            logger.info("activitypub#get_remote_actor no reponse")
+            Rails.logger.info("activitypub#get_remote_actor no reponse")
             return nil
           end
           
@@ -168,7 +174,7 @@ module ActivityPub
           
           if response.code.to_i == 301 or response.code.to_i == 302
             actor_url = response['location']
-            logger.info("activitypub#get_remote_actor redirecting to #{actor_url}")
+            Rails.logger.info("activitypub#get_remote_actor redirecting to #{actor_url}")
             redirect_count += 1
             if redirect_count >= 3
               try_again = false
@@ -181,20 +187,20 @@ module ActivityPub
         end
         
         if not response
-          logger.info("activitypub#get_remote_actor no reponse")
+          Rails.logger.info("activitypub#get_remote_actor no reponse")
           return nil          
         elsif response.code.to_i == 301 or response.code.to_i == 302
-          logger.info("activitypub#get_remote_actor too many redirections")
+          Rails.logger.info("activitypub#get_remote_actor too many redirections")
           return nil
         end
         
         if response.code.to_i == 200
           body = response.body
-          #logger.info("activitypub#get_remote_actor body: #{body}")     
+          #Rails.logger.info("activitypub#get_remote_actor body: #{body}")     
           begin
             data = JSON.parse(body)
           rescue
-            logger.info("activitypub#get_remote_actor couldn't read any json data}")
+            Rails.logger.info("activitypub#get_remote_actor couldn't read any json data}")
             return nil
           end
           if data and data.has_key? 'inbox'
@@ -222,11 +228,11 @@ module ActivityPub
             remote_actor.last_fetch = Time.now
             remote_actor.save   
           else
-            logger.info("activitypub#get_remote_actor unexpected json data}")
+            Rails.logger.info("activitypub#get_remote_actor unexpected json data}")
             return nil
           end
         else
-          logger.info("activitypub#get_remote_actor got response code #{response.code} to #{actor_url}")
+          Rails.logger.info("activitypub#get_remote_actor got response code #{response.code} to #{actor_url}")
           #logger.info("activitypub#get_remote_actor body:#{response.body}")
           return nil
         end
@@ -238,8 +244,6 @@ module ActivityPub
   def get_actor_url_by_webfinger(actor_addr)
     # Get an address like ming@social.coop and return a url id like https://social.coop/users/ming
     # We need to do a webfinger lookup to the remote server to get that
-    logger = @logger if @logger and not logger
-    
     actor_url = ''
     
     xarr = actor_addr.split("@")
@@ -253,13 +257,13 @@ module ActivityPub
     
     if response.code.to_i == 200
       body = response.body
-      logger.info("activitypub#get_actor_url_by_webfinger body: #{body}")
+      Rails.logger.info("activitypub#get_actor_url_by_webfinger body: #{body}")
       # From Mastodon:
       # {"subject":"acct:ming@social.coop","aliases":["https://social.coop/@ming","https://social.coop/users/ming"],"links":[{"rel":"http://webfinger.net/rel/profile-page","type":"text/html","href":"https://social.coop/@ming"},{"rel":"self","type":"application/activity+json","href":"https://social.coop/users/ming"},{"rel":"http://ostatus.org/schema/1.0/subscribe","template":"https://social.coop/authorize_interaction?uri={uri}"}]}
       begin
         data = JSON.parse(body)
       rescue
-        logger.info("activitypub#get_actor_url_by_webfinger couldn't read any json data}")
+        Rails.logger.info("activitypub#get_actor_url_by_webfinger couldn't read any json data}")
       end
       if data and data.has_key? 'links' and data['links'].class == Array
         links = data['links']
@@ -270,10 +274,10 @@ module ActivityPub
           end
         end
       else
-        logger.info("activitypub#get_actor_url_by_webfinger unexpected json data}")
+        Rails.logger.info("activitypub#get_actor_url_by_webfinger unexpected json data}")
       end
     else
-      logger.info("activitypub#get_actor_url_by_webfinger got response code #{response.code} to #{wurl}")
+      Rails.logger.info("activitypub#get_actor_url_by_webfinger got response code #{response.code} to #{wurl}")
       return ''
     end
   
