@@ -30,7 +30,7 @@ class AuthenticationsController < ApplicationController
       logger.info("authentications#create signed in")
       #sign_in_and_redirect(:participant, authentication.participant)
       sign_in(:participant, authentication.participant)
-      if not @participant.has_required
+      if current_participant and not current_participant.has_required
         redirect_to '/me/profile/meta' and return
       else
         redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider" and return

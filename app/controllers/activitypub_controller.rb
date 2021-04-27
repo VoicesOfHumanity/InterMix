@@ -266,7 +266,7 @@ class ActivitypubController < ApplicationController
             "https://w3id.org/security/v1"
           ],
       "type": "Follow",
-      "id": unique_follow_i,
+      "id": unique_follow_id,
       "actor": current_participant.activitypub_url,
       "object": remote_actor.account_url
     }
