@@ -2846,16 +2846,20 @@ class ItemsController < ApplicationController
       gotwidth = 0
       gotheight = 0
       begin
-        open("#{tempfilepath}", "rb") do |fh|
-          gotwidth,gotheight = ImageSize.new(fh.read).get_size
-        end
+        image_size = ImageSize.path("#{tempfilepath}")
+        gotwidth = image_size.width
+        gotheight = image_size.height
       rescue
         logger.info("items#getthumb couldn't get image size for #{tempfilepath}")           
       end    
       logger.info("items#getthumb got size #{gotpicsize}bytes dimensions:#{gotwidth}x#{gotheight}")   
 
+      if gotwidth > 0 and (gotwidth < 50 or gotheight < 50)
+        logger.info("items#getthumb image #{tempfilepath} is too small in dimensions")
+        return
+      end  
       if gotpicsize < 1000
-        logger.info("items#getthumb image #{tempfilepath} is too small")
+        logger.info("items#getthumb image #{tempfilepath} is too small in file size")
         return
       end  
 
