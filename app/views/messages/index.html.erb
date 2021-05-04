@@ -6,6 +6,9 @@
 <script>
 var curid = 0;
 var curinout = 'in';
+function gotopage(page) {
+  window.location = '/participant/<%= current_participant.id %>/messages?page=' + page;
+}
 function showinout(inout) {
 	if (showingedit) {
 		$('#messageedit').hide();

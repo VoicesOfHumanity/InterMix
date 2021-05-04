@@ -12,16 +12,15 @@
 
 <div style="clear:both;height:1px"></div>
 
-<h3>Followers:</h3>
-
-<% if !@participant.followers or !@participant.followers.class!=Array or @participant.followers.length==0 -%>
+<h3>Friends:</h3>
+<% if !@friends or @friends.length==0 -%>
 
 <p>None</p>
 
 <% else -%>
 
 <ul>
-<% @participant.followers.each do |f| %>
+<% @friends.each do |f| %>
   <% if f.int_ext == 'ext' -%>
     <% remote_actor = f.remote_follower %>
     <li><%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></li>
@@ -34,16 +33,39 @@
 
 <% end -%>
 
-<h3>Follows:</h3>
 
-<% if !@participant.followings or @participant.followings.length==0 -%>
+<h3>Other Followers:</h3>
+
+<% if !@followers or @followers.length==0 -%>
 
 <p>None</p>
 
 <% else -%>
 
 <ul>
-<% @participant.followings.each do |f| %>
+<% @followers.each do |f| %>
+  <% if f.int_ext == 'ext' -%>
+    <% remote_actor = f.remote_follower %>
+    <li><%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></li>
+  <% else -%>
+    <% person = f.follower %>
+		<li><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></li>
+  <% end -%>
+<% end %>
+</ul>
+
+<% end -%>
+
+<h3>Other Followed:</h3>
+
+<% if !@followeds or @followeds.length==0 -%>
+
+<p>None</p>
+
+<% else -%>
+
+<ul>
+<% @followeds.each do |f| %>
   <% if f.int_ext == 'ext' -%>
     <% remote_actor = f.remote_idol %>
     <li><%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></li>

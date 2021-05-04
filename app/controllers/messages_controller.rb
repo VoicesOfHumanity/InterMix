@@ -1,3 +1,5 @@
+require 'will_paginate/array'
+
 class MessagesController < ApplicationController
   
   layout "front"
@@ -5,8 +7,9 @@ class MessagesController < ApplicationController
   before_action :authenticate_participant!, :check_group_and_dialog
   
   def index
-    @section = 'messages'
+    @section = 'profile'
     @psection = 'mail'
+    
     @from = params[:from] || ''
     
     @sortby = params[:sortby] || "messages.id desc"

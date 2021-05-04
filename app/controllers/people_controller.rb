@@ -57,6 +57,10 @@ class PeopleController < ApplicationController
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.includes(:followers,:idols).find(@participant_id)
     
+    @friends = Follow.where(following_id: current_participant.id, mutual: true)
+    @followers = Follow.where(followed_id: current_participant.id, mutual: false)
+    @followeds = Follow.where(following_id: current_participant.id, mutual: false)
+    
     # Could not find the source association(s) :follower or :followers in model Follow.  Try 'has_many :followers, :through => :followeds, :source => <name>'.  Is it one of :followed or :following?
     update_last_url
   end  

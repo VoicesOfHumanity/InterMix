@@ -6,7 +6,6 @@ Sent personal messages
 <% else -%>
 Received personal messages
 <% end -%>
-
 </h1>
 <table class="listtable">
 <tr>
@@ -33,5 +32,12 @@ Received personal messages
 <% end -%>
 <tr id="messageview_tr" style="display:none"><td id="messageview_td" colspan="4" style="border:1px dotted #666;padding:10px"></td></tr>
 <tr id="reply_tr" style="display:none"><td id="reply_td" colspan="4" style="border:1px dotted #666;padding:10px"></td></tr>
-
 </table>
+
+	<%= "#{(@messages.current_page-1)*@messages.per_page+1}-#{[@messages.total_entries,@messages.current_page*@messages.per_page].min} of #{@messages.total_entries} items" if @messages.respond_to?('total_entries') and @messages.total_entries.to_i>1 %>
+	&nbsp;&nbsp;&nbsp;
+	<%= raw %(<a href="javascript:gotopage(1)">&lt;&lt;</a>) if @messages.respond_to?('total_pages') and @messages.total_pages.to_i>1 and @messages.respond_to?('current_page') and @messages.current_page>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@messages.previous_page})">&lt;</a>) if @messages.respond_to?('previous_page') and @messages.previous_page %>
+	<%= raw "page #{@messages.current_page} of #{@messages.total_pages}" if @messages.respond_to?('total_pages') and @messages.total_pages.to_i>1 %>
+	<%= raw %(<a href="javascript:gotopage(#{@messages.next_page})">&gt;</a>) if @messages.respond_to?('next_page') and @messages.next_page %>
+	<%= raw %(<a href="javascript:gotopage(#{@messages.total_pages})">&gt;&gt;</a>) if @messages.respond_to?('total_pages') and @messages.total_pages.to_i>1 and @messages.current_page<@messages.total_pages %>
