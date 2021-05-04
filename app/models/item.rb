@@ -3135,11 +3135,13 @@ class Item < ActiveRecord::Base
     end
   end
   
-  def reply_ok(participant_id)
+  def reply_ok(participant_id, from='')
     #-- Decide whether the current user is allowed to reply on this item
     #(@from == 'dialog' and item.dialog and item.dialog.settings_with_period["allow_replies"] and session[:group_is_member]) or (@from == 'group' and item.group and @is_member)
 
     participant = Participant.find_by_id(participant_id)
+    
+    logger.info("reply_ok is user #{self.id} friends with #{participant_id}? #{self.participant.friends_with(participant)}")
 
     if participant_id.to_i == 0
       return false
@@ -3150,6 +3152,10 @@ class Item < ActiveRecord::Base
       
     elsif self.intra_com != 'public' and participant.tag_list_downcase.include?(self.intra_com.downcase)
       # Can't reply to a non-public message for a community if not a member
+      return false
+      
+    elsif from == 'wall' and not self.participant.friends_with(participant)
+      # only friends can comment on somebody's wall
       return false
       
     elsif false and self.intra_conv != 'public' and self.conversation_id.to_i > 0
@@ -3216,7 +3222,7 @@ class Item < ActiveRecord::Base
     return true
 
   end
-    
+  
   def show_subgroup
     ( self.subgroup_list - ['none'] ).join(', ')
   end   

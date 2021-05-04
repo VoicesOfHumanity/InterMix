@@ -261,7 +261,7 @@ end
     <% end -%>
     
 		<div class="iteminfotxt">
-  		  <% if item.reply_ok(participant_signed_in? ? current_participant.id : 0) -%>
+  		  <% if item.reply_ok((participant_signed_in? ? current_participant.id : 0), @from) -%>
   				  <strong><%= link_to_function "Add Comment", "reply(#{item.id},#{is_reply})", {:class=>'reply_link'} %></strong>
   			<% end -%>
 		</div>
@@ -282,23 +282,6 @@ end
 		<% end -%>
     </div>
 	 <% end -%>
-		
-    <% if false -%>
-		<div class="iteminfotxt">
-			<% if @group_id.to_i > 0 and item.group and item.group_id != @group_id %><span style="color:#f99"><% end %>
-			<%= "Group: " + (item.group ? item.group.name : item.group_id.to_s) if item.group %>
-			<% if @group_id.to_i > 0 and item.group and item.group_id != @group_id %></span><% end %>
-		</div>
-    <% end -%>
-
-    <% if false -%>
-		<div class="iteminfotxt">
-			<%= "Discussion: " + (item.dialog ? item.dialog.name : item.dialog_id.to_s) if item.dialog_id.to_i > 0 %>
-		</div>
-		<div class="iteminfotxt">
-			<%= "Decision Period: " + (item.period ? item.period.name : item.period_id.to_s) if item.period_id.to_i > 0 %>
-		</div>
-    <% end -%>
 			
 		<% if (@from == 'group' or @from == 'individual') and item.subgroup_list.length > 0 and false -%>	
 		<div class="iteminfotxt">	
@@ -309,11 +292,6 @@ end
 		</div>
 		<% end -%>
     
-    <% if false -%>
-		<div class="iteminfotxt">	
-			<%= "Tags: #{item.tag_list}" if item.tag_list.to_s!='' %>			
-		</div>
-    <% end -%>
     
     <% if item.reply_to.to_i > 0 -%>
     <div class="iteminfotxt">
@@ -333,7 +311,6 @@ end
       </div>
     <% end -%>
     
-    <div id="tags_<%= item.id %>" style="<% if false and showlong===false %>display:none<% end %>">
     <% if true and item.participant -%>
       <% comtags = item.participant.show_tag_list(true,true,(params[:show_result].to_i == 1)) %>
       <% if comtags.to_s != '' -%>
@@ -357,7 +334,6 @@ end
         </div>
       <% end -%>
     <% end -%>  
-    </div>
 	 
 	 <% if item.intra_com.to_s != '' and item.intra_com.to_s != 'public' %>
 	 <div class="iteminfotxt" style="font-weight:bold;color:#44a">This message: Only <%= item.intra_com %></div>

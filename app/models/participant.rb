@@ -356,8 +356,18 @@ class Participant < ActiveRecord::Base
   
   def contacts
     ( self.followers + self.idols ).uniq
-  end    
+  end  
   
+  def friends_with(participant)
+    # Is this person friends with that other person?
+    if participant.class == Participant
+      participant_id = participant.id
+    else
+      participant_id = int(participant)
+    end    
+    return Follow.where(following_id: self.id, followed_id: participant_id, mutual: true).first != nil
+  end
+    
   def show_tag_list(with_links=false,include_check=false,show_result=false, for_participant=nil)
     xlist = ''
     tags.each do |tag|
