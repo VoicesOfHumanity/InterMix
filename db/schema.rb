@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_16_220702) do
+ActiveRecord::Schema.define(version: 2021_05_11_185912) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -641,8 +641,10 @@ ActiveRecord::Schema.define(version: 2021_03_16_220702) do
 
   create_table "messages", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "from_participant_id"
+    t.integer "from_remote_actor_id"
     t.integer "to_participant_id"
     t.integer "to_group_id"
+    t.integer "to_remote_actor_id"
     t.integer "template_id"
     t.string "subject"
     t.text "message"
@@ -663,9 +665,12 @@ ActiveRecord::Schema.define(version: 2021_03_16_220702) do
     t.integer "dialog_id"
     t.boolean "email_sent", default: false
     t.datetime "email_sent_at"
+    t.string "int_ext", default: "int"
     t.index ["from_participant_id", "id"], name: "index_messages_on_from_participant_id_and_id"
+    t.index ["from_remote_actor_id"], name: "index_messages_on_from_remote_actor_id"
     t.index ["message_id"], name: "index_messages_on_message_id", length: 30
     t.index ["to_participant_id", "id"], name: "index_messages_on_to_participant_id_and_id"
+    t.index ["to_remote_actor_id"], name: "index_messages_on_to_remote_actor_id"
   end
 
   create_table "metamap_node_participants", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|

@@ -23,7 +23,7 @@
 <% @friends.each do |f| %>
   <% if f.int_ext == 'ext' -%>
     <% remote_actor = f.remote_follower %>
-    <li><%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></li>
+    <li><a href="/people/remote/<%= remote_actor.id %>/profile">#<%= remote_actor.id %>: <%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></a></li>
   <% else -%>
     <% person = f.follower %>
 		<li><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></li>
@@ -46,7 +46,7 @@
 <% @followers.each do |f| %>
   <% if f.int_ext == 'ext' -%>
     <% remote_actor = f.remote_follower %>
-    <li><%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></li>
+    <li><a href="/people/remote/<%= remote_actor.id %>/profile">#<%= remote_actor.id %>: <%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></a></li>
   <% else -%>
     <% person = f.follower %>
 		<li><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></li>
@@ -68,7 +68,7 @@
 <% @followeds.each do |f| %>
   <% if f.int_ext == 'ext' -%>
     <% remote_actor = f.remote_idol %>
-    <li><%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></li>
+    <li><a href="/people/remote/<%= remote_actor.id %>/profile">#<%= remote_actor.id %>: <%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></a></li>
   <% else -%>
     <% person = f.idol %>
 		<li><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></li>

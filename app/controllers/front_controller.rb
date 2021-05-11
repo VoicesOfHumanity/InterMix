@@ -1532,7 +1532,7 @@ class FrontController < ApplicationController
     
     cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
     
-    flash[:notice] = "Your account has been created and you're now signed in. We've sent you an email with a password you can use for logging in with as well."
+    flash[:notice] = "Your account has been created and you're now signed in. We've sent you an email with a password you can use for logging in with as well. Check your spam folder, if you don't see it"
     @participant.status = 'active'
     @participant.new_signup = true
     @participant.save

@@ -76,7 +76,15 @@ class PeopleController < ApplicationController
       @is_following = (follow ? true : false)   
     end 
     update_last_url
-  end    
+  end
+  
+  def remote_profile
+    # A remote_actor from Activitypub
+    @remote_actor_id = params[:remote_actor_id]
+    
+    @remote_actor = RemoteActor.find_by_id(@remote_actor_id)
+    
+  end 
   
   def wall
     #-- Show somebody's wall

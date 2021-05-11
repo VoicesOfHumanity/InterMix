@@ -1,0 +1,29 @@
+<% if @remote_actor -%>
+  
+<table class="profiletable">
+<tr><td class="label">Account:</td><td><%= @remote_actor.account %></td></tr>
+<tr><td class="label">URL:</td><td><%= @remote_actor.account_url %></td></tr>
+<tr><td class="label">Username:</td><td><%= @remote_actor.username %></td></tr>
+<tr><td class="label">Name:</td><td><%= @remote_actor.name %></td></tr>
+<tr><td class="label">Summary:</td><td><%= @remote_actor.summary %></td></tr>
+
+<tr><td class="label">Icon:</td><td>
+<% if @remote_actor.icon_url.to_s != '' -%>
+  <img src="<%= @remote_actor.icon_url %>"/>
+<% end -%>
+</td></tr>
+<tr><td class="label">Image:</td><td>
+<% if @remote_actor.image_url.to_s != '' -%>
+  <img src="<%= @remote_actor.image_url %>"/>
+<% end -%>
+</td></tr>
+
+</table>
+
+
+
+<% else -%>
+
+<p>That user doesn't exist</p>
+
+<% end -%>

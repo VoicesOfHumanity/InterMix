@@ -365,6 +365,7 @@ Rails.application.routes.draw do
 
   get 'forum(/:action(/:id(.:format)))', :controller=>:forum
   get 'people(/:action(/:id(.:format)))', :controller=>:people
+  get 'people/remote/:remote_actor_id/profile' => 'people#remote_profile'
   
   get 'participant/:id/profile', :controller=>:people, :action=>:profile
   get 'participant/:id/wall', :controller=>:people, :action=>:wall
