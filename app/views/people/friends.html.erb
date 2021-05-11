@@ -22,7 +22,7 @@
 <ul>
 <% @friends.each do |f| %>
   <% if f.int_ext == 'ext' -%>
-    <% remote_actor = f.remote_follower %>
+    <% remote_actor = f.remote_idol %>
     <li><a href="/people/remote/<%= remote_actor ? remote_actor.id : 0 %>/profile">#<%= remote_actor.id %>: <%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></a></li>
   <% else -%>
     <% person = f.follower %>
