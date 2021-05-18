@@ -1,3 +1,5 @@
+require 'uri'
+
 module ActivityPub
   
   def get_account
@@ -114,24 +116,35 @@ module ActivityPub
 
   def normalize_actor(actor_uniq)
     # clean up an actor id a little bit
-    actor_uniq.strip.downcase!
+    actor_uniq.strip!.downcase!
     actor_uniq[0] = '' if actor_uniq[0] == '@'
     actor_uniq
   end
   
-  def get_remote_actor(actor_uniq)
+  def get_remote_actor(actor_uniq_or_url)
     # Get information about a remote account, either by asking, or from our cache
-    #puts logger.class
-    #puts "#{logger.class.to_s}!=#{'ActiveSupport::Logger'} ??? #{logger.class.to_s != 'ActiveSupport::Logger'}" 
-    #puts "same as: #{logger.class != ActiveSupport::Logger}"
-    #puts "logger.class != ActiveSupport::Logger and @logger : #{logger.class != ActiveSupport::Logger and @logger}"
-    #if logger.class != ActiveSupport::Logger and @logger
-    #  puts "setting a std logger"
-    #  logger = @logger if @logger
-    #end
-    #logger = @logger if @logger and logger.class != ActiveSupport::Logger
-    #puts "logger class is now: #{logger.class}"
-    remote_actor = RemoteActor.find_by_account(actor_uniq)
+    # We get either something like ming@social.coop pr @ming@social.coop
+    # or a URL like https://social.coop/users/ming    
+    
+    actor_uniq_or_url.strip!
+    
+    if actor_uniq_or_url[0] == '@'
+      actor_uniq_or_url = actor_uniq_or_url[1,100]
+    end
+    
+    actor_uniq = ''
+    actor_url = ''
+    
+    if actor_uniq_or_url[0,4] == 'http'
+      actor_url = actor_uniq_or_url
+      remote_actor = RemoteActor.find_by_account(actor_url)
+    elsif actor_uniq_or_url.include?('@')
+      actor_uniq = actor_uniq_or_url
+      remote_actor = RemoteActor.find_by_account_url(actor_uniq)
+    else
+      return nil
+    end    
+    
     if remote_actor and remote_actor.last_fetch >= Date.today - 7
       get_new = false
       Rails.logger.info("activitypub#get_remote_actor already have recent info for #{actor_uniq}")
@@ -144,7 +157,9 @@ module ActivityPub
       end
     end    
     if get_new
-      actor_url = get_actor_url_by_webfinger(actor_uniq)
+      if actor_url == '' and actor_uniq != ''
+        actor_url = get_actor_url_by_webfinger(actor_uniq)
+      end
       if actor_url.to_s != ''
 
         Rails.logger.info("activitypub#get_remote_actor getting #{actor_url}")
@@ -283,24 +298,8 @@ module ActivityPub
   
     return actor_url
   end
-  
-  def get_actor_inbox_from_url(actor_url)
-    # Look up the inbox address, based on the actor's ID url
 
-    actor_inbox = ''
-
-    response = HTTP.get(actor_url)
-    
-    if response.code.to_i == 200
-    
-    else
-      
-    end
-    
-    return actor_inbox
-  end
-
-  def respond_to_follow
+  def respond_to_follow(obj)
     #-- Answer a follow request from the outside. We'll probably want to do that automatically right away
     
     participant_id = 2602                         # current_participant.id
@@ -323,6 +322,131 @@ module ActivityPub
         
     sign_and_send(participant_id, remote_actor, object, 'respond_to_follow')
     
+  end
+  
+  def respond_to_note(obj)
+    #-- Receive a note
+    
+  end
+  
+  def get_request_data(obj)
+    # Given a received object, try to figure out what it is
+    
+    # atype: the type of activity: Follow, Accept, Create
+    # otype: the type of object: Follow, Note, Actor
+    # rtype: our code for what's happening. follow_request, accept_follow, note, etc.
+    
+    data = {
+      'atype': '',
+      'from_actor_url': '',
+      'to_actor_url': '',
+      'object': nil,
+      'otype': '',
+      'rtype': '',
+      'status': '',
+      'error': '',
+      'from_remote_actor': nil,
+      'to_participant': nil
+    }
+    
+    if not obj.has_key?('type') or not obj.has_key?('actor') or not obj.has_key?('object')
+      data['status'] = 'error'
+      data['error'] = "Don't recognize this as an activitypub request"
+      return data
+    end
+    
+    atype = obj['type']
+    data['atype'] = atype
+    data['from_actor_url'] = obj['actor']
+    object = obj['object']
+    data['object'] = object
+    
+    if object.has_key?('to')
+      data['to_actor_url'] = object['to']
+    elsif obj.has_key?('to')
+      data['to_actor_url'] = obj['to']
+    end
+    
+    # The object might be a dix or just a string
+    if object.class == String
+      # "object":"https://intermix.cr8.com/u/ff2602"
+      data['to_actor_url'] = object
+      otype = 'actor'
+    elsif object.class == Hash and object.has_key?('type')
+      otype = object['type']
+    else
+      data['status'] = 'error'
+      data['error'] = "Can't identify any target object"
+      return data
+    end
+    data['otype'] = otype
+          
+    if atype == 'Follow'
+      # Somebody wants to follow us
+      # Need actor and object
+      rtype = 'follow_request'
+    elsif atype == 'Accept' and otype == 'follow'
+      # Accepting our follow
+      rtype = 'accept_follow'
+    elsif atype == 'Create' and otype == 'note'
+      # Sending us a note
+      rtype = 'note'
+    else
+      data['error'] = "Don't know what to do with that yet"
+      rtype = '?'
+    end
+    data['rtype'] = rtype
+    
+    data['from_remote_actor'] = get_remote_actor(data['from_actor_url'])
+    
+    if data['to_actor_url'] != ''
+      # https://intermix.cr8.com/u/ff2602
+      url = URI.parse(data['to_actor_url'])
+      parr = url.path.split('/')
+      last = parr.last
+      xarr = last.split('?')
+      if xarr > 0
+        username = xarr[0]
+      else
+        username = last
+      end
+      participant = Participant.find_by_account_uniq(username).first
+      data['to_participant'] = participant
+    end
+    
+    if not data['from_remote_actor']
+      data['status'] = 'error'
+      data['error'] = "Couldn't identify remote actor"
+    elsif not data['to_participant']
+      data['status'] = 'error'
+      data['error'] = "Couldn't identify target user"
+    else  
+      data['status'] = 'ok'
+    end
+    
+    return data
+  end
+  
+  def obj_from_request(req)
+    # Extract the object from the json we got
+    puts "obj_from_request"
+    if not req.request_body
+      Rails.logger.info("activity_pub#obj_from_request no request body")
+      puts "no request body"
+      return nil
+    end
+    #data = JSON.parse(req.request_body)
+    begin
+      data = JSON.parse(req.request_body)
+    rescue
+      Rails.logger.info("activity_pub#obj_from_request couldn't read any json data")
+      puts "no json"
+      puts req.request_body.inspect
+      return nil
+    end
+    puts 'done'
+    Rails.logger.info("activitypub#obj_from_request data returned: #{data}")
+    return data
   end
     
 end

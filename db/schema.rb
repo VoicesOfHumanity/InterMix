@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_11_185912) do
+ActiveRecord::Schema.define(version: 2021_05_18_005547) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -22,6 +22,8 @@ ActiveRecord::Schema.define(version: 2021_05_11_185912) do
     t.string "remote_ip"
     t.string "our_function"
     t.boolean "processed", default: false
+    t.boolean "problem", default: false
+    t.boolean "redo", default: false
     t.text "response_body"
     t.string "account_uniq", limit: 12, default: ""
     t.integer "participant_id"
@@ -666,6 +668,7 @@ ActiveRecord::Schema.define(version: 2021_05_11_185912) do
     t.boolean "email_sent", default: false
     t.datetime "email_sent_at"
     t.string "int_ext", default: "int"
+    t.text "received_json"
     t.index ["from_participant_id", "id"], name: "index_messages_on_from_participant_id_and_id"
     t.index ["from_remote_actor_id"], name: "index_messages_on_from_remote_actor_id"
     t.index ["message_id"], name: "index_messages_on_message_id", length: 30
@@ -864,6 +867,7 @@ ActiveRecord::Schema.define(version: 2021_05_11_185912) do
     t.string "account_uniq_full", limit: 64, default: ""
     t.text "private_key"
     t.text "public_key"
+    t.index ["account_uniq"], name: "index_participants_on_account_uniq"
     t.index ["confirmation_token"], name: "index_participants_on_confirmation_token", unique: true
     t.index ["country_code", "state_code", "city"], name: "index_participants_on_country_code_and_state_code_and_city", length: { city: 20 }
     t.index ["direct_email_code"], name: "index_participants_on_direct_email_code", length: 20
