@@ -404,7 +404,7 @@ module ActivityPub
       parr = url.path.split('/')
       last = parr.last
       xarr = last.split('?')
-      if xarr > 0
+      if xarr.length > 0
         username = xarr[0]
       else
         username = last
