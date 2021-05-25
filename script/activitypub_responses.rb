@@ -37,6 +37,7 @@ for req in requests
   puts " - to_actor_url: #{data['to_actor_url']}"
   puts " - from_remote_actor: #{data['from_remote_actor'].account if data['from_remote_actor']}"
   puts " - to_participant: #{data['to_participant'].email if data['to_participant']}"
+  puts " - ref_id: #{data['ref_id']}"
 
   if data['status'] == 'error'
     puts " - error: #{data['error']}"

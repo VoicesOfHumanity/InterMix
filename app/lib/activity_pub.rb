@@ -346,7 +346,8 @@ module ActivityPub
       'status': '',
       'error': '',
       'from_remote_actor': nil,
-      'to_participant': nil
+      'to_participant': nil,
+      'ref_id': nil
     }
     
     if not obj.has_key?('type') or not obj.has_key?('actor') or not obj.has_key?('object')
@@ -372,8 +373,11 @@ module ActivityPub
         data['to_actor_url'] = object['to']
       elsif obj.has_key?('to')
         data['to_actor_url'] = obj['to']
-      elsif obj.has_key?('actor')
-        data['to_actor_url'] = obj['actor']
+      elsif object.has_key?('actor')
+        data['to_actor_url'] = object['actor']
+      end
+      if object.has_key?('id')
+        data['ref_id'] = object['id']
       end
     else
       data['status'] = 'error'
@@ -387,7 +391,7 @@ module ActivityPub
       # Need actor and object
       rtype = 'follow_request'
     elsif atype == 'Accept' and otype == 'follow'
-      # Accepting our follow
+      # Accepting our follow. We should have gotten ID we gave them
       rtype = 'accept_follow'
     elsif atype == 'Create' and otype == 'note'
       # Sending us a note
