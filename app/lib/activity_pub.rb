@@ -137,10 +137,10 @@ module ActivityPub
     
     if actor_uniq_or_url[0,4] == 'http'
       actor_url = actor_uniq_or_url
-      remote_actor = RemoteActor.find_by_account(actor_url)
+      remote_actor = RemoteActor.find_by_account_url(actor_url)
     elsif actor_uniq_or_url.include?('@')
       actor_uniq = actor_uniq_or_url
-      remote_actor = RemoteActor.find_by_account_url(actor_uniq)
+      remote_actor = RemoteActor.find_by_account(actor_uniq)
     else
       return nil
     end    
@@ -386,14 +386,14 @@ module ActivityPub
     end
     data['otype'] = otype
           
-    if atype == 'Follow'
+    if atype.downcase == 'follow'
       # Somebody wants to follow us
       # Need actor and object
       rtype = 'follow_request'
-    elsif atype == 'Accept' and otype == 'follow'
+    elsif atype.downcase == 'accept' and otype.downcase == 'follow'
       # Accepting our follow. We should have gotten ID we gave them
       rtype = 'accept_follow'
-    elsif atype == 'Create' and otype == 'note'
+    elsif atype.downcase == 'create' and otype.downcase == 'note'
       # Sending us a note
       rtype = 'note'
     else
