@@ -11,6 +11,7 @@ requests = ApiRequest.where("request_body is not null").where("processed=0 or re
 puts "#{requests.length} requests to process"
 
 for req in requests
+  puts "----------------------------------------------------------------------------\n"
   puts "##{req.id} #{req.created_at}"
 
   obj = obj_from_request(req)
@@ -66,5 +67,7 @@ for req in requests
     req.redo = true
     req.save
   end
+
+  puts "----------------------------------------------------------------------------\n"
 
 end

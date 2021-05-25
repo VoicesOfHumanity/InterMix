@@ -10,7 +10,7 @@ helper.extend ActionView::Helpers::TextHelper
 
 # This is to make logger redirect to the console
 logger                                         = Logger.new(STDOUT)
-logger.level                                   = Logger::DEBUG
+logger.level                                   = Logger::INFO
 RAILS_DEFAULT_LOGGER                           = logger
 ActiveRecord::Base.logger                      = logger
 ActionController::Base.logger                  = logger
