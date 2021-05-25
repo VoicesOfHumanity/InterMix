@@ -409,8 +409,8 @@ module ActivityPub
       else
         username = last
       end
-      participant = Participant.find_by_account_uniq(username).first
-      data['to_participant'] = participant
+      participant = Participant.find_by_account_uniq(username)
+      data['to_participant'] = participant if participant
     end
     
     if not data['from_remote_actor']
