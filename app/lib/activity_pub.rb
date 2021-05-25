@@ -400,17 +400,24 @@ module ActivityPub
     
     if data['to_actor_url'] != ''
       # https://intermix.cr8.com/u/ff2602
-      url = URI.parse(data['to_actor_url'])
-      parr = url.path.split('/')
-      last = parr.last
-      xarr = last.split('?')
-      if xarr.length > 0
-        username = xarr[0]
-      else
-        username = last
+      begin
+        url = URI.parse(data['to_actor_url'])
+      rescue
+        puts "no url from to_actor_url:#{data['to_actor_url']}"
+        url = nil
       end
-      participant = Participant.find_by_account_uniq(username)
-      data['to_participant'] = participant if participant
+      if url
+        parr = url.path.split('/')
+        last = parr.last
+        xarr = last.split('?')
+        if xarr.length > 0
+          username = xarr[0]
+        else
+          username = last
+        end
+        participant = Participant.find_by_account_uniq(username)
+        data['to_participant'] = participant if participant
+      end
     end
     
     if not data['from_remote_actor']

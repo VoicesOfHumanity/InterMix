@@ -14,7 +14,7 @@ for req in requests
   puts "##{req.id} #{req.created_at}"
 
   obj = obj_from_request(req)
-  puts " - #{obj}"
+  puts " - object: #{obj}"
   if not obj
     puts " - no object"
     req.problem = true
