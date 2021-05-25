@@ -372,6 +372,8 @@ module ActivityPub
         data['to_actor_url'] = object['to']
       elsif obj.has_key?('to')
         data['to_actor_url'] = obj['to']
+      elsif obj.has_key?('actor')
+        data['to_actor_url'] = obj['actor']
       end
     else
       data['status'] = 'error'
@@ -435,7 +437,6 @@ module ActivityPub
   
   def obj_from_request(req)
     # Extract the object from the json we got
-    puts "obj_from_request"
     if not req.request_body
       Rails.logger.info("activity_pub#obj_from_request no request body")
       puts "no request body"
@@ -450,7 +451,6 @@ module ActivityPub
       puts req.request_body.inspect
       return nil
     end
-    puts 'done'
     Rails.logger.info("activitypub#obj_from_request data returned: #{data}")
     return data
   end

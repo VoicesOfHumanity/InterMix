@@ -14,6 +14,7 @@ for req in requests
   puts "----------------------------------------------------------------------------\n"
   puts "##{req.id} #{req.created_at}"
 
+  puts "getting object from request"
   obj = obj_from_request(req)
   puts " - object: #{obj}"
   if not obj
@@ -24,16 +25,9 @@ for req in requests
     next
   end
 
+  puts "getting request data from object"
   data = get_request_data(obj)
-  
-  if data['status'] == 'error'
-    puts " - error: #{data['error']}"
-    req.problem = true
-    req.redo = true
-    req.save
-    next
-  end
-  
+    
   rtype = data['rtype']
   
   puts " - atype: #{data['atype']}"
@@ -43,6 +37,14 @@ for req in requests
   puts " - to_actor_url: #{data['to_actor_url']}"
   puts " - from_remote_actor: #{data['from_remote_actor'].account if data['from_remote_actor']}"
   puts " - to_participant: #{data['to_participant'].email if data['to_participant']}"
+
+  if data['status'] == 'error'
+    puts " - error: #{data['error']}"
+    req.problem = true
+    req.redo = true
+    req.save
+    next
+  end
 
   next
 
