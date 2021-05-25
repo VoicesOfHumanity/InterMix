@@ -361,12 +361,6 @@ module ActivityPub
     object = obj['object']
     data['object'] = object
     
-    if object.has_key?('to')
-      data['to_actor_url'] = object['to']
-    elsif obj.has_key?('to')
-      data['to_actor_url'] = obj['to']
-    end
-    
     # The object might be a dix or just a string
     if object.class == String
       # "object":"https://intermix.cr8.com/u/ff2602"
@@ -374,6 +368,11 @@ module ActivityPub
       otype = 'actor'
     elsif object.class == Hash and object.has_key?('type')
       otype = object['type']
+      if object.has_key?('to')
+        data['to_actor_url'] = object['to']
+      elsif obj.has_key?('to')
+        data['to_actor_url'] = obj['to']
+      end
     else
       data['status'] = 'error'
       data['error'] = "Can't identify any target object"
