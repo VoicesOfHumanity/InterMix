@@ -63,6 +63,7 @@ for req in requests
   ref_id = data['ref_id']
   content = data['content']
   date = data['date']
+  object = data['object']
 
   res = nil
   
