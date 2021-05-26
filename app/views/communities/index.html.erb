@@ -97,11 +97,12 @@ function joinleave(comtag,id) {
 	  data: data,
 	  complete: function(t){ 
       if (which=='join') {
-		$('#comtagjoin_'+id).html('leave')
+		    $('#comtagjoin_'+id).html('leave')
       } else {
-		  $('#comtagjoin_'+id).html('join')
+		    $('#comtagjoin_'+id).html('join')
       }
-      }
+      location.reload();
+    }
 	});
 }	
 $('#sortselect').on('change', function() {
