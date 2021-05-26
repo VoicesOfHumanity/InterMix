@@ -198,6 +198,8 @@ module ActivityPub
     signature_ok = public_key.verify(OpenSSL::Digest::SHA256.new, their_signature_decoded, data_to_sign)
     if not signature_ok
       puts "signature doesn't match"
+      puts "their_signature_decoded: #{their_signature_decoded}"
+      puts "expected_data: #{data_to_sign}"
     end
 
     return signature_ok
