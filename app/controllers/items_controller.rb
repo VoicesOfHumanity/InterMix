@@ -2827,7 +2827,11 @@ class ItemsController < ApplicationController
 
       logger.info("items#getthumb grabbing:#{original_url}")      
       
-      tempfile = Down.download(original_url)
+      tempfile = nil
+      begin
+        tempfile = Down.download(original_url)
+      rescue
+      end
 
       if not tempfile
         logger.info("items#getthumb didn't get a file")

@@ -254,11 +254,12 @@ class ActivitypubController < ApplicationController
         int_ext: 'ext'
       )
     end
+    
+    unique_follow_id = "https://#{BASEDOMAIN}/f_#{current_participant.id}_#{follow.id}"
+    
+    follow.remote_reference = unique_follow_id
     follow.followed_remote_actor_id = remote_actor.id
     follow.save    
-    
-    # Hm, what are we going to do here
-    unique_follow_id = "https://#{BASEDOMAIN}/f_#{current_participant.id}_#{follow.id}"
     
     object = {
       "@context": [
@@ -271,8 +272,11 @@ class ActivitypubController < ApplicationController
       "object": remote_actor.account_url
     }
     
-    sign_and_send(current_participant.id, remote_actor, object, 'follow_account')
+    req = sign_and_send(current_participant.id, remote_actor, object, 'follow_account')
         
+    follow.api_request_id = req.id
+    follow.save    
+    
     flash[:notice] = "Follow request sent"
     respond_to do |format|
      format.html {redirect_to '/me/friends'}
