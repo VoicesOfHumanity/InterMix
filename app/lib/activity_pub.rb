@@ -405,6 +405,8 @@ module ActivityPub
       follow.save
     end
     
+    # NB: We should also send an email to our user
+    
   end
   
   def repond_to_accept_follow(from_remote_actor, to_participant, ref_id, api_request_id)
@@ -419,16 +421,52 @@ module ActivityPub
         follow.accepted = true
         follow.accept_record_id = api_request_id
         follow.save
-        return true
       end
     end  
     
-    return false
+    return true
   end
   
-  def respond_to_note(obj)
-    #-- Receive a note
+  def respond_to_note(from_remote_actor, to_participant, ref_id, api_request_id, content, date)
+    #-- Receive a note. Assuming it to be a personal message at the moment
+    if not from_remote_actor or not to_participant
+      return false
+    end
+        
+    message = Message.create(
+      from_remote_actor_id: from_remote_actor.id,
+      to_participant_id: to_participant.id,
+      subject: 'message',
+      message: content,
+      sendmethod: 'activitypub',
+      sent: true,
+      sent_at: date,
+      int_ext: 'ext',
+      email_sent: false,
+      received_json: object
+    )
+
+    # NB: We should also send an email to our user
     
+    return true    
+  end
+  
+  def respond_to_delete_actor(from_remote_actor)
+    #-- A remote account has disappared. Let's remove it from follows
+    if not from_remote_actor
+      return false
+    end
+    remote_actor_id = from_remote_actor.id
+    
+    numdone = 0
+    follows = Follow.where("followed_remote_actor_id=#{remote_actor_id} or following_remote_actor_id=#{remote_actor_id}")
+    for follow in follows
+      follow.destroy
+      numdone += 1
+    end
+    puts "#{numdone} follow records removed"
+    
+    return true
   end
   
   def get_request_data(obj)
@@ -449,13 +487,19 @@ module ActivityPub
       'error': '',
       'from_remote_actor': nil,
       'to_participant': nil,
-      'ref_id': nil
+      'ref_id': nil,
+      'content': nil,
+      'date': nil
     }
     
     if not obj.has_key?('type') or not obj.has_key?('actor') or not obj.has_key?('object')
       data['status'] = 'error'
       data['error'] = "Don't recognize this as an activitypub request"
       return data
+    end
+    
+    if obj.has_key?('published')      # 2021-05-11T17:31:34Z
+      data['date'] = Date.parse(obj['published'])
     end
     
     atype = obj['type']
@@ -467,7 +511,11 @@ module ActivityPub
     # The object might be a dix or just a string
     if object.class == String
       # "object":"https://intermix.cr8.com/u/ff2602"
-      data['to_actor_url'] = object
+      if obj.has_key?('to')
+        data['to_actor_url'] = obj['to']
+      else
+        data['to_actor_url'] = object
+      end
       otype = 'actor'
     elsif object.class == Hash and object.has_key?('type')
       otype = object['type']
@@ -478,21 +526,34 @@ module ActivityPub
       elsif object.has_key?('actor')
         data['to_actor_url'] = object['actor']
       end
-      if data['to_actor_url'].class == Array
-        # We might have gotten a list of recipients. Hopefully just one
-        if data['to_actor_url'].length == 1
-          data['to_actor_url'] = data['to_actor_url'][0]
-        end
-      end
       if object.has_key?('id')
         data['ref_id'] = object['id']
       end
+      if object.has_key?('content')
+        data['content'] = object['content']
+      end
+      if object.has_key?('published') and not data['date']
+        data['date'] = Date.parse(object['published'])
+      end
+      
     else
       data['status'] = 'error'
       data['error'] = "Can't identify any target object"
       return data
     end
     data['otype'] = otype
+
+    if data['to_actor_url'].class == Array
+      # We might have gotten a list of recipients. Hopefully just one
+      # NB: WE NEED TO BE ABLE TO DEAL WITH MULTIPLE RECIPIENTS
+      if data['to_actor_url'].length == 1
+        data['to_actor_url'] = data['to_actor_url'][0]
+      end
+    end
+        
+    if not data['ref_id'] and obj.has_key?('id')
+      data['ref_id'] = obj['id']
+    end
           
     if atype.downcase == 'follow'
       # Somebody wants to follow us
@@ -504,6 +565,9 @@ module ActivityPub
     elsif atype.downcase == 'create' and otype.downcase == 'note'
       # Sending us a note
       rtype = 'note'
+    elsif atype.downcase == 'delete' and otype.downcase == 'actor'
+      # A remote account has been removed
+      rtype = 'delete_actor'
     else
       data['error'] = "Don't know what to do with that yet"
       rtype = '?'

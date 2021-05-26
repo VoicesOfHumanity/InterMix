@@ -16,14 +16,15 @@ for req in requests
 
   puts "getting object from request"
   obj = obj_from_request(req)
-  puts " - object: #{obj}"
   if not obj
     puts " - no object"
     req.problem = true
     req.redo = false
+    req.processed = true
     req.save
     next
   end
+  puts " - object: #{obj}"
 
   puts "getting request data from object"
   data = get_request_data(obj)
@@ -38,6 +39,8 @@ for req in requests
   puts " - from_remote_actor: #{data['from_remote_actor'].account if data['from_remote_actor']}"
   puts " - to_participant: #{data['to_participant'].email if data['to_participant']}"
   puts " - ref_id: #{data['ref_id']}"
+  puts " - content: #{data['content']}"
+  puts " - date: #{data['date']}"
 
   if data['status'] == 'error'
     puts " - error: #{data['error']}"
@@ -52,6 +55,7 @@ for req in requests
     puts "this is a valid request"
   else
     puts "this is NOT a valid request"
+    next
   end
 
   next
@@ -59,6 +63,7 @@ for req in requests
   from_remote_actor = data['from_remote_actor']
   to_participant = data['to_participant']
   ref_id = data['ref_id']
+  content = data['content']
 
   res = nil
   
@@ -69,7 +74,8 @@ for req in requests
     
   elsif rtype == 'note'
     # A note being sent to one of our users, hopefully a private message
-    
+    puts "processing a received note"
+    res = respond_to_note(from_remote_actor, to_participant, ref_id, req.id, content, date, object)
     
   elsif rtype == 'follow_request'
     # Somebody wants to follow our user
@@ -80,6 +86,12 @@ for req in requests
     # Acceptance of a follow request from our user
     puts "processing accept of our follow request"
     res = respond_to_accept_follow(from_remote_actor, to_participant, ref_id, req.id)
+    
+  elsif rtype == 'delete_actor'
+    # A remote account has been removed. We should remove it from follows  
+    puts "processing a delete_actor event"
+    res = respond_to_delete_actor(from_remote_actor)
+    
   end
 
   if res

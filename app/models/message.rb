@@ -2,6 +2,8 @@ class Message < ActiveRecord::Base
   belongs_to :sender, :class_name => 'Participant', :foreign_key => :from_participant_id
   belongs_to :recipient, :class_name => 'Participant', :foreign_key => :to_participant_id
   belongs_to :group, :foreign_key => :to_group_id
+
+  serialize :received_json
   
   def emailit
     #-- E-mail this message. We assume that it already has been saved and has an ID
