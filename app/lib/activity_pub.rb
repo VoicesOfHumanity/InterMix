@@ -53,6 +53,20 @@ module ActivityPub
     http_digest = nil
     
     request_headers = req.request_headers
+    if not request_headers
+      puts "didn't get any headers"
+      return false
+    end
+    
+    if request_headers.class == String
+      begin
+        request_headers = JSON.parse(request_headers)
+      rescue
+        puts "request headers didn't seem to be in the right format"
+        return false
+      end
+    end  
+    
     if request_headers.has_key?('HTTP_SIGNATURE')
       http_signature = request_headers['HTTP_SIGNATURE']
     else
