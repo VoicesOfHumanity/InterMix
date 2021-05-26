@@ -184,7 +184,7 @@ module ActivityPub
       elsif header == 'digest'
         data_to_sign += "digest: #{http_digest}"
       else
-        header_http = "HTTP_#{header.upcase}"
+        header_http = "HTTP_#{header.upcase}".gsub("-","_")
         if http_headers.has_key?(header_http)
           data_to_sign += "#{header}: #{http_headers[header_http]}"
         else
