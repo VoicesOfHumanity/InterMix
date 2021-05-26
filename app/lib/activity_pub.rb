@@ -134,6 +134,14 @@ module ActivityPub
     end
     
     http_headers = req.request_headers
+    if http_headers.class == String
+      begin
+        http_headers = JSON.Parse(http_headers)
+      rescue
+        puts "http headers don't look right"
+        return false
+      end
+    end
     
     # To validate the signature, we need the digest, the data to sign, and their public key
     
