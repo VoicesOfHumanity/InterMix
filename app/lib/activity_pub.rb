@@ -134,6 +134,7 @@ module ActivityPub
     end
     
     http_headers = req.request_headers
+    puts "req.request_headers: #{http_headers.class}"
     if http_headers.class == String
       begin
         http_headers = JSON.Parse(http_headers)
