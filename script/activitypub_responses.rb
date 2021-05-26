@@ -98,6 +98,8 @@ for req in requests
     # Our response was carried out
     puts "##{req.id} succesfully processed"
     req.processed = true
+    req.redo = false
+    req.problem = false
     req.save
   else
     # Our response didn't work, or we didn't know what to do
