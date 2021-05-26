@@ -1,4 +1,6 @@
 require 'uri'
+require 'openssl'
+require "base64"
 
 module ActivityPub
   
@@ -43,21 +45,76 @@ module ActivityPub
     @api_request.save
   end
   
-  def deliver_post(from_id, to_actor)
-    # Send a post to somebody's inbox. Probably sign_and_send instead of this
-    # We'd first need to figure out their inbox
-    
+  def is_valid_request(req)
+    # Determine whether a request we received is properly signed
+    return false if not req
 
-    document      = File.read('create-hello-world.json')
-    date          = Time.now.utc.httpdate
-    keypair       = OpenSSL::PKey::RSA.new(File.read('private.pem'))
-    signed_string = "(request-target): post /inbox\nhost: mastodon.social\ndate: #{date}"
-    signature     = Base64.strict_encode64(keypair.sign(OpenSSL::Digest::SHA256.new, signed_string))
-    header        = 'keyId="https://my-example.com/actor",headers="(request-target) host date",signature="' + signature + '"'
-
-    HTTP.headers({ 'Host': 'mastodon.social', 'Date': date, 'Signature': header })
-        .post('https://mastodon.social/inbox', body: document)
+    http_signature = nil
+    http_digest = nil
     
+    request_headers = req.request_headers
+    if request_headers.has_key?('HTTP_SIGNATURE')
+      http_signature = request_headers['HTTP_SIGNATURE']
+    else
+      puts "http signature missing"
+      return false
+    end
+    
+    if request_headers.has_key?('HTTP_DIGEST')
+      http_digest = request_headers['HTTP_DIGEST']
+      # Something like:
+      # SHA-256=pLOT+MzO99oXgCesq+iNSlL+q9QVulnavBrAuVScyVQ=
+    else
+      puts "http digest missing"
+      return false
+    end
+
+    # Might look something like this:
+    # keyId="https://social.coop/users/ming#main-key",algorithm="rsa-sha256",headers="(request-target) host date digest content-type",signature="IQ+WO+k1ih5VuykJzOLdDWqmSUl37dtkK6cwEzjyvHBqQbVV6K/Vn9iLdOZ9sRSdrNpFvlTti3EeIIfVBNIOmJ77nKjpzl0LaKysksu65Y8XjzD0MPrIilgji29qg8XEW5m2ffnGHn1V0BUaVutCsuku8xswz2hDF3YbWR3v8NOlOdzpB+CItbr3LbZJfgrxilyBitQECg+5PP7GPJxv6tg/6s8aZs23MxQCSod/wvrntmOgu+oiLBSwzG6iLwDAeQq7K0NQSg5Uc1IPI71WhP53dycFh/RKn06/O0vgLxfCvRZoyKddMd4qP4B2LkHKn19cwdX+5Y1z2N5adho4Nw=="
+    
+    key_id = nil
+    algorithm = nil
+    header_list = nil
+    signature = nil
+    
+    sigparts = http_signature.split(',')
+    for part in sigparts
+      m = part.match /([^=]+)="([^"]+)"/      
+      fld = m[1]
+      val = m[2]
+
+      key_id = val if fld == 'keyId'
+      algorithm = val if fld == 'algorithm'
+      header_list = val if fld == 'headers'
+      signature = val if fld == 'signature'
+    end
+    
+    if not signature
+      puts "there was no signature in the http_signature section"
+      return false
+    end
+    
+    # Check digest
+    
+    # Something like:
+    #SHA-256=NNfmbex8OJE3kL4ykrkAuGmFn/61yiXWbFAq5q1bIeA=
+    m = http_digest.match /([^=]+)=(\S+)$/      
+    dig_type = m[1]
+    dig_val = m[2]
+    
+    dig_calc = Base64.strict_encode64((OpenSSL::Digest::SHA256.new).digest(req.request_body)
+    
+    if dig_calc == dig_val
+      puts "the digest is correct"
+    else
+      puts "The calculated digest #{dig_calc} doesn't matter the given digest #{dig_val}"
+      return false
+    end
+    
+    return true
+    
+    # WE ALDO NEED TO VALIDATE THE SIGNATURE!
+
   end
     
   def sign_and_send(from_id, to_remote_actor, object, our_function)
@@ -111,7 +168,7 @@ module ActivityPub
     @api_send.response_body = res.body
     @api_send.save
     
-    return true
+    return @api_send
   end
 
   def normalize_actor(actor_uniq)
@@ -299,17 +356,23 @@ module ActivityPub
     return actor_url
   end
 
-  def respond_to_follow(obj)
-    #-- Answer a follow request from the outside. We'll probably want to do that automatically right away
+  def respond_to_follow(remote_actor, participant, their_follow_id, api_request_id)
+    #-- Record and answer a follow request from the outside. We'll probably want to do that automatically right away
+
+    #remote_actor_url = remote_actor.account_url   # https://social.coop/users/ming
+    #their_follow_id = "https://social.coop/a55b9a8e-3ffb-4f97-8fce-e3731e2ed988"
+
+    # Record the follow
+    follow = Follow.create(
+      followed_id: participant.id,
+      following_remote_actor_id: remote_actor.id,
+      following_fulluniq: remote_actor.account,
+      int_ext: 'ext',
+      remote_reference: their_follow_id
+      accepted: false
+    )
     
-    participant_id = 2602                         # current_participant.id
-    to_actor = "ming@social.coop"                 # ming@social.coop
-    remote_actor = get_remote_actor(to_actor)      
-    remote_actor_url = remote_actor.account_url   # https://intermix.cr8.com/u/ff2602
-    
-    # An ID we got from them in the follow request
-    their_follow_id = "https://social.coop/a55b9a8e-3ffb-4f97-8fce-e3731e2ed988"
-    
+    # We will automatically send back an accept
     object = {
       "@context": [
             "https://www.w3.org/ns/activitystreams",
@@ -317,11 +380,36 @@ module ActivityPub
           ],
       "type": "Accept",
       "id": their_follow_id,
-      "object": remote_actor_url
+      "object": remote_actor.account_url
     }
         
-    sign_and_send(participant_id, remote_actor, object, 'respond_to_follow')
+    req = sign_and_send(participant_id, remote_actor, object, 'respond_to_follow')
     
+    if req
+      follow.accepted = true
+      follow.accept_record_id = req.id
+      follow.save
+    end
+    
+  end
+  
+  def repond_to_accept_follow(from_remote_actor, to_participant, ref_id, api_request_id)
+    # We've received an acceptance of our following of a remote actor
+    if not from_remote_actor or not to_participant
+      return false
+    end
+    
+    follow = Follow.where(following_remote_actor_id: from_remote_actor.id, followed_id: to_participant.id).first
+    if follow
+      if not follow.accepted
+        follow.accepted = true
+        follow.accept_record_id = api_request_id
+        follow.save
+        return true
+      end
+    end  
+    
+    return false
   end
   
   def respond_to_note(obj)
@@ -375,6 +463,12 @@ module ActivityPub
         data['to_actor_url'] = obj['to']
       elsif object.has_key?('actor')
         data['to_actor_url'] = object['actor']
+      end
+      if data['to_actor_url'].class == Array
+        # We might have gotten a list of recipients. Hopefully just one
+        if data['to_actor_url'].length == 1
+          data['to_actor_url'] = data['to_actor_url'][0]
+        end
       end
       if object.has_key?('id')
         data['ref_id'] = object['id']

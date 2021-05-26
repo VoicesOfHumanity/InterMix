@@ -47,8 +47,21 @@ for req in requests
     next
   end
 
+  puts "checking validity of signature and digest"
+  if is_valid_request(req)
+    puts "this is a valid request"
+  else
+    puts "this is NOT a valid request"
+  end
+
   next
 
+  from_remote_actor = data['from_remote_actor']
+  to_participant = data['to_participant']
+  ref_id = data['ref_id']
+
+  res = nil
+  
   if rtype == '' or rtype == '?'
     req.problem = true
     req.redo = true
@@ -60,15 +73,26 @@ for req in requests
     
   elsif rtype == 'follow_request'
     # Somebody wants to follow our user
-    respond_to_follow
+    puts "processing a received follow request"
+    res = respond_to_follow(from_remote_actor, to_participant, ref_id, req.id)
 
   elsif rtype == 'accept_follow'
     # Acceptance of a follow request from our user
-    
+    puts "processing accept of our follow request"
+    res = respond_to_accept_follow(from_remote_actor, to_participant, ref_id, req.id)
+  end
+
+  if res
+    # Our response was carried out
+    puts "##{req.id} succesfully processed"
+    req.processed = true
+    req.save
   else
+    # Our response didn't work, or we didn't know what to do
+    puts "##{req.id} not processed. set to redo"
     req.problem = true
     req.redo = true
-    req.save
+    req.save    
   end
 
   puts "----------------------------------------------------------------------------\n"

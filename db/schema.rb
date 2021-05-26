@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_18_005547) do
+ActiveRecord::Schema.define(version: 2021_05_25_233854) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -305,6 +305,9 @@ ActiveRecord::Schema.define(version: 2021_05_18_005547) do
     t.string "followed_fulluniq"
     t.integer "followed_remote_actor_id"
     t.integer "following_remote_actor_id"
+    t.boolean "accepted", default: false
+    t.integer "accept_record_id"
+    t.string "remote_reference"
     t.index ["followed_fulluniq", "following_fulluniq"], name: "index_follows_on_followed_fulluniq_and_following_fulluniq", length: { followed_fulluniq: 30, following_fulluniq: 10 }
     t.index ["followed_id", "following_id"], name: "index_follows_on_followed_id_and_following_id"
     t.index ["following_fulluniq", "followed_fulluniq"], name: "index_follows_on_following_fulluniq_and_followed_fulluniq", length: { following_fulluniq: 30, followed_fulluniq: 10 }
