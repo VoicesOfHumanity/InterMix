@@ -51,7 +51,7 @@ for req in requests
   end
 
   puts "checking validity of signature and digest"
-  if is_valid_request(req)
+  if is_valid_request(req, data['from_remote_actor'], data['to_participant'])
     puts "this is a valid request"
   else
     puts "this is NOT a valid request"

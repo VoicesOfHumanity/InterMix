@@ -45,7 +45,7 @@ module ActivityPub
     @api_request.save
   end
   
-  def is_valid_request(req)
+  def is_valid_request(req, remote_actor, participant)
     # Determine whether a request we received is properly signed
     return false if not req
 
@@ -124,10 +124,75 @@ module ActivityPub
       puts "The calculated digest #{dig_calc} doesn't matter the given digest #{dig_val}"
       return false
     end
+        
+    if not remote_actor
+      puts "there is no remote actor"
+      return false
+    elsif not participant
+      puts "there is no participant"
+      return false  
+    end
     
-    return true
+    http_headers = req.request_headers
     
-    # WE ALDO NEED TO VALIDATE THE SIGNATURE!
+    # To validate the signature, we need the digest, the data to sign, and their public key
+    
+    public_key_pem = remote_actor.public_key
+    if not public_key_pem or public_key_pem.to_s == ''
+      puts "there is no public key"
+      return false
+    end
+    public_key = OpenSSL::PKey::RSA.new(public_key_pem)
+    
+    # We need the fields mentioned in the header_list, and their contents, like:
+    # "(request-target): post /u/ff2602/inbox\nhost: intermix.cr8.com\ndate: Tue, 30 Mar 2021 18:15:26 GMT\ndigest: SHA-256=NNfmbex8OJE3kL4ykrkAuGmFn/61yiXWbFAq5q1bIeA="
+    data_to_sign = ''
+    # The header list looks something like this:
+    # (request-target) host date digest content-type
+    headers = header_list.split(' ')
+    for header in headers
+      if data_to_sign != ''
+        data_to_sign += "\n"
+      end
+      if header == '(request-target)'
+        # The method could also be gotten from req.request_method
+        # The path could also be gotten from req.path
+        inbox_path = "/u/#{participant.account_uniq}/inbox" # /u/ff2602/inbox
+        data_to_sign += "(request-target): post #{inbox_path}"
+      elsif header == 'host'
+        # should be the same as HTTP_HOST
+        inbox_host = http_headers['HTTP_HOST']  # Should be the same as BASEDOMAIN, e.g. intermix.cr8.com
+        data_to_sign += "host: #{inbox_host}"
+      elsif header == 'date'
+        date = http_headers['HTTP_DATE']   # e.g. Tue, 11 May 2021 21:18:54 GMT
+        data_to_sign += "date: date"
+      elsif header == 'content-type'
+        if http_headers.has_key?('HTTP_CONTENT_TYPE')
+          content_type = http_headers['HTTP_CONTENT_TYPE']
+        else
+          content_type = 'application/activity+json'
+        end
+        data_to_sign += "content-type: #{content_type}"
+      elsif header == 'digest'
+        data_to_sign += "digest: #{http_digest}"
+      else
+        header_http = "HTTP_#{header.upcase}"
+        if http_headers.has_key?(header_http)
+          data_to_sign += "#{header}: #{http_headers[header_http]}"
+        else
+          puts "can't find header #{header}"
+        end
+      end
+    end
+    
+    their_signature_decoded = Base64.strict_decode64(signature)
+    
+    signature_ok = public_key.verify(OpenSSL::Digest::SHA256.new, their_signature_decoded, data_to_sign)
+    if not signature_ok
+      puts "signature doesn't match"
+    end
+
+    return signature_ok
 
   end
     
@@ -408,7 +473,7 @@ module ActivityPub
         "object": remote_actor.account_url
       }
         
-      req = sign_and_send(participant_id, remote_actor, object, 'respond_to_follow')
+      req = sign_and_send(participant.id, remote_actor, object, 'respond_to_follow')
       puts "follow accept sent"
     
       if req
