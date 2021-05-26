@@ -22,7 +22,7 @@ module ActivityPub
     # Record what we're receiving. Later, we can add our response
     begin
       @api_request = ApiRequest.create(
-        request_headers: request.env.select {|k,v| k =~ /^HTTP_/ and ! k.starts_with?("HTTP_COOKIE")}.to_json,
+        request_headers: request.env.select {|k,v| k =~ /^HTTP_/ and ! k.starts_with?("HTTP_COOKIE")},
         request_content_type: request.format,
         request_method: request.method,
         remote_ip: request.remote_ip,
@@ -134,10 +134,9 @@ module ActivityPub
     end
     
     http_headers = req.request_headers
-    puts "req.request_headers: #{http_headers.class}"
     if http_headers.class == String
       begin
-        http_headers = JSON.Parse(http_headers)
+        http_headers = JSON.parse(http_headers)
       rescue
         puts "http headers don't look right"
         return false
