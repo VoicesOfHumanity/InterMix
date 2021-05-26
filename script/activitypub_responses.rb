@@ -62,6 +62,7 @@ for req in requests
   to_participant = data['to_participant']
   ref_id = data['ref_id']
   content = data['content']
+  date = data['date']
 
   res = nil
   
