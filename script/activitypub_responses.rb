@@ -58,8 +58,6 @@ for req in requests
     next
   end
 
-  next
-
   from_remote_actor = data['from_remote_actor']
   to_participant = data['to_participant']
   ref_id = data['ref_id']
@@ -110,3 +108,5 @@ for req in requests
   puts "----------------------------------------------------------------------------\n"
 
 end
+
+puts "#{requests.length} requests were processed"

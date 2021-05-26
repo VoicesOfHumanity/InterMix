@@ -376,37 +376,87 @@ module ActivityPub
     #remote_actor_url = remote_actor.account_url   # https://social.coop/users/ming
     #their_follow_id = "https://social.coop/a55b9a8e-3ffb-4f97-8fce-e3731e2ed988"
 
-    # Record the follow
-    follow = Follow.create(
-      followed_id: participant.id,
-      following_remote_actor_id: remote_actor.id,
-      following_fulluniq: remote_actor.account,
-      int_ext: 'ext',
-      remote_reference: their_follow_id,
-      accepted: false
-    )
-    
-    # We will automatically send back an accept
-    object = {
-      "@context": [
-            "https://www.w3.org/ns/activitystreams",
-            "https://w3id.org/security/v1"
-          ],
-      "type": "Accept",
-      "id": their_follow_id,
-      "object": remote_actor.account_url
-    }
-        
-    req = sign_and_send(participant_id, remote_actor, object, 'respond_to_follow')
-    
-    if req
-      follow.accepted = true
-      follow.accept_record_id = req.id
-      follow.save
+    follow = Follow.where(followed_id: participant.id, following_remote_actor_id: remote_actor.id).first
+
+    if follow
+      puts "follow record already exists"
+    else
+      # Record the follow
+      follow = Follow.create(
+        followed_id: participant.id,
+        following_remote_actor_id: remote_actor.id,
+        following_fulluniq: remote_actor.account,
+        int_ext: 'ext',
+        remote_reference: their_follow_id,
+        api_request_id: api_request_id,
+        accepted: false
+      )
+      puts "follow created"
     end
     
-    # NB: We should also send an email to our user
+    if follow.accepted
+      puts "follow has already been accepted"
+    else    
+      # We will automatically send back an accept
+      object = {
+        "@context": [
+              "https://www.w3.org/ns/activitystreams",
+              "https://w3id.org/security/v1"
+            ],
+        "type": "Accept",
+        "id": their_follow_id,
+        "object": remote_actor.account_url
+      }
+        
+      req = sign_and_send(participant_id, remote_actor, object, 'respond_to_follow')
+      puts "follow accept sent"
     
+      if req
+        follow.accepted = true
+        follow.accept_record_id = req.id
+        follow.save
+      end
+    
+    end
+    
+    # Check if it is mutual
+    is_mutual = false
+    if not follow.mutual
+      ourfollow = Follow.where(following_id: participant.id, followed_remote_actor_id: remote_actor.id).first
+      if ourfollow
+        ourfollow.mutual = true
+        ourfollow.save
+        follow.mutual = true
+        follow.save
+        puts "follow is mutual"
+        is_mutual = true
+      end 
+    end
+    
+    # Send a message/email to our user
+    @message = Message.new
+    @message.subject = "Remote user #{remote_actor.account} is now following you"
+    @message.message = "<p><a href=\"https://#{BASEDOMAIN}/people/remote/#{remote_actor.id}/profile?auth_token=#{@participant.authentication_token}\">#{remote_actor.account}</a> is now following you</p>"
+    if is_mutual
+      @message.message += "<p>You are already following them.</p>"
+    else  
+      @message.message += "<p>You can <a href=\"https://#{BASEDOMAIN}/activitypub/follow_account/?fedfollow=#{remote_actor.account}&auth_token=#{@participant.authentication_token}\">follow them back</a>, if you want.</p>"
+    end
+    @message.to_participant_id = @participant.id
+    @message.from_participant_id = 0
+    @message.sendmethod = 'web'
+    @message.sent_at = Time.now
+    if @message.save      
+      if @participant.system_email == 'instant'  
+        @message.sendmethod = 'email'
+        @message.emailit
+      else
+        @message.email_sent = false
+      end  
+      @message.save
+    end
+        
+    return true
   end
   
   def repond_to_accept_follow(from_remote_actor, to_participant, ref_id, api_request_id)
@@ -421,6 +471,9 @@ module ActivityPub
         follow.accepted = true
         follow.accept_record_id = api_request_id
         follow.save
+        puts "follow marked as accepted"
+      else
+        puts "follow was already accepted"
       end
     end  
     
@@ -432,21 +485,30 @@ module ActivityPub
     if not from_remote_actor or not to_participant
       return false
     end
+    
+    message = Message.where(from_remote_actor_id: from_remote_actor.id, to_participant_id: to_participant.id, api_request_id: api_request_id).first
         
-    message = Message.create(
-      from_remote_actor_id: from_remote_actor.id,
-      to_participant_id: to_participant.id,
-      subject: 'message',
-      message: content,
-      sendmethod: 'activitypub',
-      sent: true,
-      sent_at: date,
-      int_ext: 'ext',
-      email_sent: false,
-      received_json: object
-    )
+    if message
+      puts "message already exists"
+    else
+      message = Message.create(
+        from_remote_actor_id: from_remote_actor.id,
+        to_participant_id: to_participant.id,
+        subject: 'message',
+        message: content,
+        sendmethod: 'activitypub',
+        sent: true,
+        sent_at: date,
+        int_ext: 'ext',
+        email_sent: false,
+        received_json: object,
+        api_request_id: api_request_id
+      )
+      puts "message created"
+      message.emailit
+      puts "emailed"
+    end  
 
-    # NB: We should also send an email to our user
     
     return true    
   end

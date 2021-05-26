@@ -106,8 +106,10 @@ class Message < ActiveRecord::Base
     begin
       email.deliver
       self.message_id = email.message_id
-      self.sent = true
-      self.sent_at = Time.now 
+      if not self.sent
+        self.sent = true
+        self.sent_at = Time.now 
+      end
       self.email_sent = true
       self.email_sent_at = Time.now
     rescue Exception => e

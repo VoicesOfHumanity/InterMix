@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_25_233854) do
+ActiveRecord::Schema.define(version: 2021_05_26_135807) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -308,6 +308,7 @@ ActiveRecord::Schema.define(version: 2021_05_25_233854) do
     t.boolean "accepted", default: false
     t.integer "accept_record_id"
     t.string "remote_reference"
+    t.integer "api_request_id"
     t.index ["followed_fulluniq", "following_fulluniq"], name: "index_follows_on_followed_fulluniq_and_following_fulluniq", length: { followed_fulluniq: 30, following_fulluniq: 10 }
     t.index ["followed_id", "following_id"], name: "index_follows_on_followed_id_and_following_id"
     t.index ["following_fulluniq", "followed_fulluniq"], name: "index_follows_on_following_fulluniq_and_followed_fulluniq", length: { following_fulluniq: 30, followed_fulluniq: 10 }
@@ -672,6 +673,7 @@ ActiveRecord::Schema.define(version: 2021_05_25_233854) do
     t.datetime "email_sent_at"
     t.string "int_ext", default: "int"
     t.text "received_json"
+    t.integer "api_request_id"
     t.index ["from_participant_id", "id"], name: "index_messages_on_from_participant_id_and_id"
     t.index ["from_remote_actor_id"], name: "index_messages_on_from_remote_actor_id"
     t.index ["message_id"], name: "index_messages_on_message_id", length: 30
