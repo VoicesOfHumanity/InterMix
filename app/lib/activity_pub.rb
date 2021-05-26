@@ -173,7 +173,7 @@ module ActivityPub
         data_to_sign += "host: #{inbox_host}"
       elsif header == 'date'
         date = http_headers['HTTP_DATE']   # e.g. Tue, 11 May 2021 21:18:54 GMT
-        data_to_sign += "date: date"
+        data_to_sign += "date: #{date}"
       elsif header == 'content-type'
         if http_headers.has_key?('HTTP_CONTENT_TYPE')
           content_type = http_headers['HTTP_CONTENT_TYPE']
@@ -198,7 +198,7 @@ module ActivityPub
     signature_ok = public_key.verify(OpenSSL::Digest::SHA256.new, their_signature_decoded, data_to_sign)
     if not signature_ok
       puts "signature doesn't match"
-      puts "their_signature_decoded: #{their_signature_decoded}"
+      puts "their_signature: #{signature}"
       puts "expected_data: #{data_to_sign}"
     end
 
