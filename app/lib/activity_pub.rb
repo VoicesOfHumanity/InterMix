@@ -453,8 +453,10 @@ module ActivityPub
 
     follow = Follow.where(followed_id: participant.id, following_remote_actor_id: remote_actor.id).first
 
+    newfollow = true
     if follow
       puts "follow record already exists"
+      newfollow = false
     else
       # Record the follow
       follow = Follow.create(
@@ -508,27 +510,29 @@ module ActivityPub
       end 
     end
     
-    # Send a message/email to our user
-    @message = Message.new
-    @message.subject = "Remote user #{remote_actor.account} is now following you"
-    @message.message = "<p><a href=\"https://#{BASEDOMAIN}/people/remote/#{remote_actor.id}/profile?auth_token=#{@participant.authentication_token}\">#{remote_actor.account}</a> is now following you</p>"
-    if is_mutual
-      @message.message += "<p>You are already following them.</p>"
-    else  
-      @message.message += "<p>You can <a href=\"https://#{BASEDOMAIN}/activitypub/follow_account/?fedfollow=#{remote_actor.account}&auth_token=#{@participant.authentication_token}\">follow them back</a>, if you want.</p>"
-    end
-    @message.to_participant_id = @participant.id
-    @message.from_participant_id = 0
-    @message.sendmethod = 'web'
-    @message.sent_at = Time.now
-    if @message.save      
-      if @participant.system_email == 'instant'  
-        @message.sendmethod = 'email'
-        @message.emailit
-      else
-        @message.email_sent = false
-      end  
-      @message.save
+    if newfollow
+      # Send a message/email to our user
+      @message = Message.new
+      @message.subject = "Remote user #{remote_actor.account} is now following you"
+      @message.message = "<p><a href=\"https://#{BASEDOMAIN}/people/remote/#{remote_actor.id}/profile?auth_token=#{participant.authentication_token}\">#{remote_actor.account}</a> is now following you</p>"
+      if is_mutual
+        @message.message += "<p>You are already following them.</p>"
+      else  
+        @message.message += "<p>You can <a href=\"https://#{BASEDOMAIN}/activitypub/follow_account/?fedfollow=#{remote_actor.account}&auth_token=#{participant.authentication_token}\">follow them back</a>, if you want.</p>"
+      end
+      @message.to_participant_id = participant.id
+      @message.from_participant_id = 0
+      @message.sendmethod = 'web'
+      @message.sent_at = Time.now
+      if @message.save      
+        if participant.system_email == 'instant'  
+          @message.sendmethod = 'email'
+          @message.emailit
+        else
+          @message.email_sent = false
+        end  
+        @message.save
+      end
     end
         
     return true
