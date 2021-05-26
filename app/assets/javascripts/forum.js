@@ -407,7 +407,7 @@ function reply(item_id,to_reply) {
             short_updated = false;
             //alert($('#mediatitle2').offset().top);
             //$(document.body).scrollTop($('#mediatitle2').offset().top);
-            $('html,body').animate({scrollTop: $('#mediatitle2').offset().top}, 500);
+            $('html,body').animate({scrollTop: $('#comment_title').offset().top}, 500);
             
             //editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
 		}
