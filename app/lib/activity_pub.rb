@@ -561,7 +561,7 @@ module ActivityPub
     return true
   end
   
-  def respond_to_note(from_remote_actor, to_participant, ref_id, api_request_id, content, date)
+  def respond_to_note(from_remote_actor, to_participant, ref_id, api_request_id, content, date, object)
     #-- Receive a note. Assuming it to be a personal message at the moment
     if not from_remote_actor or not to_participant
       return false
