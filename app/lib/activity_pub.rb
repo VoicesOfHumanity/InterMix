@@ -264,6 +264,7 @@ module ActivityPub
 
   def normalize_actor(actor_uniq)
     # clean up an actor id a little bit
+    return "" if not actor_uniq
     actor_uniq.strip!.downcase!
     actor_uniq[0] = '' if actor_uniq[0] == '@'
     actor_uniq
