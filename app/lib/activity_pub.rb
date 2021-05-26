@@ -102,7 +102,7 @@ module ActivityPub
     dig_type = m[1]
     dig_val = m[2]
     
-    dig_calc = Base64.strict_encode64((OpenSSL::Digest::SHA256.new).digest(req.request_body)
+    dig_calc = Base64.strict_encode64((OpenSSL::Digest::SHA256.new).digest(req.request_body))
     
     if dig_calc == dig_val
       puts "the digest is correct"
