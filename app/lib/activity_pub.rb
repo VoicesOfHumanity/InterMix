@@ -196,7 +196,9 @@ module ActivityPub
     their_signature_decoded = Base64.strict_decode64(signature)
     
     signature_ok = public_key.verify(OpenSSL::Digest::SHA256.new, their_signature_decoded, data_to_sign)
-    if not signature_ok
+    if signature_ok
+      puts "the signature is correct"
+    else
       puts "signature doesn't match"
       puts "their_signature: #{signature}"
       puts "expected_data: #{data_to_sign}"
@@ -538,7 +540,7 @@ module ActivityPub
     return true
   end
   
-  def repond_to_accept_follow(from_remote_actor, to_participant, ref_id, api_request_id)
+  def respond_to_accept_follow(from_remote_actor, to_participant, ref_id, api_request_id)
     # We've received an acceptance of our following of a remote actor
     if not from_remote_actor or not to_participant
       return false
