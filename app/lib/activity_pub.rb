@@ -368,7 +368,7 @@ module ActivityPub
       following_remote_actor_id: remote_actor.id,
       following_fulluniq: remote_actor.account,
       int_ext: 'ext',
-      remote_reference: their_follow_id
+      remote_reference: their_follow_id,
       accepted: false
     )
     
