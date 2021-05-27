@@ -363,7 +363,7 @@ class Participant < ActiveRecord::Base
     if participant.class == Participant
       participant_id = participant.id
     else
-      participant_id = int(participant)
+      participant_id = participant.to_i
     end    
     return Follow.where(following_id: self.id, followed_id: participant_id, mutual: true).first != nil
   end
