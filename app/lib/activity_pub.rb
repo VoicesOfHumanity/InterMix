@@ -480,15 +480,18 @@ module ActivityPub
     else    
       # We will automatically send back an accept
       object = {
-        "@context": [
-              "https://www.w3.org/ns/activitystreams",
-              "https://w3id.org/security/v1"
-            ],
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "summary": "Accepting a follow request",
         "type": "Accept",
-        "id": their_follow_id,
-        "object": remote_actor.account_url
+        "actor": participant.activitypub_url,
+        "object": {
+          "id": their_follow_id,
+          "type": "Follow",
+          "actor": remote_actor.account_url,
+          "object": participant.activitypub_url
+        }
       }
-        
+              
       req = sign_and_send(participant.id, remote_actor, object, 'respond_to_follow')
       puts "follow accept sent"
     
