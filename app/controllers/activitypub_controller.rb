@@ -108,6 +108,7 @@ class ActivitypubController < ApplicationController
   
   def inbox
     # Where items for a certain user arrive
+    # Somebody is sending us something
   end
   
   def feed

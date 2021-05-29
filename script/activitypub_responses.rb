@@ -47,7 +47,10 @@ for req in requests
     if rtype == 'delete_actor'
       puts "no problem, we don't know the actor, so nothing to delete"
       req.processed = true
+      req.problem = false
+      req.redo = false
     else
+      req.processed = false
       req.problem = true
       req.redo = true
     end
@@ -102,6 +105,7 @@ for req in requests
   if res
     # Our response was carried out
     puts "##{req.id} succesfully processed"
+    req.our_function = rtype
     req.processed = true
     req.redo = false
     req.problem = false
