@@ -548,7 +548,7 @@ module ActivityPub
       return false
     end
     
-    follow = Follow.where(following_remote_actor_id: from_remote_actor.id, followed_id: to_participant.id).first
+    follow = Follow.where(followed_remote_actor_id: from_remote_actor.id, following_id: to_participant.id).first
     if follow
       if not follow.accepted
         follow.accepted = true
@@ -558,9 +558,11 @@ module ActivityPub
       else
         puts "follow was already accepted"
       end
+      return true
+    else
+      puts "couldn't find that follow"
     end  
     
-    return true
   end
   
   def respond_to_note(from_remote_actor, to_participant, ref_id, api_request_id, content, date, object)

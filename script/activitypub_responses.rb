@@ -44,8 +44,13 @@ for req in requests
 
   if data['status'] == 'error'
     puts " - error: #{data['error']}"
-    req.problem = true
-    req.redo = true
+    if rtype == 'delete_actor'
+      puts "no problem, we don't know the actor, so nothing to delete"
+      req.processed = true
+    else
+      req.problem = true
+      req.redo = true
+    end
     req.save
     next
   end
