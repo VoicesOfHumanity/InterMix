@@ -201,6 +201,12 @@ class ActivitypubController < ApplicationController
     
     from_id = current_participant.id
     
+    if not params.has_key?(:fedfollow) or params[:fedfollow].to_s == ''
+      flash[:alert] = "Didn't get anything to follow"
+      redirect_to = 'me/friends'
+      return
+    end
+    
     # Should probably accept either an email like identifier ming@social.coop or the url https://social.coop/users/ming
     # but for now, only the one that looks like an email
     to_actor = normalize_actor(params[:fedfollow])

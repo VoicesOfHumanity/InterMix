@@ -21,19 +21,18 @@ class MessagesController < ApplicationController
     @newmess = (params[:newmess].to_i == 1) 
     
     @messages = Message.where(nil)
-    @messages = @messages.where(:to_group_id => params[:to_group_id]) if params[:to_group_id].to_i > 0
       
     if @inout == 'conv'
       @participant_id = ( params[:participant_id] || current_participant.id ).to_i
       @participant = Participant.find(@participant_id)
       @messages = @messages.where("(from_participant_id=#{current_participant.id} and to_participant_id=#{@participant_id}) or (from_participant_id=#{@participant_id} and to_participant_id=#{current_participant.id})")        
-      @messages = @messages.includes([:sender,:recipient])
+      @messages = @messages.includes([:sender,:remote_sender,:recipient,:remote_recipient])
     elsif @inout == 'out'  
       @messages = @messages.where(:from_participant_id => current_participant.id) 
-      @messages = @messages.includes([:group,:recipient])
+      @messages = @messages.includes([:recipient, :remote_recipient])
     else
       @messages = @messages.where(:to_participant_id => current_participant.id)
-      @messages = @messages.includes([:group,:sender])
+      @messages = @messages.includes([:sender, :remote_sender])
     end
       
     @messages = @messages.order(@sortby)

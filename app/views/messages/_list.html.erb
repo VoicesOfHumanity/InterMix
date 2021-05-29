@@ -17,15 +17,33 @@ Received personal messages
 <% for message in @messages -%>
 	<tr id="tr_<%= message.id %>">
 		<td><%= link_to_function message.created_at.strftime("%m/%d/%Y %H:%M"), "showmess(#{message.id})" %></td>
-		<% if @inout == 'out' -%>
-			<td><a href="/participant/<%= message.to_participant_id %>/profile"><%= message.recipient ? message.recipient.name : message.to_participant_id %></a></td>
-		<% else -%>
-			<% if message.from_participant_id == 0 -%>
-				<td>System</td>
-			<% else -%>
-				<td><a href="/participant/<%= message.from_participant_id %>/profile"><%= message.sender ? message.sender.name : message.from_participant_id %></a></td>	
-			<% end -%>
-		<% end -%>
+		<td>
+  		<% if @inout == 'out' -%>
+        <% if message.recipient -%>
+          <a href="/participant/<%= message.to_participant_id %>/profile"><%= message.recipient.name %></a>
+        <% elsif message.remote_recipient -%>
+          <a href="/people/remote/<%= message.remote_recipient.id %>/profile"><%= message.remote_recipient.account %><%= message.remote_recipient.name %></a>
+        <% elsif message.to_participant_id.to_i > 0 -%>
+          #<%= message.to_participant_id %>
+        <% elsif message.to_remote_actor_id.to_i > 0 -%>
+          Remote #<%= message.to_remote_actor_id %>
+        <% else -%>
+          ???
+        <% end -%>
+  		<% else -%>
+        <% if message.sender -%>
+      		<a href="/participant/<%= message.from_participant_id %>/profile"><%= message.sender ? message.sender.name : message.from_participant_id %></a>
+        <% elsif message.remote_sender -%>
+          <a href="/people/remote/<%= message.remote_sender.id %>/profile"><%= message.remote_sender.account %><%= message.remote_sender.name %></a>
+        <% elsif message.from_participant_id.to_i > 0 -%>
+          #<%= message.from_participant_id %>
+        <% elsif message.from_remote_actor_id.to_i > 0 -%>
+          Remote #<%= message.from_remote_actor_id %>            
+  			<% elsif message.from_participant_id == 0 -%>
+  				System
+  			<% end -%>
+  		<% end -%>
+    </td>
 		<td><%= message.subject %></td>
 		<td><%= (message.read_web or message.read_email) ? 'yes' : 'no' %></td>
 	</tr>	
