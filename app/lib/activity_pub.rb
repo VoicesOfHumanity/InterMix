@@ -627,7 +627,8 @@ module ActivityPub
   	    "published": published,
   	    "attributedTo": from_participant.activitypub_url,
   	    "content": fullcontent,
-  	    "to": to_remote_actor.account_url     
+  	    "to": to_remote_actor.account_url
+      }  
     }
 
     req = sign_and_send(from_participant.id, to_remote_actor, object, 'send_note')

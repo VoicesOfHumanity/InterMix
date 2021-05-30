@@ -15,7 +15,7 @@
 			</li>
 		<% else -%>
       
-      <%= f.input :to_friend_id, :label => 'to Friend', :as => :select, :collection => @friends.collect{|c| (c.remote_idol ? [c.remote_idol.name,c.id] : [c.idol.name,c.id])}+[['*yourself*',0]] %>
+      <%= f.input :to_friend_id, :label => 'to Friend', :as => :select, :collection => @friends.collect{|c| (c.remote_idol ? ["#{c.remote_idol.name} (#{c.remote_idol.account})",c.id] : [c.idol.name,c.id])}+[['*yourself*',0]] %>
 			
 			<div style="position:relative;top:-37px;left:80px;width:0;height:0"><img src="/images/question-mark.png" class="tooltip" id="contacttooltip" style="" width="16" height="16" title="Friends/Contacts are people you follow and who follows you back.  They are listed on the Friends page.  Click on someone's name to go to their profile.  At the bottom of the profile page you have the option to follow a person." alt="questionmark"></div>
 			

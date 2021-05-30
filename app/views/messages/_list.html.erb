@@ -22,7 +22,7 @@ Received personal messages
         <% if message.recipient -%>
           <a href="/participant/<%= message.to_participant_id %>/profile"><%= message.recipient.name %></a>
         <% elsif message.remote_recipient -%>
-          <a href="/people/remote/<%= message.remote_recipient.id %>/profile"><%= message.remote_recipient.account %> : <%= message.remote_recipient.name %></a>
+          <a href="/people/remote/<%= message.remote_recipient.id %>/profile"><%= message.remote_recipient.name %> (<%= message.remote_recipient.account %>)</a>
         <% elsif message.to_participant_id.to_i > 0 -%>
           #<%= message.to_participant_id %>
         <% elsif message.to_remote_actor_id.to_i > 0 -%>
@@ -34,7 +34,7 @@ Received personal messages
         <% if message.sender -%>
       		<a href="/participant/<%= message.from_participant_id %>/profile"><%= message.sender.name %></a>
         <% elsif message.remote_sender -%>
-          <a href="/people/remote/<%= message.remote_sender.id %>/profile"><%= message.remote_sender.account %><%= message.remote_sender.name %></a>
+          <a href="/people/remote/<%= message.remote_sender.id %>/profile"><%= message.remote_sender.name %> (<%= message.remote_sender.account %>)</a>
         <% elsif message.from_participant_id.to_i > 0 -%>
           #<%= message.from_participant_id %>
         <% elsif message.from_remote_actor_id.to_i > 0 -%>
