@@ -1,38 +1,34 @@
 <%= semantic_form_for @message do |f| %>
 
 	<%= f.inputs do %>
+
+		<%= f.input :to_participant_id, :as => :hidden %>	
+		<%= f.input :to_remote_actor_id, :as => :hidden %>	
+
 		<%= f.input :response_to_id, :as => :hidden %>
 		<% if @message.to_participant_id.to_i > 0 -%>
 			<li class="select optional" id="to_participant_id_input">
 			<label>to Contact</label>
 			<div style="float:left">
-			<%= @to_participant_name %>
+			<%= @to_name %>
 			</div>
 			</li>
-			<%= f.input :to_participant_id, :as => :hidden %>	
 		<% else -%>
-			<% @message.to_participant_id = current_participant.id %>
-			<%= f.input :to_participant_id, :label => 'to Contact', :as => :select, :collection => @participant.contacts.collect{|c| [c.name,c.id]}+[['*yourself*',current_participant.id]], :input_html=>{:onchange=>"grouporcontact('contact')"} %>	
+      
+      <%= f.input :to_friend_id, :label => 'to Friend', :as => :select, :collection => @friends.collect{|c| (c.remote_idol ? [c.remote_idol.name,c.id] : [c.idol.name,c.id])}+[['*yourself*',0]] %>
 			
-			<div style="position:relative;top:-37px;left:80px;width:0;height:0"><img src="/images/question-mark.png" class="tooltip" id="contacttooltip" style="" width="16" height="16" title="Contacts are people you follow or who follow you.  Your contacts are listed on the Friends page.  Click on someone's name to go to their profile.  At the bottom of the profile page you have the option to follow that person." alt="questionmark"></div>
+			<div style="position:relative;top:-37px;left:80px;width:0;height:0"><img src="/images/question-mark.png" class="tooltip" id="contacttooltip" style="" width="16" height="16" title="Friends/Contacts are people you follow and who follows you back.  They are listed on the Friends page.  Click on someone's name to go to their profile.  At the bottom of the profile page you have the option to follow a person." alt="questionmark"></div>
 			
 		<% end -%>
-		<% if false and @groupsadminin.length > 0 -%>
-			<%= f.input :to_group_id, :label => 'or Group', :as => :select, :collection => @groupsadminin.collect{|c| [c.group.name,c.group.id]}, :input_html=>{:onchange=>"grouporcontact('group')"} %>	
-		<% end -%>
+
 		<%= f.input :subject, :input_html=>{:size=>68} %>
 		<% f.input :message, :as => :text, :required => true %>
 		<li>
 			<div style="width:100%;float:left">
         <b>Message</b><br>
-				<% if @groupsadminin.length > 0 -%>
-					<%= cktext_area(:message, :message, :ckeditor => {:ajax => true, :width=>500, :height=>200, :toolbar=>'Expanded'}) %>
-				<% else -%>
-					<%= cktext_area(:message, :message, :ckeditor => {:ajax => true, :width=>500, :height=>200, :toolbar=>'Custom'}) %>
-				<% end -%>
-				<% if false and @groupsadminin.length > 0 -%>
-				<br>Available macros for group messages:<br>{{ groupforumlink }} {{ group_logo }} {{ editsettingslink }} {{ recipient.first_name }} {{ discussionprefix.forumlink }} {{ discussionprefix.logo }}
-				<% end -%>
+
+				<%= cktext_area(:message, :message, :ckeditor => {:ajax => true, :width=>500, :height=>200, :toolbar=>'Custom'}) %>
+
 			</div>
 		</li>
 		

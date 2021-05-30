@@ -596,10 +596,45 @@ module ActivityPub
       message.emailit
       puts "emailed"
     end  
-
     
     return true    
   end
+
+  def send_note(from_participant, to_remote_actor, message)
+    #-- Send a note to an outside recipient. message is a Message record
+    if not from_participant or not to_remote_actor
+      return false
+    end
+    
+    subject = message.subject
+    content = message.message
+
+    fullcontent = "<p><strong>#{subject}</strong></p>\n" + content
+
+    unique_message_id = "https://#{BASEDOMAIN}/m_#{from_participant.id}_#{message.id}"
+
+    #date = Time.now.utc.iso8601   # 2021-05-11T17:08:00Z
+    published = message.created_at.strftime("%Y-%m-%dT%H:%M:%S.%L%z")
+    
+    object = {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      "id": unique_message_id,
+      "type": "Create",
+      "actor": from_participant.activitypub_url,
+      "object": {
+      	"id": unique_message_id,
+  	    "type": "Note",
+  	    "published": published,
+  	    "attributedTo": from_participant.activitypub_url,
+  	    "content": fullcontent,
+  	    "to": to_remote_actor.account_url     
+    }
+
+    req = sign_and_send(from_participant.id, to_remote_actor, object, 'send_note')
+    puts "note sent"
+    
+    return req
+  end  
   
   def respond_to_delete_actor(from_remote_actor)
     #-- A remote account has disappared. Let's remove it from follows

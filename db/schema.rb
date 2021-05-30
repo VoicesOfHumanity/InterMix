@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_26_135807) do
+ActiveRecord::Schema.define(version: 2021_05_30_004207) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -651,6 +651,7 @@ ActiveRecord::Schema.define(version: 2021_05_26_135807) do
     t.integer "to_participant_id"
     t.integer "to_group_id"
     t.integer "to_remote_actor_id"
+    t.integer "to_friend_id"
     t.integer "template_id"
     t.string "subject"
     t.text "message"

@@ -5,6 +5,8 @@ class MessagesController < ApplicationController
   layout "front"
   before_action :authenticate_user_from_token!
   before_action :authenticate_participant!, :check_group_and_dialog
+
+  include ActivityPub
   
   def index
     @section = 'profile'
@@ -79,28 +81,33 @@ class MessagesController < ApplicationController
     @from = params[:from] || ''
     @response_to_id = params[:response_to_id].to_i
     @to_participant_id = params[:to_participant_id].to_i
+    @to_remote_actor_id = params[:to_remote_actor_id].to_i
     @message = Message.new
     @message.to_participant_id = 0
-    @to_participant_name = '???'
+    @to_name = '???'
     if @response_to_id > 0
       @message.response_to_id = @response_to_id
       @oldmessage = Message.find_by_id(@response_to_id)
       if @oldmessage
         @message.to_participant_id = @oldmessage.from_participant_id
-        @to_participant = Participant.find_by_id(@message.to_participant_id)
-        @to_participant_name = @to_participant.name if @to_participant
+        @message.to_remote_actor_id = @oldmessage.from_remote_actor_id
         @message.subject = "Re: " + @oldmessage.subject if @oldmessage.subject[0,3] != 'Re:'
       end  
+    else
+      @message.to_participant_id = @to_participant_id
+      @message.to_remote_actor_id = @to_remote_actor_id        
     end
-    if not @to_participant and @to_participant_id.to_i > 0
-      @to_participant = Participant.find_by_id(@to_participant_id)
-      @to_participant_name = @to_participant.name if @to_participant
-      @message.to_participant_id = @to_participant_id    
-    end
-    
-    @participant = Participant.includes(:idols).find(current_participant.id)      
-    @groupsin = GroupParticipant.where("participant_id=#{current_participant.id}").includes(:group)   
-    @groupsadminin = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1").includes(:group)          
+    if @message.to_participant_id.to_i > 0
+      @to_participant = Participant.find_by_id(@message.to_participant_id)
+      @to_name = @to_participant.name if @to_participant
+    elsif @message.to_remote_actor_id.to_i > 0
+      @to_remote_actor = RemoteActor.find_by_id(@message.to_remote_actor_id)
+      @to_name = "#{@to_remote_actor.account} : #{@to_remote_actor.name}" if @to_remote_actor
+    end    
+
+    # We'll be able to send to anybody I'm following, and where it is mutual
+    @friends = Follow.where(following_id: current_participant.id, mutual: true).includes(:idol, :remote_idol)
+        
     render :partial=>'edit', :layout=>false
   end  
 
@@ -118,44 +125,28 @@ class MessagesController < ApplicationController
     @from = params[:from] || ''
     @response_to_id = params[:response_to_id].to_i
     @content = params[:message][:message]
-    if params[:message][:to_group_id].to_i > 0
-      #-- A message to all members of a group who allow it
-      tosend = messsent = emailsent = 0
-      @group = Group.includes(:group_participants=>:participant).find(params[:message][:to_group_id])
-      tosend = @group.group_participants.length
-      logger.info("messages#create sending to #{tosend} group members of group ##{params[:message][:to_group_id]}") 
-      for group_participant in @group.group_participants
-        @message = Message.new
-        @message.from_participant_id = current_participant.id
-        @message.to_participant_id = group_participant.participant.id if group_participant.participant
-        @message.to_group_id = params[:message][:to_group_id]
-        @message.subject = params[:message][:subject]
-        @recipient = Participant.find_by_id(@message.to_participant_id)
-        @message.message = process_content(@content, @recipient)
-        if @message.save     
-          messsent += 1
-          if group_participant.participant and group_participant.participant.private_email == 'instant'
-            #-- Send as an e-mail. emailit is found in the application controller
-            @message.sendmethod = 'email'
-            @message.emailit
-            emailsent += 1
-          else
-            #-- If we're not sending it instantly, they'll probably get it in a daily or weekly digest  
-          end  
-        else
-          logger.info("messages#create Couldn't save message")  
+
+    @message = Message.new(message_params)
+    
+    if @message.to_friend_id.to_i > 0
+      follow = Follow.find_by_id(@message.to_friend_id)
+      if follow
+        if follow.followed_id.to_i > 0
+          @message.to_participant_id = follow.followed_id
+        elsif follow.followed_remote_actor_id.to_i > 0
+          @message.to_remote_actor_id = follow.followed_remote_actor_id
         end
       end
-      render plain: "#{messsent} of #{tosend} messages sent. #{emailsent} sent by e-mail"
-    else
-      @message = Message.new(message_params)
-      @recipient = Participant.find_by_id(@message.to_participant_id)
-      @content = @message.message
-      @message.from_participant_id = current_participant.id
-      @message.sendmethod = 'web'
-      @message.message = process_content(@content, @recipient)
-      @message.sent_at = Time.now
-      if @message.save
+    end 
+    
+    @content = @message.message
+    @message.from_participant_id = current_participant.id
+    @message.message = process_content(@content, @recipient)
+
+    if @message.save
+      
+      if @message.to_participant_id.to_i > 0
+        # Internal message
         @recipient = Participant.find_by_id(@message.to_participant_id) 
         if @recipient and @recipient.private_email == 'instant'
           #-- Send as an e-mail. 
@@ -166,13 +157,35 @@ class MessagesController < ApplicationController
         if not follow
           follow = Follow.create(:followed_id => @recipient.id, :following_id => current_participant.id)
         end
-        current_participant.update_attribute(:has_participated,true) if not current_participant.has_participated
-        render plain: 'Message was successfully sent.'
+        @message.sent_at = Time.now        
+        @message.sendmethod = 'web'
+        @message.save
+        notice = 'Message was successfully sent.'
+      elsif @message.to_remote_actor_id.to_i > 0
+        # Remote message
+        from_participant = Participant.find_by_id(@message.from_participant_id)
+        to_remote_actor = RemoteActor.find_by_id(@message.to_remote_actor_id)
+        
+        res = send_note(from_participant, to_remote_actor, @message)
+        
+        if res
+          @message.sendmethod = 'activitypub'
+          @message.sent_at = Time.now
+          @message.save
+          notice = 'Message was successfully sent to the remote user.'
+        else
+          notice = 'The message was stored, but there was a problem sending it to the remote user.'          
+        end
       else
-        logger.info("messages#create Couldn't save message")  
-        render plain: 'There was a problem creating the message.'         
+        notice = 'The message was stored, but something went wrong'
       end
-    end  
+      
+      current_participant.update_attribute(:has_participated,true) if not current_participant.has_participated
+      render plain: notice
+    else
+      logger.info("messages#create Couldn't save message")  
+      render plain: 'There was a problem creating the message.'         
+    end
 
   end  
   
