@@ -5,7 +5,7 @@
   <tr><td class="label">URL:</td><td><a href="@remote_actor.account_ur" target="_blank"><%= @remote_actor.account_url %></a></td></tr>
   <tr><td class="label">Username:</td><td><%= @remote_actor.username %></td></tr>
   <tr><td class="label">Name:</td><td><%= @remote_actor.name %></td></tr>
-  <tr><td class="label">Summary:</td><td><%= @remote_actor.summary %></td></tr>
+  <tr><td class="label">Summary:</td><td><%=raw sanitizethis(@remote_actor.summary) %></td></tr>
 
   <tr><td class="label">Icon:</td><td>
   <% if @remote_actor.icon_url.to_s != '' -%>
@@ -30,6 +30,7 @@
 
   <% else -%>
     <form action="/activitypub/follow_account" method="post">
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
       <input type="hidden" name="fedfollow" value="<%= @remote_actor.account %>">
     <p><input type="submit" value="Follow <%= @remote_actor.name %>"></p>
     </form>

@@ -139,9 +139,9 @@ class MessagesController < ApplicationController
         elsif follow.followed_remote_actor_id.to_i > 0
           @message.to_remote_actor_id = follow.followed_remote_actor_id
         end
-        puts "Sending to friend #{follow.id} Participant:#{@message.to_participant_id.to_i} Remote:#{@message.to_remote_actor_id.to_i}"
+        logger.info("messages#create Sending to friend #{follow.id} Participant:#{@message.to_participant_id.to_i} Remote:#{@message.to_remote_actor_id.to_i}")
       else
-        puts "Didn't find friend #{@message.to_friend_id}"
+        logger.info("messages#create Didn't find friend #{@message.to_friend_id}")
       end
     end 
     
@@ -233,7 +233,7 @@ class MessagesController < ApplicationController
 
   def message_params
     params.require(:message).permit(
-    :to_participant_id, :to_group_id, :template_id, :subject, :message, :sendmethod, :response_to_id, :mail_template, :group_id, :dialog_id
+    :to_participant_id, :to_remote_actor_id, :to_friend_id, :template_id, :subject, :message, :sendmethod, :response_to_id, :mail_template, :group_id, :dialog_id
     )
   end
   
