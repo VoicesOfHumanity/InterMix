@@ -67,9 +67,18 @@ function newmess() {
 		return;
 	}
 	showingsent = false;
+  <% if @to_remote_actor_id.to_i > 0 -%>
+    var url = '/messages/new?to_remote_actor_id=<%= @to_remote_actor_id %>';
+  <% elsif @to_participant_id.to_i > 0 -%>
+    var url = '/messages/new?to_participant_id=<%= @to_participant_id %>';
+  <% elsif @to_friend_id.to_i > 0 -%>  
+    var url = '/messages/new?to_friend_id=<%= @to_friend_id %>';
+  <% else -%>
+    var url = '/messages/new';
+  <% end -%>
 	$.ajax({
     type: 'GET',
-    url: '/messages/new',
+    url: url,
     complete: function(t){	
       $("#messageedit").html(t.responseText);
 		  $('#messageedit').show();

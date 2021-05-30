@@ -21,6 +21,9 @@ class MessagesController < ApplicationController
     
     @inout = params[:inout] || 'in'
     @newmess = (params[:newmess].to_i == 1) 
+    @to_remote_actor_id = params[:to_remote_actor_id].to_i
+    @to_participant_id = params[:to_participant_id].to_i
+    @to_friend_id = params[:to_friend_id].to_i
     
     @messages = Message.where(nil)
       
@@ -136,6 +139,9 @@ class MessagesController < ApplicationController
         elsif follow.followed_remote_actor_id.to_i > 0
           @message.to_remote_actor_id = follow.followed_remote_actor_id
         end
+        puts "Sending to friend #{follow.id} Participant:#{@message.to_participant_id.to_i} Remote:#{@message.to_remote_actor_id.to_i}"
+      else
+        puts "Didn't find friend #{@message.to_friend_id}"
       end
     end 
     
@@ -177,7 +183,7 @@ class MessagesController < ApplicationController
           notice = 'The message was stored, but there was a problem sending it to the remote user.'          
         end
       else
-        notice = 'The message was stored, but something went wrong'
+        notice = "The message was stored, but something went wrong. Participant:#{@message.to_participant_id.to_i} Remote:#{@message.to_remote_actor_id.to_i}"
       end
       
       current_participant.update_attribute(:has_participated,true) if not current_participant.has_participated

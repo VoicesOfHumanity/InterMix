@@ -67,6 +67,7 @@ class PeopleController < ApplicationController
   
   def profile
     #-- show somebody's profile
+    section = 'people'
     @participant_id = ( params[:id] || current_participant.id ).to_i    
     #@participant = Participant.find(@participant_id)
     @participant = Participant.includes(:followers,:idols).find(@participant_id)
@@ -80,9 +81,16 @@ class PeopleController < ApplicationController
   
   def remote_profile
     # A remote_actor from Activitypub
+    section = 'people'
     @remote_actor_id = params[:remote_actor_id]
     
     @remote_actor = RemoteActor.find_by_id(@remote_actor_id)
+    
+    if @remote_actor
+      follow = Follow.where("followed_remote_actor_id=#{@remote_actor_id} and following_id=#{current_participant.id}").first
+      @is_following = (follow ? true : false)   
+      @mutual = (@is_following and follow.mutual)
+    end    
     
   end 
   
@@ -112,6 +120,7 @@ class PeopleController < ApplicationController
   
   def follow
     #-- Follow or unfollow somebody. current_participant wants to follow/unfollow @participant
+    # NB: WHAT ABOUT REMOTE? following happens in activitypub/follow_account
     onoff = (params[:onoff].to_i == 1)  # Want to follow
     @participant_id = params[:id]
     @participant = Participant.includes(:followers,:idols).find(@participant_id)

@@ -1,25 +1,39 @@
 <% if @remote_actor -%>
   
-<table class="profiletable">
-<tr><td class="label">Account:</td><td><%= @remote_actor.account %></td></tr>
-<tr><td class="label">URL:</td><td><%= @remote_actor.account_url %></td></tr>
-<tr><td class="label">Username:</td><td><%= @remote_actor.username %></td></tr>
-<tr><td class="label">Name:</td><td><%= @remote_actor.name %></td></tr>
-<tr><td class="label">Summary:</td><td><%= @remote_actor.summary %></td></tr>
+  <table class="profiletable">
+  <tr><td class="label">Account:</td><td><%= @remote_actor.account %></td></tr>
+  <tr><td class="label">URL:</td><td><a href="@remote_actor.account_ur" target="_blank"><%= @remote_actor.account_url %></a></td></tr>
+  <tr><td class="label">Username:</td><td><%= @remote_actor.username %></td></tr>
+  <tr><td class="label">Name:</td><td><%= @remote_actor.name %></td></tr>
+  <tr><td class="label">Summary:</td><td><%= @remote_actor.summary %></td></tr>
 
-<tr><td class="label">Icon:</td><td>
-<% if @remote_actor.icon_url.to_s != '' -%>
-  <img src="<%= @remote_actor.icon_url %>"/>
-<% end -%>
-</td></tr>
-<tr><td class="label">Image:</td><td>
-<% if @remote_actor.image_url.to_s != '' -%>
-  <img src="<%= @remote_actor.image_url %>"/>
-<% end -%>
-</td></tr>
+  <tr><td class="label">Icon:</td><td>
+  <% if @remote_actor.icon_url.to_s != '' -%>
+    <img src="<%= @remote_actor.icon_url %>"/>
+  <% end -%>
+  </td></tr>
+  <tr><td class="label">Image:</td><td>
+  <% if @remote_actor.image_url.to_s != '' -%>
+    <img src="<%= @remote_actor.image_url %>"/>
+  <% end -%>
+  </td></tr>
 
-</table>
+  </table>
 
+  <% if @is_following -%>
+    <p>You're following <%= @remote_actor.name %> <% if @mutual %>and they're following you.<% end %>
+      <% if false -%>
+        <button type="button" onclick="unfollow()">Stop following</button>
+      <% end -%>
+    </p>
+    <p><a href="/messages?inout=out&newmess=1&to_remote_actor_id=<%= @remote_actor.id %>">Send a message to <%= @remote_actor.name %></a></p>
+
+  <% else -%>
+    <form action="/activitypub/follow_account" method="post">
+      <input type="hidden" name="fedfollow" value="<%= @remote_actor.account %>">
+    <p><input type="submit" value="Follow <%= @remote_actor.name %>"></p>
+    </form>
+  <% end -%>
 
 
 <% else -%>

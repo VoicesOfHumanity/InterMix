@@ -6,9 +6,10 @@
 		<%= f.input :to_remote_actor_id, :as => :hidden %>	
 
 		<%= f.input :response_to_id, :as => :hidden %>
-		<% if @message.to_participant_id.to_i > 0 -%>
+    
+		<% if @to_name != '???' -%>
 			<li class="select optional" id="to_participant_id_input">
-			<label>to Contact</label>
+			<label>to Friend</label>
 			<div style="float:left">
 			<%= @to_name %>
 			</div>
