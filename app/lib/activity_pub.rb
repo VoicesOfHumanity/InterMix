@@ -609,7 +609,7 @@ module ActivityPub
     subject = message.subject
     content = message.message
 
-    fullcontent = "<p><strong>#{subject}</strong></p>\n" + content
+    fullcontent = "<p><strong>** #{subject} **</strong></p>\n" + content
 
     unique_message_id = "https://#{BASEDOMAIN}/m_#{from_participant.id}_#{message.id}"
 

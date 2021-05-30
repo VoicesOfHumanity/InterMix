@@ -199,7 +199,7 @@ class MessagesController < ApplicationController
     @psection = 'mail'
     @inout = params[:inout]
     @message_id = params[:id]
-    @message = Message.includes(:sender,:recipient,:group).find(@message_id)
+    @message = Message.includes(:sender, :remote_sender, :recipient).find(@message_id)
     if @message.to_participant_id == current_participant.id
       @message.read_web = true
       @message.read_at = Time.now
