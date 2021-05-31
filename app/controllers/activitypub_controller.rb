@@ -84,7 +84,7 @@ class ActivitypubController < ApplicationController
         "icon" => {
           "mediaType" => "image/jpeg",
           "type" => "icon",
-          "url" => "https://#{BASEDOMAIN}@icon_url"
+          "url" => "https://#{BASEDOMAIN}#{@icon_url}"
         },
         "publicKey" => {
           "id" => "#{@account_url}#key",

@@ -1,7 +1,7 @@
 From: 
 <% if @message.sender -%>
 	<a href="/participant/<%= @message.from_participant_id %>/profile"><%= @message.sender.name %></a>
-<% elsif message.remote_sender -%>
+<% elsif @message.remote_sender -%>
   <a href="/people/remote/<%= @message.remote_sender.id %>/profile"><%= @message.remote_sender.name %> (<%= @message.remote_sender.account %>)</a>
 <% elsif @message.from_participant_id.to_i > 0 -%>
   #<%= @message.from_participant_id %>
