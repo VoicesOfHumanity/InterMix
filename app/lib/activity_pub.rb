@@ -58,10 +58,12 @@ module ActivityPub
   
   def record_response(results_json)
     # update the record with the results, if any
-    @api_request.response_body = results_json
-    @api_request.participant_id = @account.id if @account
-    @api_request.processed = true
-    @api_request.save
+    if @api_request
+      @api_request.response_body = results_json
+      @api_request.participant_id = @account.id if @account
+      @api_request.processed = true
+      @api_request.save
+    end
   end
   
   def is_valid_request(req, remote_actor, participant)

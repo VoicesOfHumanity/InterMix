@@ -10,9 +10,9 @@
 <p>
 Personal message from:
 <% if @cdata['message'].remote_sender -%>
-    <a href="https://<%= BASEDOMAIN %>/people/remote/<%= @cdata['message'].remote_sender.id %>/profile?auth_token=<%= @cdata['recipient'].authentication_token"><%= @cdata['message'].remote_sender.name %> (<%= @cdata['message'].remote_sender.account %>)</a>
+    <a href="https://<%= BASEDOMAIN %>/people/remote/<%= @cdata['message'].remote_sender.id %>/profile?auth_token=<%= @cdata['recipient'].authentication_token %>"><%= @cdata['message'].remote_sender.name %> (<%= @cdata['message'].remote_sender.account %>)</a>
 <% elsif @cdata['message'].sender -%>
-    <a href="https://<%= BASEDOMAIN %>/participant/<%= @message.from_participant_id %>/profile?auth_token=<%= @cdata['recipient'].authentication_token"><%= @cdata['message'].sender.name %></a>
+    <a href="https://<%= BASEDOMAIN %>/participant/<%= @message.from_participant_id %>/profile?auth_token=<%= @cdata['recipient'].authentication_token %>"><%= @cdata['message'].sender.name %></a>
 <% else -%>
     ???
 <% end -%>

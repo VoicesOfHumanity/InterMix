@@ -99,7 +99,7 @@ class ActivitypubController < ApplicationController
     
     results_json = results.to_json
     
-    record_response(results_json)
+    #record_response(results_json)
     
     expires_in 3.days, public: true
     #render json: results_json, content_type: 'application/jrd+json'
