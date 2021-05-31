@@ -109,6 +109,7 @@ class ActivitypubController < ApplicationController
   def inbox
     # Where items for a certain user arrive
     # Somebody is sending us something
+    render json: {"message" => "Thank you!"}, content_type: 'application/activity+json'    
   end
   
   def feed

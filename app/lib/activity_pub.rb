@@ -20,10 +20,29 @@ module ActivityPub
   
   def record_request
     # Record what we're receiving. Later, we can add our response
+    request_headers = request.env.select {|k,v| k =~ /^HTTP_/ and ! k.starts_with?("HTTP_COOKIE")}
+    if request_headers.has_key?('HTTP_CONTENT_TYPE')
+      content_type = request_headers['HTTP_CONTENT_TYPE']
+    elsif request.env.has_key?('CONTENT_TYPE')
+      content_type = request.env['CONTENT_TYPE']
+    elsif headers.has_key?("Content-Type")
+      content_type = headers["Content-Type"]
+    else
+      content_type = request.format  
+    end
+    request_headers['HTTP_CONTENT_TYPE'] = content_type
+    if request_headers.has_key?('HTTP_CONTENT_LENGTH') 
+      content_length = request_headers['HTTP_CONTENT_LENGTH']
+    elsif request.env.has_key?('CONTENT_LENGTH')
+      content_length = request.env['CONTENT_LENGTH']
+    elsif headers.has_key?("Content-Length")
+      content_length = headers["Content-Length"]
+    end
+    request_headers['HTTP_CONTENT_LENGTH'] = content_length
     begin
       @api_request = ApiRequest.create(
-        request_headers: request.env.select {|k,v| k =~ /^HTTP_/ and ! k.starts_with?("HTTP_COOKIE")},
-        request_content_type: request.format,
+        request_headers: request_headers,
+        request_content_type: content_type,
         request_method: request.method,
         remote_ip: request.remote_ip,
         path: request.fullpath,
