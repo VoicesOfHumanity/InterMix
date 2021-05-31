@@ -159,6 +159,7 @@ Rails.application.routes.draw do
   
   # activitypub
   post 'u/:acct_id/inbox.json', to: 'activitypub#inbox'
+  post 'u/:acct_id/inbox', to: 'activitypub#inbox'
   get 'u/:acct_id', to: 'activitypub#account_info'
   get 'u/:acct_id/feed.json', to: 'activitypub#feed'
   get 'u/:acct_id/key.json', to: 'activitypub#account_key'
