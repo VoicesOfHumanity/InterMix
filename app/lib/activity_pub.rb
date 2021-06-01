@@ -491,7 +491,7 @@ module ActivityPub
     end    
     
     p.destroy! if p
-    `rm -f #{tempfilepath}`
+    `rm -f #{tempfile.path}` if tempfile and tempfile.path
     
   end
   

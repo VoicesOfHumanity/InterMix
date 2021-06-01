@@ -8,12 +8,18 @@
   <tr><td class="label">Summary:</td><td><%=raw sanitizethis(@remote_actor.summary) %></td></tr>
 
   <tr><td class="label">Icon:</td><td>
-  <% if @remote_actor.icon_url.to_s != '' -%>
+  <% filepath = "#{DATADIR}/remote/pictures/#{@remote_actor.id}/big.jpg" %>
+  <% if File.exist?(filepath) -%>    
+    <img src="/images/data/remote/pictures/<%= @remote_actor.id %>/big.jpg"/>
+  <% elsif @remote_actor.icon_url.to_s != '' -%>
     <img src="<%= @remote_actor.icon_url %>"/>
   <% end -%>
   </td></tr>
   <tr><td class="label">Image:</td><td>
-  <% if @remote_actor.image_url.to_s != '' -%>
+  <% filepath = "#{DATADIR}/remote/pictures/#{@remote_actor.id}/header.jpg" %>
+  <% if File.exist?(filepath) -%>    
+    <img src="/images/data/remote/pictures/<%= @remote_actor.id %>/header.jpg"/>
+  <% elsif @remote_actor.image_url.to_s != '' -%>
     <img src="<%= @remote_actor.image_url %>"/>
   <% end -%>
   </td></tr>
