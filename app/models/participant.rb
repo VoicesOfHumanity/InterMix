@@ -71,6 +71,15 @@ class Participant < ActiveRecord::Base
     return "https://#{BASEDOMAIN}/u/#{self.account_uniq}"
   end
   
+  def thumb_or_blank
+    # Return a link to a 50x50 thumbnail picture    
+    if self.picture.exists?
+      return self.picture.url(:thumb)  
+    else
+      return "https://#{BASEDOMAIN}/images/default_user_icon-50x50.png"
+    end
+  end
+  
   def show_country2
     if self.country_code2 == '_I'
       'Indigenous peoples'
