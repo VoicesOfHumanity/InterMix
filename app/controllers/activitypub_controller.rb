@@ -145,7 +145,7 @@ class ActivitypubController < ApplicationController
       elsif f.followed_fulluniq.to_s != ''
         following_fulluniq = f.followed_fulluniq
       else
-        continue
+        next
       end        
       follower_list << following_fulluniq            
     end

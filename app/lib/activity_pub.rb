@@ -1,6 +1,8 @@
 require 'uri'
 require 'openssl'
 require "base64"
+require "down"
+
 
 module ActivityPub
   
@@ -412,7 +414,10 @@ module ActivityPub
               remote_actor.image_url = data['image']['url']
             end
             remote_actor.last_fetch = Time.now
-            remote_actor.save   
+            remote_actor.save
+            
+            #get_remote_actor_images(remote_actor)
+            
           else
             Rails.logger.info("activitypub#get_remote_actor unexpected json data}")
             return nil
@@ -425,6 +430,125 @@ module ActivityPub
       end
     end
     return remote_actor
+  end
+  
+  def get_remote_actor_images(remote_actor)
+    # Download their images, so we have a local copy
+    # We want to get their icon_url and image_url, and make a small version of the icon
+
+    tempfile = nil
+    begin
+      tempfile = Down.download(original_url)
+    rescue
+    end
+
+    if not tempfile
+      logger.info("items#getthumb didn't get a file")
+      return 0
+    end
+
+    logger.info("items#getthumb downloaded to:#{tempfile.path} original:#{tempfile.original_filename}")      
+    tempfilepath = tempfile.path
+    
+    if not File.exist?(tempfilepath)
+      logger.info("items#getthumb no file found at #{tempfilepath}")
+      return
+    end  
+    
+		gotpicsize = File.stat("#{tempfilepath}").size
+    gotwidth = 0
+    gotheight = 0
+    begin
+      image_size = ImageSize.path("#{tempfilepath}")
+      gotwidth = image_size.width
+      gotheight = image_size.height
+    rescue
+      logger.info("items#getthumb couldn't get image size for #{tempfilepath}")           
+    end    
+    logger.info("items#getthumb got size #{gotpicsize}bytes dimensions:#{gotwidth}x#{gotheight}")   
+
+    if gotwidth > 0 and (gotwidth < 50 or gotheight < 50)
+      logger.info("items#getthumb image #{tempfilepath} is too small in dimensions")
+      return
+    end  
+    if gotpicsize < 1000
+      logger.info("items#getthumb image #{tempfilepath} is too small in file size")
+      return
+    end  
+
+    if not thumb
+      thumb = ItemThumb.create(original_url: original_url)
+    end
+    thumb_id = thumb.id
+    logger.info("items#getthumb thumb_id:#{thumb_id}")
+
+    picdir = "#{DATADIR}/itemthumbs/#{thumb_id}"
+    `mkdir "#{picdir}"` if not File.exist?(picdir)
+    bigfilepath = "#{picdir}/big.jpg"
+    thumbfilepath = "#{picdir}/thumb.jpg"
+
+    logger.info("items#getthumb converting #{tempfilepath} to #{bigfilepath}") 
+    p = nil
+    begin
+      p = Magick::Image.read("#{tempfilepath}").first
+      if p
+        p.change_geometry('800x800') { |cols, rows, img| img.resize!(cols, rows) }
+        p.write("#{bigfilepath}")
+      end
+    rescue
+    end
+    
+    if p and File.exist?(bigfilepath)
+
+  		bigpicsize = File.stat("#{bigfilepath}").size
+      iwidth = iheight = 0
+      begin
+        open("#{bigfilepath}", "rb") do |fh|
+          iwidth,iheight = ImageSize.new(fh.read).get_size
+        end
+      rescue
+      end  
+      logger.info("items#getthumb size:#{bigpicsize} dim:#{iwidth}x#{iheight}")
+    
+      #-- Construct a thumb image 200x200
+      #`rm -f #{tempfilepath2}` if File.exist?(tempfilepath2)
+    
+      if iwidth.to_i >= iheight.to_i and iheight.to_i > 0
+        p.change_geometry('1000x200') { |cols, rows, img| img.resize!(cols, rows) }
+      else
+        p.change_geometry('200x1000') { |cols, rows, img| img.resize!(cols, rows) }
+      end
+      #p.write("#{tempfilepath2}")
+
+      #if File.exist?(tempfilepath2)
+        #p = Magick::Image.read("#{tempfilepath}").first
+        if iwidth.to_i >= iheight.to_i and iheight.to_i > 0
+          #-- If it is a landscape picture, get the middle part
+          width = iwidth * 200 / iheight
+          offset = ((width - 200) / 2).to_i
+          icon = p.crop(offset, 0, 200, 200)
+        else
+          #-- If it is a portrait picture, get the top part
+          icon = p.crop(0, 0, 200, 200)
+        end
+        icon.write("#{thumbfilepath}")
+      #end
+    
+      p.destroy! if p
+      icon.destroy! if icon
+    
+      `rm -f #{tempfilepath}`
+    
+      thumb.our_path = "/images/data/itemthumbs/#{thumb_id}/thumb.jpg"      
+      thumb.save!
+
+      return thumb.id
+    else
+      logger.info("items#getthumb #{bigfilepath} not found")
+      return 0
+    end
+
+    
   end
   
   def get_actor_url_by_webfinger(actor_addr)

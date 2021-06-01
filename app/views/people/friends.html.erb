@@ -22,15 +22,15 @@
 <table>
 <% @friends.each do |f| %>
   <tr>
-  <% if f.int_ext == 'ext' -%>
-    <% remote_actor = f.remote_idol %>
-    <td style="width:55px"><img src="<%= remote_actor.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
-    <td><a href="/people/remote/<%= remote_actor ? remote_actor.id : 0 %>/profile">#<%= remote_actor.id %>: <%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></a></td>
-  <% else -%>
-    <% person = f.idol %>    
-    <td style="width:55px"><img src="<%= person.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
-		<td><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></td>
-  <% end -%>
+    <% if f.int_ext == 'ext' -%>
+      <% remote_actor = f.remote_idol %>
+      <td style="width:55px"><img src="<%= remote_actor.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
+      <td><a href="/people/remote/<%= remote_actor ? remote_actor.id : 0 %>/profile">#<%= remote_actor.id %>: <%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></a></td>
+    <% else -%>
+      <% person = f.idol %>    
+      <td style="width:55px"><img src="<%= person.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
+  		<td><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></td>
+    <% end -%>
   </tr>
 <% end %>
 </table>
@@ -48,15 +48,17 @@
 
 <table>
 <% @followers.each do |f| %>
-  <% if f.int_ext == 'ext' -%>
-    <% remote_actor = f.remote_follower %>
-    <td style="width:55px"><img src="<%= remote_actor.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
-    <td><a href="/people/remote/<%= remote_actor ? remote_actor.id : 0 %>/profile">#<%= remote_actor.id %>: <%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></a></td>
-  <% else -%>
-    <% person = f.follower %>
-    <td style="width:55px"><img src="<%= person.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
-		<td><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></td>
-  <% end -%>
+  <tr>
+    <% if f.int_ext == 'ext' -%>
+      <% remote_actor = f.remote_follower %>
+      <td style="width:55px"><img src="<%= remote_actor.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
+      <td><a href="/people/remote/<%= remote_actor ? remote_actor.id : 0 %>/profile">#<%= remote_actor.id %>: <%= f.following_fulluniq %>: <%= remote_actor.name if remote_actor %></a></td>
+    <% else -%>
+      <% person = f.follower %>
+      <td style="width:55px"><img src="<%= person.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
+  		<td><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></td>
+    <% end -%>
+  </tr>
 <% end %>
 </table>
 
@@ -72,15 +74,17 @@
 
 <table>
 <% @followeds.each do |f| %>
-  <% if f.int_ext == 'ext' -%>
-    <% remote_actor = f.remote_idol %>
-    <td style="width:55px"><img src="<%= remote_actor.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
-    <td><a href="/people/remote/<%= remote_actor ? remote_actor.id : 0 %>/profile">#<%= remote_actor.id %>: <%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></a></td>
-  <% else -%>
-    <% person = f.idol %>
-    <td style="width:55px"><img src="<%= person.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
-		<td><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></td>
-  <% end -%>
+  <tr>
+    <% if f.int_ext == 'ext' -%>
+      <% remote_actor = f.remote_idol %>
+      <td style="width:55px"><img src="<%= remote_actor.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
+      <td><a href="/people/remote/<%= remote_actor ? remote_actor.id : 0 %>/profile">#<%= remote_actor.id %>: <%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></a></td>
+    <% else -%>
+      <% person = f.idol %>
+      <td style="width:55px"><img src="<%= person.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
+  		<td><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></td>
+    <% end -%>
+  </tr>
 <% end %>
 </table>
 
