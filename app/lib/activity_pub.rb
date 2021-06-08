@@ -794,7 +794,7 @@ module ActivityPub
       # "object":"https://intermix.cr8.com/u/ff2602"
       if obj.has_key?('to')
         if obj['to'].class == Array
-          data['to_actor_url'].merge(obj['to'])
+          data['to_actor_url'].concat obj['to']
         elsif obj['to'].class == String
           data['to_actor_url'] << obj['to']          
         end
@@ -805,11 +805,11 @@ module ActivityPub
     elsif object.class == Hash and object.has_key?('type')
       otype = object['type']
       if object.has_key?('to') and object['to'].class == Array
-        data['to_actor_url'].merge(object['to'])
+        data['to_actor_url'].concat object['to']
       elsif object.has_key?('to') and object['to'].class == String
         data['to_actor_url'] << object['to']
       elsif obj.has_key?('to') and obj['to'].class == Array
-        data['to_actor_url'].merge(obj['to'])
+        data['to_actor_url'].concat obj['to']
       elsif obj.has_key?('to') and obj['to'].class == String
         data['to_actor_url'] << obj['to']
       elsif object.has_key?('actor') and object['actor'].class == String
@@ -817,7 +817,7 @@ module ActivityPub
       end      
       if object.has_key?('cc')
         if object['cc'].class == Array
-          data['to_actor_url'].merge(obj['cc'])
+          data['to_actor_url'].concat obj['cc']
         elsif obj['cc'].class == String
           data['to_actor_url'] << obj['cc']          
         end
