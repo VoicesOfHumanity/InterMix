@@ -772,7 +772,6 @@ module ActivityPub
       'date': nil
     }
     data['to_actor_url'] = []
-    puts "data['to_actor_url']:#{data['to_actor_url'].inspect}"
     
     if not obj.has_key?('type') or not obj.has_key?('actor') or not obj.has_key?('object')
       data['status'] = 'error'
@@ -805,7 +804,6 @@ module ActivityPub
       otype = 'actor'
     elsif object.class == Hash and object.has_key?('type')
       otype = object['type']
-      puts "data['to_actor_url']:#{data['to_actor_url'].inspect} object['to']:#{object['to']}"
       if object.has_key?('to')
         data['to_actor_url'] << object['to']
       elsif obj.has_key?('to')
@@ -863,6 +861,7 @@ module ActivityPub
     data['from_remote_actor'] = get_remote_actor(data['from_actor_url'])
 
     # NB: WE NEED TO BE ABLE TO DEAL WITH MULTIPLE RECIPIENTS
+    puts "data['to_actor_url']:#{data['to_actor_url'].inspect}"
     for to_actor_url in data['to_actor_url']
       # We exected it to be an array with at least one entry
       # It might also have things like the remote user's own follower url
@@ -887,6 +886,7 @@ module ActivityPub
           participant = Participant.find_by_account_uniq(username)
         end
       end
+      puts "to_actor_url:#{to_actor_url} participant:#{participant.id if participant}"
       if participant
         data['to_participant'] = participant
         break
