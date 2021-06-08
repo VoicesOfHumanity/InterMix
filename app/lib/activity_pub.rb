@@ -771,6 +771,7 @@ module ActivityPub
       'content': nil,
       'date': nil
     }
+    puts "data['to_actor_url']:#{data['to_actor_url']}"
     
     if not obj.has_key?('type') or not obj.has_key?('actor') or not obj.has_key?('object')
       data['status'] = 'error'
@@ -860,15 +861,7 @@ module ActivityPub
     
     data['from_remote_actor'] = get_remote_actor(data['from_actor_url'])
 
-    if data['to_actor_url'].class == Array
-      # We might have gotten a list of recipients. Hopefully just one
-      # NB: WE NEED TO BE ABLE TO DEAL WITH MULTIPLE RECIPIENTS
-      
-      if data['to_actor_url'].length == 1
-        data['to_actor_url'] = data['to_actor_url'][0]
-      end
-    end
-    
+    # NB: WE NEED TO BE ABLE TO DEAL WITH MULTIPLE RECIPIENTS
     for to_actor_url in data['to_actor_url']
       # We exected it to be an array with at least one entry
       # It might also have things like the remote user's own follower url
@@ -876,9 +869,9 @@ module ActivityPub
       if to_actor_url != '' and to_actor_url.include?(BASEDOMAIN)
         # https://intermix.cr8.com/u/ff2602
         begin
-          url = URI.parse(data['to_actor_url'])
+          url = URI.parse(to_actor_url)
         rescue
-          puts "no url from to_actor_url:#{data['to_actor_url']}"
+          puts "no url from to_actor_url:#{to_actor_url}"
           url = nil
         end
         if url
