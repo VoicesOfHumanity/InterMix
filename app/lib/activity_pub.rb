@@ -868,7 +868,7 @@ module ActivityPub
       end
     end
     
-    for to_actor_url in data['to_actor_url']:
+    for to_actor_url in data['to_actor_url']
       # We exected it to be an array with at least one entry
       # It might also have things like the remote user's own follower url
       participant = nil
