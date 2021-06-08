@@ -2,7 +2,7 @@
   
   <table class="profiletable">
   <tr><td class="label">Account:</td><td><%= @remote_actor.account %></td></tr>
-  <tr><td class="label">URL:</td><td><a href="@remote_actor.account_ur" target="_blank"><%= @remote_actor.account_url %></a></td></tr>
+  <tr><td class="label">URL:</td><td><a href="<%= @remote_actor.account_url %>" target="_blank"><%= @remote_actor.account_url %></a></td></tr>
   <tr><td class="label">Username:</td><td><%= @remote_actor.username %></td></tr>
   <tr><td class="label">Name:</td><td><%= @remote_actor.name %></td></tr>
   <tr><td class="label">Summary:</td><td><%=raw sanitizethis(@remote_actor.summary) %></td></tr>

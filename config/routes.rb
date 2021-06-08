@@ -319,6 +319,7 @@ Rails.application.routes.draw do
     post :report_api, on: :member
     post :create_api, on: :collection
     post :censor, on: :member
+    get :followed, on: :collection
   end  
   
   resources :messages do

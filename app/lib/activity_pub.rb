@@ -864,7 +864,9 @@ module ActivityPub
     
     data['from_remote_actor'] = get_remote_actor(data['from_actor_url'])
 
-    # NB: WE NEED TO BE ABLE TO DEAL WITH MULTIPLE RECIPIENTS
+    # NB: WE NEED TO BE ABLE TO DEAL WITH MULTIPLE RECIPIENTS, like:
+    # https://www.w3.org/ns/activitystreams#Public
+    # https://social.coop/users/ming/followers
     puts "data['to_actor_url']:#{data['to_actor_url'].inspect}"
     for to_actor_url in data['to_actor_url']
       # We exected it to be an array with at least one entry
@@ -893,10 +895,12 @@ module ActivityPub
           participant = Participant.find_by_account_uniq(username)
         end
       end
-      puts "to_actor_url:#{to_actor_url} participant:#{participant.id if participant}"
       if participant
+        puts "to_actor_url:#{to_actor_url} participant:#{participant.id} - good"
         data['to_participant'] = participant
         break
+      else
+        puts "to_actor_url:#{to_actor_url} didn't know what to do with that"
       end
     end
     

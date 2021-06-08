@@ -1824,6 +1824,11 @@ class Item < ActiveRecord::Base
       # Only posts for a particular user, like for their wall
       items = items.where(posted_by: crit[:posted_by])
     end
+    
+    if crit[:followed_by].to_i > 0
+      # Only posts by people followed by this user
+      items = items.joins("join follows on (follows.followed_id=items.posted_by and follows.following_id=#{crit[:followed_by]})")
+    end
 
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
     if current_participant

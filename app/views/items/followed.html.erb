@@ -1,0 +1,24 @@
+<%= render(:partial => 'messages/menu')%>
+
+<h3>Posted by people you follow:</h3>
+
+<form id="searchform">
+<div id="forumcontrol">
+
+
+<%= hidden_field_tag "from", "#{@from}" %>
+
+</div>
+</form>
+
+<div style="clear:both;height:1px"></div>
+
+<div id="itemlist">
+<%= render(:partial => 'items/list')%>
+</div>
+
+<script>
+function gotopage(page) {
+  window.location = '/items/followed?page=' + page;
+}
+</script>
