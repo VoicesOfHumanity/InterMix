@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_30_004207) do
+ActiveRecord::Schema.define(version: 2021_06_06_225117) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -675,6 +675,7 @@ ActiveRecord::Schema.define(version: 2021_05_30_004207) do
     t.string "int_ext", default: "int"
     t.text "received_json"
     t.integer "api_request_id"
+    t.string "remote_reference"
     t.index ["from_participant_id", "id"], name: "index_messages_on_from_participant_id_and_id"
     t.index ["from_remote_actor_id"], name: "index_messages_on_from_remote_actor_id"
     t.index ["message_id"], name: "index_messages_on_message_id", length: 30

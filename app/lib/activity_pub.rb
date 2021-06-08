@@ -657,13 +657,17 @@ module ActivityPub
     
   end
   
-  def respond_to_note(from_remote_actor, to_participant, ref_id, api_request_id, content, date, object)
+  def respond_to_note(from_remote_actor, to_participant, ref_id, api_request_id, content, date, object, their_message_id)
     #-- Receive a note. Assuming it to be a personal message at the moment
     if not from_remote_actor or not to_participant
       return false
     end
     
     message = Message.where(from_remote_actor_id: from_remote_actor.id, to_participant_id: to_participant.id, api_request_id: api_request_id).first
+    if not message
+      # Potentially one message might have several recipients, but we're not dealing with that yet
+      message = Message.where(from_remote_actor_id: from_remote_actor.id, to_participant_id: to_participant.id, remote_reference: their_message_id).first
+    end
         
     if message
       puts "message already exists"
@@ -679,7 +683,8 @@ module ActivityPub
         int_ext: 'ext',
         email_sent: false,
         received_json: object,
-        api_request_id: api_request_id
+        api_request_id: api_request_id,
+        remote_reference: their_message_id
       )
       puts "message created"
       message.emailit
@@ -754,7 +759,7 @@ module ActivityPub
     data = {
       'atype': '',
       'from_actor_url': '',
-      'to_actor_url': '',
+      'to_actor_url': [],
       'object': nil,
       'otype': '',
       'rtype': '',
@@ -787,19 +792,30 @@ module ActivityPub
     if object.class == String
       # "object":"https://intermix.cr8.com/u/ff2602"
       if obj.has_key?('to')
-        data['to_actor_url'] = obj['to']
+        if obj['to'].class == Hash
+          data['to_actor_url'].merge(obj['to'])
+        elsif obj['to'].class == String
+          data['to_actor_url'] << obj['to']          
+        end
       else
-        data['to_actor_url'] = object
+        data['to_actor_url'] << object
       end
       otype = 'actor'
     elsif object.class == Hash and object.has_key?('type')
       otype = object['type']
       if object.has_key?('to')
-        data['to_actor_url'] = object['to']
+        data['to_actor_url'] << object['to']
       elsif obj.has_key?('to')
-        data['to_actor_url'] = obj['to']
+        data['to_actor_url'] << obj['to']
       elsif object.has_key?('actor')
-        data['to_actor_url'] = object['actor']
+        data['to_actor_url'] << object['actor']
+      end      
+      if object.has_key?('cc')
+        if object['cc'].class == Hash
+          data['to_actor_url'].merge(obj['cc'])
+        elsif obj['cc'].class == String
+          data['to_actor_url'] << obj['cc']          
+        end
       end
       if object.has_key?('id')
         data['ref_id'] = object['id']
@@ -816,15 +832,7 @@ module ActivityPub
       data['error'] = "Can't identify any target object"
       return data
     end
-    data['otype'] = otype
-
-    if data['to_actor_url'].class == Array
-      # We might have gotten a list of recipients. Hopefully just one
-      # NB: WE NEED TO BE ABLE TO DEAL WITH MULTIPLE RECIPIENTS
-      if data['to_actor_url'].length == 1
-        data['to_actor_url'] = data['to_actor_url'][0]
-      end
-    end
+    data['otype'] = otype    
         
     if not data['ref_id'] and obj.has_key?('id')
       data['ref_id'] = obj['id']
@@ -850,26 +858,43 @@ module ActivityPub
     data['rtype'] = rtype
     
     data['from_remote_actor'] = get_remote_actor(data['from_actor_url'])
-    
-    if data['to_actor_url'] != ''
-      # https://intermix.cr8.com/u/ff2602
-      begin
-        url = URI.parse(data['to_actor_url'])
-      rescue
-        puts "no url from to_actor_url:#{data['to_actor_url']}"
-        url = nil
+
+    if data['to_actor_url'].class == Array
+      # We might have gotten a list of recipients. Hopefully just one
+      # NB: WE NEED TO BE ABLE TO DEAL WITH MULTIPLE RECIPIENTS
+      
+      if data['to_actor_url'].length == 1
+        data['to_actor_url'] = data['to_actor_url'][0]
       end
-      if url
-        parr = url.path.split('/')
-        last = parr.last
-        xarr = last.split('?')
-        if xarr.length > 0
-          username = xarr[0]
-        else
-          username = last
+    end
+    
+    for to_actor_url in data['to_actor_url']:
+      # We exected it to be an array with at least one entry
+      # It might also have things like the remote user's own follower url
+      participant = nil
+      if to_actor_url != '' and to_actor_url.include?(BASEDOMAIN)
+        # https://intermix.cr8.com/u/ff2602
+        begin
+          url = URI.parse(data['to_actor_url'])
+        rescue
+          puts "no url from to_actor_url:#{data['to_actor_url']}"
+          url = nil
         end
-        participant = Participant.find_by_account_uniq(username)
-        data['to_participant'] = participant if participant
+        if url
+          parr = url.path.split('/')
+          last = parr.last
+          xarr = last.split('?')
+          if xarr.length > 0
+            username = xarr[0]
+          else
+            username = last
+          end
+          participant = Participant.find_by_account_uniq(username)
+        end
+      end
+      if participant
+        data['to_participant'] = participant
+        break
       end
     end
     

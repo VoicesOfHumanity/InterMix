@@ -83,7 +83,7 @@ for req in requests
   elsif rtype == 'note'
     # A note being sent to one of our users, hopefully a private message
     puts "processing a received note"
-    res = respond_to_note(from_remote_actor, to_participant, ref_id, req.id, content, date, object)
+    res = respond_to_note(from_remote_actor, to_participant, ref_id, req.id, content, date, object, ref_id)
     
   elsif rtype == 'follow_request'
     # Somebody wants to follow our user
