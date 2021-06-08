@@ -771,7 +771,8 @@ module ActivityPub
       'content': nil,
       'date': nil
     }
-    puts "data['to_actor_url']:#{data['to_actor_url']}"
+    data['to_actor_url'] = []
+    puts "data['to_actor_url']:#{data['to_actor_url'].inspect}"
     
     if not obj.has_key?('type') or not obj.has_key?('actor') or not obj.has_key?('object')
       data['status'] = 'error'
@@ -804,7 +805,7 @@ module ActivityPub
       otype = 'actor'
     elsif object.class == Hash and object.has_key?('type')
       otype = object['type']
-      puts "data['to_actor_url']:#{data['to_actor_url']} object['to']:#{object['to']}"
+      puts "data['to_actor_url']:#{data['to_actor_url'].inspect} object['to']:#{object['to']}"
       if object.has_key?('to')
         data['to_actor_url'] << object['to']
       elsif obj.has_key?('to')
