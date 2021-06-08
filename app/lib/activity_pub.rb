@@ -793,7 +793,7 @@ module ActivityPub
     if object.class == String
       # "object":"https://intermix.cr8.com/u/ff2602"
       if obj.has_key?('to')
-        if obj['to'].class == Hash
+        if obj['to'].class == Array
           data['to_actor_url'].merge(obj['to'])
         elsif obj['to'].class == String
           data['to_actor_url'] << obj['to']          
@@ -804,15 +804,19 @@ module ActivityPub
       otype = 'actor'
     elsif object.class == Hash and object.has_key?('type')
       otype = object['type']
-      if object.has_key?('to')
+      if object.has_key?('to') and object['to'].class == Array
+        data['to_actor_url'].merge(object['to'])
+      elsif object.has_key?('to') and object['to'].class == String
         data['to_actor_url'] << object['to']
-      elsif obj.has_key?('to')
+      elsif obj.has_key?('to') and obj['to'].class == Array
+        data['to_actor_url'].merge(obj['to'])
+      elsif obj.has_key?('to') and obj['to'].class == String
         data['to_actor_url'] << obj['to']
-      elsif object.has_key?('actor')
+      elsif object.has_key?('actor') and object['actor'].class == String
         data['to_actor_url'] << object['actor']
       end      
       if object.has_key?('cc')
-        if object['cc'].class == Hash
+        if object['cc'].class == Array
           data['to_actor_url'].merge(obj['cc'])
         elsif obj['cc'].class == String
           data['to_actor_url'] << obj['cc']          
@@ -865,6 +869,9 @@ module ActivityPub
     for to_actor_url in data['to_actor_url']
       # We exected it to be an array with at least one entry
       # It might also have things like the remote user's own follower url
+      if to_actor_url.class == Array
+        to_actor_url = to_actor_url[0]
+      end
       participant = nil
       if to_actor_url != '' and to_actor_url.include?(BASEDOMAIN)
         # https://intermix.cr8.com/u/ff2602
