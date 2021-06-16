@@ -188,7 +188,11 @@ module ActivityPub
       if header == '(request-target)'
         # The method could also be gotten from req.request_method
         # The path could also be gotten from req.path
-        inbox_path = "/u/#{participant.account_uniq}/inbox" # /u/ff2602/inbox
+        if participant
+          inbox_path = "/u/#{participant.account_uniq}/inbox" # /u/ff2602/inbox
+        else
+          inbox_path = req.path
+        end
         data_to_sign += "(request-target): post #{inbox_path}"
       elsif header == 'host'
         # should be the same as HTTP_HOST
