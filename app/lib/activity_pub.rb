@@ -669,7 +669,7 @@ module ActivityPub
     
     # Check that we haven't already stored it. Look up by incoming api_request and also by given unique ID of post
     item = Item.where(posted_by_remote_actor_id: from_remote_actor.id, api_request_id: api_request_id).first
-    if not message
+    if not item
       item = Item.where(posted_by_remote_actor_id: from_remote_actor.id, remote_reference: their_post_id).first
     end
     
