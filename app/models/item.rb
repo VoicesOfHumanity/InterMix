@@ -283,12 +283,18 @@ class Item < ActiveRecord::Base
       allpeople = Participant.where(status: 'active').where("mycom_email='instant' or othercom_email='instant'")
       for person in allpeople
         hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.tag_list_downcase.include?(t) } )
-        hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.participant.tag_list_downcase.include?(t) } )
-        if person.id == 6 or person.id == 1867
-          logger.info("Item#emailit person #{person.id}: hasmessmatch:#{hasmessmatch} with item #{self.id}")
-          logger.info("Item#emailit person #{person.id}: hascommatch:#{hascommatch} with person #{self.participant.id}")
+        if self.participant
+          hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.participant.tag_list_downcase.include?(t) } )
+          person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with person #{self.participant.id}. "
+        else
+          # remote authors are not in the same communities
+          hascommatch = false
+          person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with remote person #{self.remote_poster.account}. "
         end
-        person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with person #{self.participant.id}. "
+        #if person.id == 6 or person.id == 1867
+        #  logger.info("Item#emailit person #{person.id}: hasmessmatch:#{hasmessmatch} with item #{self.id}")
+        #  logger.info("Item#emailit person #{person.id}: hascommatch:#{hascommatch} with person #{self.participant.id}")
+        #end
         if hasmessmatch and hascommatch and person.mycom_email == 'instant'
           person.explanation += "Match, and person.mycom_email is instant. "
           participants << person
@@ -332,7 +338,7 @@ class Item < ActiveRecord::Base
     
     if self.reply_to.to_i > 0 and self.comment_email_to == 'author'
       #-- It is a comment, and it is to the author only (of the message we reply to)
-      if self.orig_item and top and self.orig_item.posted_by != top.posted_by
+      if self.orig_item and top and top.posted_by.to_i > 0 and self.orig_item.posted_by != top.posted_by
         if not got_participants.has_key? self.orig_item.posted_by
           author = Participant.find_by_id(self.orig_item.posted_by)
           if author
@@ -493,11 +499,14 @@ class Item < ActiveRecord::Base
       
       itext += "<p>by "
 
-      if dialog and not dialog.settings_with_period["profiles_visible"]
-  		  itext += self.participant ? self.participant.name : self.posted_by
-  		else
+      if self.participant
   		  itext += "<a href=\"https://#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
-  		end
+      elsif self.remote_poster
+  		  itext += "<a href=\"https://#{domain}/people/remote/#{self.posted_by_remote_actor_id}/profile?auth_token=#{p.authentication_token}\">#{self.remote_poster.account} : #{self.remote_poster.name}</a>"        
+      else
+        itemx += "???"
+      end
+
   		itext += " " + self.created_at.strftime("%Y-%m-%d %H:%M")
   		itext += " <a href=\"https://#{domain}/items/#{self.id}/view?auth_token=#{p.authentication_token}\" title=\"permalink\">#</a>"
   		

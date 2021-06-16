@@ -227,11 +227,11 @@ end
     <% elsif item.participant -%>  
       <a href="/participant/<%= item.posted_by %>/wall"><%= item.participant.name %></a>
     <% elsif item.remote_poster -%>  
-      <a href="/people/remote/<%= item.posted_by_remote_actor_id %>/wall"><%= item.remote_poster.account %>: <%= item.remote_poster.name %></a>
+      <a href="/people/remote/<%= item.posted_by_remote_actor_id %>/profile"><%= item.remote_poster.account %>: <%= item.remote_poster.name %></a>
 		<% elsif item.posted_by.to_i > 0 -%>
 		  <a href="/participant/<%= item.posted_by %>/wall"><%= item.posted_by %></a>		
     <% elsif item.posted_by_remote_actor_id.to_i > 0 -%>  
-      <a href="/people/remote/<%= item.posted_by_remote_actor_id %>/wall"><%= item.posted_by_remote_actor_id %></a>
+      <a href="/people/remote/<%= item.posted_by_remote_actor_id %>/profile"><%= item.posted_by_remote_actor_id %></a>
 		<% else -%>
 		  ????
 		<% end -%>
