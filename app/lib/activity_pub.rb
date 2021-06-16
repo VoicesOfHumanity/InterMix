@@ -151,9 +151,9 @@ module ActivityPub
     if not remote_actor
       puts "there is no remote actor"
       return false
-    elsif not participant
-      puts "there is no participant"
-      return false  
+    #elsif not participant
+    # puts "there is no participant"
+    #  return false  
     end
     
     http_headers = req.request_headers
