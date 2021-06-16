@@ -2575,9 +2575,7 @@ class ItemsController < ApplicationController
     @items = @items.paginate page: @page, per_page: 10  
        
     update_last_url
-    
-    
-    
+       
   end
   
   protected 
