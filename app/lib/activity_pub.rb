@@ -693,7 +693,7 @@ module ActivityPub
         first_in_thread: 0,
         received_json: object,
         api_request_id: api_request_id,
-        remote_reference: their_message_id
+        remote_reference: their_post_id
       )
       puts "item created"
        
