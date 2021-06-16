@@ -682,7 +682,7 @@ module ActivityPub
       rescue       
       end
       
-      item = Item.create(
+      item = Item.create!(
         int_ext: 'ext',
         posted_by_remote_actor_id: from_remote_actor.id,
         subject: '',
@@ -695,7 +695,12 @@ module ActivityPub
         api_request_id: api_request_id,
         remote_reference: their_post_id
       )
-      puts "item created"
+      if item.id.to_i > 0
+        puts "item created"
+      else
+        puts "problem creating item"
+        return false
+      end
        
       # We should also do the things in items_controller#itemproces
       # like extracting tags, getting a preview
