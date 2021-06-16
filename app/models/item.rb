@@ -3157,7 +3157,7 @@ class Item < ActiveRecord::Base
 
     participant = Participant.find_by_id(participant_id)
     
-    logger.info("reply_ok is user #{self.id} friends with #{participant_id}? #{self.participant.friends_with(participant)}")
+    #logger.info("reply_ok is user #{self.id} friends with #{participant_id}? #{self.participant.friends_with(participant)}")
 
     if participant_id.to_i == 0
       return false
@@ -3170,71 +3170,16 @@ class Item < ActiveRecord::Base
       # Can't reply to a non-public message for a community if not a member
       return false
       
-    elsif from == 'wall' and not self.participant.friends_with(participant)
+    elsif from == 'wall' and self.participant and not self.participant.friends_with(participant)
+      # only friends can comment on somebody's wall
+      return false
+
+    elsif from == 'wall' and self.remote_poster and not participant.friends_with(self.remote_poster)
       # only friends can comment on somebody's wall
       return false
       
-    elsif false and self.intra_conv != 'public' and self.conversation_id.to_i > 0
-      # A conversation-only post can only be commented on by members of the communities in the conversation
-      # In the apart phase, furthermore only members of one of the communities of the poster can reply/vote
-      if @conversation and @conversation.together_apart != 'apart' and defined? @in_conversation 
-        return @in_converation
-      end
-
-      conversation = Conversation.find_by_id(self.conversation_id)
-      if conversation
-        if conversation.together_apart == 'apart'
-          # One must be in the community of the poster
-          for com in conversation.communities
-            if participant.tag_list_downcase.include?(com.tagname) and self.participant.tag_list_downcase.include?(com.tagname)
-              return true
-            end
-          end
-        else
-          for com in conversation.communities
-            if participant.tag_list_downcase.include?(com.tagname)
-              return true
-            end
-          end
-        end
-      end
-      return false
-      
-    elsif false and self.dialog_id.to_i > 0
-      #-- This item belongs to a discussion
-      
-      dialog = Dialog.includes(:groups).find_by_id(self.dialog_id)
-      if not dialog.settings_with_period["allow_replies"]
-        #-- Nobody's allowed to reply in that discussion
-        return false
-      end
-
-      #-- Is he a member of a group that's a member of the discussion?
-      groupsin = GroupParticipant.where("participant_id=#{participant_id}").includes(:group)       
-      dialoggroupsin = []
-      for group1 in dialog.groups
-        for group2 in groupsin
-          if group2.group and group1 and group2.group.id == group1.id
-            #-- He's a member of one of those groups, so it is ok
-            return true
-          end
-        end
-      end
-      return false
-      
-    elsif false and self.group_id.to_i > 0  
-      #-- This message belongs to a grop
-      group = Group.includes(:owner_participant).find_by_id(self.group_id)
-      group_participant = GroupParticipant.where("group_id = ? and participant_id = ?",self.group_id,participant_id).first
-      if group_participant
-        #-- He's a member
-        return true
-      else  
-        return false
-      end
     end
     
-    #-- If the item is not in a discussion or group, then anybody can reply. Probably not true, but let's pretend that for now
     return true
 
   end

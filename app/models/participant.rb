@@ -367,14 +367,19 @@ class Participant < ActiveRecord::Base
     ( self.followers + self.idols ).uniq
   end  
   
-  def friends_with(participant)
+  def friends_with(local_or_remote_user)
     # Is this person friends with that other person?
-    if participant.class == Participant
-      participant_id = participant.id
+    if local_or_remote_user.class == Participant
+      participant_id = local_or_remote_user.id
+      return Follow.where(following_id: self.id, followed_id: participant_id, mutual: true).first != nil      
+    elsif local_or_remote_user.class == RemoteActor
+      remote_actor_id = local_or_remote_user.id 
+      return Follow.where(following_id: self.id, followed_remote_actor_id: remote_actor_id, mutual: true).first != nil
     else
-      participant_id = participant.to_i
+      participant_id = local_or_remote_user.to_i
+      return Follow.where(following_id: self.id, followed_id: participant_id, mutual: true).first != nil
     end    
-    return Follow.where(following_id: self.id, followed_id: participant_id, mutual: true).first != nil
+    return false
   end
     
   def show_tag_list(with_links=false,include_check=false,show_result=false, for_participant=nil)
