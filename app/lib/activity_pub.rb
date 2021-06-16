@@ -894,7 +894,7 @@ module ActivityPub
     elsif atype.downcase == 'accept' and otype.downcase == 'follow'
       # Accepting our follow. We should have gotten ID we gave them
       rtype = 'accept_follow'
-    elsif atype.downcase == 'create' and otype.downcase == 'note' and to_actor_url.include? "https://www.w3.org/ns/activitystreams#Public"
+    elsif atype.downcase == 'create' and otype.downcase == 'note' and data['to_actor_url'].include? "https://www.w3.org/ns/activitystreams#Public"
       # A public post or follower post
       rtype = 'post'
     elsif atype.downcase == 'create' and otype.downcase == 'note'
