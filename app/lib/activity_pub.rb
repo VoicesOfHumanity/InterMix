@@ -956,7 +956,7 @@ module ActivityPub
     if not data['from_remote_actor']
       data['status'] = 'error'
       data['error'] = "Couldn't identify remote actor"
-    elsif not data['to_participant']
+    elsif not data['to_participant'] and data['rtype'] != 'post'
       data['status'] = 'error'
       data['error'] = "Couldn't identify target user"
     else  
