@@ -657,6 +657,50 @@ module ActivityPub
     
   end
   
+  def respond_to_post(from_remote_actor, ref_id, api_request_id, content, date, object, their_post_id)
+    #-- Receive a public post. Turn it into an item
+    if not from_remote_actor
+      return false
+    end    
+    
+    # Check that we haven't already stored it. Look up by incoming api_request and also by given unique ID of post
+    item = Item.where(posted_by_remote_actor_id: from_remote_actor.id, api_request_id: api_request_id).first
+    if not message
+      item = Item.where(posted_by_remote_actor_id: from_remote_actor.id, remote_reference: their_post_id).first
+    end
+    
+    if item
+      puts "item already exists"
+    else
+      
+      begin
+        short_content = content.gsub(/<\/?[^>]*>/, "").strip[0,140]
+      rescue       
+      end
+      
+      item = Item.create(
+        int_ext: 'ext',
+        posted_by_remote_actor_id: from_remote_actor.id,
+        subject: '',
+        html_content: content,
+        short_content: short_content,
+        reply_to: 0,  # We should really catch if it is a reply
+        is_first_in_thread: true,
+        first_in_thread: 0,
+        received_json: object,
+        api_request_id: api_request_id,
+        remote_reference: their_message_id
+      )
+      puts "item created"
+       
+      # We should also do the things in items_controller#itemproces
+      # like extracting tags, getting a preview
+      # item#process_new_item should run by itself when we save, which should email the post      
+    end
+    
+    return true
+  end
+  
   def respond_to_note(from_remote_actor, to_participant, ref_id, api_request_id, content, date, object, their_message_id)
     #-- Receive a note. Assuming it to be a personal message at the moment
     if not from_remote_actor or not to_participant
@@ -850,8 +894,11 @@ module ActivityPub
     elsif atype.downcase == 'accept' and otype.downcase == 'follow'
       # Accepting our follow. We should have gotten ID we gave them
       rtype = 'accept_follow'
+    elsif atype.downcase == 'create' and otype.downcase == 'note' and to_actor_url.include? "https://www.w3.org/ns/activitystreams#Public"
+      # A public post or follower post
+      rtype = 'post'
     elsif atype.downcase == 'create' and otype.downcase == 'note'
-      # Sending us a note
+      # Sending a private note
       rtype = 'note'
     elsif atype.downcase == 'delete' and otype.downcase == 'actor'
       # A remote account has been removed
@@ -868,39 +915,41 @@ module ActivityPub
     # https://www.w3.org/ns/activitystreams#Public
     # https://social.coop/users/ming/followers
     puts "data['to_actor_url']:#{data['to_actor_url'].inspect}"
-    for to_actor_url in data['to_actor_url']
-      # We exected it to be an array with at least one entry
-      # It might also have things like the remote user's own follower url
-      if to_actor_url.class == Array
-        to_actor_url = to_actor_url[0]
-      end
-      participant = nil
-      if to_actor_url != '' and to_actor_url.include?(BASEDOMAIN)
-        # https://intermix.cr8.com/u/ff2602
-        begin
-          url = URI.parse(to_actor_url)
-        rescue
-          puts "no url from to_actor_url:#{to_actor_url}"
-          url = nil
+    if rtype != 'post'
+      for to_actor_url in data['to_actor_url']
+        # We exected it to be an array with at least one entry
+        # It might also have things like the remote user's own follower url
+        if to_actor_url.class == Array
+          to_actor_url = to_actor_url[0]
         end
-        if url
-          parr = url.path.split('/')
-          last = parr.last
-          xarr = last.split('?')
-          if xarr.length > 0
-            username = xarr[0]
-          else
-            username = last
+        participant = nil
+        if to_actor_url != '' and to_actor_url.include?(BASEDOMAIN)
+          # https://intermix.cr8.com/u/ff2602
+          begin
+            url = URI.parse(to_actor_url)
+          rescue
+            puts "no url from to_actor_url:#{to_actor_url}"
+            url = nil
           end
-          participant = Participant.find_by_account_uniq(username)
+          if url
+            parr = url.path.split('/')
+            last = parr.last
+            xarr = last.split('?')
+            if xarr.length > 0
+              username = xarr[0]
+            else
+              username = last
+            end
+            participant = Participant.find_by_account_uniq(username)
+          end
         end
-      end
-      if participant
-        puts "to_actor_url:#{to_actor_url} participant:#{participant.id} - good"
-        data['to_participant'] = participant
-        break
-      else
-        puts "to_actor_url:#{to_actor_url} didn't know what to do with that"
+        if participant
+          puts "to_actor_url:#{to_actor_url} participant:#{participant.id} - good"
+          data['to_participant'] = participant
+          break
+        else
+          puts "to_actor_url:#{to_actor_url} didn't know what to do with that"
+        end
       end
     end
     

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_06_225117) do
+ActiveRecord::Schema.define(version: 2021_06_13_234836) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -584,7 +584,9 @@ ActiveRecord::Schema.define(version: 2021_06_06_225117) do
   create_table "items", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "item_type", default: "message"
     t.string "media_type", default: "text"
+    t.string "int_ext", default: "int"
     t.integer "posted_by"
+    t.integer "posted_by_remote_actor_id"
     t.integer "group_id"
     t.integer "dialog_id"
     t.integer "dialog_round_id"
@@ -634,6 +636,9 @@ ActiveRecord::Schema.define(version: 2021_06_06_225117) do
     t.string "together_apart", default: ""
     t.string "topic"
     t.string "comment_email_to", default: "author"
+    t.string "remote_reference"
+    t.text "received_json"
+    t.integer "api_request_id"
     t.index ["conversation_id"], name: "index_items_on_conversation_id"
     t.index ["created_at"], name: "index_items_on_created_at"
     t.index ["dialog_id", "created_at"], name: "index_items_on_dialog_id_and_created_at"
@@ -643,6 +648,7 @@ ActiveRecord::Schema.define(version: 2021_06_06_225117) do
     t.index ["old_message_id"], name: "index_items_on_old_message_id"
     t.index ["period_id", "id"], name: "index_items_on_period_id_and_id"
     t.index ["posted_by", "created_at"], name: "index_items_on_posted_by_and_created_at"
+    t.index ["posted_by_remote_actor_id"], name: "index_items_on_posted_by_remote_actor_id"
   end
 
   create_table "messages", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|

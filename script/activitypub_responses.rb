@@ -80,9 +80,14 @@ for req in requests
     req.redo = true
     req.save
     
+  elsif rtype == 'post'
+    # A public post
+    puts "processing a public post"
+    res = respond_to_post(from_remote_actor, ref_id, req.id, content, date, object, ref_id)
+    
   elsif rtype == 'note'
     # A note being sent to one of our users, hopefully a private message
-    puts "processing a received note"
+    puts "processing a received personal note"
     res = respond_to_note(from_remote_actor, to_participant, ref_id, req.id, content, date, object, ref_id)
     
   elsif rtype == 'follow_request'

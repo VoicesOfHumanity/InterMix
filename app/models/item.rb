@@ -1,6 +1,7 @@
 class Item < ActiveRecord::Base
-  belongs_to :participant, :counter_cache => true, :foreign_key => :posted_by
-  belongs_to :moderatedparticipant, :class_name => "Participant", :foreign_key => :moderated_by
+  belongs_to :participant, counter_cache: true, foreign_key: :posted_by, optional: true
+  belongs_to :remote_poster, optional: true, class_name: 'RemoteActor', foreign_key: :posted_by_remote_actor_id
+  belongs_to :moderatedparticipant, class_name: "Participant", foreign_key: :moderated_by, optional: true
   belongs_to :group, :counter_cache => true
   belongs_to :dialog
   belongs_to :period
@@ -14,6 +15,7 @@ class Item < ActiveRecord::Base
   belongs_to :orig_item, class_name: "Item", foreign_key: :reply_to, optional: true
   
   serialize :oembed_response
+  serialize :received_json
   
   #-- We store the result of the voting_ok check in attributes. Is it ok? Explanation? For what user?
   attr_accessor :v_ok, :v_ok_exp, :v_p_id
