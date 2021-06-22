@@ -70,6 +70,7 @@ for req in requests
   from_remote_actor = data['from_remote_actor']
   to_participant = data['to_participant']
   ref_id = data['ref_id']
+  replying_to = data['replying_to']
   content = data['content']
   date = data['date']
   object = data['object']
