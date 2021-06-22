@@ -734,7 +734,7 @@ module ActivityPub
         if zarr.length == 3 and zarr[1].to_i == to_participant_id
           zid = zarr[2].to_i
           oldmessage = Message.find_by_id(zid)
-          if oldmessage and oldmessage.from_participant_id == to_participant_id
+          if oldmessage and oldmessage.from_participant_id == to_participant.id
             response_to_id = zid
           end
         end
