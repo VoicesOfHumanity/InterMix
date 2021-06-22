@@ -731,7 +731,7 @@ module ActivityPub
         xarr = replying_to.split('/')
         xlast = xarr[-1]
         zarr = xlast.split('_')
-        if zarr.length == 3 and zarr[1].to_i == to_participant_id
+        if zarr.length == 3 and zarr[1].to_i == to_participant.id
           zid = zarr[2].to_i
           oldmessage = Message.find_by_id(zid)
           if oldmessage and oldmessage.from_participant_id == to_participant.id
