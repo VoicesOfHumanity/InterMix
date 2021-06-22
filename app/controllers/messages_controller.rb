@@ -185,7 +185,7 @@ class MessagesController < ApplicationController
         if res
           @message.sendmethod = 'activitypub'
           @message.sent_at = Time.now
-          @message.remote_reference = "https://#{BASEDOMAIN}/m_#{current_participant.id}_#{message.id}"
+          @message.remote_reference = "https://#{BASEDOMAIN}/m_#{current_participant.id}_#{@message.id}"
           @message.save
           notice = 'Message was successfully sent to the remote user.'
         else

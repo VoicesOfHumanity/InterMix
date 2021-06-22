@@ -16,6 +16,15 @@ class Message < ActiveRecord::Base
     return txt
   end
   
+  def subject_or_excerpt
+    #-- Return either the subject, or, if there isn't one, the first few characters
+    if subject.to_s != ''
+      return subject
+    else
+      return plain[0..30]
+    end
+  end
+    
   def emailit
     #-- E-mail this message. We assume that it already has been saved and has an ID
     
@@ -44,7 +53,7 @@ class Message < ActiveRecord::Base
     
     cdata['message'] = self
     
-    msubject = self.subject
+    msubject = self.subject_or_excerpt
 
     domain = (@group and @group.shortname.to_s!='') ? "#{@group.shortname}.#{ROOTDOMAIN}" : BASEDOMAIN
 
