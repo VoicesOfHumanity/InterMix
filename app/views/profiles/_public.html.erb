@@ -18,6 +18,8 @@
 </td></tr>
 <% end -%>
 
+<% if @participant.status != 'visitor' -%>
+
 <tr><td class="label">Title:</td><td><%= @participant.title %></td></tr>	
 <tr><td class="label">Description:</td><td><div style="width:260px"><%= @participant.self_description %></div></td></tr>	
 <tr><td class="label">Address1:</td><td><%= @participant.address1 %></td></tr>	
@@ -35,7 +37,6 @@
 <tr><td class="label">Bio Region:</td><td><%= @participant.bioregion %></td></tr>	
 <tr><td class="label">Faith Tradition:</td><td><%= @participant.faith_tradition %></td></tr>	
 
-
 <tr><td class="label">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %> GMT</td></tr>	
 <tr><td class="label">Member #:</td><td><%= @participant.id %></td></tr>	
 
@@ -51,10 +52,9 @@
 <tr><td class="label" id="communities">Communities:</td><td>
   <%=raw @participant.show_tag_list(true,true,false,current_participant) %>
 </td></tr>
-
-<% if false -%>
-<tr><td class="label">Custom Tags:</td><td><%=raw @participant.show_tag_list(true) %></td></tr>	
 <% end -%>
+
+
 
 
 

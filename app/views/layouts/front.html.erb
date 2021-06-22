@@ -112,7 +112,9 @@
 								
 			<% if participant_signed_in? -%>
             
-            	<li class="menu"><a class="<%= 'selected' if (@section=='profile' or @section=='wall' or @section=='messages' or @section=='people') %>" href="/me/profile">Me &amp; My Friends</a></li>
+                <% if current_participant.status != 'visitor' -%>
+            	    <li class="menu"><a class="<%= 'selected' if (@section=='profile' or @section=='wall' or @section=='messages' or @section=='people') %>" href="/me/profile">Me &amp; My Friends</a></li>
+                <% end -%>
                 
 				<li class="menu"><a class="<%= 'selected' if @section=='communities' %>" href="/communities">Communities</a></li>
                 

@@ -4,7 +4,9 @@
 
 <div><%= render(:partial => 'profiles/public')%></div>
 
+<% if current_participant.status != 'visitor' and @participant.status != 'visitor' -%>
 <div id="followdiv"><%= render(:partial => 'follow') %></div>
+<% end -%>
 
 <script>
 function follow(onoff) {
