@@ -681,6 +681,25 @@ module ActivityPub
         short_content = content.gsub(/<\/?[^>]*>/, "").strip[0,140]
       rescue       
       end
+
+      reply_to = 0
+      first_in_thread = 0
+      is_first_in_thread = true
+      if replying_to
+        # replying_to, if present, should be something like https://intermix.cr8.com/p_7_1468
+        is_first_in_thread = false
+        xarr = replying_to.split('/')
+        xlast = xarr[-1]
+        zarr = xlast.split('_')
+        if zarr.length == 3 and zarr[1].to_i == to_participant.id
+          zid = zarr[2].to_i
+          olditem = Item.find_by_id(zid)
+          if olditem and olditem.posted_by == to_participant.id
+            reply_to = zid
+            first_in_thread = olditem.first_in_thread
+          end
+        end
+      end      
       
       item = Item.create!(
         int_ext: 'ext',
@@ -688,9 +707,9 @@ module ActivityPub
         subject: '',
         html_content: content,
         short_content: short_content,
-        reply_to: 0,  # We should really catch if it is a reply
-        is_first_in_thread: true,
-        first_in_thread: 0,
+        reply_to: reply_to,
+        is_first_in_thread: is_first_in_thread,
+        first_in_thread: first_in_thread,
         received_json: object,
         api_request_id: api_request_id,
         remote_reference: their_post_id
@@ -700,6 +719,11 @@ module ActivityPub
       else
         puts "problem creating item"
         return false
+      end
+      
+      if reply_to == 0
+        item.first_in_thread = item.id
+        item.save
       end
        
       # We should also do the things in items_controller#itemproces
