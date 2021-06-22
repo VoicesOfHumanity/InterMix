@@ -661,7 +661,7 @@ module ActivityPub
     
   end
   
-  def respond_to_post(from_remote_actor, ref_id, api_request_id, content, date, object, their_post_id)
+  def respond_to_post(from_remote_actor, ref_id, api_request_id, content, date, object, their_post_id, replying_to)
     #-- Receive a public post. Turn it into an item
     if not from_remote_actor
       return false
@@ -710,12 +710,12 @@ module ActivityPub
     return true
   end
   
-  def respond_to_note(from_remote_actor, to_participant, ref_id, api_request_id, content, date, object, their_message_id)
+  def respond_to_note(from_remote_actor, to_participant, ref_id, api_request_id, content, date, object, their_message_id, replying_to)
     #-- Receive a note. Assuming it to be a personal message at the moment
     if not from_remote_actor or not to_participant
       return false
     end
-    
+        
     message = Message.where(from_remote_actor_id: from_remote_actor.id, to_participant_id: to_participant.id, api_request_id: api_request_id).first
     if not message
       # Potentially one message might have several recipients, but we're not dealing with that yet
@@ -725,6 +725,20 @@ module ActivityPub
     if message
       puts "message already exists"
     else
+      response_to_id = 0
+      if replying_to
+        # replying_to, if present, should be something like https://intermix.cr8.com/m_7_1468
+        xarr = replying_to.split('/')
+        xlast = xarr[-1]
+        zarr = xlast.split('_')
+        if zarr.length == 3 and zarr[1].to_i == to_participant_id
+          zid = zarr[2].to_i
+          oldmessage = Message.find_by_id(zid)
+          if oldmessage and oldmessage.from_participant_id == to_participant_id
+            response_to_id = zid
+          end
+        end
+      end      
       message = Message.create(
         from_remote_actor_id: from_remote_actor.id,
         to_participant_id: to_participant.id,
@@ -737,7 +751,8 @@ module ActivityPub
         email_sent: false,
         received_json: object,
         api_request_id: api_request_id,
-        remote_reference: their_message_id
+        remote_reference: their_message_id,
+        response_to_id: response_to_id
       )
       puts "message created"
       message.emailit
@@ -763,6 +778,14 @@ module ActivityPub
     #date = Time.now.utc.iso8601   # 2021-05-11T17:08:00Z
     published = message.created_at.strftime("%Y-%m-%dT%H:%M:%S.%L%z")
     
+    replying_to = nil
+    if message.response_to_id.to_i > 0
+      previous = Message.find_by_id(message.response_to_id)
+      if previous and previous.remote_reference.to_s != ''
+        replying_to = previous.remote_reference
+      end
+    end
+    
     object = {
       "@context": "https://www.w3.org/ns/activitystreams",
       "id": unique_message_id,
@@ -774,7 +797,8 @@ module ActivityPub
   	    "published": published,
   	    "attributedTo": from_participant.activitypub_url,
   	    "content": fullcontent,
-  	    "to": to_remote_actor.account_url
+  	    "to": to_remote_actor.account_url,
+        "inReplyTo": replying_to
       }  
     }
 
@@ -821,6 +845,7 @@ module ActivityPub
       'from_remote_actor': nil,
       'to_participant': nil,
       'ref_id': nil,
+      'replying_to': nil,
       'content': nil,
       'date': nil
     }
@@ -884,7 +909,10 @@ module ActivityPub
       if object.has_key?('published') and not data['date']
         data['date'] = Date.parse(object['published'])
       end
-      
+      if object.has_key?('inReplyTo')
+        # https://intermix.cr8.com/m_7_1468
+        data['replying_to'] = object['inReplyTo']
+      end
     else
       data['status'] = 'error'
       data['error'] = "Can't identify any target object"

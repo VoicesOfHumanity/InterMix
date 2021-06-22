@@ -39,6 +39,7 @@ for req in requests
   puts " - from_remote_actor: #{data['from_remote_actor'].account if data['from_remote_actor']}"
   puts " - to_participant: #{data['to_participant'].email if data['to_participant']}"
   puts " - ref_id: #{data['ref_id']}"
+  puts " - replying_to: #{data['replying_to']}"
   puts " - content: #{data['content']}"
   puts " - date: #{data['date']}"
 
@@ -83,12 +84,12 @@ for req in requests
   elsif rtype == 'post'
     # A public post
     puts "processing a public post"
-    res = respond_to_post(from_remote_actor, ref_id, req.id, content, date, object, ref_id)
+    res = respond_to_post(from_remote_actor, ref_id, req.id, content, date, object, ref_id, replying_to)
     
   elsif rtype == 'note'
     # A note being sent to one of our users, hopefully a private message
     puts "processing a received personal note"
-    res = respond_to_note(from_remote_actor, to_participant, ref_id, req.id, content, date, object, ref_id)
+    res = respond_to_note(from_remote_actor, to_participant, ref_id, req.id, content, date, object, ref_id, replying_to)
     
   elsif rtype == 'follow_request'
     # Somebody wants to follow our user
