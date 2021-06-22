@@ -188,11 +188,7 @@ module ActivityPub
       if header == '(request-target)'
         # The method could also be gotten from req.request_method
         # The path could also be gotten from req.path
-        if participant
-          inbox_path = "/u/#{participant.account_uniq}/inbox" # /u/ff2602/inbox
-        else
-          inbox_path = req.path
-        end
+        inbox_path = req.path
         data_to_sign += "(request-target): post #{inbox_path}"
       elsif header == 'host'
         # should be the same as HTTP_HOST
@@ -758,8 +754,15 @@ module ActivityPub
         if zarr.length == 3 and zarr[1].to_i == to_participant.id
           zid = zarr[2].to_i
           oldmessage = Message.find_by_id(zid)
-          if oldmessage and oldmessage.from_participant_id == to_participant.id
-            response_to_id = zid
+          if oldmessage
+            if oldmessage.from_participant_id == to_participant.id
+              response_to_id = zid
+            else
+              # Probably is a private response that got marked as public, sent to the sender's followers
+              # We'll just ignore it
+              puts "doesn't seem to be for this user"
+              return true
+            end
           end
         end
       end      
@@ -947,6 +950,17 @@ module ActivityPub
     if not data['ref_id'] and obj.has_key?('id')
       data['ref_id'] = obj['id']
     end
+    
+    is_private_message = false
+    if data['replying_to']
+      # Check if it is a reply to a private message. Then make the response private as well
+      xarr = data['replying_to'].split('/')
+      last = xarr[-1]
+      zarr = last.split('_')
+      if zarr.length == 3 and zarr[0] == 'm'
+        is_private_message = true
+      end
+    end   
           
     if atype.downcase == 'follow'
       # Somebody wants to follow us
@@ -955,7 +969,7 @@ module ActivityPub
     elsif atype.downcase == 'accept' and otype.downcase == 'follow'
       # Accepting our follow. We should have gotten ID we gave them
       rtype = 'accept_follow'
-    elsif atype.downcase == 'create' and otype.downcase == 'note' and data['to_actor_url'].include? "https://www.w3.org/ns/activitystreams#Public"
+    elsif atype.downcase == 'create' and otype.downcase == 'note' and data['to_actor_url'].include? "https://www.w3.org/ns/activitystreams#Public" and not is_private_message
       # A public post or follower post
       rtype = 'post'
     elsif atype.downcase == 'create' and otype.downcase == 'note'
