@@ -44,7 +44,13 @@ Received personal messages
   			<% end -%>
   		<% end -%>
     </td>
-		<td><%= message.subject %></td>
+		<td>
+      <% if message.subject.to_s != '' -%>
+        <%= message.subject %>
+      <% else -%>
+        <%= message.message[0..30] %>...
+      <% end -%>
+    </td>
 		<td><%= (message.read_web or message.read_email) ? 'yes' : 'no' %></td>
 	</tr>	
 <% end -%>

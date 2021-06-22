@@ -742,7 +742,7 @@ module ActivityPub
       message = Message.create(
         from_remote_actor_id: from_remote_actor.id,
         to_participant_id: to_participant.id,
-        subject: 'message',
+        subject: '',
         message: content,
         sendmethod: 'activitypub',
         sent: true,
