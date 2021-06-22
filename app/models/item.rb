@@ -50,7 +50,12 @@ class Item < ActiveRecord::Base
     if subject.to_s != ''
       return subject
     else
-      return excerpt[0..30]
+      txt = excerpt
+      first = txt.split.first
+      if first[0] == '@'
+        txt = txt.split[1..-1].join(' ')
+      end
+      return txt[0..30]
     end
   end
   
