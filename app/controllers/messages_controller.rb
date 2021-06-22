@@ -232,9 +232,11 @@ class MessagesController < ApplicationController
     content.gsub!(%r{//.*?#{ROOTDOMAIN}/[^"')<,:;\s]+}) { |s|
       if s =~ /auth_token=/
         s
-      else  
+      elsif recipient  
         s += (s =~ /\?/) ? "&" : "?"
         s += "auth_token=#{recipient.authentication_token}"
+      else
+        s
       end  
     }
     return(content)
