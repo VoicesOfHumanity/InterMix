@@ -94,7 +94,11 @@ class MessagesController < ApplicationController
       if @oldmessage
         @message.to_participant_id = @oldmessage.from_participant_id
         @message.to_remote_actor_id = @oldmessage.from_remote_actor_id
-        @message.subject = "Re: " + @oldmessage.subject if @oldmessage.subject[0,3] != 'Re:'
+        if @oldmessage.subject.to_s != '' and @oldmessage.subject[0,3] != 'Re:'
+          @message.subject = "Re: " + @oldmessage.subject
+        else  
+          @message.subject = "Re: " + @oldmessage.message[0..20]
+        end
       end  
     else
       @message.to_participant_id = @to_participant_id
@@ -148,6 +152,10 @@ class MessagesController < ApplicationController
     @content = @message.message
     @message.from_participant_id = current_participant.id
     @message.message = process_content(@content, @recipient)
+    
+    if @message.to_remote_actor_id.to_i > 0 and @message.to_participant_id.to_i == 0
+      @message.int_ext = 'ext'
+    end
 
     if @message.save
       
@@ -177,6 +185,7 @@ class MessagesController < ApplicationController
         if res
           @message.sendmethod = 'activitypub'
           @message.sent_at = Time.now
+          @message.remote_reference = "https://#{BASEDOMAIN}/m_#{current_participant.id}_#{message.id}"
           @message.save
           notice = 'Message was successfully sent to the remote user.'
         else
