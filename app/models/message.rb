@@ -8,7 +8,7 @@ class Message < ActiveRecord::Base
   
   def plain
     #-- Return a plain version of message, without html, and without any beginning @ff2590@intermix.cr8.com ... etc
-    txt = content.gsub(/<\/?[^>]*>/, "")
+    txt = message.gsub(/<\/?[^>]*>/, "")
     first = txt.split.first
     if first[0] == '@'
       txt = txt.split[1..-1].join(' ')
