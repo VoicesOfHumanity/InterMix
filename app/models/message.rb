@@ -6,6 +6,16 @@ class Message < ActiveRecord::Base
 
   serialize :received_json
   
+  def plain
+    #-- Return a plain version of message, without html, and without any beginning @ff2590@intermix.cr8.com ... etc
+    txt = content.gsub(/<\/?[^>]*>/, "")
+    first = txt.split.first
+    if first[0] == '@'
+      txt = txt.split[1..-1].join(' ')
+    end
+    return txt
+  end
+  
   def emailit
     #-- E-mail this message. We assume that it already has been saved and has an ID
     
