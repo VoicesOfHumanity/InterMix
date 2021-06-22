@@ -45,6 +45,15 @@ class Item < ActiveRecord::Base
     #ApplicationController.helpers.my_helper_method
   end
   
+  def subject_or_excerpt
+    #-- Return either the subject, or, if there isn't one, the first few characters
+    if subject.to_s != ''
+      return subject
+    else
+      return excerpt[0..30]
+    end
+  end
+  
   def self.thumbs(iproc)
     #-- Return one of -3, -2, -1, 0, 1, 2, 3, depending on number of thumbs
     #logger.info("Item#thumbs #{iproc ? 'has iproc' : 'no iproc!'}")
@@ -464,7 +473,7 @@ class Item < ActiveRecord::Base
       
       email = recipient.email
       
-      msubject = "[voicesofhumanity] #{self.subject}"
+      msubject = "[voicesofhumanity] #{self.subject_or_excerpt}"
       
       if self.media_type == 'video' or self.media_type == 'audio'
         content = "<a href=\"#{self.link}\" target=\"_blank\">#{self.media_type}</a>"

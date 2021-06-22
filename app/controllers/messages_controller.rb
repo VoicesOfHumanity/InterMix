@@ -97,7 +97,7 @@ class MessagesController < ApplicationController
         if @oldmessage.subject.to_s != '' and @oldmessage.subject[0,3] != 'Re:'
           @message.subject = "Re: " + @oldmessage.subject
         else  
-          @message.subject = "Re: " + @oldmessage.plain[0..20]
+          @message.subject = "Re: " + @oldmessage.plain[0..30]
         end
       end  
     else
