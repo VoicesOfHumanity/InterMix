@@ -11,6 +11,7 @@ if (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ 
   CITY_CONVERSATION_CODE = 'The_Cities'
   UNGOALS_CONVERSATION_ID = 4
   UNGOALS_CONVERSATION_CODE = 'The_UN_Goals'
+  VISITOR_ID = 2634
 else
   BASEDOMAIN = 'voh.intermix.org'
   ROOTDOMAIN = 'intermix.org'
@@ -24,6 +25,7 @@ else
   CITY_CONVERSATION_CODE = 'The_Cities'
   UNGOALS_CONVERSATION_ID = 1
   UNGOALS_CONVERSATION_CODE = 'The_UN_Goals'
+  VISITOR_ID = 3399
 end
 
 DATADIR = '/home/apps/intermix/shared/data'

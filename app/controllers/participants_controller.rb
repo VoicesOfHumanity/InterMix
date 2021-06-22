@@ -3,8 +3,9 @@
 class ParticipantsController < ApplicationController
   
 	layout "admin"
-  before_action :authenticate_user_from_token!, :except=>:create
-  before_action :authenticate_participant!, :except=>:create
+  before_action :authenticate_user_from_token!, :except=>[:create, :visitor_login]
+  before_action :authenticate_participant!, :except=>[:create, :visitor_login]
+  
   respond_to :html, :xml, :json
   
   def search
@@ -131,6 +132,13 @@ class ParticipantsController < ApplicationController
       format.html { render plain: "<p>Participant ##{params[:id]} has been deleted</p>" }
       format.xml  { head :ok }
     end
+  end
+  
+  def visitor_login
+    #-- Log in as a visitor
+    @participant = Participant.find_by_id(VISITOR_ID)
+    sign_in(:participant, @participant)
+    redirect_to '/'
   end
   
   protected

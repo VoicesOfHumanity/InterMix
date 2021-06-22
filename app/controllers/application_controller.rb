@@ -248,7 +248,7 @@ class ApplicationController < ActionController::Base
     session[:dialog_name] = ''
     session[:dialog_prefix] = ''
     
-    if current_participant.status != 'active'
+    if current_participant.status != 'active' and current_participant.status != 'visitor'
       flash[:alert] = "Your account is not active"
       flash.now[:alert] = "Your account is not active"
       #auth.logout
@@ -561,6 +561,8 @@ class ApplicationController < ActionController::Base
     #-- If required profile fields aren't entered, redirect to the profile
     if not participant_signed_in?
       return
+    elsif current_participant.status == 'visitor'
+      return
     elsif not session[:has_required]
       session[:has_required] = current_participant.has_required
       if not session[:has_required]
@@ -579,7 +581,7 @@ class ApplicationController < ActionController::Base
       sign_out :participant 
       flash[:alert] = "Your account is not yet active.<br>Please confirm your account by clicking on the link in the e-mail we sent you."
       redirect_to '/'
-    elsif current_participant.status != 'active'
+    elsif current_participant.status != 'active' and current_participant.status != 'visitor'
       sign_out :participant 
       flash[:alert] = "Your account is not active"
       redirect_to '/'

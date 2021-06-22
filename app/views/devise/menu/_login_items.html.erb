@@ -5,6 +5,9 @@
   </li>
 <% else %>
   <li class="menu">
+    <%= link_to "Visitor Login", "/participants/visitor_login" %>
+  </li>
+  <li class="menu">
     <% if @comtag.to_s != '' -%>	
 			<%= link_to "Sign in", "/participants/sign_in?comtag=#{@comtag}" %>
 		<% elsif true or (@dialog and not @dialog.alt_logins) or (@group and not @group.alt_logins) %>

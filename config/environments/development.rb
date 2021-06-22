@@ -73,11 +73,13 @@ if File.dirname(__FILE__) =~ /_websites/
   ROOTDOMAIN = 'intermix.test'
   DATADIR = '/Users/ffunch/_websites/intermix/data'
   GLOBAL_GROUP_ID = 22
+  VISITOR_ID = 1895
 else
   BASEDOMAIN = 'voh.intermix.cr8.com'
   ROOTDOMAIN = 'intermix.cr8.com'
   DATADIR = '/home/apps/intermix/shared/data'
   GLOBAL_GROUP_ID = 20
+  VISITOR_ID = 2634
 end
 MAILDOMAIN = 'trantor.cr8.com'
 

@@ -171,6 +171,8 @@ Rails.application.routes.draw do
 
   get '/participants/auth/:provider/callback' => 'authentications#create'
   post '/participants/auth/:provider/callback' => 'authentications#create'
+  get '/participants/visitor_login'
+  
   resources :authentications
 
   #devise_for :participants, :controllers => { :omniauth_callbacks => "omniauth_callbacks" }
