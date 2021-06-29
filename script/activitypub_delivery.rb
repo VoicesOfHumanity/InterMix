@@ -48,7 +48,7 @@ for item in items
     remote_actor = follow.remote_follower
     puts " - - #{remote_actor.account}"
     
-    if send_public_post(item.posted_by, remote_actor, item)
+    if send_public_post(item.participant, remote_actor, item)
       puts " - - - delivered"
       success += 1
       deliveries += 1
