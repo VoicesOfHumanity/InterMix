@@ -4,7 +4,9 @@
 <p style="clear:both;color:darkred">You're not a member of any community</p>
 <% end %>
 
+<% if current_participant.status != 'visitor' -%>
 <p style="clear:both"><input type="button" value="Add community" onclick="addcom()"></p>
+<% end -%>
 
 <table style="width:595px">
 <tr><th>Forum</th><th>Activity</th><th>More Information</th><th>&nbsp;</th></tr>	
