@@ -455,7 +455,7 @@ class ItemsController < ApplicationController
     @max_characters = @dialog ? @dialog.settings_with_period["max_characters"] : 0
     @max_words = @dialog ? @dialog.settings_with_period["max_words"] : 0
     
-    if current_participant.status != 'active'
+    if current_participant.status != 'active' and current_participant.status != 'visitor'
       #-- Make sure this is an active member
       render plain: "<p>Your membership is not active</p>"
       return
@@ -670,19 +670,19 @@ class ItemsController < ApplicationController
     end   
 
     #-- Don't allow sending to group or dialog one isn't a member of
-    if @item.group_id > 0
-      ingroup = false
-      for gp in @groupsin
-        ingroup = true if gp.group and gp.group_id == @item.group_id and gp.active and gp.status == 'active'
-      end 
-      if not ingroup
-        @item.group_id = 0 
-        if @item.reply_to.to_i == 0
-          render plain: "<p>You're not a member of that group</p>"
-          return
-        end
-      end
-    end
+    #if @item.group_id > 0
+    #  ingroup = false
+    #  for gp in @groupsin
+    #    ingroup = true if gp.group and gp.group_id == @item.group_id and gp.active and gp.status == 'active'
+    #  end 
+    #  if not ingroup
+    #    @item.group_id = 0 
+    #    if @item.reply_to.to_i == 0
+    #      render plain: "<p>You're not a member of that group</p>"
+    #      return
+    #    end
+    #  end
+    #end
     #if @item.dialog_id > 0
     #  indialog = false
     #  for dp in @dialogsin
@@ -911,7 +911,7 @@ class ItemsController < ApplicationController
     @comtag = params[:comtag] if params.has_key?(:comtag)
     @item.media_type = params[:media_type] if params[:media_type].to_s != ''
 
-    if current_participant.status != 'active'
+    if current_participant.status != 'active' and current_participant.status != 'visitor'
       #-- Make sure this is an active member
       results = {'error'=>true,'message'=>"Your membership is not active",'item_id'=>0}        
       render :json=>results, :layout=>false

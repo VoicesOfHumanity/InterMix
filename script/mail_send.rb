@@ -253,6 +253,11 @@ for p in participants
           send_it = false
         end
       end  
+      
+      if item.posted_by == VISITOR_ID
+        puts "    posted by a vistor, don't send"
+        send_it = false
+      end
    
       if not send_it
         puts "    no setting to send this" if testonly

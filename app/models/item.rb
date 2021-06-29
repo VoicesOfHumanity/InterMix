@@ -285,6 +285,8 @@ class Item < ActiveRecord::Base
     #-- Each person might be configured to receive e-mails or not 
     #-- It all gets overridden by their follow settings
 
+    return if self.posted_by == VISITOR_ID
+
     participants = []   
     got_participants = {}
     allpeople = []
