@@ -687,10 +687,11 @@ module ActivityPub
         xarr = replying_to.split('/')
         xlast = xarr[-1]
         zarr = xlast.split('_')
-        if zarr.length == 3 and zarr[1].to_i == to_participant.id
+        if zarr.length == 3
+          zposted_by = zarr[1].to_i
           zid = zarr[2].to_i
           olditem = Item.find_by_id(zid)
-          if olditem and olditem.posted_by == to_participant.id
+          if olditem and olditem.posted_by == zposted_by
             reply_to = zid
             first_in_thread = olditem.first_in_thread
           end
@@ -881,7 +882,6 @@ module ActivityPub
     }
 
     req = sign_and_send(from_participant.id, to_remote_actor, object, 'send_public_post')
-    puts "note sent"
     
     return true
   end
