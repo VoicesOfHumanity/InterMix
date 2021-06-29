@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_13_234836) do
+ActiveRecord::Schema.define(version: 2021_06_29_163746) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -639,6 +639,7 @@ ActiveRecord::Schema.define(version: 2021_06_13_234836) do
     t.string "remote_reference"
     t.text "received_json"
     t.integer "api_request_id"
+    t.boolean "remote_delivery_done", default: true
     t.index ["conversation_id"], name: "index_items_on_conversation_id"
     t.index ["created_at"], name: "index_items_on_created_at"
     t.index ["dialog_id", "created_at"], name: "index_items_on_dialog_id_and_created_at"
@@ -649,6 +650,7 @@ ActiveRecord::Schema.define(version: 2021_06_13_234836) do
     t.index ["period_id", "id"], name: "index_items_on_period_id_and_id"
     t.index ["posted_by", "created_at"], name: "index_items_on_posted_by_and_created_at"
     t.index ["posted_by_remote_actor_id"], name: "index_items_on_posted_by_remote_actor_id"
+    t.index ["remote_delivery_done"], name: "index_items_on_remote_delivery_done"
   end
 
   create_table "messages", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|

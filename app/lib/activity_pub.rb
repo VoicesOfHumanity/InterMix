@@ -835,6 +835,57 @@ module ActivityPub
     return req
   end  
   
+  def send_public_post(from_participant, to_remote_actor, item)
+    #-- Send an item to a remote follower
+    
+    if not from_participant or not to_remote_actor
+      return false
+    end
+    
+    subject = item.subject
+    content = item.html_content
+
+    fullcontent = "<p><strong>** #{subject} **</strong></p>\n" + content
+
+    unique_post_id = "https://#{BASEDOMAIN}/p_#{from_participant.id}_#{item.id}"
+
+    #date = Time.now.utc.iso8601   # 2021-05-11T17:08:00Z
+    published = item.created_at.strftime("%Y-%m-%dT%H:%M:%S.%L%z")
+    
+    replying_to = nil
+    if item.reply_to.to_i > 0
+      previous = Item.find_by_id(item.reply_to)
+      if previous
+        replying_to = "https://#{BASEDOMAIN}/p_#{previous.posted_by}_#{previous.id}"
+      end
+    end
+    
+    to = "https://www.w3.org/ns/activitystreams#Public"
+    cc = to_remote_actor.account_url
+    
+    object = {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      "id": unique_post_id,
+      "type": "Create",
+      "actor": from_participant.activitypub_url,
+      "object": {
+      	"id": unique_post_id,
+  	    "type": "Note",
+  	    "published": published,
+  	    "attributedTo": from_participant.activitypub_url,
+  	    "content": fullcontent,
+  	    "to": to,
+        "cc": cc,
+        "inReplyTo": replying_to
+      }  
+    }
+
+    req = sign_and_send(from_participant.id, to_remote_actor, object, 'send_public_post')
+    puts "note sent"
+    
+    return true
+  end
+  
   def respond_to_delete_actor(from_remote_actor)
     #-- A remote account has disappared. Let's remove it from follows
     if not from_remote_actor

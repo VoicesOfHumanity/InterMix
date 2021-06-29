@@ -903,6 +903,7 @@ class ItemsController < ApplicationController
   def create
     @from = params[:from] || ''
     @item = Item.new(item_params)
+    @item.remote_delivery_done = false
     @item.link = '' if @item.link == 'https://'
     @item.item_type = 'message'
     @item.posted_by = current_participant.id
@@ -1143,6 +1144,7 @@ class ItemsController < ApplicationController
     end
     
     @item = Item.new()
+    @item.remote_delivery_done = false
     @item.item_type = 'message'
     @item.media_type = 'picture'
     @item.posted_by = current_participant.id
