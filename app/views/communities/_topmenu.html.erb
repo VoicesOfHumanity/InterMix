@@ -1,18 +1,22 @@
 <span style="font-size:20px;color:#000;">Communities</span></a><br>
 
 <ul class="horizmenu">
-<li><a class="menu<%= ' selected' if @csection=='my' %>" href="/communities/my">My communities</a></li>
-<li><a class="menu<%= ' selected' if @csection=='all' %>" href="/communities/all">All communities</a></li>
-<% if session.has_key?(:curcomtag) and session[:curcomtag].to_s != '' -%>
-<li><a class="menu<%= ' selected' if (@csection!='all' and @csection!='my' and @csection!='mynet') %>" href="/communities/<%= session[:curcomid] %>">@<%= session[:curcomtag] %></a></li>
-<% end -%>
-<li><a class="menu<%= 'selected' if @csection=='aparttogether' %>" href="/conversations">Apart & Together</a></li>
-<li><a class="menu<%= ' selected' if @csection=='mynet' %>" href="/networks/my">My networks</a></li>
+  <% if current_participant.status != 'visitor' -%>
+    <li><a class="menu<%= ' selected' if @csection=='my' %>" href="/communities/my">My communities</a></li>
+    <li><a class="menu<%= ' selected' if @csection=='all' %>" href="/communities/all">All communities</a></li>
+    <% if session.has_key?(:curcomtag) and session[:curcomtag].to_s != '' -%>
+    <li><a class="menu<%= ' selected' if (@csection!='all' and @csection!='my' and @csection!='mynet') %>" href="/communities/<%= session[:curcomid] %>">@<%= session[:curcomtag] %></a></li>
+    <% end -%>
+  <% end -%>
+  <li><a class="menu<%= 'selected' if @csection=='aparttogether' %>" href="/conversations">Apart & Together</a></li>
+  <% if current_participant.status != 'visitor' -%>
+    <li><a class="menu<%= ' selected' if @csection=='mynet' %>" href="/networks/my">My networks</a></li>
+  <% end -%>
 </ul>
 <ul class="horizmenu">
-<li><a class="menu<%= ' selected' if @csection=='human' %>" href="/communities/human">Recommended</a></li>
-<li><a class="menu<%= ' selected' if @csection=='ungoals' %>" href="/communities/un">UN Goals</a></li>
-<li><a class="menu<%= ' selected' if @csection=='cities' %>" href="/communities/cities">Cities</a></li>
-<li><a class="menu<%= ' selected' if @csection=='nations' %>" href="/communities/nations">Nations</a></li>
-<li><a class="menu<%= ' selected' if @csection=='other' %>" href="/communities/other">Other</a></li>
+  <li><a class="menu<%= ' selected' if @csection=='human' %>" href="/communities/human">Recommended</a></li>
+  <li><a class="menu<%= ' selected' if @csection=='ungoals' %>" href="/communities/un">UN Goals</a></li>
+  <li><a class="menu<%= ' selected' if @csection=='cities' %>" href="/communities/cities">Cities</a></li>
+  <li><a class="menu<%= ' selected' if @csection=='nations' %>" href="/communities/nations">Nations</a></li>
+  <li><a class="menu<%= ' selected' if @csection=='other' %>" href="/communities/other">Other</a></li>
 </ul>

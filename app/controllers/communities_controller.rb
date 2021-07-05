@@ -17,6 +17,8 @@ class CommunitiesController < ApplicationController
       session[:curcomid] = 0
     end
     
+    logger.info("communities#index which: #{params[:which].to_s}")
+    
     if params.has_key?(:sort)
       sort = params[:sort]
       if sort == 'tag'
@@ -32,12 +34,14 @@ class CommunitiesController < ApplicationController
       @sort = 'activity'
     end
 
-    if params[:which].to_s == 'all' or current_participant.tag_list.length == 0
+    if params[:which].to_s == 'all' or (current_participant.tag_list.length == 0 and current_participant.status != 'visitor')
       communities = Community.where(is_sub: false)
       @csection = 'all' 
+      logger.info("communities#index all @csection:#{@csection}")
     elsif params[:which].to_s == 'human'  
       communities = Community.where(is_sub: false, more: true)
       @csection = 'human' 
+      logger.info("communities#index human=recommended @csection:#{@csection}")
     elsif params[:which].to_s == 'un'  
       communities = Community.where(is_sub: false, ungoals: true)
       @csection = 'un' 
@@ -80,6 +84,7 @@ class CommunitiesController < ApplicationController
       @csection = 'other'            
     else
       #-- My communities
+      logger.info("communities#index my communities")
       comtag_list = ''.dup
       comtags = {}
       for tag in current_participant.tag_list_downcase
@@ -122,6 +127,8 @@ class CommunitiesController < ApplicationController
     @communities = @communities.paginate :page=>@page, :per_page => @perscr 
           
     @sort = sort 
+    
+    logger.info("communities#index @csection:#{@csection}")
     
   end  
 

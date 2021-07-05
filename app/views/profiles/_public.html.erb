@@ -20,48 +20,52 @@
 
 <% if @participant.status != 'visitor' -%>
 
-<tr><td class="label">Title:</td><td><%= @participant.title %></td></tr>	
-<tr><td class="label">Description:</td><td><div style="width:260px"><%= @participant.self_description %></div></td></tr>	
-<tr><td class="label">Address1:</td><td><%= @participant.address1 %></td></tr>	
-<tr><td class="label">Address2:</td><td><%= @participant.address2 %></td></tr>	
-<tr><td class="label">Zip:</td><td><%= @participant.zip %></td></tr>	
-<tr><td class="label">City:</td><td><%= @participant.city %></td></tr>	
-<tr><td class="label">County:</td><td><%= @participant.geoadmin2.name if @participant.geoadmin2 %></td></tr>	
-<tr><td class="label">State:</td><td><%= @participant.geoadmin1.name if @participant.geoadmin1 %></td></tr>	
-<tr><td class="label">Country:</td><td><%= @participant.geocountry ? @participant.geocountry.name : @participant.country_code %></td></tr>	
-<% if @participant.country_code2.to_s != '' -%>
-<tr><td class="label">2nd Country:</td><td><%= @participant.show_country2 %></td></tr>	
-<% end -%>
-<tr><td class="label">Phone:</td><td><%= @participant.phone %></td></tr>	
-<tr><td class="label">Metropolitan Area:</td><td><%= @participant.metro_area ?  @participant.metro_area.name : @participant.metropolitan_area %></td></tr>
-<tr><td class="label">Bio Region:</td><td><%= @participant.bioregion %></td></tr>	
-<tr><td class="label">Faith Tradition:</td><td><%= @participant.faith_tradition %></td></tr>	
+  <tr><td class="label">Title:</td><td><%= @participant.title %></td></tr>	
+  <tr><td class="label">Description:</td><td><div style="width:260px"><%= @participant.self_description %></div></td></tr>	
+  <tr><td class="label">Address1:</td><td><%= @participant.address1 %></td></tr>	
+  <tr><td class="label">Address2:</td><td><%= @participant.address2 %></td></tr>	
+  <tr><td class="label">Zip:</td><td><%= @participant.zip %></td></tr>	
+  <tr><td class="label">City:</td><td><%= @participant.city %></td></tr>	
+  <tr><td class="label">County:</td><td><%= @participant.geoadmin2.name if @participant.geoadmin2 %></td></tr>	
+  <tr><td class="label">State:</td><td><%= @participant.geoadmin1.name if @participant.geoadmin1 %></td></tr>	
+  <tr><td class="label">Country:</td><td><%= @participant.geocountry ? @participant.geocountry.name : @participant.country_code %></td></tr>	
+  <% if @participant.country_code2.to_s != '' -%>
+  <tr><td class="label">2nd Country:</td><td><%= @participant.show_country2 %></td></tr>	
+  <% end -%>
+  <tr><td class="label">Phone:</td><td><%= @participant.phone %></td></tr>	
+  <tr><td class="label">Metropolitan Area:</td><td><%= @participant.metro_area ?  @participant.metro_area.name : @participant.metropolitan_area %></td></tr>
+  <tr><td class="label">Bio Region:</td><td><%= @participant.bioregion %></td></tr>	
+  <tr><td class="label">Faith Tradition:</td><td><%= @participant.faith_tradition %></td></tr>	
 
-<tr><td class="label">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %> GMT</td></tr>	
-<tr><td class="label">Member #:</td><td><%= @participant.id %></td></tr>	
+  <tr><td class="label">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %> GMT</td></tr>	
+  <tr><td class="label">Member #:</td><td><%= @participant.id %></td></tr>	
 
-<tr><td class="label">Fediverse ID:</td><td><%= @participant.account_uniq_full ? @participant.account_uniq_full : 'none' %></td></tr>	
+  <tr><td class="label">Fediverse ID:</td><td><%= @participant.account_uniq_full ? @participant.account_uniq_full : 'none' %></td></tr>	
+
+  <% @participant.metamaps.each do |metamap| -%>
+    <% if metamap.global_default -%>
+      <% metamap_nodes = @participant.metamap_nodes_h %>
+      <% info = metamap_nodes[metamap.id] if metamap_nodes[metamap.id] %>
+      <tr><td class="label"><%= metamap.name %></td><td><%= info ? (info[3].to_s!='' ? info[3] : info[2]) : '???' %></td></tr>
+    <% end -%>
+  <% end -%>
+
+  <tr><td class="label" id="communities">Communities:</td><td>
+    <%=raw @participant.show_tag_list(true,true,false,current_participant) %>
+  </td></tr>
 
 <% else -%>
-<tr><td class="label">Description:</td><td><div style="width:260px">Use the Visit button on the home page to login as Visitor. Messages posted by a Visitor are not emailed to other users. However Visitor posts can be winners at the new and full moons.</div></td></tr>	
-<tr><td class="label">City:</td><td>None</td></tr>	
-<tr><td class="label">Country:</td><td>None</td></tr>	
-<tr><td class="label">Faith Tradition:</td><td>None</td></tr>	
+
+  <tr><td class="label">Description:</td><td><div style="width:260px">Use the <b>Visitor Login</b> button on the home page to login as Visitor. Messages posted by a Visitor are not emailed to other users. However Visitor posts can be winners at the new and full moons.</div></td></tr>	
+  <tr><td class="label">City:</td><td>None</td></tr>	
+  <tr><td class="label">Country:</td><td>None</td></tr>	
+  <tr><td class="label">Faith Tradition:</td><td>None</td></tr>	
+  <tr><td class="label">Gender identity:</td><td>simply human</td></tr>	
+  <tr><td class="label">Generation identity:</td><td>simply human</td></tr>	
+
 <% end -%>
 
-<% @participant.metamaps.each do |metamap| -%>
-  <% if metamap.global_default -%>
-    <% metamap_nodes = @participant.metamap_nodes_h %>
-    <% info = metamap_nodes[metamap.id] if metamap_nodes[metamap.id] %>
-    <tr><td class="label"><%= metamap.name %></td><td><%= info ? (info[3].to_s!='' ? info[3] : info[2]) : '???' %></td></tr>
-  <% end -%>
-<% end -%>
 
-<% if @participant.status != 'visitor' -%>
-<tr><td class="label" id="communities">Communities:</td><td>
-  <%=raw @participant.show_tag_list(true,true,false,current_participant) %>
-</td></tr>
-<% end -%>
 
 
 

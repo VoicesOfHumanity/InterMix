@@ -129,7 +129,7 @@ if (CKEDITOR.instances['item_html_content']) {
         <input type="hidden" name="item[representing_com]" id="item_representing_com" value="<%= @item.representing_com %>">
       <% end -%>
       
-      <% if (@item.reply_to.to_i>0) -%>
+      <% if (@item.reply_to.to_i>0) and current_participant.status != 'visitor' -%>
     	  <br><br>Email this comment to: <select name="item[comment_email_to]" id="item_comment_email_to">
         <% com_options = [["Public","public"]] %>
         <% com_options << ["This community only", "community"] if @comtag.to_s != '' %>
