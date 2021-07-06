@@ -915,7 +915,7 @@ module ActivityPub
     xarr = ref_id.split('/')
     xlast = xarr[-1]
     zarr = xlast.split('_')
-    if zarr.length == 3 and zarr[1].to_i == to_participant.id
+    if zarr.length == 3
       participant_id = zarr[1].to_i
       item_id = zarr[2].to_i
       item = Item.find_by_id(item_id)
