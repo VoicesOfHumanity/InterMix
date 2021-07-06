@@ -7,6 +7,7 @@ module ItemLib
   
     #logger.info("items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}")
   
+    current_participant = nil if not defined?(current_participant)
     if not current_participant and not remote_actor
       return
     end
