@@ -5,13 +5,16 @@ module ItemLib
   def rateitem(item, vote, from_mail=false, conversation_id=0, remote_actor=nil)
     # Called by fx thumbrate or view to record a vote, without showing any screen
   
-    #logger.info("items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}")
+    Rails.logger.info("items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}")
+    #puts "items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}"
   
     current_participant = nil if not defined?(current_participant)
     if not current_participant and not remote_actor
+      Rails.logger.info("items#rateitem items#rateitem no voter")
       return
     end
     if current_participant and not item.voting_ok(current_participant.id)
+      Rails.logger.info("items#rateitem voting is not ok")
       return
     end    
   
@@ -46,8 +49,8 @@ module ItemLib
       end
     end
 
-    #logger.info("items#rateitem rating:#{rating ? rating.id : "none"}")
-    puts "items#rateitem rating:#{rating ? rating.id : "none"}"
+    Rails.logger.info("items#rateitem rating:#{rating ? rating.id : "none"}")
+    #puts "items#rateitem rating:#{rating ? rating.id : "none"}"
   
     if conversation_id > 0
       conversation = Conversation.find_by_id(conversation_id)
