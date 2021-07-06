@@ -5,7 +5,7 @@ module ItemLib
   def rateitem(item, vote, from_mail=false, conversation_id=0, remote_actor=nil)
     # Called by fx thumbrate or view to record a vote, without showing any screen
   
-    logger.info("items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}")
+    #logger.info("items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}")
   
     if not current_participant and not remote_actor
       return
@@ -44,7 +44,7 @@ module ItemLib
       end
     end
 
-    logger.info("items#rateitem rating:#{rating ? rating.id : "none"}")
+    #logger.info("items#rateitem rating:#{rating ? rating.id : "none"}")
   
     if conversation_id > 0
       conversation = Conversation.find_by_id(conversation_id)
