@@ -6,6 +6,8 @@ require "down"
 
 module ActivityPub
   
+  include ItemLib
+  
   def get_account
     @account_uniq = params[:acct_id]
     @account = Participant.find_by_account_uniq(@account_uniq)
@@ -904,12 +906,35 @@ module ActivityPub
     return true
   end
   
+  def respond_to_like(from_remote_actor, ref_id)
+    # ref_id is expected to be something like https://intermix.cr8.com/p_2580_2629
+    if not from_remote_actor
+      return false
+    end
+
+    xarr = ref_id.split('/')
+    xlast = xarr[-1]
+    zarr = xlast.split('_')
+    if zarr.length == 3 and zarr[1].to_i == to_participant.id
+      participant_id = zarr[1].to_i
+      item_id = zarr[2].to_i
+      item = Item.find_by_id(item_id)
+      if item
+        # Give it the equivalent of two thumbs up        
+        rateitem(item, 2, remote_actor=from_remote_actor)
+        return true
+      end
+    end
+    
+    return false
+  end
+  
   def get_request_data(obj)
     # Given a received object, try to figure out what it is
     
     # atype: the type of activity: Follow, Accept, Create
     # otype: the type of object: Follow, Note, Actor
-    # rtype: our code for what's happening. follow_request, accept_follow, note, etc.
+    # rtype: our code for what's happening. follow_request, accept_follow, note, like, etc.
     
     data = {
       'atype': '',
@@ -1029,6 +1054,11 @@ module ActivityPub
     elsif atype.downcase == 'delete' and otype.downcase == 'actor'
       # A remote account has been removed
       rtype = 'delete_actor'
+    elsif atype.downcase == 'like'
+      rtype = 'like'
+      if object.class == String
+        data['ref_id'] = object
+      end
     else
       data['error'] = "Don't know what to do with that yet"
       rtype = '?'
@@ -1041,7 +1071,7 @@ module ActivityPub
     # https://www.w3.org/ns/activitystreams#Public
     # https://social.coop/users/ming/followers
     puts "data['to_actor_url']:#{data['to_actor_url'].inspect}"
-    if rtype != 'post'
+    if rtype != ['post', 'like']
       for to_actor_url in data['to_actor_url']
         # We exected it to be an array with at least one entry
         # It might also have things like the remote user's own follower url

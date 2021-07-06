@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_163746) do
+ActiveRecord::Schema.define(version: 2021_07_06_144924) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -951,6 +951,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_163746) do
   create_table "ratings", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "item_id"
     t.integer "participant_id"
+    t.integer "remote_actor_id"
     t.string "rating_type", limit: 15
     t.integer "group_id"
     t.integer "dialog_id"
@@ -964,6 +965,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_163746) do
     t.index ["group_id", "id"], name: "index_ratings_on_group_id_and_id"
     t.index ["item_id", "id"], name: "index_ratings_on_item_id_and_id"
     t.index ["participant_id", "id"], name: "index_ratings_on_participant_id_and_id"
+    t.index ["remote_actor_id", "id"], name: "index_ratings_on_remote_actor_id_and_id"
   end
 
   create_table "remote_actors", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

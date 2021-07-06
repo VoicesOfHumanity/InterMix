@@ -106,6 +106,11 @@ for req in requests
     # A remote account has been removed. We should remove it from follows  
     puts "processing a delete_actor event"
     res = respond_to_delete_actor(from_remote_actor)
+
+  elsif rtype == 'like'
+    # A like of one of our posts. To convert into a vote
+    puts "processing a like event"
+    res = respond_to_like(from_remote_actor, ref_id)
     
   end
 
