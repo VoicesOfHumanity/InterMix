@@ -109,7 +109,7 @@ for req in requests
 
   elsif rtype == 'like'
     # A like of one of our posts. To convert into a vote
-    puts "processing a like event"
+    puts "processing a like event from #{from_remote_actor.id}"
     res = respond_to_like(from_remote_actor, ref_id)
     
   end
