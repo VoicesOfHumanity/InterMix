@@ -648,7 +648,7 @@ class ProfilesController < ApplicationController
       logger.info("profiles#comtag removing #{comtag} for user")
       current_participant.tag_list.remove(comtag)
     end
-    current_participant.save
+    current_participant.save!
     
     #-- See if it affected the perspective in any conversations
     community = Community.find_by_tagname(comtag)
