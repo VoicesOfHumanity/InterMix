@@ -103,6 +103,7 @@ module ItemLib
     item.edit_locked = true if current_participant and current_participant.id != item.posted_by
     item.save
     
+    return rating.id
   end
   
 end

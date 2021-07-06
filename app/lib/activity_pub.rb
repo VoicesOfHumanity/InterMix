@@ -921,8 +921,10 @@ module ActivityPub
       item = Item.find_by_id(item_id)
       if item
         # Give it the equivalent of two thumbs up        
-        rateitem(item, 2, remote_actor=from_remote_actor)
-        return true
+        res = rateitem(item, 2, remote_actor=from_remote_actor)
+        if res.to_i > 0
+          return true
+        end
       end
     end
     
