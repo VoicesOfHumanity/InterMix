@@ -1058,6 +1058,7 @@ module ActivityPub
       rtype = 'like'
       if object.class == String
         data['ref_id'] = object
+        data['to_actor_url'] = []
       end
     else
       data['error'] = "Don't know what to do with that yet"
@@ -1071,7 +1072,7 @@ module ActivityPub
     # https://www.w3.org/ns/activitystreams#Public
     # https://social.coop/users/ming/followers
     puts "data['to_actor_url']:#{data['to_actor_url'].inspect}"
-    if rtype != ['post', 'like']
+    if not ['post', 'like'].include? rtype
       for to_actor_url in data['to_actor_url']
         # We exected it to be an array with at least one entry
         # It might also have things like the remote user's own follower url
@@ -1112,7 +1113,7 @@ module ActivityPub
     if not data['from_remote_actor']
       data['status'] = 'error'
       data['error'] = "Couldn't identify remote actor"
-    elsif not data['to_participant'] and data['rtype'] != 'post'
+    elsif not data['to_participant'] and not ['post', 'like'].include? data['rtype']
       data['status'] = 'error'
       data['error'] = "Couldn't identify target user"
     else  
