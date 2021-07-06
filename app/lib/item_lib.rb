@@ -38,6 +38,7 @@ module ItemLib
         rating = Rating.create(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings', approval: vote, interest: vote.abs)
       end
     elsif remote_actor
+      puts "items#rateitem remote vote"
       rating = Rating.where(item_id: item_id, remote_actor_id: remote_actor.id, rating_type: 'AllRatings').first
       if not rating
         is_new = true
@@ -46,6 +47,7 @@ module ItemLib
     end
 
     #logger.info("items#rateitem rating:#{rating ? rating.id : "none"}")
+    puts "items#rateitem rating:#{rating ? rating.id : "none"}"
   
     if conversation_id > 0
       conversation = Conversation.find_by_id(conversation_id)
