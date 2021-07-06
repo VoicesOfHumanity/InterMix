@@ -624,11 +624,13 @@ class ProfilesController < ApplicationController
     #-- Join or leave a tag
     comtag = params[:comtag]
     which = params[:which]    
+    logger.info("profiles#comtag #{which} #{comtag}")
     if which == 'join'
       comtag.gsub!(/[^0-9A-za-z_]/,'')
       #comtag.downcase!
       if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
       elsif comtag != ''
+        logger.info("profiles#comtag adding #{comtag} for user")
         current_participant.tag_list.add(comtag)
         com = Community.where(tagname: comtag).first
         if not com
@@ -643,6 +645,7 @@ class ProfilesController < ApplicationController
         end
       end
     else
+      logger.info("profiles#comtag removing #{comtag} for user")
       current_participant.tag_list.remove(comtag)
     end
     current_participant.save
