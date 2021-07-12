@@ -4,13 +4,6 @@
   <%= link_to('Edit account', edit_participant_registration_path) %>
   </li>
 	<% end %>
-<% elsif (@dialog_id.to_i > 0 or session[:dialog_id].to_i > 0) and @comtag.to_s != '' -%>	
-  <% extraparams = params.has_key?(:email) ? "&email=#{CGI.escape(params[:email])}" : "" %>
-	<li class="menu"><a class="<%= 'selected' if @section=='join' %>" href="/djoin?comtag=<%= @comtag %>&joincom=1<%= extraparams %>">Join</a></li>
-<% elsif @dialog_id.to_i > 0 or session[:dialog_id].to_i > 0 -%>	
-	<li class="menu"><a class="<%= 'selected' if @section=='join' %>" href="/djoin">Join</a></li>
-<% elsif @group_id.to_i > 0 or session[:group_id].to_i > 0 -%>	
-	<li class="menu"><a class="<%= 'selected' if @section=='join' %>" href="/gjoin">Join</a></li>
 <% else -%>
-	<li class="menu"><a class="<%= 'selected' if @section=='join' %>" href="/join">Join</a></li>
+	<li class="menu"><a class="<%= 'selected' if @section=='join' %>" href="/join">Join with Email</a></li>
 <% end -%>

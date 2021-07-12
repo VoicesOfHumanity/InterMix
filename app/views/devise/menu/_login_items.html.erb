@@ -5,15 +5,15 @@
   </li>
 <% else %>
   <li class="menu">
-    <%= link_to "Visitor Login", "/participants/visitor_login" %>
+    <%= link_to "Welcome Visitor", "/participants/visitor_login" %>
   </li>
   <li class="menu">
     <% if @comtag.to_s != '' -%>	
-			<%= link_to "Sign in", "/participants/sign_in?comtag=#{@comtag}" %>
+			<%= link_to "Member Sign in", "/participants/sign_in?comtag=#{@comtag}" %>
 		<% elsif true or (@dialog and not @dialog.alt_logins) or (@group and not @group.alt_logins) %>
-			<%= link_to "Sign in", "/participants/sign_in" %>
+			<%= link_to "Member Sign in", "/participants/sign_in" %>
   	<% else -%>
-			<%= link_to "Sign in", "/authentications" %>
+			<%= link_to "Member Sign in", "/authentications" %>
 		<% end -%>
 	</li>
 <% end %>

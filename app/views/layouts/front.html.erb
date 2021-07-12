@@ -95,7 +95,6 @@
 			<ul class="mainmenu">
 				
 			<% if not participant_signed_in? %>
-			    <li class="menu"><a class="<%= 'selected' if @section=='home' %>" href="/">Order out of Chaos</a></li>
             <% elsif session[:dialog_id].to_i > 0 -%>  
                 <% vohdom = Rails.env!='development' ? "//voh.#{ROOTDOMAIN}" : '' %>
 			    <li class="menu"><a class="<%= 'selected' if @section=='home' or (@section=='dialogs' and @dialog_id and @dialog_id.to_i==VOH_DISCUSSION_ID.to_i) %>" href="<%= vohdom %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider">Order out of Chaos</a></li>
