@@ -10,7 +10,36 @@
 
 <h3>Posted by <a href="/participant/<%= @participant.id %>/profile"><%= @participant.name %></a>:</h3>
 
+<div style="clear:both;height:1px"></div>
 
-<div id="itemlist">
-<%= render(:partial => 'items/list')%>
+<div id="newforumitem" class="newforumitem" style="display:none"></div>
+
+
+<div id="slider_container" style="overflow:none;width:740px;min-height:600px">
+
+  <div style="float:left;width:595px;min-height:600px">
+
+    <div id="per_main" style="width:595px;min-height:600px">
+  
+      loading...
+        
+    </div>
+  
+    <input type="hidden" id="sortby" value="<%= @sortby %>">
+    <input type="hidden" id="threads" value="<%= @threads %>">
+    <input type="hidden" id="datefixed" value="<%= @datefixed %>">
+    <input type="hidden" id="comtag" value="<%= @comtag %>">
+    <input type="hidden" id="messtag" value="<%= @messtag %>">    
+    
+  </div>
+
+  <div style="float:left;width:139px;padding-left:5px;" id="right_sidebar">
+  
+    <%= render(:partial => 'items/slider_sidebar') %>
+  
+  </div>
+
 </div>
+
+
+<%= render(:partial => 'items/slider_javascript') %>

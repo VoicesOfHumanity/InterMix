@@ -99,23 +99,49 @@ class PeopleController < ApplicationController
     @section = 'wall'
     @psection = 'wall'
     @from = 'wall'
+    @in = 'wall'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.find(@participant_id)
     @sortby = params[:sortby] || "items.id desc"
     @perscr = params[:perscr].to_i || 25
+    @page = params[:page].to_i
+    @page = 1 if @page <= 0
+        
+    #crit = {}
+    #crit[:posted_by] = @participant_id
+    #rootonly = false
     
-    crit = {}
-    crit[:posted_by] = @participant_id
-    rootonly = false
-    
-    items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
-    @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
-    @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
+    #items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
+    #@itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
+    #@items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
        
     update_last_url
     
-    @items = @items.paginate page: @page, per_page: 10  
-      
+    #@items = @items.paginate page: @page, per_page: 10  
+
+    # defaults
+    @geo_level = 6
+    @nvaction = false
+    @include_nvaction = false
+    @messtag = ''
+    @datetype = 'fixed'
+    @datefixed = 'month'
+    @sortby = (@in == 'main' ? 'items.id desc' : '*value*')
+    @threads = 'flat'
+    @perspective = ''
+    
+    @geo_levels = [
+      [6,'Planet&nbsp;Earth'],
+      [5,'My&nbsp;Nation'],
+      [4,'State/Province'],
+      [3,'My&nbsp;Metro&nbsp;region'],
+      [2,'My&nbsp;County'],
+      [1,'My&nbsp;City/Town']
+    ]
+         
+    @posted_by = @participant_id
+    @posted_by_participant = @participant
+     
   end
   
   def follow

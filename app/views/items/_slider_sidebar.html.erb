@@ -1,0 +1,147 @@
+    <p>
+        <% if ((not @conversation) or (@conversation and @is_conv_member)) and not (@in=='wall' and @posted_by!=current_participant.id) %>
+          <input type="button" value="Add Message" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
+          <input type="button" value="Add My Question" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>','question')">
+    		<% end -%>
+        
+        <% if @showing_options == 'more' -%>
+          <input type="button" value="Hide Options" style="margin-top:10px" id="options_button" onclick="chg_options()">        
+        <% else -%>
+          <input type="button" value="Options" style="margin-top:10px" id="options_button" onclick="chg_options()">
+        <% end -%>
+      </p>
+
+    <div style="margin: 20px 0 0 0;">
+      <img src="/images/<%= @nvaction ? 'exitaction' : 'nvaction' %>.jpg" id="actionbutton" onclick="actionclick()" alt="NV action button">
+    </div>
+    
+    <% if false -%>
+      <% if @include_nvaction -%>
+        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are included</button>  
+      <% else -%>
+        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are excluded</button>
+      <% end -%>
+    <% end -%>
+    
+    <% if @in == 'conversation' and @conversation and @conversation.topics.class.name == 'Array' and @conversation.topics.length > 0 -%>
+    <div style="margin: 20px 0 0 0;">
+        <b>Topic:</b><br>
+        <input type="radio" name="topic_radio" value="" <%= (@topic.to_s == '*' or (@topic.to_s == '' and @conversation.default_topic.to_s == '')) ? "checked" : "" %> onclick="per_reload()">any topic<br>
+        <% @conversation.topics.each do |topic| -%>
+          <input type="radio" name="topic_radio" value="<%= topic %>" <%= (topic == @topic or (@topic.to_s == '' and topic == @conversation.default_topic.to_s)) ? "checked" : "" %> onclick="per_reload()"><%=topic %><br>
+        <% end -%>
+      </div>
+      <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
+    <% end -%>
+    
+    <div style="margin: 20px 0 0 0;">
+    <% freeze_geo = false %>
+    <% if @in == 'network' and @network and @network.geo_level.to_i > 0 %>
+      <% @geo_level = @network.geo_level  %>
+      <% freeze_geo = true %>
+    <% end -%>
+    <% @geo_levels.each do |geo_level,geo_desc| -%>
+      <input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> <% if freeze_geo %>disabled<% end %> onclick="per_reload()"><%=raw geo_desc %><br>  
+    <% end -%>
+    </div>
+    
+    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
+    
+    <div style="display: <%= @in == 'conversation' ? 'none' : 'block' -%>">
+      <% if @in == 'network' -%>
+        <input type="radio" name="comtag_radio" value="" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
+        <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br>
+        <% current_participant.tags.each do |tag| -%>
+          <% if @network and @network.communities.collect{|com| com.tagname }.include? tag.name -%>
+            <input type="checkbox" name="comtag_radio" value="<%= tag.name %>" checked disabled>@<%= tag.name %><br> 
+          <% else -%>
+            <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
+          <% end -%>
+        <% end %>              
+      <% else -%>
+        <input type="radio" name="comtag_radio" value="" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
+        <% if @comtag.to_s != '' and @comtag != '*my*' and not current_participant.tag_list.include?(@comtag) -%>
+        <input type="radio" name="comtag_radio" value="<%= @comtag %>" onclick="per_reload(false,1,'comtag')" checked>@<%= @comtag %><br>
+        <% end -%>
+        <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br> 
+        <% current_participant.tags.each do |tag| -%>
+          <% community = Community.find_by_tagname(tag.name) %>
+          <% if community and community.active -%>
+            <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
+          <% end -%>
+        <% end %>
+      <% end %>
+      <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
+    </div>
+    
+  
+    <div style="display: <%= @in == 'conversation' ? 'none' : 'block' -%>">
+      <input type="radio" name="messtag_radio" value="" onclick="per_reload(false,1,'messtag')" <%= @messtag.to_s=='' ? "checked" : "" %>>any hashtag<br>
+      <% if @messtag.to_s != '' and not current_participant.tag_list.include?(@messtag) -%>
+      <input type="radio" name="messtag_radio" value="<%= @messtag %>" onclick="per_reload(false,1,'messtag')" checked>#<%= @messtag %><br>
+      <% elsif @comtag.to_s != '' and @comtag != '*my*' and not current_participant.tag_list.include?(@comtag) -%>
+      <input type="radio" name="messtag_radio" value="<%= @comtag %>" onclick="per_reload(false,1,'messtag')" checked>#<%= @comtag %><br>
+      <% end -%>
+      <% current_participant.tags.each do |tag| -%>
+        <% community = Community.find_by_tagname(tag.name) %>
+        <% if community and community.active -%>
+          <% if @network and @network.communities.collect{|com| com.tagname }.include? tag.name -%>
+            <input type="checkbox" name="messtag_radio" value="<%= tag.name %>" checked disabled>#<%= tag.name %><br>
+          <% else -%>
+            <input type="radio" name="messtag_radio" value="<%= tag.name %>" <%= (tag.name == @messtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'messtag')">#<%= tag.name %><br>
+          <% end -%>
+        <% end -%>
+      <% end %>
+      <% if false -%>
+      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">
+      <% end -%>
+      <div style="padding-left: 8px">& #<input type="text" id="messtag_other" size="10" maxlength="14" onchange="per_reload(false,1,'messtag_other')"></div>
+      <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
+    </div>
+
+    <div style="">
+      <% gender = 0 %>
+      <% freeze_gender = false %>
+      <% if @in == 'wall' and @posted_by and @posted_by_participant -%>
+        <% gender = @posted_by_participant.gender_id  %>
+        <% freeze_gender = true %>
+      <% elsif @in == 'network' and @network and @network.gender.to_i > 0 %>
+        <% gender = @network.gender  %>
+        <% freeze_gender = true %>
+      <% end -%>
+      <input type="radio" name="meta_3" id="meta_3_0" value="0" <% if gender==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.gender_id==408) %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()">all<br>
+      <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
+        <% if not metamap_node.sumcat -%>
+          <% if false %>
+            <input type="checkbox" name="meta_3[]" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" checked onclick="per_reload()"><%= metamap_node.name %><br>
+          <% else %>
+            <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" <% if metamap_node.id==gender %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()"><%= metamap_node.name %><br>
+          <% end -%>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
+
+    <div style="">
+      <% age = 0 %>
+      <% freeze_age = false %>
+      <% if @in == 'wall' and @posted_by and @posted_by_participant -%>
+        <% age = @posted_by_participant.generation_id %>
+        <% freeze_age = true %>
+      <% elsif @in == 'network' and @network and @network.age.to_i > 0 %>
+        <% age = @network.age  %>
+        <% freeze_age = true %>
+      <% end -%>
+      <input type="radio" name="meta_5" id="meta_5_0" value="0" <% if age==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.generation_id==409) %>checked<% end %> <% if freeze_age %>disabled<% end %> onclick="per_reload()">all<br>
+      <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
+        <% if not metamap_node.sumcat -%>
+          <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" <% if metamap_node.id==age %>checked<% end %> <% if freeze_age %>disabled<% end %> onclick="per_reload()"><%= metamap_node.name %><br>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div style="display:none;margin: 20px 0 0 0;">
+      <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Listing<br>
+      <input type="radio" name="show_result" value="1" <%= @show_result.to_i == 1 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Results
+    </div>

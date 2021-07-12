@@ -1,0 +1,251 @@
+<script>
+var geo_levels = {1: 'city', 2: 'county', 3: 'metro', 4: 'state', 5: 'nation', 6: 'planet'};
+var cur_comtag = '';
+var cur_messtag = '';
+var cur_geo_level = <%= @geo_level > 0 ? @geo_level : 5 %>;
+var cur_topic = '';
+var cur_batch_level = <%= (@batch_level || 1).to_i %>;
+var cur_batch_size = <%= (@batch_size || 4).to_i %>;
+var showing_options = '<%= @showing_options %>';
+var user_comtags = <%=raw current_participant.tag_list.inspect %>;
+var nvaction_on = <%= @nvaction ? 'true' : 'false' %>;
+//var nvaction_included = <%= @include_nvaction ? 'true' : 'false' %>;;
+var conversation_id = <%= @conversation_id.to_i %>;
+var in_conversation = <%= @in_conversation ? 1 : 0 %>;
+var perspective = '<%= @perspective.to_s %>';
+var cur_conv = '<%= @conversation ? @conversation.shortname : '' %>';
+var insection = '<%= @in %>';
+var network_id = <%= @network_id.to_i %>;
+
+var messtag_changed = false;
+var add_after_reload = false;
+function per_reload(first,num,whatchanged,page,go_item) {
+  console.log('per_reload() whatchanged:'+whatchanged);
+	if (editingid>0) {
+	    alert("Please save or cancel the edit that is in progress");
+	    return;
+	} else if (replyingid>0) {
+	    alert("Please save or cancel the reply that is in progress");
+	    return;
+	} else if (in_new_item>0) {
+	    alert("Please save or cancel the new thread that is in progress");
+	    return;
+	}
+  if (first === undefined) {
+    first = false;
+  } 
+  first = first ? 1 : 0;
+  if (num === undefined) {
+    num = 2;
+  }
+  if (page === undefined) {
+    page = 1;
+  }
+  if (go_item === undefined) {
+    go_item = 0;
+  }
+
+ 	$('#per_main').css('opacity','0.5');
+  cur_comtag = $("input[name='comtag_radio']:checked").val();
+  
+  if (whatchanged=='messtag') {
+    cur_messtag = $("input[name='messtag_radio']:checked").val(); 
+    if (cur_messtag == '') {
+      messtag_changed = false;
+    } else {
+      messtag_changed = true;
+    }  
+  }
+  
+  if (whatchanged=='comtag' && !messtag_changed && $.inArray(cur_comtag, user_comtags) > -1) {
+    var xfound = false;
+    $("input[name=messtag_radio]").each(function(i) {
+      if ($(this).val()==cur_comtag) {
+        $(this).prop('checked', true);
+        xfound = true;
+      }
+    });
+    //if (!xfound) {
+    //  $('#messtag_other').val(cur_comtag);
+    //  $("input[name=messtag_radio][value='*other*']").prop('checked', true);
+    //}
+  }  
+
+  cur_messtag = $("input[name='messtag_radio']:checked").val();
+  messtag_other = $('#messtag_other').val();
+  
+  //if (cur_messtag == '*other*') {
+  //  cur_messtag = $('#messtag_other').val();
+  //}
+  if (cur_messtag == '') {
+    $("input[name=messtag_radio][value='']").prop('checked', true);
+  }
+  cur_geo_level = $("input[name='geo_level_radio']:checked").val();
+   
+  cur_topic =  $("input[name='topic_radio']:checked").val();
+   
+  var showratings = <%= params[:showratings].to_i == 1 ? 1 : 0 %>;
+  var showfollow = <%= params[:showfollow].to_i == 1 ? 1 : 0 %>;
+  
+  var show_result = $('input[name=show_result]:checked').val();
+  var top_posts = $('#top_posts').val();
+  var is_first = $('#is_first').val();
+  //checkbox
+  //var meta_3 = $("input[name='meta_3[]']:checked").map(function(){
+  //  return $(this).val();
+  //}).get();
+  var meta_3 = $("input[name='meta_3']:checked").val()
+  var meta_5 = $("input[name='meta_5']:checked").val()
+  var dialog_id = $('#dialog_id').val();
+   var conversation_id = $('#conversation_id').val();
+  //var comtag = $('#comtag').val()
+  var comtag = cur_comtag;
+  var messtag = cur_messtag;
+  var topic = cur_topic;
+  var posted_by = <%= @posted_by.to_i %>;
+  if (first) {
+    var threads = $('#threads').val();
+    var sortby = $('#sortby').val();    
+    var datefixed = $('#datefixed').val();   
+  } else {
+    var threads = $('#threads'+num).val();
+    var sortby = $('#sortby'+num).val();
+    var datefixed = $('#datefixed'+num).val();
+    var othernum = (num==2) ? 1 : 2;
+    $('#threads'+othernum).val(threads);
+    $('#sortby'+othernum).val(sortby);
+    $('#datefixed'+othernum).val(datefixed);
+    $('#threads').val(threads);
+    $('#sortby').val(sortby);
+    $('#datefixed').val(datefixed);
+  }
+  var nvaction = nvaction_on ? 1 : 0
+  $('#newthreadbutton').prop('disabled', false);
+  var data = {page: page, geo_level: cur_geo_level, batch_level: cur_batch_level, batch_size: cur_batch_size, dialog_id: dialog_id, meta_3: meta_3, meta_5: meta_5, show_result: show_result, top_posts: top_posts, threads: threads, sortby: sortby, first: first, showing_options: showing_options, datefixed: datefixed, comtag: comtag, messtag: messtag, messtag_other: messtag_other, showratings: showratings, showfollow: showfollow, nvaction: nvaction, conversation_id: conversation_id, in_conversation: in_conversation, perspective: perspective, in: insection, network_id: network_id, topic: topic, is_first: is_first, posted_by: posted_by, authenticity_token: '<%= form_authenticity_token %>'}
+  
+  //nvaction_included: (nvaction_included ? 1 : 0),
+  
+  //var tag;
+  //$('.com_check').each(function(i) {
+  //  if ($(this).val()=='1') {
+  //    tag = $(this).data('tag');
+  //    data['check['+tag+']'] = 1
+  //  }
+  //});
+  
+  if (whatchanged !== undefined) {
+    data['whatchanged'] = whatchanged;
+  }
+	$.ajax({
+    type: 'POST',
+	  url: '/items/geoslider_update',
+	  data: data,
+	  complete: function(t){ 
+      $('#per_main').css('opacity','1.0');
+  	  $('#per_main').html(t.responseText);
+      $('#maincontent').height( $('#per_main').height()+95 );
+  		if (go_item>0) {
+  			location.href = "#"+go_item;
+  		} else {
+        	$(window).scrollTop(0);
+  		}
+      if (add_after_reload) {
+        newitem('<%= form_authenticity_token %>');
+      }
+	  }
+	});	
+}
+per_reload(true);
+function chg_options() {
+  if (showing_options=='more') {
+    $('#options_top').hide();
+    showing_options = 'less';
+    $('#options_button').val("Options");
+  } else {
+    $('#options_top').show();
+    showing_options = 'more';
+    $('#options_button').val("Hide Options");
+  }
+}
+function chg_nvaction_include() {
+  if (nvaction_included) {
+    nvaction_included = false;
+    $('#nvaction_include_button').html("NV Action items<br>are excluded");
+  } else {
+    nvaction_included = true;
+    $('#nvaction_include_button').html("NV Action items<br>are included");
+  }
+  per_reload();
+}
+function gotopage(page) {
+	per_reload(false,1,'page',page)
+}
+function joinleave(comtag) {
+  var which = $('#comtagjoin').prop('value');
+  var data = {
+    'comtag': comtag,
+    'which': which,
+  };
+	$.ajax({
+    type: 'GET',
+	  url: '/me/comtag',
+	  data: data,
+	  complete: function(t){ 
+      if (which=='join') {
+        $('#comtagjoin').prop('value','leave');
+      } else {
+        $('#comtagjoin').prop('value','join');
+      }
+      window.location.href = '?comtag='+comtag;
+	  }
+	});
+}
+function actionclick() {
+  if (nvaction_on) {
+    nvaction_on = false;
+    $('#actionbutton').attr('src','/images/nvaction.jpg');
+    $('#top_forum_header').html('Forum');
+    $('#top_result_header').html('Highest Rated Messages');
+    $('#nvaction_include_button').show();
+  } else {
+    nvaction_on = true;
+    $('#actionbutton').attr('src','/images/exitaction.jpg');
+    $('#top_forum_header').html('Nonviolent Action Forum');
+    $('#top_result_header').html('Highest Rated Nonviolent Action Items');
+    $('#nvaction_include_button').hide();
+    nvaction_included = false;
+  }
+  per_reload();
+}
+function chg_conversation() {
+  var conv = $('#chg_conv').val();
+  if (conv != '') {
+    // Might be a - to leave the conversation (and go to community)
+    window.location.href = '?conv='+conv;
+  }
+}
+function leave_conversation() {
+  window.location.href = '?comtag='+cur_comtag+'&conv=-';  
+}
+function chg_community() {
+  var com = $('#chg_com').val();
+  if (com != '') {
+    window.location.href = '?comtag='+com+'&conv='+cur_conv+'<%= @show_result==1 ? "&show_result=1" : "" %>';
+  }
+}
+function load_thread(item_id, conversation_id) {
+  // Load a thread (maybe with comments) into the main part of the screen, not in a different screen
+  $('#per_main').css('opacity','0.5');
+	$.ajax({
+    type: 'GET',
+	  url: '/items/'+item_id+'/thread?inline=1&conversation_id='+conversation_id,
+	  complete: function(t){ 
+      $('#per_main').css('opacity','1.0');
+  	  $('#per_main').html(t.responseText);
+      $('#maincontent').height( $('#per_main').height()+95 );
+      $(window).scrollTop(0);
+	  }
+	});	
+}
+
+</script>

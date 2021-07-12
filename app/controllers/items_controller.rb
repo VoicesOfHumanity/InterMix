@@ -1693,6 +1693,8 @@ class ItemsController < ApplicationController
         #  logger.info("items#geoslider_update nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
         #end
       end
+      
+      crit[:posted_by] = params[:posted_by].to_i
     
       #@datetype = params[:datetype].to_s    # fixed or range
       @datetype = 'fixed'
