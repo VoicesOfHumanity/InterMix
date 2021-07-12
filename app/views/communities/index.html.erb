@@ -65,7 +65,7 @@
         <% elsif prof_nation -%>
           in&nbsp;profile
         <% elsif com.context != 'nation' and com.context != 'city' %>  
-          <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>          
+          <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list_downcase.include?(com.tagname.downcase) ? "leave" : "join" %></a>          
         <% else -%>
           -
         <% end -%>
