@@ -31,6 +31,7 @@ class Participant < ActiveRecord::Base
   
   has_many :followers, :class_name => 'Participant', :through => :followeds
   has_many :idols, :class_name => 'Participant', :through => :followings
+  #has_many :friends, class_name: 'Participant', through: :followeds -> { where 'followeds.mutual': true }
   
   has_many :sent_messages, :class_name => 'Message', :primary_key => :from_participant_id
   has_many :received_messages, :class_name => 'Message', :primary_key => :to_participant_id

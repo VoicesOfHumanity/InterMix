@@ -99,7 +99,7 @@
       <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     </div>
 
-    <div style="">
+    <div style=""> 
       <% gender = 0 %>
       <% freeze_gender = false %>
       <% if @in == 'wall' and @posted_by and @posted_by_participant -%>
@@ -145,3 +145,7 @@
       <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Listing<br>
       <input type="radio" name="show_result" value="1" <%= @show_result.to_i == 1 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Results
     </div>
+    
+    <% if @in=='wall' and @posted_by==current_participant.id -%>
+      <input type="hidden" name="own_wall" id="own_wall" value="1">
+    <% end -%>

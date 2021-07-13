@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_06_144924) do
+ActiveRecord::Schema.define(version: 2021_07_13_200426) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -574,7 +574,7 @@ ActiveRecord::Schema.define(version: 2021_07_06_144924) do
   end
 
   create_table "item_thumbs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "original_url"
+    t.text "original_url"
     t.string "our_path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -635,6 +635,8 @@ ActiveRecord::Schema.define(version: 2021_07_06_144924) do
     t.string "representing_com"
     t.string "together_apart", default: ""
     t.string "topic"
+    t.string "wall_delivery", default: "public"
+    t.boolean "wall_post", default: false
     t.string "comment_email_to", default: "author"
     t.string "remote_reference"
     t.text "received_json"
@@ -1018,7 +1020,7 @@ ActiveRecord::Schema.define(version: 2021_07_06_144924) do
   end
 
   create_table "tags", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name", collation: "utf8_bin"
+    t.string "name"
     t.integer "taggings_count", default: 0
     t.index ["name"], name: "index_tags_on_name", unique: true
   end

@@ -398,6 +398,7 @@ class ItemsController < ApplicationController
     #-- screen for a new item, either new thread or a reply
     @from = params[:from] || ''
     @reply_to = params[:reply_to].to_i
+    @own_wall = params[:own_wall].to_i
     
     @media_type = params[:media_type] if params[:media_type].to_s != ''
     @item = Item.new(:media_type=>@media_type,:link=>'https://',:reply_to=>@reply_to,html_content: '')    
@@ -415,7 +416,7 @@ class ItemsController < ApplicationController
     @meta_3 = params[:meta_3].to_i    # gender
     @meta_5 = params[:meta_5].to_i    # age
     @topic = params[:topic].to_s
-
+    @item.wall_post = (@own_wall==1)
     
     if @item.reply_to.to_i > 0
       @olditem = Item.find_by_id(@item.reply_to)
@@ -3033,7 +3034,7 @@ class ItemsController < ApplicationController
   end
   
   def item_params
-    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply, :representing_com, :topic, :comment_email_to)
+    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply, :representing_com, :topic, :comment_email_to, :wall_post, :wall_delivery)
   end
     
 end

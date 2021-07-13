@@ -144,7 +144,7 @@ function list(whatchanged,gotopost) {
      data: pars,
      complete: function(t){	
        $("#itemlist").html(t.responseText);
-	   listdone();
+	     listdone();
        //if (gotopost != '') {
         //     window.location.hash = '#item_'+gotopost;
          //}
@@ -154,6 +154,7 @@ function list(whatchanged,gotopost) {
    });	
 }
 var listdone = function(t) {
+  console.log("listdone()");
   $('#itemlist').show();
   hideworking();
   $('#itemlist').css('opacity','1.0');
@@ -254,6 +255,9 @@ function newitem(token, media_type) {
 	if ($('#from')) {
 	    pars += '&from=' + $('#from').val();
 	}	
+  if ($('#own_wall').length) {
+    pars += '&own_wall=1'
+  }
 	if ($('#items_length')) {
 	    pars += '&items_length=' + $('#items_length').val();
 	}	

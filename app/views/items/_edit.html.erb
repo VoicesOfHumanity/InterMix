@@ -129,6 +129,14 @@ if (CKEDITOR.instances['item_html_content']) {
         <input type="hidden" name="item[representing_com]" id="item_representing_com" value="<%= @item.representing_com %>">
       <% end -%>
       
+      <% if @from == 'wall' and @own_wall == 1 -%>
+    	  <br><br>Delivery: <select name="item[wall_delivery]" id="item_wall_delivery">
+        <% com_options = [['Email to friends','email_friends'],['Email to followers','email_followers'],['Do not email','wall_only'],["Public","public"]] %>
+    	  <%= options_for_select(com_options, 'email_friends') %>
+    	  </select>       
+        <input type="hidden" name="item[wall_post]" id="item_wall_post" value="<%= @item.wall_post %>">
+      <% end -%>
+      
       <% if (@item.reply_to.to_i>0) and current_participant.status != 'visitor' -%>
     	  <br><br>Email this comment to: <select name="item[comment_email_to]" id="item_comment_email_to">
         <% com_options = [["Public","public"]] %>

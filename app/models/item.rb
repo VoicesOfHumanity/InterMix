@@ -287,7 +287,7 @@ class Item < ActiveRecord::Base
 
     return if self.posted_by == VISITOR_ID
 
-    participants = []   
+    participants = []   # The ones we'll mail to
     got_participants = {}
     allpeople = []
         
@@ -296,43 +296,72 @@ class Item < ActiveRecord::Base
     if self.reply_to.to_i == 0 or self.comment_email_to != 'author'
       # If this is not a comment, or the comment goes to public or community, select based on people's settings
     
-      allpeople = Participant.where(status: 'active').where("mycom_email='instant' or othercom_email='instant'")
-      for person in allpeople
-        hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.tag_list_downcase.include?(t) } )
-        if self.participant
-          hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.participant.tag_list_downcase.include?(t) } )
-          person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with person #{self.participant.id}. "
-        else
-          # remote authors are not in the same communities
-          hascommatch = false
-          person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with remote person #{self.remote_poster.account}. "
-        end
-        #if person.id == 6 or person.id == 1867
-        #  logger.info("Item#emailit person #{person.id}: hasmessmatch:#{hasmessmatch} with item #{self.id}")
-        #  logger.info("Item#emailit person #{person.id}: hascommatch:#{hascommatch} with person #{self.participant.id}")
-        #end
-        if hasmessmatch and hascommatch and person.mycom_email == 'instant'
-          person.explanation += "Match, and person.mycom_email is instant. "
-          participants << person
-          got_participants[person.id] = true
-        elsif not (hasmessmatch and hascommatch) and person.othercom_email == 'instant'
-          person.explanation += "Mismatch, and person.othercom_email is instant. "
-          participants << person
-          got_participants[person.id] = true
-        end      
-      end
-      logger.info("Item#emailit #{participants.length} recipients based on community settings")
-
-      if self.intra_com == 'public'
-      elsif self.intra_com.to_s != ''
-        # It is for a particular community only. Remove anybody who's not a member
-        tagname = self.intra_com[1,50]
-        for person in allpeople
-          if not person.tag_list_downcase.include?(tagname.downcase)
-            participants.delete(person)
+      if self.wall_post
+        # Wall posts will be sent based on the delivery choice
+    
+        if self.wall_delivery == 'email_friends'
+          follows = Follow.includes(:follower).where(followed_id: self.participant.id, mutual: true)          
+          for follow in follows
+            if follow.follower
+              friend = follow.follower
+              friend.explanation = "Friend"
+              participants << friend
+            end
           end
-        end  
-      end   
+        elsif self.wall_delivery == 'email_followers'
+          for follower in self.participant.followers
+            follower.explanation = "Follower"
+            participants << follower
+          end
+        elsif self.wall_deliver == 'wall_only' 
+          # Don't email
+          return
+        else
+          # If it is public, we probably won't email it to anybody either, but there might be some exception below
+        end
+    
+      else
+        # Not a wall post. Mailed based on people's settings
+    
+        allpeople = Participant.where(status: 'active').where("mycom_email='instant' or othercom_email='instant'")
+        for person in allpeople
+          hasmessmatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.tag_list_downcase.include?(t) } )
+          if self.participant
+            hascommatch = ( person.tag_list.class == ActsAsTaggableOn::TagList and person.tag_list_downcase.length > 0 and person.tag_list_downcase.any?{|t| self.participant.tag_list_downcase.include?(t) } )
+            person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with person #{self.participant.id}. "
+          else
+            # remote authors are not in the same communities
+            hascommatch = false
+            person.explanation = "hasmessmatch:#{hasmessmatch} with item #{self.id}. hascommatch:#{hascommatch} with remote person #{self.remote_poster.account}. "
+          end
+          #if person.id == 6 or person.id == 1867
+          #  logger.info("Item#emailit person #{person.id}: hasmessmatch:#{hasmessmatch} with item #{self.id}")
+          #  logger.info("Item#emailit person #{person.id}: hascommatch:#{hascommatch} with person #{self.participant.id}")
+          #end
+          if hasmessmatch and hascommatch and person.mycom_email == 'instant'
+            person.explanation += "Match, and person.mycom_email is instant. "
+            participants << person
+            got_participants[person.id] = true
+          elsif not (hasmessmatch and hascommatch) and person.othercom_email == 'instant'
+            person.explanation += "Mismatch, and person.othercom_email is instant. "
+            participants << person
+            got_participants[person.id] = true
+          end      
+        end
+        logger.info("Item#emailit #{participants.length} recipients based on community settings")
+
+        if self.intra_com == 'public'
+        elsif self.intra_com.to_s != ''
+          # It is for a particular community only. Remove anybody who's not a member
+          tagname = self.intra_com[1,50]
+          for person in allpeople
+            if not person.tag_list_downcase.include?(tagname.downcase)
+              participants.delete(person)
+            end
+          end  
+        end
+      
+      end
 
     end
     
@@ -1448,6 +1477,11 @@ class Item < ActiveRecord::Base
       # show only public items, if there's no community specified, unless we're seeing somebody's wall, or it is a bulk mailing
       items = items.where("items.intra_com='public'")
       
+    end
+    
+    if crit[:posted_by].to_i == 0
+      # We're probably not on somebody's wall. So, only show wall posts meant to be public
+      items = items.where("(items.wall_post=0 or items.wall_delivery='public')")
     end
     
     if crit.has_key?(:conversation_id) and crit[:conversation_id].to_i > 0
