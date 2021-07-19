@@ -35,7 +35,7 @@ class CommunitiesController < ApplicationController
     if params[:which].to_s == 'all' or (current_participant.tag_list.length == 0 and current_participant.status != 'visitor')
       communities = Community.where(is_sub: false)
       @csection = 'all' 
-    elsif params[:which].to_s == 'human'  
+    elsif params[:which].to_s == 'human'  or (current_participant.status == 'visitor' and params[:which].to_s == '')
       communities = Community.where(is_sub: false, more: true)
       @csection = 'human' 
     elsif params[:which].to_s == 'un'  
@@ -85,8 +85,12 @@ class CommunitiesController < ApplicationController
       for tag in current_participant.tag_list_downcase
         comtags[tag] = true
       end
-      @comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
-      communities = Community.where("tagname in (#{@comtag_list})")
+      if comtags.length > 0
+        @comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
+        communities = Community.where("tagname in (#{@comtag_list})")
+      else
+        communities = Community.where("1=0")
+      end
       @csection = 'my'      
     end
 
@@ -98,17 +102,21 @@ class CommunitiesController < ApplicationController
     end
     
     @communities = []
-    communities.each do |community|
-      #community.members = community.member_count
-      community.activity = community.activity_count
-      @communities << community
+    if communities.length > 0
+      communities.each do |community|
+        #community.members = community.member_count
+        community.activity = community.activity_count
+        @communities << community
+      end
     end
     
-    if ['id','tag'].include?(sort) or @sort == 'id desc'
-    elsif @sort == 'activity'
-      @communities.sort! { |a,b| [b.send('activity'),a.send('tagname')] <=> [a.send('activity'),b.send('tagname')] }
-    else
-      @communities.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
+    if @communities.length > 0
+      if ['id','tag'].include?(sort) or @sort == 'id desc'
+      elsif @sort == 'activity'
+        @communities.sort! { |a,b| [b.send('activity'),a.send('tagname')] <=> [a.send('activity'),b.send('tagname')] }
+      else
+        @communities.sort! { |a,b| b.send(@sort) <=> a.send(@sort) }
+      end
     end
 
     @perscr = (params[:perscr] || 20).to_i
