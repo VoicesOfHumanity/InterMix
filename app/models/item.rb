@@ -539,7 +539,7 @@ class Item < ActiveRecord::Base
         if self.reply_to.to_i > 0 and self.orig_item
           itext += " as a comment on a ##{ self.orig_item.representing_com.to_s !='' ? self.orig_item.representing_com : '???' } item"
         end
-        itext += " in the #{ self.conversation.name } conversation in #{ self.conversation.together_apart } mode.</p>"
+        itext += " in the #{ self.conversation.name } conversation in #{ self.together_apart } mode.</p>"
       end
       
       itext += "<p>by "
