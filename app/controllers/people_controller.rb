@@ -106,6 +106,8 @@ class PeopleController < ApplicationController
     @perscr = params[:perscr].to_i || 25
     @page = params[:page].to_i
     @page = 1 if @page <= 0
+    
+    @otherwall = true
         
     #crit = {}
     #crit[:posted_by] = @participant_id
