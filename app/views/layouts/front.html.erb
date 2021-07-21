@@ -117,16 +117,18 @@
                 
 				<li class="menu"><a class="<%= 'selected' if @section=='communities' %>" href="/communities">Communities</a></li>
                 
-                <% city_conv = Conversation.find_by_id(CITY_CONVERSATION_ID) %>
-                <% if city_conv and city_conv.active -%>
-                <li class="menu"><a class="<%= 'selected' if @section=='cities' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= CITY_CONVERSATION_CODE %>">The Cities</a></li>
-                <% end -%>
-                <% if Conversation.find_by_id(INT_CONVERSATION_ID).active -%>
-                <li class="menu"><a class="<%= 'selected' if @section=='nations' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>">The Nations</a></li>
-                <% end -%>
-                <% un_conv = Conversation.find_by_id(UNGOALS_CONVERSATION_ID) %>
-                <% if un_conv and un_conv.active -%>
-                <li class="menu"><a class="<%= 'selected' if @section=='ungoals' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= UNGOALS_CONVERSATION_CODE %>">The UN Goals</a></li>
+                <% if false -%>
+                    <% city_conv = Conversation.find_by_id(CITY_CONVERSATION_ID) %>
+                    <% if city_conv and city_conv.active -%>
+                    <li class="menu"><a class="<%= 'selected' if @section=='cities' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= CITY_CONVERSATION_CODE %>">The Cities</a></li>
+                    <% end -%>
+                    <% if Conversation.find_by_id(INT_CONVERSATION_ID).active -%>
+                    <li class="menu"><a class="<%= 'selected' if @section=='nations' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>">The Nations</a></li>
+                    <% end -%>
+                    <% un_conv = Conversation.find_by_id(UNGOALS_CONVERSATION_ID) %>
+                    <% if un_conv and un_conv.active -%>
+                    <li class="menu"><a class="<%= 'selected' if @section=='ungoals' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= UNGOALS_CONVERSATION_CODE %>">The UN Goals</a></li>
+                    <% end -%>
                 <% end -%>
                 		
 			<% end -%>
