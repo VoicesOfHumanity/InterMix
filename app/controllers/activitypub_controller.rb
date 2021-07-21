@@ -124,14 +124,29 @@ class ActivitypubController < ApplicationController
     for f in follows
       if f.followed_id.to_i > 0 and f.idol
         # An internal user
-        followed_fulluniq = f.idol.account_uniq_full
-      elsif f.followed_fulluniq.to_s != ''
-        followed_fulluniq = f.followed_fulluniq
+        followed_url = "https://#{BASEDOMAIN}/u/#{f.idol.account_uniq}"
+      elsif f.followed_remote_actor_id.to_i > 0 and f.remote_idol
+        followed_url = f.remote_idol.account_url
       else
-        continue
+        next
       end        
-      follows_list << followed_fulluniq
-    end    
+      follows_list << followed_url
+    end   
+
+    @account_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}"
+    url = "#{@account_url}/following.json"   # https://intermix.cr8.com/u/ff2580/following.json
+    
+    results = {
+      	"@context" => "https://www.w3.org/ns/activitystreams",
+        "id" => url,
+        "type" => "OrderedCollectionPage",
+        "totalItems" => follows_list.length,
+        "orderedItems" => follows_list
+    }
+    
+    results_json = results.to_json
+        
+    render json: results_json, content_type: 'application/activity+json'         
   end
   
   def followers
@@ -141,14 +156,30 @@ class ActivitypubController < ApplicationController
     for f in followers
       if f.following_id.to_i > 0 and f.follower
         # An internal user
-        following_fulluniq = f.follower.account_uniq_full
-      elsif f.followed_fulluniq.to_s != ''
-        following_fulluniq = f.followed_fulluniq
+        following_url = "https://#{BASEDOMAIN}/u/#{f.follower.account_uniq}"
+      elsif f.following_remote_actor_id.to_i > 0 and f.remote_follower
+        # a remote user 
+        following_url = f.remote_follower.account_url
       else
         next
       end        
-      follower_list << following_fulluniq            
+      follower_list << following_url            
     end
+    
+    @account_url = "https://#{BASEDOMAIN}/u/#{@account.account_uniq}"
+    url = "#{@account_url}/followers.json"   # https://intermix.cr8.com/u/ff2580/followers.json
+
+    results = {
+      	"@context" => "https://www.w3.org/ns/activitystreams",
+        "id" => url,
+        "type" => "OrderedCollectionPage",
+        "totalItems" => follower_list.length,
+        "orderedItems" => follower_list
+    }
+    
+    results_json = results.to_json
+        
+    render json: results_json, content_type: 'application/activity+json'    
   end
   
   def account_key

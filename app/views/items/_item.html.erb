@@ -15,7 +15,7 @@ if not defined? censor_ok
     if session[:moderated_communities].include? tag
       community = Community.find_by_tagname(tag)
       community_admins = community.admins_and_moderators.collect{|r| r.id }
-      if current_participant.sysadmin or community_admins.include? current_participant.id
+      if current_participant and (current_participant.sysadmin or community_admins.include? current_participant.id)
         censor_ok = true
       end
     end
