@@ -35,6 +35,7 @@ class CommunitiesController < ApplicationController
     if params[:which].to_s == 'all' or (current_participant.tag_list.length == 0 and current_participant.status != 'visitor')
       communities = Community.where(is_sub: false).where("context not in ('city','nation')")
       @csection = 'all' 
+      @toptitle = "All Communities except Nations and Cities"
     elsif params[:which].to_s == 'human'  or (current_participant.status == 'visitor' and params[:which].to_s == '')
       communities = Community.where(is_sub: false, more: true)
       @csection = 'human' 

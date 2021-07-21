@@ -1,4 +1,4 @@
-<span style="font-size:20px;color:#000;">Communities</span></a><br>
+<span style="font-size:20px;color:#000;"><% if @toptitle.to_s != '' %><%= @toptitle %><% else %>Communities<% end %></span></a><br>
 
 <ul class="horizmenu">
   <% if current_participant.status != 'visitor' -%>
