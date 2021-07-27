@@ -269,48 +269,14 @@ class ApplicationController < ActionController::Base
     group_id,dialog_id = get_group_dialog_from_subdomain
     return if not group_id and not dialog_id
     group_id,dialog_id = check_group_and_dialog if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
-
-    if session[:dialog_prefix] != '' and session[:group_prefix] != ''
-      session[:cur_prefix] = session[:dialog_prefix] + '.' + session[:group_prefix]
-    elsif session[:group_prefix] != ''
-      session[:cur_prefix] = session[:group_prefix]
-    elsif session[:dialog_prefix] != ''
-      session[:cur_prefix] = session[:dialog_prefix]
-    end
     
-    if session[:cur_prefix] != ''
-      session[:cur_baseurl] = "https://" + session[:cur_prefix] + "." + ROOTDOMAIN    
-    else
-      session[:cur_baseurl] = "https://" + BASEDOMAIN    
-    end
+    session[:cur_baseurl] = "https://" + BASEDOMAIN    
     logger.info("application#after_sign_in_path_for cur_baseurl:#{session[:cur_baseurl]}")
 
-    #-- See if they're a moderator of a group, or a hub admin. Only those can add new discussions.
-    groupsmodof = GroupParticipant.where("participant_id=#{current_participant.id} and moderator=1")
-    session[:is_group_moderator] = (groupsmodof.length > 0)
     hubadmins = HubAdmin.where("participant_id=#{current_participant.id} and active=1")
     session[:is_hub_admin] = (hubadmins.length > 0)
     session[:is_sysadmin] = current_participant.sysadmin
-    session[:is_anyadmin] = (session[:is_group_moderator] or session[:is_hub_admin] or session[:is_sysadmin])
-  
-    #if dialog_id.to_i>0 and group_id.to_i > 0
-    if group_id.to_i > 0
-      @group = Group.find_by_id(group_id) if not @group
-      #-- Check if they're a member of the group. If not, join them
-      #if @group.openness == 'open'
-        # No longer caring about group settings
-        group_participant = GroupParticipant.where("participant_id=#{current_participant.id} and group_id=#{group_id}").first
-        if group_participant
-          session[:group_is_member] = true
-        else
-          group_participant = GroupParticipant.new(:group_id=>group_id,:participant_id=>current_participant.id)
-          group_participant.active = true
-          group_participant.status = 'active'
-          group_participant.save
-          session[:group_is_member] = true
-        end
-      #end
-    end  
+    session[:is_anyadmin] = (session[:is_hub_admin] or session[:is_sysadmin]) 
     
     if current_participant.fb_uid.to_i >0 and not current_participant.picture.exists?
       #-- If they don't have a picture set, and they have a facebook account, get it from there
@@ -327,7 +293,7 @@ class ApplicationController < ActionController::Base
       session[:cur_baseurl] + '/me/profile/meta'
     elsif true and not session.has_key?(:previous_comtag)
       stored_location_for(resource_or_scope) || super  
-    elsif true
+    elsif false
       # Send everybody to Order out of Chaos  
       logger.info("application#after_sign_in_path_for send everybody to order out of chaos")
       if session.has_key?(:previous_comtag) and session[:previous_comtag].to_s != ''
@@ -335,12 +301,13 @@ class ApplicationController < ActionController::Base
       else
         session[:cur_baseurl] + "/dialogs/#{VOH_DISCUSSION_ID}/slider"
       end
-    elsif dialog_id.to_i > 0
-      logger.info("application#after_sign_in_path_for setting path to dialog slider list")
-      session[:cur_baseurl] + "/dialogs/#{dialog_id}/slider"
-    elsif group_id.to_i > 0
-      logger.info("application#after_sign_in_path_for setting path to group forum")
-      session[:cur_baseurl] + "/groups/#{group_id}/forum"      
+    elsif session[:sawfront].to_s == 'yes' and session[:comtag].to_s != '' 
+      @community = Community.find_by_tagname(session[:comtag])
+      if @community
+        return "/communities/#{@community.id}"
+      else
+        super
+      end
     elsif current_participant.last_url.to_s != ''
       current_participant.last_url
     elsif session.has_key?(:previous_url) 
