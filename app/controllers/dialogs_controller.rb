@@ -297,9 +297,7 @@ class DialogsController < ApplicationController
       end      
     end
     
-    if current_participant.status == 'visitor'
-      @perspective = 'outsider'
-    elsif @in == 'conversation' and @conversation and @conversation.id == INT_CONVERSATION_ID
+    if @in == 'conversation' and @conversation and @conversation.id == INT_CONVERSATION_ID
       #-- If we're going to the international conversation, make sure they're a member of their country communities
       country1 = nil
       country2 = nil
@@ -516,7 +514,7 @@ class DialogsController < ApplicationController
       if @comtag == ''
         @perspective = 'outsider'
       end
-      if @perspective == 'outsider' and current_participant.status != 'visitor'
+      if @perspective == 'outsider'
         logger.info("dialogs#slider redirecting to conversation about, because outsider")
         redirect_to "/conversations/#{@conversation.id}"
         return

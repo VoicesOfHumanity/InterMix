@@ -13,7 +13,13 @@ class ConversationsController < ApplicationController
     #@section = 'conversations'
     @section = 'communities'
     @csection = params[:csection].to_s
-    @csection = 'my' if @csection == ''
+    if @csection == ''
+      if current_participant.status == 'visitor'
+        @csection = 'all'
+      else  
+        @csection = 'my'
+      end 
+    end
         
     @sort = params[:sort] || 'activity'
     

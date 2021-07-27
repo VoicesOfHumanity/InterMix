@@ -368,7 +368,7 @@ ActiveRecord::Schema.define(version: 2021_07_13_200426) do
     t.index ["name"], name: "name"
   end
 
-  create_table "geonames", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "geonames", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.string "asciiname"
     t.text "alternatenames"
@@ -1020,7 +1020,7 @@ ActiveRecord::Schema.define(version: 2021_07_13_200426) do
   end
 
   create_table "tags", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name"
+    t.string "name", collation: "utf8_bin"
     t.integer "taggings_count", default: 0
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
