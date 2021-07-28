@@ -153,6 +153,8 @@ class PeopleController < ApplicationController
     @participant_id = params[:id]
     @participant = Participant.includes(:followers,:idols).find(@participant_id)
     
+    @showmess = ""
+    
     follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").first
     if onoff and not follow
       #-- Want to follow, and there isn't already a record of having done that
@@ -186,16 +188,20 @@ class PeopleController < ApplicationController
           @message.save
         end
         @is_following = true
+        @showmess = "You are now following #{@participant.name}."
       end
       current_participant.update_attribute(:has_participated,true) if not current_participant.has_participated
     elsif not onoff and follow
       #-- Want to unfollow, and there's a record
       follow.destroy  
-      @is_following = false    
+      @is_following = false  
+      @showmess = "You are now no longer following #{@participant.name}."  
     elsif follow
       @is_following = true
+      @showmess = "You are already following #{@participant.name}."
     elsif not follow
       @is_following = false    
+      @showmess = "You are not following #{@participant.name}."
     end  
     
     render :partial => "follow", :layout => false

@@ -81,8 +81,8 @@
       <td><a href="/people/remote/<%= remote_actor ? remote_actor.id : 0 %>/profile">#<%= remote_actor.id %>: <%= f.followed_fulluniq %>: <%= remote_actor.name if remote_actor %></a></td>
     <% else -%>
       <% person = f.idol %>
-      <td style="width:55px"><img src="<%= person.thumb_or_blank %>" style="width:50px;height:50px" alt="user thumbnail"></td>
-  		<td><a href="/participant/<%= person.id %>/profile">#<%= person.id %>: <%= person.name %></a></td>
+      <td style="width:55px"><img src="<%= person.thumb_or_blank if person %>" style="width:50px;height:50px" alt="user thumbnail"></td>
+  		<td><a href="/participant/<%= person.id if person %>/profile">#<%= person.id if person %>: <%= person.name if person %></a></td>
     <% end -%>
   </tr>
 <% end %>

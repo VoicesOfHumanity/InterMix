@@ -544,10 +544,12 @@ class Item < ActiveRecord::Base
       
       itext += "<p>by "
 
+      local_or_remote = 'local'
       if self.participant
   		  itext += "<a href=\"https://#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
       elsif self.remote_poster
   		  itext += "<a href=\"https://#{domain}/people/remote/#{self.posted_by_remote_actor_id}/profile?auth_token=#{p.authentication_token}\">#{self.remote_poster.account} : #{self.remote_poster.name}</a>"        
+        local_or_remote = 'remote'
       else
         itemx += "???"
       end
@@ -575,6 +577,15 @@ class Item < ActiveRecord::Base
         itext += "<br>When you vote, you will be taken online so you can comment or change your vote."
         itext += "<br><b>To block all emails, <a href=\"http://#{BASEDOMAIN}/optout?auth_token=#{p.authentication_token}\">click here</a></b>."
         itext += "</p>"
+      end
+      
+      if p.explanation == 'Friend' or p.explanation == 'Follower'
+        if local_or_remote == 'remote'
+          
+        else
+          unfollow_url = "https://#{domain}/people/follow?id=#{self.posted_by}&onoff=0&auth_token=#{p.authentication_token}"
+          itext += "<p><a href=\"#{unfollow_url}\">Stop following #{self.participant.name}</a></p>"
+        end
       end
 
       was_sent = false

@@ -293,20 +293,20 @@ class ApplicationController < ActionController::Base
       session[:cur_baseurl] + '/me/profile/meta'
     elsif true and not session.has_key?(:previous_comtag)
       stored_location_for(resource_or_scope) || super  
-    elsif false
-      # Send everybody to Order out of Chaos  
-      logger.info("application#after_sign_in_path_for send everybody to order out of chaos")
-      if session.has_key?(:previous_comtag) and session[:previous_comtag].to_s != ''
-        session[:cur_baseurl] + "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{session[:previous_comtag]}"        
-      else
-        session[:cur_baseurl] + "/dialogs/#{VOH_DISCUSSION_ID}/slider"
-      end
     elsif session[:sawfront].to_s == 'yes' and session[:comtag].to_s != '' 
       @community = Community.find_by_tagname(session[:comtag])
       if @community
         return "/communities/#{@community.id}"
       else
         super
+      end
+    elsif true
+      # Send everybody to Order out of Chaos  
+      logger.info("application#after_sign_in_path_for send everybody to order out of chaos")
+      if session.has_key?(:previous_comtag) and session[:previous_comtag].to_s != ''
+        session[:cur_baseurl] + "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{session[:previous_comtag]}"        
+      else
+        session[:cur_baseurl] + "/dialogs/#{VOH_DISCUSSION_ID}/slider"
       end
     elsif current_participant.last_url.to_s != ''
       current_participant.last_url
