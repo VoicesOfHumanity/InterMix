@@ -108,7 +108,13 @@ class AuthenticationsController < ApplicationController
               end  
             end  
           end  
-          if session[:dialog_id].to_i > 0
+          
+          if session[:sawfront].to_s == 'yes' and session[:comtag].to_s != '' 
+            @community = Community.find_by_tagname(session[:comtag])
+            if @community
+              @forum_link = "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}"
+            end
+          elsif session[:dialog_id].to_i > 0
             @forum_link = "/dialogs/#{session[:dialog_id]}/slider"
             if params and params.has_key?(:comtag) and params[:comtag].to_s != ''
               @forum_link += "?comtag=" + params[:comtag]

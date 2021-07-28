@@ -859,7 +859,11 @@ module ActivityPub
     if item.reply_to.to_i > 0
       previous = Item.find_by_id(item.reply_to)
       if previous
-        replying_to = "https://#{BASEDOMAIN}/p_#{previous.posted_by}_#{previous.id}"
+        if previous.posted_by_remote_actor_id.to_i > 0
+          replying_to = previous.remote_reference            
+        else
+          replying_to = "https://#{BASEDOMAIN}/p_#{previous.posted_by}_#{previous.id}"
+        end
       end
     end
     

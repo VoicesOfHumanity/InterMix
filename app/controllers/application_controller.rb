@@ -296,7 +296,8 @@ class ApplicationController < ActionController::Base
     elsif session[:sawfront].to_s == 'yes' and session[:comtag].to_s != '' 
       @community = Community.find_by_tagname(session[:comtag])
       if @community
-        return "/communities/#{@community.id}"
+        #return "/communities/#{@community.id}"
+        return "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}"
       else
         super
       end

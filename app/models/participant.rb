@@ -433,6 +433,10 @@ class Participant < ActiveRecord::Base
     
     return account_uniq
   end
+  
+  def account_url
+    return "https://#{BASEDOMAIN}/u/#{self.account_uniq}"
+  end
       
   private
   

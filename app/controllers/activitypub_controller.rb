@@ -114,7 +114,72 @@ class ActivitypubController < ApplicationController
   
   def feed
     # The outbox. A user's public posts.
+    # Should really be divided into pages. For now it is everything
+    post_list = []
+
+    @account_url = @account.account_url
     
+    items = Item.where(posted_by: @account.id, censored: false, intra_com: 'public', intra_conv: 'public', wall_delivery: 'public').order("id desc")
+    for item in items
+      unique_post_id = "https://#{BASEDOMAIN}/p_#{item.posted_by}_#{item.id}"
+      from_participant = item.participant
+      
+      to = "https://www.w3.org/ns/activitystreams#Public"
+      cc = [
+        "#{@account_url}/followers.json"
+      ]
+
+      published = item.created_at.strftime("%Y-%m-%dT%H:%M:%S.%L%z")
+      
+      replying_to = nil
+      if item.reply_to.to_i > 0
+        previous = Item.find_by_id(item.reply_to)
+        if previous
+          if previous.posted_by_remote_actor_id.to_i > 0
+            replying_to = previous.remote_reference            
+          else
+            replying_to = "https://#{BASEDOMAIN}/p_#{previous.posted_by}_#{previous.id}"
+          end
+        end
+      end
+
+      subject = item.subject
+      content = item.html_content
+      fullcontent = "<p><strong>** #{subject} **</strong></p>\n" + content
+      
+      post = {
+        "id": unique_post_id,
+        "type": "Create",
+        "actor": from_participant.activitypub_url,
+        "object": {
+        	"id": unique_post_id,
+    	    "type": "Note",
+    	    "published": published,
+    	    "attributedTo": from_participant.activitypub_url,
+    	    "content": fullcontent,
+    	    "to": to,
+          "cc": cc,
+          "inReplyTo": replying_to
+        }  
+      }
+      
+      post_list << post
+    end
+    
+    url = "#{@account_url}/feed.json"   # https://intermix.cr8.com/u/ff2580/feed.json
+    
+    results = {
+      	"@context" => "https://www.w3.org/ns/activitystreams",
+        "id" => url,
+        "type" => "OrderedCollectionPage",
+        "totalItems" => post_list.length,
+        "orderedItems" => post_list
+    }
+
+    results_json = results.to_json
+        
+    render json: results_json, content_type: 'application/activity+json'         
+        
   end
   
   def following
