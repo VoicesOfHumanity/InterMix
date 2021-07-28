@@ -32,9 +32,13 @@ class AuthenticationsController < ApplicationController
       sign_in(:participant, authentication.participant)
       if current_participant and not current_participant.has_required
         redirect_to '/me/profile/meta' and return
-      else
-        redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider" and return
+      elsif session[:sawfront].to_s == 'yes' and session[:comtag].to_s != '' 
+        @community = Community.find_by_tagname(session[:comtag])
+        if @community
+          redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}" and return
+        end
       end
+      redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider" and return
     elsif current_participant
       # Adding an authorization, while already logged in
       current_participant.authentications.create!(:provider => omniauth['provider'], :uid => omniauth['uid'])
