@@ -710,13 +710,13 @@ module ActivityPub
         bigfilepath = "#{picdir}/big.jpg"
         thumbfilepath = "#{picdir}/thumb.jpg"
 
-    		gotpicsize = File.stat("#{attachment}").size
-        gotwidth = 0
-        gotheight = 0
+    		ipicsize = File.stat("#{attachment}").size
+        iwidth = 0
+        iheight = 0
         begin
           image_size = ImageSize.path("#{attachment}")
-          gotwidth = image_size.width
-          gotheight = image_size.height
+          iwidth = image_size.width
+          iheight = image_size.height
         rescue
         end    
 
@@ -726,7 +726,7 @@ module ActivityPub
         rescue
         end
 
-        if p and gotpicsize > 1000 and gotwidth > 50 and gotheight > 50
+        if p and ipicsize > 1000 and iwidth > 50 and iheight > 50
           ext = attachment.split('.')[-1]
           if ext == 'jpg' or ext == 'jpeg'
             # if it is a jpeg, just copy it into place
