@@ -41,6 +41,7 @@ for req in requests
   puts " - ref_id: #{data['ref_id']}"
   puts " - replying_to: #{data['replying_to']}"
   puts " - content: #{data['content']}"
+  puts " - attachment: #{data['attachment']}"
   puts " - date: #{data['date']}"
 
   if data['status'] == 'error'
@@ -72,6 +73,7 @@ for req in requests
   ref_id = data['ref_id']
   replying_to = data['replying_to']
   content = data['content']
+  attachment = data['attachment']
   date = data['date']
   object = data['object']
 
@@ -85,7 +87,7 @@ for req in requests
   elsif rtype == 'post'
     # A public post
     puts "processing a public post"
-    res = respond_to_post(from_remote_actor, ref_id, req.id, content, date, object, ref_id, replying_to)
+    res = respond_to_post(from_remote_actor, ref_id, req.id, content, date, object, ref_id, replying_to, attachment)
     
   elsif rtype == 'note'
     # A note being sent to one of our users, hopefully a private message

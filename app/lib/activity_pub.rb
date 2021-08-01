@@ -659,7 +659,7 @@ module ActivityPub
     
   end
   
-  def respond_to_post(from_remote_actor, ref_id, api_request_id, content, date, object, their_post_id, replying_to)
+  def respond_to_post(from_remote_actor, ref_id, api_request_id, content, date, object, their_post_id, replying_to, attachment)
     #-- Receive a public post. Turn it into an item
     if not from_remote_actor
       return false
@@ -698,8 +698,75 @@ module ActivityPub
             first_in_thread = olditem.first_in_thread
           end
         end
-      end      
+      end
+
+      likely_id = Item.maximum("id") + 1
+      if attachment.to_s != ''
+        # There's an attachment (picture, we suppose) in a temporary location
+        # Copy it to where we went it, and reference it at the bottom of the message
+        puts "attachment: #{attachment}"
+        picdir = "#{DATADIR}/items/#{likely_id}"
+        `mkdir "#{picdir}"` if not File.exist?(picdir)
+        bigfilepath = "#{picdir}/big.jpg"
+        thumbfilepath = "#{picdir}/thumb.jpg"
+
+    		gotpicsize = File.stat("#{attachment}").size
+        gotwidth = 0
+        gotheight = 0
+        begin
+          image_size = ImageSize.path("#{attachment}")
+          gotwidth = image_size.width
+          gotheight = image_size.height
+        rescue
+        end    
+
+        p = nil
+        begin
+          p = Magick::Image.read("#{attachment}").first
+        rescue
+        end
+
+        if p and gotpicsize > 1000 and gotwidth > 50 and gotheight > 50
+          ext = attachment.split('.')[-1]
+          if ext == 'jpg' or ext == 'jpeg'
+            # if it is a jpeg, just copy it into place
+          `/bin/cp #{attachment} #{bigfilepath}`
+          else
+            # otherwise convert it
+            begin
+              p.change_geometry('800x800') { |cols, rows, img| img.resize!(cols, rows) }
+              p.write("#{bigfilepath}")
+            rescue
+            end
+          end
       
+          if iwidth.to_i >= iheight.to_i and iheight.to_i > 0
+            p.change_geometry('1000x200') { |cols, rows, img| img.resize!(cols, rows) }
+          else
+            p.change_geometry('200x1000') { |cols, rows, img| img.resize!(cols, rows) }
+          end
+
+          if iwidth.to_i >= iheight.to_i and iheight.to_i > 0
+            #-- If it is a landscape picture, get the middle part
+            width = iwidth * 200 / iheight
+            offset = ((width - 200) / 2).to_i
+            icon = p.crop(offset, 0, 200, 200)
+          else
+            #-- If it is a portrait picture, get the top part
+            icon = p.crop(0, 0, 200, 200)
+          end
+          icon.write("#{thumbfilepath}")
+
+          if File.exist?(bigfilepath)
+            bigurl = "https://#{BASEDOMAIN}/images/data/items/#{likely_id}/big.jpg"
+            content += "<p><img alt=\"attached picture\" src=\"#{bigurl}\" /></p>"
+          end
+          
+        else
+          puts "didn't get a suitable picture attachment"  
+        end
+      end 
+                  
       item = Item.create!(
         int_ext: 'ext',
         posted_by_remote_actor_id: from_remote_actor.id,
@@ -724,6 +791,16 @@ module ActivityPub
         item.first_in_thread = item.id
         item.save
       end
+       
+      if item.id != likely_id and attachment.to_s != ''
+        picdir = "#{DATADIR}/items/#{item.id}"
+        `mkdir "#{picdir}"` if not File.exist?(picdir)
+        `mv "#{bigfilepath}" "#{picdir}"` 
+        `mv "#{thumbfilepath}" "#{picdir}"` 
+        item.content = item.content.gsub("/data/items/#{likely_id}/", "/data/items/#{item.id}/")
+        item.save
+      end       
+      `rm -f #{attachment}` if attachment.to_s != ''
        
       # We should also do the things in items_controller#itemproces
       # like extracting tags, getting a preview
@@ -956,6 +1033,7 @@ module ActivityPub
       'ref_id': nil,
       'replying_to': nil,
       'content': nil,
+      'attachment': nil,
       'date': nil
     }
     data['to_actor_url'] = []
@@ -1021,6 +1099,31 @@ module ActivityPub
       if object.has_key?('inReplyTo')
         # https://intermix.cr8.com/m_7_1468
         data['replying_to'] = object['inReplyTo']
+      end
+      if object.has_key?('attachment')
+        # Probably an array of hashes. Just pick the first one
+        aobj = object['attachment']
+        aurl = nil
+        if aobj.class == Array
+          aobj = aobj[0]
+        end
+        if aobj.class == String
+          aurl = aobj
+        elsif aobj.class == Hash
+          if aobj.has_key?('url')
+            aurl = aobj['url']
+          end
+        end
+        if aurl.to_s != ''
+          tempfile = nil
+          begin
+            tempfile = Down.download(aurl)
+          rescue
+          end
+          if tempfile
+            data['attachment'] = tempfile
+          end
+        end
       end
     else
       data['status'] = 'error'
