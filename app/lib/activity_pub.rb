@@ -1121,7 +1121,7 @@ module ActivityPub
           rescue
           end
           if tempfile
-            data['attachment'] = tempfile
+            data['attachment'] = tempfile.path
           end
         end
       end
