@@ -759,7 +759,7 @@ module ActivityPub
 
           if File.exist?(bigfilepath)
             bigurl = "https://#{BASEDOMAIN}/images/data/items/#{likely_id}/big.jpg"
-            content += "<p><img alt=\"attached picture\" src=\"#{bigurl}\" /></p>"
+            content += "<p><img alt=\"attached picture\" src=\"#{bigurl}\" class=\"item_attached_image\"/></p>"
           end
           
         else
