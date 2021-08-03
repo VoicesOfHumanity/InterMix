@@ -620,6 +620,9 @@ div#forumcontrol3 {
 div.htmlcontent {
   overflow: hidden;
 }
+div.htmlcontent img {
+  max-width: 715px;
+}
 
 img.playicon {
 	position:absolute;
