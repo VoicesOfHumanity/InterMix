@@ -485,6 +485,8 @@ class ItemsController < ApplicationController
           @item.subject = "Re: #{@olditem.subject}"  
         elsif @olditem.subject != ''
           @item.subject = @olditem.subject 
+        elsif @olditem.subject == ''
+          @item.subject = "Re: #{@olditem.subject_or_excerpt}"  
         end
         
         @item.conversation_id = 0
