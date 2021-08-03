@@ -179,7 +179,9 @@
 		    <%= render 'devise/menu/login_items' %>
 		    <%= render 'devise/menu/registration_items' %>
             
-            <li class="menu"><a class="" href="#" onclick="chgmoreless();return false"><span id="morelesstext"><%= @moreless=='more' ? 'Less Options' : 'More Options' %></span></a></li>
+            <% if participant_signed_in? -%>
+                <li class="menu"><a class="" href="#" onclick="chgmoreless();return false"><span id="morelesstext"><%= @moreless=='more' ? 'Less Options' : 'More Options' %></span></a></li>
+            <% end -%>
 
 			</ul>
 			
