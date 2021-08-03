@@ -20,8 +20,8 @@
   <link rel="shortcut icon" href="/favicon.ico">
   <%= csrf_meta_tag %>
 	<script>
-   $(document).ready(function() {
-      $('.tooltip').tooltipster({
+        $(document).ready(function() {
+            $('.tooltip').tooltipster({
 				trigger: 'hover',
 				//content: 'Loading...',
 				functionBefore: function(origin,continueTooltip) {
@@ -54,7 +54,24 @@
 				position: 'right'
 			});
 			$('#whereami').tooltipster('update', $('#youareherediv').html());
-   });
+        });
+        var inval = '<%= @in.to_s != '' ? @in : '' %>';
+        var moreless = '<%= @moreless == 'more' ? 'more' : 'less' %>';
+        function chgmoreless() {
+            if (moreless == 'less') {
+                moreless = 'more';
+                $('#morelesstext').html("Less Options");
+                $('#nvactiondiv').show();
+                if (inval != 'conversation') {
+                    $('#communitysidelist').show();
+                }
+            } else {
+                moreless = 'less';
+                $('#morelesstext').html("More Options");
+                $('#nvactiondiv').hide();
+                $('#communitysidelist').hide();
+            }
+        }
 	</script>
 <% if @item and controller_name == 'items' -%>
 <meta property="og:title" content="Voices of Humanity: <%= @item.subject %>">
@@ -135,6 +152,8 @@
 			
 		    <%= render 'devise/menu/login_items' %>
 		    <%= render 'devise/menu/registration_items' %>
+            
+            <li class="menu"><a class="" href="#" onclick="chgmoreless();return false"><span id="morelesstext">More Options</span></a></li>
 
 			</ul>
 			

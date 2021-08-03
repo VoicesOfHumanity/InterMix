@@ -11,17 +11,9 @@
         <% end -%>
       </p>
 
-    <div style="margin: 20px 0 0 0;">
+    <div id="nvactiondiv" style="margin: 20px 0 0 0;display:<%= @moreless == 'more' ? 'inline' : 'none' %>;">
       <img src="/images/<%= @nvaction ? 'exitaction' : 'nvaction' %>.jpg" id="actionbutton" onclick="actionclick()" alt="NV action button">
     </div>
-    
-    <% if false -%>
-      <% if @include_nvaction -%>
-        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are included</button>  
-      <% else -%>
-        <button style="margin-top:10px;<%="display:none" if @nvaction %>" id="nvaction_include_button" onclick="chg_nvaction_include()">NV Action items<br>are excluded</button>
-      <% end -%>
-    <% end -%>
     
     <% if @in == 'conversation' and @conversation and @conversation.topics.class.name == 'Array' and @conversation.topics.length > 0 -%>
     <div style="margin: 20px 0 0 0;">
@@ -50,7 +42,7 @@
     
     <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     
-    <div style="display: <%= @in == 'conversation' ? 'none' : 'block' -%>">
+    <div id="communitysidelist" style="display: <%= (@in != 'conversation' and @moreless=='more') ? 'block' : 'none' -%>">
       <% if @in == 'network' -%>
         <input type="radio" name="comtag_radio" value="" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='' ? "checked" : "" %>>any community<br>
         <input type="radio" name="comtag_radio" value="*my*" onclick="per_reload(false,1,'comtag')" <%= @comtag.to_s=='*my*' ? "checked" : "" %>>my communities<br>
