@@ -61,21 +61,39 @@
             if (moreless == 'less') {
                 moreless = 'more';
                 $('#morelesstext').html("Less Options");
-                $('#nvactiondiv').show();
-                if (inval != 'conversation') {
+                if ($('#nvactiondiv').length>0) {
+                    $('#nvactiondiv').show();
+                }
+                if ($('#communitysidelist').length>0 && inval != 'conversation') {
                     $('#communitysidelist').show();
                 }
-                $('#citybutton').show();
-                $('#nationbutton').show();
-                $('#ungoalbutton').show();                
+                if ($('#citybutton').length>0) {
+                    $('#citybutton').show();
+                }
+                if ($('#nationbutton').length>0) {
+                    $('#nationbutton').show();
+                }
+                if ($('#ungoalbutton').length>0) {
+                    $('#ungoalbutton').show();      
+                }          
             } else {
                 moreless = 'less';
                 $('#morelesstext').html("More Options");
-                $('#nvactiondiv').hide();
-                $('#communitysidelist').hide();
-                $('#citybutton').hide();
-                $('#nationbutton').hide();
-                $('#ungoalbutton').hide();                
+                if ($('#nvactiondiv').length>0) {
+                    $('#nvactiondiv').hide();
+                }
+                if ($('#communitysidelist').length>0) {
+                    $('#communitysidelist').hide();
+                }
+                if ($('#citybutton').length>0) {
+                    $('#citybutton').hide();
+                }
+                if ($('#nationbutton').length>0) {
+                    $('#nationbutton').hide();
+                }
+                if ($('#ungoalbutton').length>0) {
+                    $('#ungoalbutton').hide();      
+                }          
             }
             $.ajax({
                 type: 'GET',
