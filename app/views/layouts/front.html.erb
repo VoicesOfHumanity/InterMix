@@ -65,11 +65,17 @@
                 if (inval != 'conversation') {
                     $('#communitysidelist').show();
                 }
+                $('#citybutton').show();
+                $('#nationbutton').show();
+                $('#ungoalbutton').show();                
             } else {
                 moreless = 'less';
                 $('#morelesstext').html("More Options");
                 $('#nvactiondiv').hide();
                 $('#communitysidelist').hide();
+                $('#citybutton').hide();
+                $('#nationbutton').hide();
+                $('#ungoalbutton').hide();                
             }
             $.ajax({
                 type: 'GET',
@@ -138,18 +144,16 @@
                 
 				<li class="menu"><a class="<%= 'selected' if @section=='communities' %>" href="/communities">Communities</a></li>
                 
-                <% if false -%>
-                    <% city_conv = Conversation.find_by_id(CITY_CONVERSATION_ID) %>
-                    <% if city_conv and city_conv.active -%>
-                    <li class="menu"><a class="<%= 'selected' if @section=='cities' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= CITY_CONVERSATION_CODE %>">The Cities</a></li>
-                    <% end -%>
-                    <% if Conversation.find_by_id(INT_CONVERSATION_ID).active -%>
-                    <li class="menu"><a class="<%= 'selected' if @section=='nations' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>">The Nations</a></li>
-                    <% end -%>
-                    <% un_conv = Conversation.find_by_id(UNGOALS_CONVERSATION_ID) %>
-                    <% if un_conv and un_conv.active -%>
-                    <li class="menu"><a class="<%= 'selected' if @section=='ungoals' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= UNGOALS_CONVERSATION_CODE %>">The UN Goals</a></li>
-                    <% end -%>
+                <% city_conv = Conversation.find_by_id(CITY_CONVERSATION_ID) %>
+                <% if city_conv and city_conv.active -%>
+                <li id="citybutton" class="menu"><a class="<%= 'selected' if @section=='cities' %>" style="display: <%= @moreless=='more' ? 'block' : 'none' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= CITY_CONVERSATION_CODE %>">The Cities</a></li>
+                <% end -%>
+                <% if Conversation.find_by_id(INT_CONVERSATION_ID).active -%>
+                <li id="nationbutton" class="menu"><a class="<%= 'selected' if @section=='nations' %>" style="display: <%= @moreless=='more' ? 'block' : 'none' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>">The Nations</a></li>
+                <% end -%>
+                <% un_conv = Conversation.find_by_id(UNGOALS_CONVERSATION_ID) %>
+                <% if un_conv and un_conv.active -%>
+                <li id="ungoalbutton" class="menu"><a class="<%= 'selected' if @section=='ungoals' %>" style="display: <%= @moreless=='more' ? 'block' : 'none' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= UNGOALS_CONVERSATION_CODE %>">The UN Goals</a></li>
                 <% end -%>
                 		
 			<% end -%>
@@ -157,7 +161,7 @@
 		    <%= render 'devise/menu/login_items' %>
 		    <%= render 'devise/menu/registration_items' %>
             
-            <li class="menu"><a class="" href="#" onclick="chgmoreless();return false"><span id="morelesstext">More Options</span></a></li>
+            <li class="menu"><a class="" href="#" onclick="chgmoreless();return false"><span id="morelesstext"><%= @moreless=='more' ? 'Less Options' : 'More Options' %></span></a></li>
 
 			</ul>
 			
