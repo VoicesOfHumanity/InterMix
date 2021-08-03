@@ -36,7 +36,10 @@
     
     <div style="margin: 20px 0 0 0;">
     <% freeze_geo = false %>
-    <% if @in == 'network' and @network and @network.geo_level.to_i > 0 %>
+    <% if current_participant.status == 'visitor' -%>
+      <% @geo_level = 6  %>
+      <% freeze_geo = true %>
+    <% elsif @in == 'network' and @network and @network.geo_level.to_i > 0 %>
       <% @geo_level = @network.geo_level  %>
       <% freeze_geo = true %>
     <% end -%>

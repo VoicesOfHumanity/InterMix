@@ -12,7 +12,7 @@ puts "#{numfollows} follows"
 for follow in follows
   if follow.following_remote_actor_id.to_i > 0 and follow.followed_id.to_i > 0
     # a remote person is following somebody local. Is the reverse true?
-    puts "remote #{follow.following_remote_actor_id} following local {follow.followed_id}"
+    puts "remote #{follow.following_remote_actor_id} following local #{follow.followed_id}"
     reverse = Follow.where(following_id: follow.followed_id, followed_remote_actor_id: follow.following_remote_actor_id).first
   elsif follow.following_id.to_i > 0
     # a local person is following somebody local or remote

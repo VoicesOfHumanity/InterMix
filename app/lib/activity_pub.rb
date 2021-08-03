@@ -707,6 +707,7 @@ module ActivityPub
         puts "attachment: #{attachment}"
         picdir = "#{DATADIR}/items/#{likely_id}"
         `mkdir "#{picdir}"` if not File.exist?(picdir)
+        `chmod a+rx "#{picdir}"`
         bigfilepath = "#{picdir}/big.jpg"
         thumbfilepath = "#{picdir}/thumb.jpg"
 
@@ -762,6 +763,8 @@ module ActivityPub
             content += "<p><img alt=\"attached picture\" src=\"#{bigurl}\" class=\"item_attached_image\"/></p>"
           end
           
+          `chown -R ploy:ploy "#{picdir}"`
+          
         else
           puts "didn't get a suitable picture attachment"  
         end
@@ -795,6 +798,7 @@ module ActivityPub
       if item.id != likely_id and attachment.to_s != ''
         picdir = "#{DATADIR}/items/#{item.id}"
         `mkdir "#{picdir}"` if not File.exist?(picdir)
+        `chmod a+rx "#{picdir}"`
         `mv "#{bigfilepath}" "#{picdir}"` 
         `mv "#{thumbfilepath}" "#{picdir}"` 
         item.content = item.content.gsub("/data/items/#{likely_id}/", "/data/items/#{item.id}/")
