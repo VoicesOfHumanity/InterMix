@@ -30,6 +30,8 @@ class AuthenticationsController < ApplicationController
       logger.info("authentications#create signed in")
       #sign_in_and_redirect(:participant, authentication.participant)
       sign_in(:participant, authentication.participant)
+      session[:moreless] = 'less'
+      @moreless = 'less'
       if current_participant and not current_participant.has_required
         redirect_to '/me/profile/meta' and return
       elsif session[:sawfront].to_s == 'yes' and session[:comtag].to_s != '' 
@@ -139,6 +141,8 @@ class AuthenticationsController < ApplicationController
             @forum_link = '/groups/'
           end  
           #redirect_to authentications_url
+          session[:moreless] = 'less'
+          @moreless = 'less'
           redirect_to @forum_link
         else  
           #-- Unless if they're not active, then show them a screen saying they'll have to log in by themselves

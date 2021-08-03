@@ -115,6 +115,13 @@ class ApplicationController < ActionController::Base
     end
     render plain: "ok"
   end
+
+  def updatemoreless
+    if participant_signed_in? and params['moreless'].to_s != ''
+      session[:moreless] = params['moreless']
+    end
+    render plain: "ok"
+  end
       
   protected
 
@@ -647,6 +654,7 @@ class ApplicationController < ActionController::Base
     
     def get_global_data
       #-- Get some information once in a while, for efficiency, to not have to look it up all the time
+      @moreless = session.has_key?('moreless') ? session[:moreless] : 'less' 
       if not session.has_key?(:global_got) or session[:global_got] < Time.now.to_i - 3600
         session[:global_got] = Time.now.to_i
         session[:moderated_communities] = Community.where(moderated: true).collect {|r| r.tagname }

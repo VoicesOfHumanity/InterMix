@@ -337,6 +337,7 @@ Rails.application.routes.draw do
   get 'front/getmetro' => 'front#getmetro'
   get 'front/getadmin2_from_city'
   get 'front/setsess' => 'front#setsess'
+  get 'front/updatemoreless' => 'front#updatemoreless'
   get 'front/test' => 'front#test'
   get 'helptext(/:code)', :controller=>:front, :action=>:helptext
 

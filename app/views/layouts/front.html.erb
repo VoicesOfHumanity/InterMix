@@ -71,6 +71,10 @@
                 $('#nvactiondiv').hide();
                 $('#communitysidelist').hide();
             }
+            $.ajax({
+                type: 'GET',
+                url: '/front/updatemoreless?moreless='+moreless
+            });
         }
 	</script>
 <% if @item and controller_name == 'items' -%>
