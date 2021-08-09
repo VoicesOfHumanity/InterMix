@@ -8,12 +8,16 @@ module ItemLib
     Rails.logger.info("items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}")
     #puts "items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}"
   
-    current_participant = nil if not defined?(current_participant)
-    if not current_participant and not remote_actor
+    begin
+      participant = current_participant
+    rescue
+      participant = nil
+    end
+    if not participant and not remote_actor
       Rails.logger.info("items#rateitem items#rateitem no voter")
       return
     end
-    if current_participant and not item.voting_ok(current_participant.id)
+    if participant and not item.voting_ok(participant.id)
       Rails.logger.info("items#rateitem voting is not ok")
       return
     end    
@@ -27,18 +31,18 @@ module ItemLib
     #com_count = Item.where(posted_by: current_participant.id, is_first_in_thread: false, first_in_thread: item.first_in_thread).count
     # check for comments on that message
     com_count = 0
-    if current_participant
-      com_count = Item.where(posted_by: current_participant.id, reply_to: item_id).count
+    if participant
+      com_count = Item.where(posted_by: participant.id, reply_to: item_id).count
     elsif remote_actor
       com_count = Item.where(posted_by_remote_actor_id: remote_actor.id, reply_to: item_id).count
     end
   
     #-- See if that user already has rated that item, or create a new rating if they haven't
-    if current_participant
-      rating = Rating.where(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings').first
+    if participant
+      rating = Rating.where(item_id: item_id, participant_id: participant.id, rating_type: 'AllRatings').first
       if not rating
         is_new = true
-        rating = Rating.create(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings', approval: vote, interest: vote.abs)
+        rating = Rating.create(item_id: item_id, participant_id: participant.id, rating_type: 'AllRatings', approval: vote, interest: vote.abs)
       end
     elsif remote_actor
       puts "items#rateitem remote vote"
@@ -54,7 +58,7 @@ module ItemLib
   
     if conversation_id > 0
       conversation = Conversation.find_by_id(conversation_id)
-      if conversation and current_participant and conversation.is_member_of(current_participant)
+      if conversation and participant and conversation.is_member_of(participant)
         # If we're in a conversation, and the user is a member, only then do we store a conversation with the rating
         rating.conversation_id = conversation_id
       end
@@ -74,7 +78,7 @@ module ItemLib
       elsif rating.approval
         return       
       end
-    elsif rating.approval == vote and current_participant
+    elsif rating.approval == vote and participant
       #-- If they clicked on the existing rating, turn it off
       rating.approval = 0    
       rating.interest = 0
@@ -105,7 +109,7 @@ module ItemLib
     item.interest = item_rating_summary.int_average
     item.value = item_rating_summary.value
     item.controversy = item_rating_summary.controversy
-    item.edit_locked = true if current_participant and current_participant.id != item.posted_by
+    item.edit_locked = true if participant and participant.id != item.posted_by
     item.save
     
     return rating.id
