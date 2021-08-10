@@ -9,16 +9,16 @@
     
 		<% if @to_name != '???' -%>
 			<li class="select optional" id="to_participant_id_input">
-			<label>to Friend</label>
+			<label>to Follower/Friend</label>
 			<div style="float:left">
 			<%= @to_name %>
 			</div>
 			</li>
 		<% else -%>
       
-      <%= f.input :to_friend_id, :label => 'to Friend', :as => :select, :collection => @friends.collect{|c| (c.remote_idol ? ["#{c.remote_idol.name} (#{c.remote_idol.account})",c.id] : [c.idol.name,c.id])}+[['*yourself*',0]] %>
+      <%= f.input :to_friend_id, :label => 'to Follower', :as => :select, :collection => @followers.collect{|c| (c.remote_follower ? ["#{c.remote_follower.name} (#{c.remote_follower.account})",c.id] : [c.follower.name,c.id])}+[['*yourself*',0]] %>
 			
-			<div style="position:relative;top:-37px;left:80px;width:0;height:0"><img src="/images/question-mark.png" class="tooltip" id="contacttooltip" style="" width="16" height="16" title="Friends/Contacts are people you follow and who follows you back.  They are listed on the Friends page.  Click on someone's name to go to their profile.  At the bottom of the profile page you have the option to follow a person." alt="questionmark"></div>
+			<div style="position:relative;top:-37px;left:90px;width:0;height:0"><img src="/images/question-mark.png" class="tooltip" id="contacttooltip" style="" width="16" height="16" title="Followers are people who follow you. Friends are people you also follow back. They are all listed on the Friends page.  Click on someone's name to go to their profile.  At the bottom of the profile page you have the option to follow a person. If you write to a follow, you will subsequently be following them as well, if you aren't already" alt="questionmark"></div>
 			
 		<% end -%>
 

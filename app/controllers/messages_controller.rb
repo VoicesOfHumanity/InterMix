@@ -112,8 +112,9 @@ class MessagesController < ApplicationController
       @to_name = "#{@to_remote_actor.account} : #{@to_remote_actor.name}" if @to_remote_actor
     end    
 
-    # We'll be able to send to anybody I'm following, and where it is mutual
-    @friends = Follow.where(following_id: current_participant.id, mutual: true).includes(:idol, :remote_idol)
+    # We'll be able to send to anybody who's following me, whether it is mutual or not
+    #@friends = Follow.where(following_id: current_participant.id, mutual: true).includes(:idol, :remote_idol)
+    @followers = Follow.where(followed_id: current_participant.id).includes(:follower, :remote_follower)
         
     render :partial=>'edit', :layout=>false
   end  
@@ -136,18 +137,35 @@ class MessagesController < ApplicationController
     @message = Message.new(message_params)
     
     if @message.to_friend_id.to_i > 0
-      follow = Follow.find_by_id(@message.to_friend_id)
-      if follow
-        if follow.followed_id.to_i > 0
-          @message.to_participant_id = follow.followed_id
-        elsif follow.followed_remote_actor_id.to_i > 0
-          @message.to_remote_actor_id = follow.followed_remote_actor_id
+      # The follow ID of somebody following us
+      followme = Follow.find_by_id(@message.to_friend_id)
+      if followme
+        followthem = nil
+        if followme.following_id.to_i > 0
+          @message.to_participant_id = followme.following_id
+          followthem = Follow.where(followed_id: @message.to_participant_id, following_id: current_participant.id).first
+        elsif followme.following_remote_actor_id.to_i > 0
+          @message.to_remote_actor_id = followme.following_remote_actor_id
+          followthem = Follow.where(followed_remote_actor_id: @message.to_remote_actor_id, following_id: current_participant.id).first
         end
-        logger.info("messages#create Sending to friend #{follow.id} Participant:#{@message.to_participant_id.to_i} Remote:#{@message.to_remote_actor_id.to_i}")
+        logger.info("messages#create Sending to follower #{followthem.id} Participant:#{@message.to_participant_id.to_i} Remote:#{@message.to_remote_actor_id.to_i}") if followthem
+        if not followthem
+          # Follow them back, if we aren't already
+          followthem = Follow.new(following_id: current_participant.id, mutual: true)
+          if @message.to_remote_actor_id.to_i > 0
+            followthem.followed_remote_actor_id = @message.to_remote_actor_id
+          else
+            followthem.followed_id = @message.to_participant_id
+          end
+          followthem.save
+          followme.mutual = true
+          followme.save
+        end
       else
-        logger.info("messages#create Didn't find friend #{@message.to_friend_id}")
+        logger.info("messages#create Didn't find follower #{@message.to_friend_id}")
       end
     end 
+    
     
     @content = @message.message
     @message.from_participant_id = current_participant.id
