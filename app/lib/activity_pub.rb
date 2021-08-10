@@ -938,7 +938,7 @@ module ActivityPub
     for image in images
       attachment = {'url': image, 'type': 'Document'}
       uri = URI::parse(image)
-      ext = uri.path.split('.')[-1].tolower
+      ext = uri.path.split('.')[-1].downcase
       if ext == 'png'
         mime = 'image/png'
       elsif ext == 'gif'
