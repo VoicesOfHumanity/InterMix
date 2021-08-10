@@ -159,7 +159,6 @@ class PeopleController < ApplicationController
     if onoff and not follow
       #-- Want to follow, and there isn't already a record of having done that
       follow = Follow.create(:followed_id => @participant_id, :following_id => current_participant.id)
-
       
       they_follow = Follow.where("followed_id=#{current_participant.id} and following_id=#{@participant_id}").first
       @they_following = (they_follow ? true : false)    
@@ -203,6 +202,25 @@ class PeopleController < ApplicationController
       @is_following = false    
       @showmess = "You are not following #{@participant.name}."
     end  
+    
+    #-- Check what is mutual
+    following = Follow.where("following_id=#{current_participant.id} and followed_id=#{@participant.id}").first
+    followed = Follow.where("following_id=#{@participant.id} and followed_id=#{current_participant.id}").first
+    if following and followed
+      logger.info("people#follow it is now mutual for #{current_participant.id} and #{@participant.id}")
+      following.mutual = true
+      following.save
+      followed.mutual = true
+      followed.save
+    elsif following
+      logger.info("people#follow #{current_participant.id} follows #{@participant.id}, but not the reverse. Turning mutual off")      
+      following.mutual = false
+      following.save
+    elsif followed
+      logger.info("people#follow #{@participant.id} follows #{current_participant.id}, but not the reverse. Turning mutual off")      
+      followed.mutual = false
+      followed.save  
+    end
     
     render :partial => "follow", :layout => false
   end  
