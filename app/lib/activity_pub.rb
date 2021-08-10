@@ -3,7 +3,6 @@ require 'openssl'
 require "base64"
 require "down"
 
-
 module ActivityPub
   
   include ItemLib
@@ -926,10 +925,34 @@ module ActivityPub
       return false
     end
     
+    attachments = []
+    
     subject = item.subject
-    content = item.html_content
+    #content = item.html_content
+    
+    images = get_image_urls(item.html_content)
+    content = remove_images(item.html_content)
 
     fullcontent = "<p><strong>** #{subject} **</strong></p>\n" + content
+    
+    for image in images
+      attachment = {'url': image, 'type': 'Document'}
+      uri = URI::parse(image)
+      ext = uri.path.split('.')[-1].tolower
+      if ext == 'png'
+        mime = 'image/png'
+      elsif ext == 'gif'
+        mime = 'image/gif'
+      elsif ext == 'webp'
+        mime = 'image/webp'
+      elsif ext == 'svg'
+        mime = 'image/svg+xml'
+      else
+        mime = 'image/jpeg'
+      end
+      attachment['mediaType'] = mime    
+      attachments << attachment
+    end
 
     unique_post_id = "https://#{BASEDOMAIN}/p_#{from_participant.id}_#{item.id}"
 
@@ -962,6 +985,7 @@ module ActivityPub
   	    "published": published,
   	    "attributedTo": from_participant.activitypub_url,
   	    "content": fullcontent,
+        "attachment": attachments,
   	    "to": to,
         "cc": cc,
         "inReplyTo": replying_to
@@ -1254,6 +1278,29 @@ module ActivityPub
     end
     Rails.logger.info("activitypub#obj_from_request data returned: #{data}")
     return data
+  end
+  
+  def remove_images(somehtml)
+    # Remove images in html, by sanitizing, and leaving img out
+    Sanitize.clean(somehtml.force_encoding("UTF-8"), 
+      :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'ol', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td'],
+      :attributes => {'a' => ['href', 'title', 'target']},
+      :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]} },
+      :allow_comments => false,
+      :output => :html
+    )
+  end
+  
+  def get_image_urls(somehtml)
+    # Extra urls from any img tags
+    images = somehtml.scan(/"(.*?)"/im)
+        .map { |i| i[0].to_s }
+        .select { |i| i=~/(.jpg|.png|.jpeg|.gif)/im }
+        .reject {|i| ['.jpg', '.gif', '.png', '.jpeg', '.webp'].include?(i) }
+        .map do |img|
+            img =~ /^http/i ? img : URI.join(url, img)
+    end
+    return images
   end
     
 end
