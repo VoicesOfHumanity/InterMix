@@ -313,7 +313,7 @@ class Item < ActiveRecord::Base
             follower.explanation = "Follower"
             participants << follower
           end
-        elsif self.wall_deliver == 'wall_only' 
+        elsif self.wall_delivery == 'wall_only' 
           # Don't email
           return
         else
