@@ -58,6 +58,7 @@
         var inval = '<%= @in.to_s != '' ? @in : '' %>';
         var moreless = '<%= @moreless == 'more' ? 'more' : 'less' %>';
         function chgmoreless() {
+            var reloadslider = false;
             if (moreless == 'less') {
                 moreless = 'more';
                 $('#morelesstext').html("Less Options");
@@ -79,6 +80,20 @@
             } else {
                 moreless = 'less';
                 $('#morelesstext').html("More Options");
+                if ($('#communitysidelist').length) {
+                    if ($("input[name='comtag_radio']:checked").val() != '') {
+                        $("input[name=comtag_radio][value='']").prop('checked', true);
+                        reloadslider = true;
+                    }
+                }   
+                if ($('#actionbutton').length && nvaction_on) {
+                    nvaction_on = false;
+                    $('#actionbutton').attr('src','/images/nvaction.jpg');
+                    $('#top_forum_header').html('Forum');
+                    $('#top_result_header').html('Highest Rated Messages');
+                    $('#nvaction_include_button').show();
+                    reloadslider = true
+                }
                 if ($('#nvactiondiv').length>0) {
                     $('#nvactiondiv').hide();
                 }
@@ -93,7 +108,10 @@
                 }
                 if ($('#ungoalbutton').length>0) {
                     $('#ungoalbutton').hide();      
-                }          
+                }
+                if (reloadslider) {                        
+                    per_reload(false,1,'comtag');
+                }
             }
             $.ajax({
                 type: 'GET',
