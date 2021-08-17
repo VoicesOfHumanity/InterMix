@@ -200,7 +200,7 @@ class DialogsController < ApplicationController
       session.delete(:age)
       session.delete(:gender)
       session.delete(:datetype)
-      session.delete(:datefixed)
+      #session.delete(:datefixed)
       session.delete(:datefrom)
       session.delete(:list_threads)
       session.delete(:list_sortby)
