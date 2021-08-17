@@ -12,6 +12,7 @@
 			<label>to Follower/Friend</label>
 			<div style="float:left">
 			<%= @to_name %>
+      <%= f.input :to_friend_id, :as => :hidden %>
 			</div>
 			</li>
 		<% else -%>
@@ -39,6 +40,10 @@
 	  <input type="button" value="Cancel" onclick="newmess()" />
 	  <input type="button" value="Send" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};savemess()" />
 	</p>
+  
+  <% if @message.to_friend_id.to_i > 0 and not @follow_mutual -%>
+    <p><br>You're writing to one of your followers. You will now follow them back, so they can respond if they want.</p>
+  <% end -%>
 
 <% end %>
 

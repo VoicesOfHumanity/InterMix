@@ -106,11 +106,30 @@ class MessagesController < ApplicationController
     end
     if @message.to_participant_id.to_i > 0
       @to_participant = Participant.find_by_id(@message.to_participant_id)
-      @to_name = @to_participant.name if @to_participant
+      if @to_participant
+        @to_name = @to_participant.name
+        follow = Follow.where(followed_id: current_participant.id, following_id: @to_participant_id).first
+        if follow
+          logger.info("messages#new #{@to_participant_id} is following me")
+          @message.to_friend_id = follow.id
+          @follow_mutual = follow.mutual
+        else
+          logger.info("messages#new #{@to_participant_id} is not following me")
+        end
+      end
     elsif @message.to_remote_actor_id.to_i > 0
       @to_remote_actor = RemoteActor.find_by_id(@message.to_remote_actor_id)
-      @to_name = "#{@to_remote_actor.account} : #{@to_remote_actor.name}" if @to_remote_actor
+      if @to_remote_actor
+        @to_name = "#{@to_remote_actor.account} : #{@to_remote_actor.name}"
+        follow = Follow.where(followed_id: current_participant.id, following_remote_actor_id: @to_remote_actor_id).first
+        if follow
+          @message.to_friend_id = follow.id
+          @follow_mutual = follow.mutual
+        end        
+      end
     end    
+
+    logger.info("messages#new to_friend_id: #{@message.to_friend_id} follow_mutual:#{@follow_mutual}")
 
     # We'll be able to send to anybody who's following me, whether it is mutual or not
     #@friends = Follow.where(following_id: current_participant.id, mutual: true).includes(:idol, :remote_idol)
