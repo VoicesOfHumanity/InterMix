@@ -184,6 +184,7 @@ class DialogsController < ApplicationController
         logger.info("dialogs#slider neither @cur_moon_new_full nor @cur_moon_full_new are set")
       end
     end
+    @defaultdatefixed = @datefixed
     
     #@datefrom = (Date.today-364).beginning_of_month.strftime('%Y-%m-%d')
     @sortby = (@in == 'main' ? 'items.id desc' : '*value*')

@@ -1702,6 +1702,7 @@ class ItemsController < ApplicationController
       #@datetype = params[:datetype].to_s    # fixed or range
       @datetype = 'fixed'
       @datefixed = params[:datefixed].to_s  # day, week, month, year, all, [moon ranges, like 2016-03-08_2017-06-23]
+      @defaultdatefixed = params[:defaultdatefixed].to_s
       #@datefrom = params[:datefrom].to_s    # [date]
       @together_apart = ""
       
