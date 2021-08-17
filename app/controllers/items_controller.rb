@@ -739,17 +739,19 @@ class ItemsController < ApplicationController
         tags.concat @olditem.tag_list
       end
       logger.info("items#new tags:#{tags.inspect}") 
-      if @meta_3 == 207
-          tags << 'VoiceOfMen'    
-      elsif @meta_3 == 208
-          tags << 'VoiceOfWomen'         
-      end
-      if @meta_5 == 405
-          tags << 'VoiceOfYouth'
-      elsif @meta_5 == 406
-          tags << 'VoiceOfExperience'
-      elsif @meta_5 == 407
-          tags << 'VoiceOfWisdom'        
+      if not @own_wall
+        if @meta_3 == 207
+            tags << 'VoiceOfMen'    
+        elsif @meta_3 == 208
+            tags << 'VoiceOfWomen'         
+        end
+        if @meta_5 == 405
+            tags << 'VoiceOfYouth'
+        elsif @meta_5 == 406
+            tags << 'VoiceOfExperience'
+        elsif @meta_5 == 407
+            tags << 'VoiceOfWisdom'        
+        end
       end
       if current_participant.geocountry
         country_com = Community.where(context: 'nation', context_code:current_participant.geocountry.iso3).first
