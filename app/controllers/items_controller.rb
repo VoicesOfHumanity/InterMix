@@ -1471,7 +1471,41 @@ class ItemsController < ApplicationController
     rateitem(item, vote, false, conversation_id)
     
     render plain: vote
-  end   
+  end
+  
+  def importancerate
+    # The "important issue" checkbox has been clicked on or off
+    @from = params[:from] || ''
+    item_id = params[:id].to_i
+    rate = params[:rate].to_i    # 0 or 1
+    logger.info("items#importancerate item:#{item_id} user:#{current_participant.id} rate:#{rate}")
+    
+    rating = Rating.where(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings').first
+    if not rating
+      rating = Rating.new(item_id: item_id, participant_id: current_participant.id, rating_type: 'AllRatings', approval: 0, interest: 0, importance: 0)
+    end
+    
+    rating.importance = rate
+    if rate == 1
+      # Turning importance on
+      rating.interest += 1
+      if rating.interest > 5
+        rating.interest = 5
+      end
+    else
+      # Turning importance off  
+      if rating.interest >= 4
+        rating.interest = 4
+      elsif rating.approval == 0 and rating.interest == 1
+        rating.interest = 0
+      elsif rating.interest > rating.approval.abs
+        rating.interest = rating.approval.abs
+      end
+    end        
+    rating.save
+    
+    render plain: rate
+  end
   
   def get_summary
     @item_id = params[:id]

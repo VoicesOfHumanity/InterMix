@@ -4,7 +4,14 @@ module ItemLib
   
   def rateitem(item, vote, from_mail=false, conversation_id=0, remote_actor=nil)
     # Called by fx thumbrate or view to record a vote, without showing any screen
-  
+    
+    # A thumb vote is recorded as approval, -3 ... +3
+    # The absolute value is stored as interest, which otherwise has a 1-5 range
+    # A thumb vote from mail can only be -1 or +1
+    # If one has commented on the item, set the interest to 4
+    # If Important Issue is checked, we add 1 to the interest
+    # If unchecked, remove that 1 again
+    
     Rails.logger.info("items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}")
     #puts "items#rateitem vote:#{vote} #{remote_actor ? "remote" : "local"}"
   
@@ -42,14 +49,14 @@ module ItemLib
       rating = Rating.where(item_id: item_id, participant_id: participant.id, rating_type: 'AllRatings').first
       if not rating
         is_new = true
-        rating = Rating.create(item_id: item_id, participant_id: participant.id, rating_type: 'AllRatings', approval: vote, interest: vote.abs)
+        rating = Rating.create(item_id: item_id, participant_id: participant.id, rating_type: 'AllRatings', approval: vote, interest: vote.abs, importance: 0)
       end
     elsif remote_actor
       puts "items#rateitem remote vote"
       rating = Rating.where(item_id: item_id, remote_actor_id: remote_actor.id, rating_type: 'AllRatings').first
       if not rating
         is_new = true
-        rating = Rating.create(item_id: item_id, remote_actor_id: remote_actor.id, rating_type: 'AllRatings', approval: vote, interest: vote.abs)
+        rating = Rating.create(item_id: item_id, remote_actor_id: remote_actor.id, rating_type: 'AllRatings', approval: vote, interest: vote.abs, importance: 0)
       end
     end
 
@@ -89,6 +96,9 @@ module ItemLib
   
     if com_count > 0
       rating.interest = 4
+    end
+    if rating.importance.to_i > 0
+      rating.interest += 1
     end
     rating.save!
   

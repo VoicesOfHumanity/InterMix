@@ -91,6 +91,16 @@ class Item < ActiveRecord::Base
     return numthumbs
   end
   
+  def self.importance(iproc)
+    #-- Return the 0 or 1 importance rating this user has given the item, if any
+    if iproc and iproc['hasrating'].to_i > 0 and iproc['rateimportance'].to_i > 0
+      importance = iproc['rateimportance'].to_i
+    else
+      importance = 0
+    end
+    return importance
+  end
+  
   def has_voted(p)
     #-- Has that user already voted on this item?
     rating = Rating.where(item_id: self.id, participant_id: p.id).first
@@ -1542,7 +1552,7 @@ class Item < ActiveRecord::Base
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
     if current_participant
       items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
-      items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation")
+      items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,r_has.importance as rateimportance,'' as explanation")
     end
         
     #puts("sql: #{items.to_sql}")
@@ -1647,6 +1657,7 @@ class Item < ActiveRecord::Base
             iproc['hasrating'] = participant_id
             iproc['rateapproval'] = p_rating.approval
             iproc['rateinterest'] = p_rating.interest
+            iproc['rateimportance'] = p_rating.importance
           end
         end
       end

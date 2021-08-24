@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_13_200426) do
+ActiveRecord::Schema.define(version: 2021_08_24_163914) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -368,7 +368,7 @@ ActiveRecord::Schema.define(version: 2021_07_13_200426) do
     t.index ["name"], name: "name"
   end
 
-  create_table "geonames", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "geonames", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.string "asciiname"
     t.text "alternatenames"
@@ -960,6 +960,7 @@ ActiveRecord::Schema.define(version: 2021_07_13_200426) do
     t.integer "dialog_round_id"
     t.integer "approval"
     t.integer "interest"
+    t.integer "importance"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "period_id"
@@ -1020,7 +1021,7 @@ ActiveRecord::Schema.define(version: 2021_07_13_200426) do
   end
 
   create_table "tags", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name", collation: "utf8_bin"
+    t.string "name"
     t.integer "taggings_count", default: 0
     t.index ["name"], name: "index_tags_on_name", unique: true
   end

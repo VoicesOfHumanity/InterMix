@@ -995,6 +995,23 @@ function updatethumbs(id,value) {
     
 }
 
+function clickimportance(item_id) {
+  var valuel
+  if ($('#imp_'+item_id).prop('checked')) {
+    value = 1;
+  } else {
+    value = 0;
+  }
+  $.ajax({
+      type: "POST",
+      url: '/items/' + item_id + '/importancerate',
+  	  data: 'rate='+value,
+      complete: function(t){
+        // nothing to do, really
+      }
+  });	  
+}
+
 function html_to_short(htmlval,plainval) {
     if (typeof htmlval === "undefined") {
         htmlval = CKEDITOR.instances['item_html_content'].getData();

@@ -401,6 +401,11 @@ div.itemthumbdiv div.thumbtitle {
   margin-right: 7px;
 }
 
+div.importantcheck {
+  float: right;
+  margin-top: 5px;
+}
+
 div.forumitem div.itemvoting {
     position: absolute;
     top: -10px;
