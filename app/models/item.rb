@@ -2866,6 +2866,7 @@ class Item < ActiveRecord::Base
 
     participant = Participant.find_by_id(participant_id)
     
+    logger.info("reply_ok can user #{participant_id} reply to item #{self.id} posted by user #{self.posted_by}? from:#{from}")
     #logger.info("reply_ok is user #{self.id} friends with #{participant_id}? #{self.participant.friends_with(participant)}")
 
     if participant_id.to_i == 0

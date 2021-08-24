@@ -1691,6 +1691,9 @@ class ItemsController < ApplicationController
     
       @in = params['in'].to_s
       crit['in'] = @in
+      # probably the same thing
+      @from = params['from'].to_s
+      crit['from'] = @from
       
       @is_first = (params[:is_first].to_i == 1)
     
