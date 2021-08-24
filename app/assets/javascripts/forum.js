@@ -666,6 +666,11 @@ function saveitem() {
           
 					per_reload();
 					//window.location.hash = '#item_' + results['item_id'];
+        } else if ($('#from').length && $('#from').val()=='wall') {
+					console.log('saveitem own wall');
+          $('#sortby2').val('items.id desc')
+				  in_new_item = 0;
+          per_reload(false,2,'sortby');       
 				} else if (results['item_id']) {
 					console.log('saveitem results item_id');
 					replyingid = 0;
