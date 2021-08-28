@@ -19,6 +19,8 @@ class WallController < ApplicationController
     @page = params[:page].to_i
     @page = 1 if @page <= 0
     
+    @ownwall = true
+    
     # defaults
     @geo_level = 6
     @nvaction = false
