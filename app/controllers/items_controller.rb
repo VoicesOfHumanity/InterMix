@@ -1791,7 +1791,8 @@ class ItemsController < ApplicationController
           #  @datefixed = xrange
           #end
         else
-          drange = "#{moon_rec.new_or_full} moon #{dstart} - #{dend}"
+          #drange = "#{moon_rec.new_or_full} moon #{dstart} - #{dend}"
+          drange = "#{dstart} - #{dend}"
         end
         @lastmoon = ''
         if @in == 'conversation'

@@ -155,6 +155,11 @@ class MessagesController < ApplicationController
 
     @message = Message.new(message_params)
     
+    if @message.to_participant_id.to_i == 0
+      # Assume it is a message to ourselves
+      @message.to_participant_id = current_participant.id
+    end
+    
     if @message.to_friend_id.to_i > 0
       # The follow ID of somebody following us
       followme = Follow.find_by_id(@message.to_friend_id)
