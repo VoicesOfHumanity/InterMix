@@ -1741,6 +1741,7 @@ class ItemsController < ApplicationController
       #@datetype = params[:datetype].to_s    # fixed or range
       @datetype = 'fixed'
       @datefixed = params[:datefixed].to_s  # day, week, month, year, all, [moon ranges, like 2016-03-08_2017-06-23]
+      logger.info("items#geoslider_update datefixed from parameter: #{@datefixed}")
       @defaultdatefixed = params[:defaultdatefixed].to_s
       #@datefrom = params[:datefrom].to_s    # [date]
       @together_apart = ""
@@ -1822,6 +1823,7 @@ class ItemsController < ApplicationController
         end
       elsif @datetype == 'fixed' and nvaction_changed
         @datefixed = 'month'
+        logger.info("items#geoslider_update datefixed set to #{@datefixed} because nvaction_changed")
       end
     
       #-- Checkboxes are also about comtags
@@ -1839,7 +1841,19 @@ class ItemsController < ApplicationController
       #end
     
       #session[:datetype] = @datetype.dup
-      session[:datefixed] = @datefixed.dup
+      if redocount == 0
+        session[:datefixed] = @datefixed.dup
+        logger.info("dialogs#geoslider_update session[:datefixed] set to: #{@datefixed}")
+        if @in == 'conversation'
+          session[:datefixed_conversation] = @datefixed.dup
+          logger.info("dialogs#geoslider_update session[:datefixed_conversation] set to: #{@datefixed}")
+        elsif @in == 'community'
+          session[:datefixed_community] = @datefixed.dup
+          logger.info("dialogs#geoslider_update session[:datefixed_community] set to: #{@datefixed}")
+        end
+      else
+        logger.info("dialogs#geoslider_update redocount > 0 so session[:datefixed] not set")        
+      end
       #session[:datefrom] = @datefrom.dup
       @datefromto = ''
       if @datetype == 'fixed'

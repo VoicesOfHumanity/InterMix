@@ -21,8 +21,8 @@
     <td style="text-align:right;vertical-align:top;background-color:transparent">Date range:</td>
     <td style="background-color:transparent">
         <% options = [] %>
-        <% if @defaultdatefixed.to_s != '' and @defaultdatefixed != @datefixed -%>
-          <% options << ["Return to default","#{@defaultdatefixed}"] %>
+        <% if @conversation and @defaultdatefixed.to_s != '' and @defaultdatefixed != @datefixed -%>
+          <% options << ["Current phase","#{@defaultdatefixed}"] %>
         <% end -%>
         <% if @conversation and @conversation.together_apart == 'apart' -%>
           <% options = options + @moons.reverse[0,6] %>

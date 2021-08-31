@@ -212,11 +212,20 @@ class DialogsController < ApplicationController
       @messtag = session[:messtag].to_s if session.has_key?(:messtag)
       @nvaction = session[:nvaction] if session.has_key?(:nvaction)
       #@datetype = session[:datetype] if session.has_key?(:datetype)
-      @datefixed = session[:datefixed] if session.has_key?(:datefixed)
-      logger.info("dialogs#slider datefixed set from session to: #{@datefixed}")
       #@datefrom = session[:datefrom] if session.has_key?(:datefrom)
       @sortby = session[:list_sortby] if session.has_key?(:list_sortby)
       @threads = session[:list_threads] if session.has_key?(:list_threads)
+    end
+
+    if @in == 'conversation' and session.has_key?(:datefixed_conversation)
+      @datefixed = session[:datefixed_conversation]
+      logger.info("dialogs#slider datefixed set from session[:datefixed_conversation] to: #{@datefixed}")
+    elsif @in == 'community' and session.has_key?(:datefixed_community)
+      @datefixed = session[:datefixed_community]
+      logger.info("dialogs#slider datefixed set from session[:datefixed_community] to: #{@datefixed}")
+    elsif session.has_key?(:datefixed)
+      @datefixed = session[:datefixed]
+      logger.info("dialogs#slider datefixed set from session[:datefixed] to: #{@datefixed}")
     end
 
     # We might have gotten specific parameters, which override defaults and session variables
@@ -261,6 +270,14 @@ class DialogsController < ApplicationController
     #session[:datetype] = @datetype
     session[:datefixed] = @datefixed
     logger.info("dialogs#slider session[:datefixed] set to #{@datefixed}")
+    if @in == 'conversation'
+      session[:datefixed_conversation] = @datefixed
+      logger.info("dialogs#slider session[:datefixed_conversation] set to #{@datefixed}")
+    elsif @in == 'community'
+       session[:datefixed_community] = @datefixed
+       logger.info("dialogs#slider session[:datefixed_community] set to #{@datefixed}")
+    end
+    
     #session[:datefrom] = @datefrom
     session[:list_sortby] = @sortby
     session[:list_threads] = @threads
