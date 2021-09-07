@@ -168,6 +168,9 @@ Rails.application.routes.draw do
   get 'u/:acct_id/*other', to: 'activitypub#unknown_target'
   post 'u/:acct_id/*other', to: 'activitypub#unknown_target'
   post 'activitypub/follow_account'
+  get 'ap/com/:comtag', to: 'activitypub#community_info'
+  get 'ap/conv/:tag', to: 'activitypub#conversation_info'
+  get 'ap/voh', to: 'activitypub#voh_info'
 
   get '/participants/auth/:provider/callback' => 'authentications#create'
   post '/participants/auth/:provider/callback' => 'authentications#create'

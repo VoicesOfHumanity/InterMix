@@ -106,6 +106,18 @@ class ActivitypubController < ApplicationController
     render json: results_json, content_type: 'application/activity+json'
   end
   
+  def community_info
+    # account info for a community
+  end
+  
+  def conversation_info
+    # account info for a conversation
+  end
+  
+  def voh_info
+    # account info for order out of chaos
+  end
+  
   def inbox
     # Where items for a certain user arrive
     # Somebody is sending us something
