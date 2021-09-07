@@ -372,7 +372,7 @@ end
       <%=raw thumbvote(itemproc, (@conversation_id ? @conversation_id : 0)) %>
       
       <div class="importantcheck">
-        Important issue?
+        Important issue!
         <input type="checkbox" value="1" <% if Item.importance(itemproc)>0 %>checked<% end %> onclick="clickimportance(<%= item.id %>)" id="imp_<%= item.id %>">
       </div>
     </div>
