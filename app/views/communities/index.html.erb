@@ -62,6 +62,31 @@
         %>
         <% if prof_nation -%>
           in&nbsp;profile
+          
+        <% elsif com.conversation_id.to_i>0 and com.conversation.twocountry -%>
+          <% is_in_com = current_participant.tag_list.include?(com.tagname) %>
+          <% if com.context == 'nation' -%>
+              -
+          <% elsif com.id == com.conversation.twocountry_common -%>
+              <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= is_in_com ? "leave" : "join" %></a>
+          <% elsif com.context == 'twocountry' -%>
+              <% is_in_other = false %>
+              <% if com.id == com.conversation.twocountry_supporter1 -%>
+                  <% other = Community.find_by_id(com.conversation.twocountry_supporter2) %>
+                  <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+              <% elsif com.id == com.conversation.twocountry_supporter2 -%>
+                  <% other = Community.find_by_id(com.conversation.twocountry_supporter1) %>
+                  <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+              <% end -%>
+              <% if is_in_other -%>
+                  -
+              <% else -%>                      
+                  <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= is_in_com ? "leave" : "join" %></a>
+              <% end -%>
+          <% else -%>
+            ?
+          <% end -%>          
+          
         <% elsif com.context != 'nation' and com.context != 'city' %>  
           <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list_downcase.include?(com.tagname.downcase) ? "leave" : "join" %></a>          
         <% else -%>

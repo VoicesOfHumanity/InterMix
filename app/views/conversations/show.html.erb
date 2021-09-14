@@ -91,8 +91,31 @@
               %>
               <% if prof_nation -%>
                 in&nbsp;profile
-              <% elsif com.context != 'nation' and com.context != 'city' %>
-                  <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>            
+              <% elsif @conversation.twocountry -%>
+                  <% is_in_com = current_participant.tag_list.include?(com.tagname) %>
+                  <% if com.context == 'nation' -%>
+                      -
+                  <% elsif com.id == @conversation.twocountry_common -%>
+                      <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= is_in_com ? "leave" : "join" %></a>
+                  <% elsif com.context == 'twocountry' -%>
+                      <% is_in_other = false %>
+                      <% if com.id == @conversation.twocountry_supporter1 -%>
+                          <% other = Community.find_by_id(@conversation.twocountry_supporter2) %>
+                          <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+                      <% elsif com.id == @conversation.twocountry_supporter2 -%>
+                          <% other = Community.find_by_id(@conversation.twocountry_supporter1) %>
+                          <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+                      <% end -%>
+                      <% if is_in_other -%>
+                          -
+                      <% else -%>                      
+                          <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= is_in_com ? "leave" : "join" %></a>
+                      <% end -%>
+                  <% else -%>
+                    ?
+                  <% end -%>
+              <% elsif com.context != 'nation' and com.context != 'city' -%>
+                  <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>
               <% end -%>
           </td>
       </tr>

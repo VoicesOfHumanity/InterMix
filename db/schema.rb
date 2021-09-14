@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_14_153731) do
+ActiveRecord::Schema.define(version: 2021_09_14_170815) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -123,6 +123,7 @@ ActiveRecord::Schema.define(version: 2021_09_14_153731) do
     t.string "voice_of_old"
     t.boolean "moderated", default: false
     t.boolean "active", default: true
+    t.integer "conversation_id"
     t.index ["tagname"], name: "index_communities_on_tagname"
   end
 

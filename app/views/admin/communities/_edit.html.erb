@@ -9,6 +9,7 @@
     <%= f.input :bold, :label => "Bold text?" %>
     <%= f.input :ungoals, :label => "UN Goal?" %>
     <%= f.input :sustdev, :label => "Sustainable Development Goal?" %>
+    <%= f.input :conversation_id, :label => "Two country conversation", as: :select, collection: [['* none *','']]+Conversation.where(active: true).collect{|c| [c.name,c.id]} %>
 		<%= f.input :moderated, :label => "Moderated?" %>
 		<%= f.input :twitter_post, :label => "Post items to twitter?" %>
 		<%= f.input :tweet_what, :label => "Items to tweet", :as => :select, :collection =>[['* all *'],['root messages','roots']] %>
