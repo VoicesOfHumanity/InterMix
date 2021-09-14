@@ -397,6 +397,10 @@ class DialogsController < ApplicationController
           redirect_to url
           return
         end
+        
+    elsif @in == 'conversation' and @conversation and @conversation.id == ISRAEL_PALESTINE_CONV_ID
+      # Not sure if we need to do anything special
+        
     end
     
     @communities = []
@@ -494,9 +498,35 @@ class DialogsController < ApplicationController
             logger.info("dialogs#slider perspective from only available: #{@comtag} for #{@conversation.shortname}")
         elsif @perspectives.length == 0
           @perspective = 'outsider'
-        elsif session.has_key?("cur_perspective_#{@conversation.id}") and session["cur_perspective_#{@conversation.id}"] != '' and @conversation.id != CITY_CONVERSATION_ID
+        elsif session.has_key?("cur_perspective_#{@conversation.id}") and session["cur_perspective_#{@conversation.id}"] != '' and @conversation.id != CITY_CONVERSATION_ID and session["cur_perspective_#{@conversation.id}"] != 'outsider'
           @comtag = session["cur_perspective_#{@conversation.id}"]
           logger.info("dialogs#slider perspective from cookie: #{@comtag} for #{@conversation.shortname}")
+        elsif @conversation.id == ISRAEL_PALESTINE_CONV_ID
+          # pick one of the countries, if we have them and if member of both, pick Palestine
+          @comtag = ''
+          for pcom in @perspectives
+            if pcom.tagname == 'Israel' and @comtag == ''
+              @comtag = pcom.tagname
+            elsif pcom.tagname[0..5] == 'Palest'
+              @comtag = pcom.tagname
+            end
+          end
+          if @comtag
+            # We got a country
+            logger.info("dialogs#slider perspective set to country: #{@comtag} for #{@conversation.shortname}")
+            # Get rid of any membership of the supporter communities, if they exist
+            for pcom in @perspectives
+              if pcom.id == @conversation.twocountry_supporter1 or pcom.id == @conversation.twocountry_supporter2
+                @perspectives.delete(pcom)
+                current_participant.tag_list.remove(pcom.tagname)
+                current_participant.save
+              end
+            end
+          else
+            # if we don't have any of the two countries, pick something else
+            @comtag = @perspectives[0].tagname
+            logger.info("dialogs#slider perspective from first in the list: #{@comtag} for #{@conversation.shortname}, as there weren't any countries")
+          end       
         else
           #@comtag = @perspectives.keys[0]
           @comtag = @perspectives[0].tagname

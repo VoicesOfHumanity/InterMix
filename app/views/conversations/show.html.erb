@@ -95,21 +95,31 @@
                   <% is_in_com = current_participant.tag_list.include?(com.tagname) %>
                   <% if com.context == 'nation' -%>
                       -
+                  <% elsif is_in_com -%>
+                    <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>">leave</a>
                   <% elsif com.id == @conversation.twocountry_common -%>
                       <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= is_in_com ? "leave" : "join" %></a>
                   <% elsif com.context == 'twocountry' -%>
                       <% is_in_other = false %>
-                      <% if com.id == @conversation.twocountry_supporter1 -%>
-                          <% other = Community.find_by_id(@conversation.twocountry_supporter2) %>
-                          <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
-                      <% elsif com.id == @conversation.twocountry_supporter2 -%>
-                          <% other = Community.find_by_id(@conversation.twocountry_supporter1) %>
-                          <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
-                      <% end -%>
-                      <% if is_in_other -%>
+                      <% is_in_country = false %>
+                      <% country1 =  Community.find_by_id(@conversation.twocountry_country1) %>
+                      <% country2 =  Community.find_by_id(@conversation.twocountry_country2) %>                      
+                      <% is_in_country = (current_participant.tag_list.include?(country1.tagname) or current_participant.tag_list.include?(country2.tagname)) %>
+                      <% if is_in_country -%>
                           -
-                      <% else -%>                      
-                          <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= is_in_com ? "leave" : "join" %></a>
+                      <% else -%>
+                          <% if com.id == @conversation.twocountry_supporter1 -%>
+                              <% other = Community.find_by_id(@conversation.twocountry_supporter2) %>
+                              <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+                          <% elsif com.id == @conversation.twocountry_supporter2 -%>
+                              <% other = Community.find_by_id(@conversation.twocountry_supporter1) %>
+                              <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+                          <% end -%>
+                          <% if is_in_other -%>
+                              -
+                          <% else -%>                      
+                              <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= is_in_com ? "leave" : "join" %></a>
+                          <% end -%>
                       <% end -%>
                   <% else -%>
                     ?

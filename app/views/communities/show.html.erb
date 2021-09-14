@@ -31,18 +31,25 @@ end
     <a href="#" onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= is_in_com ? "leave" : "join" %></a>
 
 <% elsif @community.context=='twocountry' and @community.conversation -%>
-  <% is_in_other = false %>
-  <% if @community.id == @community.conversation.twocountry_supporter1 -%>
-      <% other = Community.find_by_id(@community.conversation.twocountry_supporter2) %>
-      <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
-  <% elsif @community.id == @community.conversation.twocountry_supporter2 -%>
-      <% other = Community.find_by_id(@community.conversation.twocountry_supporter1) %>
-      <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
-  <% end -%>
-  <% if is_in_other -%>
+  <% country1 =  Community.find_by_id(@community.conversation.twocountry_country1) %>
+  <% country2 =  Community.find_by_id(@community.conversation.twocountry_country2) %>                      
+  <% is_in_country = (current_participant.tag_list.include?(country1.tagname) or current_participant.tag_list.include?(country2.tagname)) %>
+  <% if is_in_country -%>
       -
-  <% else -%>                      
-      <a href="#" onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= is_in_com ? "leave" : "join" %></a>
+  <% else -%>
+      <% is_in_other = false %>
+      <% if @community.id == @community.conversation.twocountry_supporter1 -%>
+          <% other = Community.find_by_id(@community.conversation.twocountry_supporter2) %>
+          <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+      <% elsif @community.id == @community.conversation.twocountry_supporter2 -%>
+          <% other = Community.find_by_id(@community.conversation.twocountry_supporter1) %>
+          <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+      <% end -%>
+      <% if is_in_other -%>
+          -
+      <% else -%>                      
+          <a href="#" onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= is_in_com ? "leave" : "join" %></a>
+      <% end -%>
   <% end -%>
 
 <% else -%>
