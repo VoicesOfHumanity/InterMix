@@ -4,7 +4,15 @@
 <tr><td class="left">Full Name:</td><td><%= @conversation.name %></td></tr>	
 <tr><td class="left">Description:</td><td><%= @conversation.description %></td></tr>	
 <tr><td class="left">Active/Public:</td><td><%= @conversation.active ? 'yes' : 'no' %></td></tr>	
-<tr><td class="left">Mode:</td><td><%= @conversation.together_apart %></td></tr>	
+<tr><td class="left">Mode:</td><td><%= @conversation.together_apart %></td></tr>
+<tr><td class="left">Two Country:</td><td><%= @conversation.twocountry ? 'Yes' : 'No' %></td></tr>
+<% if @conversation.twocountry -%>
+    <tr><td class="left">Country1:</td><td><%= @conversation.twocountry_country1.to_i>0 ? Community.find_by_id(@conversation.twocountry_country1).fullname : 'None' %></td></tr>
+    <tr><td class="left">Country2:</td><td><%= @conversation.twocountry_country2.to_i>0 ? Community.find_by_id(@conversation.twocountry_country2).fullname : 'None' %></td></tr>
+    <tr><td class="left">Supporter1:</td><td><%= @conversation.twocountry_supporter1.to_i>0 ? Community.find_by_id(@conversation.twocountry_supporter1).fullname : 'None' %></td></tr>
+    <tr><td class="left">Supporter2:</td><td><%= @conversation.twocountry_supporter2.to_i>0 ? Community.find_by_id(@conversation.twocountry_supporter2).fullname : 'None' %></td></tr>
+    <tr><td class="left">Common:</td><td><%= @conversation.twocountry_common.to_i>0 ? Community.find_by_id(@conversation.twocountry_common).fullname : 'None' %></td></tr>
+<% end -%>
 <tr><td class="left">Created:</td><td><%= @conversation.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 <tr><td class="left">Updated:</td><td><%= @conversation.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 </table>

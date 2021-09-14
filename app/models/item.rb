@@ -1264,7 +1264,8 @@ class Item < ActiveRecord::Base
       plist = Participant.tagged_with(network_comtags).collect {|p| p.id}.join(',')
       if plist != ''
         items = items.where("participants.id in (#{plist})")
-        items = items.where("items.intra_com='public'")            
+        items = items.where("items.intra_com='public'")       
+        logger.info("item#get_items network users with network tags")     
       else
         items = items.where("1=0")
       end
@@ -1341,8 +1342,10 @@ class Item < ActiveRecord::Base
       end
     elsif crit[:geo_level] == 'planet'
       title += "Planet Earth"  
+      logger.info("item#get_items planet")
     elsif crit[:geo_level] == 'all'
       title += "All Perspectives"
+      logger.info("item#get_items all perspectives")
     end
     
     if crit[:conversation_id].to_i > 0
@@ -1353,6 +1356,7 @@ class Item < ActiveRecord::Base
       #title += " | #{@conversation.name}" if @conversation
       items = items.where("items.intra_com='public'")
       items = items.where("items.intra_conv='public' or items.intra_conv='#{@conversation.shortname}'")
+      logger.info("item#get_items conversation: #{@conversation.shortname}")
       if crit[:topic].to_s != '' and crit[:topic] != '*'
         @topic = crit[:topic]
         items = items.where(topic: @topic)
@@ -1364,10 +1368,12 @@ class Item < ActiveRecord::Base
     if crit[:gender].to_i != 0
       items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
       ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
+      logger.info("item#get_items by gender")
     end
     if crit[:age].to_i != 0
       items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
       ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
+      logger.info("item#get_items by age")
     end
 
     logger.info("item#get_items gender:#{crit[:gender]} age:#{crit[:age]} title:#{title}")
@@ -1390,6 +1396,7 @@ class Item < ActiveRecord::Base
     
     if crit['in'] == 'main'
       items = items.where("(comment_email_to!='author' or is_first_in_thread=1)")
+      logger.info("item#get_items main first in thread or not comment to author only")
     end
     
     # tags
@@ -1410,7 +1417,8 @@ class Item < ActiveRecord::Base
           items = items.where("items.representing_com!=''")
           items = items.joins("left join items o on (items.reply_to=o.id)").where("items.reply_to=0 or o.representing_com=items.representing_com")    
         end
-            
+        
+        logger.info("item#get_items conversation in apart mode")
       end  
       # What about this now??
       #if @conversation.together_apart == 'together'
@@ -1443,6 +1451,7 @@ class Item < ActiveRecord::Base
       
       # show items from members of any of my groups
       items = items.where("items.intra_com='public' or items.intra_com in (#{comtag_list})")
+      logger.info("item#get_items my communities by tag")
       
     elsif crit[:comtag].to_s != ''
       title += " | @#{crit[:comtag]}"
@@ -1488,6 +1497,7 @@ class Item < ActiveRecord::Base
       else
         items = items.where("1=0")
       end
+      logger.info("item#get_items by comtag #{crit[:comtag]}")
 
       # Show items that either are public, or specifically for this community
       items = items.where("items.intra_com='public' or items.intra_com='@#{crit[:comtag]}'")
@@ -1497,28 +1507,33 @@ class Item < ActiveRecord::Base
       
       # show only public items, if there's no community specified, unless we're seeing somebody's wall, or it is a bulk mailing
       items = items.where("items.intra_com='public'")
+      logger.info("item#get_items public in regards to community")
       
     end
     
     if crit[:posted_by].to_i == 0
       # We're probably not on somebody's wall. So, only show wall posts meant to be public
       items = items.where("(items.wall_post=0 or items.wall_delivery='public')")
+      logger.info("item#get_items not wall post, or public")
     end
     
     if crit.has_key?(:conversation_id) and crit[:conversation_id].to_i > 0
       # Skip tags if we're in a conversation
     elsif crit[:messtag].to_s != ''
       title += " | ##{crit[:messtag]}"
-      items = items.tagged_with(crit[:messtag])      
+      items = items.tagged_with(crit[:messtag])  
+      logger.info("item#get_items messtag: #{crit[:messtag]}")    
     end
     if crit[:messtag_other].to_s != ''
       title += " | ##{crit[:messtag_other]}"
       items = items.tagged_with(crit[:messtag_other])            
+      logger.info("item#get_items messtag other: #{crit[:messtag_other]}")    
     end
     
     if crit.has_key?(:nvaction) and crit[:nvaction] === true
       items = items.tagged_with('nvaction')      
       logger.info("item#get_items nvaction:#{crit[:nvaction]} include nvaction")
+      logger.info("item#get_items nvaction")
     elsif crit.has_key?(:nvaction) and crit[:nvaction] === false      
       #if crit.has_key?(:nvaction_included) and crit[:nvaction_included] === false
       #  items = items.tagged_with('nvaction', exclude: true)  
@@ -1538,21 +1553,25 @@ class Item < ActiveRecord::Base
     if crit[:posted_by].to_i > 0
       # Only posts for a particular user, like for their wall
       items = items.where(posted_by: crit[:posted_by])
+      logger.info("item#get_items posted_by:#{crit[:posted_by]}")
     end
     
     if crit[:followed_by].to_i > 0
       # Only posts by people followed by this user
       items = items.joins("join follows on ((follows.followed_id=items.posted_by or follows.followed_remote_actor_id=items.posted_by_remote_actor_id) and follows.following_id=#{crit[:followed_by]})")
+      logger.info("item#get_items only users we follow")
     else
       # This should probably be more nuanced. Currently it means that external items only show in one's friend feed and not in the main forum
       # Should maybe change if they have up votes?
       items = items.where(int_ext: 'int')
+      logger.info("item#get_items only int items")
     end
 
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
     if current_participant
       items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
       items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,r_has.importance as rateimportance,'' as explanation")
+      logger.info("item#get_items include personal ratings")
     end
         
     #puts("sql: #{items.to_sql}")

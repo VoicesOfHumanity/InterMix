@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_24_163914) do
+ActiveRecord::Schema.define(version: 2021_09_14_153731) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -169,6 +169,12 @@ ActiveRecord::Schema.define(version: 2021_08_24_163914) do
     t.boolean "active", default: true
     t.text "topics"
     t.string "default_topic"
+    t.boolean "twocountry", default: false
+    t.integer "twocountry_country1"
+    t.integer "twocountry_country2"
+    t.integer "twocountry_supporter1"
+    t.integer "twocountry_supporter2"
+    t.integer "twocountry_common"
     t.index ["context_code", "context"], name: "index_conversations_on_context_code_and_context"
     t.index ["name"], name: "index_conversations_on_name"
     t.index ["shortname"], name: "index_conversations_on_shortname"

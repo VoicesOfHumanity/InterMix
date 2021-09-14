@@ -224,6 +224,8 @@ end
 		  <%= item.participant.name %>
 		<% elsif not participant_signed_in? and item.remote_poster -%>
 		  <%= item.remote_poster.account %>: <%= item.remote_poster.name %>
+    <% elsif item.participant and item.participant == current_participant -%>
+      <a href="/me/wall"><%= item.participant.name %></a>
     <% elsif item.participant -%>  
       <a href="/participant/<%= item.posted_by %>/wall"><%= item.participant.name %></a>
     <% elsif item.remote_poster -%>  

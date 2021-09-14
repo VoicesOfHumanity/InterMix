@@ -108,14 +108,58 @@ class ActivitypubController < ApplicationController
   
   def community_info
     # account info for a community
+    # /ap/com/:comtag
+
+    results_json = results.to_json
+    expires_in 3.days, public: true
+    render json: results_json, content_type: 'application/activity+json'
   end
   
   def conversation_info
     # account info for a conversation
+    # /ap/conv/:tag
+
+    results_json = results.to_json
+    expires_in 3.days, public: true
+    render json: results_json, content_type: 'application/activity+json'
   end
   
   def voh_info
     # account info for order out of chaos
+    # /ap/voh
+
+    results = {
+      	"@context" => [
+      		"https://www.w3.org/ns/activitystreams",
+      		"https://w3id.org/security/v1",
+          {"@language": "en"}
+      	],
+        "type" => "Person",
+        "id" => @account_url,
+        "url" => @account_url,
+        "preferredUsername" => @account.account_uniq,
+        "name" => @account.account_uniq,
+        "summary" => "VoH user",
+        "inbox" => @inbox_url,
+        "outbox" => @outbox_url,
+        "following" => @following_url,
+        "followers" => @followers_url,
+        "liked" => @liked_url,
+        "icon" => {
+          "mediaType" => "image/jpeg",
+          "type" => "icon",
+          "url" => "https://#{BASEDOMAIN}#{@icon_url}"
+        },
+        "publicKey" => {
+          "id" => "#{@account_url}#key",
+          "owner" => @account_url,
+          "publicKeyPem" => @account.public_key
+        } 
+    }
+
+    results_json = results.to_json
+    expires_in 3.days, public: true
+    render json: results_json, content_type: 'application/activity+json'
   end
   
   def inbox
