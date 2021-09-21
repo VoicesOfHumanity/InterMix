@@ -33,13 +33,22 @@ class AuthenticationsController < ApplicationController
       session[:moreless] = 'less'
       @moreless = 'less'
       if current_participant and not current_participant.has_required
+        logger.info("authentications#create missing required into")
         redirect_to '/me/profile/meta' and return
       elsif session[:sawfront].to_s == 'yes' and session[:comtag].to_s != '' 
+        logger.info("authentications#create has comtag, sending to community")
         @community = Community.find_by_tagname(session[:comtag])
         if @community
           redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}" and return
         end
+      elsif session[:sawconvfront].to_s == 'yes' and session[:previous_convtag].to_s != '' 
+        logger.info("authentications#create comes from conversation front page, go to conversation")
+        @conversation = Conversation.find_by_shortname(session[:previous_convtag])
+        if @conversation
+          return "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{@converation.shortname}"
+        end      
       end
+      logger.info("authentications#create go to default slider, as nothing else applies")
       redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider" and return
     elsif current_participant
       # Adding an authorization, while already logged in

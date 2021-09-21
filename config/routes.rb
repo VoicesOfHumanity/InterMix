@@ -416,6 +416,8 @@ Rails.application.routes.draw do
     
   root 'front#index'
   
+  get '/conversation/:tagname', to: 'conversations#fronttag'
+  get '/community/:tagname', to: 'communities#fronttag'
   get '/:tagname', to: 'communities#fronttag'
   
 end

@@ -299,11 +299,22 @@ class ApplicationController < ActionController::Base
       session[:cur_baseurl] + '/fbapp'
     elsif not session[:has_required]
       #session[:cur_baseurl] + '/me/profile/edit#settings'
+      logger.info("application#after_sign_in_path_for missing required")
       session[:cur_baseurl] + '/me/profile/meta'
+    elsif session[:sawconvfront].to_s == 'yes' and session[:previous_convtag].to_s != '' 
+      @conversation = Conversation.find_by_shortname(session[:previous_convtag])
+      logger.info("application#after_sign_in_path_for came from conversation front page, go to conversation")
+      if @conversation
+        return "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{@conversation.shortname}"
+      else
+        super
+      end
     elsif true and not session.has_key?(:previous_comtag)
+      logger.info("application#after_sign_in_path_for doesn't have previoius comtag, getting stored location")
       stored_location_for(resource_or_scope) || super  
     elsif session[:sawfront].to_s == 'yes' and session[:comtag].to_s != '' 
       @community = Community.find_by_tagname(session[:comtag])
+      logger.info("application#after_sign_in_path_for has comtag, sending to community")
       if @community
         #return "/communities/#{@community.id}"
         return "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}"

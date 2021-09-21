@@ -818,8 +818,15 @@ class CommunitiesController < ApplicationController
     tagname = params[:tagname].to_s
     @community = Community.find_by_tagname(tagname)
     if not @community
-      redirect_to "/"
-      return
+      # If it doesn't exist, maybe it is a conversation?
+      @conversation = Conversation.find_by_shortname(tagname)
+      if @conversation
+        redirect_to "/conversation/#{tagname}"
+        return
+      else
+        redirect_to "/"
+        return
+      end
     end    
     session[:sawfront] = 'yes'
     session[:previous_comtag] = tagname

@@ -50,4 +50,8 @@ class Conversation < ApplicationRecord
     return ''
   end
   
+  def to_liquid
+      {'id'=>id, 'shortname'=>shortname,'name'=>name, 'description'=>description}
+  end
+  
 end

@@ -6,6 +6,39 @@ class ConversationsController < ApplicationController
   before_action :authenticate_participant!, except: [:join, :front, :fronttag]
   before_action :check_is_admin, except: [:index, :join, :front, :fronttag]
 
+  def fronttag
+    #-- Show the public front page
+    #-- http://voh.intermix.cr8.com/conversation/IPpeace
+    tagname = params[:tagname].to_s
+
+    @conversation = Conversation.find_by_shortname(tagname)
+    if not @conversation
+      redirect_to "/"
+      return
+    end
+   
+    if participant_signed_in?
+      redirect_to "/conversations/#{@conversation.id}"
+      return
+    end
+    
+    session[:sawconvfront] = 'yes'
+    session[:previous_convtag] = tagname
+    
+    @dialog_id = VOH_DISCUSSION_ID
+    @cdata = {}
+    @cdata['conversation'] = @conversation
+    if @conversation.front_template.to_s.strip != ''
+      desc = Liquid::Template.parse(@conversation.front_template).render(@cdata)
+    else   
+      tcontent = render_to_string :partial=>"conversations/front_default", :layout=>false
+      desc = Liquid::Template.parse(tcontent).render(@cdata)
+    end
+    @content = "<div>#{desc}</div>"    
+    render action: :front    
+  end
+
+
   # GET /conversations
   def index
     # Show a list of conversations
