@@ -28,9 +28,11 @@ class ApplicationController < ActionController::Base
     #-- Get the state/region entries for a certain country, for a select box
     @country_code = params[:country_code].to_s
     if @country_code == ''  
-      res = [{:val=>0, :txt=>''}]
+      #res = [{:val=>0, :txt=>''}]
+      res = []
     else
-      res = [{:val=>0, :txt=>''}] + Geoadmin1.where("country_code='#{@country_code}' and admin1_code!='00'").order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
+      #res = [{:val=>0, :txt=>''}] + Geoadmin1.where("country_code='#{@country_code}' and admin1_code!='00'").order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
+      res = Geoadmin1.where("country_code='#{@country_code}' and admin1_code!='00'").order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
     end          
     #render :layout=>false, :text => res.to_json
     render json: res
