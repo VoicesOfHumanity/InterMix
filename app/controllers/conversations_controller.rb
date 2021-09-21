@@ -199,6 +199,17 @@ class ConversationsController < ApplicationController
     if @conversation.id == CITY_CONVERSATION_ID
       @communities.sort! { |a,b| [b.send('activity'),a.send('tagname')] <=> [a.send('activity'),b.send('tagname')] }
       @communities = @communities[0..20]
+    elsif @conversation.context == 'twocountry' or @conversation.twocountry
+      sorder = {
+        @conversation.twocountry_common => 1,
+        @conversation.twocountry_country1 => 2,
+        @conversation.twocountry_country2 => 3,
+        @conversation.twocountry_supporter1 => 4,
+        @conversation.twocountry_supporter2 => 5
+      }
+      @communities.sort! do |a,b| 
+        sorder[a.id] <=> sorder[b.id]
+      end
     else
       @communities.sort! do |a, b|
         if b.tagname == @cur_perspective
