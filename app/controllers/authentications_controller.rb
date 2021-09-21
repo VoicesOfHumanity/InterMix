@@ -45,7 +45,7 @@ class AuthenticationsController < ApplicationController
         logger.info("authentications#create comes from conversation front page, go to conversation")
         @conversation = Conversation.find_by_shortname(session[:previous_convtag])
         if @conversation
-          return "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{@converation.shortname}"
+          return "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{@conversation.shortname}"
         end      
       end
       logger.info("authentications#create go to default slider, as nothing else applies")
