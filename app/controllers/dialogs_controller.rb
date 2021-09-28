@@ -475,6 +475,9 @@ class DialogsController < ApplicationController
       redirect_to url
       return      
       
+    elsif @in == 'conversation' and current_participant.status == 'visitor'
+      @perspective = 'visitor'
+      
     elsif @in == 'conversation' and @conv != '-' and @conversation and @conversation.id != INT_CONVERSATION_ID
       #-- In a conversation, they also need a community/perspective, if there is a suitable one      
       logger.info("dialogs#slider check for conversation perspective")
