@@ -143,7 +143,9 @@ if (CKEDITOR.instances['item_html_content']) {
         <% com_options << ["This community only", "community"] if @comtag.to_s != '' %>
         <% com_options << ["Message author only","author"] %>
     	  <%= options_for_select(com_options, 'author') %>
-    	  </select>       
+    	  </select>
+      <% elsif current_participant.status == 'visitor' -%>
+        <input type="hidden" name="item[comment_email_to]" id="item_comment_email_to" value="public">
       <% end -%>
             
   	</div>
