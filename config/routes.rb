@@ -221,6 +221,8 @@ Rails.application.routes.draw do
   resources :conversations do
     get :change_perspective, on: :member
     get :top_posts, on: :member
+    get :test_template, :on => :member
+    get :get_default, :on => :member
   end
 
   get 'networks/all', to: 'networks#index', action: :index, which: 'allnet'

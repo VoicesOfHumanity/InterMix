@@ -329,6 +329,40 @@ class ConversationsController < ApplicationController
         
   end
 
+  def get_default
+    #-- Return a particular default template, e.g. invite, member, import
+    which = params[:which]
+    render :partial=>"#{which}_default", :layout=>false
+  end
+
+  def test_template
+    #-- Show a template with the liquid macros filled in
+    which = params[:which]
+    @conversation_id = params[:id].to_i
+    @conversation = Conversation.find_by_id(@conversation_id)
+    #@logo = @conversation.logo.exists? ? "https://#{BASEDOMAIN}#{@conversation.logo.url}" : "" 
+    @participant = current_participant
+    @email = @participant.email
+    @name = @participant.name
+    
+    cdata = {}
+    cdata['conversation'] = @conversation
+    cdata['conversation_logo'] = @logo
+    cdata['participant'] = @participant
+    cdata['current_participant'] = @current_participant
+    cdata['recipient'] = @participant
+    cdata['password'] = '[#@$#$%$^]'
+    #cdata['logo'] = @logo
+      
+    if @conversation.send("#{which}_template").to_s != ""
+      template_content = render_to_string(plain: @conversation.send("#{which}_template"), layout: false)
+    else
+      template_content = render_to_string(:partial=>"#{which}_default",:layout=>false)
+    end      
+    template = Liquid::Template.parse(template_content)
+    render html: template.render(cdata).html_safe, layout: false
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_conversation

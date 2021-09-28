@@ -40,7 +40,7 @@
 			<%= button_to_function "get default", "get_default('front')" %><br>
 			<%= button_to_function "test", "test_template('front')" %>	
 			</label>
-			<textarea id="dialog_front_template" name="dialog[front_template]" rows="5"><%= @conversation.front_template %></textarea>
+			<textarea id="conversation_front_template" name="conversation[front_template]" rows="5"><%= @conversation.front_template %></textarea>
 		</li>
     
 		<%= f.input :together_apart, :label => "Mode", :as => :select, :collection =>['together','apart'] %>
@@ -62,6 +62,32 @@
 <% end -%>
 
 <script>
+    function get_default(which) {
+    	if (!$('#conversation_'+which+'_template')) {
+    		alert("That doesn't seem to exist");
+    		return;
+    	} else if ($('#conversation_'+which+'_template').val()!='') {
+    		alert("Please empty the template field first, if you wish to overwrite it with the default");
+    		return;
+    	}
+    	var pars = "which="+which;
+    	$.ajax({
+         type: "GET",
+         url: "/conversations/<%= @conversation.id %>/get_default",
+         data: pars,
+         complete: function(t){	
+           $('#conversation_'+which+'_template').val(t.responseText);
+         }
+       });	
+    }
+    function test_template(which) {
+    	//if ($('#group_'+which+'_template').val()=='') {
+    	//	alert("There's no template to test");
+    	//	return;
+    	//}	
+    	window.open("/conversations/<%= @conversation.id %>/test_template?which="+which, '_blank');
+    }
+
   function topic(act) {
     var tag = $('#comlist').val();
     if ($('#topic_list').val()=='') {
