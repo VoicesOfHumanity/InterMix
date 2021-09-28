@@ -498,7 +498,7 @@ class DialogsController < ApplicationController
             logger.info("dialogs#slider perspective from only available: #{@comtag} for #{@conversation.shortname}")
         elsif @perspectives.length == 0
           @perspective = 'outsider'
-        elsif session.has_key?("cur_perspective_#{@conversation.id}") and session["cur_perspective_#{@conversation.id}"] != '' and @conversation.id != CITY_CONVERSATION_ID and session["cur_perspective_#{@conversation.id}"] != 'outsider'
+        elsif session.has_key?("cur_perspective_#{@conversation.id}") and session["cur_perspective_#{@conversation.id}"] != '' and @conversation.id != CITY_CONVERSATION_ID and @conversation.context != 'twocountry' and session["cur_perspective_#{@conversation.id}"] != 'outsider'
           @comtag = session["cur_perspective_#{@conversation.id}"]
           logger.info("dialogs#slider perspective from cookie: #{@comtag} for #{@conversation.shortname}")
         elsif @conversation.id == ISRAEL_PALESTINE_CONV_ID
@@ -534,6 +534,8 @@ class DialogsController < ApplicationController
         end
         if @comtag != '' and current_participant.tag_list_downcase.include?(@comtag.downcase)
           @perspective = @comtag
+          session["cur_perspective_#{@conversation.id}"] = @perspective
+          logger.info("dialogs#slider settting perspective in cookie: #{@perspective} for #{@conversation.shortname}")
           logger.info("dialogs#slider redirecting to conversation with comtag: #{@perspective}")
           url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
           url += "&show_result=1" if @show_result == 1
