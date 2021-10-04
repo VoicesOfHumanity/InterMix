@@ -555,7 +555,9 @@ class Item < ActiveRecord::Base
       itext += "<p>by "
 
       local_or_remote = 'local'
-      if self.participant
+      if self.participant and self.participant == p
+  		  itext += "<a href=\"https://#{domain}/me/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
+      elsif self.participant
   		  itext += "<a href=\"https://#{domain}/participant/#{self.posted_by}/wall?auth_token=#{p.authentication_token}\">#{self.participant ? self.participant.name : self.posted_by}</a>"
       elsif self.remote_poster
   		  itext += "<a href=\"https://#{domain}/people/remote/#{self.posted_by_remote_actor_id}/profile?auth_token=#{p.authentication_token}\">#{self.remote_poster.account} : #{self.remote_poster.name}</a>"        

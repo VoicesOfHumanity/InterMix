@@ -307,6 +307,8 @@ for p in participants
   		  itext += "[name withheld for this discussion]"  		
   		elsif item.dialog and not item.dialog.settings_with_period["profiles_visible"]
   		  itext += item.participant ? item.participant.name : item.posted_by
+      elsif item.participant and item.participant == p
+  		  itext += "<a href=\"https://#{domain}/me/wall?auth_token=#{p.authentication_token}\">#{item.participant ? item.participant.name : item.posted_by}</a>"
   		else
   		  itext += "<a href=\"https://#{domain}/participant/#{item.posted_by}/wall?auth_token=#{p.authentication_token}\">#{item.participant ? item.participant.name : item.posted_by}</a>"
   		end
