@@ -182,7 +182,7 @@ class ProfilesController < ApplicationController
       # remove those unchecked
       for r in @participant.religions
         if  not params[:religions].include?(r.id.to_s)
-          r.destroy
+          #r.destroy
         end
       end
       # Add the new ones
