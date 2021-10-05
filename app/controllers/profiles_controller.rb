@@ -195,7 +195,7 @@ class ProfilesController < ApplicationController
       end
       for r in @participant.religions
         if params["religion_denom_#{r.id}"]
-          p_r = ParticipantReligion.where(participant_id: @participant.id, religion_id: r_id).first
+          p_r = ParticipantReligion.where(participant_id: @participant.id, religion_id: r.id).first
           p_r.religion_denomination = params["religion_denom_#{r.id}"].to_s
           p_r.save
         end
