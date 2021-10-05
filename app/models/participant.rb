@@ -43,6 +43,10 @@ class Participant < ActiveRecord::Base
   has_many :item_subscribes
   has_many :subscriptions, class_name: "Item", :through => :item_subscribes
   
+  has_many :participant_religions
+  has_many :religions, :through => :participant_religions
+  
+  
   #has_many :gender_metamap_node_participants, :class_name => "MetamapNodeParticipant", :conditions => "metamap_id=3"
   #has_many :gender_metamap_nodes, :source => :metamap_node_participants
   #has_many :gender_metamap_nodes, :class_name => "MetamapNode", :through=>:metamap_node_participants  

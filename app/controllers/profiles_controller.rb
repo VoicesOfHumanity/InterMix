@@ -177,6 +177,30 @@ class ProfilesController < ApplicationController
         #end
       end
     end
+    
+    if params[:religions]
+      # remove those unchecked
+      for r in @participant.religions
+        if  not params[:religions].include?(r.id.to_s)
+          r.destroy
+        end
+      end
+      # Add the new ones
+      for r_id in params[:religions]
+        r_id = r_id.to_i
+        p_r = ParticipantReligion.where(participant_id: @participant.id, religion_id: r_id).first
+        if not p_r
+          ParticipantReligion.create(participant_id: @participant.id, religion_id: r_id)
+        end
+      end
+      for r in @participant.religions
+        if params["religion_denom_#{r.id}"]
+          p_r = ParticipantReligion.where(participant_id: @participant.id, religion_id: r_id).first
+          p_r.religion_denomination = params["religion_denom_#{r.id}"].to_s
+          p_r.save
+        end
+      end
+    end
 
     # Save any metamap assignments
     if params[:meta]

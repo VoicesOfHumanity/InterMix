@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_14_170815) do
+ActiveRecord::Schema.define(version: 2021_10_05_203335) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -786,6 +786,16 @@ ActiveRecord::Schema.define(version: 2021_09_14_170815) do
     t.index ["name"], name: "name"
   end
 
+  create_table "participant_religions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "participant_id"
+    t.integer "religion_id"
+    t.string "religion_denomination"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["participant_id", "religion_id"], name: "index_participant_religions_on_participant_id_and_religion_id"
+    t.index ["religion_id", "participant_id"], name: "index_participant_religions_on_religion_id_and_participant_id"
+  end
+
   create_table "participants", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -976,6 +986,15 @@ ActiveRecord::Schema.define(version: 2021_09_14_170815) do
     t.index ["item_id", "id"], name: "index_ratings_on_item_id_and_id"
     t.index ["participant_id", "id"], name: "index_ratings_on_participant_id_and_id"
     t.index ["remote_actor_id", "id"], name: "index_ratings_on_remote_actor_id_and_id"
+  end
+
+  create_table "religions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name"
+    t.string "shortname"
+    t.string "subdiv", default: ""
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_religions_on_name", length: 35
   end
 
   create_table "remote_actors", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
