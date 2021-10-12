@@ -180,9 +180,10 @@ class ProfilesController < ApplicationController
     
     if params[:religions]
       # remove those unchecked
-      for r in @participant.religions
-        if  not params[:religions].include?(r.id.to_s)
-          ParticipantReligion.where(participant_id: @participant.id, religion_id: r.id).destroy
+      for p_r in @participant.participant_religions
+        if not params[:religions].include?(p_r.religion_id.to_s)
+          logger.info("profiles#update religion #{p_r.religion_id} removed")
+          p_r.destroy
         end
       end
       # Add the new ones
@@ -190,14 +191,25 @@ class ProfilesController < ApplicationController
         r_id = r_id.to_i
         p_r = ParticipantReligion.where(participant_id: @participant.id, religion_id: r_id).first
         if not p_r
-          ParticipantReligion.create(participant_id: @participant.id, religion_id: r_id)
+          r = Religion.find_by_id(r_id)
+          if r
+            logger.info("profiles#update religion #{r.id}:#{r.name} added")
+            if params.has_key?("religion_denom_#{r.id}")
+              religion_denomination = params["religion_denom_#{r.id}"]
+            else
+              religion_denomination = ''
+            end
+            ParticipantReligion.create(participant_id: @participant.id, religion_id: r_id, religion_denomination: religion_denomination)
+          end
         end
       end
-      for r in @participant.religions
-        if params["religion_denom_#{r.id}"]
-          p_r = ParticipantReligion.where(participant_id: @participant.id, religion_id: r.id).first
-          p_r.religion_denomination = params["religion_denom_#{r.id}"].to_s
-          p_r.save
+      for p_r in @participant.participant_religions
+        if p_r.religion and params.has_key?("religion_denom_#{p_r.religion_id}")
+          if params["religion_denom_#{p_r.religion_id}"].to_s != p_r.religion_denomination
+            logger.info("profiles#update religion #{p_r.religion_id}:#{p_r.religion.name} updating denomination to #{params["religion_denom_#{p_r.religion_id}"]}")
+            p_r.religion_denomination = params["religion_denom_#{p_r.religion_id}"].to_s
+            p_r.save
+          end
         end
       end
     end
@@ -325,7 +337,9 @@ class ProfilesController < ApplicationController
         redirect_to @goto and return
       else        
         @subsection = 'view'
-        render :action=>'index' and return
+        #render :action=>'index' and return
+        redirect_to '/me/profile'
+        return
       end
     else
       @subsection = 'edit'

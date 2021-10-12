@@ -68,8 +68,9 @@
         <% for religion in Religion.all -%>
             <% participant_religion = ParticipantReligion.where(participant_id: @participant.id, religion_id: religion.id).first %>
             <% checked = participant_religion ? 'checked' : '' %>
-            <input type="checkbox" class="religion_check" name="religions[]" id="religion_check_<%= religion.id %>" value="<%= religion.id %>" <%= checked %> onclick="click_religion(<%= religion.id %>)"> <%= religion.name %><span id="religion_span_<%= religion.id %>" style="<%= 'display:none' if checked == '' %>"> -
+            <input type="checkbox" class="religion_check" name="religions[]" id="religion_check_<%= religion.id %>" value="<%= religion.id %>" <%= checked %> onclick="click_religion(<%= religion.id %>)"> <%= religion.name %><span id="religion_span_<%= religion.id %>" style="<%= 'display:none' if checked == '' %>">
             <% if religion.subdiv != 'nodenom' -%>
+                -
                 <% if religion.subdiv == 'trad' -%>
                     Tradition:
                 <% elsif religion.subdiv == 'denom' -%>
