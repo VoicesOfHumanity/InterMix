@@ -1359,10 +1359,50 @@ class Item < ActiveRecord::Base
       items = items.where("items.intra_com='public'")
       items = items.where("items.intra_conv='public' or items.intra_conv='#{@conversation.shortname}'")
       logger.info("item#get_items conversation: #{@conversation.shortname}")
+      
       if crit[:topic].to_s != '' and crit[:topic] != '*'
         @topic = crit[:topic]
         items = items.where(topic: @topic)
-      end        
+      end 
+      
+      if @conversation.context = 'twocountry'
+        ucom  = Community.find_by_id(@conversation.twocountry_common)
+        ccom1 = Community.find_by_id(@conversation.twocountry_country1)
+        ccom2 = Community.find_by_id(@conversation.twocountry_country2)
+        scom1 = Community.find_by_id(@conversation.twocountry_supporter1)
+        scom2 = Community.find_by_id(@conversation.twocountry_supporter2)
+        
+        ucom_tag = ucom ? ucom.tagname : ''
+        ccom1_tag = ccom1 ? ccom1.tagname : ''
+        ccom2_tag = ccom2 ? ccom2.tagname : ''
+        scom1_tag = scom1 ? scom1.tagname : ''
+        scom2_tag = ccom2 ? scom2.tagname : ''
+        
+        country1 = Geocountry.find_by_iso3(ccom1)
+        country2 = Geocountry.find_by_iso3(ccom2)
+        
+        if (ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag)) or (ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag))
+          # viewer is from one of the two main countries. We want only votes, comments, and importance from those as well 
+          ratings = ratings.where("(participants.country_code=? or participants.country_code=?)", country1.iso, country2.iso)          
+        elsif (scom1 and current_participant.tag_list_downcase.include?(scom1_tag)) or (scom2 and current_participant.tag_list_downcase.include?(scom2_tag))
+          # viewer is in one of the supporter communities. Only votes from the countries and supporters
+          # Get a list of the people that are in the supporter communities, or in the country communities
+          supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag]
+          plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+          if plist != ''
+            ratings = ratings.where("participants.id in (#{plist})")
+          end
+        #elsif (ucom and current_participant.tag_list_downcase.include?(ucom_tag))
+        else
+          # viewer is (probably) only in the general community
+          supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag, ucom_tag]
+          plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+          if plist != ''
+            ratings = ratings.where("participants.id in (#{plist})")
+          end
+        end        
+      end
+             
     else
       items = items.where("intra_conv='public'")        
     end
