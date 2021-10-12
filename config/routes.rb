@@ -101,6 +101,10 @@ Rails.application.routes.draw do
       delete :admin_del, :on => :member
     end
 
+    resources :religions do
+      get :search, :on => :collection
+    end
+
     resources :moons do
       get :search, :on => :collection
       get :admins, :on => :member

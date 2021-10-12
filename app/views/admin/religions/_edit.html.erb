@@ -1,0 +1,14 @@
+<%= semantic_form_for [:admin, @religion] do |f| %>
+
+	<%= f.inputs do %>
+		<%= f.input :name, :required => true %>
+		<%= f.input :shortname, :required => true %>
+		<%= f.input :subdiv, :required => true, label: 'Sub Division' %>
+	<% end %>
+
+<% end %>
+
+<p>
+  <input type="button" value="Cancel" onclick="viewrec1(<%= @religion.id.to_i %>)" />
+  <input type="button" value="Save" onclick="saverec1()" />
+</p>
