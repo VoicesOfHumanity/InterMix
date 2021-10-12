@@ -16,7 +16,6 @@ religions = Religion.create([
   {name: "Chinese Traditional", shortname: "ChineseTrad", subdiv: "trad"},
   {name: "Christianity", shortname: "Christianity", subdiv: "denom"},
   {name: "Hinduism", shortname: "Hinduism", subdiv: "denom"},
-  {name: "Indigenous", shortname: "IndigenousRel", subdiv: "people"},
   {name: "Islam", shortname: "Islam", subdiv: "denom"},
   {name: "Jainism", shortname: "Jainism", subdiv: "denom"},
   {name: "Judaism", shortname: "Judaism", subdiv: "denom"},

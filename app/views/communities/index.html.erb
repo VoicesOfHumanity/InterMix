@@ -64,7 +64,7 @@
           in&nbsp;profile
           
         <% elsif com.conversation_id.to_i>0 and com.conversation.twocountry -%>
-          <% is_in_com = current_participant.tag_list.include?(com.tagname) %>
+          <% is_in_com = current_participant.tag_list_downcase.include?(com.tagname.downcase) %>
           <% if com.context == 'nation' -%>
               -
           <% elsif com.id == com.conversation.twocountry_common -%>
@@ -72,17 +72,17 @@
           <% elsif com.context == 'twocountry' -%>
               <% country1 =  Community.find_by_id(com.conversation.twocountry_country1) %>
               <% country2 =  Community.find_by_id(com.conversation.twocountry_country2) %>                      
-              <% is_in_country = (current_participant.tag_list.include?(country1.tagname) or current_participant.tag_list.include?(country2.tagname)) %>
+              <% is_in_country = (current_participant.tag_list_downcase.include?(country1.tagname.downcase) or current_participant.tag_list_downcase.include?(country2.tagname.downcase)) %>
               <% if is_in_country -%>
                   -
               <% else -%>
                   <% is_in_other = false %>
                   <% if com.id == com.conversation.twocountry_supporter1 -%>
                       <% other = Community.find_by_id(com.conversation.twocountry_supporter2) %>
-                      <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+                      <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
                   <% elsif com.id == com.conversation.twocountry_supporter2 -%>
                       <% other = Community.find_by_id(com.conversation.twocountry_supporter1) %>
-                      <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+                      <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
                   <% end -%>
                   <% if is_in_other -%>
                       -

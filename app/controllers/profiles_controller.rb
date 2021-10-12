@@ -182,7 +182,7 @@ class ProfilesController < ApplicationController
       # remove those unchecked
       for r in @participant.religions
         if  not params[:religions].include?(r.id.to_s)
-          #r.destroy
+          ParticipantReligion.where(participant_id: @participant.id, religion_id: r.id).destroy
         end
       end
       # Add the new ones
@@ -671,6 +671,11 @@ class ProfilesController < ApplicationController
     else
       logger.info("profiles#comtag removing #{comtag} for user")
       current_participant.tag_list.remove(comtag)
+      current_participant.tag_list.each do |tag|
+        if tag.downcase == comtag.downcase
+          current_participant.tag_list.remove(tag)
+        end
+      end
     end
     current_participant.save!
     
