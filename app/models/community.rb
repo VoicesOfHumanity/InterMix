@@ -74,7 +74,7 @@ class Community < ActiveRecord::Base
   def go_to_conversation(participant)
     # Decide if we should go to a conversation, rather than the forum for this community
     conversation = nil
-    if participant.tag_list.include?(self.tagname)
+    if participant.tag_list_downcase.include?(self.tagname.downcase)
       # If we're in a community, and the user is a member. Conversation not specified. Figure out which one
       if self.conversations.length == 1
         # Community is in only one conversation, go there

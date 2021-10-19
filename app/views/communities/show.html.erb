@@ -22,7 +22,7 @@ elsif @community.context=='city'
   end
 end
 %>
-<% is_in_com = current_participant.tag_list.include?(@community.tagname) %>
+<% is_in_com = current_participant.tag_list_downcase.include?(@community.tagname.downcase) %>
 <% if prof_nation or prof_city -%>
   [in&nbsp;profile]
 <% elsif @community.context=='nation' or @community.context=='city' -%>  
@@ -33,17 +33,17 @@ end
 <% elsif @community.context=='twocountry' and @community.conversation -%>
   <% country1 =  Community.find_by_id(@community.conversation.twocountry_country1) %>
   <% country2 =  Community.find_by_id(@community.conversation.twocountry_country2) %>                      
-  <% is_in_country = (current_participant.tag_list.include?(country1.tagname) or current_participant.tag_list.include?(country2.tagname)) %>
+  <% is_in_country = (current_participant.tag_list_downcase.include?(country1.tagname.downcase) or current_participant.tag_list_downcase.include?(country2.tagname.downcase)) %>
   <% if is_in_country -%>
       -
   <% else -%>
       <% is_in_other = false %>
       <% if @community.id == @community.conversation.twocountry_supporter1 -%>
           <% other = Community.find_by_id(@community.conversation.twocountry_supporter2) %>
-          <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+          <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
       <% elsif @community.id == @community.conversation.twocountry_supporter2 -%>
           <% other = Community.find_by_id(@community.conversation.twocountry_supporter1) %>
-          <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+          <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
       <% end -%>
       <% if is_in_other -%>
           -
@@ -53,7 +53,7 @@ end
   <% end -%>
 
 <% else -%>
-    <button onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list.include?(@comtag) ? "leave" : "join" %></button>
+    <button onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= current_participant.tag_list_downcase.include?(@comtag.downcase) ? "leave" : "join" %></button>
 <% end -%>
 </p>
 
@@ -84,7 +84,7 @@ end
     	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= sub.tagname %>">@<%= sub.tagname %></a></td>	
     	<td><%= sub.activity_count %></td>
     	<td><a href="/communities/<%= sub.id %>"><%= sub.fullname.to_s != '' ?  sub.fullname : sub.tagname %></a></td>
-    	<td><a href="#" onclick="joinleave('<%= sub.tagname %>',<%= sub.id %>);return(false)" id="comtagjoin_<%= sub.id %>"><%= current_participant.tag_list.include?(sub.tagname) ? "leave" : "join" %></a></td>
+    	<td><a href="#" onclick="joinleave('<%= sub.tagname %>',<%= sub.id %>);return(false)" id="comtagjoin_<%= sub.id %>"><%= current_participant.tag_list_downcase.include?(sub.tagname.downcase) ? "leave" : "join" %></a></td>
     </tr>
   <% end -%>
   </table>

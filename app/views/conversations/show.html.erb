@@ -92,7 +92,7 @@
               <% if prof_nation -%>
                 in&nbsp;profile
               <% elsif @conversation.twocountry -%>
-                  <% is_in_com = current_participant.tag_list.include?(com.tagname) %>
+                  <% is_in_com = current_participant.tag_list_downcase.include?(com.tagname.downcase) %>
                   <% if com.context == 'nation' -%>
                       -
                   <% elsif is_in_com -%>
@@ -104,16 +104,16 @@
                       <% is_in_country = false %>
                       <% country1 =  Community.find_by_id(@conversation.twocountry_country1) %>
                       <% country2 =  Community.find_by_id(@conversation.twocountry_country2) %>                      
-                      <% is_in_country = (current_participant.tag_list.include?(country1.tagname) or current_participant.tag_list.include?(country2.tagname)) %>
+                      <% is_in_country = (current_participant.tag_list_downcase.include?(country1.tagname.downcase) or current_participant.tag_list_downcase.include?(country2.tagname.downcase)) %>
                       <% if is_in_country -%>
                           -
                       <% else -%>
                           <% if com.id == @conversation.twocountry_supporter1 -%>
                               <% other = Community.find_by_id(@conversation.twocountry_supporter2) %>
-                              <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+                              <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
                           <% elsif com.id == @conversation.twocountry_supporter2 -%>
                               <% other = Community.find_by_id(@conversation.twocountry_supporter1) %>
-                              <% is_in_other = current_participant.tag_list.include?(other.tagname) %>
+                              <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
                           <% end -%>
                           <% if is_in_other -%>
                               -
@@ -125,7 +125,7 @@
                     ?
                   <% end -%>
               <% elsif com.context != 'nation' and com.context != 'city' -%>
-                  <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list.include?(com.tagname) ? "leave" : "join" %></a>
+                  <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list_downcase.include?(com.tagname.downcase) ? "leave" : "join" %></a>
               <% end -%>
           </td>
       </tr>
