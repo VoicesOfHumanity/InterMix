@@ -58,7 +58,7 @@
   <p>(Activity counts are for the current phase of the conversation.)</p>
 
   <table style="width:595px">
-  <tr><!--<th>Forum</th>--><th>Activity</th><th>More Information</th><th>&nbsp;</th></tr>	
+  <tr><!--<th>Forum</th>--><th>Activity</th><th>More Information</th><th>Membership</th><% if @conversation.twocountry %><th>Results</th><% end %></tr>	
   
   <% if @conversation.id == CITY_CONVERSATION_ID -%>
     <% for com in @prof_cities -%>
@@ -92,6 +92,15 @@
               <% if prof_nation -%>
                 in&nbsp;profile
               <% elsif @conversation.twocountry -%>
+                  <%
+                    if com.id == @conversation.twocountry_supporter1 or com.id == @conversation.twocountry_supporter2
+                        result2c = 'supporter'
+                    elsif com.context == 'nation'
+                        result2c = 'country'
+                    else
+                       result2c = 'general' 
+                    end
+                  %>
                   <% is_in_com = current_participant.tag_list_downcase.include?(com.tagname.downcase) %>
                   <% if com.context == 'nation' -%>
                       -
@@ -105,19 +114,21 @@
                       <% country1 =  Community.find_by_id(@conversation.twocountry_country1) %>
                       <% country2 =  Community.find_by_id(@conversation.twocountry_country2) %>                      
                       <% is_in_country = (current_participant.tag_list_downcase.include?(country1.tagname.downcase) or current_participant.tag_list_downcase.include?(country2.tagname.downcase)) %>
-                      <% if is_in_country -%>
+                      <% if is_in_country -%><% result2c = 'country' %>
                           -
                       <% else -%>
                           <% if com.id == @conversation.twocountry_supporter1 -%>
+                              <% result2c = 'supporter' %>
                               <% other = Community.find_by_id(@conversation.twocountry_supporter2) %>
                               <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
                           <% elsif com.id == @conversation.twocountry_supporter2 -%>
+                              <% result2c = 'supporter' %>
                               <% other = Community.find_by_id(@conversation.twocountry_supporter1) %>
                               <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
                           <% end -%>
                           <% if is_in_other -%>
                               -
-                          <% else -%>                      
+                          <% else -%><% result2c = 'general' %>                    
                               <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= is_in_com ? "leave" : "join" %></a>
                           <% end -%>
                       <% end -%>
@@ -128,6 +139,9 @@
                   <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list_downcase.include?(com.tagname.downcase) ? "leave" : "join" %></a>
               <% end -%>
           </td>
+          <% if @conversation.twocountry -%>
+              <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= com.tagname %>&show_result=1&result2c=<%= result2c %>">go to results</a></td>
+          <% end -%>
       </tr>
     <% end -%>
   <% end -%>

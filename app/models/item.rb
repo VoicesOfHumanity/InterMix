@@ -1381,20 +1381,38 @@ class Item < ActiveRecord::Base
         country1 = Geocountry.find_by_iso3(ccom1)
         country2 = Geocountry.find_by_iso3(ccom2)
         
-        if (ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag)) or (ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag))
-          # viewer is from one of the two main countries. We want only votes, comments, and importance from those as well 
-          ratings = ratings.where("(participants.country_code=? or participants.country_code=?)", country1.iso, country2.iso)          
+        # Which kind of results we'll show depends on if it is directly specified, or based on what the viewer is a member of.
+        # There aer three possibilities: country, supporter, general
+        whichres = ''
+        if crit[:result2c] == 'country'
+          whichres = 'country'
+        elsif crit[:result2c] == 'supporter'
+          whichres = 'supporter'
+        elsif crit[:result2c] == 'general'
+          whichres = 'general'
+        elsif (ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag)) or (ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag))
+          # viewer is from one of the two main countries. 
+          whichres = 'country'
         elsif (scom1 and current_participant.tag_list_downcase.include?(scom1_tag)) or (scom2 and current_participant.tag_list_downcase.include?(scom2_tag))
-          # viewer is in one of the supporter communities. Only votes from the countries and supporters
+          # viewer is in one of the supporter communities. 
+          whichres = 'supporter'
+        else
+          # viewer is (probably) only in the general community, or not a member at all
+          whichres= 'general'
+        end
+        
+        if whichres == 'country'
+          # We want only votes, comments, and importance from the two countries
+          ratings = ratings.where("(participants.country_code=? or participants.country_code=?)", country1.iso, country2.iso)          
+        elsif whichres == 'supporter'
+          # Only votes from the countries and supporters
           # Get a list of the people that are in the supporter communities, or in the country communities
           supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag]
           plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
           if plist != ''
             ratings = ratings.where("participants.id in (#{plist})")
           end
-        #elsif (ucom and current_participant.tag_list_downcase.include?(ucom_tag))
         else
-          # viewer is (probably) only in the general community
           supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag, ucom_tag]
           plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
           if plist != ''

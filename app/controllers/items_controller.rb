@@ -1685,6 +1685,10 @@ class ItemsController < ApplicationController
       
       show_result = (params[:show_result].to_i == 1)
       @show_result = show_result
+      result2c = params[:result2c].to_s
+      @result2c = result2c
+      crit[:result2c] = result2c
+      
       top_posts = (params[:top_posts].to_i == 1)
       @top_posts = top_posts
       whatchanged = params[:whatchanged].to_s

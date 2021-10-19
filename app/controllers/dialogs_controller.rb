@@ -62,6 +62,7 @@ class DialogsController < ApplicationController
     @dialog_id = VOH_DISCUSSION_ID
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
+    @result2c = params[:result2c].to_s
     @top_posts = params[:top_posts].to_i
     @network_id = params[:network_id].to_i
     @period = params[:period].to_s    # Mostly matches datefixed, but not quite. To control the period, particularly for linking to results
@@ -567,8 +568,8 @@ class DialogsController < ApplicationController
       if @comtag == ''
         @perspective = 'outsider'
       end
-      if @perspective == 'outsider'
-        logger.info("dialogs#slider redirecting to conversation about, because outsider")
+      if @perspective == 'outsider' and not (@show_result == 1 and @result2c != '')
+        logger.info("dialogs#slider redirecting to conversation about, because outsider (show_result:#{@show_result}, result2c:#{@result2c})")
         redirect_to "/conversations/#{@conversation.id}"
         return
       end
