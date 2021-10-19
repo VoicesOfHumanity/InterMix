@@ -1799,10 +1799,10 @@ class ItemsController < ApplicationController
         if @in == 'conversation'
           if xstart >= month6ago and xstart <=today
             if @conversation.together_apart == 'apart'
-              if together_apart == 'apart'
+              #if together_apart == 'apart'
                 @moons << [drange,xrange]
                 @lastmoon = xrange           
-              end
+              #end
             else
               @moons << [drange,xrange]
               @lastmoon = xrange

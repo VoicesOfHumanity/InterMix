@@ -1,5 +1,5 @@
     <p>
-        <% if ((not @conversation) or (@conversation and @is_conv_member)) and not (@in=='wall' and (@posted_by!=current_participant.id or @otherwall)) %>
+        <% if (@show_result.to_i == 0) and ((not @conversation) or (@conversation and @is_conv_member)) and not (@in=='wall' and (@posted_by!=current_participant.id or @otherwall)) %>
           <input type="button" value="Add Message" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
           <input type="button" value="Add My Question" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>','question')">
     		<% end -%>
