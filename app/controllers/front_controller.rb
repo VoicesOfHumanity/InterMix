@@ -1560,7 +1560,7 @@ class FrontController < ApplicationController
   end
   
   def joinform
-    #-- General join form where one can shoose a group
+    #-- General join form with email
     prepare_join
     
     render :action=>:joinform
@@ -1599,16 +1599,16 @@ class FrontController < ApplicationController
     end  
     flash[:alert] += 'Country is required<br>' if params.has_key?(:country_code) and (params[:country_code].to_s == '' or params[:country_code].to_s == '* choose *')
     @participant = Participant.find_by_email(@email) 
-    if @group_id == 0
-      flash[:alert] += "Please choose a group to join<br>"
-    elsif @group_id > 0
-      @group = Group.find_by_id(@group_id)
-      if not @group
-        flash[:alert] += "Sorry, this group seems to no longer exist<br>"
-      elsif @group.openness != 'open'
-        flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
-      end    
-    end 
+    #if @group_id == 0
+    #  flash[:alert] += "Please choose a group to join<br>"
+    #elsif @group_id > 0
+    #  @group = Group.find_by_id(@group_id)
+    #  if not @group
+    #    flash[:alert] += "Sorry, this group seems to no longer exist<br>"
+    #  elsif @group.openness != 'open'
+    #    flash[:alert] += "Sorry, this group seems to no longer be open to submissions<br>"
+    #  end    
+    #end 
     @password = '???'    
     if params.include?('password')
       #-- A password has been supplied
@@ -1697,7 +1697,7 @@ class FrontController < ApplicationController
       return
     end  
     
-    @participant.groups << @group if not @participant.groups.include?(@group)
+    #@participant.groups << @group if not @participant.groups.include?(@group)
     
     if not @participant.save!  
       flash[:alert] = "Sorry, there's some kind of database problem<br>"
@@ -1732,16 +1732,16 @@ class FrontController < ApplicationController
     end
     
     # Pick an appropriate logo
-    if @group.logo.exists?
-      @logo = "//#{BASEDOMAIN}#{@group.logo.url}"
-    else
+    #if @group.logo.exists?
+    #  @logo = "//#{BASEDOMAIN}#{@group.logo.url}"
+    #else
       @logo = nil
-    end
+    #end
 
     if true
       dom = BASEDOMAIN
-    elsif @group.shortname.to_s != ""
-      dom = "#{@group.shortname}.#{ROOTDOMAIN}"
+    #elsif @group.shortname.to_s != ""
+    #  dom = "#{@group.shortname}.#{ROOTDOMAIN}"
     else
       dom = BASEDOMAIN
     end
@@ -1752,13 +1752,13 @@ class FrontController < ApplicationController
     cdata['item'] = @item
     cdata['recipient'] = @participant     
     cdata['participant'] = @participant 
-    cdata['group'] = @group if @group
-    cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
+    #cdata['group'] = @group if @group
+    #cdata['group_logo'] = "//#{BASEDOMAIN}#{@group.logo.url}" if @group.logo.exists?
     cdata['logo'] = @logo if @logo
     cdata['password'] = @password
-    cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}</a>"
+    cdata['confirmlink'] = "<a href=\"https://#{dom}/front/confirm?code=#{@participant.confirmation_token}\">https://#{dom}/front/confirm?code=#{@participant.confirmation_token}</a>"
     
-    if @group.confirm_email_template.to_s != ''
+    if false and @group.confirm_email_template.to_s != ''
       template = Liquid::Template.parse(@group.confirm_email_template)
       html_content = template.render(cdata)
     else    
@@ -1766,7 +1766,7 @@ class FrontController < ApplicationController
       html_content += "password: #{@password}<br/>" if @password != '???'
       
       html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
-      html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
+      html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}<br/><br/>"
       
       #html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
       
@@ -1778,7 +1778,7 @@ class FrontController < ApplicationController
     end
   
     email = @participant.email
-    msubject = "[#{@group.shortname}] Signup"
+    msubject = "Voices of Humanity Signup"
     email = SystemMailer.generic(SYSTEM_SENDER, @participant.email_address_with_name, msubject, html_content, cdata)
 
     begin
@@ -1789,18 +1789,18 @@ class FrontController < ApplicationController
       logger.info("front#join problem delivering email to #{recipient.id}:#{recipient.name}: #{e}")
     end
 
-    if @group.confirm_template.to_s != ''
+    if false and @group.confirm_template.to_s != ''
       template = Liquid::Template.parse(@group.confirm_template)
       @content = template.render(cdata)
     else
       @content = ""
       @content += "<p><img src=\"#{@logo}\" alt=\"logo\"/></p>" if @logo
       #@content += "<p>Thank you! We've sent you an e-mail with your username and password. This e-mail also contains a confirmation link. Please click on that link to continue. This is simply to confirm that you really are you.</p>"
-      @content += "<p align=\"center\"><big><b>#{@group.name}</b> Signup Success!</big></p>"
+      @content += "<p align=\"center\"><big>Signup Success!</big></p>"
       @content += "<p>A confirmation email has been sent to the email address you provided. Please check your inbox. If you have not received the email within a few minutes, be sure to check your spam folder. You must click the link in that email to confirm it really was you who signed up.</p>"
     end
     
-    cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
+    #cookies["g_#{@group.shortname}"] = { :value => "joined", :expires => Time.now + 30*3600}
     
     render :action=>:confirm, :layout=>'front'   
     
