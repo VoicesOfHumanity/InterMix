@@ -191,7 +191,10 @@
                 <% if un_conv and un_conv.active -%>
                 <li id="ungoalbutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='ungoals' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= UNGOALS_CONVERSATION_CODE %>">The UN Goals</a></li>
                 <% end -%>
-                		
+                <% rel_conv = Conversation.find_by_id(RELIGIONS_CONVERSATION_ID) %>
+                <% if rel_conv and rel_conv.active -%>
+                <li id="religionbutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='religions' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= RELIGIONS_CONVERSATION_CODE %>">The Religions</a></li>
+                <% end -%>
 			<% end -%>
 			
 		    <%= render 'devise/menu/login_items' %>

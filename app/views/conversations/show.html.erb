@@ -51,9 +51,9 @@
 
 
 
-<p><b>Communities:</b></p>
+<p><b>Communities (<%= @communities.length %>):</b></p>
 
-<% if @communities.length > 0 -%>
+<% if true -%>
 
   <p>(Activity counts are for the current phase of the conversation.)</p>
 
@@ -68,7 +68,16 @@
           <td>in&nbsp;profile</td>
         </tr>
     <% end -%>
-    <tr><td>&nbsp;</td></tr>  
+    <tr><td>&nbsp;</td></tr> 
+  <% elsif @conversation.id == RELIGIONS_CONVERSATION_ID -%>
+    <% for com in @prof_religions -%>
+        <tr>
+          <td><%= com.activity_count_for_conversation(@conversation,@cur_period) %></td>
+          <td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a></td>
+          <td>in&nbsp;profile</td>
+        </tr>
+    <% end -%>
+    <tr><td>&nbsp;</td></tr> 
   <% end -%>
   
   <% for com in @communities -%>
@@ -102,7 +111,7 @@
                     end
                   %>
                   <% is_in_com = current_participant.tag_list_downcase.include?(com.tagname.downcase) %>
-                  <% if com.context == 'nation' -%>
+                  <% if com.context == 'nation' or com.context == 'religion' -%>
                       -
                   <% elsif is_in_com -%>
                     <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>">leave</a>

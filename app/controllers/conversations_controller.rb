@@ -172,6 +172,27 @@ class ConversationsController < ApplicationController
         end
       end
       @communities = communities
+    elsif @conversation.id == RELIGIONS_CONVERSATION_ID
+      @prof_religions = []
+      communities = []
+      got_com = {}
+      coms = @conversation.communities
+      logger.info("conversations#show #{coms.length} communities total")
+      for com in coms
+        if current_participant.tag_list_downcase.include?(com.tagname.downcase)
+          com.activity = com.activity_count
+          @prof_religions << com
+          @cur_perspective = com.tagname
+          logger.info("conversations#show adding #{com.tagname} to prof_religions")
+          @perspectives[com.tagname] = com.fullname
+        else
+          if not got_com.has_key?(com.tagname)
+            communities << com
+            got_com[com.tagname] = true
+          end
+        end
+      end
+      @communities = communities
     else
       @communities = @conversation.communities      
     end
