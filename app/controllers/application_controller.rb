@@ -317,7 +317,12 @@ class ApplicationController < ActionController::Base
       logger.info("application#after_sign_in_path_for has comtag, sending to community")
       if @community
         #return "/communities/#{@community.id}"
-        return "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}"
+        if @community.conversations.length == 1
+          conversation = @community.conversations[0]
+          return "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{conversation.shortname}&comtag=#{@community.tagname}"
+        else
+          return "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}"
+        end
       else
         super
       end
