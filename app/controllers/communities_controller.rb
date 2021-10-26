@@ -833,8 +833,14 @@ class CommunitiesController < ApplicationController
     @comtag = tagname
     @community_id = @community.id        
     if participant_signed_in?
-      redirect_to "/communities/#{@community_id}"
-      return
+      if @community.conversations.length == 1
+        conversation = @community.conversations[0]
+        redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{conversation.shortname}&comtag=#{@community.tagname}"
+        return
+      else
+        redirect_to "/communities/#{@community_id}"
+        return
+      end
     end
     @dialog_id = VOH_DISCUSSION_ID
     @cdata = {}
