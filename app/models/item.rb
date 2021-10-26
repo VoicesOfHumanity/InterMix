@@ -17,6 +17,8 @@ class Item < ActiveRecord::Base
   serialize :oembed_response
   serialize :received_json
   
+  serialize :outside_com_details
+  
   #-- We store the result of the voting_ok check in attributes. Is it ok? Explanation? For what user?
   attr_accessor :v_ok, :v_ok_exp, :v_p_id
   

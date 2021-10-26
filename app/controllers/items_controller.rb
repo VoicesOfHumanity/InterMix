@@ -1032,6 +1032,26 @@ class ItemsController < ApplicationController
       @item.group_id = GLOBAL_GROUP_ID
     end
 
+    # Check if there are tags for communities that the user is not in
+    tags_in_html = get_tags_from_html(@item.html_content,true)
+    tagdetails = {}
+    for tag in tags_in_html
+      com = Community.find_by_tagname(tag)
+      if com
+        # The community exists
+        if current_participant.tag_list_downcase.include? tag
+          # They're a member, all is good
+        else
+          # They're not a member. Make a note of it
+          @item.outside_com_post = true
+          tagdetails[tag] = 1
+        end
+      end
+    end
+    if @item.outside_com_post
+      @item.outside_com_details = tagdetails
+    end
+
     if not itemvalidate
       logger.info("items#create by #{@item.posted_by}: failing validation: #{@xmessage}")
       flash.now[:alert] = @xmessage

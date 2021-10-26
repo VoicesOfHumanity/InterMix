@@ -351,6 +351,17 @@ end
    This comment is from outside the conversation
    </div>
    <% end -%>
+   
+   <% if item.outside_com_post -%>
+       <div class="iteminfotxt" style="font-weight:bold;color:#44a">
+           <% outcoms = item.outside_com_details.keys %>
+           <% if outcoms.size > 1 -%>
+               The author was not a member of these communities: <%= outcoms.collect{|c| "@#{c}"}.join(', ') %>.
+           <% elsif outcoms.size == 1 -%>
+               The author was not a member of the @<%= outcoms[0] %> community.
+           <% end -%>
+       </div>
+   <% end -%>
 
    <% item_num_replies = (@conversation_id ? item.num_replies(@conversation_id) : item.num_replies) %>
 		<% if (@show_result and item_num_replies > 0) or (@sortby == 'default' and itemproc['replies'].length > 0) or ((@threads=='root' or @threads=='flat') and item_num_replies > 0) %>
