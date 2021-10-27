@@ -179,11 +179,14 @@ class ProfilesController < ApplicationController
     end
     
     if params[:religions]
+      logger.info("profiles#update religions:#{params[:religions]}")
       # remove those unchecked
       for p_r in @participant.participant_religions
         if not params[:religions].include?(p_r.religion_id.to_s)
+          tagname = p_r.religion ? p_r.religion.shortname : ''
           logger.info("profiles#update religion #{p_r.religion_id} removed")
           p_r.destroy
+          @participant.tag_list.remove(tagname) if tagname != ''
         end
       end
       # Add the new ones
@@ -200,15 +203,44 @@ class ProfilesController < ApplicationController
               religion_denomination = ''
             end
             ParticipantReligion.create(participant_id: @participant.id, religion_id: r_id, religion_denomination: religion_denomination)
+            @participant.tag_list.add(r.shortname)
           end
         end
       end
+      got_religions = []
       for p_r in @participant.participant_religions
+        got_religions << p_r.religion_id
         if p_r.religion and params.has_key?("religion_denom_#{p_r.religion_id}")
           if params["religion_denom_#{p_r.religion_id}"].to_s != p_r.religion_denomination
             logger.info("profiles#update religion #{p_r.religion_id}:#{p_r.religion.name} updating denomination to #{params["religion_denom_#{p_r.religion_id}"]}")
             p_r.religion_denomination = params["religion_denom_#{p_r.religion_id}"].to_s
             p_r.save
+          end
+        end
+        if p_r.religion
+          if not @participant.tag_list_downcase.include?(p_r.religion.shortname.downcase)
+            @participant.tag_list.add(p_r.religion.shortname)
+          end
+          community = Community.where(context: 'religion', context_code: p_r.religion.id).first
+          if not community     
+            tagname = p_r.religion.shortname     
+            community = Community.create(tagname: tagname, context: 'religion', context_code: p_r.religion.id, fullname: p_r.religion.name)
+          end
+          conversation_communities = ConversationCommunity.where(conversation_id: RELIGIONS_CONVERSATION_ID, community_id: community.id)
+          if conversation_communities.length == 0
+            conversation = Conversation.find_by_id(RELIGIONS_CONVERSATION_ID)
+            conversation.communities << community
+          end
+        end
+      end
+      # Remove any unmentioned religions from tags
+      religions = Religion.all
+      for r in religions
+        if not got_religions.include?(r.id)
+          tagname = r.shortname
+          if @participant.tag_list_downcase.include?(tagname.downcase)
+            @participant.tag_list.remove(tagname)
+            logger.info("profiles#update removing religion #{tagname} from tags")
           end
         end
       end

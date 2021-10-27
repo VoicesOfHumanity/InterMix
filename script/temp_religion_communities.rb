@@ -7,7 +7,7 @@ conversation = Conversation.find_by_id(RELIGIONS_CONVERSATION_ID)
 participants = Participant.where(status: 'active')
 for p in participants
   for p_r in p.participant_religions
-    next if ! p_r.religion
+    next  if ! p_r.religion
     r = p_r.religion
     denomination = p_r.religion_denomination
     
