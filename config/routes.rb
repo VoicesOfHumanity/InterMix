@@ -186,6 +186,8 @@ Rails.application.routes.draw do
   devise_for :participants, :controllers => {:registrations => 'registrations'}
   resources :participants do
     get :search, :on => :collection
+    post :removedata, on: :member
+
   end
 
   get 'communities/all', to: 'communities#index', action: :index, which: 'all'

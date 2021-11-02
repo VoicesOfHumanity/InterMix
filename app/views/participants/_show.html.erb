@@ -23,7 +23,6 @@
 <tr><td class="left">System emails:</td><td><%= @participant.system_email %></td></tr>	
 <tr><td class="left">Block all emails?</td><td><%= @participant.no_email %></td></tr>	
 <tr><td class="left">E-mail Posting Code:</td><td>w+<%= @participant.direct_email_code %>@intermix.org</tr></tr>
-
 <tr><td class="left">Created:</td><td><%= @participant.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 <tr><td class="left">Updated:</td><td><%= @participant.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
 </table>
@@ -32,6 +31,24 @@
 <a href="javascript:editrec1()">Edit</a> | 
 <a href="javascript:delrec1()">Delete</a>
 </p>
+
+
+<h3>Data</h3>
+
+<table class="edittable">
+<tr><td class="left">Items</td><td><%= @participant.items.count %></td></tr>
+<tr><td class="left">Ratings</td><td><%= @participant.ratings.count %></td></tr>
+<tr><td class="left">Followers</td><td><%= @participant.followers.count %></td></tr>
+<tr><td class="left">Following</td><td><%= @participant.idols.count %></td></tr>
+<tr><td class="left">Sent Messages</td><td><%= @participant.sent_messages.count %></td></tr>
+<tr><td class="left">Received Messages</td><td><%= @participant.received_messages.count %></td></tr>
+<tr><td class="left">Pictures</td><td><%= @participant.all_pictures %></td></tr>
+</table>
+
+<p>
+<a href="javascript:removedata(<%= @participant.id %>)">Remove Data</a>
+</p>
+
 
 <script>
 curid1 = <%= @participant.id %>;

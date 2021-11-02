@@ -133,7 +133,7 @@ function newrec1() {
 }
 function delrec1() {
 	if (confirm("Are you sure you want to delete participant #" + curid1 + "?")) {
-    $('rec1box').css('opacity','0.5');
+        $('rec1box').css('opacity','0.5');
 		$.ajax({
 	    type: 'DELETE',
 	    url: '/participants/'+curid1,
@@ -168,6 +168,21 @@ function saverec1() {
 			search();
      }
    });	
+}
+function removedata(id) {
+    if (confirm("Are you sure you want to remove data for participant #" + curid1 + "?")) {
+        curid1 = id;
+        $('rec1box').css('opacity','0.5');
+		$.ajax({
+	    type: 'POST',
+	    url: '/participants/'+id+'/removedata',
+	    complete: function(t){	
+	      $("#rec1boxcontent").html(t.responseText);
+			  $('#rec1box').css('opacity','1.0');
+				search();
+	     }
+	   });			
+    }
 }
 
 var allmarked = false;

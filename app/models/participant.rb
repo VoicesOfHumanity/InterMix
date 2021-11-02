@@ -33,8 +33,8 @@ class Participant < ActiveRecord::Base
   has_many :idols, :class_name => 'Participant', :through => :followings
   #has_many :friends, class_name: 'Participant', through: :followeds -> { where 'followeds.mutual': true }
   
-  has_many :sent_messages, :class_name => 'Message', :primary_key => :from_participant_id
-  has_many :received_messages, :class_name => 'Message', :primary_key => :to_participant_id
+  has_many :sent_messages, :class_name => 'Message', :foreign_key => :from_participant_id
+  has_many :received_messages, :class_name => 'Message', :foreign_key => :to_participant_id
   
   has_many :metamap_node_participants, :dependent => :destroy
   has_many :metamaps, :through=>:metamap_node_participants
@@ -83,6 +83,12 @@ class Participant < ActiveRecord::Base
     else
       return "https://#{BASEDOMAIN}/images/default_user_icon-50x50.png"
     end
+  end
+  
+  def all_pictures
+    # Return a count of pictures
+    picdir = "#{DATADIR}/participants/pictures/#{self.id}"
+    return Dir[File.join(picdir, '**', '*')].count { |file| File.file?(file) }
   end
   
   def show_country2
