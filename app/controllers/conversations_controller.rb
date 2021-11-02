@@ -207,7 +207,7 @@ class ConversationsController < ApplicationController
     
     if @perspectives.length == 0
       @cur_perspective = 'outsider'
-    elsif @cur_perspective != ''
+    elsif @cur_perspective != '' and @cur_perspective != 'outsider'
     elsif @perspectives.length == 1
       @cur_perspective = @perspectives.keys[0]
     else
