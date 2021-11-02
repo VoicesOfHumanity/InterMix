@@ -11,28 +11,28 @@
 		<%= f.input :name, :required => true %>		
 		<%= f.input :shortname, :label=>"Prefix", :required => true %>
     
-    <%= f.input :active, label: "Active/Public" %>	
+        <%= f.input :active, label: "Active/Public" %>	
     
 		<%= f.input :description %>
     
-    <li class="select input optional" id="conversation_topics_input">
-      <div style="width:25%;float:left;font-weight:bold">Topics</div>
-      <div style="width:75%;float:left">
-        <select id="comlist">
-          <% for com in Community.where(active: true).order('fullname') -%>
-            <option><%= com.tagname %></option>
-          <% end -%>
-        </select><br>
-        <input type="button" value="add" onclick="topic('add')">
-        <input type="button" value="remove" onclick="topic('remove')">
-        <input type="button" value="default" onclick="topic('default')"><br>
-        List: <span id="topic_list_show"><%= @conversation.topic_list %></span><br>
-        Default: <span id="topic_default_show"><%= @conversation.default_topic %></span>
-      </div>
-    </li> 
+        <li class="select input optional" id="conversation_topics_input">
+          <div style="width:25%;float:left;font-weight:bold">Topics</div>
+          <div style="width:75%;float:left">
+            <select id="comlist">
+              <% for com in Community.where(active: true).order('fullname') -%>
+                <option><%= com.tagname %></option>
+              <% end -%>
+            </select><br>
+            <input type="button" value="add" onclick="topic('add')">
+            <input type="button" value="remove" onclick="topic('remove')">
+            <input type="button" value="default" onclick="topic('default')"><br>
+            List: <span id="topic_list_show"><%= @conversation.topic_list %></span><br>
+            Default: <span id="topic_default_show"><%= @conversation.default_topic %></span>
+          </div>
+        </li> 
     
-    <input type="hidden" name="topic_list" id="topic_list" value="<%= @conversation.topic_list %>">
-    <input type="hidden" name="conversation[default_topic]" id="default_topic" value="<%= @conversation.default_topic %>">
+        <input type="hidden" name="topic_list" id="topic_list" value="<%= @conversation.topic_list %>">
+        <input type="hidden" name="conversation[default_topic]" id="default_topic" value="<%= @conversation.default_topic %>">
 
 		<% f.input :front_template, :label => "Front Page template" %>
 		<li class="text optional" id="conversation_front_template_input">

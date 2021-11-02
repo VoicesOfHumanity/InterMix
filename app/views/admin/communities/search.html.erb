@@ -4,7 +4,7 @@
 <table class="edittable">
 <tr><td class="left">ID</td><td><%= text_field_tag :community_id, "", "size"=>6 %></td></tr>
 <tr><td class="left">Tag</td><td><%= text_field_tag :name, "", "size"=>52 %></td></tr>
-<tr><td class="left">Type</td><td><%= select_tag(:context, options_for_select([['* blank *',''],'nation',['* all *','*']],'*')) %> &nbsp;
+<tr><td class="left">Type</td><td><%= select_tag(:context, options_for_select([['* blank *',''],'nation','twocountry','city','religion',['* all *','*']],'*')) %> &nbsp;
   <%= check_box_tag :major, 1, false %>Major
   <%= check_box_tag :ungoals, 1, false %>UNgoals
   <%= check_box_tag :sustdev, 1, false %>SustDev
