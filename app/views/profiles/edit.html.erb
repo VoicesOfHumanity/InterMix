@@ -80,7 +80,7 @@
                 <% elsif religion.subdiv == 'name' -%>
                     Name
                 <% end -%>
-                <input type="text" name="religion_denom_<%= religion.id %>" id="religion_denom_<%= religion.id %>" value="<%= participant_religion ? participant_religion.religion_denomination : '' %>" style="width: 120px" maxlength="13">
+                <input type="text" name="religion_denom_<%= religion.id %>" id="religion_denom_<%= religion.id %>" value="<%= participant_religion ? participant_religion.religion_denomination : '' %>" style="width: 120px" maxlength="24">
             <% end -%>
             </span>
             <br>        

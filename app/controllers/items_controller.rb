@@ -613,7 +613,18 @@ class ItemsController < ApplicationController
         if @comtag and @conv_own_coms.has_key?(@comtag)
           @item.representing_com = @comtag
           if not tags_downcase.include? @comtag.downcase
+            # Make sure we have their own chosen community tag
             tags << @comtag
+            if @conversation.context == 'religion' and @community
+              # If this is the religion conversation, maybe there's a donomination to include as well
+              religion_id = @community.context_code.to_i
+              if religion_id > 0
+                p_r = ParticipantReligion.where(participant_id: current_participant.id, religion_id: religion_id).first
+                if p_r and p_r.religion_denomination.to_s != ''
+                  tags << p_r.religion_denomination
+                end
+              end
+            end
           end
         end
         
