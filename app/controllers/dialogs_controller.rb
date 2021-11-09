@@ -415,6 +415,7 @@ class DialogsController < ApplicationController
       @include_nvaction = (@conversation.together_apart == 'apart' ? true : false)
     end
     @perspectives = @communities
+    logger.info("dialogs#slider perspectives: #{@perspectives.collect{|p| p.tagname}}")
     @community_list = @communities.collect{|c| [c.fullname,c.tagname]}
     session['community_list'] = @community_list
     
@@ -509,13 +510,13 @@ class DialogsController < ApplicationController
           # pick one of the countries, if we have them and if member of both, pick Palestine
           @comtag = ''
           for pcom in @perspectives
-            if pcom.tagname == 'Israel' and @comtag == ''
+            if pcom.context == 'nation' and pcom.tagname == 'Israel' and @comtag == ''
               @comtag = pcom.tagname
-            elsif pcom.tagname[0..5] == 'Palest'
+            elsif pcom.context == 'nation' and pcom.tagname[0..5] == 'Palest'
               @comtag = pcom.tagname
             end
           end
-          if @comtag
+          if @comtag != ''
             # We got a country
             logger.info("dialogs#slider perspective set to country: #{@comtag} for #{@conversation.shortname}")
             # Get rid of any membership of the supporter communities, if they exist
