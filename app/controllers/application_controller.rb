@@ -791,5 +791,198 @@ class ApplicationController < ActionController::Base
         end
       end
     end        
+
+    def geoupdate
+      #-- Update geo-related fields, when saving a participant, or if one of the fields changed
+      #-- needs @participant to be set.
+      #-- @oldparticipant and @old_city_uniq and @old_country_code and @old_country_code2 are optional
+      #logger.info("profiles#geoupdate country_code:#{@participant.country_code} country_code2:#{@participant.country_code2} old_country_code:#{@old_country_code} old_country_code2:#{@old_country_code2}")
+      updated_country_code = false
+      updated_admin1 = false
+      updated_admin2 = false
+      updated_metro = false
+      updated_city = false
+      updated_zip = false
+      if @oldparticipant and @participant.country_code != @oldparticipant.country_code
+        updated_country_code = true
+        @participant.country_name = ''
+        @participant.country_iso3 = ''
+      end
+      if @oldparticipant and @participant.admin1uniq != @oldparticipant.admin1uniq
+        updated_admin1 = true
+      end
+      if @oldparticipant and @participant.admin2uniq != @oldparticipant.admin2uniq
+        updated_admin2 = true
+      end
+      if @oldparticipant and @participant.metro_area_id != @oldparticipant.metro_area_id
+        updated_metro = true
+      end
+      if @oldparticipant and @participant.city != @oldparticipant.city
+        updated_city = true
+      end
+      if @oldparticipant and @participant.zip != @oldparticipant.zip
+        updated_zip = true
+      end
+      if updated_country_code and not updated_admin1
+        @participant.admin1uniq = ''
+        @participant.state_code = ''
+        @participant.state_name = ''
+      end
+      if updated_country_code and not updated_admin2
+        @participant.admin2uniq = ''
+        @participant.county_code = ''
+        @participant.county_name = ''
+      end
+      if updated_country_code and not updated_metro
+        @participant.metro_area_id = 0
+        @participant.metropolitan_area = ''
+      end
+      if updated_country_code and not updated_city
+        @participant.city = ''
+      end
+      if updated_country_code and not updated_zip
+        @participant.zip = ''
+      end
+      if @participant.city.to_s != ""
+        #-- Fill in city unique code, which is admin1uniq_cityname, e.g. BY.01_Akhova
+        geoname = Geoname.where(name: @participant.city, country_code: @participant.country_code, admin1_code: adminuniq_part(@participant.admin1uniq)).where("fclasscode like 'P.PPL%'").first
+        if geoname
+          @participant.city_uniq = "#{@participant.admin1uniq}_#{@participant.city}"
+          # Create/Join city community
+          community = Community.where(context: 'city', context_code: @participant.city_uniq).first
+          if not community        
+            tagname = @participant.city.gsub(/[^0-9A-za-z_]/i,'')  
+            logger.info("profiles#geoupdate creating city community #{@participant.city_uniq}")
+            community = Community.create(tagname: tagname, context: 'city', context_code: @participant.city_uniq, fullname: @participant.city)
+          end
+          if community
+            @participant.tag_list.add(community.tagname)
+            conversation = Conversation.find_by_id(CITY_CONVERSATION_ID)
+            conversation_community = ConversationCommunity.where(conversation_id: conversation.id, community_id: community.id).first
+            if not conversation_community
+              conversation.communities << community
+            end
+          end
+          if @old_city_uniq.to_s != '' and @old_city_uniq != @participant.city_uniq
+            # Leave the previous community
+            logger.info("profiles#geoupdate city_uniq #{@old_city_uniq} -> #{@participant.city_uniq}")
+            ocommunity = Community.where(context: 'city', context_code: @old_city_uniq).first
+            if ocommunity
+              @participant.tag_list.remove(ocommunity.tagname)
+            end
+          end
+        end
+      elsif @old_city_uniq.to_s != ''
+        # Leave the previous community
+        logger.info("profiles#geoupdate city_uniq #{@old_city_uniq} -> [blank]")
+        ocommunity = Community.where(context: 'city', context_code: @old_city_uniq).first
+        if ocommunity
+          @participant.tag_list.remove(ocommunity.tagname)
+        end
+        @participant.city_uniq = ''
+      else
+        @participant.city_uniq = ''
+      end
+      if @participant.country_code.to_s != ""
+        #-- Fill in the country name
+        geocountry = Geocountry.find_by_iso(@participant.country_code)
+        if geocountry
+          @participant.country_name = geocountry.name
+          @participant.country_iso3 = geocountry.iso3
+          community = Community.where(context: 'nation', context_code: geocountry.iso3).first
+          if community
+            #logger.info("profiles#geoupdate adding #{community.tagname} to tag_list")
+            @participant.tag_list.add(community.tagname)
+            if @old_country_code and @old_country_code != @participant.country_code
+              logger.info("profiles#geoupdate country_code #{@old_country_code} -> #{@participant.country_code}")
+              ogeocountry = Geocountry.find_by_iso(@old_country_code)
+              if ogeocountry
+                ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
+                if ocommunity
+                  @participant.tag_list.remove(ocommunity.tagname)
+                end
+              end
+            end
+          end
+        end
+      end   
+      if @participant.country_code2.to_s != ""
+        #-- Fill in the second country name
+        if @participant.country_code2.to_s == '_I'
+          @participant.country_name2 = 'Indigenous peoples'
+          @participant.country2_iso3 = ''        
+          community2 = Community.where(context: 'nation', context_code: '__I').first
+          if not community2
+            community2 = Community.create(tagname: 'indigenous', context: 'nation', context_code: '__I', fullname: 'Indigenous peoples')
+          end
+          @participant.tag_list.add(community2.tagname)        
+        else
+          geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
+          if geocountry2
+            @participant.country_name2 = geocountry2.name
+            @participant.country2_iso3 = geocountry2.iso3      
+            community2 = Community.where(context: 'nation', context_code: geocountry2.iso3).first
+            if community2
+              @participant.tag_list.add(community2.tagname)            
+            end
+          end
+        end
+        if @old_country_code2 and @old_country_code2 != @participant.country_code2 and @old_country_code2 != @participant.country_code
+          logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> #{@participant.country_code2}")
+          if @old_country_code2 == '_I'
+            logger.info("profiles#geoupdate removing nation2 community indigenous from user")
+            @participant.tag_list.remove('indigenous')
+          else
+            ogeocountry = Geocountry.find_by_iso(@old_country_code2)
+            if ogeocountry
+              ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
+              if ocommunity
+                logger.info("profiles#geoupdate removing nation2 community #{ocommunity.tagname} from user")
+                @participant.tag_list.remove(ocommunity.tagname)
+              end
+            end  
+          end
+        end
+      elsif @participant.country_code2.to_s == "" and @old_country_code2 != "" and @old_country_code2 != @participant.country_code
+        logger.info("profiles#geoupdate country_code2 #{@old_country_code2} -> [blank]")
+        @participant.country_name2 = ''
+        ogeocountry = Geocountry.find_by_iso(@old_country_code2)
+        if ogeocountry
+          ocommunity = Community.where(context: 'nation', context_code: ogeocountry.iso3).first
+          if ocommunity
+            logger.info("profiles#geoupdate removing nation2 community #{ocommunity.tagname} from user")
+            @participant.tag_list.remove(ocommunity.tagname)
+          else
+            logger.info("profiles#geoupdate community not found for nation2/#{ogeocountry.iso3}")
+          end
+        end
+      end   
+      if @participant.admin2uniq.to_s != ""  
+        geoadmin2 = Geoadmin2.find_by_admin2uniq(@participant.admin2uniq)
+        if geoadmin2
+          #-- Fill in the county (admin2) code and name
+          @participant.county_code = geoadmin2.admin2_code
+          @participant.county_name = geoadmin2.name
+          if @participant.admin1uniq.to_i == 0
+            #-- If we got the admin2 first, look up the admin1 from it
+            @participant.admin1uniq = geoadmin2.admin1uniq
+            updated_admin2 = true
+          end
+        end 
+      end
+      if @participant.admin1uniq.to_s != ""
+        #-- Fill in the state (admin1) code and name
+        geoadmin1 = Geoadmin1.find_by_admin1uniq(@participant.admin1uniq)
+        if geoadmin1
+          @participant.state_code = geoadmin1.admin1_code
+          @participant.state_name = geoadmin1.name
+        end
+      end    
+      if @participant.timezone.to_s!=''
+        #-- Calculate timezone offset from UTC
+        @participant.timezone_offset = TZInfo::Timezone.get(@participant.timezone).period_for_utc(Time.new).utc_offset / 3600      
+      end
+      @participant.save      
+    end
         
 end

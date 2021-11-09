@@ -207,60 +207,6 @@ class ParticipantsController < ApplicationController
   
   protected
   
-  def geoupdate
-    #-- Update geo-related fields, when saving a participant, or if one of the fields changed
-    #-- Duplicate of what's in the profiles controller
-    if @participant.country_code.to_s != ""
-      #-- Fill in the country name
-      geocountry = Geocountry.find_by_iso(@participant.country_code)
-      @participant.country_name = geocountry.name
-      community = Community.where(context: 'nation', context_code: geocountry.iso3).first
-      if community
-        @participant.tag_list.add(community.tagname)
-      end
-    end   
-    if @participant.country_code2.to_s != ""
-      #-- Fill in the second country name
-      if @participant.country_code2 == '_I'
-        @participant.country_name2 = "Indigenous peoples"
-        @participant.tag_list.add("indigenous")
-      else
-        geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
-        if geocountry2
-          @participant.country_name2 = geocountry2.name
-        end
-        community = Community.where(context: 'nation', context_code: geocountry2.iso3).first
-        if community
-          @participant.tag_list.add(community.tagname)
-        end
-      end
-    end   
-    if @participant.admin2uniq.to_s != ""  
-      geoadmin2 = Geoadmin2.find_by_admin2uniq(@participant.admin2uniq)
-      if geoadmin2
-        #-- Fill in the county (admin2) code and name
-        @participant.county_code = geoadmin2.admin2_code
-        @participant.county_name = geoadmin2.name
-        if @participant.admin1uniq.to_i == 0
-          #-- If we got the admin2 first, look up the admin1 from it
-          @participant.admin1uniq = geoadmin2.admin1uniq
-        end  
-      end 
-    end
-    if @participant.admin1uniq.to_s != ""
-      #-- Fill in the state (admin1) code and name
-      geoadmin1 = Geoadmin1.find_by_admin1uniq(@participant.admin1uniq)
-      if geoadmin1
-        @participant.state_code = geoadmin1.admin1_code
-        @participant.state_name = geoadmin1.name
-      end
-    end    
-    if @participant.timezone.to_s!=''
-      #-- Calculate timezone offset from UTC
-      @participant.timezone_offset = TZInfo::Timezone.get(@participant.timezone).period_for_utc(Time.new).utc_offset / 3600
-    end         
-  end
-  
   def participant_params
     params.require(:participant).permit(
     :picture, :status,

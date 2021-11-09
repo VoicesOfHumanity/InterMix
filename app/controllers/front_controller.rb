@@ -239,6 +239,7 @@ class FrontController < ApplicationController
         render :action=>:instantjoinform, :layout=>'blank'
         return
       end  
+      geoupdate
     end
     
     @participant.groups << @group
@@ -632,6 +633,8 @@ class FrontController < ApplicationController
         end    
       end
     end
+    
+    geoupdate
 
     if flash[:alert] != ''
       render :action=>:dialogjoinform
@@ -1023,6 +1026,8 @@ class FrontController < ApplicationController
       end
     end
 
+    geoupdate
+
     if flash[:alert] != ''
       render :action=>:groupjoinform
       return        
@@ -1130,6 +1135,9 @@ class FrontController < ApplicationController
       @participant.status = 'active'
       @participant.new_signup = true
       @participant.save
+      
+      geoupdate
+      
       group_participants = GroupParticipant.where(:participant_id=>@participant.id).includes(:group=>:moderators)
       for group_participant in group_participants
         #-- Activate any group memberships that were waiting for the person to confirm
@@ -1455,6 +1463,8 @@ class FrontController < ApplicationController
         
     @participant.ensure_authentication_token!
     
+    geoupdate
+    
     # Pick an appropriate logo
     if @group and @group.logo.exists?
       @logo = "//#{BASEDOMAIN}#{@group.logo.url}"
@@ -1710,6 +1720,8 @@ class FrontController < ApplicationController
     group_participant = GroupParticipant.create(group_id: GLOBAL_GROUP_ID, participant_id: @participant.id, active: true, status: 'active')
 
     @participant.ensure_authentication_token!
+    
+    geoupdate
 
     #-- Store their metamap category
     for metamap in @metamaps
@@ -1973,6 +1985,8 @@ class FrontController < ApplicationController
       end
         
       @participant.ensure_authentication_token!
+      
+      geoupdate
     
       # Pick an appropriate logo
       if @group and @group.logo.exists?
