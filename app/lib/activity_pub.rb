@@ -1019,7 +1019,7 @@ module ActivityPub
     #-- A local account has been removed. Inform any remote followers
     object = {
       "@context": "https://www.w3.org/ns/activitystreams",
-      "id": participant.activitypub_url + "#delete"
+      "id": participant.activitypub_url + "#delete",
       "type": "Delete",
       "actor": participant.activitypub_url,
       "to":[
