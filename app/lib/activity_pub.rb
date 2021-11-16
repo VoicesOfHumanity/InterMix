@@ -1014,6 +1014,31 @@ module ActivityPub
     
     return true
   end
+
+  def send_delete_actor(participant, to_remote_actor)
+    #-- A local account has been removed. Inform any remote followers
+    object = {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      "id": participant.activitypub_url + "#delete"
+      "type": "Delete",
+      "actor": participant.activitypub_url,
+      "to":[
+            "https://www.w3.org/ns/activitystreams#Public"
+         ],
+      "object": participant.activitypub_url
+    }
+            
+    req = sign_and_send(participant.id, to_remote_actor, object, 'send_delete_actor')
+    puts "delete actor sent"
+  
+    if req
+      follow.accepted = true
+      follow.accept_record_id = req.id
+      follow.save
+    end
+        
+    return true
+  end
   
   def respond_to_like(from_remote_actor, ref_id)
     # ref_id is expected to be something like https://intermix.cr8.com/p_2580_2629

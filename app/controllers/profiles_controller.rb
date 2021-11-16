@@ -229,7 +229,9 @@ class ProfilesController < ApplicationController
           conversation_communities = ConversationCommunity.where(conversation_id: RELIGIONS_CONVERSATION_ID, community_id: community.id)
           if conversation_communities.length == 0
             conversation = Conversation.find_by_id(RELIGIONS_CONVERSATION_ID)
-            conversation.communities << community
+            if conversation
+              conversation.communities << community
+            end
           end
         end
       end

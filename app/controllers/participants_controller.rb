@@ -7,6 +7,8 @@ class ParticipantsController < ApplicationController
   before_action :authenticate_participant!, :except=>[:create, :visitor_login]
   
   respond_to :html, :xml, :json
+
+  include ActivityPub
   
   def search
     @heading = 'Participants'
@@ -142,9 +144,7 @@ class ParticipantsController < ApplicationController
     `/bin/rm -f #{picdir}/*`
     
     Message.where("from_participant_id=#{p.id} or to_participant_id=#{p.id}").delete_all
-    
-    Follow.where("following_id=#{p.id} or followed_id=#{p.id}").delete_all
-    
+        
     # not touching their ratings
     #Rating.where(participant_id: p.id).destroy
     
@@ -192,6 +192,15 @@ class ParticipantsController < ApplicationController
     p.tag_list = ''
     p.status = 'removed'
     p.save!
+    
+    remote_followers = Follow.where("followed_id=#{p.id} and following_remote_actor_id is not null")
+    for rfollow in remote_followers
+      if rfollow.remote_follower
+        send_delete_actor(p, rfollow.remote_follower)
+      end
+    end
+    
+    Follow.where("following_id=#{p.id} or followed_id=#{p.id}").delete_all
     
     respond_to do |format|
       format.html { render :partial=>'show', :layout=>false, :notice => 'Participant data has been removed' }
