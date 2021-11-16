@@ -2,6 +2,6 @@
 
 <ul class="horizmenu">
 <li><a class="menu<%= ' selected' if @psection=='wall' %>" href="/me/wall">My Posts</a></li>
-<li><a class="menu<%= ' selected' if @psection=='profile' %>" href="/me/profile">Profile</a></li>
+<li><a class="menu<%= ' selected' if @psection=='profile' or current_page?('/authentications') %>" href="/me/profile">Profile</a></li>
 <li><a class="menu<%= ' selected' if @psection=='mail' %>" href="/messages">Mail/Friends</a></li>
 </ul>

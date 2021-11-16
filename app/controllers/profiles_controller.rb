@@ -42,6 +42,22 @@ class ProfilesController < ApplicationController
         @participant.save
       end
     end
+    if @participant.country_code2 == '_I'
+      # If indigenous as country, add to religion, if not there
+      has_indig = false
+      for p_r in @participant.participant_religions
+        if p_r.religion.name == 'Indigenous'
+          has_indig = true
+        end 
+      end
+      if not has_indig
+        logger.info("profiles#settings adding missing indigenous religion")
+        religion = Religion.find_by_name('Indigenous')
+        if religion
+          ParticipantReligion.create(participant_id: @participant.id, religion_id: religion.id)
+        end
+      end
+    end
     session[:has_required] = @participant.has_required
     if @participant.country_code.to_s != ''
       @metro_areas = MetroArea.where(:country_code=>@participant.country_code).order(:name).collect{|r| [r.name,r.id]}
@@ -208,6 +224,7 @@ class ProfilesController < ApplicationController
         end
       end
       got_religions = []
+      has_indigenous = false
       for p_r in @participant.participant_religions
         got_religions << p_r.religion_id
         if p_r.religion and params.has_key?("religion_denom_#{p_r.religion_id}")
@@ -233,6 +250,9 @@ class ProfilesController < ApplicationController
               conversation.communities << community
             end
           end
+          if p_r.religion.name == 'Indigenous'
+            has_indigenous = true
+          end
         end
       end
       # Remove any unmentioned religions from tags
@@ -244,6 +264,12 @@ class ProfilesController < ApplicationController
             @participant.tag_list.remove(tagname)
             logger.info("profiles#update removing religion #{tagname} from tags")
           end
+        end
+      end
+      if has_indigenous
+        # If they have the indigenous religion, add them to nations too, if they don't already have two nations
+        if @participant.country_code2.to_s == '' and @participant.country_code2 != '_I' and @participant.country_code != '_I'
+          @participant.country_code2 = '_I'
         end
       end
     end

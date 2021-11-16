@@ -78,7 +78,9 @@
                 <% elsif religion.subdiv == 'path' -%>
                     Path:
                 <% elsif religion.subdiv == 'name' -%>
-                    Name
+                    Name:
+                <% elsif religion.subdiv == 'people' -%>
+                    People:
                 <% end -%>
                 <input type="text" name="religion_denom_<%= religion.id %>" id="religion_denom_<%= religion.id %>" value="<%= participant_religion ? participant_religion.religion_denomination : '' %>" style="width: 120px" maxlength="24">
             <% end -%>

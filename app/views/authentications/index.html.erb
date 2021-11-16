@@ -1,8 +1,10 @@
-<h1>Sign In</h1>
+<%= render(:partial => 'profiles/menu')%>
+
+<h1>Sign In Authentication</h1>
 
 <% if @authentications %>
   <% unless @authentications.empty? %>
-    <p><strong>You can sign in to this account using:</strong></p>
+    <p><strong>Available authentication methods:</strong></p>
     <div class="authentications">
       <% for authentication in @authentications %>
         <div class="authentication" style="<%= authentication.provider[0..5]=='google' ? "width: 145px" : "" %>">
@@ -43,10 +45,6 @@
 </a>
 <% end -%>
 <div class="clear"></div>
-
-<p>If you prefer, you can instead <%= link_to('sign up', new_participant_registration_path) %> for an Intermix account with a password.</p>
-
-<p>If you have an Intermix account, you can <%= link_to('sign in', new_participant_session_path)  %> with your e-mail address and password.</p>
 
 
 
