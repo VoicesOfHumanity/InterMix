@@ -65,7 +65,7 @@
       <div style="width:25%;float:left;font-weight:bold">Religion</div>
       <div style="width:75%;float:left">
         <% participant_religions = @participant.religions.collect{|r| r.id } %>
-        <% for religion in Religion.all -%>
+        <% for religion in Religion.order_by_custom -%>
             <% participant_religion = ParticipantReligion.where(participant_id: @participant.id, religion_id: religion.id).first %>
             <% checked = participant_religion ? 'checked' : '' %>
             <input type="checkbox" class="religion_check" name="religions[]" id="religion_check_<%= religion.id %>" value="<%= religion.id %>" <%= checked %> onclick="click_religion(<%= religion.id %>)"> <%= religion.name %><span id="religion_span_<%= religion.id %>" style="<%= 'display:none' if checked == '' %>">
