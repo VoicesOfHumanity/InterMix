@@ -1120,7 +1120,11 @@ class FrontController < ApplicationController
   def confirm
     #-- End point of the confirmation link in e-mail, when signing up
     @participant = Participant.find_by_confirmation_token(params[:code])
-    @comtag = params[:comtag].to_s
+    if params.has_key?(:comtag) and params[:comtag].to_s != ''
+      @comtag = params[:comtag].to_s
+    elsif session.has_key?(:comtag)
+      @comtag = session[:comtag]
+    end
     @joincom = params.has_key?(:joincom)
     @content = ""
     @content += "<p><img src=\"#{@logo}\" alt=\"logo\" /></p>" if @logo

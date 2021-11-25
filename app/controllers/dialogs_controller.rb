@@ -423,49 +423,27 @@ class DialogsController < ApplicationController
       @network = Network.find_by_id(@network_id)
     end
     
-    if @in == 'community'
-      #-- In a community, they maybe need to join
-      if (@comtag != '' and params.has_key?(:joincom)) or (session.has_key?(:joincom))
-        # They should be joined to the community, if they aren't already a member ?comtag=love&joincom=1
-        if session.has_key?(:joincom)
-          @comtag = comtag_before
-        end
-        comtag = @comtag
-        comtag.gsub!(/[^0-9A-za-z_]/,'')
-        #comtag.downcase!
-        if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
-        elsif comtag != ''
-          current_participant.tag_list.add(comtag)
-        end
-        current_participant.save
-        @messtag = @comtag
-        session[:messtag] = @messtag
-        session[:comtag] = @comtag
-        session.delete(:joincom)
+    #-- In a community, they maybe need to join
+    if (@comtag != '' and params.has_key?(:joincom)) or (session.has_key?(:joincom))
+      # They should be joined to the community, if they aren't already a member ?comtag=love&joincom=1
+      if session.has_key?(:joincom)
+        @comtag = comtag_before
       end
-
-      # Do we want to send them to a conversation, if they have only community specified? 
-      # Change of policy, now we don't do that any longer. We catch it in the listing of communities.
-      if false and not @conversation and @community and current_participant.tag_list.include?(@comtag)
-        # If we're in a community, and the user is a member. Conversation not specified. Figure out which one
-        if @community.conversations.length == 1
-          # Community is in only one conversation, go there
-          @conversation = @community.conversations[0]
-          url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-          url += "&show_result=1" if @show_result == 1
-          redirect_to url
-          return
-        elsif @community.conversations.length > 1
-          # Community is in more than one conversation. Pick the last one.
-          @conversation = @community.conversations.last
-          url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
-          url += "&show_result=1" if @show_result == 1
-          redirect_to url
-          return
-        end
+      comtag = @comtag
+      comtag.gsub!(/[^0-9A-za-z_]/,'')
+      #comtag.downcase!
+      if ['VoiceOfMen','VoiceOfWomen','VoiceOfYouth','VoiceOfExperience','VoiceOfExperie','VoiceOfWisdom'].include? comtag
+      elsif comtag != ''
+        current_participant.tag_list.add(comtag)
       end
+      current_participant.save
+      @messtag = @comtag
+      session[:messtag] = @messtag
+      session[:comtag] = @comtag
+      session.delete(:joincom)
+    end
       
-    elsif @in == 'conversation' and @conv == '-'
+    if @in == 'conversation' and @conv == '-'
       #-- They want to leave the conversation, i.e. leave conversation mode
       if @comtag != ''
         #-- Go to that community

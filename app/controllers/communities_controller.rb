@@ -713,7 +713,13 @@ class CommunitiesController < ApplicationController
           
           if @recipient
             # They already have an account, send a link that logs them in, joins them, and sends them to the forum
-            @cdata['joinlink'] = "https://#{BASEDOMAIN}/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}&amp;joincom=1&amp;auth_token=#{@recipient.authentication_token}"
+            if @community.conversations.length == 1
+              # If the community is a member of just one conversation, go there
+              @conversation = @community.conversations[0]
+              @cdata['joinlink'] = "https://#{BASEDOMAIN}/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{@conversation.shortname}&amp;comtag=#{@community.tagname}&amp;joincom=1&amp;auth_token=#{@recipient.authentication_token}"            
+            else
+              @cdata['joinlink'] = "https://#{BASEDOMAIN}/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}&amp;joincom=1&amp;auth_token=#{@recipient.authentication_token}"
+            end
           else
             @cdata['joinlink'] = "https://#{BASEDOMAIN}/#{@community.tagname}?joincom=1&amp;email=#{CGI.escape(email)}"            
           end
