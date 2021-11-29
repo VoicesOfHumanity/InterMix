@@ -370,17 +370,17 @@ class DialogsController < ApplicationController
       end
       
       was_comtag = @comtag
-      if @comtag != '' and @comtag == country1_tag
+      if @comtag != '' and @comtag.downcase == country1_tag.downcase
         @perspective = @comtag
         logger.info("dialogs#slider perspective set to #{@perspective} in international conversation, from @comtag, same as country1")
-      elsif @comtag != '' and @comtag == country2_tag
+      elsif @comtag != '' and @comtag.downcase == country2_tag.downcase
         @perspective = @comtag
         logger.info("dialogs#slider perspective set to #{@perspective} in international conversation, from @comtag, same as country2")
       else
         @comtag = country1_tag
         @perspective = @comtag
         logger.info("dialogs#slider perspective set to #{@perspective} (country1) in international conversation, because it was something else (#{was_comtag}). Redirecting.")
-        if @comtag != was_comtag
+        if @comtag.downcase != was_comtag.downcase
           url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
           url += "&show_result=1" if @show_result == 1
           redirect_to url
@@ -534,7 +534,7 @@ class DialogsController < ApplicationController
           if current_participant.tag_list_downcase.include?(com.tagname.downcase)
             @is_conv_member = true
             # Is it the one selected?
-            if com.tagname == @comtag
+            if com.tagname.downcase == @comtag.downcase
               # remember it as the current perspective for this conversation
               @perspective = @comtag
               session["cur_perspective_#{@conversation.id}"] = @perspective
