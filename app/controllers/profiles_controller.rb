@@ -196,6 +196,8 @@ class ProfilesController < ApplicationController
     
     # religions
     logger.info("profiles#update religions:#{params[:religions]}")
+    rchange = false
+    got_religions = []
     # remove those unchecked
     for p_r in @participant.participant_religions
       if not params[:religions] or not params[:religions].include?(p_r.religion_id.to_s)
@@ -203,9 +205,11 @@ class ProfilesController < ApplicationController
         logger.info("profiles#update religion #{p_r.religion_id} removed")
         p_r.destroy
         @participant.tag_list.remove(tagname) if tagname != ''
+        rchange = true
       end
     end
-    @participant.save
+    @participant.save if rchange
+    rchange = false
     if params[:religions]
       # Add the new ones
       for r_id in params[:religions]
@@ -222,11 +226,15 @@ class ProfilesController < ApplicationController
             end
             ParticipantReligion.create(participant_id: @participant.id, religion_id: r_id, religion_denomination: religion_denomination)
             @participant.tag_list.add(r.shortname)
+            got_religions << r.id
+            rchange = true
           end
         end
       end
     end
-    got_religions = []
+    @participant.save if rchange
+    @participant.participant_religions.reload
+    rchange = false
     has_indigenous = false
     for p_r in @participant.participant_religions
       got_religions << p_r.religion_id
@@ -235,16 +243,19 @@ class ProfilesController < ApplicationController
           logger.info("profiles#update religion #{p_r.religion_id}:#{p_r.religion.name} updating denomination to #{params["religion_denom_#{p_r.religion_id}"]}")
           p_r.religion_denomination = params["religion_denom_#{p_r.religion_id}"].to_s
           p_r.save
+          rchange = true
         end
       end
       if p_r.religion
         if not @participant.tag_list_downcase.include?(p_r.religion.shortname.downcase)
           @participant.tag_list.add(p_r.religion.shortname)
+          rchange = true
         end
         community = Community.where(context: 'religion', context_code: p_r.religion.id).first
         if not community     
           tagname = p_r.religion.shortname     
           community = Community.create(tagname: tagname, context: 'religion', context_code: p_r.religion.id, fullname: p_r.religion.name)
+          rchange = true
         end
         conversation_communities = ConversationCommunity.where(conversation_id: RELIGIONS_CONVERSATION_ID, community_id: community.id)
         if conversation_communities.length == 0
@@ -258,6 +269,9 @@ class ProfilesController < ApplicationController
         end
       end
     end
+    @participant.save if rchange
+    rchange = false
+    logger.info("profiles#update have these religions: #{got_religions}")
     # Remove any unmentioned religions from tags
     religions = Religion.all
     for r in religions
@@ -275,7 +289,6 @@ class ProfilesController < ApplicationController
         @participant.country_code2 = '_I'
       end
     end
-
 
     # Save any metamap assignments
     if params[:meta]
