@@ -915,7 +915,17 @@ class ApplicationController < ActionController::Base
           if not community2
             community2 = Community.create(tagname: 'indigenous', context: 'nation', context_code: '__I', fullname: 'Indigenous peoples')
           end
-          @participant.tag_list.add(community2.tagname)        
+          @participant.tag_list.add(community2.tagname)
+          # Check that the religion is added too
+          if community2.context2 == 'religion'
+            r_id = community2.context_code2.to_i
+            if r_id > 0
+              p_r = ParticipantReligion.where(religion_id: r_id, participant_id: @participant.id).first
+              if not p_r
+                p_r = ParticipantReligion.create(religion_id: r_id, participant_id: @participant.id)
+              end
+            end 
+          end 
         else
           geocountry2 = Geocountry.find_by_iso(@participant.country_code2)
           if geocountry2
