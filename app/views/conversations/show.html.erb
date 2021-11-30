@@ -78,6 +78,15 @@
         </tr>
     <% end -%>
     <tr><td>&nbsp;</td></tr> 
+  <% elsif @conversation.id == INT_CONVERSATION_ID -%>
+    <% for com in @prof_nations -%>
+        <tr>
+          <td><%= com.activity_count_for_conversation(@conversation,@cur_period) %></td>
+          <td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a></td>
+          <td>in&nbsp;profile</td>
+        </tr>
+    <% end -%>
+    <tr><td>&nbsp;</td></tr> 
   <% end -%>
   
   <% for com in @communities -%>

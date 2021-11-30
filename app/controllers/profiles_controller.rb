@@ -251,18 +251,20 @@ class ProfilesController < ApplicationController
           @participant.tag_list.add(p_r.religion.shortname)
           rchange = true
         end
-        community = Community.where(context: 'religion', context_code: p_r.religion.id).first
-        if not community     
-          tagname = p_r.religion.shortname     
+        community = Community.where("(context='religion' and context_code='#{p_r.religion.id}') or (context2='religion' and context_code2='#{p_r.religion.id}')").first
+        tagname = p_r.religion.shortname
+        if not community and tagname.downcase != 'indigenous'          
           community = Community.create(tagname: tagname, context: 'religion', context_code: p_r.religion.id, fullname: p_r.religion.name)
           rchange = true
         end
-        conversation_communities = ConversationCommunity.where(conversation_id: RELIGIONS_CONVERSATION_ID, community_id: community.id)
-        if conversation_communities.length == 0
-          conversation = Conversation.find_by_id(RELIGIONS_CONVERSATION_ID)
-          if conversation
-            conversation.communities << community
-          end
+        if community
+          conversation_communities = ConversationCommunity.where(conversation_id: RELIGIONS_CONVERSATION_ID, community_id: community.id)
+          if conversation_communities.length == 0
+            conversation = Conversation.find_by_id(RELIGIONS_CONVERSATION_ID)
+            if conversation
+              conversation.communities << community
+            end
+          end          
         end
         if p_r.religion.name == 'Indigenous'
           has_indigenous = true

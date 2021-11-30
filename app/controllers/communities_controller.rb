@@ -44,11 +44,12 @@ class CommunitiesController < ApplicationController
       @csection = 'un' 
     elsif params[:which].to_s == 'religions'  
       preligions = current_participant.participant_religions.collect{|r| r.religion_id}
+      logger.info("communities#index preligions:#{preligions}")
       @prof_religions = []
       communities = []
-      coms = Community.where(context: 'religion')
+      coms = Community.where("context='religion' or context2='religion'")
       for com in coms
-        if preligions.include? com.context_code.to_i 
+        if (com.context == 'religion' and preligions.include? com.context_code.to_i) or (com.context2 == 'religion' and preligions.include? com.context_code2.to_i)
           com.activity = com.activity_count
           @prof_religions << com
         else
@@ -59,7 +60,7 @@ class CommunitiesController < ApplicationController
     elsif params[:which].to_s == 'cities'  
       @prof_cities = []
       communities = []
-      coms = Community.where(context: 'city')
+      coms = Community.where("context='city' or context2='city'")
       for com in coms
         if current_participant.city_uniq != '' and com.context_code == current_participant.city_uniq
           com.activity = com.activity_count
@@ -76,11 +77,13 @@ class CommunitiesController < ApplicationController
       geo2 = ''
       geocountry = Geocountry.find_by_iso(current_participant.country_code)
       geo1 = geocountry.iso3 if geocountry
-      if current_participant.country_code2 != ''
+      if current_participant.country_code2 == '_I'
+        geo2 = '__I'
+      elsif current_participant.country_code2 != ''
         geocountry = Geocountry.find_by_iso(current_participant.country_code2)
         geo2 = geocountry.iso3 if geocountry
       end
-      coms = Community.where(is_sub: false, context: 'nation')
+      coms = Community.where(is_sub: false).where("context='nation' or context2='nation'")
       for com in coms
         if com.context_code != '' and (com.context_code == geo1 or com.context_code == geo2)
           com.activity = com.activity_count

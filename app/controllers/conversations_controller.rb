@@ -172,6 +172,42 @@ class ConversationsController < ApplicationController
         end
       end
       @communities = communities
+    elsif @conversation.id == INT_CONVERSATION_ID
+      @prof_nations = []  
+      communities = []
+      got_com = {}
+      coms = @conversation.communities
+      logger.info("conversations#show #{coms.length} communities total")
+      iso1 = nil
+      iso2 = nil
+      if current_participant.country_code != ''
+        country1 = Geocountry.where(iso: current_participant.country_code).first
+        if country1
+          iso1 = country1.iso3
+        end
+      end
+      if current_participant.country_code2 == '_I'
+        iso2 = '__I'
+      elsif current_participant.country_code2 != ''
+        country2 = Geocountry.where(iso: current_participant.country_code2).first
+        if country2
+          iso2 = country2.iso3
+        end
+      end
+      for com in coms
+        if (iso1 and (com.context_code == iso1 or com.context_code2 == iso1)) or (iso2 and (com.context_code == iso2 or com.context_code2 == iso2))
+          com.activity = com.activity_count
+          @prof_nations << com
+          @cur_perspective = com.tagname
+          @perspectives[com.tagname] = com.fullname
+        else
+          if not got_com.has_key?(com.tagname)
+            communities << com
+            got_com[com.tagname] = true
+          end
+        end
+      end
+      @communities = communities
     elsif @conversation.id == RELIGIONS_CONVERSATION_ID
       @prof_religions = []
       communities = []
@@ -179,11 +215,17 @@ class ConversationsController < ApplicationController
       coms = @conversation.communities
       logger.info("conversations#show #{coms.length} communities total")
       for com in coms
-        if current_participant.tag_list_downcase.include?(com.tagname.downcase)
+        if com.context == 'religion'
+          r_id = com.context_code.to_i
+        elsif com.context2 == 'religion'
+          r_id = com.context_code2.to_i
+        else
+          r_id = nil
+        end
+        if r_id and ParticipantReligion.where(religion_id: r_id, participant_id: current_participant.id).count > 0
           com.activity = com.activity_count
           @prof_religions << com
           @cur_perspective = com.tagname
-          logger.info("conversations#show adding #{com.tagname} to prof_religions")
           @perspectives[com.tagname] = com.fullname
         else
           if not got_com.has_key?(com.tagname)
@@ -197,13 +239,15 @@ class ConversationsController < ApplicationController
       @communities = @conversation.communities      
     end
     
-    if @conversation.id != CITY_CONVERSATION_ID
+    if @conversation.id != CITY_CONVERSATION_ID and @conversation.id != RELIGIONS_CONVERSATION_ID and @conversation.id != INT_CONVERSATION_ID
       for com in @communities
         if current_participant.tag_list_downcase.include?(com.tagname.downcase)
           @perspectives[com.tagname] = com.fullname
         end
       end
     end
+    
+    logger.info("conversations#show #{@perspectives.length} perspectives")
     
     if @perspectives.length == 0
       @cur_perspective = 'outsider'

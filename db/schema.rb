@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_26_175737) do
+ActiveRecord::Schema.define(version: 2021_11_30_203529) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -115,6 +115,8 @@ ActiveRecord::Schema.define(version: 2021_10_26_175737) do
     t.integer "sub_of"
     t.string "context", default: ""
     t.string "context_code", default: ""
+    t.string "context2", default: ""
+    t.string "context_code2", default: ""
     t.string "voice_of_humanity"
     t.string "voice_of_women"
     t.string "voice_of_men"
