@@ -186,16 +186,28 @@ class ConversationsController < ApplicationController
           iso1 = country1.iso3
         end
       end
+      has_indig = false
       if current_participant.country_code2 == '_I'
         iso2 = '__I'
+        has_indig = true
       elsif current_participant.country_code2 != ''
         country2 = Geocountry.where(iso: current_participant.country_code2).first
         if country2
           iso2 = country2.iso3
         end
       end
+      if iso2 and iso2 != '__I'
+        # check if they have Indigenous religion
+        r = Religion.where(shortname: 'Indigenous').first
+        if r
+          p_r = ParticipantReligion.where(participant_id: current_participant.id, religion_id: r.id).first
+          if p_r
+            has_indig = true
+          end
+        end
+      end
       for com in coms
-        if (iso1 and (com.context_code == iso1 or com.context_code2 == iso1)) or (iso2 and (com.context_code == iso2 or com.context_code2 == iso2))
+        if (com.context_code == '__I' and has_indig) or (iso1 and (com.context_code == iso1 or com.context_code2 == iso1)) or (iso2 and (com.context_code == iso2 or com.context_code2 == iso2))
           com.activity = com.activity_count
           @prof_nations << com
           @cur_perspective = com.tagname
