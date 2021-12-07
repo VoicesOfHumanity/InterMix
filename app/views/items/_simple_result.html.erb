@@ -11,6 +11,10 @@
 <% end -%>  
 </h3>
 
+<% if @select_explain.to_s != '' -%>
+	<p><%= @select_explain %></p>
+<% end -%>
+
 <% if @period -%>
 <p>These results are for the period "<%= @period.name %>"</p>
 <% end -%>

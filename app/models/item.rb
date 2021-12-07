@@ -1218,6 +1218,7 @@ class Item < ActiveRecord::Base
     items = Item.where(nil)
     ratings = Rating.where(nil)
     title = ''
+    select_explain = ''
 
     # Date period
     if crit.has_key?(:datefromuse) and crit[:datefromuse].to_s != ''
@@ -1405,16 +1406,27 @@ class Item < ActiveRecord::Base
         
         if whichres == 'country'
           # We want only votes, comments, and importance from the two countries
-          ratings = ratings.where("(participants.country_code=? or participants.country_code=?)", country1.iso, country2.iso)          
+          if country1.name == 'Israel' or country2.name == 'Israel'
+            select_explain = "(candidate messages and votes from Israelis and Palestinians only)"
+          else
+            select_explain = "(candidate messages and votes from the two countries only)"
+          end
+          ratings = ratings.where("(participants.country_code=? or participants.country_code=?)", country1.iso, country2.iso) 
         elsif whichres == 'supporter'
           # Only votes from the countries and supporters
           # Get a list of the people that are in the supporter communities, or in the country communities
+          if country1.name == 'Israel' or country2.name == 'Israel'
+            select_explain = "(candidate messages and votes from Israelis, Palestinians and their supporters only)"
+          else
+            select_explain = "(candidate messages and votes from the two countries and their supporters only)"
+          end
           supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag]
           plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
           if plist != ''
             ratings = ratings.where("participants.id in (#{plist})")
           end
         else
+          select_explain = "(candidate messages and votes from all participants)"    
           supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag, ucom_tag]
           plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
           if plist != ''
@@ -1640,7 +1652,7 @@ class Item < ActiveRecord::Base
   
     logger.info("item#get_items #{items.length if items} items and #{ratings.length if ratings} ratings")
   
-    return items,ratings,title
+    return items,ratings,title,select_explain
   end
   
   def self.get_itemsproc(items,ratings,participant_id,rootonly=false)

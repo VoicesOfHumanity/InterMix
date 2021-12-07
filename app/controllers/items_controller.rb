@@ -114,7 +114,7 @@ class ItemsController < ApplicationController
     if true      
       #-- Get the records, while adding up the stats on the fly
 
-      items,ratings,@title = Item.get_items(crit,current_participant,@rootonly)
+      items,ratings,@title,@select_explain = Item.get_items(crit,current_participant,@rootonly)
       @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,@rootonly)
       @items = Item.get_sorted(items,@itemsproc,@sortby,@rootonly)
                   
@@ -263,7 +263,7 @@ class ItemsController < ApplicationController
       'messtag': @messtag
     }
 
-    items1,ratings,title = Item.get_items(crit,current_participant,rootonly)
+    items1,ratings,title,select_explain = Item.get_items(crit,current_participant,rootonly)
     itemsproc,extras = Item.get_itemsproc(items1,ratings,current_participant.id,rootonly)
     items = Item.get_sorted(items1,itemsproc,sortby,rootonly)
     
@@ -2003,7 +2003,7 @@ class ItemsController < ApplicationController
           crit[:comtag] = com.tagname
 
           logger.info("items#geoslider_update top_posts for #{com.tagname} calling get_items")
-          items,ratings,@title = Item.get_items(crit,current_participant)
+          items,ratings,@title,@select_explain = Item.get_items(crit,current_participant)
           @itemsproc, @extras = Item.get_itemsproc(items,ratings,current_participant.id)
           @sortby = '*value*'
           @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2056,7 +2056,7 @@ class ItemsController < ApplicationController
         
           crit[:age] = age_id
           crit[:gender] = gender_id
-          items,ratings,@title = Item.get_items(crit,current_participant)
+          items,ratings,@title,@select_explain = Item.get_items(crit,current_participant)
           @itemsproc, @extras = Item.get_itemsproc(items,ratings,current_participant.id)
           @sortby = '*value*'
           @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2075,7 +2075,7 @@ class ItemsController < ApplicationController
           name = @community.voice_of_humanity if @community and @community.voice_of_humanity.to_s != ''          
           item = nil
           iproc = nil        
-          items,ratings,@title = Item.get_items(crit,current_participant)
+          items,ratings,@title,@select_explain = Item.get_items(crit,current_participant)
           @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
           @sortby = '*value*'
           @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2109,7 +2109,7 @@ class ItemsController < ApplicationController
             
               crit[:gender] = gender_id
               crit[:age] = 0
-              items,ratings,title = Item.get_items(crit,current_participant)
+              items,ratings,title,select_explain = Item.get_items(crit,current_participant)
               @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
               @sortby = '*value*'
               @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2141,7 +2141,7 @@ class ItemsController < ApplicationController
             
               crit[:age] = age_id
               crit[:gender] = 0
-              items,ratings,title = Item.get_items(crit,current_participant)
+              items,ratings,title,select_explain = Item.get_items(crit,current_participant)
               @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
               @sortby = '*value*'
               @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2172,7 +2172,7 @@ class ItemsController < ApplicationController
           item = nil
           iproc = nil        
           crit[:age] = age_id
-          items,ratings,@title = Item.get_items(crit,current_participant)
+          items,ratings,@title,@select_explain = Item.get_items(crit,current_participant)
           @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
           @sortby = '*value*'
           @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2201,7 +2201,7 @@ class ItemsController < ApplicationController
             
               crit[:age] = age_id
               crit[:gender] = gender_id
-              items,ratings,title = Item.get_items(crit,current_participant)
+              items,ratings,title,select_explain = Item.get_items(crit,current_participant)
               @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
               @sortby = '*value*'
               @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2231,7 +2231,7 @@ class ItemsController < ApplicationController
           item = nil
           iproc = nil        
           crit[:gender] = gender_id
-          items,ratings,@title = Item.get_items(crit,current_participant)
+          items,ratings,@title,@select_explain = Item.get_items(crit,current_participant)
           @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
           @sortby = '*value*'
           @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2254,7 +2254,7 @@ class ItemsController < ApplicationController
             
               crit[:age] = age_id
               crit[:gender] = gender_id
-              items,ratings,title = Item.get_items(crit,current_participant)
+              items,ratings,title,select_explain = Item.get_items(crit,current_participant)
               @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
               @sortby = '*value*'
               @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2298,7 +2298,7 @@ class ItemsController < ApplicationController
       else
         #-- Listing
           
-        items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
+        items,ratings,@title,@select_explain = Item.get_items(crit,current_participant,rootonly)
 
         #if @num_all_posts == 0 and @first == 1 and @datetype == 'fixed' and @datefixed == 'month'
         if items.length == 0 and @datefixed != 'all' and (not @conversation or @conversation.together_apart != 'apart')
@@ -2582,7 +2582,7 @@ class ItemsController < ApplicationController
     crit[:followed_by] = @participant_id
     rootonly = false
     
-    items,ratings,@title = Item.get_items(crit,current_participant,rootonly)
+    items,ratings,@title,@select_explain = Item.get_items(crit,current_participant,rootonly)
     @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
     @items = Item.get_sorted(items,@itemsproc,@sortby,rootonly)
        
