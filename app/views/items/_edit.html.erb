@@ -111,19 +111,28 @@ if (CKEDITOR.instances['item_html_content']) {
   	    <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
       <% end -%>
 	 
-  	  <% intra_options = [['Public','public']] %>
-  	  <% def_intra = @item.intra_com ? @item.intra_com : 'public' %>		  
-      <% if (@item.reply_to.to_i>0 and @olditem and @olditem.intra_com.to_s!='' and @olditem.intra_com.to_s!='public') -%>
-  	    <% intra_options << ["Only #{@olditem.intra_com}","#{@olditem.intra_com}"]  %>
-        <% def_intra = "#{@olditem.intra_com}" %>
-      <% elsif (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*' and (!@conversation) and @is_com_member) -%>
-  	    <% intra_options << ["Only @#{@comtag}","@#{@comtag}"]  %>
-      <% end -%>
-  	  <% if intra_options.length > 1 -%>
-    	  <select name="item[intra_com]" id="item_intra_com">
-    	  <%= options_for_select(intra_options,def_intra) %>
-    	  </select>
-  	  <% end -%>      
+	 	  <% if @conversation and @conversation.together_apart == 'together' -%>
+				<% intra_options = [['Public','public']] %>
+				<% def_intra = @item.intra_com ? @item.intra_com : 'public' %>
+				<% intra_options << ["Only #{@conversation.shortname}","#{@conversation.shortname}"]  %>
+	    	<select name="item[intra_conv]" id="item_intra_conv">
+	    		<%= options_for_select(intra_options,def_intra) %>
+	    	</select>
+			<% else -%>
+	  	  <% intra_options = [['Public','public']] %>
+	  	  <% def_intra = @item.intra_com ? @item.intra_com : 'public' %>		  
+	      <% if (@item.reply_to.to_i>0 and @olditem and @olditem.intra_com.to_s!='' and @olditem.intra_com.to_s!='public') -%>
+	  	    <% intra_options << ["Only #{@olditem.intra_com}","#{@olditem.intra_com}"]  %>
+	        <% def_intra = "#{@olditem.intra_com}" %>
+	      <% elsif (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*' and (!@conversation) and @is_com_member) -%>
+	  	    <% intra_options << ["Only @#{@comtag}","@#{@comtag}"]  %>
+	      <% end -%>
+	  	  <% if intra_options.length > 1 -%>
+	    	  <select name="item[intra_com]" id="item_intra_com">
+	    	  <%= options_for_select(intra_options,def_intra) %>
+	    	  </select>
+	  	  <% end -%>
+			<% end -%>    
       
       <% if @item.representing_com.to_s != '' -%>
         <input type="hidden" name="item[representing_com]" id="item_representing_com" value="<%= @item.representing_com %>">
