@@ -63,11 +63,21 @@ module ItemLib
     Rails.logger.info("items#rateitem rating:#{rating ? rating.id : "none"}")
     #puts "items#rateitem rating:#{rating ? rating.id : "none"}"
   
+    if conversation_id.to_i == 0
+      conversation_id = item.conversation_id
+    end
     if conversation_id > 0
       conversation = Conversation.find_by_id(conversation_id)
       if conversation and participant and conversation.is_member_of(participant)
-        # If we're in a conversation, and the user is a member, only then do we store a conversation with the rating
-        rating.conversation_id = conversation_id
+        # In a conversation in together mode, the vote is valid if the user is a member of any community that is in the conversation
+        # If we're in apart mode, it is only valid if they're in the same community as the poster
+        if conversation.together_apart == 'apart'
+          if item.representing_com.to_s != '' and participant.tag_list_downcase.include?(item.representing_com.downcase)
+            rating.conversation_id = conversation_id          
+          end
+        else
+          rating.conversation_id = conversation_id          
+        end
       end
     end
   
