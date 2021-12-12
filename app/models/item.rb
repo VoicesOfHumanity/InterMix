@@ -1219,6 +1219,7 @@ class Item < ActiveRecord::Base
     ratings = Rating.where(nil)
     title = ''
     select_explain = ''
+    kind_messages = ''    # highest rated ____ messages, if there's anything special
 
     # Date period
     if crit.has_key?(:datefromuse) and crit[:datefromuse].to_s != ''
@@ -1381,44 +1382,54 @@ class Item < ActiveRecord::Base
         scom1_tag = scom1 ? scom1.tagname : ''
         scom2_tag = ccom2 ? scom2.tagname : ''
         
-        country1 = Geocountry.find_by_iso3(ccom1)
-        country2 = Geocountry.find_by_iso3(ccom2)
+        country1 = Geocountry.find_by_iso3(ccom1.context_code) if ccom1
+        country2 = Geocountry.find_by_iso3(ccom2.context_code) if ccom2
         
         # Which kind of results we'll show depends on if it is directly specified, or based on what the viewer is a member of.
         # There aer three possibilities: country, supporter, general
         whichres = ''
         if crit[:result2c] == 'country'
           whichres = 'country'
+          logger.info("item#get_items #{whichres} results, because that was specified")
         elsif crit[:result2c] == 'supporter'
           whichres = 'supporter'
+          logger.info("item#get_items #{whichres} results, because that was specified")
         elsif crit[:result2c] == 'general'
           whichres = 'general'
+          logger.info("item#get_items #{whichres} results, because that was specified")
         elsif (ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag)) or (ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag))
           # viewer is from one of the two main countries. 
           whichres = 'country'
+          logger.info("item#get_items #{whichres} results, because user is in one of the countries")
         elsif (scom1 and current_participant.tag_list_downcase.include?(scom1_tag)) or (scom2 and current_participant.tag_list_downcase.include?(scom2_tag))
           # viewer is in one of the supporter communities. 
           whichres = 'supporter'
+          logger.info("item#get_items #{whichres} results, because user is in one of the supporter communities")
         else
           # viewer is (probably) only in the general community, or not a member at all
           whichres= 'general'
+          logger.info("item#get_items #{whichres} results, because user isn't in country or supporter communities")
         end
         
         if whichres == 'country'
           # We want only votes, comments, and importance from the two countries
-          if country1.name == 'Israel' or country2.name == 'Israel'
+          if (country1 and country1.name == 'Israel') or (country2 and country2.name == 'Israel')
             select_explain = "(candidate messages and votes from Israelis and Palestinians only)"
+            kind_results = "Israeli/Palestinian"
           else
             select_explain = "(candidate messages and votes from the two countries only)"
+            kind_results = "Country"
           end
           ratings = ratings.where("(participants.country_code=? or participants.country_code=?)", country1.iso, country2.iso) 
         elsif whichres == 'supporter'
           # Only votes from the countries and supporters
           # Get a list of the people that are in the supporter communities, or in the country communities
-          if country1.name == 'Israel' or country2.name == 'Israel'
+          if (country1 and country1.name == 'Israel') or (country2 and country2.name == 'Israel')
             select_explain = "(candidate messages and votes from Israelis, Palestinians and their supporters only)"
+            kind_results = "Israeli/Palestinian and Supporter"
           else
             select_explain = "(candidate messages and votes from the two countries and their supporters only)"
+            kind_results = "Country and Supporter"
           end
           supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag]
           plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
@@ -1426,7 +1437,8 @@ class Item < ActiveRecord::Base
             ratings = ratings.where("participants.id in (#{plist})")
           end
         else
-          select_explain = "(candidate messages and votes from all participants)"    
+          select_explain = "(candidate messages and votes from all participants)"   
+          kind_results = "" 
           supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag, ucom_tag]
           plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
           if plist != ''
@@ -1652,7 +1664,7 @@ class Item < ActiveRecord::Base
   
     logger.info("item#get_items #{items.length if items} items and #{ratings.length if ratings} ratings")
   
-    return items,ratings,title,select_explain
+    return items,ratings,title,select_explain,kind_results
   end
   
   def self.get_itemsproc(items,ratings,participant_id,rootonly=false)

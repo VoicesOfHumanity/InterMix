@@ -67,4 +67,7 @@ if ($('#period_id').length && $('#period_id').val()!=showing_period_id) {
 $('.thumbupdown').hover(function(){thumbhover(this,'in')},function(){thumbhover(this,'out')});
 var page = 1;
 var show_result = <%= @show_result ? 1 : 0 %>;
+<% if @kind_results.to_s != '' -%>
+$('#kind_results').html("<%= @kind_results %>");
+<% end -%>
 </script>

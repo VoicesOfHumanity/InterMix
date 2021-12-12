@@ -153,6 +153,9 @@ $('#about_a').attr('href',about_link);
     <% txt += " - #{@conversation.together_apart.capitalize}" %>
   <% end %>
   $('#top_forum_header').html("<%= txt %>");
+	<% if @kind_results.to_s != '' -%>
+	$('#kind_results').html("<%= @kind_results %>");
+	<% end -%>
   var lastmoon = '<%= @lastmoon %>';
 <% end -%>
 </script>

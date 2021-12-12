@@ -2062,7 +2062,7 @@ class ItemsController < ApplicationController
         
           crit[:age] = age_id
           crit[:gender] = gender_id
-          items,ratings,@title,@select_explain = Item.get_items(crit,current_participant)
+          items,ratings,@title,@select_explain,@kind_results = Item.get_items(crit,current_participant)
           @itemsproc, @extras = Item.get_itemsproc(items,ratings,current_participant.id)
           @sortby = '*value*'
           @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2081,7 +2081,7 @@ class ItemsController < ApplicationController
           name = @community.voice_of_humanity if @community and @community.voice_of_humanity.to_s != ''          
           item = nil
           iproc = nil        
-          items,ratings,@title,@select_explain = Item.get_items(crit,current_participant)
+          items,ratings,@title,@select_explain,@kind_results = Item.get_items(crit,current_participant)
           @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
           @sortby = '*value*'
           @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2178,7 +2178,7 @@ class ItemsController < ApplicationController
           item = nil
           iproc = nil        
           crit[:age] = age_id
-          items,ratings,@title,@select_explain = Item.get_items(crit,current_participant)
+          items,ratings,@title,@select_explain,@kind_results = Item.get_items(crit,current_participant)
           @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
           @sortby = '*value*'
           @items = Item.get_sorted(items,@itemsproc,@sortby,false)
@@ -2237,7 +2237,7 @@ class ItemsController < ApplicationController
           item = nil
           iproc = nil        
           crit[:gender] = gender_id
-          items,ratings,@title,@select_explain = Item.get_items(crit,current_participant)
+          items,ratings,@title,@select_explain,@kind_results = Item.get_items(crit,current_participant)
           @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id)
           @sortby = '*value*'
           @items = Item.get_sorted(items,@itemsproc,@sortby,false)
