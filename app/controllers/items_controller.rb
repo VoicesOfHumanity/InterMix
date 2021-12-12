@@ -1345,9 +1345,7 @@ class ItemsController < ApplicationController
     
     #-- Even though we're only showing one item, we still need to get the context, with the ratings, etc.
     if participant_signed_in?
-      @crit = {
-        
-      }
+      @crit = {}
       items,ratings,@title,@select_explain = Item.get_items(@crit, current_participant, @rootonly)
       @itemsproc, @extras = Item.get_itemsproc(items, ratings, current_participant.id, @rootonly)
       @items = Item.get_sorted(items,@itemsproc, @sortby, @rootonly)      
@@ -1420,7 +1418,11 @@ class ItemsController < ApplicationController
     @rated_by_metro_area_id = 0
     
     #-- Even though we're only showing one item, we still need to get the context, with the ratings, etc.
-    @items, @itemsproc, @extras = Item.list_and_results(@group,@dialog,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id)
+    #@items, @itemsproc, @extras = Item.list_and_results(@group,@dialog,@period_id,@posted_by,@posted_meta,@rated_meta,@rootonly,@sortby,current_participant,true,0,'','',@posted_by_country_code,@posted_by_admin1uniq,@posted_by_metro_area_id,@rated_by_country_code,@rated_by_admin1uniq,@rated_by_metro_area_id)
+    @crit = {}
+    items,ratings,@title,@select_explain = Item.get_items(@crit, current_participant, @rootonly)
+    @itemsproc, @extras = Item.get_itemsproc(items, ratings, current_participant.id, @rootonly)
+    @items = Item.get_sorted(items,@itemsproc, @sortby, @rootonly)      
 
     update_last_url
     #update_prefix
