@@ -1386,7 +1386,8 @@ class Item < ActiveRecord::Base
         country2 = Geocountry.find_by_iso3(ccom2.context_code) if ccom2
         
         # Which kind of results we'll show depends on if it is directly specified, or based on what the viewer is a member of.
-        # There aer three possibilities: country, supporter, general
+        # There are three possibilities for together mode: country, supporter, general
+        # For apart mode, any of the five communities: ccom1, ccom2, scom1, scom2, ucom
         whichres = ''
         if crit[:result2c] == 'country'
           whichres = 'country'
@@ -1397,21 +1398,98 @@ class Item < ActiveRecord::Base
         elsif crit[:result2c] == 'general'
           whichres = 'general'
           logger.info("item#get_items #{whichres} results, because that was specified")
-        elsif (ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag)) or (ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag))
+          
+        elsif crit[:result2c] == 'ccom1'
+          whichres = 'ccom1'
+          logger.info("item#get_items #{whichres} results, because that was specified")
+        elsif crit[:result2c] == 'ccom2'
+          whichres = 'ccom2'
+          logger.info("item#get_items #{whichres} results, because that was specified")
+        elsif crit[:result2c] == 'scom1'
+          whichres = 'scom1'
+          logger.info("item#get_items #{whichres} results, because that was specified")
+        elsif crit[:result2c] == 'scom2'
+          whichres = 'scom2'
+          logger.info("item#get_items #{whichres} results, because that was specified")
+        elsif crit[:result2c] == 'ucom'
+          whichres = 'ucom'
+          logger.info("item#get_items #{whichres} results, because that was specified")          
+          
+        elsif @conversation.together_apart=='together' and (ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag)) or (ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag))
           # viewer is from one of the two main countries. 
           whichres = 'country'
           logger.info("item#get_items #{whichres} results, because user is in one of the countries")
-        elsif (scom1 and current_participant.tag_list_downcase.include?(scom1_tag)) or (scom2 and current_participant.tag_list_downcase.include?(scom2_tag))
+        elsif @conversation.together_apart=='together' and (scom1 and current_participant.tag_list_downcase.include?(scom1_tag)) or (scom2 and current_participant.tag_list_downcase.include?(scom2_tag))
           # viewer is in one of the supporter communities. 
           whichres = 'supporter'
           logger.info("item#get_items #{whichres} results, because user is in one of the supporter communities")
+          
+        elsif @conversation.together_apart=='apart' and ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag)
+          # viewer is from the first country 
+          whichres = 'ccom1'
+          logger.info("item#get_items #{whichres} results, because user is in that country")
+        elsif @conversation.together_apart=='apart' and ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag)
+          # viewer is from the second country 
+          whichres = 'ccom2'
+          logger.info("item#get_items #{whichres} results, because user is in that country")          
+        elsif @conversation.together_apart=='apart' and scom1 and current_participant.tag_list_downcase.include?(scom1_tag)
+          # viewer is in the first supporter communitty
+          whichres = 'scom1'
+          logger.info("item#get_items #{whichres} results, because user is in that supporter community")
+        elsif @conversation.together_apart=='apart' and scom2 and current_participant.tag_list_downcase.include?(scom2_tag)
+          # viewer is in the first supporter communitty
+          whichres = 'scom2'
+          logger.info("item#get_items #{whichres} results, because user is in that supporter community")
+          
         else
           # viewer is (probably) only in the general community, or not a member at all
           whichres= 'general'
           logger.info("item#get_items #{whichres} results, because user isn't in country or supporter communities")
         end
         
-        if whichres == 'country'
+        if whichres == 'ccom1' and country1
+          # Only votes, comments, and importance from one country
+          select_explain = "(candidate messages and votes from #{ccom1.fullname} only)"
+          kind_results = ccom1.fullname
+          ratings = ratings.where("participants.country_code=? ", country1.iso) 
+
+        elsif whichres == 'ccom2' and country2
+          # Only votes, comments, and importance from one country
+          select_explain = "(candidate messages and votes from #{ccom2.fullname} only)"
+          kind_results = ccom2.fullname
+          ratings = ratings.where("participants.country_code=?", country2.iso) 
+                    
+        elsif whichres == 'scom1'
+          # Only votes, comments, and importance from one supporter community
+          select_explain = "(candidate messages and votes from #{scom1.fullname} only)"
+          kind_results = scom1.fullname
+          supporter_comtags = [scom1_tag]
+          plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+          if plist != ''
+            ratings = ratings.where("participants.id in (#{plist})")
+          end
+                    
+        elsif whichres == 'scom2'
+          # Only votes, comments, and importance from one supporter community
+          select_explain = "(candidate messages and votes from #{scom2.fullname} only)"
+          kind_results = scom2.fullname
+          supporter_comtags = [scom2_tag]
+          plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+          if plist != ''
+            ratings = ratings.where("participants.id in (#{plist})")
+          end
+                    
+        elsif whichres == 'ucom'  
+          # Only votes, comments, and importance from the common community
+          select_explain = "(candidate messages and votes from #{ucom.fullname} supporters only)"
+          kind_results = ucom.fullname      
+          supporter_comtags = [ucom_tag]
+          plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+          if plist != ''
+            ratings = ratings.where("participants.id in (#{plist})")
+          end          
+              
+        elsif whichres == 'country'
           # We want only votes, comments, and importance from the two countries
           if (country1 and country1.name == 'Israel') or (country2 and country2.name == 'Israel')
             select_explain = "(candidate messages and votes from Israelis and Palestinians only)"

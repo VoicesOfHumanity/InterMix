@@ -114,9 +114,23 @@
               <% elsif @conversation.twocountry -%>
                   <%
                     if com.id == @conversation.twocountry_supporter1 or com.id == @conversation.twocountry_supporter2
+											if com.id == @conversation.twocountry_supporter1 and @conversation.together_apart == 'apart'
+												result2c = 'scom1'
+											elsif com.id == @conversation.twocountry_supporter2 and @conversation.together_apart == 'apart'
+													result2c = 'scom2'
+											else
                         result2c = 'supporter'
+											end
                     elsif com.context == 'nation'
+											if com.id == @conversation.twocountry_country1 and @conversation.together_apart == 'apart'
+												result2c = 'ccom1'
+											elsif com.id == @conversation.twocountry_country2 and @conversation.together_apart == 'apart'
+												result2c = 'ccom2'												
+											else
                         result2c = 'country'
+											end
+										elsif com.id == @conversation.twocountry_common and @conversation.together_apart == 'apart'
+											result2c = 'ucom'
                     else
                        result2c = 'general' 
                     end
@@ -138,11 +152,9 @@
                           -
                       <% else -%>
                           <% if com.id == @conversation.twocountry_supporter1 -%>
-                              <% result2c = 'supporter' %>
                               <% other = Community.find_by_id(@conversation.twocountry_supporter2) %>
                               <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
                           <% elsif com.id == @conversation.twocountry_supporter2 -%>
-                              <% result2c = 'supporter' %>
                               <% other = Community.find_by_id(@conversation.twocountry_supporter1) %>
                               <% is_in_other = current_participant.tag_list_downcase.include?(other.tagname.downcase) %>
                           <% end -%>
