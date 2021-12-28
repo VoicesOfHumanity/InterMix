@@ -413,7 +413,7 @@ class DialogsController < ApplicationController
         
     end
     
-    if @conversation.together_apart == 'apart' and @resulttype == 'apart' and @show_result
+    if @conversation and @conversation.together_apart == 'apart' and @resulttype == 'apart' and @show_result
       # if we're showing results in apart mode for a conversation, ok to pick whatever
       @perspective = @comtag
     end
