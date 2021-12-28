@@ -58,7 +58,7 @@
   <p>(Activity counts are for the current phase of the conversation.)</p>
 
   <table style="width:595px">
-  <tr><!--<th>Forum</th>--><th>Activity</th><th>More Information</th><th>Membership</th><% if @conversation.twocountry %><th>Results</th><% end %></tr>	
+  <tr><!--<th>Forum</th>--><th>Activity</th><th>More Information</th><th>Membership</th><% if @conversation.twocountry or (@conversation.together_apart=='apart') %><th>Results</th><% end %></tr>	
   
   <% if @conversation.id == CITY_CONVERSATION_ID -%>
     <% for com in @prof_cities -%>
@@ -173,6 +173,8 @@
           </td>
           <% if @conversation.twocountry -%>
               <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= com.tagname %>&show_result=1&result2c=<%= result2c %>">go to results</a></td>
+					<% elsif @conversation.together_apart=='apart' -%>
+							<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= com.tagname %>&show_result=1&resulttype=apart">go&nbsp;to&nbsp;results</a></td>
           <% end -%>
       </tr>
     <% end -%>

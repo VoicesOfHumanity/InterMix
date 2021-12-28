@@ -296,7 +296,7 @@ for p in participants
         if item.reply_to.to_i > 0 and item.orig_item
           itext += " as a comment on a ##{ item.orig_item.representing_com.to_s !='' ? item.orig_item.representing_com : '???' } item"
         end
-        itext += " in the #{ item.conversation.name } conversation in #{ item.together_apart } mode.</p>"
+        itext += " in #{'the' if not item.conversation.name.start_with?('The')} #{ item.conversation.name } conversation in #{ item.together_apart } mode.</p>"
       end
       
       itext += "<p>by "

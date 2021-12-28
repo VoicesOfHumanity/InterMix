@@ -63,6 +63,7 @@ class DialogsController < ApplicationController
     @dialog = Dialog.includes(:creator).find(@dialog_id)
     @show_result = params[:show_result].to_i
     @result2c = params[:result2c].to_s
+    @resulttype = params[:resulttype].to_s
     @top_posts = params[:top_posts].to_i
     @network_id = params[:network_id].to_i
     @period = params[:period].to_s    # Mostly matches datefixed, but not quite. To control the period, particularly for linking to results
@@ -380,6 +381,9 @@ class DialogsController < ApplicationController
       elsif @comtag != '' and @comtag.downcase == country2_tag.downcase
         @perspective = @comtag
         logger.info("dialogs#slider perspective set to #{@perspective} in international conversation, from @comtag, same as country2")
+      elsif @conversation.together_apart == 'apart' and @resulttype == 'apart' and @show_result
+        # if we're showing results in apart mode for a conversation, ok to pick whatever
+        @perspective = @comtag
       else
         @comtag = country1_tag
         @perspective = @comtag
@@ -387,6 +391,7 @@ class DialogsController < ApplicationController
         if @comtag.downcase != was_comtag.downcase
           url = "/dialogs/#{@dialog_id}/slider?comtag=#{@comtag}&conv=#{@conversation.shortname}"
           url += "&show_result=1" if @show_result == 1
+          url += "&resulttype=#{@resulttype}" if @resulttype and @resulttype != ""
           redirect_to url
           return
         end
@@ -406,6 +411,11 @@ class DialogsController < ApplicationController
     elsif @in == 'conversation' and @conversation and @conversation.id == ISRAEL_PALESTINE_CONV_ID
       # Not sure if we need to do anything special
         
+    end
+    
+    if @conversation.together_apart == 'apart' and @resulttype == 'apart' and @show_result
+      # if we're showing results in apart mode for a conversation, ok to pick whatever
+      @perspective = @comtag
     end
     
     @communities = []
@@ -551,7 +561,7 @@ class DialogsController < ApplicationController
       if @comtag == ''
         @perspective = 'outsider'
       end
-      if @perspective == 'outsider' and not (@show_result == 1 and @result2c != '')
+      if @perspective == 'outsider' and not (@show_result == 1 and (@result2c != '' or @resulttype != ''))
         logger.info("dialogs#slider redirecting to conversation about, because outsider (show_result:#{@show_result}, result2c:#{@result2c})")
         redirect_to "/conversations/#{@conversation.id}"
         return

@@ -551,7 +551,7 @@ class Item < ActiveRecord::Base
         if self.reply_to.to_i > 0 and self.orig_item
           itext += " as a comment on a ##{ self.orig_item.representing_com.to_s !='' ? self.orig_item.representing_com : '???' } item"
         end
-        itext += " in the #{ self.conversation.name } conversation in #{ self.together_apart } mode.</p>"
+        itext += " in #{'the' if not self.conversation.name.start_with?('The')} #{ self.conversation.name } conversation in #{ self.together_apart } mode.</p>"
       end
       
       itext += "<p>by "
@@ -1369,7 +1369,7 @@ class Item < ActiveRecord::Base
         items = items.where(topic: @topic)
       end 
       
-      if @conversation.context = 'twocountry'
+      if @conversation.context == 'twocountry'
         ucom  = Community.find_by_id(@conversation.twocountry_common)
         ccom1 = Community.find_by_id(@conversation.twocountry_country1)
         ccom2 = Community.find_by_id(@conversation.twocountry_country2)
@@ -1522,7 +1522,17 @@ class Item < ActiveRecord::Base
           if plist != ''
             ratings = ratings.where("participants.id in (#{plist})")
           end
-        end        
+        end    
+      elsif @conversation.together_apart == 'apart' and crit[:resulttype] == 'apart' and crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+        # For a conversation in apart mode, from the about page, one might link to results for just one community
+        # The items should already be limited to just from that community below, so we're just missing the ratings
+        logger.info("item#get_items apart results, for only #{crit[:comtag]}")
+        plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
+        if plist != ''
+          ratings = ratings.where("participants.id in (#{plist})")
+        end    
+        select_explain = "(candidate messages and votes from @#{crit[:comtag]})"  
+        kind_results =  "#{crit[:comtag]}"    
       end
              
     else

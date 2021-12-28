@@ -1727,7 +1727,10 @@ class ItemsController < ApplicationController
       result2c = params[:result2c].to_s
       @result2c = result2c
       crit[:result2c] = result2c
-      
+      resulttype = params[:resulttype].to_s
+      @resulttype = resulttype
+      crit[:resulttype] = resulttype
+            
       top_posts = (params[:top_posts].to_i == 1)
       @top_posts = top_posts
       whatchanged = params[:whatchanged].to_s
