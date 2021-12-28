@@ -106,6 +106,10 @@ class DialogsController < ApplicationController
         @section = 'cities'
       elsif @conv == UNGOALS_CONVERSATION_CODE
         @section = 'ungoals'
+      elsif @conv == RELIGIONS_CONVERSATION_CODE
+        @section = 'religions'
+      elsif @conv == ISRAEL_PALESTINE_CONV_CODE
+        @section = 'mideast'
       else
         @section = 'conversations'
       end

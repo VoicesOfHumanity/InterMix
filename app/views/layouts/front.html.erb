@@ -195,6 +195,10 @@
                 <% city_conv = Conversation.find_by_id(CITY_CONVERSATION_ID) %>
                 <% if city_conv and city_conv.active -%>
                 <li id="citybutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='cities' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= CITY_CONVERSATION_CODE %>">The Cities</a></li>
+                <% end -%>		
+                <% mideast_conv = Conversation.find_by_id(ISRAEL_PALESTINE_CONV_ID) %>
+                <% if mideast_conv and mideast_conv.active -%>
+                <li id="mideastbutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='mideast' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= mideast_conv.shortname %>">MidEast Peace</a></li>
                 <% end -%>
                 <% rel_conv = Conversation.find_by_id(RELIGIONS_CONVERSATION_ID) %>
                 <% if rel_conv and rel_conv.active -%>
