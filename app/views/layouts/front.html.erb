@@ -80,7 +80,10 @@
                 if ($('#religionbutton').length>0) {
                     $('#religionbutton').show();      
                 }          
-            } else {
+                if ($('#mideastbutton').length>0) {
+                    $('#mideastbutton').show();      
+                }              
+						} else {
                 moreless = 'less';
                 $('#morelesstext').html("More Options");
                 if ($('#communitysidelist').length) {
@@ -114,7 +117,10 @@
                 }
                 if ($('#religionbutton').length>0) {
                     $('#religionbutton').hide();      
-                }     
+                }   
+                if ($('#mideastbutton').length>0) {
+                    $('#mideastbutton').hide();      
+                } 															  
                 if (reloadslider) {                        
                     per_reload(false,1,'comtag');
                 }
