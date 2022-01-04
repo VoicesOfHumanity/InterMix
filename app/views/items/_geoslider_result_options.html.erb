@@ -6,7 +6,16 @@
     <tr>
       <td style="text-align:right;vertical-align:top;background-color:transparent">Date range:</td>
       <td style="background-color:transparent">
-          <%= select_tag "datefixed#{num}", options_for_select([["In last 24 hours",'day'],["In last week",'week'],["In last month",'month'],['In last year','year'],['All','all']]+@moons.reverse,@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>
+					<% options = [] %>
+        	<% if @conversation and @defaultdatefixed.to_s != '' and @defaultdatefixed != @datefixed -%>
+          	<% options << ["Current phase","#{@defaultdatefixed}"] %>
+        	<% end -%>
+	        <% if @conversation and @conversation.together_apart == 'apart' -%>
+	          <% options = options + @moons.reverse[0,6] %>
+	        <% else -%>
+	          <% options = options + [["In last 24 hours",'day'],["In last week",'week'],["In last month",'month'],['In last year','year'],['All','all']]+@moons.reverse %>
+	        <% end -%>
+					<%= select_tag "datefixed#{num}", options_for_select(options,@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>  
       </td>
     </tr>
     <% if false -%>

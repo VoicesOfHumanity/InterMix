@@ -207,7 +207,7 @@ class DialogsController < ApplicationController
       session.delete(:age)
       session.delete(:gender)
       session.delete(:datetype)
-      #session.delete(:datefixed)
+      session.delete(:datefixed)
       session.delete(:datefrom)
       session.delete(:list_threads)
       session.delete(:list_sortby)
@@ -217,8 +217,8 @@ class DialogsController < ApplicationController
       @comtag = session[:comtag].to_s if session.has_key?(:comtag) and @in == 'main' and @comtag == ''
       @messtag = session[:messtag].to_s if session.has_key?(:messtag)
       @nvaction = session[:nvaction] if session.has_key?(:nvaction)
-      #@datetype = session[:datetype] if session.has_key?(:datetype)
-      #@datefrom = session[:datefrom] if session.has_key?(:datefrom)
+      @datetype = session[:datetype] if session.has_key?(:datetype)
+      @datefrom = session[:datefrom] if session.has_key?(:datefrom)
       @sortby = session[:list_sortby] if session.has_key?(:list_sortby)
       @threads = session[:list_threads] if session.has_key?(:list_threads)
     end
