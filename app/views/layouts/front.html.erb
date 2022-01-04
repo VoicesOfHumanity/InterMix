@@ -82,7 +82,10 @@
                 }          
                 if ($('#mideastbutton').length>0) {
                     $('#mideastbutton').show();      
-                }              
+                }
+                if ($('#top_posts').length>0) {
+                    $('#top_posts').show();      
+                }               
 						} else {
                 moreless = 'less';
                 $('#morelesstext').html("More Options");
@@ -120,7 +123,10 @@
                 }   
                 if ($('#mideastbutton').length>0) {
                     $('#mideastbutton').hide();      
-                } 															  
+                } 	
+                if ($('#top_posts').length>0) {
+                    $('#top_posts').hide();      
+                } 														  
                 if (reloadslider) {                        
                     per_reload(false,1,'comtag');
                 }
