@@ -347,10 +347,10 @@ class DialogsController < ApplicationController
       end
 
       if current_participant.country_code2.to_s == '_I'
-        country2_tag = 'indigenous'
+        country2_tag = 'Indigenous'
         if not current_participant.tag_list_downcase.include?('indigenous')
           current_participant.country_name2 = "Indigenous peoples"
-          current_participant.tag_list.add("indigenous")
+          current_participant.tag_list.add("Indigenous")
           current_participant.save!     
         end
       else
@@ -374,6 +374,17 @@ class DialogsController < ApplicationController
         end
       end
       
+      has_indig = false
+      if @comtag.downcase == "indigenous" and country2_tag != 'Indigenous'
+        r = Religion.where(shortname: 'Indigenous').first
+        if r
+          p_r = ParticipantReligion.where(participant_id: current_participant.id, religion_id: r.id).first
+          if p_r
+            has_indig = true
+          end
+        end
+      end
+      
       was_comtag = @comtag
       if @comtag != '' and @comtag.downcase == country1_tag.downcase
         @perspective = @comtag
@@ -383,6 +394,8 @@ class DialogsController < ApplicationController
         logger.info("dialogs#slider perspective set to #{@perspective} in international conversation, from @comtag, same as country2")
       elsif @conversation.together_apart == 'apart' and @resulttype == 'apart' and @show_result
         # if we're showing results in apart mode for a conversation, ok to pick whatever
+        @perspective = @comtag
+      elsif @comtag.downcase == "indigenous" and has_indig
         @perspective = @comtag
       else
         @comtag = country1_tag
