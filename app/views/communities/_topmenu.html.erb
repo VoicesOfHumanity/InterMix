@@ -8,7 +8,7 @@
   <% end -%>
   <li><a class="menu<%= 'selected' if @csection=='aparttogether' %>" href="/conversations">Apart & Together</a></li>
   <% if current_participant.status != 'visitor' -%>
-    <li><a class="menu<%= ' selected' if @csection=='mynet' %>" href="/networks/my">My networks</a></li>
+    <li><a id="my_networks" class="menu<%= ' selected' if @csection=='mynet' %>" style="display: <%= @moreless=='more' ? 'block' : 'none' %>" href="/networks/my">My networks</a></li>
   <% end -%>
 </ul>
 <ul class="horizmenu">

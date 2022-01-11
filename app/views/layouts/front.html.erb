@@ -86,7 +86,10 @@
                 if ($('#top_posts').length>0) {
                     $('#top_posts').show();      
                 }               
-						} else {
+                if ($('#my_networks').length>0) {
+                    $('#my_networks').show();      
+                }				
+							} else {
                 moreless = 'less';
                 $('#morelesstext').html("More Options");
                 if ($('#communitysidelist').length) {
@@ -126,7 +129,10 @@
                 } 	
                 if ($('#top_posts').length>0) {
                     $('#top_posts').hide();      
-                } 														  
+                }
+                if ($('#my_networks').length>0) {
+                    $('#my_networks').hide();      
+                }													  
                 if (reloadslider) {                        
                     per_reload(false,1,'comtag');
                 }
