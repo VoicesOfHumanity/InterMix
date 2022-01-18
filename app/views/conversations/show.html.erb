@@ -109,6 +109,10 @@
               %>
               <% if prof_nation -%>
                 in&nbsp;profile
+			  <% elsif @conversation.context == 'gender' and current_participant.gender_id == com.context_code.to_i -%>	
+			    in&nbsp;profile
+			  <% elsif @conversation.context == 'generation' and current_participant.generation_id == com.context_code.to_i -%>	
+			    in&nbsp;profile
               <% elsif @conversation.id == RELIGIONS_CONVERSATION_ID -%>
                   -
               <% elsif @conversation.twocountry -%>
@@ -136,7 +140,7 @@
                     end
                   %>
                   <% is_in_com = current_participant.tag_list_downcase.include?(com.tagname.downcase) %>
-                  <% if com.context == 'nation' or com.context == 'religion' -%>
+                  <% if com.context == 'nation' or com.context == 'religion' or com.context == 'gender' or com.context == 'generation' -%>
                       -
                   <% elsif is_in_com -%>
                     <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>">leave</a>
@@ -167,7 +171,7 @@
                   <% else -%>
                     ?
                   <% end -%>
-              <% elsif com.context != 'nation' and com.context != 'city' -%>
+              <% elsif com.context != 'nation' and com.context != 'city' and com.context != 'gender' and com.context != 'generation'-%>
                   <a href="#" onclick="joinleave('<%= com.tagname %>',<%= com.id %>);return(false)" id="comtagjoin_<%= com.id %>"><%= current_participant.tag_list_downcase.include?(com.tagname.downcase) ? "leave" : "join" %></a>
               <% end -%>
           </td>
