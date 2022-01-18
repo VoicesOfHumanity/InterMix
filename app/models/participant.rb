@@ -360,7 +360,7 @@ class Participant < ActiveRecord::Base
         return mn.id
       end
     end  
-    return '???'
+    return 0
   end
   
   def them

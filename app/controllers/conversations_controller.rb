@@ -92,7 +92,11 @@ class ConversationsController < ApplicationController
       # Pick an appropriate perspective
       perspectives = {}    
       for com in conversation.communities
-        if current_participant.tag_list_downcase.include?(com.tagname.downcase)
+        if conversation.context == 'gender' and current_participant.gender_id == com.context_code.to_i
+          perspectives[com.tagname] = com.fullname
+        elsif conversation.context == 'generation' and current_participant.generation_id == com.context_code.to_i
+          perspectives[com.tagname] = com.fullname
+        elsif current_participant.tag_list_downcase.include?(com.tagname.downcase)
           perspectives[com.tagname] = com.fullname
           #logger.info("conversations#index user is in :#{com.tagname}")          
         else
@@ -102,10 +106,12 @@ class ConversationsController < ApplicationController
       conversation.perspectives = perspectives
       if perspectives.length == 0
         conversation.perspective = 'outsider'
-      elsif session.has_key?("cur_perspective_#{conversation.id}") and session["cur_perspective_#{conversation.id}"] != ''
-        conversation.perspective = session["cur_perspective_#{conversation.id}"]
+        #logger.info("conversations#index no perspectives, so choosing outsider")
       elsif perspectives.length == 1
         conversation.perspective = perspectives.keys[0]
+        #logger.info("conversations#index choosing the only perspective: #{conversation.perspective}")
+      elsif session.has_key?("cur_perspective_#{conversation.id}") and session["cur_perspective_#{conversation.id}"] != '' and session["cur_perspective_#{conversation.id}"] != 'outsider'
+        conversation.perspective = session["cur_perspective_#{conversation.id}"]
       else
         conversation.perspective = perspectives.keys[0]
       end
