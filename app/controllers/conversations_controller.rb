@@ -63,6 +63,17 @@ class ConversationsController < ApplicationController
       conversations2 = Conversation.all
       for conversation in conversations2
         for com in conversation.communities
+          if conversation.context == 'gender'
+            if current_participant.gender_id == com.context_code.to_i
+              conversations << conversation
+              break
+            end
+          elsif conversation.context == 'generation'
+            if current_participant.generation_id == com.context_code.to_i
+              conversations << conversation
+              break
+            end
+          end
           if current_participant.tag_list_downcase.include?(com.tagname.downcase)
             conversations << conversation
             break
