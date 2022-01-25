@@ -42,7 +42,7 @@
     <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>">Forum</a> as an outsider</p>  
   <% else -%>
     <% perspective_community = Community.find_by_tagname(@cur_perspective) %>
-    <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= @cur_perspective %>"><%= perspective_community.name %> Forum</a></p>
+    <p>Go to the <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= @cur_perspective %>"><%= perspective_community ? perspective_community.name : "#{@cur_perspective}" %> Forum</a></p>
   <% end -%>
 
   <p>In Apart phase, the forum includes only messages from your current perspective. If you are not a member of any of the conversation communities, then you cannot post in the conversation, but you may comment and rate. Your comments and ratings as a non-member will not count in the conversation, only in the wider Order Out of Chaos forum.</p>

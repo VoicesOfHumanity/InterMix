@@ -264,6 +264,24 @@ class ConversationsController < ApplicationController
         end
       end
       @communities = communities
+    elsif @conversation.id == GENDER_CONVERSATION_ID
+      # find the community that goes with their gender
+      @perspectives = {}
+      com = Community.where(context: 'gender', context_code: current_participant.gender_id).first
+      if com
+        @cur_perspective = com.tagname
+        @perspectives[com.tagname] = com.fullname
+      end
+      @communities = @conversation.communities 
+    elsif @conversation.id == GENERATION_CONVERSATION_ID
+      # find the community that goes with their generation
+      @perspectives = {}
+      com = Community.where(context: 'generation', context_code: current_participant.generation_id).first
+      if com
+        @cur_perspective = com.tagname
+        @perspectives[com.tagname] = com.fullname
+      end      
+      @communities = @conversation.communities 
     else
       @communities = @conversation.communities      
     end

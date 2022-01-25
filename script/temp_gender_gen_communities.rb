@@ -16,14 +16,15 @@ genders = {
 		'plural' => 'Men',
 		'group' => 'Voice of Men',
 		'tag' => 'VoiceofMen'
-	}
+	},
+  408 => {
+  	'name' => 'simply-human',
+  	'plural' => 'Simply Human',
+  	'group' => 'Voice of Humanity',
+  	'tag' => 'VoiceOfHumanity'
+  }
 }
-#408 => {
-#	'name' => 'simply-human',
-#	'plural' => 'Simply Human',
-#	'group' => 'Voice of Humanity',
-#	'tag' => 'VoiceOfHumanity'
-#}
+
 
 genders.each do |code,info|
   puts "#{code}:#{info['group']}"
@@ -61,14 +62,15 @@ generations = {
 		'plural' => '',
 		'group' => 'Voice of Wisdom',
 		'tag' => 'VoiceOfWisdom'
-	}
+	},
+  409 => {
+  	'name' => 'simply-human',
+  	'plural' => 'Simply Human',
+  	'group' => 'Voice of Humanity',
+  	'tag' => ''
+  }
 }
-#409 => {
-#	'name' => 'simply-human',
-#	'plural' => 'Simply Human',
-#	'group' => 'Voice of Humanity',
-#	'tag' => ''
-#}
+
 
 generations.each do |code,info|
   puts "#{code}:#{info['group']}"
