@@ -2312,7 +2312,7 @@ class ItemsController < ApplicationController
         items,ratings,@title,@select_explain = Item.get_items(crit,current_participant,rootonly)
 
         #if @num_all_posts == 0 and @first == 1 and @datetype == 'fixed' and @datefixed == 'month'
-        if items.length == 0 and @datefixed != 'all' and (not @conversation or @conversation.together_apart != 'apart') and not @is_first
+        if items.length == 0 and @datefixed != 'all' and (not @conversation or @conversation.together_apart != 'apart') and @is_first
           #-- If there are no posts in the last month, change to since the beginning
           #params[:datetype] = 'range'
           #params[:datefrom] = '2016-03-08'
