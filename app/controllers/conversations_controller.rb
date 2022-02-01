@@ -337,6 +337,8 @@ class ConversationsController < ApplicationController
         end
       end
     end
+    
+    @comtag = @cur_perspective
         
   end
 

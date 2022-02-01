@@ -9,19 +9,22 @@ genders = {
 		'name' => 'female',
 		'plural' => 'Women',
 		'group' => 'Voice of Women',
-		'tag' => 'VoiceofWomen'
+		'tag' => 'VoiceofWomen',
+    'community' => nil
 	},
 	207 => {
 		'name' => 'male',
 		'plural' => 'Men',
 		'group' => 'Voice of Men',
-		'tag' => 'VoiceofMen'
+		'tag' => 'VoiceofMen',
+    'community' => nil
 	},
   408 => {
   	'name' => 'simply-human',
   	'plural' => 'Simply Human',
   	'group' => 'Voice of Humanity',
-  	'tag' => 'VoiceOfHumanity'
+  	'tag' => 'VoiceOfHumanity',
+    'community' => nil
   }
 }
 
@@ -35,6 +38,7 @@ genders.each do |code,info|
 		group = info['group']
 		community = Community.create(fullname: group, tagname: tagname, context: 'gender', context_code: code)
 	end
+  genders[code]['community'] = community
   concom = ConversationCommunity.where(conversation_id: conversation.id, community_id: community.id).first
   if not concom
     puts " - adding to conversation"
@@ -49,25 +53,29 @@ generations = {
 		'name' => 'young',
 		'plural' => 'Youth',
 		'group' => 'Voice of Youth',
-		'tag' => 'VoiceOfYouth'
+		'tag' => 'VoiceOfYouth',
+    'community' => nil  
 	},
 	406 => {
 		'name' => 'middle-aged',
 		'plural' => '',
 		'group' => 'Voice of Experience',
-		'tag' => 'VoiceOfExperience'
+		'tag' => 'VoiceOfExperience',
+    'community' => nil
 	},
 	407 => {
 		'name' => 'senior',
 		'plural' => '',
 		'group' => 'Voice of Wisdom',
-		'tag' => 'VoiceOfWisdom'
+		'tag' => 'VoiceOfWisdom',
+    'community' => nil
 	},
   409 => {
   	'name' => 'simply-human',
   	'plural' => 'Simply Human',
   	'group' => 'Voice of Humanity',
-  	'tag' => ''
+  	'tag' => 'VoiceOfHumanity',
+    'community' => nil
   }
 }
 
@@ -81,9 +89,36 @@ generations.each do |code,info|
 		group = info['group']
 		community = Community.create(fullname: group, tagname: tagname, context: 'generation', context_code: code)
 	end
+  generations[code]['community'] = community
   concom = ConversationCommunity.where(conversation_id: conversation.id, community_id: community.id).first
   if not concom
     puts " - adding to conversation"
     concom = ConversationCommunity.create(conversation_id: conversation.id, community_id: community.id)
+  end
+end
+
+puts "participants"
+participants = Participant.where(status: 'active')
+for p in participants
+  if p.gender_id > 0
+    com = genders[p.gender_id]['community']
+    if com
+      if not p.tag_list_downcase.include?(com.tagname.downcase)
+        p.tag_list.add(com.tagname)
+        p.save!
+        puts " - #{p.id}: gender:#{p.gender_id}:#{com.tagname}" 
+      end
+    end
+  end
+  if p.generation_id > 0
+    com = generations[p.generation_id]['community']
+    if com
+      com.tagname
+      if not p.tag_list_downcase.include?(com.tagname.downcase)
+        p.tag_list.add(com.tagname)
+        p.save!
+        puts " - #{p.id}: generation:#{p.generation_id}:#{com.tagname}" 
+      end
+    end
   end
 end

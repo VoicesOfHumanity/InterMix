@@ -141,6 +141,8 @@ class ProfilesController < ApplicationController
     @old_country_code = @participant.country_code.clone
     @old_country_code2 = @participant.country_code2.clone
     @old_city_uniq = @participant.city_uniq.clone
+    @old_gender_id = @participant.gender_id
+    @old_generation_id = @participant.generation_id
     @goto = params[:goto]  # Maybe a (forum) link to continue to after saving
         
     @participant.has_participated = true
@@ -351,7 +353,54 @@ class ProfilesController < ApplicationController
         end
       end 
     end    
-
+    
+    # Update gender and generation communities, if necessary  
+    @participant = Participant.find_by_id(@participant.id)  
+    p = @participant
+    if p.gender_id != @old_gender_id
+      logger.info("profiles#update gender changed #{@old_gender_id} -> #{p.gender_id}")
+      oldcom = Community.where(context: 'gender', context_code: @old_gender_id).first
+      if oldcom
+        logger.info("profiles#update remove old gender:#{@old_gender_id}/#{oldcom.tagname}")
+        p.tag_list.remove(oldcom.tagname)
+        p.save!
+      else
+        logger.info("profiles#update old gender community not found")
+      end
+    end
+    if p.generation_id != @old_generation_id
+      logger.info("profiles#update generation changed #{@old_generation_id} -> #{p.generation_id}")
+      oldcom = Community.where(context: 'generation', context_code: @old_generation_id).first
+      if oldcom
+        logger.info("profiles#update remove old generation:#{@old_generation_id}/#{oldcom.tagname}")
+        p.tag_list.remove(oldcom.tagname)
+        p.save!
+      else
+        logger.info("profiles#update old generation community not found")
+      end
+    end
+    if p.gender_id > 0
+      com = Community.where(context: 'gender', context_code: p.gender_id).first
+      if com
+        if not p.tag_list_downcase.include?(com.tagname.downcase)
+          logger.info("profiles#update adding mew gender:#{p.gender_id}/#{com.tagname}")
+          p.tag_list.add(com.tagname)
+          p.save!
+        end
+      end
+    end
+    if p.generation_id > 0
+      com = Community.where(context: 'generation', context_code: p.generation_id).first
+      if com
+        com.tagname
+        if not p.tag_list_downcase.include?(com.tagname.downcase)
+          logger.info("profiles#update adding mew generation:#{p.generation_id}/#{com.tagname}")
+          p.tag_list.add(com.tagname)
+          p.save!
+        end
+      end
+    end
+    
     @major_communities = Community.where(major: true).order(:fullname)
     @ungoals_communities = Community.where(ungoals: true).order(:fullname)
     @sustdev_communities = Community.where(sustdev: true).order(:fullname)
