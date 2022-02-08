@@ -1381,8 +1381,8 @@ class Item < ActiveRecord::Base
         ccom2_tag = ccom2 ? ccom2.tagname : ''
         scom1_tag = scom1 ? scom1.tagname : ''
         scom2_tag = ccom2 ? scom2.tagname : ''
-        logger.info("item#get_items ucom:#{ucom_tag} ccom1:#{ccom1_tag} ccom2:#{ccom2_tag} scom1:#{scom1_tag} scom2:#{scom2_tag}")
-        logger.info("item#get_items tag_list_downcase:#{current_participant.tag_list_downcase}")
+        #logger.info("item#get_items ucom:#{ucom_tag} ccom1:#{ccom1_tag} ccom2:#{ccom2_tag} scom1:#{scom1_tag} scom2:#{scom2_tag}")
+        #logger.info("item#get_items tag_list_downcase:#{current_participant.tag_list_downcase}")
         
         country1 = Geocountry.find_by_iso3(ccom1.context_code) if ccom1
         country2 = Geocountry.find_by_iso3(ccom2.context_code) if ccom2
@@ -1417,28 +1417,28 @@ class Item < ActiveRecord::Base
           whichres = 'ucom'
           logger.info("item#get_items #{whichres} results, because that was specified")          
           
-        elsif @conversation.together_apart=='together' and (ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag)) or (ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag))
+        elsif @conversation.together_apart=='together' and (ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag.downcase)) or (ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag.downcase))
           # viewer is from one of the two main countries. 
           whichres = 'country'
           logger.info("item#get_items #{whichres} results, because user is in one of the countries")
-        elsif @conversation.together_apart=='together' and (scom1 and current_participant.tag_list_downcase.include?(scom1_tag)) or (scom2 and current_participant.tag_list_downcase.include?(scom2_tag))
+        elsif @conversation.together_apart=='together' and (scom1 and current_participant.tag_list_downcase.include?(scom1_tag.downcase)) or (scom2 and current_participant.tag_list_downcase.include?(scom2_tag.downcase))
           # viewer is in one of the supporter communities. 
           whichres = 'supporter'
           logger.info("item#get_items #{whichres} results, because user is in one of the supporter communities")
           
-        elsif @conversation.together_apart=='apart' and ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag)
+        elsif @conversation.together_apart=='apart' and ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag.downcase)
           # viewer is from the first country 
           whichres = 'ccom1'
           logger.info("item#get_items #{whichres} results, because user is in that country")
-        elsif @conversation.together_apart=='apart' and ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag)
+        elsif @conversation.together_apart=='apart' and ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag.downcase)
           # viewer is from the second country 
           whichres = 'ccom2'
           logger.info("item#get_items #{whichres} results, because user is in that country")          
-        elsif @conversation.together_apart=='apart' and scom1 and current_participant.tag_list_downcase.include?(scom1_tag)
+        elsif @conversation.together_apart=='apart' and scom1 and current_participant.tag_list_downcase.include?(scom1_tag.downcase)
           # viewer is in the first supporter communitty
           whichres = 'scom1'
           logger.info("item#get_items #{whichres} results, because user is in that supporter community")
-        elsif @conversation.together_apart=='apart' and scom2 and current_participant.tag_list_downcase.include?(scom2_tag)
+        elsif @conversation.together_apart=='apart' and scom2 and current_participant.tag_list_downcase.include?(scom2_tag.downcase)
           # viewer is in the first supporter communitty
           whichres = 'scom2'
           logger.info("item#get_items #{whichres} results, because user is in that supporter community")
