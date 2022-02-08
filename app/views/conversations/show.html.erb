@@ -66,6 +66,9 @@
           <td><%= com.activity_count_for_conversation(@conversation,@cur_period) %></td>
           <td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a></td>
           <td>in&nbsp;profile</td>
+          <% if @conversation.together_apart=='apart' -%>
+		  	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= com.tagname %>&show_result=1&resulttype=apart">go&nbsp;to&nbsp;results</a></td>
+          <% end -%>
         </tr>
     <% end -%>
     <tr><td>&nbsp;</td></tr> 
@@ -75,6 +78,9 @@
           <td><%= com.activity_count_for_conversation(@conversation,@cur_period) %></td>
           <td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a></td>
           <td>in&nbsp;profile</td>
+          <% if @conversation.together_apart=='apart' -%>
+		  	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= com.tagname %>&show_result=1&resulttype=apart">go&nbsp;to&nbsp;results</a></td>
+          <% end -%>
         </tr>
     <% end -%>
     <tr><td>&nbsp;</td></tr> 
@@ -84,6 +90,10 @@
           <td><%= com.activity_count_for_conversation(@conversation,@cur_period) %></td>
           <td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ? com.fullname : com.tagname %></a></td>
           <td>in&nbsp;profile</td>
+          <% if @conversation.together_apart=='apart' -%>
+		  	<td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= @conversation.shortname %>&comtag=<%= com.tagname %>&show_result=1&resulttype=apart">go&nbsp;to&nbsp;results</a></td>
+          <% end -%>
+	      </tr>
         </tr>
     <% end -%>
     <tr><td>&nbsp;</td></tr> 
