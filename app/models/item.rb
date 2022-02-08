@@ -1381,6 +1381,8 @@ class Item < ActiveRecord::Base
         ccom2_tag = ccom2 ? ccom2.tagname : ''
         scom1_tag = scom1 ? scom1.tagname : ''
         scom2_tag = ccom2 ? scom2.tagname : ''
+        logger.info("item#get_items ucom:#{ucom_tag} ccom1:#{ccom1_tag} ccom2:#{ccom2_tag} scom1:#{scom1_tag} scom2:#{scom2_tag}")
+        logger.info("item#get_items tag_list_downcase:#{current_participant.tag_list_downcase}")
         
         country1 = Geocountry.find_by_iso3(ccom1.context_code) if ccom1
         country2 = Geocountry.find_by_iso3(ccom2.context_code) if ccom2
