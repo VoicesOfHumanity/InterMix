@@ -149,7 +149,7 @@ class DialogsController < ApplicationController
       @dsection = 'list'
     end
 
-    if not params.has_key?(:show_result)
+    if not params.has_key?(:show_result) and not params.has_key?(:page)
       # all movement between tabs keeps the show_result parameter. If it isn't there, we're coming here from elsewhere
       is_new = true
     else
