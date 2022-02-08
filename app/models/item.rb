@@ -1499,6 +1499,10 @@ class Item < ActiveRecord::Base
             kind_results = "Country"
           end
           ratings = ratings.where("(participants.country_code=? or participants.country_code=?)", country1.iso, country2.iso) 
+          if @conversation.together_apart == 'together'
+            # and we want items only when representing one of those countries, if in together mode
+            items = items.where("lower(items.representing_com)='#{ccom1_tag.downcase}' or lower(items.representing_com)='#{ccom2_tag.downcase}'")
+          end
         elsif whichres == 'supporter'
           # Only votes from the countries and supporters
           # Get a list of the people that are in the supporter communities, or in the country communities
@@ -1513,6 +1517,10 @@ class Item < ActiveRecord::Base
           plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
           if plist != ''
             ratings = ratings.where("participants.id in (#{plist})")
+          end
+          if @conversation.together_apart == 'together'
+            # and we want items only when representing one of those countries or the supporters, if in together mode
+            items = items.where("lower(items.representing_com)='#{ccom1_tag.downcase}' or lower(items.representing_com)='#{ccom2_tag.downcase}' or lower(items.representing_com)='#{scom1_tag.downcase}' or lower(items.representing_com)='#{scom2_tag.downcase}'")
           end
         else
           select_explain = "(candidate messages and votes from all participants)"   
