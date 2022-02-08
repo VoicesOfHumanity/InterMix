@@ -22,8 +22,8 @@ genders = {
   408 => {
   	'name' => 'simply-human',
   	'plural' => 'Simply Human',
-  	'group' => 'Voice of Humanity',
-  	'tag' => 'VoiceOfHumanity',
+  	'group' => 'Gender Simply Human',
+  	'tag' => 'gendersimplyhuman',
     'community' => nil
   }
 }
@@ -32,12 +32,15 @@ genders = {
 genders.each do |code,info|
   puts "#{code}:#{info['group']}"
 	community = Community.where(context: 'gender', context_code: code).first
+	tagname = info['tag']
+	group = info['group']
 	if not community
     puts " - creating community"
-		tagname = info['tag']
-		group = info['group']
 		community = Community.create(fullname: group, tagname: tagname, context: 'gender', context_code: code)
 	end
+  community.fullname = group
+  community.tagname = tagname
+  community.save
   genders[code]['community'] = community
   concom = ConversationCommunity.where(conversation_id: conversation.id, community_id: community.id).first
   if not concom
@@ -73,8 +76,8 @@ generations = {
   409 => {
   	'name' => 'simply-human',
   	'plural' => 'Simply Human',
-  	'group' => 'Voice of Humanity',
-  	'tag' => 'VoiceOfHumanity',
+  	'group' => 'Age Simply Human',
+  	'tag' => 'agesimplyhuman',
     'community' => nil
   }
 }
@@ -83,12 +86,15 @@ generations = {
 generations.each do |code,info|
   puts "#{code}:#{info['group']}"
   community = Community.where(context: 'generation', context_code: code).first
+	tagname = info['tag']
+	group = info['group']
 	if not community
     puts " - creating community"
-		tagname = info['tag']
-		group = info['group']
 		community = Community.create(fullname: group, tagname: tagname, context: 'generation', context_code: code)
 	end
+  community.fullname = group
+  community.tagname = tagname
+  community.save
   generations[code]['community'] = community
   concom = ConversationCommunity.where(conversation_id: conversation.id, community_id: community.id).first
   if not concom
@@ -100,6 +106,10 @@ end
 puts "participants"
 participants = Participant.where(status: 'active')
 for p in participants
+  if p.tag_list.include?("VoiceOfHumanity")
+    p.tag_list.remove("VoiceOfHumanity")
+    p.save!
+  end
   if p.gender_id > 0
     com = genders[p.gender_id]['community']
     if com
