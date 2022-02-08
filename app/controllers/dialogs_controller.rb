@@ -208,6 +208,7 @@ class DialogsController < ApplicationController
       session.delete(:gender)
       session.delete(:datetype)
       session.delete(:datefixed)
+      logger.info("dialogs#slider first time here. Deleting datefixed session cookie")
       session.delete(:datefrom)
       session.delete(:list_threads)
       session.delete(:list_sortby)
@@ -223,7 +224,9 @@ class DialogsController < ApplicationController
       @threads = session[:list_threads] if session.has_key?(:list_threads)
     end
 
-    if @in == 'conversation' and session.has_key?(:datefixed_conversation)
+    if is_new
+      logger.info("dialogs#slider first time here. Don't try to set datefixed from cookies")
+    elsif @in == 'conversation' and session.has_key?(:datefixed_conversation)
       @datefixed = session[:datefixed_conversation]
       logger.info("dialogs#slider datefixed set from session[:datefixed_conversation] to: #{@datefixed}")
     elsif @in == 'community' and session.has_key?(:datefixed_community)
