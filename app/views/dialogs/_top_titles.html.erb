@@ -29,7 +29,22 @@
 <% elsif (@dsection == 'list' or @dsection == 'top') and @conversation and @conversation.name.to_s != '' -%>
   - <span id="top_forum_header"><%= @conversation.name if @conversation %> - <%=  @conversation.together_apart.capitalize %></span> 
 <% elsif @dsection == 'list' -%>
-  - <span id="top_forum_header"><%= @nvaction ? 'Nonviolent Action Forum' : 'Forum' %> <% if @in == 'main' %><span style="color:#aaa">(tell us what you think!)</span><% end %></span>  
+  - <span id="top_forum_header"><%= @nvaction ? 'Nonviolent Action Forum' : 'Forum' %> 
+	  	<% if @in == 'main' -%>
+	 		<span style="color:#aaa">
+		        <% help_text = HelpText.find_by_code("oooc_message")
+		        if help_text
+		          @optional_message = help_text.text
+				else
+				  @optional_message = "tell us what you think!"   
+		        end
+				%>
+				<% if @optional_message.to_s != '' -%>
+					(<%= @optional_message %>)
+				<% end -%>
+			</span>
+		<% end -%>
+ 	</span>  
 <% end -%>
 
 </span>
