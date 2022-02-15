@@ -35,13 +35,39 @@ class CommunitiesController < ApplicationController
     if params[:which].to_s == 'all' or (current_participant.tag_list.length == 0 and current_participant.status != 'visitor')
       communities = Community.where(is_sub: false).where("context not in ('city','nation','religion')")
       @csection = 'all' 
-      @toptitle = "All Communities except Nations, Cities and Religions"
+      @toptitle = "All Communities except Nations, Cities, Religions, Genders and Ages"
     elsif params[:which].to_s == 'human'  or (current_participant.status == 'visitor' and params[:which].to_s == '')
       communities = Community.where(is_sub: false, more: true)
       @csection = 'human' 
     elsif params[:which].to_s == 'un'  
       communities = Community.where(is_sub: false, ungoals: true)
-      @csection = 'un' 
+      @csection = 'un'       
+    elsif params[:which].to_s == 'genders'  
+      @prof_genders = []
+      communities = []
+      coms = Community.where("context='gender' or context2='gender'")
+      for com in coms
+        if current_participant.gender_id == com.context_code.to_i
+          com.activity = com.activity_count
+          @prof_genders << com
+        else
+          communities << com
+        end
+      end
+      @csection = 'genders'
+    elsif params[:which].to_s == 'generations'  
+      @prof_generations = []
+      communities = []
+      coms = Community.where("context='generation' or context2='generation'")
+      for com in coms
+        if current_participant.generation_id == com.context_code.to_i
+          com.activity = com.activity_count
+          @prof_generations << com
+        else
+          communities << com
+        end
+      end
+      @csection = 'generations'     
     elsif params[:which].to_s == 'religions'  
       preligions = current_participant.participant_religions.collect{|r| r.religion_id}
       logger.info("communities#index preligions:#{preligions}")
