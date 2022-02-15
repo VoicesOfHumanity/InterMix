@@ -83,6 +83,12 @@
                 if ($('#mideastbutton').length>0) {
                     $('#mideastbutton').show();      
                 }
+                if ($('#genderbutton').length>0) {
+                    $('#genderbutton').show();      
+                } 	
+                if ($('#generationbutton').length>0) {
+                    $('#generationbutton').show();      
+                } 	
                 if ($('#top_posts').length>0) {
                     $('#top_posts').show();      
                 }               
@@ -126,7 +132,13 @@
                 }   
                 if ($('#mideastbutton').length>0) {
                     $('#mideastbutton').hide();      
+                } 								
+                if ($('#genderbutton').length>0) {
+                    $('#genderbutton').hide();      
                 } 	
+                if ($('#generationbutton').length>0) {
+                    $('#generationbutton').hide();      
+                } 									
                 if ($('#top_posts').length>0) {
                     $('#top_posts').hide();      
                 }
@@ -206,7 +218,15 @@
                 <% un_conv = Conversation.find_by_id(UNGOALS_CONVERSATION_ID) %>
                 <% if un_conv and un_conv.active -%>
                 <li id="ungoalbutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='ungoals' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= UNGOALS_CONVERSATION_CODE %>">The UN Goals</a></li>
-                <% end -%>                
+                <% end -%>  								
+                <% gender_conv = Conversation.find_by_id(GENDER_CONVERSATION_ID) %>
+                <% if gender_conv and gender_conv.active -%>
+                <li id="genderbutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='genders' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= GENDER_CONVERSATION_CODE %>">The Genders</a></li>
+                <% end -%>  								
+                <% generation_conv = Conversation.find_by_id(GENERATION_CONVERSATION_ID) %>
+                <% if generation_conv and generation_conv.active -%>
+                <li id="generationbutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='generations' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= GENERATION_CONVERSATION_CODE %>">The Generations</a></li>
+                <% end -%>  																              
                 <% if Conversation.find_by_id(INT_CONVERSATION_ID).active -%>
                 <li id="nationbutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='nations' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>">The Nations</a></li>
                 <% end -%>
