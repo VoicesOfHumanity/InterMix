@@ -106,13 +106,7 @@
       <% end -%>
       <input type="radio" name="meta_3" id="meta_3_0" value="0" <% if gender==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.gender_id==408) %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()">all<br>
       <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
-        <% if not metamap_node.sumcat -%>
-          <% if false %>
-            <input type="checkbox" name="meta_3[]" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" checked onclick="per_reload()"><%= metamap_node.name %><br>
-          <% else %>
-            <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" <% if metamap_node.id==gender %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()"><%= metamap_node.name %><br>
-          <% end -%>
-        <% end %>
+	        <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" <% if metamap_node.id==gender %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()"><%= metamap_node.name %><br>
       <% end %>
     </div>
 
@@ -130,9 +124,7 @@
       <% end -%>
       <input type="radio" name="meta_5" id="meta_5_0" value="0" <% if age==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.generation_id==409) %>checked<% end %> <% if freeze_age %>disabled<% end %> onclick="per_reload()">all<br>
       <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
-        <% if not metamap_node.sumcat -%>
           <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" <% if metamap_node.id==age %>checked<% end %> <% if freeze_age %>disabled<% end %> onclick="per_reload()"><%= metamap_node.name %><br>
-        <% end %>
       <% end %>
     </div>
 
