@@ -12,7 +12,7 @@
 prof_nation = false
 prof_city = false
 prof_gender = false
-prof_generation
+prof_generation = false
 if @community.context=='nation'
   geocountry = Geocountry.find_by_iso3(@community.context_code)
   if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
