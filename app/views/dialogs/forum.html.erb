@@ -1,5 +1,18 @@
 <%= render(:partial => 'dialogs/menu')%>
 
+<%
+if @dialog.new_message_title.to_s != ''
+	addtitle = @dialog.new_message_title
+else
+	help_text = HelpText.find_by_code("addmessage")
+	if help_text and help_text.text != ''
+		addtitle = help_text.text
+	else
+		addtitle = "Add Message"	
+	end
+end
+%>
+
 <form id="searchform" style="clear:both">
 <input type="hidden" id="authenticity_token" name="authenticity_token" value="<%= form_authenticity_token %>">
 <input type="hidden" id="max_messages" value="<%= @dialog.settings_with_period["max_messages"].to_i %>">	
@@ -19,9 +32,9 @@
 		<div class="right">
 		<input type="button" value="More Options" id="optionbutton" onclick="toggleoptions()">
 		<% if session[:group_is_member] and ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) and @dialog.settings_with_period["posting_open"] -%>
-		<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
+		<input type="button" value="<%= addtitle %>" id="newthreadbutton" onclick="newitem('<%= form_authenticity_token %>')">
 		<% else -%>
-			<input type="button" value="<%= @dialog.new_message_title.to_s != '' ? @dialog.new_message_title : "Add Message" %>" title="<%= 
+			<input type="button" value="<%= addtitle %>" title="<%= 
 			if not session[:group_is_member] then "Not group member" elsif not @dialog.settings_with_period["posting_open"] then "Posting is not open"
 	elsif not ((@dialog.current_period.to_i > 0 and (@dialog.active_period.max_messages.to_i == 0 or @previous_messages_period < @dialog.active_period.max_messages.to_i)) or (@dialog.current_period.to_i == 0 and (@dialog.max_messages.to_i == 0 or @previous_messages < @dialog.max_messages.to_i))) then "Maximum messages have been reached"
 	else "Can't post, for unknown reason" end %>" id="newthreadbutton" disabled="disabled" style="Opacity:0.5">
