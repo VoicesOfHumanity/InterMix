@@ -2046,8 +2046,8 @@ class ItemsController < ApplicationController
         age = crit[:age]
         gender = crit[:gender]
 
-        gender_pos = {207=>"Men's",208=>"Women's"}
-        gender_single = {207=>"Men",208=>"Women"} 
+        gender_pos = {207=>"Men's",208=>"Women's",408=>"Gender Simply Human's"}
+        gender_single = {207=>"Men",208=>"Women",408=>"Gender Simply Human"} 
     
         if age > 0 and gender > 0
           # One particular result
@@ -2113,7 +2113,7 @@ class ItemsController < ApplicationController
             elsif gender_id==207 and @community and @community.voice_of_men.to_s != ''
               name = @community.voice_of_men
             end
-            if not gender_rec.sumcat
+            if true #not gender_rec.sumcat
               item = nil
               iproc = nil
               exp = ""
@@ -2146,7 +2146,7 @@ class ItemsController < ApplicationController
             elsif age_id==407 and @community and @community.voice_of_old.to_s != ''
               name = @community.voice_of_old
             end
-            if not age_rec.sumcat
+            if true #not age_rec.sumcat
               item = nil
               iproc = nil
             

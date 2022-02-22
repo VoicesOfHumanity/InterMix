@@ -23,7 +23,7 @@ genders = {
   	'name' => 'simply-human',
   	'plural' => 'Simply Human',
   	'group' => 'Gender Simply Human',
-  	'tag' => 'gendersimplyhuman',
+  	'tag' => 'GenderSimplyHuman',
     'community' => nil
   }
 }
@@ -77,7 +77,7 @@ generations = {
   	'name' => 'simply-human',
   	'plural' => 'Simply Human',
   	'group' => 'Age Simply Human',
-  	'tag' => 'agesimplyhuman',
+  	'tag' => 'AgeSimplyHuman',
     'community' => nil
   }
 }

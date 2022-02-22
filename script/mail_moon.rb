@@ -154,7 +154,7 @@ for gender_rec in genders
   gender_name = gender_rec.name_as_group
   code = "#{gender_id}"
   name = "#{gender_name}"
-  if not gender_rec.sumcat
+  if true #not gender_rec.sumcat
     item = nil
     iproc = nil
     exp = ""
@@ -190,7 +190,7 @@ for age_rec in ages
   age_name = age_rec.name_as_group
   code = "#{age_id}"
   name = "#{age_name}"
-  if not age_rec.sumcat
+  if true #not age_rec.sumcat
     item = nil
     iproc = nil
     
