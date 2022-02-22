@@ -4,6 +4,10 @@
 <p style="clear:both;color:darkred">You're not a member of any community</p>
 <% end %>
 
+<%
+	preligions = current_participant.participant_religions.collect{|r| r.religion_id}
+%>
+
 <% if current_participant.status != 'visitor' -%>
 <p style="clear:both"><input type="button" value="Add community" onclick="addcom()"></p>
 <% end -%>
@@ -95,14 +99,35 @@
     	<td>
         <%
         prof_nation = false
+				prof_city = false
+				prof_religion = false
+				prof_gender = false
+				prof_generation = false
         if com.context=='nation'
           geocountry = Geocountry.find_by_iso3(com.context_code)
           if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
             prof_nation = true
           end
-        end
+	      elsif com.context=='city'
+	        if current_participant.city_uniq != '' and com.context_code == current_participant.city_uniq
+	          prof_city = true
+	        end
+				elsif com.context=='religion'
+					if (com.context == 'religion' and preligions.include? com.context_code.to_i) or (com.context2 == 'religion' and preligions.include? com.context_code2.to_i)
+						prof_religion = true
+					end
+	      elsif com.context=='gender'
+	        if current_participant.gender_id == com.context_code.to_i
+	          prof_gender = true
+	        end
+	      elsif com.context=='generation'
+	        if current_participant.generation_id == com.context_code.to_i
+	          prof_generation = true
+	        end
+	      end
+				
         %>
-        <% if prof_nation -%>
+        <% if prof_nation or prof_city or prof_religion or prof_gender or prof_generation -%>
           in&nbsp;profile
           
         <% elsif com.conversation_id.to_i>0 and com.conversation.twocountry -%>

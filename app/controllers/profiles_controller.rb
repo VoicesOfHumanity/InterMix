@@ -357,13 +357,13 @@ class ProfilesController < ApplicationController
     # Update gender and generation communities, if necessary  
     @participant = Participant.find_by_id(@participant.id)  
     p = @participant
+    logger.info("profiles#update gender_id:#{p.gender_id} generation_id:#{p.generation_id}")
     if p.gender_id != @old_gender_id
       logger.info("profiles#update gender changed #{@old_gender_id} -> #{p.gender_id}")
       oldcom = Community.where(context: 'gender', context_code: @old_gender_id).first
       if oldcom
         logger.info("profiles#update remove old gender:#{@old_gender_id}/#{oldcom.tagname}")
         p.tag_list.remove(oldcom.tagname)
-        p.save!
       else
         logger.info("profiles#update old gender community not found")
       end
@@ -374,32 +374,44 @@ class ProfilesController < ApplicationController
       if oldcom
         logger.info("profiles#update remove old generation:#{@old_generation_id}/#{oldcom.tagname}")
         p.tag_list.remove(oldcom.tagname)
-        p.save!
       else
         logger.info("profiles#update old generation community not found")
       end
     end
     if p.gender_id > 0
       com = Community.where(context: 'gender', context_code: p.gender_id).first
-      if com
-        if not p.tag_list_downcase.include?(com.tagname.downcase)
-          logger.info("profiles#update adding mew gender:#{p.gender_id}/#{com.tagname}")
-          p.tag_list.add(com.tagname)
-          p.save!
-        end
+      if com and not p.tag_list_downcase.include?(com.tagname.downcase)
+        logger.info("profiles#update adding new gender:#{p.gender_id}/#{com.tagname}")
+        p.tag_list.add(com.tagname)
       end
     end
     if p.generation_id > 0
       com = Community.where(context: 'generation', context_code: p.generation_id).first
-      if com
-        com.tagname
-        if not p.tag_list_downcase.include?(com.tagname.downcase)
-          logger.info("profiles#update adding mew generation:#{p.generation_id}/#{com.tagname}")
-          p.tag_list.add(com.tagname)
-          p.save!
-        end
+      if com and not p.tag_list_downcase.include?(com.tagname.downcase)
+        logger.info("profiles#update adding new generation:#{p.generation_id}/#{com.tagname}")
+        p.tag_list.add(com.tagname)
       end
     end
+    
+    p.save!
+    
+    # Remove any genders and generatioins other than the one we have
+    gencoms = Community.where(context: 'gender')
+    for gcom in gencoms
+      if gcom.context_code.to_i != p.gender_id and p.tag_list_downcase.include?(gcom.tagname.downcase)
+        logger.info("profiles#update removing not used gender:#{gcom.id}/#{gcom.tagname}")
+        p.tag_list.remove(gcom.tagname)
+      end
+    end
+    gencoms = Community.where(context: 'generation')
+    for gcom in gencoms
+      if gcom.context_code.to_i != p.generation_id and p.tag_list_downcase.include?(gcom.tagname.downcase)
+        logger.info("profiles#update removing not used generation:#{gcom.id}/#{gcom.tagname}")
+        p.tag_list.remove(gcom.tagname)
+      end
+    end
+
+    p.save!
     
     @major_communities = Community.where(major: true).order(:fullname)
     @ungoals_communities = Community.where(ungoals: true).order(:fullname)

@@ -10,6 +10,7 @@
     <th>ID</th>
     <th>Short name</th>
     <th>Full name</th>
+		<th>Context</th>
     <th>Moderated</th>
   </tr>
 
@@ -21,6 +22,7 @@
 		<td><a href="#" onclick="viewrec1(<%= community.id %>)"><%= community.id %></a></td>
     <td><a href="#" onclick="viewrec1(<%= community.id %>)"><%= community.tagname %></a></td>
     <td><%= community.fullname %></td>
+		<td><%= community.context %></td>
     <td><%= community.moderated ? 'yes' : '' %></td>
   </tr>
 <% end %>

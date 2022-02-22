@@ -1648,6 +1648,10 @@ class Item < ActiveRecord::Base
       end      
       com = Community.find_by_tagname(crit[:comtag])
       prof_nation = false
+      prof_city = false
+      prof_religion = false
+      prof_gender = false
+      prof_generation = false
       if com and com.context=='nation'
         geocountry = Geocountry.find_by_iso3(com.context_code)
         if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
@@ -1656,6 +1660,14 @@ class Item < ActiveRecord::Base
       elsif com and com.context=='city'
         if current_participant.city_uniq != '' and com.context_code == current_participant.city_uniq
           prof_city = true
+        end
+      elsif com.context=='gender'
+        if current_participant.gender_id == com.context_code.to_i
+          prof_gender = true
+        end
+      elsif com.context=='generation'
+        if current_participant.generation_id == com.context_code.to_i
+          prof_generation = true
         end
       end
       if com
@@ -1667,6 +1679,16 @@ class Item < ActiveRecord::Base
           if prof_city
             title += " in&nbsp;profile"
           end
+        elsif com.context == 'religion'
+        elsif com.context == 'gender'
+          if prof_gender
+            title += " in&nbsp;profile"
+          end
+        elsif com.context == 'generation'
+          if prof_generation
+            title += " in&nbsp;profile"
+          end
+        elsif com.context == 'twocountry'
         else
           if has_tag
             title += " <input type=\"button\" value=\"leave\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"

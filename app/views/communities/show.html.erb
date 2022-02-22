@@ -11,6 +11,7 @@
 <%
 prof_nation = false
 prof_city = false
+prof_religion = false
 prof_gender = false
 prof_generation = false
 if @community.context=='nation'
@@ -22,6 +23,11 @@ elsif @community.context=='city'
   if current_participant.city_uniq != '' and @community.context_code == current_participant.city_uniq
     prof_city = true
   end
+elsif @community.context=='religion'
+	preligions = current_participant.participant_religions.collect{|r| r.religion_id}
+	if (@community.context == 'religion' and preligions.include? @community.context_code.to_i) or (@community.context2 == 'religion' and preligions.include? @community.context_code2.to_i)
+		prof_religion = true
+	end
 elsif @community.context=='gender'
   if current_participant.gender_id == @community.context_code.to_i
     prof_gender = true
@@ -33,9 +39,9 @@ elsif @community.context=='generation'
 end
 %>
 <% is_in_com = current_participant.tag_list_downcase.include?(@community.tagname.downcase) %>
-<% if prof_nation or prof_city or prof_gender or prof_generation -%>
+<% if prof_nation or prof_city or prof_religion or prof_gender or prof_generation -%>
   [in&nbsp;profile]
-<% elsif @community.context=='nation' or @community.context=='city' or @community.context=='gender' or @community.context=='generation' -%>  
+<% elsif @community.context=='nation' or @community.context=='city' or @community.context=='religion' or @community.context=='gender' or @community.context=='generation' -%>  
 
 <% elsif @community.context=='twocountry' and @community.conversation and @community.id == @community.conversation.twocountry_common -%>
     <a href="#" onclick="joinleave('<%= @comtag %>',<%= @community.id %>);return(false)" id="comtagjoin_<%= @community.id %>"><%= is_in_com ? "leave" : "join" %></a>
