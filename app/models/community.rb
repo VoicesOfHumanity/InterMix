@@ -57,7 +57,9 @@ class Community < ActiveRecord::Base
   end
   
   def geo_counts
-    members = Participant.tagged_with(self.tagname)
+    members = #Participant.tagged_with(self.tagname)
+    members = Participant.tagged_with(self.tagname).where(status: 'active', no_email: false)
+    logger.info("community#geo_counts #{members.length} members")
     nations = {}
     states = {}
     metros = {}
