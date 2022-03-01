@@ -195,6 +195,13 @@ class ProfilesController < ApplicationController
         #end
       end
     end
+
+    if flash.now[:alert] == ""
+      logger.info("profiles#update saving basic fields")
+      @participant.save!
+    else
+      logger.info("profiles#update not saving yet, because there are issues")
+    end
     
     # religions
     logger.info("profiles#update religions:#{params[:religions]}")
@@ -210,7 +217,7 @@ class ProfilesController < ApplicationController
         rchange = true
       end
     end
-    @participant.save if rchange
+    @participant.save! if rchange
     rchange = false
     if params[:religions]
       # Add the new ones
@@ -234,7 +241,7 @@ class ProfilesController < ApplicationController
         end
       end
     end
-    @participant.save if rchange
+    @participant.save! if rchange
     @participant.participant_religions.reload
     rchange = false
     has_indigenous = false
@@ -273,7 +280,7 @@ class ProfilesController < ApplicationController
         end
       end
     end
-    @participant.save if rchange
+    @participant.save! if rchange
     rchange = false
     logger.info("profiles#update have these religions: #{got_religions}")
     # Remove any unmentioned religions from tags
