@@ -111,6 +111,9 @@ end
       <% elsif @in == 'network' and @network and @network.gender.to_i > 0 %>
         <% gender = @network.gender  %>
         <% freeze_gender = true %>
+			<% elsif @in == 'conversation' and @conversation and @conversation.context=='gender' and @conversation.together_apart=='apart' %>
+        <% gender = current_participant.gender_id  %>
+        <% freeze_gender = true %>
       <% end -%>
       <input type="radio" name="meta_3" id="meta_3_0" value="0" <% if gender==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.gender_id==408) %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()">all<br>
       <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
@@ -128,6 +131,9 @@ end
         <% freeze_age = true %>
       <% elsif @in == 'network' and @network and @network.age.to_i > 0 %>
         <% age = @network.age  %>
+        <% freeze_age = true %>
+			<% elsif @in == 'conversation' and @conversation and @conversation.context=='generation' and @conversation.together_apart=='apart' %>
+        <% age = current_participant.generation_id  %>
         <% freeze_age = true %>
       <% end -%>
       <input type="radio" name="meta_5" id="meta_5_0" value="0" <% if age==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.generation_id==409) %>checked<% end %> <% if freeze_age %>disabled<% end %> onclick="per_reload()">all<br>

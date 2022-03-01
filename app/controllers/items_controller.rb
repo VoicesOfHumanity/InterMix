@@ -2206,10 +2206,9 @@ class ItemsController < ApplicationController
             end
             code = "#{age_id}_#{gender_id}"
             name = "#{gender_name} #{age_name}"
-            if not gender_rec.sumcat
+            if not gender_rec.sumcat or (@in=='conversation' and @conversation.together_apart=='apart' and current_participant.gender_id==408)
               item = nil
-              iproc = nil
-            
+              iproc = nil         
               crit[:age] = age_id
               crit[:gender] = gender_id
               items,ratings,title,select_explain = Item.get_items(crit,current_participant)
@@ -2221,8 +2220,7 @@ class ItemsController < ApplicationController
                   item = @items[0]
                   iproc = @itemsproc[item.id]
                 end
-              end
-            
+              end          
               @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
             end
           end
@@ -2259,10 +2257,9 @@ class ItemsController < ApplicationController
             age_name = age_rec.name_as_group
             code = "#{age_id}_#{gender_id}"
             name = "#{gender_name} #{age_name}"
-            if not age_rec.sumcat
+            if not age_rec.sumcat or (@in=='conversation' and @conversation.together_apart=='apart' and current_participant.generation_id==409)            
               item = nil
-              iproc = nil
-            
+              iproc = nil          
               crit[:age] = age_id
               crit[:gender] = gender_id
               items,ratings,title,select_explain = Item.get_items(crit,current_participant)
@@ -2274,8 +2271,7 @@ class ItemsController < ApplicationController
                   item = @items[0]
                   iproc = @itemsproc[item.id]
                 end
-              end
-            
+              end          
               @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
             end
           end
