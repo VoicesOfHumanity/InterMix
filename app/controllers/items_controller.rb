@@ -2206,7 +2206,8 @@ class ItemsController < ApplicationController
             end
             code = "#{age_id}_#{gender_id}"
             name = "#{gender_name} #{age_name}"
-            if not gender_rec.sumcat or (@in=='conversation' and @conversation.together_apart=='apart' and current_participant.gender_id==408)
+            #if not gender_rec.sumcat or (@in=='conversation' and @conversation.together_apart=='apart' and current_participant.gender_id==408)
+            if true
               item = nil
               iproc = nil         
               crit[:age] = age_id
@@ -2257,7 +2258,8 @@ class ItemsController < ApplicationController
             age_name = age_rec.name_as_group
             code = "#{age_id}_#{gender_id}"
             name = "#{gender_name} #{age_name}"
-            if not age_rec.sumcat or (@in=='conversation' and @conversation.together_apart=='apart' and current_participant.generation_id==409)            
+            #if not age_rec.sumcat or (@in=='conversation' and @conversation.together_apart=='apart' and current_participant.generation_id==409)            
+            if true            
               item = nil
               iproc = nil          
               crit[:age] = age_id
