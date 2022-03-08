@@ -407,14 +407,24 @@ class ProfilesController < ApplicationController
     for gcom in gencoms
       if gcom.context_code.to_i != p.gender_id and p.tag_list_downcase.include?(gcom.tagname.downcase)
         logger.info("profiles#update removing not used gender:#{gcom.id}/#{gcom.tagname}")
-        p.tag_list.remove(gcom.tagname)
+        #p.tag_list.remove(gcom.tagname)
+        for tag in p.tag_list
+          if tag.downcase == gcom.tagname.downcase
+            p.tag_list.remove(tag)
+          end
+        end
       end
     end
     gencoms = Community.where(context: 'generation')
     for gcom in gencoms
       if gcom.context_code.to_i != p.generation_id and p.tag_list_downcase.include?(gcom.tagname.downcase)
         logger.info("profiles#update removing not used generation:#{gcom.id}/#{gcom.tagname}")
-        p.tag_list.remove(gcom.tagname)
+        #p.tag_list.remove(gcom.tagname)
+        for tag in p.tag_list
+          if tag.downcase == gcom.tagname.downcase
+            p.tag_list.remove(tag)
+          end
+        end
       end
     end
 
