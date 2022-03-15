@@ -306,7 +306,7 @@ class ItemsController < ApplicationController
           'id': comment.id,
           'created_at': comment.created_at,
           'posted_by': comment.posted_by,
-          'posted_by_user': comment.participant.name,
+          'posted_by_user': comment.participant ? comment.participant.name : '???',
           'content': com_content,
           'has_more': has_more
         }
@@ -319,7 +319,7 @@ class ItemsController < ApplicationController
         'id': item.id,
         'created_at': item.created_at,
         'posted_by': item.posted_by,
-        'posted_by_user': item.participant.name,
+        'posted_by_user': item.participant ? item.participant.name : '???',
         'subject': item.subject,
         'short_content': item.short_content,
         'html_content': item.html_content,
