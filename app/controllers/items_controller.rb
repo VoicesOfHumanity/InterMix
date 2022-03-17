@@ -1724,6 +1724,7 @@ class ItemsController < ApplicationController
       
       show_result = (params[:show_result].to_i == 1)
       @show_result = show_result
+      crit[:show_result] = @show_result
       result2c = params[:result2c].to_s
       @result2c = result2c
       crit[:result2c] = result2c

@@ -1549,32 +1549,35 @@ class Item < ActiveRecord::Base
       items = items.where("intra_conv='public'")        
     end
         
-    if crit[:gender].to_i != 0
-      items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
-      ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
-      logger.info("item#get_items by gender")
-    end
-    if crit[:age].to_i != 0
-      items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
-      ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
-      logger.info("item#get_items by age")
-    end
+        
+    if not crit[:show_result]    
+      if crit[:gender].to_i != 0
+        items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
+        ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
+        logger.info("item#get_items by gender")
+      end
+      if crit[:age].to_i != 0
+        items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
+        ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
+        logger.info("item#get_items by age")
+      end
 
-    logger.info("item#get_items gender:#{crit[:gender]} age:#{crit[:age]} title:#{title}")
-    if crit[:gender].to_i > 0 and crit[:age].to_i == 0
-      gender = MetamapNode.find_by_id(crit[:gender].to_i)
-      title += " | #{gender.name_as_group}"
-    elsif crit[:gender].to_i == 0 and crit[:age].to_i > 0
-      age = MetamapNode.find_by_id(crit[:age].to_i)
-      title += " | #{age.name_as_group}"
-    elsif crit[:gender].to_i > 0 and crit[:age].to_i > 0
-      gender = MetamapNode.find_by_id(crit[:gender].to_i)
-      age = MetamapNode.find_by_id(crit[:age].to_i)
-      xtit = gender.name_as_group
-      xtit2 = xtit[0..8] + age.name.capitalize + ' ' + xtit[9..100]
-      title += " | #{xtit2}"    
-    elsif not crit[:show_result]
-      title += " | Voice of Humanity"
+      logger.info("item#get_items gender:#{crit[:gender]} age:#{crit[:age]} title:#{title}")
+      if crit[:gender].to_i > 0 and crit[:age].to_i == 0
+        gender = MetamapNode.find_by_id(crit[:gender].to_i)
+        title += " | #{gender.name_as_group}"
+      elsif crit[:gender].to_i == 0 and crit[:age].to_i > 0
+        age = MetamapNode.find_by_id(crit[:age].to_i)
+        title += " | #{age.name_as_group}"
+      elsif crit[:gender].to_i > 0 and crit[:age].to_i > 0
+        gender = MetamapNode.find_by_id(crit[:gender].to_i)
+        age = MetamapNode.find_by_id(crit[:age].to_i)
+        xtit = gender.name_as_group
+        xtit2 = xtit[0..8] + age.name.capitalize + ' ' + xtit[9..100]
+        title += " | #{xtit2}"    
+      elsif not crit[:show_result]
+        title += " | Voice of Humanity"
+      end
     end
     logger.info("item#get_items title:#{title}")
     
