@@ -369,6 +369,91 @@ class ItemsController < ApplicationController
     render json: @items
   end
   
+  def item_api
+    #-- Get one item over the API, for an app
+    @from = 'api'
+    item_id = params[:id]
+    item = Item.includes([{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
+    
+    if not item
+      render :status => 404
+      return
+    end
+    
+    item = item.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})") if participant_signed_in?
+    item = item.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation") if participant_signed_in?    
+    item = item.find_by_id(item_id)
+    
+    @comments = []
+    comments = Item.where(first_in_thread: item.id, is_first_in_thread: false).order('id')
+    for comment in comments
+      plain_content = view_context.strip_tags(comment.html_content.to_s).strip
+      plain_content.gsub!(/\B[#]\S+\b/, '')
+      if plain_content.length > 500
+        com_content = plain_content[0,487] + '...'
+        has_more = 1
+      else
+        com_content = plain_content
+        has_more = 0
+      end
+      com = {
+        'id': comment.id,
+        'created_at': comment.created_at,
+        'posted_by': comment.posted_by,
+        'posted_by_user': comment.participant ? comment.participant.name : '???',
+        'content': com_content,
+        'has_more': has_more
+      }
+      @comments << com
+    end
+    
+    if item.has_picture
+      img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
+    elsif item.participant.picture.url.to_s != ''
+      img_link = item.participant.picture.url
+    else
+      img_link = ""
+    end
+
+    plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
+    content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
+    if content_without_hash.length > 190
+      content_without_hash = content_without_hash[0,190]
+      item_has_more = 1
+    else
+      item_has_more = 0
+    end
+        
+    item.voting_ok(participant_signed_in? ? current_participant.id : 0)
+    has_voted = participant_signed_in? ? item.has_voted(current_participant) : 0
+
+    rec = {
+      'id': item.id,
+      'created_at': item.created_at,
+      'posted_by': item.posted_by,
+      'posted_by_user': item.participant ? item.participant.name : '???',
+      'subject': item.subject,
+      'short_content': item.short_content,
+      'html_content': item.html_content,
+      'content_without_hash': content_without_hash,
+      'approval': item.approval,
+      'interest': item.interest,
+      'has_voted': has_voted,
+      'media_type': item.media_type,
+      'has_picture': item.has_picture,
+      'link': img_link,
+      'reply_to': item.reply_to,
+      'comments': @comments,
+      'num_comments': @comments.length,
+      'has_more': item_has_more,
+    }
+    
+    rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
+    rec['thumbs'] = rating ? rating.approval.to_i : 0
+
+    render json: item
+  end
+  
   def report_api
     #-- Report a post
     item_id = params[:id].to_i

@@ -333,6 +333,7 @@ Rails.application.routes.draw do
     get :unfollow, on: :member
     post :list_api, on: :collection
     get :list_api, on: :collection
+    get :item_api, on: :member
     post :report_api, on: :member
     post :create_api, on: :collection
     post :censor, on: :member
