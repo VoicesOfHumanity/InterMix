@@ -448,7 +448,7 @@ class ItemsController < ApplicationController
       'has_more': item_has_more,
     }
     
-    rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
+    rating = current_participant ? Rating.where(item_id: item.id, participant_id: current_participant.id).last : nil
     rec['thumbs'] = rating ? rating.approval.to_i : 0
 
     render json: item
