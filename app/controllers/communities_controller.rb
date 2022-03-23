@@ -138,8 +138,8 @@ class CommunitiesController < ApplicationController
       @csection = 'my'      
     end
 
-    if ['id','tag'].include?(sort) or @sort == 'id desc'
-      communities = communities.order(@sort)      
+    if (['id','tag'].include?(sort) or @sort == 'id desc') and communities.class != Array
+      communities = communities.order(@sort)
     #elsif @sort == 'activity'
     #  logger.info("communities#index pre-sort by tagname in query")
     #  communities = communities.order("tagname")      
