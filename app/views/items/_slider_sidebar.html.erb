@@ -44,7 +44,13 @@ end
       <% freeze_geo = true %>
     <% end -%>
     <% @geo_levels.each do |geo_level,geo_desc| -%>
-      <input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> <% if freeze_geo %>disabled<% end %> onclick="per_reload()"><%=raw geo_desc %><br>  
+			<% if geo_level==1 and current_participant.city.to_s=='' -%>
+			<% elsif geo_level==2 and current_participant.county_code.to_s=='' -%>
+			<% elsif geo_level==3 and current_participant.metro_area_id.to_i==0 -%>
+			<% elsif geo_level==4 and current_participant.admin1uniq.to_s=='' -%>
+			<% else -%>
+      	<input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> <% if freeze_geo %>disabled<% end %> onclick="per_reload()"><%=raw geo_desc %><br>
+			<% end -%>
     <% end -%>
     </div>
     
