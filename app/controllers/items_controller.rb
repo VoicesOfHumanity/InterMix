@@ -262,9 +262,12 @@ class ItemsController < ApplicationController
     crit = {
       'messtag': @messtag
     }
+    
+    cp = participant_signed_in? ? current_participant : nil
+    cp_id = cp ? cp.id : 0
 
-    items1,ratings,title,select_explain = Item.get_items(crit,current_participant,rootonly)
-    itemsproc,extras = Item.get_itemsproc(items1,ratings,current_participant.id,rootonly)
+    items1,ratings,title,select_explain = Item.get_items(crit,cp,rootonly)
+    itemsproc,extras = Item.get_itemsproc(items1,ratings,cp_id,rootonly)
     items = Item.get_sorted(items1,itemsproc,sortby,rootonly)
     
     @items = []
@@ -313,7 +316,8 @@ class ItemsController < ApplicationController
         @comments << com
       end
       
-      has_voted = item.has_voted(current_participant)
+      
+      has_voted = cp ? item.has_voted(cp) : false
       
       rec = {
         'id': item.id,
@@ -336,13 +340,13 @@ class ItemsController < ApplicationController
         'has_more': item_has_more,
       }
       
-      rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
+      rating = Rating.where(item_id: item.id, participant_id: cp_id).last
       rec['thumbs'] = rating ? rating.approval.to_i : 0
       
       if !has_voted
         logger.info("items#list_api !vote subject:#{item.short_content} num_comments:#{@comments.length}")
         #@items << rec
-        if current_participant.id == item.posted_by
+        if cp_id == item.posted_by
           own_items << rec
         else
           other_items << rec
@@ -351,7 +355,7 @@ class ItemsController < ApplicationController
         if xcount >= 12
           break
         end
-      elsif current_participant.id == item.posted_by
+      elsif cp_id == item.posted_by
         logger.info("items#list_api voted subject:#{item.short_content} num_comments:#{@comments.length}")
       end
     
@@ -374,13 +378,16 @@ class ItemsController < ApplicationController
     @from = 'api'
     item_id = params[:id]
     item = Item.includes([{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
+
+    cp = participant_signed_in? ? current_participant : nil
+    cp_id = cp ? cp.id : 0
     
     if not item
       render :status => 404
       return
     end
     
-    item = item.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})") if participant_signed_in?
+    item = item.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{cp_id})") if participant_signed_in?
     item = item.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation") if participant_signed_in?    
     item = item.find_by_id(item_id)
     

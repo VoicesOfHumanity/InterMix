@@ -46,8 +46,8 @@ class Community < ActiveRecord::Base
     xarr = period.split('_')
     dstart = xarr[0]
     dend = xarr[1]
-    plist = Participant.tagged_with(self.tagname).collect {|p| p.id}.join(',')
     logger.info("community#activity_count_for_conversation #{conversation.id}: period:#{period}: #{dstart} - #{dend}")
+    plist = Participant.tagged_with(self.tagname).collect {|p| p.id}.join(',')
     if plist != ''
       items = Item.includes(:participant).references(:participant).where("participants.id in (#{plist})").where(conversation_id: conversation.id)
       items = items.tagged_with(self.tagname).where('items.created_at >= ?', dstart).where('items.created_at <= ?', dend).count
