@@ -190,7 +190,9 @@ class CommunitiesController < ApplicationController
     #  return
     #end
     #-----
-    
+
+    @is_member = current_participant.tag_list_downcase.include?(@community.tagname.downcase)
+
     if @community.is_sub
       @parent = Community.find(@community.sub_of)
     end

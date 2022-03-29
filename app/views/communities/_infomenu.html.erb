@@ -8,6 +8,7 @@
 <% elsif not @community.new_record? -%>
 <p class="linkmenu">
 <a class="menu<%= ' selected' if @csection=='info' %>" href="/communities/<%= @community.id %>">info</a>
+<% if @community.visibility=='public' or @is_member -%>
  | <a class="menu<%= ' selected' if @csection=='members' %>" href="/communities/<%= @community.id %>/members">members</a>
  | 
  <% if @community.go_to_conversation(current_participant) != '' -%>
@@ -15,6 +16,7 @@
  <% else -%>
   <a class="menu<%= ' selected' if @csection=='forum' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= @comtag %>">go to forum</a>
  <% end -%>
+<% end -%>
 <% if @is_admin -%>
  | <a class="menu<%= ' selected' if @csection=='invite' %>" href="/communities/<%= @community.id %>/invite">invite</a>
  | <a class="menu<%= ' selected' if @csection=='edit' %>" href="/communities/<%= @community.id %>/edit">edit</a>
