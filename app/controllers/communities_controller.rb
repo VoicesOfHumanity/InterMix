@@ -33,14 +33,14 @@ class CommunitiesController < ApplicationController
     end
 
     if params[:which].to_s == 'all' or (current_participant.tag_list.length == 0 and current_participant.status != 'visitor')
-      communities = Community.where(is_sub: false).where("context not in ('city','nation','religion')")
+      communities = Community.where(is_sub: false).where("context not in ('city','nation','religion')").where.not(visibility: "private")
       @csection = 'all' 
       @toptitle = "All Communities except Nations, Cities, Religions, Genders and Ages"
     elsif params[:which].to_s == 'human'  or (current_participant.status == 'visitor' and params[:which].to_s == '')
-      communities = Community.where(is_sub: false, more: true)
+      communities = Community.where(is_sub: false, more: true).where.not(visibility: "private")
       @csection = 'human' 
     elsif params[:which].to_s == 'un'  
-      communities = Community.where(is_sub: false, ungoals: true)
+      communities = Community.where(is_sub: false, ungoals: true).where.not(visibility: "private")
       @csection = 'un'       
     elsif params[:which].to_s == 'genders'  
       @prof_genders = []
@@ -120,8 +120,11 @@ class CommunitiesController < ApplicationController
       end
       @csection = 'nations' 
     elsif params[:which].to_s == 'other'  
-      communities = Community.where(is_sub: false, major: false, ungoals: false, more: true).where.not(context: 'nation').where.not(context: 'city')
-      @csection = 'other'            
+      communities = Community.where(is_sub: false, major: false, ungoals: false, more: true).where.not(context: 'nation').where.not(context: 'city').where.not(visibility: "private")
+      @csection = 'other'
+    elsif params[:which].to_s == 'private'  
+      communities = Community.where(visibility: "private")
+      @csection = 'private'           
     else
       #-- My communities
       comtag_list = ''.dup
@@ -928,7 +931,7 @@ class CommunitiesController < ApplicationController
   protected
 
   def community_params
-    params.require(:community).permit(:fullname, :description, :logo, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :tweet_approval_min, :tweet_what, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :autotags, :active)
+    params.require(:community).permit(:fullname, :description, :logo, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :tweet_approval_min, :tweet_what, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :autotags, :active, :visibility, :message_visibility)
   end
   
   def check_is_admin

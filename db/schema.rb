@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_30_203529) do
+ActiveRecord::Schema.define(version: 2022_03_29_185513) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -126,6 +126,8 @@ ActiveRecord::Schema.define(version: 2021_11_30_203529) do
     t.boolean "moderated", default: false
     t.boolean "active", default: true
     t.integer "conversation_id"
+    t.string "visibility", default: "public"
+    t.string "message_visibility", default: "public"
     t.index ["tagname"], name: "index_communities_on_tagname"
   end
 

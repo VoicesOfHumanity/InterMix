@@ -74,6 +74,11 @@ PARTICIPANT_VISIBILITY_TEXT = {'visible_to_all'=>'Visible to all', 'visible_to_g
 PARTICIPANT_WALL_VISIBILITY = ['all','groups&friends','friends']
 PARTICIPANT_WALL_VISIBILITY_TEXT = {'all'=>'Visible to all','groups&friends'=>'Visible only to friends and other group members','friends'=>'Visible only to friends'}
 
+COM_VISIBILITY = ['private','public']
+COM_VISIBILITY_TEXT = {'private'=>'Private', 'public'=>'Public'}
+COM_MESSAGE_VISIBILITY = ['private','public']
+COM_MESSAGE_VISIBILITY_TEXT = {'private'=>"private: visible only to members",'public'=>"public: non-members can see messages"}
+
 GROUP_VISIBILITY = ['private','public']
 GROUP_VISIBILITY_TEXT = {'private'=>'Private, unlisted', 'public'=>'Public, visible to all'}
 GROUP_OPENNESS = ['open','open_to_apply','by_invitation_only','private']

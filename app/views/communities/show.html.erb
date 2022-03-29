@@ -88,6 +88,10 @@ end
 <p><%=raw @community.description %></p>
 <% end -%>
 
+<% if @community.visibility != 'public' -%>
+<p><b>Private community</b></p>
+<% end -%>
+
 <p><b>Auto-tags:</b> <%= @community.autotags %></p>
 
 <p><b>Sub-communities:</b></p>

@@ -199,6 +199,7 @@ Rails.application.routes.draw do
   get 'communities/cities', to: 'communities#index', action: :index, which: 'cities'
   get 'communities/nations', to: 'communities#index', action: :index, which: 'nations'
   get 'communities/religions', to: 'communities#index', action: :index, which: 'religions'
+  get 'communities/private', to: 'communities#index', action: :index, which: 'private'
   get 'communities/other', to: 'communities#index', action: :index, which: 'other'
   resources :communities do
     get :index, :on => :collection

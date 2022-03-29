@@ -94,8 +94,11 @@
                 }               
                 if ($('#my_networks').length>0) {
                     $('#my_networks').show();      
+                }
+                if ($('#private_com').length>0) {
+                    $('#private_com').show();      
                 }				
-							} else {
+			} else {
                 moreless = 'less';
                 $('#morelesstext').html("More Options");
                 if ($('#communitysidelist').length) {
@@ -144,7 +147,10 @@
                 }
                 if ($('#my_networks').length>0) {
                     $('#my_networks').hide();      
-                }													  
+                }
+                if ($('#private_com').length>0) {
+                    $('#private_com').hide();      
+                }												  
                 if (reloadslider) {                        
                     per_reload(false,1,'comtag');
                 }
