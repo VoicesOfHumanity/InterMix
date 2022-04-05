@@ -319,7 +319,8 @@ class ItemsController < ApplicationController
       
       has_voted = cp ? item.has_voted(cp) : false
       
-      plain_content = view_context.strip_tags(item.html_content.to_s).strip
+      content = item.html_content.to_s != '' ? item.html_content.to_s : item.short_content.to_s
+      plain_content = view_context.strip_tags(content).strip
       plain_content.gsub!(/\B[#]\S+\b/, '')
 
       rec = {
