@@ -77,7 +77,8 @@ PARTICIPANT_WALL_VISIBILITY_TEXT = {'all'=>'Visible to all','groups&friends'=>'V
 COM_VISIBILITY = ['private','public']
 COM_VISIBILITY_TEXT = {'private'=>'Private', 'public'=>'Public'}
 COM_MESSAGE_VISIBILITY = ['private','public']
-COM_MESSAGE_VISIBILITY_TEXT = {'private'=>"private: visible only to members",'public'=>"public: non-members can see messages"}
+COM_MESSAGE_VISIBILITY_TEXT_PRIVATE = {'private'=>"always visible only to members",'public'=>"poster can choose if private or public"}
+COM_MESSAGE_VISIBILITY_TEXT_PUBLIC = {'private'=>"default to this community only",'public'=>"default to being public"}
 
 GROUP_VISIBILITY = ['private','public']
 GROUP_VISIBILITY_TEXT = {'private'=>'Private, unlisted', 'public'=>'Public, visible to all'}

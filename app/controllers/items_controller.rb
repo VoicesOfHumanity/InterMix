@@ -3234,7 +3234,7 @@ class ItemsController < ApplicationController
   end
   
   def item_params
-    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply, :representing_com, :topic, :comment_email_to, :wall_post, :wall_delivery)
+    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply, :representing_com, :topic, :comment_email_to, :wall_post, :wall_delivery, :visible_com)
   end
     
 end
