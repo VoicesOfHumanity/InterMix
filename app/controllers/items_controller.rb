@@ -448,6 +448,7 @@ class ItemsController < ApplicationController
       'short_content': item.short_content,
       'html_content': item.html_content,
       'content_without_hash': content_without_hash,
+      'plain_content': plain_content,
       'approval': item.approval,
       'interest': item.interest,
       'has_voted': has_voted,
