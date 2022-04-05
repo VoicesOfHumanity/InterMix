@@ -223,6 +223,7 @@ class CommunitiesController < ApplicationController
   end
   
   def members
+
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
     @comtag = @community.tagname
@@ -231,6 +232,10 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'members'
 
+    @is_member = current_participant.tag_list_downcase.include?(@community.tagname.downcase)
+    if @community.visibility!='public' and not @is_member
+      return
+    end
     prepare_members
     
   end
