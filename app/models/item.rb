@@ -273,7 +273,7 @@ class Item < ActiveRecord::Base
     if old_message_id.to_i == 0
       #-- Only twitter and e-mail if it really is a new message just being posted
       personal_twitter
-      emailit
+      get_items
     end
     self.save
   end  
@@ -370,7 +370,18 @@ class Item < ActiveRecord::Base
             if not person.tag_list_downcase.include?(tagname.downcase)
               participants.delete(person)
             end
-          end  
+          end
+        end
+        if self.visible_com == self.intra_com
+        elsif self.visible_com == 'public'
+        elsif self.visible_com.to_s != ''
+          # It is private for a particular community only. Remove anybody who's not a member
+          tagname = self.visible_com[1,50]
+          for person in allpeople
+            if not person.tag_list_downcase.include?(tagname.downcase)
+              participants.delete(person)
+            end
+          end
         end
       
       end
@@ -1711,6 +1722,14 @@ class Item < ActiveRecord::Base
       # Show items that either are public, or specifically for this community
       items = items.where("items.intra_com='public' or items.intra_com='@#{crit[:comtag]}'")
 
+      if not has_tag and com.visibility != 'public'
+        # In a private community, if the current viewer doesn't themselves have the tag (community) we're looking at, don't show anything at all
+        items = items.where("1=0")
+      else
+        # Respect community and post privacy
+        items = items.where("items.visible_com='public' or items.visible_com='@#{crit[:comtag]}'")
+      end
+
     #elsif crit[:posted_by].to_i == 0 and not (crit.has_key?(:from) and crit[:from] == 'mail')
     elsif crit[:posted_by].to_i == 0
       
@@ -1763,6 +1782,15 @@ class Item < ActiveRecord::Base
       # Only posts for a particular user, like for their wall
       items = items.where(posted_by: crit[:posted_by])
       logger.info("item#get_items posted_by:#{crit[:posted_by]}")
+      # We need to exclude private messages from communities the viewer is not a member of
+      p_tags = '' 
+      for tag in current_participant.tag_list_downcase
+        if p_tags != ''
+          p_tags += ','
+        end
+        p_tags += "'@" + tag + "'"
+      end
+      items = items.where("(items.visible_com='public' or lower(items.visible_com) in (#{p_tags}))")
     end
     
     if crit[:followed_by].to_i > 0

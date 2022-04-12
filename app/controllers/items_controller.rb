@@ -615,6 +615,7 @@ class ItemsController < ApplicationController
         end
         
         @item.intra_conv = @olditem.intra_conv
+        @item.visible_com = @olditem.visible_com
         @item.group_id = @olditem.group_id if @item.group_id.to_i == 0 and @olditem.group_id.to_i > 0
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
         if @item.dialog_id.to_i > 0

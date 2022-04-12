@@ -92,6 +92,14 @@ class Community < ActiveRecord::Base
     return ''
   end
   
+  def is_member(participant)
+    if participant.sysadmin
+      return true
+    else
+      return participant.tag_list_downcase.include? self.tagname.downcase
+    end  
+  end
+
   def is_admin(participant)
     if participant.sysadmin
       return true
