@@ -46,7 +46,13 @@ class AuthenticationsController < ApplicationController
         @conversation = Conversation.find_by_shortname(session[:previous_convtag])
         if @conversation
           return "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{@conversation.shortname}"
-        end      
+        end    
+      else
+        # If they're only in one community, go there when they sign in 
+        if current_participant.communities.count == 1
+          @community = current_participant.communities.first
+          return "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}"
+        end
       end
       logger.info("authentications#create go to default slider, as nothing else applies")
       redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider" and return
