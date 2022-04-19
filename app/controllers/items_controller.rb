@@ -291,6 +291,7 @@ class ItemsController < ApplicationController
       else
         user_img_link = "/images/default_user_icon-50x50.png"
       end 
+      user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
 
       plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
       content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
