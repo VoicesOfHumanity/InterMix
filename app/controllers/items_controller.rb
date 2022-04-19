@@ -284,6 +284,14 @@ class ItemsController < ApplicationController
       else
         img_link = ""
       end
+      if item.participant and item.participant.picture.exists?
+        user_img_link = item.participant.picture.url(:thumb)
+      elsif item.remote_poster
+        user_img_link = item.remote_poster.thumb_or_blank
+      else
+        user_img_link = "/images/default_user_icon-50x50.png"
+      end 
+
       plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
       content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
       if content_without_hash.length > 190
@@ -316,7 +324,6 @@ class ItemsController < ApplicationController
         @comments << com
       end
       
-      
       has_voted = cp ? item.has_voted(cp) : false
       
       content = item.html_content.to_s != '' ? item.html_content.to_s : item.short_content.to_s
@@ -339,6 +346,7 @@ class ItemsController < ApplicationController
         'media_type': item.media_type,
         'has_picture': item.has_picture,
         'link': img_link,
+        'user_img_link': user_img_link,
         'reply_to': item.reply_to,
         'comments': @comments,
         'num_comments': @comments.length,
