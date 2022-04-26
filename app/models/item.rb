@@ -273,7 +273,8 @@ class Item < ActiveRecord::Base
     if old_message_id.to_i == 0
       #-- Only twitter and e-mail if it really is a new message just being posted
       personal_twitter
-      get_items
+      # I don't understand what this was meant to do here:
+      #get_items
     end
     self.save
   end  
