@@ -135,7 +135,11 @@ if (CKEDITOR.instances['item_html_content']) {
 					<select name="item[visible_com]" id="item_visible_com">
 					<%= options_for_select(visible_options,def_vis) %>
 					</select>
-					<input type="hidden" name="item[intra_com]" id="item_intra_com" value="<%= "@#{@community.tagname}" %>">
+					<% if @community.message_visibility == 'public' %>
+						<input type="hidden" name="item[intra_com]" id="item_intra_com" value="<%= "public" %>">
+					<% else %>
+						<input type="hidden" name="item[intra_com]" id="item_intra_com" value="<%= "@#{@community.tagname}" %>">
+					<% end -%>
 				<% else %>
 					<% if @community and @community.message_visibility != 'public' -%>
 						<% intra_options = [] %>
