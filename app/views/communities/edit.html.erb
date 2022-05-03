@@ -26,6 +26,7 @@
     <% else %>
       <%= f.input :visibility, label: "Privacy", as: :select, collection: {'public'=>'Public'}, include_blank: false %>
     <% end %>
+    Only the system administrator can add private communities.<br><br>
 
 		<% if @community.visibility != 'public' -%>
       <%= f.input :message_visibility, label: "Post visibility", as: :select, collection: COM_MESSAGE_VISIBILITY_TEXT_PRIVATE.collect {|x| [x[1],x[0]]}, include_blank: false %>
