@@ -290,6 +290,8 @@ class ItemsController < ApplicationController
     crit = {
       'messtag': @messtag,
       'geo_level': @geo_level,
+      'age': @age,
+      'gender': @gender
     }
     
     cp = participant_signed_in? ? current_participant : nil
