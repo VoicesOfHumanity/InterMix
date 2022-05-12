@@ -256,6 +256,28 @@ class ItemsController < ApplicationController
     else
       @geo_level = ''
     end
+    age = params[:age].to_i
+    if age == 1
+      @age = 405
+    elsif age == 2
+      @age = 406
+    elsif age == 3
+      @age = 407
+    elsif age == 4
+      @age = 409
+    else
+      @age = 0
+    end
+    gender = params[:gender].to_i
+    if gender == 1
+      @gender = 208
+    elsif gender == 2
+      @gender = 207
+    elsif gender == 3
+      @gender = 408
+    else
+      @gender = 0
+    end
 
     #items = Item.where(is_first_in_thread: true)
     #if @tag != ''
