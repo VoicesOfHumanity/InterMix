@@ -88,7 +88,7 @@ end
 <p><%=raw @community.description %></p>
 <% end -%>
 
-<% if @community.visibility != 'public' -%>
+<% if @community.visibility.downcase != 'public' -%>
 <p><b>Private community</b></p>
 <% end -%>
 

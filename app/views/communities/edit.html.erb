@@ -24,7 +24,7 @@
     <% if current_participant.sysadmin %>
   		<%= f.input :visibility, label: "Privacy", as: :select, collection: COM_VISIBILITY_TEXT.collect {|x| [x[1],x[0]]}, include_blank: false %>
     <% else %>
-      <%= f.input :visibility, label: "Privacy", as: :select, collection: {'public'=>'Public'}, include_blank: false %>
+      <%= f.input :visibility, label: "Privacy", as: :select, collection: {'Public'=>'public'}, include_blank: false %>
     <% end %>
     Only the system administrator can add private communities.<br><br>
 
