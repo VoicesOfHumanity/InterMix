@@ -250,6 +250,7 @@ class ItemsController < ApplicationController
     #-- Get some items in a simplified manner, over the API, for apps
     
     @messtag = params[:messtag].to_s
+    @geo_level = params[:geo_level].to_i
     
     #items = Item.where(is_first_in_thread: true)
     #if @tag != ''
@@ -260,7 +261,8 @@ class ItemsController < ApplicationController
     rootonly = true
     sortby = '*value*'
     crit = {
-      'messtag': @messtag
+      'messtag': @messtag,
+      'geo_level': @geo_level,
     }
     
     cp = participant_signed_in? ? current_participant : nil
