@@ -250,8 +250,13 @@ class ItemsController < ApplicationController
     #-- Get some items in a simplified manner, over the API, for apps
     
     @messtag = params[:messtag].to_s
-    @geo_level = params[:geo_level].to_i
-    
+    geo_level = params[:geo_level].to_i
+    if geo_level > 0
+      @geo_level = GEO_LEVELS[geo_level]
+    else
+      @geo_level = ''
+    end
+
     #items = Item.where(is_first_in_thread: true)
     #if @tag != ''
     #  items = items.tagged_with(@messtag)
