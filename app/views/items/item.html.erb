@@ -1,53 +1,60 @@
-<%= hidden_field_tag "from", "individual" %>
-<div class="forumitem forumitemplain forummain" id="item_<%= @item.id %>">
-<%= render :partial => "item", :locals => { :item => @item, :itemproc =>@itemsproc[@item.id], :is_reply => false, :odd_or_even=>0, :from=>'individual', :top=>@item.id, :showlong=>true } %>
-</div>
+<% if @is_private -%>
 
-<% if params[:showratings].to_i == 1 and @extras and @extras.has_key?('regression') -%>
-<div>
-Regression: <%=raw @extras['regression'] -%><br>
-</div>
-<% end -%>
+  <p>Sorry, this message is private</p>
 
-<% if false and @item.is_first_in_thread -%>
-<p>
-<!-- AddThis Button BEGIN -->
-<a class="addthis_button" href="//www.addthis.com/bookmark.php?v=300&amp;pubid=ra-5265a1b73e8922ff" addthis:title="<%= @item.subject %>" addthis:description="<%= @item.short_content %>"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a>
-<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5265a1b73e8922ff"></script>
-<!-- AddThis Button END -->
-</p>
-<% end -%>
+<% else -%>
 
-<% if participant_signed_in? -%>
-<ul>
-<% if @item.num_in_thread > 1 -%>
-<li><a href="/items/<%= @item.id %>/thread#item_<%= @item.id %>">Whole thread</a></li>
-<% end -%>
-<% if false and @item.dialog_id.to_i > 0 -%>
-<li><a href="/dialogs/<%= @item.dialog_id %>/slider?perscr=100&amp;sortby=items.id+desc<%=raw "&amp;threads=flat" if @item.reply_to.to_i>0 %>#item_<%= @item.id %>">Discussion List</a></li>
-<% end -%>
+  <%= hidden_field_tag "from", "individual" %>
+  <div class="forumitem forumitemplain forummain" id="item_<%= @item.id %>">
+  <%= render :partial => "item", :locals => { :item => @item, :itemproc =>@itemsproc[@item.id], :is_reply => false, :odd_or_even=>0, :from=>'individual', :top=>@item.id, :showlong=>true } %>
+  </div>
 
-<% if false -%>
-  <% if @item.subgroup_list.length > 0 -%>
-    <li>Subgroup List: <%=raw @item.show_subgroup_with_link("/groups/#{@item.group_id}/forum?subgroup=") %></li>
+  <% if params[:showratings].to_i == 1 and @extras and @extras.has_key?('regression') -%>
+  <div>
+  Regression: <%=raw @extras['regression'] -%><br>
+  </div>
   <% end -%>
 
-  <% if @item.root_item.group_id.to_i > 0 -%>
-  <li><a href="/groups/<%= @item.root_item.group_id %>/forum?perscr=100<%=raw "&amp;threads=flat" if @item.reply_to.to_i>0 %>#item_<%= @item.id %>">Group List</a></li>
+  <% if false and @item.is_first_in_thread -%>
+  <p>
+  <!-- AddThis Button BEGIN -->
+  <a class="addthis_button" href="//www.addthis.com/bookmark.php?v=300&amp;pubid=ra-5265a1b73e8922ff" addthis:title="<%= @item.subject %>" addthis:description="<%= @item.short_content %>"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5265a1b73e8922ff"></script>
+  <!-- AddThis Button END -->
+  </p>
   <% end -%>
-  </ul>
+
+  <% if participant_signed_in? -%>
+  <ul>
+  <% if @item.num_in_thread > 1 -%>
+  <li><a href="/items/<%= @item.id %>/thread#item_<%= @item.id %>">Whole thread</a></li>
   <% end -%>
+  <% if false and @item.dialog_id.to_i > 0 -%>
+  <li><a href="/dialogs/<%= @item.dialog_id %>/slider?perscr=100&amp;sortby=items.id+desc<%=raw "&amp;threads=flat" if @item.reply_to.to_i>0 %>#item_<%= @item.id %>">Discussion List</a></li>
+  <% end -%>
+
+  <% if false -%>
+    <% if @item.subgroup_list.length > 0 -%>
+      <li>Subgroup List: <%=raw @item.show_subgroup_with_link("/groups/#{@item.group_id}/forum?subgroup=") %></li>
+    <% end -%>
+
+    <% if @item.root_item.group_id.to_i > 0 -%>
+    <li><a href="/groups/<%= @item.root_item.group_id %>/forum?perscr=100<%=raw "&amp;threads=flat" if @item.reply_to.to_i>0 %>#item_<%= @item.id %>">Group List</a></li>
+    <% end -%>
+    </ul>
+    <% end -%>
+  <% end -%>
+
+  <p><a href="https://intermix.org/ccattribution4point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("ccattribution4point0.png",:style=>"margin:18px 0 0 0;", alt: "creative commons logo") %></a></p>
+
+  <script>
+  if (window.location.hash=='#reply') {
+    expand(<%= @item.id %>,'expand')
+    reply(<%= @item.id %>,false);
+  }
+  $('.thumbupdown').hover(function(){thumbhover(this,'in')},function(){thumbhover(this,'out')});
+  </script>
+
 <% end -%>
-
-<p><a href="https://intermix.org/ccattribution4point0.htm" alt="Click to read the Creative Commons License which governs all items posted here." title="Click to read the Creative Commons License which governs all items posted here." target="_blank"><%= image_tag("ccattribution4point0.png",:style=>"margin:18px 0 0 0;", alt: "creative commons logo") %></a></p>
-
-<script>
-if (window.location.hash=='#reply') {
-	expand(<%= @item.id %>,'expand')
-	reply(<%= @item.id %>,false);
-}
-$('.thumbupdown').hover(function(){thumbhover(this,'in')},function(){thumbhover(this,'out')});
-</script>
-
 
 
