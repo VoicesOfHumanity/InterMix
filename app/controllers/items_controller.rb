@@ -1191,6 +1191,10 @@ class ItemsController < ApplicationController
       @item.group_id = GLOBAL_GROUP_ID
     end
 
+    if @item.visible_com != 'public'
+      @item.intra_com = @item.visible_com
+    end
+
     # Check if there are tags for communities that the user is not in
     tags_in_html = get_tags_from_html(@item.html_content,true)
     tagdetails = {}
