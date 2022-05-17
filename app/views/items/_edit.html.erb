@@ -147,7 +147,7 @@ if (CKEDITOR.instances['item_html_content']) {
 					<% else -%>
 						<% intra_options = [['Public','public']] %>
 					<% end -%>
-					<% def_intra = @community.message_visibility %>	  
+					<% def_intra = @community.message_visibility == 'private' ? "@#{@community.tagname}" : 'public' %>
 					<% if (@item.reply_to.to_i>0 and @olditem and @olditem.intra_com.to_s!='' and @olditem.intra_com.to_s!='public') -%>
 						<% intra_options << ["Only #{@olditem.intra_com}","#{@olditem.intra_com}"]  %>
 						<% def_intra = "#{@olditem.intra_com}" %>
