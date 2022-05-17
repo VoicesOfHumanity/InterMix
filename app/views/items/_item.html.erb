@@ -358,7 +358,8 @@ end
    <% end -%>
    
    <% if item.outside_com_post -%>
-       <div class="iteminfotxt" style="font-weight:bold;color:#44a">
+   	   <!--<div class="iteminfotxt" style="font-weight:bold;color:#44a">-->
+       <div class="iteminfotxt">
            <% outcoms = item.outside_com_details.keys %>
            <% if outcoms.size > 1 -%>
                The author was not a member of these communities: <%= outcoms.collect{|c| "@#{c}"}.join(', ') %>.
