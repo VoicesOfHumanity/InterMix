@@ -489,7 +489,7 @@ class ItemsController < ApplicationController
 
     rec = {
       'id': item.id,
-      'created_at': item.created_at,
+      'created_at': item.created_at.strftime("%Y-%m-%d"),
       'posted_by': item.posted_by,
       'posted_by_user': item.participant ? item.participant.name : '???',
       'subject': item.subject,

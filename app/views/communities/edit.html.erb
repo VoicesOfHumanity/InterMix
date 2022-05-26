@@ -23,6 +23,8 @@
 		
     <% if current_participant.sysadmin %>
   		<%= f.input :visibility, label: "Privacy", as: :select, collection: COM_VISIBILITY_TEXT.collect {|x| [x[1],x[0]]}, include_blank: false %>
+    <% elsif @community.visibility.downcase != 'public' %>
+      <p><b>This is a private community</b></p>
     <% else %>
       <%= f.input :visibility, label: "Privacy", as: :select, collection: {'Public'=>'public'}, include_blank: false %>
     <% end %>
