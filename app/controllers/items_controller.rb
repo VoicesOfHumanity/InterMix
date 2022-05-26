@@ -347,7 +347,7 @@ class ItemsController < ApplicationController
         end
         com = {
           'id': comment.id,
-          'created_at': comment.created_at,
+          'created_at': comment.created_at.strftime("%Y-%m-%d"),
           'posted_by': comment.posted_by,
           'posted_by_user': comment.participant ? comment.participant.name : '???',
           'content': com_content,
@@ -364,7 +364,7 @@ class ItemsController < ApplicationController
 
       rec = {
         'id': item.id,
-        'created_at': item.created_at,
+        'created_at': item.created_at.strftime("%Y-%m-%d"),
         'posted_by': item.posted_by,
         'posted_by_user': item.participant ? item.participant.name : '???',
         'subject': item.subject,
@@ -450,7 +450,7 @@ class ItemsController < ApplicationController
       end
       com = {
         'id': comment.id,
-        'created_at': comment.created_at,
+        'created_at': comment.created_at.strftime("%Y-%m-%d"),
         'posted_by': comment.posted_by,
         'posted_by_user': comment.participant ? comment.participant.name : '???',
         'content': com_content,
