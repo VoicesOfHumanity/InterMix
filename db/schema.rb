@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_05_202257) do
+ActiveRecord::Schema.define(version: 2022_05_26_212032) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -150,6 +150,11 @@ ActiveRecord::Schema.define(version: 2022_04_05_202257) do
     t.datetime "updated_at", null: false
     t.index ["community_id", "network_id"], name: "index_community_networks_on_community_id_and_network_id"
     t.index ["network_id", "community_id"], name: "index_community_networks_on_network_id_and_community_id"
+  end
+
+  create_table "community_participants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "conversation_communities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

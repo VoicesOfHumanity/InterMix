@@ -3,6 +3,16 @@
 <tr><td class="left">Short Name:</td><td><%= @community.tagname %></td></tr>	
 <tr><td class="left">Full Name:</td><td><%= @community.fullname %></td></tr>	
 <tr><td class="left">Description:</td><td><%= @community.description %></td></tr>	
+
+<tr><td class="left">Visibility:</td><td><%= COM_VISIBILITY_TEXT.has_key?(@community.visibility) ? COM_VISIBILITY_TEXT[@community.visibility] : @community.visibility %></td></tr>
+<tr><td class="left">Post Visibility:</td><td>
+<% if @community.visibility != 'public' -%>
+    <%= COM_MESSAGE_VISIBILITY_TEXT_PRIVATE.has_key?(@community.message_visibility) ? COM_MESSAGE_VISIBILITY_TEXT_PRIVATE[@community.message_visibility] : @community.message_visibility %>
+<% else %>
+    <%= COM_MESSAGE_VISIBILITY_TEXT_PRIVATE.has_key?(@community.message_visibility) ? COM_MESSAGE_VISIBILITY_TEXT_PUBLIC[@community.message_visibility] : @community.message_visibility %>
+<% end -%>
+</td></tr>
+
 <tr><td class="left">Major?</td><td><%= @community.major ? 'yes' : 'no' %></td></tr>	
 <tr><td class="left">More?</td><td><%= @community.more ? 'yes' : 'no' %></td></tr>	
 <tr><td class="left">Bold?</td><td><%= @community.bold ? 'yes' : 'no' %></td></tr>	

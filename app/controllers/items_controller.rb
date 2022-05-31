@@ -448,13 +448,22 @@ class ItemsController < ApplicationController
         com_content = plain_content
         has_more = 0
       end
+      if comment.participant and comment.participant.picture.exists?
+        user_img_link = comment.participant.picture.url(:thumb)
+      elsif item.remote_poster
+        user_img_link = comment.remote_poster.thumb_or_blank
+      else
+        user_img_link = "/images/default_user_icon-50x50.png"
+      end 
+      user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
       com = {
         'id': comment.id,
         'created_at': comment.created_at.strftime("%Y-%m-%d"),
         'posted_by': comment.posted_by,
         'posted_by_user': comment.participant ? comment.participant.name : '???',
         'content': com_content,
-        'has_more': has_more
+        'has_more': has_more,
+        'user_img_link': user_img_link
       }
       @comments << com
     end
