@@ -120,7 +120,7 @@ if (CKEDITOR.instances['item_html_content']) {
 	    	</select>
 			<% else -%>
 				<% if @community and @community.visibility != 'public' -%>
-					<% if @community and @community.message_visibility != 'public' -%>
+					<% if @community.message_visibility != 'public' or (@olditem and @olditem.visible_com.to_s!='public')-%>
 						<% visible_options = [] %>
 					<% else %>
 						<% visible_options = [['Public','public']] %>
@@ -176,7 +176,11 @@ if (CKEDITOR.instances['item_html_content']) {
       
       <% if (@item.reply_to.to_i>0) and current_participant.status != 'visitor' -%>
     	  <br><br>Email this comment to: <select name="item[comment_email_to]" id="item_comment_email_to">
-        <% com_options = [["Public","public"]] %>
+		<% if @community.message_visibility != 'public' or (@olditem and @olditem.visible_com.to_s!='public')-%>
+			<% com_options = [] %>
+		<% else -%>
+			<% com_options = [["Public","public"]] %>
+		<% end -%>
         <% com_options << ["This community only", "community"] if @comtag.to_s != '' %>
         <% com_options << ["Message author only","author"] %>
     	  <%= options_for_select(com_options, 'author') %>
