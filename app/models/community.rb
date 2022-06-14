@@ -9,6 +9,8 @@ class Community < ActiveRecord::Base
   has_many :admins_and_moderators, -> { where "(moderator=1 or admin=1) and active=1"}, source: :participant, through: :community_admins
   belongs_to :conversation, optional: true
 
+  belongs_to :creator, optional: true, class_name: 'Participant', foreign_key: :created_by
+  belongs_to :administrator, optional: true, class_name: 'Participant', foreign_key: :administrator_id
 
   has_many :conversation_communities
   has_many :conversations, :through => :conversation_communities

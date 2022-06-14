@@ -336,7 +336,11 @@ class CommunitiesController < ApplicationController
     #-- Add a new forum
     @section = 'communities'
     @csection = 'edit'
-    @community = Community.new    
+    @community = Community.new  
+    @community.created_by = current_participant.id
+    @community.administrator_id = current_participant.id  
+    @is_admin = true
+    @members = [current_participant]
     render action: :edit
   end
   
@@ -360,6 +364,7 @@ class CommunitiesController < ApplicationController
       end
       @community.tagname = tagname
     end
+    @community.created_by = current_participant.id
     if flash.now[:alert] != ''  
       render action: :edit
     else  
@@ -561,6 +566,16 @@ class CommunitiesController < ApplicationController
     if participant
       participant.tag_list.add(@community.tagname)
       participant.save
+      cp = CommunityParticipant.where(["community_id = ? and participant_id = ?", @community_id, @participant_id]).first_or_create
+      if @community.sub_of.to_i > 0
+        #-- Add to the main community too, if it's a sub-community
+        maincom = Community.find_by_id(@community.sub_of)
+        if maincom
+          participant.tag_list.add(maincom.tagname)
+          participant.save
+          cp = CommunityParticipant.where(["community_id = ? and participant_id = ?", maincom.id, @participant_id]).first_or_create
+        end
+      end
     end    
     memlist   
   end 
@@ -568,12 +583,27 @@ class CommunitiesController < ApplicationController
   def member_del 
     #-- Delete a member
     @community_id = params[:id].to_i
+    @community = Community.find_by_id(@community_id)
     participant_ids = params[:participant_ids]
     for participant_id in participant_ids
       participant = Participant.find_by_id(participant_id)      
       if participant
         participant.tag_list.remove(comtag)
         participant.save
+        cp = CommunityParticipant.where(["community_id = ? and participant_id = ?", @community_id, @participant_id]).first
+        if cp
+          cp.destroy
+        end
+        # Remove from any sub-communities too
+        subcoms = Community.where(sub_of: @community_id)
+        for subcom in subcoms
+          participant.tag_list.remove(subcom.tagname)
+          participant.save
+          cp = CommunityParticipant.where(["community_id = ? and participant_id = ?", subcom.id, @participant_id]).first
+          if cp
+            cp.destroy
+          end
+        end
       end      
     end
     memlist
@@ -938,23 +968,42 @@ class CommunitiesController < ApplicationController
   protected
 
   def community_params
-    params.require(:community).permit(:fullname, :description, :logo, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :tweet_approval_min, :tweet_what, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :autotags, :active, :visibility, :message_visibility)
+    params.require(:community).permit(:fullname, :description, :logo, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :tweet_approval_min, :tweet_what, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :autotags, :active, :visibility, :message_visibility, :administrator_id)
   end
   
   def check_is_admin
     @community_id = params[:id].to_i
+    @community = Community.find(@community_id) if @community_id > 0
     @is_admin = false
     @is_super = false
     @is_moderator = false
     if current_participant.sysadmin
       @is_admin = true
       @is_super = true
-    else
+    elsif @community_id > 0 and @community.administrator_id == current_participant.id
+      @is_admin = true
+    elsif @community_id > 0 and @community.created_by.to_i > 0 and @community.created_by == current_participant.id
+      @is_admin = true
+    elsif @community_id > 0
       admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, current_participant.id]).first
       if admin
-        @is_admin = true
         @is_moderator = true
       end
+    end
+    if @community_id > 0 and @community.sub_of.to_i > 0 and not @is_admin
+      # Check if they're an admin of the top level community, if it is a sub
+      top_com = Community.find(@community.sub_of)
+      if top_com.administrator_id == current_participant.id
+        @is_admin = true
+      else
+        admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community.sub_of, current_participant.id]).first
+        if admin
+          @is_moderator = true
+        end
+      end
+    end
+    if @is_admin or @is_super
+      @is_moderator = true
     end
   end
   

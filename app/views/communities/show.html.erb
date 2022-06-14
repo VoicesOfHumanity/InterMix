@@ -126,6 +126,7 @@ end
   </table>
 <% end -%>
 
+<p><b>Administrator:</b> <%= @community.administrator.name if @community.administrator %></p>
 
 <p><b>Moderators:</b><br>
 <% if @community.moderators.length > 0 -%>

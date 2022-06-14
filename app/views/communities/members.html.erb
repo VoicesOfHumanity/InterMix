@@ -8,37 +8,37 @@
 
 <div id="member_container" style="overflow:none;width:740px;min-height:600px">
 
-<div style="float:left;width:595px;min-height:600px">
-  <div id="memlist">
+  <div style="float:left;width:595px;min-height:600px">
+    <div id="memlist">
+    </div>
+  </div>  
+
+  <div style="float:left;width:139px;padding-left:5px;">
+      <div style="margin: 20px 0 0 0;">
+      <% @geo_levels.each do |geo_level,geo_desc| -%>
+        <input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> onclick="per_reload()"><%=raw geo_desc %><br> 
+      <% end -%>
+      </div>
+      
+      <div style="margin: 20px 0 0 0;">
+        <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
+        <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
+          <% if not metamap_node.sumcat -%>
+            <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div style="margin: 20px 0 0 0;">
+        <input type="radio" name="meta_5" id="meta_5_0" value="0" checked onclick="per_reload()">all<br>
+        <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
+          <% if not metamap_node.sumcat -%>
+            <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
+          <% end %>
+        <% end %>
+      </div>
+      
   </div>
-</div>  
-
-<div style="float:left;width:139px;padding-left:5px;">
-    <div style="margin: 20px 0 0 0;">
-    <% @geo_levels.each do |geo_level,geo_desc| -%>
-      <input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> onclick="per_reload()"><%=raw geo_desc %><br> 
-    <% end -%>
-    </div>
-    
-    <div style="margin: 20px 0 0 0;">
-      <input type="radio" name="meta_3" id="meta_3_0" value="0" checked onclick="per_reload()">all<br>
-      <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
-        <% if not metamap_node.sumcat -%>
-          <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
-        <% end %>
-      <% end %>
-    </div>
-
-    <div style="margin: 20px 0 0 0;">
-      <input type="radio" name="meta_5" id="meta_5_0" value="0" checked onclick="per_reload()">all<br>
-      <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
-        <% if not metamap_node.sumcat -%>
-          <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" onclick="per_reload()"><%= metamap_node.name %><br>
-        <% end %>
-      <% end %>
-    </div>
-    
-</div>
 
 </div>
 

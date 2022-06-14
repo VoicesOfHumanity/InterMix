@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_26_212032) do
+ActiveRecord::Schema.define(version: 2022_06_14_142857) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -128,6 +128,8 @@ ActiveRecord::Schema.define(version: 2022_05_26_212032) do
     t.integer "conversation_id"
     t.string "visibility", default: "public"
     t.string "message_visibility", default: "public"
+    t.integer "created_by"
+    t.integer "administrator_id"
     t.index ["tagname"], name: "index_communities_on_tagname"
   end
 
@@ -155,6 +157,10 @@ ActiveRecord::Schema.define(version: 2022_05_26_212032) do
   create_table "community_participants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "community_id"
+    t.integer "participant_id"
+    t.index ["community_id", "participant_id"], name: "index_community_participants_on_community_id_and_participant_id", unique: true
+    t.index ["participant_id", "community_id"], name: "index_community_participants_on_participant_id_and_community_id", unique: true
   end
 
   create_table "conversation_communities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
