@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_14_142857) do
+ActiveRecord::Schema.define(version: 2022_06_21_204744) do
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 2022_06_14_142857) do
     t.string "message_visibility", default: "public"
     t.integer "created_by"
     t.integer "administrator_id"
+    t.string "who_add_members", default: "admin"
     t.index ["tagname"], name: "index_communities_on_tagname"
   end
 
@@ -142,6 +143,15 @@ ActiveRecord::Schema.define(version: 2022_06_14_142857) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["community_id", "participant_id"], name: "index_community_admins_on_community_id_and_participant_id"
+  end
+
+  create_table "community_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "community_id"
+    t.integer "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id", "item_id"], name: "index_community_items_on_community_id_and_item_id"
+    t.index ["item_id", "community_id"], name: "index_community_items_on_item_id_and_community_id"
   end
 
   create_table "community_networks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -613,6 +623,8 @@ ActiveRecord::Schema.define(version: 2022_06_14_142857) do
     t.integer "dialog_id"
     t.integer "dialog_round_id"
     t.integer "conversation_id"
+    t.integer "community_id"
+    t.integer "community2_id"
     t.string "subject"
     t.integer "subject_id"
     t.boolean "promoted_to_forum"
