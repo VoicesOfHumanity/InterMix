@@ -180,6 +180,14 @@ Rails.application.routes.draw do
   post '/participants/auth/:provider/callback' => 'authentications#create'
   get '/participants/visitor_login'
   
+  # API for apps
+  get 'api/:verify_email', to: 'api#verify_email'
+  get 'api/:login', to: 'api#login'
+  get 'api/:logout', to: 'api#logout'
+  post 'api/:register', to: 'api#register'
+  get 'api/:get_user', to: 'api#get_user'
+  
+
   resources :authentications
 
   #devise_for :participants, :controllers => { :omniauth_callbacks => "omniauth_callbacks" }
