@@ -3,8 +3,6 @@ class ApiController < ApplicationController
 
     append_before_action :check_api_code
 
-    @api_code = 'Xe6tsdfasf'
-
     def verify_email
         email = params[:email].to_s
         participant = Participant.find_by(email: params[:email])
@@ -65,10 +63,11 @@ class ApiController < ApplicationController
     protected
 
     def check_api_code
+        @api_code = 'Xe6tsdfasf'
         if params[:x] != @api_code
             render json: {
                 status: 'error',
-                message: 'Access denied'
+                message: 'Access denied'+"x: #{params[:x]} != @api_code: #{@api_code}"
             }
         end
     end
@@ -87,7 +86,5 @@ class ApiController < ApplicationController
         }
         return info
     end 
-
-    end
 
 end
