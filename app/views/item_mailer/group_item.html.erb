@@ -18,10 +18,10 @@ end
 %>
 
 <% if @cdata and @cdata['is_instant'] -%>
-<p>To go to the Order out of Chaos Voices of Humanity forum, <a href="<%= @cdata['forum_link'] %>">click here</a>.<br>
-To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
-</p>
+<p>To go to the Order out of Chaos Voices of Humanity forum, <a href="<%= @cdata['forum_link'] %>">click here</a>.</p>
 <% end -%>
+<p><a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">unsubscribe</a></p>
+
 	
 <hr/>
 

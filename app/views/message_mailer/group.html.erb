@@ -20,7 +20,7 @@ This is a message sent to a group you're a member of.
 <% if false -%>
 You can also see it in your <a href="http://<%= BASEDOMAIN %>/messages?auth_token=<%= @cdata['recipient'].authentication_token %>">Message Area</a>
 <% end -%>
-To block emails from the Voices of Humanity social media, <a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.
+<a href="http://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">Unsubscribe</a>
 
 <img src="https://<%= BASEDOMAIN %>/pixel/<%= @cdata['message'].id.to_i if @cdata['message'] %>.gif" width="0" height="0" border="0" style="display:none" alt="pixel">
 
