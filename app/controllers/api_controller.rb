@@ -83,6 +83,17 @@ class ApiController < ApplicationController
             email: participant.email,
             name: participant.name,
             user_img_link: user_img_link,
+            country_code: participant.country_code,
+            country_name: participant.country_name,
+            country_code2: participant.country_code2,
+            country_name2: participant.show_country2,
+            admin1uniq: participant.admin1uniq,
+            city_uniq: participant.city_uniq,
+            city: participant.city,
+            gender_id: participant.gender_id,
+            gender: participant.gender,
+            generation_id: participant.generation_id,
+            generation: participant.generation
         }
         return info
     end 

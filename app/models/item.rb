@@ -1714,6 +1714,7 @@ class Item < ActiveRecord::Base
       end
       plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
       if plist != ''
+        # Items posted by authors who have that tag
         items = items.where("participants.id in (#{plist})")
       else
         items = items.where("1=0")

@@ -79,7 +79,8 @@ COM_VISIBILITY_TEXT = {'private'=>'Private', 'public'=>'Public'}
 COM_MESSAGE_VISIBILITY = ['private','public']
 COM_MESSAGE_VISIBILITY_TEXT_PRIVATE = {'private'=>"always visible only to members",'public'=>"poster can choose if private or public"}
 COM_MESSAGE_VISIBILITY_TEXT_PUBLIC = {'private'=>"default to this community only",'public'=>"default to being public"}
-COM_WHO_ADD_MEMBERS_TEXT  = {'member'=>"Any member of the community",'moderator'=>'Moderators of the community','admin'=>'Administrator/owner of community','sysadmin'=>"Only system administrator"}
+COM_WHO_ADD_MEMBERS_TEXT  = {'moderator'=>'Moderators of the community','admin'=>'Administrator/owner of community','sysadmin'=>"Only system administrator"}
+# 'member'=>"Any member of the community",
 
 GROUP_VISIBILITY = ['private','public']
 GROUP_VISIBILITY_TEXT = {'private'=>'Private, unlisted', 'public'=>'Public, visible to all'}
