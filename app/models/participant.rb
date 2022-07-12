@@ -346,13 +346,15 @@ class Participant < ActiveRecord::Base
   end
 
   def update_gender(gender_id)
-    self.metamap_nodes.each do |mn|
-      if mn.metamap_id == 3
-        mn.update_attribute(:metamap_node_id, gender_id)
-      end
+    mnp = MetamapNodeParticipant.where(participant_id: self.id, metamap_id: 3).first
+    if mnp
+      mnp.metamap_node_id = gender_id
+    else
+      mnp = MetamapNodeParticipant.create(participant_id: self.id, metamap_id: 3, metamap_node_id: gender_id)
     end
+    mnp.save
   end   
-  
+
   def generation
     self.metamap_nodes.each do |mn|
       if mn.metamap_id == 5
@@ -372,11 +374,13 @@ class Participant < ActiveRecord::Base
   end
 
   def update_generation(generation_id)
-    self.metamap_nodes.each do |mn|
-      if mn.metamap_id == 5
-        mn.update_attribute(:metamap_node_id, generation_id)
-      end
+    mnp = MetamapNodeParticipant.where(participant_id: self.id, metamap_id: 5).first
+    if mnp
+      mnp.metamap_node_id = generation_id
+    else
+      mnp = MetamapNodeParticipant.create(participant_id: self.id, metamap_id: 5, metamap_node_id: generation_id)
     end
+    mnp.save
   end
   
   def them
