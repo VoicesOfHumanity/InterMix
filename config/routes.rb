@@ -181,13 +181,13 @@ Rails.application.routes.draw do
   get '/participants/visitor_login'
   
   # API for apps
-  get 'api/:verify_email', to: 'api#verify_email'
-  get 'api/:login', to: 'api#login'
-  get 'api/:logout', to: 'api#logout'
-  post 'api/:register', to: 'api#register'
-  get 'api/:get_user', to: 'api#get_user'
-  get 'api/:update_user', to: 'api#update_user'
-  post 'api/:update_user', to: 'api#update_user'
+  get 'api/verify_email', to: 'api#verify_email'
+  get 'api/login', to: 'api#login'
+  get 'api/logout', to: 'api#logout'
+  post 'api/register', to: 'api#register'
+  get 'api/get_user', to: 'api#get_user'
+  get 'api/update_user', to: 'api#update_user'
+  post 'api/update_user', to: 'api#update_user'
 
   resources :authentications
 
