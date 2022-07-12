@@ -140,7 +140,7 @@ if (CKEDITOR.instances['item_html_content']) {
 					<% else %>
 						<input type="hidden" name="item[intra_com]" id="item_intra_com" value="<%= "@#{@community.tagname}" %>">
 					<% end -%>
-				<% else %>
+				<% elsif @community -%>
 					<!--public community-->
 					<% if (@item.reply_to.to_i>0 and @olditem and @olditem.visible_com.to_s!='' and @olditem.visible_com.to_s!='public') -%>
 						<% intra_options = [] %>
