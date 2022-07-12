@@ -64,13 +64,13 @@ class ApiController < ApplicationController
         id = params[:user_id].to_i
         p = Participant.find_by_id(id)
         if p
-            if params[:country_code]
+            if params[:country_code].to_s != ''
                 p.country_code = params[:country_code]
             end
-            if params[:generation_id]
+            if params[:generation_id].to_i > 0
                 p.update_generation(params[:generation_id])
             end
-            if params[:gender_id]
+            if params[:gender_id].to_i > 0
                 p.update_gender(params[:gender_id])
             end
             p.save
@@ -80,7 +80,7 @@ class ApiController < ApplicationController
         else
             render json: {
                 status: 'error',
-                message: 'User not found'
+                message: "User #{id} not found"
             }
         end
     end
