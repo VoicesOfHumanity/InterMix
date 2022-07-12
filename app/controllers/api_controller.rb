@@ -75,8 +75,7 @@ class ApiController < ApplicationController
             end
             p.save
             render json: {
-                status: 'success',
-                user: user_info(participant)
+                status: 'success'
             }
         else
             render json: {
