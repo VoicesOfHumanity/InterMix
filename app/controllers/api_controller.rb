@@ -63,7 +63,7 @@ class ApiController < ApplicationController
     def update_user
         id = params[:user_id].to_i
         p = Participant.find_by_id(id)
-        if params
+        if p
             if params[:country_code]
                 p.country_code = params[:country_code]
             end
