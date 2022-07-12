@@ -60,6 +60,32 @@ class ApiController < ApplicationController
         end
     end
 
+    def update_user
+        id = params[:user_id].to_i
+        p = Participant.find_by_id(id)
+        if params
+            if params[:country_code]
+                p.country_code = params[:country_code]
+            end
+            if params[:generation_id]
+                p.update_generation(params[:generation_id])
+            end
+            if params[:gender_id]
+                p.update_gender(params[:gender_id])
+            end
+            p.save
+            render json: {
+                status: 'success',
+                user: user_info(participant)
+            }
+        else
+            render json: {
+                status: 'error',
+                message: 'User not found'
+            }
+        end
+    end
+
     protected
 
     def check_api_code

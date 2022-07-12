@@ -344,6 +344,14 @@ class Participant < ActiveRecord::Base
     end  
     return 0
   end
+
+  def update_gender(gender_id)
+    self.metamap_nodes.each do |mn|
+      if mn.metamap_id == 3
+        mn.update_attribute(:metamap_node_id, gender_id)
+      end
+    end
+  end   
   
   def generation
     self.metamap_nodes.each do |mn|
@@ -361,6 +369,14 @@ class Participant < ActiveRecord::Base
       end
     end  
     return 0
+  end
+
+  def update_generation(generation_id)
+    self.metamap_nodes.each do |mn|
+      if mn.metamap_id == 5
+        mn.update_attribute(:metamap_node_id, generation_id)
+      end
+    end
   end
   
   def them
