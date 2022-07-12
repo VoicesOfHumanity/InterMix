@@ -61,17 +61,18 @@ class ApiController < ApplicationController
     end
 
     def update_user
-        id = params[:user_id].to_i
+        data = JSON.parse(request.raw_post)
+        id = data['user_id'].to_i
         p = Participant.find_by_id(id)
         if p
-            if params[:country_code].to_s != ''
-                p.country_code = params[:country_code]
+            if data.has_key?('country_code')
+                p.country_code = data['country_code']
             end
-            if params[:generation_id].to_i > 0
-                p.update_generation(params[:generation_id])
+            if data.has_key?('generation_id')
+                p.update_generation(data['generation_id'])
             end
-            if params[:gender_id].to_i > 0
-                p.update_gender(params[:gender_id])
+            if data.has_key?('gender_id')
+                p.update_gender(data['gender_id'])
             end
             p.save
             render json: {
