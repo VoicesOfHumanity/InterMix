@@ -24,10 +24,13 @@ module ItemLib
       Rails.logger.info("items#rateitem items#rateitem no voter")
       return
     end
+    if not item
+      return
+    end
     if participant and not item.voting_ok(participant.id)
       Rails.logger.info("items#rateitem voting is not ok")
       return
-    end    
+    end  
   
     item_id = item.id
     group_id = item.group_id.to_i
