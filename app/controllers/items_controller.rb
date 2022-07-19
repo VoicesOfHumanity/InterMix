@@ -2064,16 +2064,16 @@ class ItemsController < ApplicationController
       #session[:datetype] = @datetype.dup
       if redocount == 0
         session[:datefixed] = @datefixed.dup
-        logger.info("dialogs#geoslider_update session[:datefixed] set to: #{@datefixed}")
+        logger.info("items#geoslider_update session[:datefixed] set to: #{@datefixed}")
         if @in == 'conversation'
           session[:datefixed_conversation] = @datefixed.dup
-          logger.info("dialogs#geoslider_update session[:datefixed_conversation] set to: #{@datefixed}")
+          logger.info("items#geoslider_update session[:datefixed_conversation] set to: #{@datefixed}")
         elsif @in == 'community'
           session[:datefixed_community] = @datefixed.dup
-          logger.info("dialogs#geoslider_update session[:datefixed_community] set to: #{@datefixed}")
+          logger.info("items#geoslider_update session[:datefixed_community] set to: #{@datefixed}")
         end
       else
-        logger.info("dialogs#geoslider_update redocount > 0 so session[:datefixed] not set")        
+        logger.info("items#geoslider_update redocount > 0 so session[:datefixed] not set")        
       end
       #session[:datefrom] = @datefrom.dup
       @datefromto = ''
@@ -2160,11 +2160,12 @@ class ItemsController < ApplicationController
 
       @threads = params[:threads]
       session[:list_threads] = @threads
-      if @threads == '' or @threads == 'tree' or @threads == 'root'
+      if @threads == 'tree' or @threads == 'root'
         rootonly = true
       else
         rootonly = false
       end
+      logger.info("items#geoslider_update rootonly:#{rootonly}")
 
       #-- See how many total posts there are in the selected period, to be able to do a graphic
       all_posts = Item.where(nil)
@@ -2482,6 +2483,7 @@ class ItemsController < ApplicationController
       else
         #-- Listing
           
+        logger.info("items#geoslider_update running get_items rootonly:#{rootonly}")
         items,ratings,@title,@select_explain = Item.get_items(crit,current_participant,rootonly)
 
         #if @num_all_posts == 0 and @first == 1 and @datetype == 'fixed' and @datefixed == 'month'
@@ -2502,6 +2504,7 @@ class ItemsController < ApplicationController
     
         # Add up results for those items and those ratings, to show in the item summaries in the listing
         # I.e. add up the number of interest/approval ratings for each item, do regression to the mean, calculate value, etc
+        logger.info("items#geoslider_update running get_itemsproc rootonly:#{rootonly}")
         @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
   
         # Items probably need to be sorted, based on the results we calculated

@@ -1221,10 +1221,11 @@ class Item < ActiveRecord::Base
     
   end
   
-  def self.get_items(crit,current_participant,rootonly=true)
+  #------- get_items ------------------------------------------------------------
+  def self.get_items(crit,current_participant,rootonly=false)
     #-- Get the items and records that match a certain criteria. Mainly for geoslider
   
-    logger.info("item#get_items crit:#{crit}")
+    logger.info("item#get_items crit:#{crit} rootonly:#{rootonly}")
   
     # Start preparing the queries
     items = Item.where(nil)
@@ -1593,10 +1594,10 @@ class Item < ActiveRecord::Base
     end
     logger.info("item#get_items title:#{title}")
     
-    if crit['in'] == 'main'
-      items = items.where("(comment_email_to!='author' or is_first_in_thread=1)")
-      logger.info("item#get_items main first in thread or not comment to author only")
-    end
+    #if crit['in'] == 'main'
+    #  items = items.where("(comment_email_to!='author' or is_first_in_thread=1)")
+    #  logger.info("item#get_items main first in thread or not comment to author only")
+    #end
     
     # tags
     if crit['in'] == 'conversation' and @conversation
@@ -1822,7 +1823,7 @@ class Item < ActiveRecord::Base
   
   def self.get_itemsproc(items,ratings,participant_id,rootonly=false)
     # Add things up based on given items and ratings. Return itemsproc
-    logger.info("item#get_itemsproc start with #{items.length} items and #{ratings.length} ratings")
+    logger.info("item#get_itemsproc start with #{items.length} items and #{ratings.length} ratings. rootonly:#{rootonly}")
     
     regmean = true
     sortby = ''
@@ -1976,6 +1977,7 @@ class Item < ActiveRecord::Base
       itemsproc[item.id] = iproc
       
       if (rootonly or sortby=='default')
+        logger.info("item#get_itemsproc: removing non-roots")
         #-- If we need roots only
         if item.is_first_in_thread
           #-- This is a root, put it on the main list

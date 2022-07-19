@@ -41,7 +41,10 @@ do_it = false
 nowdate = now.strftime("%Y-%m-%d")
 nowtime = now.strftime("%H:%M")
 @moon = Moon.where("mdate<='#{nowdate}'").order(mdate: :desc).first
-if @moon and @moon.mailing_sent
+if @moon and testonly
+  puts "Test Mode: Day #{@moon.mdate.strftime("%Y-%m-%d")} mailing"
+  do_it = true
+elsif @moon and @moon.mailing_sent
   puts "Day #{@moon.mdate.strftime("%Y-%m-%d")} mailing was already sent"
 elsif @moon and @moon.mdate.strftime("%Y-%m-%d") < nowdate and @moon.mdate < (now.to_date - 1)
   puts "Day #{@moon.mdate.strftime("%Y-%m-%d")} has already passed, but it was too long ago"
