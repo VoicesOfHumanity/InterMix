@@ -41,6 +41,9 @@ do_it = false
 nowdate = now.strftime("%Y-%m-%d")
 nowtime = now.strftime("%H:%M")
 @moon = Moon.where("mdate<='#{nowdate}'").order(mdate: :desc).first
+if @moon
+  puts "closest moon: #{@moon.mdate.strftime("%Y-%m-%d")}"
+end
 if @moon and testonly
   puts "Test Mode: Day #{@moon.mdate.strftime("%Y-%m-%d")} mailing"
   do_it = true
