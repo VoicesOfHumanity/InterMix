@@ -7,13 +7,13 @@ class ApiController < ApplicationController
         email = params[:email].to_s
         participant = Participant.find_by(email: params[:email])
         if participant
-            puts("verify_email: ok")
+            logger.info("api verify_email: ok")
             render json: {
                 status: 'success',
                 user: user_info(participant)
             }
         else
-            puts("verify_email: not found")
+            logger.info("api verify_email: not found")
             render json: {
                 status: 'error',
                 message: 'User not found'
@@ -25,15 +25,15 @@ class ApiController < ApplicationController
         email = params[:email].to_s
         password = params[:pass].to_s
         participant = Participant.find_by(email: params[:email])
-        puts("login: user found") if participant
+        logger.info("api login: user found") if participant
         if participant and participant.valid_password?(password)
-            puts("login: password ok")
+            logger.info("api login: password ok")
             render json: {
                 status: 'success',
                 user: user_info(participant)
             }
         else
-            puts("login: password not ok")
+            logger.info("api login: password not ok")
             render json: {
             status: 'error',
             message: 'Not valid'
