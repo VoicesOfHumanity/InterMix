@@ -51,6 +51,7 @@ class ApiController < ApplicationController
 
     def get_user
         id = params[:id].to_i
+        logger.info("api get_user: id: #{id}")
         participant = Participant.find_by_id(id)
         if participant
             render json: {
