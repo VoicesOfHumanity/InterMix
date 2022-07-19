@@ -35,9 +35,9 @@ class ApiController < ApplicationController
         else
             logger.info("api login: password not ok")
             if participant
-                xmess += "user found. password not right"
+                xmess = "user found. password not right"
             else
-                xmess += "user not found"
+                xmess = "user not found"
             end
             render json: {
             status: 'error',
