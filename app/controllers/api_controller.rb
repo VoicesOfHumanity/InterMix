@@ -99,7 +99,7 @@ class ApiController < ApplicationController
             end
             p.save
             render json: {
-                status: 'success'
+                status: 'success: '+data.inspect
             }
         else
             render json: {
