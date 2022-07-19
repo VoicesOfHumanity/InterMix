@@ -84,6 +84,12 @@ class ApiController < ApplicationController
         if p
             if data.has_key?('country_code')
                 p.country_code = data['country_code']
+            elsif data.has_key?('country_name')
+                country = Geocountry.where(name: data['country_name']).first
+                if country
+                    p.country_code = country.code
+                    p.country_name = country.name
+                end
             end
             if data.has_key?('generation_id')
                 p.update_generation(data['generation_id'])
