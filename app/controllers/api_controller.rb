@@ -87,7 +87,7 @@ class ApiController < ApplicationController
             elsif data.has_key?('country_name')
                 country = Geocountry.where(name: data['country_name']).first
                 if country
-                    p.country_code = country.code
+                    p.country_code = country.iso
                     p.country_name = country.name
                 end
             end
