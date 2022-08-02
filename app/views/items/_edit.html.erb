@@ -182,7 +182,7 @@ if (CKEDITOR.instances['item_html_content']) {
 			<% com_options = [["Public","public"]] %>
 		<% end -%>
         <% com_options << ["This community only", "community"] if @comtag.to_s != '' %>
-        <% com_options << ["Author only","author"] %>
+        <% com_options << ["Original poster only","author"] %>
     	  <%= options_for_select(com_options, 'author') %>
     	  </select>
       <% elsif current_participant.status == 'visitor' -%>
