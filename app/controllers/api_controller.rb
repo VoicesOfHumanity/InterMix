@@ -117,7 +117,7 @@ class ApiController < ApplicationController
         item_id = params[:item_id].to_i
         vote = params[:vote].to_i
         user_id = params[:user_id].to_i
-        logger.info("items#thumbrate item:#{item_id} user:#{user_id} vote:#{vote}")
+        Rails.logger.info("api#thumbrate item:#{item_id} user:#{user_id} vote:#{vote}")
 
         current_participant = Participant.find_by_id(user_id)
     
