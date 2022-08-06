@@ -118,6 +118,7 @@ class ApiController < ApplicationController
         item_id = params[:item_id].to_i
         vote = params[:vote].to_i
         user_id = params[:user_id].to_i
+        Rails.logger.level = 1
         Rails.logger.info("api#thumbrate item:#{item_id} user:#{user_id} vote:#{vote}")
 
         current_participant = Participant.find_by_id(user_id)
@@ -144,6 +145,7 @@ class ApiController < ApplicationController
 
     def check_api_code
         Rails.logger.level = 1
+        Rails.logger.info("api#check_api_code")
         @api_code = 'Xe6tsdfasf'
         if params[:x] != @api_code
             Rails.logger.info("api#check_api_code: not ok")
