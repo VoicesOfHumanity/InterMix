@@ -188,6 +188,7 @@ Rails.application.routes.draw do
   get 'api/get_user', to: 'api#get_user'
   get 'api/update_user', to: 'api#update_user'
   post 'api/update_user', to: 'api#update_user'
+  post 'api/thumbrate', to: 'api#thumbrate'
 
   resources :authentications
 

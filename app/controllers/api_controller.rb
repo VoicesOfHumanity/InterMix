@@ -3,6 +3,8 @@ class ApiController < ApplicationController
 
     append_before_action :check_api_code
 
+    include ItemLib
+
     def verify_email
         email = params[:email].to_s
         participant = Participant.find_by(email: params[:email])
@@ -108,6 +110,34 @@ class ApiController < ApplicationController
             }
         end
     end
+
+    def thumbrate
+        #-- rate an item with up or down thumbs
+        @from = params[:from] || 'api'
+        item_id = params[:item_id].to_i
+        vote = params[:vote].to_i
+        user_id = params[:user_id].to_i
+        logger.info("items#thumbrate item:#{item_id} user:#{user_id} vote:#{vote}")
+
+        current_participant = Participant.find_by_id(user_id)
+    
+        item = Item.includes(:dialog,:group).find_by_id(item_id)
+    
+        #-- Check if they're allowed to rate it
+        if not item.voting_ok(current_participant.id)
+            render json: {
+                status: 'error',
+                message: "Not allowed to rate"
+            }
+            return
+        end
+        
+        rateitem(item, vote)
+        
+        render json: {
+            status: 'success'
+        }
+      end
 
     protected
 
