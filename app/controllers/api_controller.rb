@@ -9,7 +9,7 @@ class ApiController < ApplicationController
         email = params[:email].to_s
         participant = Participant.find_by(email: params[:email])
         if participant
-            logger.info("api verify_email: ok")
+            Rails.logger.info("api verify_email: ok")
             render json: {
                 status: 'success',
                 user: user_info(participant)
@@ -27,21 +27,21 @@ class ApiController < ApplicationController
         email = params[:email].to_s
         password = params[:pass].to_s
         participant = Participant.find_by(email: params[:email])
-        logger.info("api login: user found") if participant
+        Rails.logger.info("api login: user found") if participant
         if participant
-            logger.info("api login: forget about passwords for now")
+            Rails.logger.info("api login: forget about passwords for now")
             render json: {
                 status: 'success',
                 user: user_info(participant)
             }
         elsif participant and participant.valid_password?(password)
-            logger.info("api login: password ok")
+            Rails.logger.info("api login: password ok")
             render json: {
                 status: 'success',
                 user: user_info(participant)
             }
         else
-            logger.info("api login: password not ok")
+            Rails.logger.info("api login: password not ok")
             if participant
                 xmess = "user found. password not right"
             else
@@ -64,7 +64,7 @@ class ApiController < ApplicationController
 
     def get_user
         id = params[:id].to_i
-        logger.info("api get_user: id: #{id}")
+        Rails.logger.info("api#get_user: id: #{id}")
         participant = Participant.find_by_id(id)
         if participant
             render json: {
@@ -82,6 +82,7 @@ class ApiController < ApplicationController
     def update_user
         data = JSON.parse(request.raw_post)
         id = data['user_id'].to_i
+        Rails.logger.info("api#update_user: id: #{id}")
         p = Participant.find_by_id(id)
         if p
             if data.has_key?('country_code')
@@ -144,6 +145,7 @@ class ApiController < ApplicationController
     def check_api_code
         @api_code = 'Xe6tsdfasf'
         if params[:x] != @api_code
+            Rails.logger.info("api#check_api_code: not ok")
             render json: {
                 status: 'error',
                 message: 'Access denied'
