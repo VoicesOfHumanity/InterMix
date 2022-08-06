@@ -143,6 +143,7 @@ class ApiController < ApplicationController
     protected
 
     def check_api_code
+        Rails.logger.level = 1
         @api_code = 'Xe6tsdfasf'
         if params[:x] != @api_code
             Rails.logger.info("api#check_api_code: not ok")
