@@ -46,6 +46,12 @@ end
 
 DATADIR = '/home/apps/intermix/shared/data'
 
+logger                                         = Logger.new(STDOUT)
+logger.level                                   = Logger::INFO
+RAILS_DEFAULT_LOGGER                           = logger
+ActiveRecord::Base.logger                      = logger
+ActionController::Base.logger                  = logger
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
