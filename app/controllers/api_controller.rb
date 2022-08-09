@@ -124,7 +124,8 @@ class ApiController < ApplicationController
         Rails.logger.level = 1
         Rails.logger.info("api#thumbrate item:#{item_id} user:#{user_id} vote:#{vote}")
 
-        current_participant = Participant.find_by_id(user_id)
+        participant = Participant.find_by_id(user_id)
+        sign_in participant
     
         item = Item.includes(:dialog,:group).find_by_id(item_id)
     
