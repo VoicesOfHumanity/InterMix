@@ -1,6 +1,9 @@
 class ApiController < ApplicationController
     #-- This is mainly a back end for apps like Facebook, Google, etc.
 
+    logger                                         = Logger.new(STDOUT)
+    logger.level                                   = Logger::INFO
+
     append_before_action :check_api_code
 
     include ItemLib
