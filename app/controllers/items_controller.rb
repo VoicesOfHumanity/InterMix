@@ -998,6 +998,12 @@ class ItemsController < ApplicationController
         end
       end
     end
+
+    if @community and @community.visibility != 'public'
+      if tags.include? @community.tagname
+        tags.delete @community.tagname
+      end
+    end
     
     logger.info("items#new tags:#{tags.inspect}") 
     tagtext = ''.dup
