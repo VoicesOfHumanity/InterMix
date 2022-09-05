@@ -249,6 +249,7 @@ class ItemsController < ApplicationController
   def list_api
     #-- Get some items in a simplified manner, over the API, for apps
     
+    user_id = params[:user_id].to_i
     @messtag = params[:messtag].to_s
     geo_level = params[:geo_level].to_i
     if geo_level > 0
@@ -294,7 +295,13 @@ class ItemsController < ApplicationController
       'gender': @gender
     }
     
-    cp = participant_signed_in? ? current_participant : nil
+    if participant_signed_in?
+      cp = current_participant
+    elsif user_id > 0
+      cp = Participant.find_by_id(user_id)
+    else
+      cp = nil
+    end
     cp_id = cp ? cp.id : 0
 
     items1,ratings,title,select_explain = Item.get_items(crit,cp,rootonly)
