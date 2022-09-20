@@ -1943,9 +1943,16 @@ class ItemsController < ApplicationController
       crit[:gender] = params[:meta_3].to_i
       crit[:age] = params[:meta_5].to_i
     
-      crit[:comtag] = params[:comtag].to_s     # Might be blank, *my*, or a tag
-      crit[:messtag] = params[:messtag].to_s
+      crit[:comtag] = params[:comtag].to_s     # Might be blank, *my*, *other* or a tag
+      crit[:comtag_other] = params[:comtag_other].to_s
+      if crit[:comtag] == "*other*"
+        crit[:comtag] = crit[:comtag_other]
+      end
+      crit[:messtag] = params[:messtag].to_s   # a tag or *other*
       crit[:messtag_other] = params[:messtag_other].to_s
+      if crit[:messtag] == "*other*"
+        crit[:messtag] = crit[:messtag_other]
+      end
       session[:comtag] = crit[:comtag]
       session[:messtag] = crit[:messtag]
       

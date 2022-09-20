@@ -79,6 +79,7 @@ end
             <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
           <% end -%>
         <% end %>
+        <input type="radio" name="comtag_radio" value="*other*" onclick="per_reload(false,1,'comtag')">@<input type="text" id="comtag_other" size="10" maxlength="14" onchange="per_reload(false,1,'comtag_other')">
       <% end %>
       <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     </div>
@@ -101,10 +102,7 @@ end
           <% end -%>
         <% end -%>
       <% end %>
-      <% if false -%>
-      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">
-      <% end -%>
-      <div style="padding-left: 8px">& #<input type="text" id="messtag_other" size="10" maxlength="14" onchange="per_reload(false,1,'messtag_other')"></div>
+      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">#<input type="text" id="messtag_other" size="10" maxlength="14" onchange="per_reload(false,1,'messtag_other')">
       <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     </div>
 

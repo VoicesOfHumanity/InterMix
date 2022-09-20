@@ -1755,11 +1755,11 @@ class Item < ActiveRecord::Base
       items = items.tagged_with(crit[:messtag])  
       logger.info("item#get_items messtag: #{crit[:messtag]}")    
     end
-    if crit[:messtag_other].to_s != ''
-      title += " | ##{crit[:messtag_other]}"
-      items = items.tagged_with(crit[:messtag_other])            
-      logger.info("item#get_items messtag other: #{crit[:messtag_other]}")    
-    end
+    #if crit[:messtag_other].to_s != ''
+    #  title += " | ##{crit[:messtag_other]}"
+    #  items = items.tagged_with(crit[:messtag_other])            
+    #  logger.info("item#get_items messtag other: #{crit[:messtag_other]}")    
+    #end
     
     if crit.has_key?(:nvaction) and crit[:nvaction] === true
       items = items.tagged_with('nvaction')      
