@@ -1359,7 +1359,7 @@ class ItemsController < ApplicationController
       end
     end
     if not participant_signed_in? or current_participant.id != posted_by
-      render :json=>{'error'=>true,'message'=>'No user found'}, :layout=>false
+      render :json=>{'status'=>'error','message'=>'No user found'}, :layout=>false
       return
     end
 
@@ -1381,10 +1381,10 @@ class ItemsController < ApplicationController
     @item.save!
     @item.first_in_thread = @item.id    
     if @item.save
-      render json: {'result': 'success', 'item_id': @item.id}
+      render json: {'status': 'success', 'message': 'item created', 'item_id': @item.id}
       return
     else
-      render json: {'result': 'error: something went wrong'}
+      render json: {'status': 'error', 'message': 'something went wrong'}
       return
     end
     
