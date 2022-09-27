@@ -5,7 +5,7 @@ class ItemsController < ApplicationController
 
   layout "front"
   before_action :authenticate_user_from_token!, :except=>[:pubgallery]
-  before_action :authenticate_participant!, :except=>[:pubgallery,:view,:item_api,:list_api]
+  before_action :authenticate_participant!, :except=>[:pubgallery,:view,:item_api,:list_api, :create_api]
   append_before_action :check_required, only: :new
 
   include ItemLib
@@ -1337,6 +1337,60 @@ class ItemsController < ApplicationController
   end
   
   def create_api
+    #-- Create an item, called remotely by json, which should be turned into params automatically
+    #-- We should be receiving an api_code, login in the user
+    
+    #auth_token = params[:auth_token].presence
+    #participant       = auth_token && Participant.find_by_authentication_token(auth_token.to_s)
+    #if participant
+    #  sign_in participant
+    #end
+
+    # NB: We should move on to auth tokens for this, but for now, we'll just use the api_code
+
+    check_api_code
+    
+    posted_by = params[:user_id].to_i
+
+    if posted_by > 0
+      @participant = Participant.find_by_id(posted_by)
+      if @participant
+        sign_in @participant
+      end
+    end
+    if not participant_signed_in? or current_participant.id != posted_by
+      render :json=>{'error'=>true,'message'=>'No user found'}, :layout=>false
+      return
+    end
+
+    subject = params[:subject].to_s
+    short_content = params[:message].to_s
+    
+    @item = Item.new()
+    @item.remote_delivery_done = false
+    @item.item_type = 'message'
+    @item.media_type = 'picture'
+    @item.posted_by = current_participant.id
+    @item.subject = subject
+    @item.short_content = short_content
+    @item.html_content = @item.short_content
+    @item.is_first_in_thread = true 
+    
+    itemprocess
+    
+    @item.save!
+    @item.first_in_thread = @item.id    
+    if @item.save
+      render json: {'result': 'success', 'item_id': @item.id}
+      return
+    else
+      render json: {'result': 'error: something went wrong'}
+      return
+    end
+    
+  end
+
+  def create_api_scowl
     #-- Create an item, called remotely by json, which should be turned into params automatically
     #-- We should be receiving an auth_token, login in the user
     
@@ -3330,6 +3384,18 @@ class ItemsController < ApplicationController
         session[:cur_baseurl] = "https://" + BASEDOMAIN    
       end
     end 
+  end
+
+  def check_api_code
+    Rails.logger.info("items#check_api_code")
+    @api_code = 'Xe6tsdfasf'
+    if params[:x] != @api_code
+        Rails.logger.info("items#check_api_code: not ok")
+        render json: {
+            status: 'error',
+            message: 'Access denied'
+        }
+    end
   end
   
   def item_params
