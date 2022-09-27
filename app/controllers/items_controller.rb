@@ -1369,7 +1369,7 @@ class ItemsController < ApplicationController
     @item = Item.new()
     @item.remote_delivery_done = false
     @item.item_type = 'message'
-    @item.media_type = 'picture'
+    @item.media_type = 'text'
     @item.posted_by = current_participant.id
     @item.subject = subject
     @item.short_content = short_content
