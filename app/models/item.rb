@@ -1977,7 +1977,7 @@ class Item < ActiveRecord::Base
       itemsproc[item.id] = iproc
       
       if (rootonly or sortby=='default')
-        logger.info("item#get_itemsproc: removing non-roots")
+        #logger.info("item#get_itemsproc: removing non-roots")
         #-- If we need roots only
         if item.is_first_in_thread
           #-- This is a root, put it on the main list

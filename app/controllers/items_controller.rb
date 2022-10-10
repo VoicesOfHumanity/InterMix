@@ -321,8 +321,8 @@ class ItemsController < ApplicationController
     items = Item.get_sorted(items1,itemsproc,sortby,rootonly)
     
     @items = []
-    own_items = []
-    other_items = []
+    #own_items = []
+    #other_items = []
     
     xcount = 0
     
@@ -375,6 +375,7 @@ class ItemsController < ApplicationController
         @comments << com
       end
       
+      # Have they themselves voted on this?
       has_voted = cp ? item.has_voted(cp) : false
       
       content = item.html_content.to_s != '' ? item.html_content.to_s : item.short_content.to_s
@@ -407,30 +408,28 @@ class ItemsController < ApplicationController
       rating = Rating.where(item_id: item.id, participant_id: cp_id).last
       rec['thumbs'] = rating ? rating.approval.to_i : 0
       
-      if !has_voted
-        logger.info("items#list_api !vote subject:#{item.short_content} num_comments:#{@comments.length}")
-        #@items << rec
-        if cp_id == item.posted_by
-          own_items << rec
-        else
-          other_items << rec
-        end
-        xcount += 1
-        if xcount >= 12
-          break
-        end
-      elsif cp_id == item.posted_by
-        logger.info("items#list_api voted subject:#{item.short_content} num_comments:#{@comments.length}")
-      end
+      # if !has_voted
+      #   logger.info("items#list_api !vote subject:#{item.short_content} num_comments:#{@comments.length}")
+      #   #@items << rec
+      #   if cp_id == item.posted_by
+      #     own_items << rec
+      #   else
+      #     other_items << rec
+      #   end
+      #   xcount += 1
+      #   if xcount >= 12
+      #     break
+      #   end
+      # elsif cp_id == item.posted_by
+      #   logger.info("items#list_api voted subject:#{item.short_content} num_comments:#{@comments.length}")
+      # end
+      @items << rec
     
     end
     
-    #logger.info("items#list_api own_items[0]: #{own_items[0]}")
-    #logger.info("items#list_api own_items: #{own_items.collect{|i| i[:id]}}")
-    own_items_sorted = own_items.sort {|a,b| b[:id]<=>a[:id]}
-    #logger.info("items#list_api own_items_sorted: #{own_items_sorted.collect{|i| i[:id]}}")
-    
-    @items = own_items_sorted + other_items
+    # This was part of the smile/scowl scheme
+    #own_items_sorted = own_items.sort {|a,b| b[:id]<=>a[:id]}  
+    #@items = own_items_sorted + other_items
     
     logger.info("items#list_api returning #{@items.length} items")
     
