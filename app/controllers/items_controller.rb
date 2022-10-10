@@ -253,16 +253,16 @@ class ItemsController < ApplicationController
     @messtag = params[:messtag].to_s
     geo_level = params[:geo_level].to_i
     sort = params[:sort].to_i
-    if sort == 2
+    if sort == 1
       sortby = "*value*"
-    elsif sort == 3
+    elsif sort == 2
       sortby = "*approval*"
-    elsif sort == 4
+    elsif sort == 3
       sortby = "*interest*"
-    elsif sort == 5
+    elsif sort == 4
       sortby = "*controversy*"
     else
-      #  1: date
+      #  0: date
       sortby = "items.id desc"
     end
     if geo_level > 0
