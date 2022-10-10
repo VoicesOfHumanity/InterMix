@@ -252,6 +252,19 @@ class ItemsController < ApplicationController
     user_id = params[:user_id].to_i
     @messtag = params[:messtag].to_s
     geo_level = params[:geo_level].to_i
+    sort = params[:sort].to_i
+    if sort == 2
+      sortby = "*value*"
+    elsif sort == 3
+      sortby = "*approval*"
+    elsif sort == 4
+      sortby = "*interest*"
+    elsif sort == 5
+      sortby = "*controversy*"
+    else
+      #  1: date
+      sortby = "items.id desc"
+    end
     if geo_level > 0
       @geo_level = GEO_LEVELS[geo_level]
     else
@@ -287,7 +300,6 @@ class ItemsController < ApplicationController
     #items = items.order("id desc").limit(5)
 
     rootonly = true
-    sortby = 'items.id desc'
     crit = {
       'messtag': @messtag,
       'geo_level': @geo_level,
