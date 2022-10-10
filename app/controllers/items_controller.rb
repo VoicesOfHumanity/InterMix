@@ -1340,24 +1340,14 @@ class ItemsController < ApplicationController
     #-- Create an item, called remotely by json, which should be turned into params automatically
     #-- We should be receiving an api_code, login in the user
     
-    #auth_token = params[:auth_token].presence
-    #participant       = auth_token && Participant.find_by_authentication_token(auth_token.to_s)
-    #if participant
-    #  sign_in participant
-    #end
-
-    # NB: We should move on to auth tokens for this, but for now, we'll just use the api_code
-
-    check_api_code
-    
     posted_by = params[:user_id].to_i
 
-    if posted_by > 0
-      @participant = Participant.find_by_id(posted_by)
-      if @participant
-        sign_in @participant
-      end
+    auth_token = params[:auth_token].presence
+    participant       = auth_token && Participant.find_by_authentication_token(auth_token.to_s)
+    if participant
+      sign_in participant
     end
+
     if not participant_signed_in? or current_participant.id != posted_by
       render :json=>{'status'=>'error','message'=>'No user found'}, :layout=>false
       return
