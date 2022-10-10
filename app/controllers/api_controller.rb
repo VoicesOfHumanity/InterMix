@@ -31,13 +31,7 @@ class ApiController < ApplicationController
         password = params[:pass].to_s
         participant = Participant.find_by(email: params[:email])
         Rails.logger.info("api login: user found") if participant
-        if participant
-            Rails.logger.info("api login: forget about passwords for now")
-            render json: {
-                status: 'success',
-                user: user_info(participant)
-            }
-        elsif participant and participant.valid_password?(password)
+        if participant and participant.valid_password?(password)
             Rails.logger.info("api login: password ok")
             render json: {
                 status: 'success',
@@ -167,8 +161,10 @@ class ApiController < ApplicationController
         if participant.picture.exists?
             user_img_link = participant.picture.url(:thumb)
         else
-            user_img_link = "https://#{BASEDOMAIN}/images/default_user_icon-50x50.png"
+            user_img_link = "/images/default_user_icon-50x50.png"
         end 
+        user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
+
         info = {
             id: participant.id,
             email: participant.email,
@@ -184,7 +180,8 @@ class ApiController < ApplicationController
             gender_id: participant.gender_id,
             gender: participant.gender,
             generation_id: participant.generation_id,
-            generation: participant.generation
+            generation: participant.generation,
+            auth_token: participant.authentication_token
         }
         return info
     end 
