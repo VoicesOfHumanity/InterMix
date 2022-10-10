@@ -287,7 +287,7 @@ class ItemsController < ApplicationController
     #items = items.order("id desc").limit(5)
 
     rootonly = true
-    sortby = '*value*'
+    sortby = 'items.id desc'
     crit = {
       'messtag': @messtag,
       'geo_level': @geo_level,
