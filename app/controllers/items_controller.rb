@@ -1349,7 +1349,7 @@ class ItemsController < ApplicationController
   
   def create_api
     #-- Create an item, called remotely by json, which should be turned into params automatically
-    #-- We should be receiving an api_code, login in the user
+    #-- We should be receiving an authorization token to log in in the user
     
     posted_by = params[:user_id].to_i
 
@@ -1366,7 +1366,8 @@ class ItemsController < ApplicationController
 
     subject = params[:subject].to_s
     short_content = params[:message].to_s
-    
+    reply_to = params[:reply_to].to_i
+
     @item = Item.new()
     @item.remote_delivery_done = false
     @item.item_type = 'message'
@@ -1375,7 +1376,12 @@ class ItemsController < ApplicationController
     @item.subject = subject
     @item.short_content = short_content
     @item.html_content = @item.short_content
-    @item.is_first_in_thread = true 
+    @item.reply_to = reply_to
+    if reply_to > 0:
+      @item.is_first_in_thread = false
+      @item.first_in_thread = Item.find_by_id(reply_to).first_in_thread
+    else:
+      @item.is_first_in_thread = true
     
     itemprocess
     
