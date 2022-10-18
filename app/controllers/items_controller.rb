@@ -1387,7 +1387,9 @@ class ItemsController < ApplicationController
     itemprocess
     
     @item.save!
-    @item.first_in_thread = @item.id    
+    if reply_to == 0
+      @item.first_in_thread = @item.id
+    end
     if @item.save
       render json: {'status': 'success', 'message': 'item created', 'item_id': @item.id}
       return
