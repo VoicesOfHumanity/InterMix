@@ -455,7 +455,7 @@ class ItemsController < ApplicationController
     item = item.find_by_id(item_id)
     
     @comments = []
-    comments = Item.where(first_in_thread: item.id, is_first_in_thread: false).order('id')
+    comments = Item.where(first_in_thread: item.id, is_first_in_thread: false).order('id desc')
     for comment in comments
       plain_content = view_context.strip_tags(comment.html_content.to_s).strip
       plain_content.gsub!(/\B[#]\S+\b/, '')
