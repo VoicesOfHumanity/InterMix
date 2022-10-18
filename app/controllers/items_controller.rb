@@ -1377,12 +1377,13 @@ class ItemsController < ApplicationController
     @item.short_content = short_content
     @item.html_content = @item.short_content
     @item.reply_to = reply_to
-    if reply_to > 0:
+    if reply_to > 0
       @item.is_first_in_thread = false
       @item.first_in_thread = Item.find_by_id(reply_to).first_in_thread
-    else:
+    else
       @item.is_first_in_thread = true
-    
+    end
+
     itemprocess
     
     @item.save!
