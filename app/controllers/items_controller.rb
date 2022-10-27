@@ -424,6 +424,11 @@ class ItemsController < ApplicationController
       #   logger.info("items#list_api voted subject:#{item.short_content} num_comments:#{@comments.length}")
       # end
       @items << rec
+
+      xcount += 1
+      if xcount >= 12
+        break
+      end
     
     end
     
