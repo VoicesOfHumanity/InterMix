@@ -248,10 +248,15 @@ class ItemsController < ApplicationController
   
   def list_api
     #-- Get some items in a simplified manner, over the API, for apps
-    
+
     user_id = params[:user_id].to_i
     @messtag = params[:messtag].to_s
     geo_level = params[:geo_level].to_i
+
+    @perscr = (params[:perscr] || set['perscr'] || 12).to_i
+    @page = ( params[:page] || 1 ).to_i
+    @page = 1 if @page < 1
+
     sort = params[:sort].to_i
     if sort == 1
       sortby = "*value*"
@@ -320,6 +325,8 @@ class ItemsController < ApplicationController
     itemsproc,extras = Item.get_itemsproc(items1,ratings,cp_id,rootonly)
     items = Item.get_sorted(items1,itemsproc,sortby,rootonly)
     
+    items = items.paginate :page=>@page, :per_page => @perscr
+
     @items = []
     #own_items = []
     #other_items = []
@@ -408,27 +415,12 @@ class ItemsController < ApplicationController
       rating = Rating.where(item_id: item.id, participant_id: cp_id).last
       rec['thumbs'] = rating ? rating.approval.to_i : 0
       
-      # if !has_voted
-      #   logger.info("items#list_api !vote subject:#{item.short_content} num_comments:#{@comments.length}")
-      #   #@items << rec
-      #   if cp_id == item.posted_by
-      #     own_items << rec
-      #   else
-      #     other_items << rec
-      #   end
-      #   xcount += 1
-      #   if xcount >= 12
-      #     break
-      #   end
-      # elsif cp_id == item.posted_by
-      #   logger.info("items#list_api voted subject:#{item.short_content} num_comments:#{@comments.length}")
-      # end
       @items << rec
 
       xcount += 1
-      if xcount >= 12
-        break
-      end
+      #if xcount >= 12
+      #  break
+      #end
     
     end
     
