@@ -252,6 +252,7 @@ class ItemsController < ApplicationController
     user_id = params[:user_id].to_i
     @messtag = params[:messtag].to_s
     geo_level = params[:geo_level].to_i
+    com_show = params[:com_show].to_i
 
     @perscr = (params[:perscr] || set['perscr'] || 12).to_i
     @page = ( params[:page] || 1 ).to_i
@@ -304,7 +305,11 @@ class ItemsController < ApplicationController
     #end
     #items = items.order("id desc").limit(5)
 
-    rootonly = true
+    if com_show
+      rootonly = false
+    else
+      rootonly = true
+    end
     crit = {
       'messtag': @messtag,
       'geo_level': @geo_level,
