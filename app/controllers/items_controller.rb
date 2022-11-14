@@ -305,7 +305,7 @@ class ItemsController < ApplicationController
     #end
     #items = items.order("id desc").limit(5)
 
-    if com_show
+    if com_show == 1
       rootonly = false
     else
       rootonly = true
