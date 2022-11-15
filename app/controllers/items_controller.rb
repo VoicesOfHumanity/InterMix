@@ -363,7 +363,15 @@ class ItemsController < ApplicationController
       else
         item_has_more = 0
       end
-      
+
+      isum = itemsproc[item['id']]
+      rating_summary = ""
+      rating_summary += "Average interest: #{sprintf("%.1f", isum['avg_interest'] ? isum['avg_interest'] : 0.0)}\n"
+      rating_summary += "Average approval: #{sprintf("%.1f", isum['avg_approval'] ? isum['avg_approval'] : 0.0)}\n"
+      rating_summary += "Value: #{sprintf("%.1f", isum['value'] ? isum['value'] : 0.0)} (value = interest x approval)\n"
+      rating_summary += "Controversy: #{sprintf("%.1f", isum['controversy'] ? isum['controversy'] : 0.0)} (maximum=9)\n"
+      rating_summary += "Number of raters: #{isum['num_raters']}"
+
       @comments = []
       comments = Item.where(first_in_thread: item.id, is_first_in_thread: false).order('id')
       for comment in comments
@@ -415,6 +423,7 @@ class ItemsController < ApplicationController
         'comments': @comments,
         'num_comments': @comments.length,
         'has_more': item_has_more,
+        'rating_summary': rating_summary,
       }
       
       rating = Rating.where(item_id: item.id, participant_id: cp_id).last
