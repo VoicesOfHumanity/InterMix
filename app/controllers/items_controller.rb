@@ -10,6 +10,9 @@ class ItemsController < ApplicationController
 
   include ItemLib
 
+  # list of methods in this class:
+
+
   def index
     list  
   end  
@@ -402,13 +405,19 @@ class ItemsController < ApplicationController
       plain_content = view_context.strip_tags(content).strip
       plain_content.gsub!(/\B[#]\S+\b/, '')
 
+      short_content = item.short_content
+      if trim(item.short_content) == ""
+        short_content = plain_content
+      end
+      short_content = short_content[0,140] + '...' if short_content.length > 140
+
       rec = {
         'id': item.id,
         'created_at': item.created_at.strftime("%Y-%m-%d"),
         'posted_by': item.posted_by,
         'posted_by_user': item.participant ? item.participant.name : '???',
         'subject': item.subject,
-        'short_content': item.short_content,
+        'short_content': short_content,
         'html_content': item.html_content,
         'content_without_hash': content_without_hash,
         'plain_content': plain_content,
@@ -1376,8 +1385,11 @@ class ItemsController < ApplicationController
     end
 
     subject = params[:subject].to_s
-    short_content = params[:message].to_s
     reply_to = params[:reply_to].to_i
+
+    message = params[:message].to_s
+    html_content = "<p>" + message.gsub(/\n/, "<br />") + "</p>"
+    short_content = message[0,140]
 
     @item = Item.new()
     @item.remote_delivery_done = false
@@ -1385,8 +1397,8 @@ class ItemsController < ApplicationController
     @item.media_type = 'text'
     @item.posted_by = current_participant.id
     @item.subject = subject
+    @item.short_content = html_content
     @item.short_content = short_content
-    @item.html_content = @item.short_content
     @item.reply_to = reply_to
     if reply_to > 0
       @item.is_first_in_thread = false
