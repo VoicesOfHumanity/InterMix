@@ -406,7 +406,7 @@ class ItemsController < ApplicationController
       plain_content.gsub!(/\B[#]\S+\b/, '')
 
       short_content = item.short_content
-      if trim(item.short_content) == ""
+      if item.short_content.strip == ""
         short_content = plain_content
       end
       short_content = short_content[0,140] + '...' if short_content.length > 140
