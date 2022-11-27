@@ -387,13 +387,24 @@ class ItemsController < ApplicationController
           com_content = plain_content
           has_more = 0
         end
+        short_content = comment.short_content.to_s
+        if short_content.strip == ""
+          short_content = plain_content
+        end
+        short_content = short_content[0,140] + '...' if short_content.length > 140
         com = {
           'id': comment.id,
           'created_at': comment.created_at.strftime("%Y-%m-%d"),
           'posted_by': comment.posted_by,
           'posted_by_user': comment.participant ? comment.participant.name : '???',
-          'content': com_content,
-          'has_more': has_more
+          'short_content': short_content,
+          'html_content': item.html_content,
+          'plain_content': com_content,
+          'has_more': has_more,
+          'subject': comment.subject,
+          'num_comments': 0,
+          'comments': [],
+          'rating_summary': '',
         }
         rating = Rating.where(item_id: comment.id, participant_id: cp_id).last
         com['thumbs'] = rating ? rating.approval.to_i : 0
