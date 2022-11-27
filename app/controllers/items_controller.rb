@@ -395,6 +395,8 @@ class ItemsController < ApplicationController
           'content': com_content,
           'has_more': has_more
         }
+        rating = Rating.where(item_id: comment.id, participant_id: cp_id).last
+        com['thumbs'] = rating ? rating.approval.to_i : 0
         @comments << com
       end
       
