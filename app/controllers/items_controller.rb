@@ -405,6 +405,7 @@ class ItemsController < ApplicationController
           'num_comments': 0,
           'comments': [],
           'rating_summary': '',
+          'is_first_in_thread': 0,
         }
         rating = Rating.where(item_id: comment.id, participant_id: cp_id).last
         com['thumbs'] = rating ? rating.approval.to_i : 0
@@ -446,6 +447,7 @@ class ItemsController < ApplicationController
         'num_comments': @comments.length,
         'has_more': item_has_more,
         'rating_summary': rating_summary,
+        'is_first_in_thread': 1,
       }
       
       rating = Rating.where(item_id: item.id, participant_id: cp_id).last
