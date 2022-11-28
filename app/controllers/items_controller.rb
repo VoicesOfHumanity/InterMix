@@ -539,6 +539,8 @@ class ItemsController < ApplicationController
         'is_first_in_thread': 0,
         'user_img_link': user_img_link,
       }
+      rating = Rating.where(item_id: comment.id, participant_id: cp_id).last
+      com['thumbs'] = rating ? rating.approval.to_i : 0
       @comments << com
     end
     
