@@ -501,6 +501,11 @@ class ItemsController < ApplicationController
         com_content = plain_content
         has_more = 0
       end
+      short_content = comment.short_content.to_s
+      if short_content.strip == ""
+        short_content = plain_content
+      end
+      short_content = short_content[0,140] + '...' if short_content.length > 140
       if comment.participant and comment.participant.picture.exists?
         user_img_link = comment.participant.picture.url(:thumb)
       elsif item.remote_poster
@@ -514,9 +519,15 @@ class ItemsController < ApplicationController
         'created_at': comment.created_at.strftime("%Y-%m-%d"),
         'posted_by': comment.posted_by,
         'posted_by_user': comment.participant ? comment.participant.name : '???',
-        'content': com_content,
+        'short_content': short_content,
+        'html_content': item.html_content,
+        'plain_content': com_content,
         'has_more': has_more,
-        'user_img_link': user_img_link
+        'subject': comment.subject,
+        'num_comments': 0,
+        'comments': [],
+        'rating_summary': '',
+        'is_first_in_thread': 0,
       }
       @comments << com
     end
