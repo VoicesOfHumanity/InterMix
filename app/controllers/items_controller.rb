@@ -392,6 +392,14 @@ class ItemsController < ApplicationController
           short_content = plain_content
         end
         short_content = short_content[0,140] + '...' if short_content.length > 140
+        if comment.participant and comment.participant.picture.exists?
+          user_img_link = comment.participant.picture.url(:thumb)
+        elsif comment.remote_poster
+          user_img_link = comment.remote_poster.thumb_or_blank
+        else
+          user_img_link = "/images/default_user_icon-50x50.png"
+        end 
+        user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
         com = {
           'id': comment.id,
           'created_at': comment.created_at.strftime("%Y-%m-%d"),
@@ -406,6 +414,7 @@ class ItemsController < ApplicationController
           'comments': [],
           'rating_summary': '',
           'is_first_in_thread': 0,
+          'user_img_link': user_img_link,
         }
         rating = Rating.where(item_id: comment.id, participant_id: cp_id).last
         com['thumbs'] = rating ? rating.approval.to_i : 0
@@ -528,6 +537,7 @@ class ItemsController < ApplicationController
         'comments': [],
         'rating_summary': '',
         'is_first_in_thread': 0,
+        'user_img_link': user_img_link,
       }
       @comments << com
     end
