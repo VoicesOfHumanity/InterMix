@@ -6,6 +6,7 @@ class ItemsController < ApplicationController
   layout "front"
   before_action :authenticate_user_from_token!, :except=>[:pubgallery]
   before_action :authenticate_participant!, :except=>[:pubgallery,:view,:item_api,:list_api, :create_api]
+  skip_before_action :verify_authenticity_token, :only => [:create_api]
   append_before_action :check_required, only: :new
 
   include ItemLib
