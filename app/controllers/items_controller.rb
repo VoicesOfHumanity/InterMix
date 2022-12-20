@@ -1436,7 +1436,7 @@ class ItemsController < ApplicationController
     @item.media_type = 'text'
     @item.posted_by = current_participant.id
     @item.subject = subject
-    @item.short_content = html_content
+    @item.html_content = html_content
     @item.short_content = short_content
     @item.reply_to = reply_to
     if reply_to > 0
