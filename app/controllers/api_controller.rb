@@ -94,6 +94,13 @@ class ApiController < ApplicationController
             if data.has_key?('admin1uniq')
                 p.admin1uniq = data['admin1uniq']
             end
+            if data.has_key?('city')
+                p.city = data['city']
+                p.city_uniq = data['admin1uniq'] + '_' + data['city']
+            end
+            if data.has_key?('country_cod2')
+                p.country_code = data['country_code2']
+            end
             if data.has_key?('generation_id')
                 p.update_generation(data['generation_id'])
             end
