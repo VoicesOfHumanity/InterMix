@@ -9,3 +9,4 @@ config/localsettings.rb
 intermix.tmproj
 public/ckeditor_assets
 *~
+secrets

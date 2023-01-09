@@ -102,17 +102,18 @@ end
 
 # Gems used only for assets and not required
 # in production environments by default.
-#group :assets do
+group :assets do
   gem 'sass-rails'
   gem 'coffee-rails'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'therubyracer', :platforms => :ruby
+  #gem 'therubyracer', :platforms => :ruby
+  gem 'mini_racer'
 
   gem 'uglifier'
   
-  gem 'libv8'
-#end
+  #gem 'libv8'
+end
 
 
 # Bundle gems for the local environment. Make sure to

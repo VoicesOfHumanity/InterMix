@@ -186,7 +186,7 @@ BITLY_TOKEN = 'c9d06623cb928bca6977ae80bbdb1a4cc676309c'
 
 #EMBEDLY_API_KEY = '69a93eaedc814b13ad46aa4952e75107'
 
-VOH_DISCUSSION_ID = 4
+#VOH_DISCUSSION_ID = 4
 
 # New moons: http://rubyslipper.ca/ruby-slipper-astrology/2014/10/newfull-moons-eclipses-2015
 MOONS = {
