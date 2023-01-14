@@ -64,6 +64,8 @@ Rails.application.configure do
   
   config.force_ssl = true
   
+  config.hosts << "intermix.test"
+  
 end
 
 #SYSTEM_SENDER = "noreply@intermix.cr8.com"
