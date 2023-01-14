@@ -82,6 +82,8 @@ class ApiController < ApplicationController
         Rails.logger.info("api#update_user: id: #{id}")
         p = Participant.find_by_id(id)
         if p
+            @participant = p
+            @oldparticipant = p.dup
             if data.has_key?('country_code')
                 p.country_code = data['country_code']
             elsif data.has_key?('country_name')
@@ -108,6 +110,7 @@ class ApiController < ApplicationController
                 p.update_gender(data['gender_id'])
             end
             p.save
+            geoupdate
             render json: {
                 status: 'success: '+data.inspect
             }
