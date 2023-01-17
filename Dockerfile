@@ -16,8 +16,10 @@ RUN bundle config set --local without 'development test'
 RUN bundle install
 
 COPY . /usr/src/app
-#RUN bundle exec rake DATABASE_URL=mysql2:does_not_exist assets:precompile
-RUN bundle exec rake assets:precompile
+RUN bundle exec rake DATABASE_URL=mysql2:does_not_exist assets:precompile
+#RUN bundle exec rake assets:precompile
 
 EXPOSE 3000
-CMD ['rails', 'server', '-b', '0.0.0.0']
+# thin start -p 3002 --ssl --ssl-key-file ~/.ssl/localhost.key --ssl-cert-file ~/.ssl/localhost.crt
+CMD ["rails", "server", "-u", "thin", "-b", "0.0.0.0"]
+#CMD bundle exec rails server -b

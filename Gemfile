@@ -91,6 +91,9 @@ gem 'down'
 
 gem 'rexml'
 
+# for local dev, but also staging server?
+gem 'thin'
+
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
@@ -102,7 +105,6 @@ group :development, :test do
   #gem 'capybara-webkit'
   #gem 'factory_girl_rails'
   gem 'factory_bot_rails'
-  gem 'thin'
 end
 
 # Gems used only for assets and not required
