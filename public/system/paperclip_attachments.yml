@@ -1,0 +1,14 @@
+:Community:
+  :logo:
+  - :thumb
+  - :medium
+:Participant:
+  :picture:
+  - :thumb
+  - :medium
+:Ckeditor::Picture:
+  :data:
+  - :thumb
+  - :content
+
+#:Ckeditor::AttachmentFile:
