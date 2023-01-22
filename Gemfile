@@ -94,8 +94,6 @@ gem 'rexml'
 # for local dev, but also staging server?
 gem 'thin'
 
-gem "passenger", ">= 6.0.16", require: "phusion_passenger/rack_handler"
-
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'

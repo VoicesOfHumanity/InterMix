@@ -273,9 +273,6 @@ GEM
       mime-types
       mimemagic (~> 0.3.0)
       terrapin (~> 0.6.0)
-    passenger (6.0.16)
-      rack
-      rake (>= 0.8.1)
     pkg-config (1.5.1)
     postmark (1.22.2)
       json
@@ -462,7 +459,6 @@ DEPENDENCIES
   omniauth-twitter
   openssl
   paperclip
-  passenger (>= 6.0.16)
   postmark
   postmark-rails
   rack-cors
