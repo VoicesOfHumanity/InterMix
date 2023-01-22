@@ -54,8 +54,7 @@ gem 'rmagick', :require => "rmagick"
 gem 'acts-as-taggable-on'
 #gem 'simple_captcha'
 #gem 'ckeditor', '3.4.2.pre'
-#gem 'ckeditor'
-#gem 'ckeditor_rails_6'
+gem 'ckeditor'
 #gem 'carrierwave'
 #gem 'mini_magick'
 gem 'cancancan'
@@ -101,18 +100,14 @@ gem "passenger", ">= 6.0.16", require: "phusion_passenger/rack_handler"
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
-  gem 'capistrano-rails' 
+  gem 'capistrano-rails'
+  gem 'web-console'  
   gem 'rspec-rails'
   #gem 'capybara'
   #gem 'selenium-webdriver'
   #gem 'capybara-webkit'
   #gem 'factory_girl_rails'
   gem 'factory_bot_rails'
-
-  gem 'web-console', '>= 4.1.0'
-  gem 'listen', '~> 3.3'
-  gem 'rack-mini-profiler', '~> 2.0'
-  gem 'spring'
 end
 
 # Gems used only for assets and not required
@@ -126,6 +121,8 @@ group :assets do
   gem 'mini_racer'
 
   gem 'uglifier'
+  
+  #gem 'libv8'
 end
 
 

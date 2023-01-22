@@ -9,10 +9,6 @@ class Religion < ApplicationRecord
     ret << " END"
   end
   
-  #scope :order_by_custom, -> { order(custom_order) }
-  scope :order_by_custom, -> { order(Arel.sql(custom_order).asc) }
+  scope :order_by_custom, -> { order(custom_order) }
   
-  #scope :order_by_start_date_asc, -> { order(Arel.sql("lms_data->>'startDate'").asc) }
-
-
 end
