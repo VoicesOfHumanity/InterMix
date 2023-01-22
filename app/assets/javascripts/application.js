@@ -16,7 +16,7 @@
 //= require front
 //= require forum
 //= require ckeditor_fix
-// require ckeditor/init
+//= require ckeditor/init
 
 //= require jquery-ui
 // require jquery.ui.core

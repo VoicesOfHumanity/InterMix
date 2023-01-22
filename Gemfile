@@ -1,11 +1,8 @@
 source 'http://rubygems.org'
 
-ruby "3.0.5"
-
 #gem 'rails', '~> 3.2'
 #gem 'rails', '~> 4.2'
-#gem 'rails', '~> 5.2.3'
-gem 'rails', '~> 6.1'
+gem 'rails', '~> 5.2.3'
 
 gem 'rake'
 
