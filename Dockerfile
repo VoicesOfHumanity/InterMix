@@ -12,8 +12,7 @@ ENV RAILS_LOG_TO_STDOUT true
 COPY Gemfile /usr/src/app/
 COPY Gemfile.lock /usr/src/app/
 RUN bundle config --global frozen 1
-RUN bundle config set --local without 'development test'
-RUN bundle install
+RUN bundle install --without development test
 
 COPY . /usr/src/app
 RUN bundle exec rake DATABASE_URL=mysql2:does_not_exist assets:precompile

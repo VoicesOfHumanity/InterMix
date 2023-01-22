@@ -86,8 +86,6 @@ gem 'deep_cloneable'
 
 gem 'down'
 
-gem 'rexml'
-
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
