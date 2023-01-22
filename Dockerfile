@@ -16,8 +16,7 @@ RUN bundle config set --local without 'development test'
 RUN bundle install
 
 COPY . /usr/src/app
-#RUN bundle exec rake DATABASE_URL=mysql2:does_not_exist assets:precompile
-RUN bundle exec rake assets:precompile
+RUN bundle exec rake DATABASE_URL=mysql2:does_not_exist assets:precompile
 
 EXPOSE 3000
 CMD ['rails', 'server', '-b', '0.0.0.0']
