@@ -2,17 +2,55 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_28_212811) do
+ActiveRecord::Schema.define(version: 2023_01_19_214407) do
 
-  create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "action_text_rich_texts", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body", size: :long
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
+  create_table "active_storage_attachments", charset: "utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", charset: "utf8", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", charset: "utf8", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "api_requests", charset: "utf8", force: :cascade do |t|
     t.string "path"
     t.text "request_body"
     t.text "request_headers"
@@ -35,7 +73,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["user_agent"], name: "index_api_requests_on_user_agent"
   end
 
-  create_table "api_sends", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "api_sends", charset: "utf8", force: :cascade do |t|
     t.integer "participant_id"
     t.integer "remote_actor_id"
     t.string "to_url"
@@ -53,7 +91,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["remote_actor_id"], name: "index_api_sends_on_remote_actor_id"
   end
 
-  create_table "authentications", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "authentications", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "participant_id"
     t.string "provider"
     t.string "uid"
@@ -61,7 +99,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.datetime "updated_at"
   end
 
-  create_table "ckeditor_assets", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "ckeditor_assets", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "data_file_name", null: false
     t.string "data_content_type"
     t.integer "data_file_size"
@@ -80,7 +118,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["user_id"], name: "fk_user"
   end
 
-  create_table "communities", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "communities", id: :integer, charset: "utf8", force: :cascade do |t|
     t.string "tagname"
     t.text "description"
     t.boolean "twitter_post", default: true
@@ -134,7 +172,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["tagname"], name: "index_communities_on_tagname"
   end
 
-  create_table "community_admins", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "community_admins", id: :integer, charset: "utf8", force: :cascade do |t|
     t.integer "community_id"
     t.integer "participant_id"
     t.boolean "active", default: true
@@ -145,7 +183,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["community_id", "participant_id"], name: "index_community_admins_on_community_id_and_participant_id"
   end
 
-  create_table "community_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "community_items", charset: "utf8", force: :cascade do |t|
     t.integer "community_id"
     t.integer "item_id"
     t.datetime "created_at", null: false
@@ -154,7 +192,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["item_id", "community_id"], name: "index_community_items_on_item_id_and_community_id"
   end
 
-  create_table "community_networks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "community_networks", charset: "utf8", force: :cascade do |t|
     t.integer "community_id"
     t.integer "network_id"
     t.integer "created_by"
@@ -164,7 +202,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["network_id", "community_id"], name: "index_community_networks_on_network_id_and_community_id"
   end
 
-  create_table "community_participants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "community_participants", charset: "utf8", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "community_id"
@@ -174,7 +212,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id", "community_id"], name: "index_community_participants_on_participant_id_and_community_id", unique: true
   end
 
-  create_table "conversation_communities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "conversation_communities", charset: "utf8", force: :cascade do |t|
     t.integer "conversation_id"
     t.integer "community_id"
     t.datetime "created_at", null: false
@@ -183,7 +221,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["conversation_id", "community_id"], name: "conv_com_ids"
   end
 
-  create_table "conversations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "conversations", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.string "shortname"
     t.text "description"
@@ -207,7 +245,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["shortname"], name: "index_conversations_on_shortname"
   end
 
-  create_table "dialog_admins", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "dialog_admins", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "dialog_id"
     t.integer "participant_id"
     t.boolean "active", default: true
@@ -216,7 +254,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["dialog_id", "participant_id"], name: "index_dialog_admins_on_dialog_id_and_participant_id"
   end
 
-  create_table "dialog_groups", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "dialog_groups", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "dialog_id"
     t.integer "group_id"
     t.boolean "active", default: true
@@ -234,7 +272,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["group_id", "dialog_id"], name: "index_dialog_groups_on_group_id_and_dialog_id"
   end
 
-  create_table "dialog_metamaps", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "dialog_metamaps", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "dialog_id"
     t.integer "metamap_id"
     t.integer "sortorder"
@@ -244,7 +282,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["metamap_id", "dialog_id"], name: "index_dialog_metamaps_on_metamap_id_and_dialog_id"
   end
 
-  create_table "dialog_participants", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "dialog_participants", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "dialog_id"
     t.integer "participant_id"
     t.boolean "moderator", default: false
@@ -257,7 +295,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id", "dialog_id"], name: "index_dialog_participants_on_participant_id_and_dialog_id"
   end
 
-  create_table "dialogs", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "dialogs", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.text "shortdesc"
@@ -312,7 +350,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["shortname"], name: "index_dialogs_on_shortname", length: 20
   end
 
-  create_table "emails", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "emails", charset: "utf8", force: :cascade do |t|
     t.integer "participant_id"
     t.integer "integer"
     t.string "context"
@@ -327,7 +365,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id", "id"], name: "index_emails_on_participant_id_and_id"
   end
 
-  create_table "follows", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "follows", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "following_id"
     t.integer "followed_id"
     t.boolean "mutual", default: false
@@ -348,7 +386,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["following_id", "followed_id"], name: "index_follows_on_following_id_and_followed_id"
   end
 
-  create_table "geoadmin1s", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "geoadmin1s", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "admin1uniq", limit: 15
     t.string "country_code", limit: 2
     t.string "admin1_code", limit: 10
@@ -358,7 +396,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["country_code", "name"], name: "geoadmin1s_name_index", length: { name: 20 }
   end
 
-  create_table "geoadmin2s", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "geoadmin2s", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "admin2uniq", limit: 30
     t.string "country_code", limit: 2
     t.string "admin1_code", limit: 10
@@ -373,7 +411,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["geoname_id"], name: "geoname_id"
   end
 
-  create_table "geocountries", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "geocountries", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "iso", limit: 2
     t.string "iso3", limit: 3
     t.integer "isonum"
@@ -401,7 +439,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["name"], name: "name"
   end
 
-  create_table "geonames", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "geonames", id: :integer, charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.string "asciiname"
     t.text "alternatenames"
@@ -428,7 +466,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["name"], name: "geonames_name_index", length: 30
   end
 
-  create_table "group_metamaps", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "group_metamaps", id: :integer, charset: "utf8", force: :cascade do |t|
     t.integer "group_id"
     t.integer "metamap_id"
     t.integer "sortorder"
@@ -438,7 +476,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["metamap_id", "group_id"], name: "index_group_metamaps_on_metamap_id_and_group_id"
   end
 
-  create_table "group_participants", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "group_participants", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "group_id"
     t.integer "participant_id"
     t.boolean "moderator", default: false
@@ -452,7 +490,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id", "group_id"], name: "index_group_participants_on_participant_id_and_group_id"
   end
 
-  create_table "group_subtag_participants", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "group_subtag_participants", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "group_subtag_id"
     t.integer "group_id"
     t.integer "participant_id"
@@ -462,7 +500,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id"], name: "index_group_subtag_participants_on_participant_id"
   end
 
-  create_table "group_subtags", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "group_subtags", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "group_id"
     t.string "tag", limit: 30
     t.datetime "created_at"
@@ -472,7 +510,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["group_id", "tag"], name: "index_group_subtags_on_group_id_and_tag"
   end
 
-  create_table "groups", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "groups", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "name"
     t.string "shortname"
     t.text "description"
@@ -516,7 +554,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["shortname"], name: "index_groups_on_shortname", length: 20
   end
 
-  create_table "help_texts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "help_texts", id: :integer, charset: "utf8", force: :cascade do |t|
     t.string "code"
     t.string "description"
     t.text "text"
@@ -525,7 +563,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["code"], name: "index_help_texts_on_code", length: 30
   end
 
-  create_table "hub_admins", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "hub_admins", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "hub_id"
     t.integer "participant_id"
     t.boolean "active", default: true
@@ -534,14 +572,14 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["hub_id", "participant_id"], name: "index_hub_admins_on_hub_id_and_participant_id"
   end
 
-  create_table "hubs", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "hubs", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["name"], name: "index_hubs_on_name"
   end
 
-  create_table "item_deliveries", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "item_deliveries", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "item_id"
@@ -553,7 +591,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id", "item_id"], name: "index_item_deliveries_on_participant_id_and_item_id"
   end
 
-  create_table "item_flags", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "item_flags", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "item_id"
     t.integer "participant_id"
     t.text "comment"
@@ -566,7 +604,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id", "item_id"], name: "index_item_flags_on_participant_id_and_item_id"
   end
 
-  create_table "item_rating_summaries", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "item_rating_summaries", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "item_id"
     t.string "summary_type", limit: 15
     t.integer "int_0_count", default: 0
@@ -598,7 +636,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["value"], name: "index_item_rating_summaries_on_value"
   end
 
-  create_table "item_subscribes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "item_subscribes", id: :integer, charset: "utf8", force: :cascade do |t|
     t.integer "item_id"
     t.integer "participant_id"
     t.boolean "followed", default: true
@@ -606,7 +644,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id", "item_id"], name: "index_item_subscribes_on_participant_id_and_item_id"
   end
 
-  create_table "item_thumbs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "item_thumbs", charset: "utf8", force: :cascade do |t|
     t.text "original_url"
     t.string "our_path"
     t.datetime "created_at", null: false
@@ -614,7 +652,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["original_url"], name: "index_item_thumbs_on_original_url", length: 35
   end
 
-  create_table "items", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "items", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "item_type", default: "message"
     t.string "media_type", default: "text"
     t.string "int_ext", default: "int"
@@ -693,7 +731,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["remote_delivery_done"], name: "index_items_on_remote_delivery_done"
   end
 
-  create_table "messages", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "messages", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "from_participant_id"
     t.integer "from_remote_actor_id"
     t.integer "to_participant_id"
@@ -731,7 +769,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["to_remote_actor_id"], name: "index_messages_on_to_remote_actor_id"
   end
 
-  create_table "metamap_node_participants", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "metamap_node_participants", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "metamap_id"
     t.integer "metamap_node_id"
     t.integer "participant_id"
@@ -742,7 +780,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id", "metamap_node_id"], name: "particip_node"
   end
 
-  create_table "metamap_nodes", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "metamap_nodes", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "metamap_id"
     t.string "name"
     t.string "name_as_group"
@@ -757,7 +795,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["parent_id"], name: "index_metamap_nodes_on_parent_id"
   end
 
-  create_table "metamaps", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "metamaps", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "name"
     t.integer "created_by"
     t.datetime "created_at"
@@ -769,7 +807,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["name"], name: "index_metamaps_on_name", length: 20
   end
 
-  create_table "metro_areas", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "metro_areas", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "name"
     t.string "country_code"
     t.integer "population"
@@ -779,7 +817,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["country_code", "name"], name: "index_metro_areas_on_country_code_and_name", length: { country_code: 1, name: 20 }
   end
 
-  create_table "moons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "moons", charset: "utf8", force: :cascade do |t|
     t.date "mdate"
     t.string "topic"
     t.text "top_text"
@@ -792,7 +830,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["mdate"], name: "index_moons_on_mdate"
   end
 
-  create_table "network_communities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "network_communities", charset: "utf8", force: :cascade do |t|
     t.integer "network_id"
     t.integer "community_id"
     t.integer "created_by"
@@ -802,7 +840,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["network_id", "community_id"], name: "net_com_ids"
   end
 
-  create_table "networks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "networks", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.integer "created_by"
     t.datetime "created_at", null: false
@@ -817,7 +855,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["name"], name: "name"
   end
 
-  create_table "participant_religions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "participant_religions", charset: "utf8", force: :cascade do |t|
     t.integer "participant_id"
     t.integer "religion_id"
     t.string "religion_denomination"
@@ -827,7 +865,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["religion_id", "participant_id"], name: "index_participant_religions_on_religion_id_and_participant_id"
   end
 
-  create_table "participants", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "participants", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
     t.string "title"
@@ -942,7 +980,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["reset_password_token"], name: "index_participants_on_reset_password_token", unique: true
   end
 
-  create_table "periods", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "periods", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.date "startdate"
     t.date "enddate"
     t.date "endposting"
@@ -980,12 +1018,12 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.string "sort_order", default: "date"
     t.string "crosstalk", default: "none"
     t.integer "period_number", default: 0
-    t.text "result", limit: 16777215
+    t.text "result", size: :medium
     t.index ["dialog_id", "startdate"], name: "index_periods_on_dialog_id_and_startdate"
     t.index ["group_id", "startdate"], name: "index_periods_on_group_id_and_startdate"
   end
 
-  create_table "photos", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "photos", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "participant_id"
     t.text "caption"
     t.string "filename"
@@ -998,7 +1036,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["participant_id"], name: "index_photos_on_participant_id"
   end
 
-  create_table "ratings", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "ratings", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "item_id"
     t.integer "participant_id"
     t.integer "remote_actor_id"
@@ -1019,7 +1057,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["remote_actor_id", "id"], name: "index_ratings_on_remote_actor_id_and_id"
   end
 
-  create_table "religions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "religions", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.string "shortname"
     t.string "subdiv", default: ""
@@ -1028,7 +1066,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["name"], name: "index_religions_on_name", length: 35
   end
 
-  create_table "remote_actors", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "remote_actors", charset: "utf8", force: :cascade do |t|
     t.string "account"
     t.string "account_url"
     t.text "json_got"
@@ -1048,7 +1086,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["name"], name: "index_remote_actors_on_name"
   end
 
-  create_table "sys_data", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "sys_data", charset: "utf8", force: :cascade do |t|
     t.integer "cur_moon_id"
     t.string "moon_new_or_full", default: "new"
     t.datetime "moon_startdate"
@@ -1058,7 +1096,7 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "taggings", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "taggings", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.integer "tag_id"
     t.integer "taggable_id"
     t.string "taggable_type"
@@ -1077,13 +1115,13 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["tagger_id"], name: "index_taggings_on_tagger_id"
   end
 
-  create_table "tags", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "tags", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "name"
     t.integer "taggings_count", default: 0
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
 
-  create_table "templates", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "templates", id: :integer, charset: "utf8", options: "ENGINE=MyISAM", force: :cascade do |t|
     t.string "name"
     t.string "section", limit: 20
     t.string "mail_web", limit: 4
@@ -1101,4 +1139,6 @@ ActiveRecord::Schema.define(version: 2022_06_28_212811) do
     t.index ["section"], name: "index_templates_on_section"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
 end

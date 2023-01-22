@@ -1,10 +1,10 @@
-# Use this hook to configure ckeditor
-Ckeditor.setup do |config|
+# Use this hook to configure ckeditor. Probably no longer needed
+#Ckeditor.setup do |config|
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default), :mongo_mapper and
   # :mongoid (bson_ext recommended) by default. Other ORMs may be
   # available as additional gems.
-  require "ckeditor/orm/active_record"
+#  require "ckeditor/orm/active_record"
 
   # Allowed image file types for upload.
   # Set to nil or [] (empty array) for all file types
@@ -16,7 +16,7 @@ Ckeditor.setup do |config|
 
   # Setup authorization to be run as a before filter
   #config.authorize_with :cancan
-end
+#end
 
 #Ckeditor::ApplicationController.send :define_method, :ckeditor_filebrowser_scope do |o|
 #  super(o.merge(assetable_type: "Participant", assetable_id: current_participant.try(:id)))
