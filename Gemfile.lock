@@ -416,6 +416,7 @@ DEPENDENCIES
   capistrano-rbenv
   ckeditor
   coffee-rails
+  date
   deep_cloneable
   devise
   down

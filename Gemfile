@@ -92,6 +92,9 @@ gem "passenger", ">= 6.0.16", require: "phusion_passenger/rack_handler"
 
 gem "mimemagic", ">=0.3.10"
 
+# assets:precompile seems to be missing this
+gem "date"
+
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
