@@ -45,6 +45,9 @@ class Participant < ActiveRecord::Base
   
   has_many :participant_religions
   has_many :religions, :through => :participant_religions
+
+  has_many :community_participants
+  has_many :communities, :through => :community_participants
   
   
   #has_many :gender_metamap_node_participants, :class_name => "MetamapNodeParticipant", :conditions => "metamap_id=3"

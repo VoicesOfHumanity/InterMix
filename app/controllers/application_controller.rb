@@ -111,7 +111,9 @@ class ApplicationController < ActionController::Base
   end
 
   def getcommunities
-
+    @major_communities = Community.where(major: true).order(:fullname)
+    #@more_communities = Community.where(more: true).order(:fullname)
+    res = @major_communities.collect {|r| {:val=>r.id,:txt=>r.fullname}}
   end
   
   def setsess
