@@ -382,6 +382,14 @@ class Participant < ActiveRecord::Base
     end
     mnp.save
   end
+
+  def religion_ids
+    self.religions.map{|r| r.id}
+  end
+
+  def community_ids
+    self.communities.map{|c| c.id}
+  end
   
   def them
     #-- Return him, her, them, depending on what we know about their gender

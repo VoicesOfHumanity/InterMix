@@ -191,7 +191,9 @@ class ApiController < ApplicationController
             gender: participant.gender,
             generation_id: participant.generation_id,
             generation: participant.generation,
-            auth_token: participant.authentication_token
+            auth_token: participant.authentication_token,
+            religion_ids: participant.religion_ids,
+            community_ids: participant.community_ids,
         }
         return info
     end 
