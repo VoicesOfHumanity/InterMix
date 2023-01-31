@@ -103,7 +103,16 @@ class ApplicationController < ActionController::Base
     end          
     #render :layout=>false, :text => res.to_json
     render json: res
-  end  
+  end
+
+  def getreligions
+    res = [{:val=>0, :txt=>''}] + Religion.order_by_custom.collect {|r| {:val=>r.id,:txt=>r.name}}
+    render json: res
+  end
+
+  def getcommunities
+
+  end
   
   def setsess
     if participant_signed_in?
