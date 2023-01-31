@@ -116,7 +116,9 @@ class ApiController < ApplicationController
                 religion_ids = data['religion_ids']
                 for rel in Religion.all
                     if religion_ids.include?(rel.id)
-                        p.religions << rel
+                        if not p.religions.include?(rel)
+                            p.religions << rel
+                        end
                         p.tag_list.add(rel.shortname)
                         if rel.name == 'Indigenous'
                             has_indigenous = true
@@ -139,7 +141,9 @@ class ApiController < ApplicationController
                 major_communities = Community.where(major: true).order(:fullname)
                 for com in major_communities
                     if community_ids.include?(com.id)
-                        p.communities << com
+                        if not p.communities.include?(com)
+                            p.communities << com
+                        end
                         p.tag_list.add(com.tagname)
                     else
                         p.communities.delete(com)
