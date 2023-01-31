@@ -110,7 +110,46 @@ class ApiController < ApplicationController
                 p.update_gender(data['gender_id'])
             end
             p.save
+
+            has_indigenous = false
+            if data.has_key?('religion_ids')
+                religion_ids = data['religion_ids']
+                for rel in Religion.all
+                    if religion_ids.include?(rel.id)
+                        p.religions << rel
+                        p.tag_list.add(rel.shortname)
+                        if rel.name == 'Indigenous'
+                            has_indigenous = true
+                        end
+                    else
+                        p.religions.delete(rel)
+                        p.tag_list.remove(rel.shortname)
+                    end
+                end
+            end
+            if has_indigenous
+                # If they have the indigenous religion, add them to nations too, if they don't already have two nations
+                if p.country_code2.to_s == '' and p.country_code2 != '_I' and p.country_code != '_I'
+                    p.country_code2 = '_I'
+                end
+            end
+
+            if data.has_key?('community_ids')
+                community_ids = data['community_ids']
+                major_communities = Community.where(major: true).order(:fullname)
+                for com in major_communities
+                    if community_ids.include?(com.id)
+                        p.communities << com
+                        p.tag_list.add(com.tagname)
+                    else
+                        p.communities.delete(com)
+                        p.tag_list.remove(com.tagname)
+                    end
+                end
+            end
+
             geoupdate
+
             render json: {
                 status: 'success: '+data.inspect
             }
