@@ -116,6 +116,7 @@ class ApiController < ApplicationController
                 religion_ids = data['religion_ids']
                 for rel in Religion.all
                     if religion_ids.include?(rel.id)
+                        logger.info("api#update_user: rel: #{rel.id} #{rel.name} try to add")
                         if not p.religions.include?(rel)
                             p.religions << rel
                         end
@@ -124,6 +125,7 @@ class ApiController < ApplicationController
                             has_indigenous = true
                         end
                     else
+                        logger.info("api#update_user: rel: #{rel.id} #{rel.name} try to delete")
                         p.religions.delete(rel)
                         p.tag_list.remove(rel.shortname)
                     end
