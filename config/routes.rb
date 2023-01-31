@@ -363,6 +363,8 @@ Rails.application.routes.draw do
   get 'front/getcities' => 'front#getcities'
   get 'front/getmetro' => 'front#getmetro'
   get 'front/getadmin2_from_city'
+  get 'front/getreligions'
+  get 'front/getcommunities'
   get 'front/setsess' => 'front#setsess'
   get 'front/updatemoreless' => 'front#updatemoreless'
   get 'front/test' => 'front#test'
