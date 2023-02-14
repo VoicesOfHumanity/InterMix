@@ -207,7 +207,7 @@ class ApiController < ApplicationController
         item = Item.find_by_id(item_id)
 
         if item
-            complaint = Complaint.new(item_id: item_id, complainer_id: user_id, poster_id: item.posted_by, reason: reason)
+            complaint = Complaint.new(item_id: item_id, complainer_id: user_id, poster_id: item.posted_by, reason: reason, status: 'new')
             complaint.save
             render json: {
                 status: 'success'

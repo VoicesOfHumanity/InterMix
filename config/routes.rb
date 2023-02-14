@@ -73,6 +73,10 @@ Rails.application.routes.draw do
       get :search, :on => :collection
     end  
 
+    resources :complaints do
+      get :search, :on => :collection
+    end
+
     resources :communities do
       get :search, :on => :collection
       get :admins, :on => :member
