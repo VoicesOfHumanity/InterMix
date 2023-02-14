@@ -195,7 +195,30 @@ class ApiController < ApplicationController
         render json: {
             status: 'success'
         }
-      end
+    end
+
+    def report_complaint
+        item_id = params[:item_id].to_i
+        user_id = params[:user_id].to_i
+        reason = params[:reason].to_s
+
+        Rails.logger.info("api#report_complaint item:#{item_id} user:#{user_id} reason:#{reason}")
+
+        item = Item.find_by_id(item_id)
+
+        if item
+            complaint = Complaint.new(item_id: item_id, complainer_id: user_id, poster_id: item.posted_by, reason: reason)
+            complaint.save
+            render json: {
+                status: 'success'
+            }
+        else
+            render json: {
+                status: 'error',
+                message: "Item not found"
+            }
+        end
+    end
 
     protected
 

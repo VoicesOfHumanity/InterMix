@@ -8,12 +8,14 @@ class Item < ActiveRecord::Base
   belongs_to :conversation
   has_many :allratings, :class_name=>"Rating"
   has_one :item_rating_summary
-  
+
   has_many :item_subscribes
   has_many :subscribers, class_name: "Participant", :through => :item_subscribes
   
   belongs_to :orig_item, class_name: "Item", foreign_key: :reply_to, optional: true
-  
+
+  has_many :complaints
+
   serialize :oembed_response
   serialize :received_json
   
