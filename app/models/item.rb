@@ -1262,6 +1262,11 @@ class Item < ActiveRecord::Base
     items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
     ratings = ratings.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
     
+    # Exclude items that this user has complained about
+    if current_participant
+      items = items.where.not(id: Complaint.where(complainer_id: current_participant.id).pluck(:item_id))
+    end
+
     # Don't worry about groups any more
     title = ''
   
