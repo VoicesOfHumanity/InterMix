@@ -310,7 +310,7 @@ class ApiController < ApplicationController
             email: participant.email,
             name: participant.name,
             user_img_link: user_img_link,
-            fb_uid: fb_uid,
+            fb_uid: participant.fb_uid,
             country_code: participant.country_code,
             country_name: participant.country_name,
             country_code2: participant.country_code2,
