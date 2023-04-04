@@ -59,6 +59,68 @@ class ApiController < ApplicationController
 
     end
 
+    def user_from_facebook
+        # A facebook user has logged in, and we want to see if they are already an intermix user
+        # If not, create them
+        # Return the user info
+        Rails.logger.info("api#user_from_facebook")
+        data = JSON.parse(request.raw_post)
+        Rails.logger.info("api#user_from_facebook: data: #{data.inspect}")
+        fb_uid = data['facebook_id']
+        email = data['email']
+        name = data['name']
+        explanation = ''
+
+        participant = Participant.where(fb_uid: fb_uid, email: email).first
+        if participant
+            Rails.logger.info("api#user_from_facebook: found participant by fb_uid and email: #{participant.id}")
+            explanation = 'existing user found by fb_uid and email'
+        end
+        if not participant
+            participant = Participant.find_by_fb_uid(fb_uid)
+            if participant
+                Rails.logger.info("api#user_from_facebook: found participant by fb_uid: #{participant.id}")
+                explanation = 'existing user found by fb_uid'
+            end
+        end
+        if not participant
+            participant = Participant.find_by_email(email)
+            if participant
+                Rails.logger.info("api#user_from_facebook: found participant by email: #{participant.id}")
+                explanation = 'existing user found by email'
+                if not participant.fb_uid or participant.fb_uid == ''
+                    participant.fb_uid = fb_uid
+                    participant.save
+                end
+            end
+        end
+        if not participant
+            Rails.logger.info("api#user_from_facebook: creating participant")
+            explanation = 'new user created'
+            participant = Participant.new
+            narr = @name.split(' ')
+            last_name = narr[narr.length-1]
+            first_name = ''
+            first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
+            participant.first_name = first_name
+            participant.last_name = last_name
+            participant.email = email
+            participant.fb_uid = fb_uid
+            participant.save
+        end
+        if @participant.fb_uid.to_i >0 and not @participant.picture.exists?
+            #-- Use their facebook photo, if they don't already have one.
+            url = "https://graph.facebook.com/#{@participant.fb_uid}/picture?type=large"
+            @participant.picture = URI.parse(url).open
+            @participant.save
+        end
+        render json: {
+            status: 'success',
+            message: explanation,
+            user: user_info(participant)
+        }
+    end
+
     def get_user
         id = params[:id].to_i
         Rails.logger.info("api#get_user: id: #{id}")
