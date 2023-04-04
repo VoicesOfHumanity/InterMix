@@ -108,11 +108,11 @@ class ApiController < ApplicationController
             participant.fb_uid = fb_uid
             participant.save
         end
-        if @participant.fb_uid.to_i >0 and not @participant.picture.exists?
+        if participant.fb_uid.to_i >0 and not participant.picture.exists?
             #-- Use their facebook photo, if they don't already have one.
-            url = "https://graph.facebook.com/#{@participant.fb_uid}/picture?type=large"
-            @participant.picture = URI.parse(url).open
-            @participant.save
+            url = "https://graph.facebook.com/#{participant.fb_uid}/picture?type=large"
+            participant.picture = URI.parse(url).open
+            participant.save
         end
         render json: {
             status: 'success',
@@ -310,6 +310,7 @@ class ApiController < ApplicationController
             email: participant.email,
             name: participant.name,
             user_img_link: user_img_link,
+            fb_uid: fb_uid,
             country_code: participant.country_code,
             country_name: participant.country_name,
             country_code2: participant.country_code2,
