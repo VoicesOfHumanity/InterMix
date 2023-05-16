@@ -346,41 +346,6 @@ class ItemsController < ApplicationController
       if item.id == 2787
         logger.info("items#list_api item.id:#{item.id} item.participant.picture.url:#{item.participant.picture.url}")
       end
-      if item.has_picture
-        img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
-      elsif item.participant and item.participant.picture and item.participant.picture.url.to_s != ''
-        img_link = item.participant.picture.url
-      else
-        img_link = ""
-      end
-      if item.participant and item.participant.picture.exists?
-        user_img_link = item.participant.picture.url(:thumb)
-      elsif item.remote_poster
-        user_img_link = item.remote_poster.thumb_or_blank
-      else
-        user_img_link = "/images/default_user_icon-50x50.png"
-      end 
-      user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
-      if item.id == 2787
-        logger.info("items#list_api user_img_link:#{user_img_link}")
-      end
-
-      plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
-      content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
-      if content_without_hash.length > 190
-        content_without_hash = content_without_hash[0,190]
-        item_has_more = 1
-      else
-        item_has_more = 0
-      end
-
-      isum = itemsproc[item['id']]
-      rating_summary = ""
-      rating_summary += "Average interest: #{sprintf("%.1f", isum['avg_interest'] ? isum['avg_interest'] : 0.0)}\n"
-      rating_summary += "Average approval: #{sprintf("%.1f", isum['avg_approval'] ? isum['avg_approval'] : 0.0)}\n"
-      rating_summary += "Value: #{sprintf("%.1f", isum['value'] ? isum['value'] : 0.0)} (value = interest x approval)\n"
-      rating_summary += "Controversy: #{sprintf("%.1f", isum['controversy'] ? isum['controversy'] : 0.0)} (maximum=9)\n"
-      rating_summary += "Number of raters: #{isum['num_raters']}"
 
       @comments = []
       comments = Item.where(first_in_thread: item.id, is_first_in_thread: false).order('id')
@@ -427,7 +392,43 @@ class ItemsController < ApplicationController
         com['thumbs'] = rating ? rating.approval.to_i : 0
         @comments << com
       end
-      
+
+      plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
+      content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
+      if content_without_hash.length > 190
+        content_without_hash = content_without_hash[0,190]
+        item_has_more = 1
+      else
+        item_has_more = 0
+      end
+
+      isum = itemsproc[item['id']]
+      rating_summary = ""
+      rating_summary += "Average interest: #{sprintf("%.1f", isum['avg_interest'] ? isum['avg_interest'] : 0.0)}\n"
+      rating_summary += "Average approval: #{sprintf("%.1f", isum['avg_approval'] ? isum['avg_approval'] : 0.0)}\n"
+      rating_summary += "Value: #{sprintf("%.1f", isum['value'] ? isum['value'] : 0.0)} (value = interest x approval)\n"
+      rating_summary += "Controversy: #{sprintf("%.1f", isum['controversy'] ? isum['controversy'] : 0.0)} (maximum=9)\n"
+      rating_summary += "Number of raters: #{isum['num_raters']}"
+
+      if item.has_picture
+        img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
+      elsif item.participant and item.participant.picture and item.participant.picture.url.to_s != ''
+        img_link = item.participant.picture.url
+      else
+        img_link = ""
+      end
+      if item.participant and item.participant.picture.exists?
+        user_img_link = item.participant.picture.url(:thumb)
+      elsif item.remote_poster
+        user_img_link = item.remote_poster.thumb_or_blank
+      else
+        user_img_link = "/images/default_user_icon-50x50.png"
+      end 
+      user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
+      #if item.id == 2787
+      #  logger.info("items#list_api user_img_link:#{user_img_link}")
+      #end
+
       # Have they themselves voted on this?
       has_voted = cp ? item.has_voted(cp) : false
       
