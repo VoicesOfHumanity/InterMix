@@ -343,6 +343,9 @@ class ItemsController < ApplicationController
     xcount = 0
     
     for item in items
+      if item.id == 2787
+        logger.info("items#list_api item.id:#{item.id} item.participant.picture.url:#{item.participant.picture.url}")
+      end
       if item.has_picture
         img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
       elsif item.participant and item.participant.picture and item.participant.picture.url.to_s != ''
@@ -358,6 +361,9 @@ class ItemsController < ApplicationController
         user_img_link = "/images/default_user_icon-50x50.png"
       end 
       user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
+      if item.id == 2787
+        logger.info("items#list_api user_img_link:#{user_img_link}")
+      end
 
       plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
       content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
