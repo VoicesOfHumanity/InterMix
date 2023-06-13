@@ -138,6 +138,91 @@ class ApiController < ApplicationController
         end
     end
 
+    def update_user_field
+        data = JSON.parse(request.raw_post)
+        id = data['user_id'].to_i
+        Rails.logger.info("api#update_user_field: id: #{id}")
+        field_name = data['field_name']
+        field_value = data['field_value']
+        p = Participant.find_by_id(id)
+        if p
+            @participant = p
+            @oldparticipant = p.dup
+            if field_name == 'country_code'
+                p.country_code = field_value
+                if p.country_code != @oldparticipant.country_code
+                    p.admin1uniq = ''
+                    p.city = ''
+                    p.city_uniq = ''
+                end
+            elsif field_name == 'admin1uniq'
+                p.admin1uniq = field_value
+                if p.admin1uniq != @oldparticipant.admin1uniq
+                    p.city = ''
+                    p.city_uniq = ''
+                end
+            elsif field_name == 'city'
+                p.city = field_value
+                p.city_uniq = p.admin1uniq + '_' + p.city
+            elsif field_name == 'generationId'
+                p.update_generation(field_value)
+            elsif field_name == 'genderId'
+                p.update_gender(field_value)
+            elsif field_name == 'religionIDs'
+                religion_ids = field_value
+                has_indigenous = false
+                for rel in Religion.all
+                    if religion_ids.include?(rel.id)
+                        logger.info("api#update_user_field: rel: #{rel.id} #{rel.name} try to add")
+                        if not p.religions.include?(rel)
+                            p.religions << rel
+                        end
+                        p.tag_list.add(rel.shortname)
+                        if rel.name == 'Indigenous'
+                            has_indigenous = true
+                        end
+                    else
+                        logger.info("api#update_user_field: rel: #{rel.id} #{rel.name} try to delete")
+                        p.religions.delete(rel)
+                        p.tag_list.remove(rel.shortname)
+                    end
+                end
+                if has_indigenous
+                    # If they have the indigenous religion, add them to nations too, if they don't already have two nations
+                    if p.country_code2.to_s == '' and p.country_code2 != '_I' and p.country_code != '_I'
+                        p.country_code2 = '_I'
+                    end
+                end
+            elsif field_name == 'communityIDs'
+                community_ids = field_value
+                major_communities = Community.where(major: true).order(:fullname)
+                for com in major_communities
+                    if community_ids.include?(com.id)
+                        if not p.communities.include?(com)
+                            p.communities << com
+                        end
+                        p.tag_list.add(com.tagname)
+                    else
+                        p.communities.delete(com)
+                        p.tag_list.remove(com.tagname)
+                    end
+                end
+            end
+            p.save
+
+            geoupdate
+
+            render json: {
+                status: 'success'
+            }
+        else
+            render json: {
+                status: 'error',
+                message: "User #{id} not found"
+            }
+        end
+    end
+
     def update_user
         data = JSON.parse(request.raw_post)
         id = data['user_id'].to_i
