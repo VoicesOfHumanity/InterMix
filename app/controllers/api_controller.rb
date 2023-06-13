@@ -148,7 +148,7 @@ class ApiController < ApplicationController
         if p
             @participant = p
             @oldparticipant = p.dup
-            if field_name == 'country_code'
+            if field_name == 'countryCode'
                 p.country_code = field_value
                 if p.country_code != @oldparticipant.country_code
                     p.admin1uniq = ''
@@ -173,7 +173,7 @@ class ApiController < ApplicationController
                 has_indigenous = false
                 for rel in Religion.all
                     if religion_ids.include?(rel.id)
-                        logger.info("api#update_user_field: rel: #{rel.id} #{rel.name} try to add")
+                        #logger.info("api#update_user_field: rel: #{rel.id} #{rel.name} try to add")
                         if not p.religions.include?(rel)
                             p.religions << rel
                         end
@@ -182,7 +182,7 @@ class ApiController < ApplicationController
                             has_indigenous = true
                         end
                     else
-                        logger.info("api#update_user_field: rel: #{rel.id} #{rel.name} try to delete")
+                        #logger.info("api#update_user_field: rel: #{rel.id} #{rel.name} try to delete")
                         p.religions.delete(rel)
                         p.tag_list.remove(rel.shortname)
                     end
