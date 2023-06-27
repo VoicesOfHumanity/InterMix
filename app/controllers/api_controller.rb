@@ -321,7 +321,8 @@ class ApiController < ApplicationController
         importance = params[:importance].to_i
         rating = Rating.where(item_id: item_id, participant_id: user_id).first
         if not rating
-            rating = Rating.new(item_id: item_id, participant_id: user_id) 
+            rating = Rating.new(item_id: item_id, participant_id: user_id)
+        end
         if rating
             rating.importance = importance
             rating.save
