@@ -262,19 +262,6 @@ class ItemsController < ApplicationController
     @page = ( params[:page] || 1 ).to_i
     @page = 1 if @page < 1
 
-    sort = params[:sort].to_i
-    if sort == 1
-      sortby = "*value*"
-    elsif sort == 2
-      sortby = "*approval*"
-    elsif sort == 3
-      sortby = "*interest*"
-    elsif sort == 4
-      sortby = "*controversy*"
-    else
-      #  0: date
-      sortby = "items.id desc"
-    end
     if geo_level > 0
       @geo_level = GEO_LEVELS[geo_level]
     else
@@ -320,6 +307,25 @@ class ItemsController < ApplicationController
       'age': @age,
       'gender': @gender
     }
+
+        sort = params[:sort].to_i
+    # Now 1 means value - last month
+    # and 2 means value - all time
+    if sort == 1
+      sortby = "*value*"
+      crit['datefromuse'] = (Date.today - 30).to_s
+    elsif sort == 2
+      sortby = "*value*"
+    # elsif sort == 2
+    #   sortby = "*approval*"
+    # elsif sort == 3
+    #   sortby = "*interest*"
+    # elsif sort == 4
+    #   sortby = "*controversy*"
+    else
+      #  0: date
+      sortby = "items.id desc"
+    end
     
     if participant_signed_in?
       cp = current_participant
