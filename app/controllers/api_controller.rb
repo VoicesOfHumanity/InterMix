@@ -320,6 +320,8 @@ class ApiController < ApplicationController
         user_id = params[:user_id].to_i
         importance = params[:importance].to_i
         rating = Rating.where(item_id: item_id, participant_id: user_id).first
+        if not rating
+            rating = Rating.new(item_id: item_id, participant_id: user_id) 
         if rating
             rating.importance = importance
             rating.save
