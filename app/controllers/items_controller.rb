@@ -475,6 +475,7 @@ class ItemsController < ApplicationController
       
       rating = Rating.where(item_id: item.id, participant_id: cp_id).last
       rec['thumbs'] = rating ? rating.approval.to_i : 0
+      rec['importance'] = rating ? rating.importance.to_i : 0
       
       @items << rec
 
