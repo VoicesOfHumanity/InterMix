@@ -314,6 +314,26 @@ class ApiController < ApplicationController
         end
     end
 
+    def importance
+        # update importance for an item
+        item_id = params[:item_id].to_i
+        user_id = params[:user_id].to_i
+        importance = params[:importance].to_i
+        rating = Rating.where(item_id: item_id, participant_id: user_id).first
+        if rating
+            rating.importance = importance
+            rating.save
+            render json: {
+                status: 'success'
+            }
+        else
+            render json: {
+                status: 'error',
+                message: "Rating not found"
+            }
+        end
+    end
+
     def thumbrate
         #-- rate an item with up or down thumbs
         @from = params[:from] || 'api'

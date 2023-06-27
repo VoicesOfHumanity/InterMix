@@ -195,6 +195,7 @@ Rails.application.routes.draw do
   post 'api/update_user', to: 'api#update_user'
   post 'api/update_user_field', to: 'api#update_user_field'
   post 'api/thumbrate', to: 'api#thumbrate'
+  post 'api/importance', to: 'api#importance'
   post 'api/report_complaint', to: 'api#report_complaint'
 
   resources :authentications

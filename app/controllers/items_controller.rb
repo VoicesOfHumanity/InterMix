@@ -615,6 +615,8 @@ class ItemsController < ApplicationController
     rec['thumbs'] = rating ? rating.approval.to_i : 0
     rec['importance'] = rating ? rating.importance.to_i : 0
 
+    Item.importance(itemproc)
+
     render json: rec
   end
   
