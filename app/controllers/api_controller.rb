@@ -325,6 +325,7 @@ class ApiController < ApplicationController
         end
         if rating
             rating.importance = importance
+            rating.interest += 1
             rating.save
             render json: {
                 status: 'success'
