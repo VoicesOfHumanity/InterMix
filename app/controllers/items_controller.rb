@@ -308,12 +308,12 @@ class ItemsController < ApplicationController
       'gender': @gender
     }
 
-        sort = params[:sort].to_i
+    sort = params[:sort].to_i
     # Now 1 means value - last month
     # and 2 means value - all time
     if sort == 1
       sortby = "*value*"
-      crit['datefromuse'] = (Date.today - 30).to_s
+      crit[:datefromuse] = (Date.today - 30).to_s
     elsif sort == 2
       sortby = "*value*"
     # elsif sort == 2
