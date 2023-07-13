@@ -567,7 +567,7 @@ class ItemsController < ApplicationController
     items,ratings,@title,@select_explain = Item.get_items(@crit, current_participant, @rootonly)
     @itemsproc, extras = Item.get_itemsproc(items, ratings, current_participant.id, @rootonly)
     @items = Item.get_sorted(items,@itemsproc, @sortby, @rootonly)      
-    isum = itemsproc[item['id']]
+    isum = @itemsproc[item['id']]
     rating_summary = ""
     rating_summary += "Average interest: #{sprintf("%.1f", isum['avg_interest'] ? isum['avg_interest'] : 0.0)}\n"
     rating_summary += "Average approval: #{sprintf("%.1f", isum['avg_approval'] ? isum['avg_approval'] : 0.0)}\n"
