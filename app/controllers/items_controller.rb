@@ -559,6 +559,21 @@ class ItemsController < ApplicationController
       com['thumbs'] = rating ? rating.approval.to_i : 0
       @comments << com
     end
+
+    #-- Even though we're only getting one item, we still need to get the context, with the ratings, etc.
+    @crit = {}
+    @rootonly = false
+    @sortby = "items.id desc"
+    items,ratings,@title,@select_explain = Item.get_items(@crit, current_participant, @rootonly)
+    @itemsproc, extras = Item.get_itemsproc(items, ratings, current_participant.id, @rootonly)
+    @items = Item.get_sorted(items,@itemsproc, @sortby, @rootonly)      
+    isum = itemsproc[item['id']]
+    rating_summary = ""
+    rating_summary += "Average interest: #{sprintf("%.1f", isum['avg_interest'] ? isum['avg_interest'] : 0.0)}\n"
+    rating_summary += "Average approval: #{sprintf("%.1f", isum['avg_approval'] ? isum['avg_approval'] : 0.0)}\n"
+    rating_summary += "Value: #{sprintf("%.1f", isum['value'] ? isum['value'] : 0.0)} (value = interest x approval)\n"
+    rating_summary += "Controversy: #{sprintf("%.1f", isum['controversy'] ? isum['controversy'] : 0.0)} (maximum=9)\n"
+    rating_summary += "Number of raters: #{isum['num_raters']}"
     
     if item.has_picture
       img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
@@ -608,6 +623,7 @@ class ItemsController < ApplicationController
       'reply_to': item.reply_to,
       'comments': @comments,
       'num_comments': @comments.length,
+      'rating_summary': rating_summary,
       'has_more': item_has_more,
     }
     
