@@ -46,6 +46,7 @@ gem 'omniauth-facebook'
 gem 'omniauth-twitter'
 gem 'omniauth-google-oauth2'
 #gem 'omniauth-google_apps'
+gem "omniauth-rails_csrf_protection"
 
 gem 'rest-graph'
 
