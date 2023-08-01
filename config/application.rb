@@ -52,6 +52,10 @@ module Intermix
     
     # This is temporary, because I can't find out to make the parameters work for groupsx   
     #config.action_controller.permit_all_parameters = true
+
+    # Temporary fix, https://stackoverflow.com/questions/71332602/upgrading-to-ruby-3-1-causes-psychdisallowedclass-exception-when-using-yaml-lo
+    config.active_record.use_yaml_unsafe_load = true
+    config.active_record.yaml_column_permitted_classes = [ActiveSupport::HashWithIndifferentAccess]
     
     # rack-cors configuration. https://github.com/cyu/rack-cors
     config.middleware.insert_before 0, Rack::Cors do
