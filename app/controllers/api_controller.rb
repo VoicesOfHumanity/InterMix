@@ -1,5 +1,5 @@
 class ApiController < ApplicationController
-    #-- This is mainly a back end for apps like Facebook, Google, etc.
+    #-- This is mainly a back end for apps 
 
     logger                                         = Logger.new(STDOUT)
     logger.level                                   = Logger::INFO
@@ -7,6 +7,20 @@ class ApiController < ApplicationController
     append_before_action :check_api_code
 
     include ItemLib
+
+    # List of methods in this file:
+    # verify_email
+    # login
+    # logout
+    # register
+    # user_from_facebook
+    # get_user
+    # update_user_field
+    # update_user
+    # importance
+    # thumbrate
+    # report_complaint
+
 
     def verify_email
         email = params[:email].to_s
@@ -56,7 +70,74 @@ class ApiController < ApplicationController
     end
 
     def register
+        # Register a new user
+        email = params[:email].to_s
+        password = params[:pass].to_s
+        name = params[:name].to_s
 
+        error = ''
+
+        if email == ''
+            error = 'Please enter your email'
+        else
+            participant = Participant.find_by(email: params[:email])
+            if participant
+                error = 'A user with that email is already registered'
+            end
+        end
+
+        if error != ''
+        elsif not email =~ /^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$/
+            error = 'Please enter a valid email address'
+        elsif name == ''
+            error = 'Please enter your name'
+        elsif password == ''
+            error = "Please choose a password"
+        elsif password.length < 4
+            error = "Please choose a longer password"
+        end
+
+        if error != ''
+            render json: {
+                status: 'error',
+                message: error
+            }
+            return
+        end
+
+        Rails.logger.info("api#register: creating participant")
+        explanation = 'new user created'
+        participant = Participant.new
+        narr = name.split(' ')
+        last_name = narr[narr.length-1]
+        first_name = ''
+        first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
+        participant.first_name = first_name
+        participant.last_name = last_name
+        participant.email = email
+        participant.password = password
+        participant.save!
+
+        participant.ensure_authentication_token!
+        rsa_key = OpenSSL::PKey::RSA.new(2048)
+        participant.private_key = rsa_key.to_pem
+        participant.public_key = rsa_key.public_key.to_pem
+
+        participant.forum_email = 'daily'
+        participant.group_email = 'instant'
+        participant.subgroup_email = 'instant'
+        participant.private_email = 'instant'  
+        participant.status = 'active'
+
+        participant.save
+
+        # Send a confirmation email?
+
+        # Give back a user, just like with login
+        render json: {
+            status: 'success',
+            user: user_info(participant)
+        }
     end
 
     def user_from_facebook
