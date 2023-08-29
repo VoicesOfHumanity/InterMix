@@ -188,6 +188,7 @@ Rails.application.routes.draw do
   get 'api/verify_email', to: 'api#verify_email'
   get 'api/login', to: 'api#login'
   get 'api/logout', to: 'api#logout'
+  get 'api/register', to: 'api#register'
   post 'api/register', to: 'api#register'
   post 'api/user_from_facebook', to: 'api#user_from_facebook'
   get 'api/get_user', to: 'api#get_user'
