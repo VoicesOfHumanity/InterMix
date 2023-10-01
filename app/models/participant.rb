@@ -478,6 +478,14 @@ class Participant < ActiveRecord::Base
   def account_url
     return "https://#{BASEDOMAIN}/u/#{self.account_uniq}"
   end
+
+  def generate_reset_password_token
+    raw, hashed = Devise.token_generator.generate(Participant, :reset_password_token)
+    @token = raw
+    self.reset_password_token = hashed
+    self.reset_password_sent_at = Time.now.utc
+    self.save
+  end
       
   private
   
@@ -503,14 +511,6 @@ class Participant < ActiveRecord::Base
       token = Devise.friendly_token
       break token unless Participant.where(authentication_token: token).first
     end
-  end
-
-  def generate_reset_password_token
-      raw, hashed = Devise.token_generator.generate(Participant, :reset_password_token)
-      @token = raw
-      self.reset_password_token = hashed
-      self.reset_password_sent_at = Time.now.utc
-      self..save
   end
       
 end
