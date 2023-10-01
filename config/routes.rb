@@ -198,6 +198,7 @@ Rails.application.routes.draw do
   post 'api/thumbrate', to: 'api#thumbrate'
   post 'api/importance', to: 'api#importance'
   post 'api/report_complaint', to: 'api#report_complaint'
+  post 'api/forgot_password', to: 'api#forgot_password'
 
   resources :authentications
 

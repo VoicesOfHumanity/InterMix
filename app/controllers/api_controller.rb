@@ -20,6 +20,7 @@ class ApiController < ApplicationController
     # importance
     # thumbrate
     # report_complaint
+    # forgot_password
 
 
     def verify_email
@@ -468,6 +469,44 @@ class ApiController < ApplicationController
             render json: {
                 status: 'error',
                 message: "Item not found"
+            }
+        end
+    end
+
+    def forgot_password
+        email = params[:email].to_s
+        participant = Participant.find_by(email: email)
+        if participant
+            participant.generate_reset_password_token
+            html_content = "<p>Hello #{participant.email}</p>"
+            html_content += "<p>Someone has requested a link to reset your password, and you can do this through the link below.</p>"
+            html_content += "<p><a href=\"http://voh.intermix.org/participants/password/edit?reset_password_token=#{participant.reset_password_token}\">Reset my password</a></p>" 
+            html_content += "<p>If you didn't request this, please ignore this email.</p>"
+            html_content += "<p>Your password won't change until you access the link above and create a new one.</p>"
+            cdata = {}
+            cdata['recipient'] = participant     
+            cdata['participant'] = participant 
+            email = participant.email
+            msubject = "Reset password instructions"
+            email = SystemMailer.generic(SYSTEM_SENDER, participant.email_address_with_name, msubject, html_content, cdata)
+            begin
+                logger.info("api#forget_password delivering email to #{participant.id}:#{participant.name}")
+                email.deliver
+                message_id = email.message_id
+                render json: {
+                    status: 'success'
+                }            
+            rescue Exception => e
+                logger.info("api#forget_password problem delivering email to #{participant.id}:#{participant.name}: #{e}")
+                render json: {
+                    status: 'error',
+                    message: "Problem delivering email"
+                }
+            end
+        else
+            render json: {
+                status: 'error',
+                message: "User not found"
             }
         end
     end
