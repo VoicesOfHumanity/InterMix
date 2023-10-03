@@ -485,6 +485,7 @@ class Participant < ActiveRecord::Base
     self.reset_password_token = hashed
     self.reset_password_sent_at = Time.now.utc
     self.save
+    return @token
   end
       
   private
