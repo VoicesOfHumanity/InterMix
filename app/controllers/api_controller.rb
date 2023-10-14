@@ -478,7 +478,11 @@ class ApiController < ApplicationController
         participant = Participant.find_by(email: email)
         if participant
             token = participant.generate_reset_password_token
-            participant.send_reset_password_instructions
+            begin
+                participant.send_reset_password_instructions
+            rescue Exception => e
+                # It wants to show a blank web page. Just ignore
+            end
             if false
                 html_content = "<p>Hello #{participant.email}</p>"
                 html_content += "<p>Someone has requested a link to reset your password, and you can do this through the link below.</p>"
@@ -506,6 +510,9 @@ class ApiController < ApplicationController
                     }
                 end
             end
+            render json: {
+                status: 'success'
+            }   
         else
             render json: {
                 status: 'error',
