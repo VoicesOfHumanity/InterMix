@@ -475,7 +475,7 @@ class ItemsController < ApplicationController
         'num_comments': @comments.length,
         'has_more': item_has_more,
         'rating_summary': rating_summary,
-        'is_first_in_thread': 1,
+        'is_first_in_thread': (item.is_first_in_thread ? 1 : 0),
       }
       
       rating = Rating.where(item_id: item.id, participant_id: cp_id).last
