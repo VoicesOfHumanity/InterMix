@@ -396,7 +396,7 @@ class ItemsController < ApplicationController
           'comments': [],
           'rating_summary': '',
           'is_first_in_thread': 0,
-          'first_in_thread': comment.is_first_in_thread,
+          'first_in_thread': comment.first_in_thread,
           'user_img_link': user_img_link,
           'importance': 0,
         }
@@ -477,6 +477,7 @@ class ItemsController < ApplicationController
         'has_more': item_has_more,
         'rating_summary': rating_summary,
         'is_first_in_thread': (item.is_first_in_thread ? 1 : 0),
+        'first_in_thread_id': item.first_in_thread
       }
       
       rating = Rating.where(item_id: item.id, participant_id: cp_id).last
