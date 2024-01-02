@@ -136,6 +136,17 @@ class ApplicationController < ActionController::Base
     end
     render plain: "ok"
   end
+
+  def current_moon_period(xmoon)
+    #-- Get the start (and maybe end?) date of the current moon period
+    #-- Either full to full moon, or new to new moon
+    cutoff = 1.month.from_now
+    moon_recs = Moon.where(new_or_full: xmoon).where("mdate<='#{cutoff}'").order(mdate: :desc)
+    for moon_rec in moon_recs
+      return moon_rec['mdate'].strftime('%Y-%m-%d')
+      break
+    end
+  end
       
   protected
 

@@ -2274,9 +2274,16 @@ class ItemsController < ApplicationController
           @datefromuse = (Date.today - 30).to_s
         elsif @datefixed == 'year'
           @datefromuse = (Date.today - 365).to_s
+        elsif @datefixed == 'next_full'
+          # from last full moon to next full moon
+          @datefromuse = current_moon_period('full')
+        elsif @datefixed == 'next_new'
+          # from last new moon to next new moon
+          @datefromuse = current_moon_period('new')
         elsif @datefixed == 'all' or @datefixed == '*' or @datefixed == ''
           @datefromuse = (Date.today - 7000).to_s
         elsif /_/ =~ @datefixed   
+          # We got a date range
           xarr = @datefixed.split('_')
           @datefromuse = xarr[0]
           @datefromto = xarr[1]
