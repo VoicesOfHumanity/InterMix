@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_02_14_001641) do
+ActiveRecord::Schema.define(version: 2024_01_30_183920) do
 
   create_table "action_text_rich_texts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -828,6 +828,21 @@ ActiveRecord::Schema.define(version: 2023_02_14_001641) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["country_code", "name"], name: "index_metro_areas_on_country_code_and_name", length: { country_code: 1, name: 20 }
+  end
+
+  create_table "moon_winners", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "moon_id"
+    t.date "send_date"
+    t.string "new_or_full"
+    t.integer "gender_id"
+    t.integer "age_id"
+    t.string "category"
+    t.integer "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_moon_winners_on_item_id"
+    t.index ["moon_id"], name: "index_moon_winners_on_moon_id"
+    t.index ["send_date"], name: "index_moon_winners_on_send_date"
   end
 
   create_table "moons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

@@ -75,6 +75,8 @@ else
   exit
 end
 
+@moon_id = @moon.id
+
 puts "It's a #{@moon.new_or_full} moon"
 
 crit = {}
@@ -154,6 +156,9 @@ if @items.length > 0 and ratings.length > 0
   end
 end
 @data['all'] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras, image:'humanity.png'}
+if item
+  MoonWinner.create(moon_id: @moon.id, item_id: item.id, send_date: today, new_or_full: @moon.new_or_full, gender_id: 0, age_id: 0, category: 'all')
+end
 
 for gender_rec in genders
   gender_id = gender_rec.id
@@ -189,6 +194,9 @@ for gender_rec in genders
     end
         
     @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras, image: image}
+    if item
+      MoonWinner.create(moon_id: @moon.id, item_id: item.id, send_date: today, new_or_full: @moon.new_or_full, gender_id: gender_id, age_id: 0, category: 'gender')
+    end
   end
 end
 for age_rec in ages
@@ -226,6 +234,9 @@ for age_rec in ages
     end
     
     @data[code] = {name: name, item: item, iproc: iproc, itemcount: @items.length, ratingcount: ratings.length, extras: @extras, image: image}
+    if item
+      MoonWinner.create(moon_id: @moon.id, item_id: item.id, send_date: today, new_or_full: @moon.new_or_full, gender_id: 0, age_id: age_id, category: 'age')
+    end
   end
 end
 

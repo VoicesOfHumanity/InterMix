@@ -16,6 +16,8 @@ class Item < ActiveRecord::Base
 
   has_many :complaints
 
+  has_many :moon_winners
+
   serialize :oembed_response
   serialize :received_json
   
