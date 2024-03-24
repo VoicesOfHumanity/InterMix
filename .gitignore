@@ -4,7 +4,6 @@ log/*.log*
 tmp/**/*
 public/images/data
 config/database.yml
-config/deploy*
 config/localsettings.rb
 intermix.tmproj
 public/ckeditor_assets
