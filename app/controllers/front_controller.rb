@@ -717,7 +717,7 @@ class FrontController < ApplicationController
       url = "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}"
       html_content = "<p>Welcome to the #{@community.name} community on Voices of Humanity!</p><p>username: #{@participant.email}<br/>"
       html_content += "password: #{@password}<br/>" if @password != '???'      
-      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "<br/>You must click this log-in link to confirm it really was you who signed up:<br/><br/>"
       html_content += "<a href=\"#{url}\">#{url}</a><br/><br/>"
       html_content += "(If it wasn't you, just do nothing, and nothing further happens)<br/>"      
       html_content += "</p>"      
@@ -725,7 +725,7 @@ class FrontController < ApplicationController
       url = "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&amp;dialog_id=#{@dialog.id}&amp;comtag=#{@comtag}"
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
       html_content += "password: #{@password}<br/>" if @password != '???'
-      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "<br/>You must click this log-in link to confirm it really was you who signed up:<br/><br/>"
       html_content += "<a href=\"#{url}\">#{url}</a><br/><br/>"
       
       #html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
@@ -1073,7 +1073,7 @@ class FrontController < ApplicationController
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
       html_content += "password: #{@password}<br/>" if @password != '???'
       
-      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "<br/>You must click this log-in link to confirm it really was you who signed up:<br/><br/>"
       html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}<br/><br/>"
       
       #html_content += "<br/>Click <a href=\"http://#{dom}/front/confirm?code=#{@participant.confirmation_token}&group_id=#{@group.id}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
@@ -1781,7 +1781,7 @@ class FrontController < ApplicationController
       html_content = "<p>Welcome!</p><p>username: #{@participant.email}<br/>"
       html_content += "password: #{@password}<br/>" if @password != '???'
       
-      html_content += "<br/>As the first step, please click this link, to confirm that it really was you who signed up, and to log in the first time:<br/><br/>"
+      html_content += "<br/>You must click this log-in link to confirm it really was you who signed up:<br/><br/>"
       html_content += "https://#{dom}/front/confirm?code=#{@participant.confirmation_token}<br/><br/>"
       
       #html_content += "<br/>Click <a href=\"http://#{dom}/?auth_token=#{@participant.authentication_token}\">here</a> to log in the first time, or enter your username/password at http://#{dom}/<br/><br/>"
