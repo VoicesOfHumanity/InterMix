@@ -4,9 +4,9 @@
 # server in each group is considered to be the first
 # unless any hosts have the primary property set.
 # Don't declare `role :all`, it's a meta role
-role :web, "ploy@voh.intermix.org:2022"                          # Your HTTP server, Apache/etc
-role :app, "ploy@voh.intermix.org:2022"                          # This may be the same as your `Web` server
-role :db,  "ploy@voh.intermix.org:2022", :primary => true # This is where Rails migrations will run
+role :web, "ploy@sirius.cr8.com"                          # Your HTTP server, Apache/etc
+role :app, "ploy@sirius.cr8.com"                          # This may be the same as your `Web` server
+role :db,  "ploy@sirius.cr8.com", :primary => true # This is where Rails migrations will run
 
 # Extended Server Syntax
 # ======================
@@ -14,7 +14,7 @@ role :db,  "ploy@voh.intermix.org:2022", :primary => true # This is where Rails 
 # definition into the server list. The second argument
 # something that quacks like a hash can be used to set
 # extended properties on the server.
-#server 'intermix.org', user: 'ploy', roles: %w{web app db}, my_property: :my_value
+#server 'sirius.cr8.com', user: 'ploy', roles: %w{web app db}, my_property: :my_value
 
 # you can set custom ssh options
 # it's possible to pass any option but you need to keep in mind that net/ssh understand limited list of options
@@ -38,17 +38,5 @@ role :db,  "ploy@voh.intermix.org:2022", :primary => true # This is where Rails 
 #   }
 # setting per server overrides global ssh_options
 
-#server 'eurodentaire.com',
-#   user: 'ploy',
-#   roles: %w{web app db},
-#   ssh_options: {
-#     user: 'ploy', # overrides user setting above
-#     keys: %w(/Users/ffunch/.ssh/id_dsa),
-#     forward_agent: true,
-#     auth_methods: %w(publickey),
-#     port: 22222
-#   }
-
-
-set :branch, "production"
+set :branch, "master"
 set :rails_env, :production
