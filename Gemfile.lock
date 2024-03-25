@@ -177,16 +177,6 @@ GEM
     method_source (1.0.0)
     mime-types (3.4.1)
       mime-types-data (~> 3.2015)
-<<<<<<< HEAD
-    mime-types-data (3.2018.0812)
-    mimemagic (0.3.10)
-      nokogiri (~> 1)
-      rake
-    mini_mime (1.0.2)
-    mini_portile2 (2.4.0)
-    minitest (5.14.0)
-    multi_json (1.13.1)
-=======
     mime-types-data (3.2022.0105)
     mimemagic (0.4.3)
       nokogiri (~> 1)
@@ -196,7 +186,6 @@ GEM
     mini_racer (0.4.0)
       libv8-node (~> 15.14.0.0)
     minitest (5.17.0)
->>>>>>> master
     multi_xml (0.6.0)
     multipart-post (2.2.3)
     mysql2 (0.5.5)
