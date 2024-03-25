@@ -8,12 +8,16 @@ class Item < ActiveRecord::Base
   belongs_to :conversation
   has_many :allratings, :class_name=>"Rating"
   has_one :item_rating_summary
-  
+
   has_many :item_subscribes
   has_many :subscribers, class_name: "Participant", :through => :item_subscribes
   
   belongs_to :orig_item, class_name: "Item", foreign_key: :reply_to, optional: true
-  
+
+  has_many :complaints
+
+  has_many :moon_winners
+
   serialize :oembed_response
   serialize :received_json
   
@@ -273,7 +277,8 @@ class Item < ActiveRecord::Base
     if old_message_id.to_i == 0
       #-- Only twitter and e-mail if it really is a new message just being posted
       personal_twitter
-      emailit
+      # I don't understand what this was meant to do here:
+      #get_items
     end
     self.save
   end  
@@ -370,7 +375,18 @@ class Item < ActiveRecord::Base
             if not person.tag_list_downcase.include?(tagname.downcase)
               participants.delete(person)
             end
-          end  
+          end
+        end
+        if self.visible_com == self.intra_com
+        elsif self.visible_com == 'public'
+        elsif self.visible_com.to_s != ''
+          # It is private for a particular community only. Remove anybody who's not a member
+          tagname = self.visible_com[1,50]
+          for person in allpeople
+            if not person.tag_list_downcase.include?(tagname.downcase)
+              participants.delete(person)
+            end
+          end
         end
       
       end
@@ -1209,10 +1225,11 @@ class Item < ActiveRecord::Base
     
   end
   
-  def self.get_items(crit,current_participant,rootonly=true)
+  #------- get_items ------------------------------------------------------------
+  def self.get_items(crit,current_participant,rootonly=false)
     #-- Get the items and records that match a certain criteria. Mainly for geoslider
   
-    logger.info("item#get_items crit:#{crit}")
+    logger.info("item#get_items crit:#{crit} rootonly:#{rootonly}")
   
     # Start preparing the queries
     items = Item.where(nil)
@@ -1247,6 +1264,11 @@ class Item < ActiveRecord::Base
     items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
     ratings = ratings.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
     
+    # Exclude items that this user has complained about
+    if current_participant
+      items = items.where.not(id: Complaint.where(complainer_id: current_participant.id).pluck(:item_id))
+    end
+
     # Don't worry about groups any more
     title = ''
   
@@ -1285,7 +1307,7 @@ class Item < ActiveRecord::Base
         items = items.where("participants.city=?",crit[:geo_level_id])
         ratings = ratings.where("participants.city=?",crit[:geo_level_id])
         title += "#{crit[:geo_level_detail]}"
-      elsif current_participant.city.to_s != ''
+      elsif current_participant and current_participant.city.to_s != ''
         items = items.where("participants.city=?",current_participant.city)
         ratings = ratings.where("participants.city=?",current_participant.city)
         title += "#{current_participant.city}"
@@ -1299,7 +1321,7 @@ class Item < ActiveRecord::Base
         items = items.where("participants.admin2uniq=?",crit[:geo_level_id])
         ratings = ratings.where("participants.admin2uniq=?",crit[:geo_level_id])
         title += "#{crit[:geo_level_detail]}"
-      elsif current_participant.admin2uniq.to_s != '' and current_participant.geoadmin2
+      elsif current_participant and current_participant.admin2uniq.to_s != '' and current_participant.geoadmin2
         items = items.where("participants.admin2uniq=?",current_participant.admin2uniq)
         ratings = ratings.where("participants.admin2uniq=?",current_participant.admin2uniq)
         title += "#{current_participant.geoadmin2.name}" 
@@ -1313,7 +1335,7 @@ class Item < ActiveRecord::Base
         items = items.where("participants.metro_area_id=?",crit[:geo_level_id])
         ratings = ratings.where("participants.metro_area_id=?",crit[:geo_level_id])
         title += "#{crit[:geo_level_detail]}"
-      elsif current_participant.metro_area_id.to_i > 0 and current_participant.metro_area
+      elsif current_participant and current_participant.metro_area_id.to_i > 0 and current_participant.metro_area
         items = items.where("participants.metro_area_id=?",current_participant.metro_area_id)
         ratings = ratings.where("participants.metro_area_id=?",current_participant.metro_area_id)
         title += "#{current_participant.metro_area.name}"
@@ -1327,7 +1349,7 @@ class Item < ActiveRecord::Base
         items = items.where("participants.admin1uniq=?",crit[:geo_level_id])
         ratings = ratings.where("participants.admin1uniq=?",crit[:geo_level_id])
         title += "#{crit[:geo_level_detail]}"
-      elsif current_participant.admin1uniq.to_s != '' and current_participant.geoadmin1
+      elsif current_participant and current_participant.admin1uniq.to_s != '' and current_participant.geoadmin1
         items = items.where("participants.admin1uniq=?",current_participant.admin1uniq)
         ratings = ratings.where("participants.admin1uniq=?",current_participant.admin1uniq)
         title += "#{current_participant.geoadmin1.name}"
@@ -1549,39 +1571,42 @@ class Item < ActiveRecord::Base
       items = items.where("intra_conv='public'")        
     end
         
-    if crit[:gender].to_i != 0
-      items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
-      ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
-      logger.info("item#get_items by gender")
-    end
-    if crit[:age].to_i != 0
-      items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
-      ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
-      logger.info("item#get_items by age")
-    end
+        
+    if not crit[:show_result]    
+      if crit[:gender].to_i != 0
+        items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
+        ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
+        logger.info("item#get_items by gender")
+      end
+      if crit[:age].to_i != 0
+        items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
+        ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")   
+        logger.info("item#get_items by age")
+      end
 
-    logger.info("item#get_items gender:#{crit[:gender]} age:#{crit[:age]} title:#{title}")
-    if crit[:gender].to_i > 0 and crit[:age].to_i == 0
-      gender = MetamapNode.find_by_id(crit[:gender].to_i)
-      title += " | #{gender.name_as_group}"
-    elsif crit[:gender].to_i == 0 and crit[:age].to_i > 0
-      age = MetamapNode.find_by_id(crit[:age].to_i)
-      title += " | #{age.name_as_group}"
-    elsif crit[:gender].to_i > 0 and crit[:age].to_i > 0
-      gender = MetamapNode.find_by_id(crit[:gender].to_i)
-      age = MetamapNode.find_by_id(crit[:age].to_i)
-      xtit = gender.name_as_group
-      xtit2 = xtit[0..8] + age.name.capitalize + ' ' + xtit[9..100]
-      title += " | #{xtit2}"    
-    elsif not crit[:show_result]
-      title += " | Voice of Humanity"
+      logger.info("item#get_items gender:#{crit[:gender]} age:#{crit[:age]} title:#{title}")
+      if crit[:gender].to_i > 0 and crit[:age].to_i == 0
+        gender = MetamapNode.find_by_id(crit[:gender].to_i)
+        title += " | #{gender.name_as_group}"
+      elsif crit[:gender].to_i == 0 and crit[:age].to_i > 0
+        age = MetamapNode.find_by_id(crit[:age].to_i)
+        title += " | #{age.name_as_group}"
+      elsif crit[:gender].to_i > 0 and crit[:age].to_i > 0
+        gender = MetamapNode.find_by_id(crit[:gender].to_i)
+        age = MetamapNode.find_by_id(crit[:age].to_i)
+        xtit = gender.name_as_group
+        xtit2 = xtit[0..8] + age.name.capitalize + ' ' + xtit[9..100]
+        title += " | #{xtit2}"    
+      elsif not crit[:show_result]
+        title += " | Voice of Humanity"
+      end
     end
     logger.info("item#get_items title:#{title}")
     
-    if crit['in'] == 'main'
-      items = items.where("(comment_email_to!='author' or is_first_in_thread=1)")
-      logger.info("item#get_items main first in thread or not comment to author only")
-    end
+    #if crit['in'] == 'main'
+    #  items = items.where("(comment_email_to!='author' or is_first_in_thread=1)")
+    #  logger.info("item#get_items main first in thread or not comment to author only")
+    #end
     
     # tags
     if crit['in'] == 'conversation' and @conversation
@@ -1699,6 +1724,7 @@ class Item < ActiveRecord::Base
       end
       plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
       if plist != ''
+        # Items posted by authors who have that tag
         items = items.where("participants.id in (#{plist})")
       else
         items = items.where("1=0")
@@ -1707,6 +1733,14 @@ class Item < ActiveRecord::Base
 
       # Show items that either are public, or specifically for this community
       items = items.where("items.intra_com='public' or items.intra_com='@#{crit[:comtag]}'")
+
+      if not has_tag and com.visibility != 'public'
+        # In a private community, if the current viewer doesn't themselves have the tag (community) we're looking at, don't show anything at all
+        items = items.where("1=0")
+      else
+        # Respect community and post privacy
+        items = items.where("items.visible_com='public' or items.visible_com='@#{crit[:comtag]}'")
+      end
 
     #elsif crit[:posted_by].to_i == 0 and not (crit.has_key?(:from) and crit[:from] == 'mail')
     elsif crit[:posted_by].to_i == 0
@@ -1730,11 +1764,11 @@ class Item < ActiveRecord::Base
       items = items.tagged_with(crit[:messtag])  
       logger.info("item#get_items messtag: #{crit[:messtag]}")    
     end
-    if crit[:messtag_other].to_s != ''
-      title += " | ##{crit[:messtag_other]}"
-      items = items.tagged_with(crit[:messtag_other])            
-      logger.info("item#get_items messtag other: #{crit[:messtag_other]}")    
-    end
+    #if crit[:messtag_other].to_s != ''
+    #  title += " | ##{crit[:messtag_other]}"
+    #  items = items.tagged_with(crit[:messtag_other])            
+    #  logger.info("item#get_items messtag other: #{crit[:messtag_other]}")    
+    #end
     
     if crit.has_key?(:nvaction) and crit[:nvaction] === true
       items = items.tagged_with('nvaction')      
@@ -1760,6 +1794,15 @@ class Item < ActiveRecord::Base
       # Only posts for a particular user, like for their wall
       items = items.where(posted_by: crit[:posted_by])
       logger.info("item#get_items posted_by:#{crit[:posted_by]}")
+      # We need to exclude private messages from communities the viewer is not a member of
+      p_tags = '' 
+      for tag in current_participant.tag_list_downcase
+        if p_tags != ''
+          p_tags += ','
+        end
+        p_tags += "'@" + tag + "'"
+      end
+      items = items.where("(items.visible_com='public' or lower(items.visible_com) in (#{p_tags}))")
     end
     
     if crit[:followed_by].to_i > 0
@@ -1789,7 +1832,7 @@ class Item < ActiveRecord::Base
   
   def self.get_itemsproc(items,ratings,participant_id,rootonly=false)
     # Add things up based on given items and ratings. Return itemsproc
-    logger.info("item#get_itemsproc start with #{items.length} items and #{ratings.length} ratings")
+    logger.info("item#get_itemsproc start with #{items.length} items and #{ratings.length} ratings. rootonly:#{rootonly}")
     
     regmean = true
     sortby = ''
@@ -1943,6 +1986,7 @@ class Item < ActiveRecord::Base
       itemsproc[item.id] = iproc
       
       if (rootonly or sortby=='default')
+        #logger.info("item#get_itemsproc: removing non-roots")
         #-- If we need roots only
         if item.is_first_in_thread
           #-- This is a root, put it on the main list

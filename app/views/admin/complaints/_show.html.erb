@@ -1,0 +1,12 @@
+<table class="edittable">
+<tr><td class="left">ID:</td><td><%= @complaint.id %></td></tr>	
+<tr><td class="left">Item:</td><td><%= @complaint.item.subject %></td></tr>	
+<tr><td class="left">Reporter:</td><td><%= @complaint.complainer.name %></td></tr>
+<tr><td class="left">Status:</td><td><%= @complaint.status %></td></tr>
+<tr><td class="left">Created:</td><td><%= @complaint.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @complaint.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+</table>
+
+<script>
+curid1 = <%= @complaint.id %>;
+</script>

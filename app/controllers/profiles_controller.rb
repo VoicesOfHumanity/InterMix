@@ -694,7 +694,12 @@ class ProfilesController < ApplicationController
           @photo.filesize = bigpicsize if bigpicsize
           @photo.width = iwidth if iwidth
           @photo.height = iheight if iheight
-          @photo.filetype = original_filename.split('.').last
+          filetype = original_filename.split('.').last
+          if filetype.length <= 3
+            @photo.filetype = filetype
+          else
+            @photo.filetype = 'jpg'
+          end
           @photo.save
           
           fileresult['size'] = @photo.filesize    

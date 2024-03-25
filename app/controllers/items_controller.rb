@@ -5,10 +5,14 @@ class ItemsController < ApplicationController
 
   layout "front"
   before_action :authenticate_user_from_token!, :except=>[:pubgallery]
-  before_action :authenticate_participant!, :except=>[:pubgallery,:view]
+  before_action :authenticate_participant!, :except=>[:pubgallery,:view,:item_api,:list_api, :create_api]
+  skip_before_action :verify_authenticity_token, :only => [:create_api]
   append_before_action :check_required, only: :new
 
   include ItemLib
+
+  # list of methods in this class:
+
 
   def index
     list  
@@ -248,50 +252,113 @@ class ItemsController < ApplicationController
   
   def list_api
     #-- Get some items in a simplified manner, over the API, for apps
-    
+
+    user_id = params[:user_id].to_i
     @messtag = params[:messtag].to_s
-    
+    geo_level = params[:geo_level].to_i
+    com_show = params[:com_show].to_i
+
+    @perscr = (params[:perscr] || set['perscr'] || 12).to_i
+    @page = ( params[:page] || 1 ).to_i
+    @page = 1 if @page < 1
+
+    if geo_level > 0
+      @geo_level = GEO_LEVELS[geo_level]
+    else
+      @geo_level = ''
+    end
+    age = params[:age].to_i
+    if age == 1
+      @age = 405
+    elsif age == 2
+      @age = 406
+    elsif age == 3
+      @age = 407
+    elsif age == 4
+      @age = 409
+    else
+      @age = 0
+    end
+    gender = params[:gender].to_i
+    if gender == 1
+      @gender = 208
+    elsif gender == 2
+      @gender = 207
+    elsif gender == 3
+      @gender = 408
+    else
+      @gender = 0
+    end
+
     #items = Item.where(is_first_in_thread: true)
     #if @tag != ''
     #  items = items.tagged_with(@messtag)
     #end
     #items = items.order("id desc").limit(5)
 
-    rootonly = true
-    sortby = '*value*'
+    if com_show == 1
+      rootonly = false
+    else
+      rootonly = true
+    end
     crit = {
-      'messtag': @messtag
+      'messtag': @messtag,
+      'geo_level': @geo_level,
+      'age': @age,
+      'gender': @gender
     }
 
-    items1,ratings,title,select_explain = Item.get_items(crit,current_participant,rootonly)
-    itemsproc,extras = Item.get_itemsproc(items1,ratings,current_participant.id,rootonly)
+    sort = params[:sort].to_i
+    # Now 1 means value - last month
+    # and 2 means value - all time
+    if sort == 1
+      sortby = "*value*"
+      crit[:datefromuse] = (Date.today - 30).to_s
+    elsif sort == 2
+      sortby = "*value*"
+    # elsif sort == 2
+    #   sortby = "*approval*"
+    # elsif sort == 3
+    #   sortby = "*interest*"
+    # elsif sort == 4
+    #   sortby = "*controversy*"
+    else
+      #  0: date
+      sortby = "items.id desc"
+    end
+    
+    if participant_signed_in?
+      cp = current_participant
+    elsif user_id > 0
+      cp = Participant.find_by_id(user_id)
+    else
+      cp = nil
+    end
+    cp_id = cp ? cp.id : 0
+
+    items1,ratings,title,select_explain = Item.get_items(crit,cp,rootonly)
+    itemsproc,extras = Item.get_itemsproc(items1,ratings,cp_id,rootonly)
     items = Item.get_sorted(items1,itemsproc,sortby,rootonly)
     
+    items = items.paginate :page=>@page, :per_page => @perscr
+
     @items = []
-    own_items = []
-    other_items = []
+    #own_items = []
+    #other_items = []
     
     xcount = 0
     
     for item in items
-      if item.has_picture
-        img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
-      elsif item.participant.picture.url.to_s != ''
-        img_link = item.participant.picture.url
-      else
-        img_link = ""
+      if item.id == 2787
+        logger.info("items#list_api item.id:#{item.id} item.participant.picture.url:#{item.participant.picture.url}")
       end
-      plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
-      content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
-      if content_without_hash.length > 190
-        content_without_hash = content_without_hash[0,190]
-        item_has_more = 1
-      else
-        item_has_more = 0
-      end
-      
+
       @comments = []
-      comments = Item.where(first_in_thread: item.id, is_first_in_thread: false).order('id')
+      if item.is_first_in_thread
+        comments = Item.where(first_in_thread: item.id, is_first_in_thread: false).order('id')
+      else
+        comments = Item.where(reply_to: item.id).order('id')
+      end
       for comment in comments
         plain_content = view_context.strip_tags(comment.html_content.to_s).strip
         plain_content.gsub!(/\B[#]\S+\b/, '')
@@ -302,71 +369,279 @@ class ItemsController < ApplicationController
           com_content = plain_content
           has_more = 0
         end
+        short_content = comment.short_content.to_s
+        if short_content.strip == ""
+          short_content = plain_content
+        end
+        short_content = short_content[0,140] + '...' if short_content.length > 140
+        if comment.participant and comment.participant.picture.exists?
+          user_img_link = comment.participant.picture.url(:thumb)
+        elsif comment.remote_poster
+          user_img_link = comment.remote_poster.thumb_or_blank
+        else
+          user_img_link = "/images/default_user_icon-50x50.png"
+        end 
+        user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
         com = {
           'id': comment.id,
-          'created_at': comment.created_at,
+          'created_at': comment.created_at.strftime("%Y-%m-%d"),
           'posted_by': comment.posted_by,
-          'posted_by_user': comment.participant.name,
-          'content': com_content,
-          'has_more': has_more
+          'posted_by_user': comment.participant ? comment.participant.name : '???',
+          'short_content': short_content,
+          'html_content': item.html_content,
+          'plain_content': com_content,
+          'has_more': has_more,
+          'subject': comment.subject,
+          'num_comments': 0,
+          'comments': [],
+          'rating_summary': '',
+          'is_first_in_thread': 0,
+          'first_in_thread': comment.first_in_thread,
+          'user_img_link': user_img_link,
+          'importance': 0,
         }
+        rating = Rating.where(item_id: comment.id, participant_id: cp_id).last
+        com['thumbs'] = rating ? rating.approval.to_i : 0
         @comments << com
       end
+
+      plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
+      content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
+      if content_without_hash.length > 190
+        content_without_hash = content_without_hash[0,190]
+        item_has_more = 1
+      else
+        item_has_more = 0
+      end
+
+      isum = itemsproc[item['id']]
+      rating_summary = ""
+      rating_summary += "Average interest: #{sprintf("%.1f", isum['avg_interest'] ? isum['avg_interest'] : 0.0)}\n"
+      rating_summary += "Average approval: #{sprintf("%.1f", isum['avg_approval'] ? isum['avg_approval'] : 0.0)}\n"
+      rating_summary += "Value: #{sprintf("%.1f", isum['value'] ? isum['value'] : 0.0)} (value = interest x approval)\n"
+      rating_summary += "Controversy: #{sprintf("%.1f", isum['controversy'] ? isum['controversy'] : 0.0)} (maximum=9)\n"
+      rating_summary += "Number of raters: #{isum['num_raters']}"
+
+      if item.has_picture
+        img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
+      elsif item.participant and item.participant.picture and item.participant.picture.url.to_s != ''
+        img_link = item.participant.picture.url
+      else
+        img_link = ""
+      end
+      if item.participant and item.participant.picture.exists?
+        user_img_link = item.participant.picture.url(:thumb)
+      elsif item.remote_poster
+        user_img_link = item.remote_poster.thumb_or_blank
+      else
+        user_img_link = "/images/default_user_icon-50x50.png"
+      end 
+      user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
+      #if item.id == 2787
+      #  logger.info("items#list_api user_img_link:#{user_img_link}")
+      #end
+
+      # Have they themselves voted on this?
+      has_voted = cp ? item.has_voted(cp) : false
       
-      has_voted = item.has_voted(current_participant)
-      
+      content = item.html_content.to_s != '' ? item.html_content.to_s : item.short_content.to_s
+      plain_content = view_context.strip_tags(content).strip
+      plain_content.gsub!(/\B[#]\S+\b/, '')
+
+      short_content = item.short_content.to_s
+      if short_content.strip == ""
+        short_content = plain_content
+      end
+      short_content = short_content[0,140] + '...' if short_content.length > 140
+
       rec = {
         'id': item.id,
-        'created_at': item.created_at,
+        'created_at': item.created_at.strftime("%Y-%m-%d"),
         'posted_by': item.posted_by,
-        'posted_by_user': item.participant.name,
+        'posted_by_user': item.participant ? item.participant.name : '???',
         'subject': item.subject,
-        'short_content': item.short_content,
+        'short_content': short_content,
         'html_content': item.html_content,
         'content_without_hash': content_without_hash,
+        'plain_content': plain_content,
         'approval': item.approval,
         'interest': item.interest,
         'has_voted': has_voted,
         'media_type': item.media_type,
         'has_picture': item.has_picture,
         'link': img_link,
+        'user_img_link': user_img_link,
         'reply_to': item.reply_to,
         'comments': @comments,
         'num_comments': @comments.length,
         'has_more': item_has_more,
+        'rating_summary': rating_summary,
+        'is_first_in_thread': (item.is_first_in_thread ? 1 : 0),
+        'first_in_thread_id': item.first_in_thread
       }
       
-      rating = Rating.where(item_id: item.id, participant_id: current_participant.id).last
+      rating = Rating.where(item_id: item.id, participant_id: cp_id).last
       rec['thumbs'] = rating ? rating.approval.to_i : 0
+      rec['importance'] = rating ? rating.importance.to_i : 0
       
-      if !has_voted
-        logger.info("items#list_api !vote subject:#{item.short_content} num_comments:#{@comments.length}")
-        #@items << rec
-        if current_participant.id == item.posted_by
-          own_items << rec
-        else
-          other_items << rec
-        end
-        xcount += 1
-        if xcount >= 12
-          break
-        end
-      elsif current_participant.id == item.posted_by
-        logger.info("items#list_api voted subject:#{item.short_content} num_comments:#{@comments.length}")
-      end
+      @items << rec
+
+      xcount += 1
+      #if xcount >= 12
+      #  break
+      #end
     
     end
     
-    #logger.info("items#list_api own_items[0]: #{own_items[0]}")
-    #logger.info("items#list_api own_items: #{own_items.collect{|i| i[:id]}}")
-    own_items_sorted = own_items.sort {|a,b| b[:id]<=>a[:id]}
-    #logger.info("items#list_api own_items_sorted: #{own_items_sorted.collect{|i| i[:id]}}")
-    
-    @items = own_items_sorted + other_items
+    # This was part of the smile/scowl scheme
+    #own_items_sorted = own_items.sort {|a,b| b[:id]<=>a[:id]}  
+    #@items = own_items_sorted + other_items
     
     logger.info("items#list_api returning #{@items.length} items")
     
     render json: @items
+  end
+  
+  def item_api
+    #-- Get one item over the API, for an app
+    @from = 'api'
+    item_id = params[:id]
+    item = Item.includes([{:participant=>{:metamap_node_participants=>:metamap_node}},:item_rating_summary])
+
+    cp = participant_signed_in? ? current_participant : nil
+    cp_id = cp ? cp.id : 0
+    
+    if not item
+      render :status => 404
+      return
+    end
+    
+    item = item.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{cp_id})") if participant_signed_in?
+    item = item.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation") if participant_signed_in?    
+    item = item.find_by_id(item_id)
+    
+    @comments = []
+    if item.is_first_in_thread
+      comments = Item.where(first_in_thread: item.id, is_first_in_thread: false).order('id desc')
+    else
+      comments = Item.where(reply_to: item.id).order('id desc')
+    end    
+    for comment in comments
+      plain_content = view_context.strip_tags(comment.html_content.to_s).strip
+      plain_content.gsub!(/\B[#]\S+\b/, '')
+      if plain_content.length > 500
+        com_content = plain_content[0,487] + '...'
+        has_more = 1
+      else
+        com_content = plain_content
+        has_more = 0
+      end
+      short_content = comment.short_content.to_s
+      if short_content.strip == ""
+        short_content = plain_content
+      end
+      short_content = short_content[0,140] + '...' if short_content.length > 140
+      if comment.participant and comment.participant.picture.exists?
+        user_img_link = comment.participant.picture.url(:thumb)
+      elsif item.remote_poster
+        user_img_link = comment.remote_poster.thumb_or_blank
+      else
+        user_img_link = "/images/default_user_icon-50x50.png"
+      end 
+      user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
+      com = {
+        'id': comment.id,
+        'created_at': comment.created_at.strftime("%Y-%m-%d"),
+        'posted_by': comment.posted_by,
+        'posted_by_user': comment.participant ? comment.participant.name : '???',
+        'short_content': short_content,
+        'html_content': item.html_content,
+        'plain_content': com_content,
+        'has_more': has_more,
+        'subject': comment.subject,
+        'num_comments': 0,
+        'comments': [],
+        'rating_summary': '',
+        'is_first_in_thread': 0,
+        'user_img_link': user_img_link,
+      }
+      rating = Rating.where(item_id: comment.id, participant_id: cp_id).last
+      com['thumbs'] = rating ? rating.approval.to_i : 0
+      @comments << com
+    end
+
+    #-- Even though we're only getting one item, we still need to get the context, with the ratings, etc.
+    @crit = {}
+    @rootonly = false
+    @sortby = "items.id desc"
+    items,ratings,@title,@select_explain = Item.get_items(@crit, current_participant, @rootonly)
+    @itemsproc, extras = Item.get_itemsproc(items, ratings, current_participant.id, @rootonly)
+    @items = Item.get_sorted(items,@itemsproc, @sortby, @rootonly)      
+    isum = @itemsproc[item['id']]
+    rating_summary = ""
+    rating_summary += "Average interest: #{sprintf("%.1f", isum['avg_interest'] ? isum['avg_interest'] : 0.0)}\n"
+    rating_summary += "Average approval: #{sprintf("%.1f", isum['avg_approval'] ? isum['avg_approval'] : 0.0)}\n"
+    rating_summary += "Value: #{sprintf("%.1f", isum['value'] ? isum['value'] : 0.0)} (value = interest x approval)\n"
+    rating_summary += "Controversy: #{sprintf("%.1f", isum['controversy'] ? isum['controversy'] : 0.0)} (maximum=9)\n"
+    rating_summary += "Number of raters: #{isum['num_raters']}"
+    
+    if item.has_picture
+      img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
+    elsif item.participant.picture.url.to_s != ''
+      img_link = item.participant.picture.url
+    else
+      img_link = ""
+    end
+    if item.participant and item.participant.picture.exists?
+      user_img_link = item.participant.picture.url(:thumb)
+    elsif item.remote_poster
+      user_img_link = item.remote_poster.thumb_or_blank
+    else
+      user_img_link = "/images/default_user_icon-50x50.png"
+    end 
+    user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
+
+    plain_content = view_context.strip_tags(item.html_content.to_s).strip      # or sanitize(html_string, tags:[])
+    content_without_hash = plain_content.gsub(/\B[#]\S+\b/, '').strip
+    if content_without_hash.length > 190
+      content_without_hash = content_without_hash[0,190]
+      item_has_more = 1
+    else
+      item_has_more = 0
+    end
+        
+    item.voting_ok(participant_signed_in? ? current_participant.id : 0)
+    has_voted = participant_signed_in? ? item.has_voted(current_participant) : 0
+
+    rec = {
+      'id': item.id,
+      'created_at': item.created_at.strftime("%Y-%m-%d"),
+      'posted_by': item.posted_by,
+      'posted_by_user': item.participant ? item.participant.name : '???',
+      'subject': item.subject,
+      'short_content': item.short_content,
+      'html_content': item.html_content,
+      'content_without_hash': content_without_hash,
+      'plain_content': plain_content,
+      'approval': item.approval,
+      'interest': item.interest,
+      'has_voted': has_voted,
+      'media_type': item.media_type,
+      'has_picture': item.has_picture,
+      'link': img_link,
+      'user_img_link': user_img_link,
+      'reply_to': item.reply_to,
+      'comments': @comments,
+      'num_comments': @comments.length,
+      'rating_summary': rating_summary,
+      'has_more': item_has_more,
+    }
+    
+    rating = current_participant ? Rating.where(item_id: item.id, participant_id: current_participant.id).last : nil
+    rec['thumbs'] = rating ? rating.approval.to_i : 0
+    rec['importance'] = rating ? rating.importance.to_i : 0
+
+    render json: rec
   end
   
   def report_api
@@ -517,6 +792,7 @@ class ItemsController < ApplicationController
         end
         
         @item.intra_conv = @olditem.intra_conv
+        @item.visible_com = @olditem.visible_com
         @item.group_id = @olditem.group_id if @item.group_id.to_i == 0 and @olditem.group_id.to_i > 0
         @item.dialog_id = @olditem.dialog_id if @olditem.dialog_id.to_i > 0
         if @item.dialog_id.to_i > 0
@@ -841,6 +1117,12 @@ class ItemsController < ApplicationController
         end
       end
     end
+
+    #if @community and @community.visibility != 'public'
+    #  if tags.include? @community.tagname
+    #    tags.delete @community.tagname
+    #  end
+    #end
     
     logger.info("items#new tags:#{tags.inspect}") 
     tagtext = ''.dup
@@ -1043,6 +1325,10 @@ class ItemsController < ApplicationController
       @item.group_id = GLOBAL_GROUP_ID
     end
 
+    if @item.visible_com != 'public'
+      @item.intra_com = @item.visible_com
+    end
+
     # Check if there are tags for communities that the user is not in
     tags_in_html = get_tags_from_html(@item.html_content,true)
     tagdetails = {}
@@ -1164,6 +1450,62 @@ class ItemsController < ApplicationController
   
   def create_api
     #-- Create an item, called remotely by json, which should be turned into params automatically
+    #-- We should be receiving an authorization token to log in in the user
+    
+    posted_by = params[:user_id].to_i
+
+    auth_token = params[:auth_token].presence
+    participant       = auth_token && Participant.find_by_authentication_token(auth_token.to_s)
+    if participant
+      sign_in participant
+    end
+
+    if not participant_signed_in? or current_participant.id != posted_by
+      render :json=>{'status'=>'error','message'=>'No user found'}, :layout=>false
+      return
+    end
+
+    subject = params[:subject].to_s
+    reply_to = params[:reply_to].to_i
+
+    message = params[:message].to_s
+    html_content = "<p>" + message.gsub(/\n/, "<br />") + "</p>"
+    short_content = message[0,140]
+
+    @item = Item.new()
+    @item.remote_delivery_done = false
+    @item.item_type = 'message'
+    @item.media_type = 'text'
+    @item.posted_by = current_participant.id
+    @item.subject = subject
+    @item.html_content = html_content
+    @item.short_content = short_content
+    @item.reply_to = reply_to
+    if reply_to > 0
+      @item.is_first_in_thread = false
+      @item.first_in_thread = Item.find_by_id(reply_to).first_in_thread
+    else
+      @item.is_first_in_thread = true
+    end
+
+    itemprocess
+    
+    @item.save!
+    if reply_to == 0
+      @item.first_in_thread = @item.id
+    end
+    if @item.save
+      render json: {'status': 'success', 'message': 'item created', 'item_id': @item.id}
+      return
+    else
+      render json: {'status': 'error', 'message': 'something went wrong'}
+      return
+    end
+    
+  end
+
+  def create_api_scowl
+    #-- Create an item, called remotely by json, which should be turned into params automatically
     #-- We should be receiving an auth_token, login in the user
     
     #auth_token = params[:auth_token].presence
@@ -1263,12 +1605,25 @@ class ItemsController < ApplicationController
       render :status => 404
       return
     end
-    
+
     @item = @item.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})") if participant_signed_in?
     @item = @item.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation") if participant_signed_in?    
     @item = @item.find_by_id(@item_id)
     
     @item.voting_ok(participant_signed_in? ? current_participant.id : 0)
+
+    @is_private = false
+    if participant_signed_in? and @item.posted_by == current_participant.id
+    elsif @item.visible_com != 'public' and not participant_signed_in?
+      @is_private = true
+    elsif @item.visible_com != 'public'
+      # visible only to people in a certain community
+      comtag = @item.visible_com[1,50].downcase
+      com = Community.where(tagname: @comtag).first
+      if not current_participant.tag_list_downcase.include?(comtag)
+        @is_private = true
+      end
+    end
 
     @group_id,@dialog_id = get_group_dialog_from_subdomain
 
@@ -1724,6 +2079,7 @@ class ItemsController < ApplicationController
       
       show_result = (params[:show_result].to_i == 1)
       @show_result = show_result
+      crit[:show_result] = @show_result
       result2c = params[:result2c].to_s
       @result2c = result2c
       crit[:result2c] = result2c
@@ -1755,9 +2111,16 @@ class ItemsController < ApplicationController
       crit[:gender] = params[:meta_3].to_i
       crit[:age] = params[:meta_5].to_i
     
-      crit[:comtag] = params[:comtag].to_s     # Might be blank, *my*, or a tag
-      crit[:messtag] = params[:messtag].to_s
+      crit[:comtag] = params[:comtag].to_s     # Might be blank, *my*, *other* or a tag
+      crit[:comtag_other] = params[:comtag_other].to_s
+      if crit[:comtag] == "*other*"
+        crit[:comtag] = crit[:comtag_other]
+      end
+      crit[:messtag] = params[:messtag].to_s   # a tag or *other*
       crit[:messtag_other] = params[:messtag_other].to_s
+      if crit[:messtag] == "*other*"
+        crit[:messtag] = crit[:messtag_other]
+      end
       session[:comtag] = crit[:comtag]
       session[:messtag] = crit[:messtag]
       
@@ -1889,16 +2252,16 @@ class ItemsController < ApplicationController
       #session[:datetype] = @datetype.dup
       if redocount == 0
         session[:datefixed] = @datefixed.dup
-        logger.info("dialogs#geoslider_update session[:datefixed] set to: #{@datefixed}")
+        logger.info("items#geoslider_update session[:datefixed] set to: #{@datefixed}")
         if @in == 'conversation'
           session[:datefixed_conversation] = @datefixed.dup
-          logger.info("dialogs#geoslider_update session[:datefixed_conversation] set to: #{@datefixed}")
+          logger.info("items#geoslider_update session[:datefixed_conversation] set to: #{@datefixed}")
         elsif @in == 'community'
           session[:datefixed_community] = @datefixed.dup
-          logger.info("dialogs#geoslider_update session[:datefixed_community] set to: #{@datefixed}")
+          logger.info("items#geoslider_update session[:datefixed_community] set to: #{@datefixed}")
         end
       else
-        logger.info("dialogs#geoslider_update redocount > 0 so session[:datefixed] not set")        
+        logger.info("items#geoslider_update redocount > 0 so session[:datefixed] not set")        
       end
       #session[:datefrom] = @datefrom.dup
       @datefromto = ''
@@ -1911,9 +2274,16 @@ class ItemsController < ApplicationController
           @datefromuse = (Date.today - 30).to_s
         elsif @datefixed == 'year'
           @datefromuse = (Date.today - 365).to_s
+        elsif @datefixed == 'next_full'
+          # from last full moon to next full moon
+          @datefromuse = previous_moon('full', 1)
+        elsif @datefixed == 'next_new'
+          # from last new moon to next new moon
+          @datefromuse = previous_moon('new', 1)
         elsif @datefixed == 'all' or @datefixed == '*' or @datefixed == ''
           @datefromuse = (Date.today - 7000).to_s
         elsif /_/ =~ @datefixed   
+          # We got a date range
           xarr = @datefixed.split('_')
           @datefromuse = xarr[0]
           @datefromto = xarr[1]
@@ -1985,11 +2355,12 @@ class ItemsController < ApplicationController
 
       @threads = params[:threads]
       session[:list_threads] = @threads
-      if @threads == '' or @threads == 'tree' or @threads == 'root'
+      if @threads == 'tree' or @threads == 'root'
         rootonly = true
       else
         rootonly = false
       end
+      logger.info("items#geoslider_update rootonly:#{rootonly}")
 
       #-- See how many total posts there are in the selected period, to be able to do a graphic
       all_posts = Item.where(nil)
@@ -2307,6 +2678,7 @@ class ItemsController < ApplicationController
       else
         #-- Listing
           
+        logger.info("items#geoslider_update running get_items rootonly:#{rootonly}")
         items,ratings,@title,@select_explain = Item.get_items(crit,current_participant,rootonly)
 
         #if @num_all_posts == 0 and @first == 1 and @datetype == 'fixed' and @datefixed == 'month'
@@ -2327,6 +2699,7 @@ class ItemsController < ApplicationController
     
         # Add up results for those items and those ratings, to show in the item summaries in the listing
         # I.e. add up the number of interest/approval ratings for each item, do regression to the mean, calculate value, etc
+        logger.info("items#geoslider_update running get_itemsproc rootonly:#{rootonly}")
         @itemsproc,@extras = Item.get_itemsproc(items,ratings,current_participant.id,rootonly)
   
         # Items probably need to be sorted, based on the results we calculated
@@ -3133,9 +3506,21 @@ class ItemsController < ApplicationController
       end
     end 
   end
+
+  def check_api_code
+    Rails.logger.info("items#check_api_code")
+    @api_code = 'Xe6tsdfasf'
+    if params[:x] != @api_code
+        Rails.logger.info("items#check_api_code: not ok")
+        render json: {
+            status: 'error',
+            message: 'Access denied'
+        }
+    end
+  end
   
   def item_params
-    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply, :representing_com, :topic, :comment_email_to, :wall_post, :wall_delivery)
+    params.require(:item).permit(:item_type, :media_type, :group_id, :dialog_id, :period_id, :subject, :short_content, :html_content, :link, :reply_to, :geo_level, :censored, :intra_com, :conversation_id, :intra_conv, :outside_conv_reply, :representing_com, :topic, :comment_email_to, :wall_post, :wall_delivery, :visible_com)
   end
     
 end

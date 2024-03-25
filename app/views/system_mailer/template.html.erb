@@ -13,7 +13,7 @@
 
 <p>
 <% if @cdata and @cdata.has_key?('recipient') and @cdata['recipient'].authentication_token.to_s != '' -%>    
-To block emails from the Voices of Humanity social media, <a href="https://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>   
+<a href="https://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">Unsubscribe</a>   
 <% else -%>
 This message sent through <a href="https://<%= BASEDOMAIN %>/">Voices of Humanity</a>. 
 <% end -%>    

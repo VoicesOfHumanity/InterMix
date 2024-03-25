@@ -119,19 +119,47 @@ if (CKEDITOR.instances['item_html_content']) {
 	    		<%= options_for_select(intra_options,def_intra) %>
 	    	</select>
 			<% else -%>
-	  	  <% intra_options = [['Public','public']] %>
-	  	  <% def_intra = @item.intra_com ? @item.intra_com : 'public' %>		  
-	      <% if (@item.reply_to.to_i>0 and @olditem and @olditem.intra_com.to_s!='' and @olditem.intra_com.to_s!='public') -%>
-	  	    <% intra_options << ["Only #{@olditem.intra_com}","#{@olditem.intra_com}"]  %>
-	        <% def_intra = "#{@olditem.intra_com}" %>
-	      <% elsif (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*' and (!@conversation) and @is_com_member) -%>
-	  	    <% intra_options << ["Only @#{@comtag}","@#{@comtag}"]  %>
-	      <% end -%>
-	  	  <% if intra_options.length > 1 -%>
-	    	  <select name="item[intra_com]" id="item_intra_com">
-	    	  <%= options_for_select(intra_options,def_intra) %>
-	    	  </select>
-	  	  <% end -%>
+				<% if @community and @community.visibility != 'public' -%>
+					<% if @community.message_visibility != 'public' or (@olditem and @olditem.visible_com.to_s!='public')-%>
+						<% visible_options = [] %>
+					<% else %>
+						<% visible_options = [['Public','public']] %>
+					<% end -%>
+					<% def_vis = "@#{@community.tagname}" %>	
+					<% if (@item.reply_to.to_i>0 and @olditem and @olditem.visible_com.to_s!='' and @olditem.visible_com.to_s!='public') -%>
+						<% visible_options << ["Visible only to members","#{@olditem.visible_com}"]  %>
+						<% def_vis = "#{@olditem.visible_com}" %>
+					<% elsif (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*' and (!@conversation) and @is_com_member) -%>
+						<% visible_options << ["Visible only to members","@#{@comtag}"]  %>
+					<% end -%>
+					<select name="item[visible_com]" id="item_visible_com">
+					<%= options_for_select(visible_options,def_vis) %>
+					</select>
+					<% if @community.message_visibility == 'public' %>
+						<input type="hidden" name="item[intra_com]" id="item_intra_com" value="<%= "public" %>">
+					<% else %>
+						<input type="hidden" name="item[intra_com]" id="item_intra_com" value="<%= "@#{@community.tagname}" %>">
+					<% end -%>
+				<% elsif @community -%>
+					<!--public community-->
+					<% if (@item.reply_to.to_i>0 and @olditem and @olditem.visible_com.to_s!='' and @olditem.visible_com.to_s!='public') -%>
+						<% intra_options = [] %>
+					<% else -%>
+						<% intra_options = [['Public','public']] %>
+					<% end -%>
+					<% def_intra = @community.message_visibility == 'private' ? "@#{@community.tagname}" : 'public' %>
+					<% if (@item.reply_to.to_i>0 and @olditem and @olditem.intra_com.to_s!='' and @olditem.intra_com.to_s!='public') -%>
+						<% intra_options << ["Only #{@olditem.intra_com}","#{@olditem.intra_com}"]  %>
+						<% def_intra = "#{@olditem.intra_com}" %>
+					<% elsif (@comtag.to_s != '' and @comtag != 'my' and @comtag != '@my' and @comtag != '*my*' and (!@conversation) and @is_com_member) -%>
+						<% intra_options << ["Only @#{@comtag}","@#{@comtag}"]  %>
+					<% end -%>
+					<% if intra_options.length > 1 or intra_options != [['Public','public']] -%>
+						<select name="item[intra_com]" id="item_intra_com">
+						<%= options_for_select(intra_options,def_intra) %>
+						</select>
+					<% end -%>
+				<% end -%>
 			<% end -%>    
       
       <% if @item.representing_com.to_s != '' -%>
@@ -148,9 +176,13 @@ if (CKEDITOR.instances['item_html_content']) {
       
       <% if (@item.reply_to.to_i>0) and current_participant.status != 'visitor' -%>
     	  <br><br>Email this comment to: <select name="item[comment_email_to]" id="item_comment_email_to">
-        <% com_options = [["Public","public"]] %>
+		<% if @community and @community.message_visibility != 'public' or (@olditem and @olditem.visible_com.to_s!='public')-%>
+			<% com_options = [] %>
+		<% else -%>
+			<% com_options = [["Public","public"]] %>
+		<% end -%>
         <% com_options << ["This community only", "community"] if @comtag.to_s != '' %>
-        <% com_options << ["Message author only","author"] %>
+        <% com_options << ["Original poster only","author"] %>
     	  <%= options_for_select(com_options, 'author') %>
     	  </select>
       <% elsif current_participant.status == 'visitor' -%>

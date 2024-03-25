@@ -18,7 +18,7 @@
   <% for com in @prof_nations -%>
       <tr>
         <% if com.go_to_conversation(current_participant) != '' -%>
-      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= com.go_to_conversation(current_participant) %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
+      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
         <% else -%>
       	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
         <% end -%>  
@@ -32,7 +32,7 @@
   <% for com in @prof_cities -%>
       <tr>
         <% if com.go_to_conversation(current_participant) != '' -%>
-      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= com.go_to_conversation(current_participant) %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
+      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= CITY_CONVERSATION_CODE %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
         <% else -%>
       	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
         <% end -%>  
@@ -46,7 +46,7 @@
   <% for com in @prof_religions -%>
       <tr>
         <% if com.go_to_conversation(current_participant) != '' -%>
-      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= com.go_to_conversation(current_participant) %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
+      	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= RELIGIONS_CONVERSATION_CODE %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
         <% else -%>
       	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
         <% end -%>  
@@ -89,11 +89,19 @@
 <% for com in @communities -%>
   <% if com.active or (@csection == 'my' and com.is_admin(current_participant)) -%>
     <tr>
-      <% if com.go_to_conversation(current_participant) != '' -%>
-    	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= com.go_to_conversation(current_participant) %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
+      <td>
+      <% if com.visibility == 'private' -%>
+        <% if com.is_member(current_participant) %>
+          <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a>
+        <% else -%>
+          -
+        <% end -%>
+      <% elsif com.go_to_conversation(current_participant) != '' -%>
+    	  <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= com.go_to_conversation(current_participant) %>&comtag=<%= com.tagname %>">@<%= com.tagname %></a>
       <% else -%>
-    	  <td><a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a></td>
-      <% end -%>  
+    	  <a href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?comtag=<%= com.tagname %>">@<%= com.tagname %></a>
+      <% end -%>
+      </td>
     	<td><%= com.activity %></td>
     	<td><a href="/communities/<%= com.id %>"><%= com.fullname.to_s != '' ?  com.fullname : com.tagname %></a></td>
     	<td>

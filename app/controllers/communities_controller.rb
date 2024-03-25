@@ -33,14 +33,14 @@ class CommunitiesController < ApplicationController
     end
 
     if params[:which].to_s == 'all' or (current_participant.tag_list.length == 0 and current_participant.status != 'visitor')
-      communities = Community.where(is_sub: false).where("context not in ('city','nation','religion')")
+      communities = Community.where(is_sub: false).where("context not in ('city','nation','religion')").where.not(visibility: "private")
       @csection = 'all' 
       @toptitle = "All Communities except Nations, Cities, Religions, Genders and Ages"
     elsif params[:which].to_s == 'human'  or (current_participant.status == 'visitor' and params[:which].to_s == '')
-      communities = Community.where(is_sub: false, more: true)
+      communities = Community.where(is_sub: false, more: true).where.not(visibility: "private")
       @csection = 'human' 
     elsif params[:which].to_s == 'un'  
-      communities = Community.where(is_sub: false, ungoals: true)
+      communities = Community.where(is_sub: false, ungoals: true).where.not(visibility: "private")
       @csection = 'un'       
     elsif params[:which].to_s == 'genders'  
       @prof_genders = []
@@ -120,8 +120,11 @@ class CommunitiesController < ApplicationController
       end
       @csection = 'nations' 
     elsif params[:which].to_s == 'other'  
-      communities = Community.where(is_sub: false, major: false, ungoals: false, more: true).where.not(context: 'nation').where.not(context: 'city')
-      @csection = 'other'            
+      communities = Community.where(is_sub: false, major: false, ungoals: false, more: true).where.not(context: 'nation').where.not(context: 'city').where.not(visibility: "private")
+      @csection = 'other'
+    elsif params[:which].to_s == 'private'  
+      communities = Community.where(visibility: "private")
+      @csection = 'private'           
     else
       #-- My communities
       comtag_list = ''.dup
@@ -138,8 +141,8 @@ class CommunitiesController < ApplicationController
       @csection = 'my'      
     end
 
-    if ['id','tag'].include?(sort) or @sort == 'id desc'
-      communities = communities.order(@sort)      
+    if (['id','tag'].include?(sort) or @sort == 'id desc') and communities.class != Array
+      communities = communities.order(@sort)
     #elsif @sort == 'activity'
     #  logger.info("communities#index pre-sort by tagname in query")
     #  communities = communities.order("tagname")      
@@ -187,7 +190,9 @@ class CommunitiesController < ApplicationController
     #  return
     #end
     #-----
-    
+
+    @is_member = current_participant.tag_list_downcase.include?(@community.tagname.downcase)
+
     if @community.is_sub
       @parent = Community.find(@community.sub_of)
     end
@@ -218,6 +223,7 @@ class CommunitiesController < ApplicationController
   end
   
   def members
+
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
     @comtag = @community.tagname
@@ -226,6 +232,10 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'members'
 
+    @is_member = current_participant.tag_list_downcase.include?(@community.tagname.downcase)
+    if @community.visibility!='public' and not @is_member
+      return
+    end
     prepare_members
     
   end
@@ -326,7 +336,11 @@ class CommunitiesController < ApplicationController
     #-- Add a new forum
     @section = 'communities'
     @csection = 'edit'
-    @community = Community.new    
+    @community = Community.new  
+    @community.created_by = current_participant.id
+    @community.administrator_id = current_participant.id  
+    @is_admin = true
+    @members = [current_participant]
     render action: :edit
   end
   
@@ -350,6 +364,7 @@ class CommunitiesController < ApplicationController
       end
       @community.tagname = tagname
     end
+    @community.created_by = current_participant.id
     if flash.now[:alert] != ''  
       render action: :edit
     else  
@@ -551,6 +566,16 @@ class CommunitiesController < ApplicationController
     if participant
       participant.tag_list.add(@community.tagname)
       participant.save
+      cp = CommunityParticipant.where(["community_id = ? and participant_id = ?", @community_id, @participant_id]).first_or_create
+      if @community.sub_of.to_i > 0
+        #-- Add to the main community too, if it's a sub-community
+        maincom = Community.find_by_id(@community.sub_of)
+        if maincom
+          participant.tag_list.add(maincom.tagname)
+          participant.save
+          cp = CommunityParticipant.where(["community_id = ? and participant_id = ?", maincom.id, @participant_id]).first_or_create
+        end
+      end
     end    
     memlist   
   end 
@@ -558,12 +583,27 @@ class CommunitiesController < ApplicationController
   def member_del 
     #-- Delete a member
     @community_id = params[:id].to_i
+    @community = Community.find_by_id(@community_id)
     participant_ids = params[:participant_ids]
     for participant_id in participant_ids
       participant = Participant.find_by_id(participant_id)      
       if participant
         participant.tag_list.remove(comtag)
         participant.save
+        cp = CommunityParticipant.where(["community_id = ? and participant_id = ?", @community_id, @participant_id]).first
+        if cp
+          cp.destroy
+        end
+        # Remove from any sub-communities too
+        subcoms = Community.where(sub_of: @community_id)
+        for subcom in subcoms
+          participant.tag_list.remove(subcom.tagname)
+          participant.save
+          cp = CommunityParticipant.where(["community_id = ? and participant_id = ?", subcom.id, @participant_id]).first
+          if cp
+            cp.destroy
+          end
+        end
       end      
     end
     memlist
@@ -928,23 +968,42 @@ class CommunitiesController < ApplicationController
   protected
 
   def community_params
-    params.require(:community).permit(:fullname, :description, :logo, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :tweet_approval_min, :tweet_what, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :autotags, :active)
+    params.require(:community).permit(:fullname, :description, :logo, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :tweet_approval_min, :tweet_what, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :autotags, :active, :visibility, :message_visibility, :administrator_id, :who_add_members)
   end
   
   def check_is_admin
     @community_id = params[:id].to_i
+    @community = Community.find(@community_id) if @community_id > 0
     @is_admin = false
     @is_super = false
     @is_moderator = false
     if current_participant.sysadmin
       @is_admin = true
       @is_super = true
-    else
+    elsif @community_id > 0 and @community.administrator_id == current_participant.id
+      @is_admin = true
+    elsif @community_id > 0 and @community.created_by.to_i > 0 and @community.created_by == current_participant.id
+      @is_admin = true
+    elsif @community_id > 0
       admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community_id, current_participant.id]).first
       if admin
-        @is_admin = true
         @is_moderator = true
       end
+    end
+    if @community_id > 0 and @community.sub_of.to_i > 0 and not @is_admin
+      # Check if they're an admin of the top level community, if it is a sub
+      top_com = Community.find(@community.sub_of)
+      if top_com.administrator_id == current_participant.id
+        @is_admin = true
+      else
+        admin = CommunityAdmin.where(["community_id = ? and participant_id = ?", @community.sub_of, current_participant.id]).first
+        if admin
+          @is_moderator = true
+        end
+      end
+    end
+    if @is_admin or @is_super
+      @is_moderator = true
     end
   end
   

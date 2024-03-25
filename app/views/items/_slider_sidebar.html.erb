@@ -44,7 +44,13 @@ end
       <% freeze_geo = true %>
     <% end -%>
     <% @geo_levels.each do |geo_level,geo_desc| -%>
-      <input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> <% if freeze_geo %>disabled<% end %> onclick="per_reload()"><%=raw geo_desc %><br>  
+			<% if geo_level==1 and current_participant.city.to_s=='' -%>
+			<% elsif geo_level==2 and current_participant.county_code.to_s=='' -%>
+			<% elsif geo_level==3 and current_participant.metro_area_id.to_i==0 -%>
+			<% elsif geo_level==4 and current_participant.admin1uniq.to_s=='' -%>
+			<% else -%>
+      	<input type="radio" name="geo_level_radio" value="<%= geo_level %>" <%= geo_level == @geo_level ? "checked" : "" %> <% if freeze_geo %>disabled<% end %> onclick="per_reload()"><%=raw geo_desc %><br>
+			<% end -%>
     <% end -%>
     </div>
     
@@ -73,6 +79,7 @@ end
             <input type="radio" name="comtag_radio" value="<%= tag.name %>" <%= (tag.name == @comtag.to_s) ? "checked" : "" %> onclick="per_reload(false,1,'comtag')">@<%= tag.name %><br> 
           <% end -%>
         <% end %>
+        <input type="radio" name="comtag_radio" value="*other*" onclick="per_reload(false,1,'comtag')">@<input type="text" id="comtag_other" size="10" maxlength="14" onchange="per_reload(false,1,'comtag_other')">
       <% end %>
       <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     </div>
@@ -95,52 +102,52 @@ end
           <% end -%>
         <% end -%>
       <% end %>
-      <% if false -%>
-      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">
-      <% end -%>
-      <div style="padding-left: 8px">& #<input type="text" id="messtag_other" size="10" maxlength="14" onchange="per_reload(false,1,'messtag_other')"></div>
+      <input type="radio" name="messtag_radio" value="*other*" onclick="per_reload(false,1,'messtag')">#<input type="text" id="messtag_other" size="10" maxlength="14" onchange="per_reload(false,1,'messtag_other')">
       <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
     </div>
 
-    <div style=""> 
-      <% gender = 0 %>
-      <% freeze_gender = false %>
-      <% if @in == 'wall' and @posted_by and @posted_by_participant -%>
-        <% gender = @posted_by_participant.gender_id  %>
-        <% freeze_gender = true %>
-      <% elsif @in == 'network' and @network and @network.gender.to_i > 0 %>
-        <% gender = @network.gender  %>
-        <% freeze_gender = true %>
-			<% elsif @in == 'conversation' and @conversation and @conversation.context=='gender' and @conversation.together_apart=='apart' %>
-        <% gender = current_participant.gender_id  %>
-        <% freeze_gender = true %>
-      <% end -%>
-      <input type="radio" name="meta_3" id="meta_3_0" value="0" <% if gender==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.gender_id==408) %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()">all<br>
-      <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
-	        <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" <% if metamap_node.id==gender %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()"><%= metamap_node.name %><br>
-      <% end %>
-    </div>
+		<% if (@show_result.to_i == 0) %>
+	    <div style=""> 
+	      <% gender = 0 %>
+	      <% freeze_gender = false %>
+	      <% if @in == 'wall' and @posted_by and @posted_by_participant -%>
+	        <% gender = @posted_by_participant.gender_id  %>
+	        <% freeze_gender = true %>
+	      <% elsif @in == 'network' and @network and @network.gender.to_i > 0 %>
+	        <% gender = @network.gender  %>
+	        <% freeze_gender = true %>
+				<% elsif @in == 'conversation' and @conversation and @conversation.context=='gender' and @conversation.together_apart=='apart' %>
+	        <% gender = current_participant.gender_id  %>
+	        <% freeze_gender = true %>
+	      <% end -%>
+	      <input type="radio" name="meta_3" id="meta_3_0" value="0" <% if gender==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.gender_id==408) %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()">all<br>
+	      <% for metamap_node in MetamapNode.where(:metamap_id=>3).order(:sortorder) %>
+		        <input type="radio" name="meta_3" id="meta_3_<%= metamap_node.id %>" value="<%= metamap_node.id %>" <% if metamap_node.id==gender %>checked<% end %> <% if freeze_gender %>disabled<% end %> onclick="per_reload()"><%= metamap_node.name %><br>
+	      <% end %>
+	    </div>
 
-    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
+	    <div style="text-align:center;margin:4px 25px 4px 0">-----</div>
 
-    <div style="">
-      <% age = 0 %>
-      <% freeze_age = false %>
-      <% if @in == 'wall' and @posted_by and @posted_by_participant -%>
-        <% age = @posted_by_participant.generation_id %>
-        <% freeze_age = true %>
-      <% elsif @in == 'network' and @network and @network.age.to_i > 0 %>
-        <% age = @network.age  %>
-        <% freeze_age = true %>
-			<% elsif @in == 'conversation' and @conversation and @conversation.context=='generation' and @conversation.together_apart=='apart' %>
-        <% age = current_participant.generation_id  %>
-        <% freeze_age = true %>
-      <% end -%>
-      <input type="radio" name="meta_5" id="meta_5_0" value="0" <% if age==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.generation_id==409) %>checked<% end %> <% if freeze_age %>disabled<% end %> onclick="per_reload()">all<br>
-      <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
-          <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" <% if metamap_node.id==age %>checked<% end %> <% if freeze_age %>disabled<% end %> onclick="per_reload()"><%= metamap_node.name %><br>
-      <% end %>
-    </div>
+	    <div style="">
+	      <% age = 0 %>
+	      <% freeze_age = false %>
+	      <% if @in == 'wall' and @posted_by and @posted_by_participant -%>
+	        <% age = @posted_by_participant.generation_id %>
+	        <% freeze_age = true %>
+	      <% elsif @in == 'network' and @network and @network.age.to_i > 0 %>
+	        <% age = @network.age  %>
+	        <% freeze_age = true %>
+				<% elsif @in == 'conversation' and @conversation and @conversation.context=='generation' and @conversation.together_apart=='apart' %>
+	        <% age = current_participant.generation_id  %>
+	        <% freeze_age = true %>
+	      <% end -%>
+	      <input type="radio" name="meta_5" id="meta_5_0" value="0" <% if age==0 or (@in == 'wall' and @posted_by and @posted_by_participant and @posted_by_participant.generation_id==409) %>checked<% end %> <% if freeze_age %>disabled<% end %> onclick="per_reload()">all<br>
+	      <% for metamap_node in MetamapNode.where(:metamap_id=>5).order(:sortorder) %>
+	          <input type="radio" name="meta_5" id="meta_5_<%= metamap_node.id %>" value="<%= metamap_node.id %>" <% if metamap_node.id==age %>checked<% end %> <% if freeze_age %>disabled<% end %> onclick="per_reload()"><%= metamap_node.name %><br>
+	      <% end %>
+	    </div>
+		
+		<% end -%>
 
     <div style="display:none;margin: 20px 0 0 0;">
       <input type="radio" name="show_result" value="0" <%= @show_result.to_i == 0 ? "checked" : "" %> onclick="per_reload(undefined,undefined,'show_result')">Listing<br>

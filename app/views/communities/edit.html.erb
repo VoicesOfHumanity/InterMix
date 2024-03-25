@@ -20,6 +20,29 @@
     
     <li class="text input optional" id="community_description_input"><label for="community_description" class="label">Description</label><textarea rows="2" id="community_description" name="community[description]"><%= @community.description %></textarea><br><label>&nbsp;</label>(basic HTML ok)
     </li>
+		
+    <% if current_participant.sysadmin or @is_admin %>
+      <%= f.input :administrator_id, as: :select, collection: @members.collect{|m| [m.name, m.id]}, label: "Administrator" %>
+    <% end -%>
+
+    <% if current_participant.sysadmin -%>
+  		<%= f.input :visibility, label: "Privacy", as: :select, collection: COM_VISIBILITY_TEXT.collect {|x| [x[1],x[0]]}, include_blank: false %>
+    <% elsif @community.visibility.downcase != 'public' -%>
+      <p><b>This is a private community</b></p>
+    <% else -%>
+      <%= f.input :visibility, label: "Privacy", as: :select, collection: {'Public'=>'public'}, include_blank: false %>
+    <% end -%>
+    Only the system administrator can add private communities.<br><br>
+
+		<% if @community.visibility != 'public' -%>
+      <%= f.input :message_visibility, label: "Post visibility", as: :select, collection: COM_MESSAGE_VISIBILITY_TEXT_PRIVATE.collect {|x| [x[1],x[0]]}, include_blank: false %>
+    <% else %>
+      <%= f.input :message_visibility, label: "Post visibility", as: :select, collection: COM_MESSAGE_VISIBILITY_TEXT_PUBLIC.collect {|x| [x[1],x[0]]}, include_blank: false, disabled: true %>
+    <% end -%>
+
+    <% if current_participant.sysadmin or @is_admin %>
+      <%= f.input :who_add_members, label: "Who can add members?", as: :select, collection: COM_WHO_ADD_MEMBERS_TEXT.collect {|x| [x[1],x[0]]}, include_blank: false %>
+    <% end -%>
 
 		<%= f.input :logo, :as=>:file %>	
 

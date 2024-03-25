@@ -45,6 +45,9 @@ class Participant < ActiveRecord::Base
   
   has_many :participant_religions
   has_many :religions, :through => :participant_religions
+
+  has_many :community_participants
+  has_many :communities, :through => :community_participants
   
   
   #has_many :gender_metamap_node_participants, :class_name => "MetamapNodeParticipant", :conditions => "metamap_id=3"
@@ -344,7 +347,17 @@ class Participant < ActiveRecord::Base
     end  
     return 0
   end
-  
+
+  def update_gender(gender_id)
+    mnp = MetamapNodeParticipant.where(participant_id: self.id, metamap_id: 3).first
+    if mnp
+      mnp.metamap_node_id = gender_id
+    else
+      mnp = MetamapNodeParticipant.create(participant_id: self.id, metamap_id: 3, metamap_node_id: gender_id)
+    end
+    mnp.save
+  end   
+
   def generation
     self.metamap_nodes.each do |mn|
       if mn.metamap_id == 5
@@ -361,6 +374,24 @@ class Participant < ActiveRecord::Base
       end
     end  
     return 0
+  end
+
+  def update_generation(generation_id)
+    mnp = MetamapNodeParticipant.where(participant_id: self.id, metamap_id: 5).first
+    if mnp
+      mnp.metamap_node_id = generation_id
+    else
+      mnp = MetamapNodeParticipant.create(participant_id: self.id, metamap_id: 5, metamap_node_id: generation_id)
+    end
+    mnp.save
+  end
+
+  def religion_ids
+    self.religions.map{|r| r.id}
+  end
+
+  def community_ids
+    self.communities.map{|c| c.id}
   end
   
   def them
@@ -446,6 +477,15 @@ class Participant < ActiveRecord::Base
   
   def account_url
     return "https://#{BASEDOMAIN}/u/#{self.account_uniq}"
+  end
+
+  def generate_reset_password_token
+    raw, hashed = Devise.token_generator.generate(Participant, :reset_password_token)
+    @token = raw
+    self.reset_password_token = hashed
+    self.reset_password_sent_at = Time.now.utc
+    self.save
+    return @token
   end
       
   private

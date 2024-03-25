@@ -21,6 +21,7 @@ class AuthenticationsController < ApplicationController
   end
 
   def create
+    #-- This should akways run when a user log in. So this is where we also  send them to the right place.
     omniauth = request.env["omniauth.auth"]
     logger.info("authentications#create omniauth.auth:#{omniauth.to_yaml}")
     authentication = Authentication.find_by_provider_and_uid(omniauth['provider'], omniauth['uid'])
@@ -46,7 +47,21 @@ class AuthenticationsController < ApplicationController
         @conversation = Conversation.find_by_shortname(session[:previous_convtag])
         if @conversation
           return "/dialogs/#{VOH_DISCUSSION_ID}/slider?conv=#{@conversation.shortname}"
-        end      
+        end    
+      else
+        # If they're only in one community, go there when they sign in 
+        non_profile_com_count = 0
+        only_com = nil
+        for com in current_participant.communities
+          if context == '' or not ['nation','city','religion','gender','generation'].include?(com.context)
+            non_profile_com_count += 1
+            only_com = com
+          end 
+        end
+        if non_profile_com_count == 1
+          @community = only_com
+          return "/dialogs/#{VOH_DISCUSSION_ID}/slider?comtag=#{@community.tagname}"
+        end
       end
       logger.info("authentications#create go to default slider, as nothing else applies")
       redirect_to "/dialogs/#{VOH_DISCUSSION_ID}/slider" and return

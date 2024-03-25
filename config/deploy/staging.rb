@@ -4,6 +4,9 @@
 # server in each group is considered to be the first
 # unless any hosts have the primary property set.
 # Don't declare `role :all`, it's a meta role
+#role :web, "ploy@sirius.cr8.com"                          # Your HTTP server, Apache/etc
+#role :app, "ploy@sirius.cr8.com"                          # This may be the same as your `Web` server
+#role :db,  "ploy@sirius.cr8.com", :primary => true # This is where Rails migrations will run
 role :web, "ploy@34.30.183.18"                          # Your HTTP server, Apache/etc
 role :app, "ploy@34.30.183.18"                          # This may be the same as your `Web` server
 role :db,  "ploy@34.30.183.18", :primary => true # This is where Rails migrations will run

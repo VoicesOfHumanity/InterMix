@@ -103,7 +103,19 @@ class ApplicationController < ActionController::Base
     end          
     #render :layout=>false, :text => res.to_json
     render json: res
-  end  
+  end
+
+  def getreligions
+    res = Religion.order_by_custom.collect {|r| {:val=>r.id,:txt=>r.name}}
+    render json: res
+  end
+
+  def getcommunities
+    @major_communities = Community.where(major: true).order(:fullname)
+    #@more_communities = Community.where(more: true).order(:fullname)
+    res = @major_communities.collect {|r| {:val=>r.id,:txt=>r.fullname}}
+    render json: res
+  end
   
   def setsess
     if participant_signed_in?
@@ -123,6 +135,20 @@ class ApplicationController < ActionController::Base
       session[:moreless] = params['moreless']
     end
     render plain: "ok"
+  end
+
+  def previous_moon(xmoon, offset=0)
+    #-- Get the start date of the current moon period
+    #-- or an earlier one, if the offset is more than zero
+    moon_recs = Moon.where(new_or_full: xmoon).where("mdate<now()").order(mdate: :desc)
+    x = 0
+    for moon_rec in moon_recs
+      if x == offset
+        return moon_rec['mdate'].strftime('%Y-%m-%d')
+        break
+      end
+      x += 1
+    end
   end
       
   protected

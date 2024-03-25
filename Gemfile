@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+ruby '2.7.7'
+
 #gem 'rails', '~> 3.2'
 #gem 'rails', '~> 4.2'
 gem 'rails', '~> 5.2.3'
@@ -44,6 +46,7 @@ gem 'omniauth-facebook'
 gem 'omniauth-twitter'
 gem 'omniauth-google-oauth2'
 #gem 'omniauth-google_apps'
+gem "omniauth-rails_csrf_protection"
 
 gem 'rest-graph'
 
@@ -86,6 +89,13 @@ gem 'deep_cloneable'
 
 gem 'down'
 
+gem "passenger", ">= 6.0.16", require: "phusion_passenger/rack_handler"
+
+gem "mimemagic", ">=0.3.10"
+
+# assets:precompile seems to be missing this
+gem "date"
+
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
@@ -107,11 +117,14 @@ end
   gem 'coffee-rails'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'therubyracer', :platforms => :ruby
+  #gem 'therubyracer', :platforms => :ruby
+  gem 'mini_racer', '~> 0.4.0'
 
   gem 'uglifier'
+
+  gem 'sprockets', '~> 3.7.2'
   
-  gem 'libv8'
+  #gem 'libv8'
 #end
 
 

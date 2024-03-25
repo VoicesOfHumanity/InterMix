@@ -10,7 +10,45 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_30_203529) do
+ActiveRecord::Schema.define(version: 2024_01_30_183920) do
+
+  create_table "action_text_rich_texts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body", limit: 4294967295
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "api_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "path"
@@ -126,6 +164,11 @@ ActiveRecord::Schema.define(version: 2021_11_30_203529) do
     t.boolean "moderated", default: false
     t.boolean "active", default: true
     t.integer "conversation_id"
+    t.string "visibility", default: "public"
+    t.string "message_visibility", default: "public"
+    t.integer "created_by"
+    t.integer "administrator_id"
+    t.string "who_add_members", default: "admin"
     t.index ["tagname"], name: "index_communities_on_tagname"
   end
 
@@ -140,6 +183,15 @@ ActiveRecord::Schema.define(version: 2021_11_30_203529) do
     t.index ["community_id", "participant_id"], name: "index_community_admins_on_community_id_and_participant_id"
   end
 
+  create_table "community_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "community_id"
+    t.integer "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id", "item_id"], name: "index_community_items_on_community_id_and_item_id"
+    t.index ["item_id", "community_id"], name: "index_community_items_on_item_id_and_community_id"
+  end
+
   create_table "community_networks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "community_id"
     t.integer "network_id"
@@ -148,6 +200,29 @@ ActiveRecord::Schema.define(version: 2021_11_30_203529) do
     t.datetime "updated_at", null: false
     t.index ["community_id", "network_id"], name: "index_community_networks_on_community_id_and_network_id"
     t.index ["network_id", "community_id"], name: "index_community_networks_on_network_id_and_community_id"
+  end
+
+  create_table "community_participants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "community_id"
+    t.integer "participant_id"
+    t.string "status", default: "member"
+    t.index ["community_id", "participant_id"], name: "index_community_participants_on_community_id_and_participant_id", unique: true
+    t.index ["participant_id", "community_id"], name: "index_community_participants_on_participant_id_and_community_id", unique: true
+  end
+
+  create_table "complaints", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "item_id"
+    t.integer "poster_id"
+    t.integer "complainer_id"
+    t.string "reason"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["complainer_id"], name: "index_complaints_on_complainer_id"
+    t.index ["item_id"], name: "index_complaints_on_item_id"
+    t.index ["poster_id"], name: "index_complaints_on_poster_id"
   end
 
   create_table "conversation_communities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -600,6 +675,8 @@ ActiveRecord::Schema.define(version: 2021_11_30_203529) do
     t.integer "dialog_id"
     t.integer "dialog_round_id"
     t.integer "conversation_id"
+    t.integer "community_id"
+    t.integer "community2_id"
     t.string "subject"
     t.integer "subject_id"
     t.boolean "promoted_to_forum"
@@ -639,6 +716,7 @@ ActiveRecord::Schema.define(version: 2021_11_30_203529) do
     t.boolean "censored", default: false
     t.string "geo_level"
     t.string "intra_com", default: "public"
+    t.string "visible_com", default: "public"
     t.string "intra_conv", default: "public"
     t.boolean "outside_com_post", default: false
     t.text "outside_com_details"
@@ -750,6 +828,21 @@ ActiveRecord::Schema.define(version: 2021_11_30_203529) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["country_code", "name"], name: "index_metro_areas_on_country_code_and_name", length: { country_code: 1, name: 20 }
+  end
+
+  create_table "moon_winners", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "moon_id"
+    t.date "send_date"
+    t.string "new_or_full"
+    t.integer "gender_id"
+    t.integer "age_id"
+    t.string "category"
+    t.integer "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_moon_winners_on_item_id"
+    t.index ["moon_id"], name: "index_moon_winners_on_moon_id"
+    t.index ["send_date"], name: "index_moon_winners_on_send_date"
   end
 
   create_table "moons", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1074,4 +1167,6 @@ ActiveRecord::Schema.define(version: 2021_11_30_203529) do
     t.index ["section"], name: "index_templates_on_section"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
 end

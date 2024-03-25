@@ -344,6 +344,9 @@ end
 	 <% elsif item.intra_conv.to_s != '' and item.intra_conv != 'public' -%>
 	 		<div class="iteminfotxt" style="font-weight:bold;color:#44a">This message: Only <%= item.intra_conv %></div>
 	 <% end -%>
+	 <% if item.visible_com != 'public' and '@'+@comtag.to_s.downcase != item.visible_com -%>
+		<div class="iteminfotxt" style="font-weight:bold;color:#44a">PRIVATE</div>
+	 <% end -%>
 	 <% if false and item.representing_com.to_s != '' and item.representing_com.to_s != 'public' and @in == 'conversation' and @conversation and @conversation.together_apart == 'apart' %>
 	 <div class="iteminfotxt" style="font-weight:bold;color:#44a">Representing: <%= item.representing_com %></div>
 	 <% end -%>
@@ -355,7 +358,8 @@ end
    <% end -%>
    
    <% if item.outside_com_post -%>
-       <div class="iteminfotxt" style="font-weight:bold;color:#44a">
+   	   <!--<div class="iteminfotxt" style="font-weight:bold;color:#44a">-->
+       <div class="iteminfotxt">
            <% outcoms = item.outside_com_details.keys %>
            <% if outcoms.size > 1 -%>
                The author was not a member of these communities: <%= outcoms.collect{|c| "@#{c}"}.join(', ') %>.

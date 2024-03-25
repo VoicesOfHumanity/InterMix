@@ -24,10 +24,13 @@ module ItemLib
       Rails.logger.info("items#rateitem items#rateitem no voter")
       return
     end
+    if not item
+      return
+    end
     if participant and not item.voting_ok(participant.id)
       Rails.logger.info("items#rateitem voting is not ok")
       return
-    end    
+    end  
   
     item_id = item.id
     group_id = item.group_id.to_i
@@ -66,7 +69,7 @@ module ItemLib
     if conversation_id.to_i == 0
       conversation_id = item.conversation_id
     end
-    if conversation_id > 0
+    if conversation_id.to_i > 0
       conversation = Conversation.find_by_id(conversation_id)
       if conversation and participant and conversation.is_member_of(participant)
         # In a conversation in together mode, the vote is valid if the user is a member of any community that is in the conversation

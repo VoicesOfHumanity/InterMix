@@ -1,12 +1,16 @@
 class Community < ActiveRecord::Base
 
   has_many :community_admins
-  has_many :participants, :through => :community_admins
+  has_many :community_participants
+  has_many :participants, :through => :community_participants
+  #has_many :participants, :through => :community_admins
   has_many :admins, -> { where "admin=1 and active=1"}, source: :participant, through: :community_admins
   has_many :moderators, -> { where "moderator=1 and active=1"}, source: :participant, through: :community_admins
   has_many :admins_and_moderators, -> { where "(moderator=1 or admin=1) and active=1"}, source: :participant, through: :community_admins
   belongs_to :conversation, optional: true
-  
+
+  belongs_to :creator, optional: true, class_name: 'Participant', foreign_key: :created_by
+  belongs_to :administrator, optional: true, class_name: 'Participant', foreign_key: :administrator_id
 
   has_many :conversation_communities
   has_many :conversations, :through => :conversation_communities
@@ -46,8 +50,8 @@ class Community < ActiveRecord::Base
     xarr = period.split('_')
     dstart = xarr[0]
     dend = xarr[1]
-    plist = Participant.tagged_with(self.tagname).collect {|p| p.id}.join(',')
     logger.info("community#activity_count_for_conversation #{conversation.id}: period:#{period}: #{dstart} - #{dend}")
+    plist = Participant.tagged_with(self.tagname).collect {|p| p.id}.join(',')
     if plist != ''
       items = Item.includes(:participant).references(:participant).where("participants.id in (#{plist})").where(conversation_id: conversation.id)
       items = items.tagged_with(self.tagname).where('items.created_at >= ?', dstart).where('items.created_at <= ?', dend).count
@@ -92,6 +96,14 @@ class Community < ActiveRecord::Base
     return ''
   end
   
+  def is_member(participant)
+    if participant.sysadmin
+      return true
+    else
+      return participant.tag_list_downcase.include? self.tagname.downcase
+    end  
+  end
+
   def is_admin(participant)
     if participant.sysadmin
       return true

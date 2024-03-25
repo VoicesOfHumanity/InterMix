@@ -19,7 +19,7 @@
 
 <p><a href="https://<%= BASEDOMAIN %>/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>&auth_token=<%= @cdata['recipient'].authentication_token %>">Go online to The Nations Apart and Together conversation</a></p>
 
-<p>To block emails from the Voices of Humanity social media, <a href="https://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">click here</a>.</p>
+<p><a href="https://<%= BASEDOMAIN %>/optout?auth_token=<%= @cdata['recipient'].authentication_token %>">Unsubscribe</a></p>
 
 <img src="https://<%= BASEDOMAIN %>/pixel/e_<%= @cdata.has_key?('email_id') ? @cdata['email_id'] : 0 %>.gif" width="0" height="0" border="0" style="display:none" alt="pixel" data-template="moon">
 

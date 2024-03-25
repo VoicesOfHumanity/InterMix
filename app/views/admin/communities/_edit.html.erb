@@ -4,12 +4,20 @@
 		<%= f.input :tagname, :required => true %>
 		<%= f.input :fullname, :required => true %>
 		<%= f.input :description %>
-    <%= f.input :major, :label => "Major checkbox?" %>
-    <%= f.input :more, :label => "More communities list?" %>    
-    <%= f.input :bold, :label => "Bold text?" %>
-    <%= f.input :ungoals, :label => "UN Goal?" %>
-    <%= f.input :sustdev, :label => "Sustainable Development Goal?" %>
-    <%= f.input :conversation_id, :label => "Two country conversation", as: :select, collection: [['* none *','']]+Conversation.where(active: true).collect{|c| [c.name,c.id]} %>
+
+		<%= f.input :visibility, label: "Privacy", as: :select, collection: COM_VISIBILITY_TEXT.collect {|x| [x[1],x[0]]}, include_blank: false %>
+		<% if @community.visibility != 'public' -%>
+		<%= f.input :message_visibility, label: "Post visibility", as: :select, collection: COM_MESSAGE_VISIBILITY_TEXT_PRIVATE.collect {|x| [x[1],x[0]]}, include_blank: false %>
+		<% else %>
+		<%= f.input :message_visibility, label: "Post visibility", as: :select, collection: COM_MESSAGE_VISIBILITY_TEXT_PUBLIC.collect {|x| [x[1],x[0]]}, include_blank: false, disabled: true %>
+		<% end -%>
+
+		<%= f.input :major, :label => "Major checkbox?" %>
+		<%= f.input :more, :label => "More communities list?" %>    
+		<%= f.input :bold, :label => "Bold text?" %>
+		<%= f.input :ungoals, :label => "UN Goal?" %>
+		<%= f.input :sustdev, :label => "Sustainable Development Goal?" %>
+		<%= f.input :conversation_id, :label => "Two country conversation", as: :select, collection: [['* none *','']]+Conversation.where(active: true).collect{|c| [c.name,c.id]} %>
 		<%= f.input :moderated, :label => "Moderated?" %>
 		<%= f.input :twitter_post, :label => "Post items to twitter?" %>
 		<%= f.input :tweet_what, :label => "Items to tweet", :as => :select, :collection =>[['* all *'],['root messages','roots']] %>

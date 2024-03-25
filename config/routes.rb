@@ -73,6 +73,10 @@ Rails.application.routes.draw do
       get :search, :on => :collection
     end  
 
+    resources :complaints do
+      get :search, :on => :collection
+    end
+
     resources :communities do
       get :search, :on => :collection
       get :admins, :on => :member
@@ -180,6 +184,22 @@ Rails.application.routes.draw do
   post '/participants/auth/:provider/callback' => 'authentications#create'
   get '/participants/visitor_login'
   
+  # API for apps
+  get 'api/verify_email', to: 'api#verify_email'
+  get 'api/login', to: 'api#login'
+  get 'api/logout', to: 'api#logout'
+  get 'api/register', to: 'api#register'
+  post 'api/register', to: 'api#register'
+  post 'api/user_from_facebook', to: 'api#user_from_facebook'
+  get 'api/get_user', to: 'api#get_user'
+  get 'api/update_user', to: 'api#update_user'
+  post 'api/update_user', to: 'api#update_user'
+  post 'api/update_user_field', to: 'api#update_user_field'
+  post 'api/thumbrate', to: 'api#thumbrate'
+  post 'api/importance', to: 'api#importance'
+  post 'api/report_complaint', to: 'api#report_complaint'
+  get 'api/forgot_password', to: 'api#forgot_password'
+
   resources :authentications
 
   #devise_for :participants, :controllers => { :omniauth_callbacks => "omniauth_callbacks" }
@@ -199,6 +219,7 @@ Rails.application.routes.draw do
   get 'communities/cities', to: 'communities#index', action: :index, which: 'cities'
   get 'communities/nations', to: 'communities#index', action: :index, which: 'nations'
   get 'communities/religions', to: 'communities#index', action: :index, which: 'religions'
+  get 'communities/private', to: 'communities#index', action: :index, which: 'private'
   get 'communities/other', to: 'communities#index', action: :index, which: 'other'
   resources :communities do
     get :index, :on => :collection
@@ -333,6 +354,7 @@ Rails.application.routes.draw do
     get :unfollow, on: :member
     post :list_api, on: :collection
     get :list_api, on: :collection
+    get :item_api, on: :member
     post :report_api, on: :member
     post :create_api, on: :collection
     post :censor, on: :member
@@ -351,6 +373,8 @@ Rails.application.routes.draw do
   get 'front/getcities' => 'front#getcities'
   get 'front/getmetro' => 'front#getmetro'
   get 'front/getadmin2_from_city'
+  get 'front/getreligions'
+  get 'front/getcommunities'
   get 'front/setsess' => 'front#setsess'
   get 'front/updatemoreless' => 'front#updatemoreless'
   get 'front/test' => 'front#test'

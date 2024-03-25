@@ -13,7 +13,7 @@
 	        <% if @conversation and @conversation.together_apart == 'apart' -%>
 	          <% options = options + @moons.reverse[0,6] %>
 	        <% else -%>
-	          <% options = options + [["In last 24 hours",'day'],["In last week",'week'],["In last month",'month'],['In last year','year'],['All','all']]+@moons.reverse %>
+	          <% options = options + [["In last 24 hours",'day'],["In last week",'week'],["In last month",'month'],['In last year','year'],['For next full moon','next_full'],['For next new moon','next_new'],['All','all']]+@moons.reverse %>
 	        <% end -%>
 					<%= select_tag "datefixed#{num}", options_for_select(options,@datefixed), :onchange=>"per_reload(false,#{num},'datefixed')" %>  
       </td>

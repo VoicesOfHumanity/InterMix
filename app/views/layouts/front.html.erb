@@ -10,13 +10,17 @@
 	<% "stylesheet_link_tag 'blueprint/print', :media => 'print'" %>
   <!--[if lt IE 8]>
     <% "stylesheet_link_tag 'blueprint/ie'" %>
-  <![endif]-->  
+  <![endif]-->
+    <%= javascript_include_tag Ckeditor.cdn_url %>
+    <!--
+    <% javascript_include_tag "/javascripts/ckeditor/ckeditor.js" %>
+    -->  
   <%= javascript_include_tag "application" %>
 	<script type="text/javascript">
 	//var CKEDITOR_BASEPATH = '/javascripts/ckeditor/';
 	</script>
-  <% javascript_include_tag "/javascripts/ckeditor/ckeditor.js" %>
-	<% javascript_include_tag '/javascripts/ckeditor/config' %>
+    <% javascript_include_tag '/javascripts/ckeditor/config' %>
+
   <link rel="shortcut icon" href="/favicon.ico">
   <%= csrf_meta_tag %>
 	<script>
@@ -94,8 +98,11 @@
                 }               
                 if ($('#my_networks').length>0) {
                     $('#my_networks').show();      
+                }
+                if ($('#private_com').length>0) {
+                    $('#private_com').show();      
                 }				
-							} else {
+			} else {
                 moreless = 'less';
                 $('#morelesstext').html("More Options");
                 if ($('#communitysidelist').length) {
@@ -144,7 +151,10 @@
                 }
                 if ($('#my_networks').length>0) {
                     $('#my_networks').hide();      
-                }													  
+                }
+                if ($('#private_com').length>0) {
+                    $('#private_com').hide();      
+                }												  
                 if (reloadslider) {                        
                     per_reload(false,1,'comtag');
                 }

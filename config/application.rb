@@ -52,6 +52,10 @@ module Intermix
     
     # This is temporary, because I can't find out to make the parameters work for groupsx   
     #config.action_controller.permit_all_parameters = true
+
+    # Temporary fix, https://stackoverflow.com/questions/71332602/upgrading-to-ruby-3-1-causes-psychdisallowedclass-exception-when-using-yaml-lo
+    config.active_record.use_yaml_unsafe_load = true
+    config.active_record.yaml_column_permitted_classes = [ActiveSupport::HashWithIndifferentAccess]
     
     # rack-cors configuration. https://github.com/cyu/rack-cors
     config.middleware.insert_before 0, Rack::Cors do
@@ -73,6 +77,14 @@ PARTICIPANT_VISIBILITY_TEXT = {'visible_to_all'=>'Visible to all', 'visible_to_g
 #-- Participant's setting for how visible their wall is
 PARTICIPANT_WALL_VISIBILITY = ['all','groups&friends','friends']
 PARTICIPANT_WALL_VISIBILITY_TEXT = {'all'=>'Visible to all','groups&friends'=>'Visible only to friends and other group members','friends'=>'Visible only to friends'}
+
+COM_VISIBILITY = ['private','public']
+COM_VISIBILITY_TEXT = {'private'=>'Private', 'public'=>'Public'}
+COM_MESSAGE_VISIBILITY = ['private','public']
+COM_MESSAGE_VISIBILITY_TEXT_PRIVATE = {'private'=>"always visible only to members",'public'=>"poster can choose if private or public"}
+COM_MESSAGE_VISIBILITY_TEXT_PUBLIC = {'private'=>"default to this community only",'public'=>"default to being public"}
+COM_WHO_ADD_MEMBERS_TEXT  = {'moderator'=>'Moderators of the community','admin'=>'Administrator/owner of community','sysadmin'=>"Only system administrator"}
+# 'member'=>"Any member of the community",
 
 GROUP_VISIBILITY = ['private','public']
 GROUP_VISIBILITY_TEXT = {'private'=>'Private, unlisted', 'public'=>'Public, visible to all'}
