@@ -9,12 +9,25 @@
 
 <p style="text-align:justify"><b><big>Welcome.</big></b> Joining the <i>Order out of Chaos</i> worldwide conversation is easy. By giving each nation and religion its own collective voice in a global conversation capped by the Voice of Humanity-as-One, Voices of Humanity enables us to transcend and yet also to support our nations and religions. </p>
 
-<p><a href="/participants/auth/facebook">
+<p><!--<a href="/participants/auth/facebook">
 <img alt="Facebook Sign-in" height="64" src="https://voh.intermix.org/images/login/facebook_64.png" style="float:left; margin:0 10px 10px 0;" width="64" title ="Facebook Sign-in" /></a>
+-->
+<%= button_to "/participants/auth/facebook", class: "btn btn-danger", method: :post, data: {turbo: "false"} do %>
+  <%= image_tag("https://voh.intermix.org/images/login/facebook_64.png", alt: "Facebook Sign-in", style: "display:inline-block;vertical-align:middle", width: "64", height: "64") %>
+<% end %>
+</p>
 
-<p><a href="/participants/auth/google_oauth2" class="auth_provider">
+<p><!--<a href="/participants/auth/google_oauth2" class="auth_provider">
   <img alt="Google" style="display:inline-block;vertical-align:middle" src="https://voh.intermix.org/images/login/google_oauth2_64.png" width="64" height="64" />
 </a>
+<button class="auth_provider" style="background: none; border: none;">
+  <a href="/participants/auth/google_oauth2">
+    <img alt="Google" style="display:inline-block;vertical-align:middle" src="https://voh.intermix.org/images/login/google_oauth2_64.png" width="64" height="64" />
+  </a>
+</button>-->
+<%= button_to "/participants/auth/google_oauth2", class: "btn btn-danger", method: :post, data: {turbo: "false"} do %>
+  <%= image_tag("https://voh.intermix.org/images/login/google_oauth2_64.png", alt: "Google", style: "display:inline-block;vertical-align:middle", width: "64", height: "64") %>
+<% end %>
 </p>
 <b>Use the Facebook or Google button</b> to sign up for free and sign back in anytime or click the Join button on the left of the screen. You'll fill out a short form that will become your online profile. Or use the Sign in button with your email and password if you have already joined. <a href="https://voh.intermix.org/participants/password/new">Forgot your password?</a></p>
 
