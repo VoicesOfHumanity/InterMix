@@ -36,6 +36,7 @@ class FrontController < ApplicationController
       cdata['dialog_logo'] = "//#{cdata['domain']}#{@dialog.logo.url}" if @dialog and @dialog.logo.exists?
       cdata['group_logo'] = "//#{cdata['domain']}#{@group.logo.url}" if @group and @group.logo.exists?
       cdata['group'] = @group if @group
+      cdata['authenticity_token'] = form_authenticity_token
       if participant_signed_in? and @dialog.member_template.to_s.strip != ''
         desc = Liquid::Template.parse(@dialog.member_template).render(cdata)
       elsif @dialog.front_template.to_s.strip != ''
