@@ -184,6 +184,21 @@ function removedata(id) {
 	   });			
     }
 }
+function removepersonal(id) {
+    if (confirm("Are you sure you want to remove identifying information for participant #" + curid1 + "?")) {
+        curid1 = id;
+        $('rec1box').css('opacity','0.5');
+		$.ajax({
+	    type: 'POST',
+	    url: '/participants/'+id+'/removepersonal',
+	    complete: function(t){	
+	      $("#rec1boxcontent").html(t.responseText);
+			  $('#rec1box').css('opacity','1.0');
+				search();
+	     }
+	   });			
+    }
+}
 
 var allmarked = false;
 function markall() {

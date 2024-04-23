@@ -1,0 +1,29 @@
+<h1>Delete Account</h1>
+
+<p>If you no longer wish to participate in this site, you can simply turn off all email notifications 
+in the <a href="/me/profile/edit#settings">settings</a> and stop using the site.</p>
+
+<p>However, data protection laws like the <a href="https://gdpr.eu/right-to-be-forgotten/" target="_blank">GDPR</a> ask us to provide you the option to be altogether forgotten,
+and for all personal data and identifying information to be deleted from our system.</p>
+
+<% if @participant %>
+  <p>Are you sure you want to delete your account? This is permanent and irreversible.</p>
+  <%= button_to "Yes, permanently delete my account", '/delete_my_account', method: :post, class: "btn btn-danger", data: { confirm: 'This is the last chance to say no. Are you sure you want to permanently delete your account?' } %>
+<% else %>
+  <p>If you would like to delete your account and identifying information, it would be best if you first
+  logged into your account, so that we know that it is you who's making this request. 
+  Simply come back to this page after you have logged in.</p>
+
+  <p>If you don't have your login information, please provide your name and email address below. 
+  You will receive an email with a link that will log you in and bring you back to this page where
+  you can delete your account.</p>
+
+  <%= form_with(url: '/delete_my_account', method: :post) do |f| %>
+
+    <div class="form-group">
+      <%= f.label :email %>
+      <%= f.email_field :email, class: "form-control" %>
+    </div>
+    <p><br><%= f.submit "Send link to Delete Account", class: "btn btn-danger" %></p>
+  <% end %>
+<% end %>

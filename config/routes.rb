@@ -207,7 +207,7 @@ Rails.application.routes.draw do
   resources :participants do
     get :search, :on => :collection
     post :removedata, on: :member
-
+    post :removepersonal, on: :member
   end
 
   get 'communities/all', to: 'communities#index', action: :index, which: 'all'
@@ -407,9 +407,13 @@ Rails.application.routes.draw do
   get 'autologin', :controller=>:front, :action=>:autologin
   get 'front/notconfirmed', :controller=>:front, :action=>:notconfirmed
 
+  get 'delete_my_account', :controller=>:front, :action=>:delete_account_screen
+  post 'delete_my_account', :controller=>:front, :action=>:delete_account_action
+
   get 'forum(/:action(/:id(.:format)))', :controller=>:forum
   get 'people(/:action(/:id(.:format)))', :controller=>:people
   get 'people/remote/:remote_actor_id/profile' => 'people#remote_profile'
+  get 'people/removed', :controller=>:people, :action=>:removed
   
   get 'participant/:id/profile', :controller=>:people, :action=>:profile
   get 'participant/:id/wall', :controller=>:people, :action=>:wall

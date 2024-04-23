@@ -137,6 +137,8 @@ class ParticipantsController < ApplicationController
   end
   
   def removedata
+    # Remove content and personal data
+    # Posts with no replies are removed, others just have their content removed
     @participant = Participant.find(params[:id])
     p = @participant
     
@@ -204,6 +206,71 @@ class ParticipantsController < ApplicationController
     
     respond_to do |format|
       format.html { render :partial=>'show', :layout=>false, :notice => 'Participant data has been removed' }
+    end
+  end
+
+  def removepersonal
+    # Remove/anonymize personal data, but leave the content in place
+    @participant = Participant.find(params[:id])
+    p = @participant
+    
+    picdir = "#{DATADIR}/participants/pictures/#{p.id}"
+    `/bin/rm -f #{picdir}/*`
+    
+    Message.where("from_participant_id=#{p.id} or to_participant_id=#{p.id}").delete_all
+        
+    # not touching their ratings
+    #Rating.where(participant_id: p.id).destroy
+
+    p.first_name = '*'
+    p.last_name = '*'
+    p.address1 = ''
+    p.address2 = ''
+    p.city = ''
+    p.city_uniq = ''
+    p.state_code = ''
+    p.state_name = ''
+    p.country_code = ''
+    p.country_name = ''
+    p.zip = ''
+    p.phone = ''
+    p.county_code = ''
+    p.county_name = ''
+    p.admin1uniq = ''
+    p.fb_uid = ''
+    p.fb_link = ''
+    p.twitter_username = ''
+    p.twitter_oauth_token = ''
+    p.visibility = ''
+    p.email = "datadeleted#{p.id}@intermix.org"
+    p.mycom_email = 'never'
+    p.othercom_email = 'never'
+    p.private_email = 'never'
+    p.system_email = 'never'
+    p.no_email = true
+    p.old_email = ''
+    p.direct_email_code = ''
+    p.encrypted_password = "ewrwerwerr345324324#{p.id}"
+    p.confirmation_token = "ewrwerwerassdaasd3#{p.id}"
+    p.authentication_token = "324533eweder2342423423dssd#{p.id}"
+    p.google_uid = ''
+    p.account_uniq = ''
+    p.account_uniq_full = ''
+    p.tag_list = ''
+    p.status = 'removed'
+    p.save!
+    
+    remote_followers = Follow.where("followed_id=#{p.id} and following_remote_actor_id is not null")
+    for rfollow in remote_followers
+      if rfollow.remote_follower
+        send_delete_actor(p, rfollow.remote_follower)
+      end
+    end
+    
+    Follow.where("following_id=#{p.id} or followed_id=#{p.id}").delete_all
+    
+    respond_to do |format|
+      format.html { render :partial=>'show', :layout=>false, :notice => 'Participant personal data has been removed' }
     end
   end
   

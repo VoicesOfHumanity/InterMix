@@ -2096,6 +2096,27 @@ class FrontController < ApplicationController
     end
     render inline: showtext, layout: 'front'
   end  
+
+  def delete_account_screen
+    #-- /delete_my_account. Removal/anonymization of account, to respect
+    #-- data laws, and the right to be forgotten
+    @participant = current_participant
+    render :action=>:delete_account_screen
+  end
+
+  def delete_account_action
+    #-- Actually do the account deletion
+    if participant_signed_in?
+      @participant = current_participant
+      @participant.status = 'inactive'
+      #@participant.save
+      #sign_out :participant
+      flash[:notice] = "Your account has been deleted"
+    else
+      flash[:alert] = "You must be logged in to delete your account"
+    end
+    redirect_to '/'
+  end
   
   def youarehere
     @group_id = session[:group_id].to_i

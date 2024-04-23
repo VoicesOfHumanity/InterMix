@@ -39,6 +39,10 @@ class PeopleController < ApplicationController
     #-- List people who follow a certain user
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.includes(:followers).find(@participant_id)
+    if @participant.status == 'removed'
+      redirect_to '/people/removed' and return
+    end
+
     update_last_url
   end
   
@@ -46,6 +50,10 @@ class PeopleController < ApplicationController
     #-- List the people the user is following
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.includes(:idols).find(@participant_id)
+    if @participant.status == 'removed'
+      redirect_to '/people/removed' and return
+    end
+
     update_last_url
   end 
   
@@ -56,6 +64,9 @@ class PeopleController < ApplicationController
     @psection = 'mail'
     @participant_id = ( params[:id] || current_participant.id ).to_i
     @participant = Participant.includes(:followers,:idols).find(@participant_id)
+    if @participant.status == 'removed'
+      redirect_to '/people/removed' and return
+    end
     
     @friends = Follow.where(following_id: current_participant.id, mutual: true)
     @followers = Follow.where(followed_id: current_participant.id, mutual: false)
@@ -71,6 +82,9 @@ class PeopleController < ApplicationController
     @participant_id = ( params[:id] || current_participant.id ).to_i    
     #@participant = Participant.find(@participant_id)
     @participant = Participant.includes(:followers,:idols).find(@participant_id)
+    if @participant.status == 'removed'
+      redirect_to '/people/removed' and return
+    end
     logger.info("people#profile showing profile for #{@participant_id}") 
     if @participant
       follow = Follow.where("followed_id=#{@participant_id} and following_id=#{current_participant.id}").first
@@ -108,6 +122,10 @@ class PeopleController < ApplicationController
     @page = 1 if @page <= 0
     
     @otherwall = true
+
+    if @participant.status == 'removed'
+      redirect_to '/people/removed' and return
+    end  
         
     #crit = {}
     #crit[:posted_by] = @participant_id
@@ -224,6 +242,12 @@ class PeopleController < ApplicationController
     
     render :partial => "follow", :layout => false
   end  
+
+  def removed
+    # If a participant has been removed, we'll show people this screen
+    @section = 'people'
+    @psection = 'removed'
+  end
 
   protected
   
