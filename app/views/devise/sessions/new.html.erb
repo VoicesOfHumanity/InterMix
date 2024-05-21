@@ -14,15 +14,12 @@ It looks like you might not have cookies turned on.<br><br>Signing in to this si
 </div>
 <% end -%>
 
-<p><!--<a href="/participants/auth/facebook" class="auth_provider">
-  <%= image_tag "/images/login/facebook_64.png", size: "64x64", alt: "Facebook", style: "display:inline-block;vertical-align:middle" %>
-  Click to sign in with your Facebook login.
-</a>-->
+<!--<p>
 <%= button_to "/participants/auth/facebook", class: "btn btn-danger", method: :post, data: {turbo: "false"} do %>
   <%= image_tag("https://voh.intermix.org/images/login/facebook_64.png", alt: "Facebook Sign-in", style: "display:inline-block;vertical-align:middle", width: "64", height: "64") %>
   Click to sign in with your Facebook login.
 <% end %>
-</p>
+</p>-->
 <p><!--<a href="/participants/auth/google_oauth2" class="auth_provider">
   <%= image_tag "/images/login/google_oauth2_64.png", size: "64x64", alt: "Google", style: "display:inline-block;vertical-align:middle" %>
   Click to sign in with your Google login.
