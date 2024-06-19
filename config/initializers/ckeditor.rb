@@ -6,7 +6,8 @@ Ckeditor.setup do |config|
   # available as additional gems.
   require "ckeditor/orm/active_record"
 
-  config.cdn_url = "//cdn.ckeditor.com/4.6.1/basic/ckeditor.js"
+  #config.cdn_url = "//cdn.ckeditor.com/4.6.1/basic/ckeditor.js"
+  config.cdn_url = "//cdn.ckeditor.com/4.6.1/standard/ckeditor.js"
 
   # Allowed image file types for upload.
   # Set to nil or [] (empty array) for all file types

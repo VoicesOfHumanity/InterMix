@@ -78,6 +78,10 @@ CKEDITOR.editorConfig = function( config )
       [
         ['Bold','Italic','Underline','-','NumberedList','BulletedList','Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyRight','-','Link','Unlink','-','Image','Smiley','-','SpellChecker', 'Scayt','-','About']
       ];
+    // config.toolbar_Custom =
+    //   [
+    //     ['Bold','Italic','Underline','-','NumberedList','BulletedList','Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyRight','-','Link','Unlink','-','Smiley','-', 'About']
+    //   ];
     
 
     config.toolbar = 'Custom';    
