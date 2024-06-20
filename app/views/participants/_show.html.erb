@@ -29,7 +29,8 @@
 
 <p>
 <a href="javascript:editrec1()">Edit</a> | 
-<a href="javascript:delrec1()">Delete</a>
+<a href="javascript:delrec1()">Delete</a> |
+<a href="javascript:removepersonal(<%= @participant.id %>)">Remove Personal Data</a>
 </p>
 
 
@@ -46,7 +47,7 @@
 </table>
 
 <p>
-<a href="javascript:removedata(<%= @participant.id %>)">Remove Data</a>
+<a href="javascript:removedata(<%= @participant.id %>)">Remove All Data</a>
 </p>
 
 

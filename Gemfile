@@ -54,7 +54,7 @@ gem 'rmagick', :require => "rmagick"
 gem 'acts-as-taggable-on'
 #gem 'simple_captcha'
 #gem 'ckeditor', '3.4.2.pre'
-gem 'ckeditor'
+gem 'ckeditor', '4.2.4'
 #gem 'carrierwave'
 #gem 'mini_magick'
 gem 'cancancan'
