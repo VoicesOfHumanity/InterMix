@@ -2675,6 +2675,7 @@ class ItemsController < ApplicationController
         end
 
         @crit = crit
+        logger.info("items#geoslider_update show_result after processing @crit:#{@crit.inspect}")
     
         render :partial=>'simple_result'
     
