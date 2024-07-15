@@ -2374,7 +2374,7 @@ class ItemsController < ApplicationController
       crit[:show_result] = show_result
       crit[:top_posts] = top_posts
       logger.info("items#geoslider_update show_results:#{crit[:show_result]} top_posts:#{crit[:top_posts]}")
-      @crit = crit.copy()
+      @crit = crit.clone
 
       @data = {}  
   
