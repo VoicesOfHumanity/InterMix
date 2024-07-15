@@ -1572,7 +1572,9 @@ class Item < ActiveRecord::Base
     end
         
         
-    if not crit[:show_result]    
+    # Why did we do that?
+    #if not crit[:show_result]
+    if true    
       if crit[:gender].to_i != 0
         items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
         ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")   
