@@ -2417,6 +2417,8 @@ class ItemsController < ApplicationController
         age = crit[:age]
         gender = crit[:gender]
 
+        logger.info("items#geoslider_update show_result age:#{age} gender:#{gender}")
+
         gender_pos = {207=>"Men's",208=>"Women's",408=>"Gender Simply Human's"}
         gender_single = {207=>"Men",208=>"Women",408=>"Gender Simply Human"} 
     
@@ -2452,6 +2454,7 @@ class ItemsController < ApplicationController
           @data['all'] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
         elsif age == 0 and gender == 0
           # two genders, three ages, and voice of humanity
+          logger.info("items#geoslider_update show_result age==0 gender==0 crit:#{crit.inspect}")
           # total
           name = "Voice of Humanity-as-One"
           name = @community.voice_of_humanity if @community and @community.voice_of_humanity.to_s != ''          
