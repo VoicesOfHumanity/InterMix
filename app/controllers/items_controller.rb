@@ -2374,6 +2374,7 @@ class ItemsController < ApplicationController
       crit[:show_result] = show_result
       crit[:top_posts] = top_posts
       logger.info("items#geoslider_update show_results:#{crit[:show_result]} top_posts:#{crit[:top_posts]}")
+      @crit = crit.copy()
 
       @data = {}  
   
@@ -2401,8 +2402,6 @@ class ItemsController < ApplicationController
           end      
         
         end
-        
-        @crit = crit
     
         render :partial=>'top_posts'
         
@@ -2674,8 +2673,7 @@ class ItemsController < ApplicationController
           @moontime = moondate + ' ' + moontime
         end
 
-        @crit = crit
-        logger.info("items#geoslider_update show_result after processing @crit:#{@crit.inspect}")
+        logger.info("items#geoslider_update show_result after processing @crit:#{@crit.inspect} @data:#{@data} @moontime:#{@moontime}")
     
         render :partial=>'simple_result'
     
