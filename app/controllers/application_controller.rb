@@ -106,14 +106,19 @@ class ApplicationController < ActionController::Base
   end
 
   def getreligions
-    res = Religion.order_by_custom.collect {|r| {:val=>r.id,:txt=>r.name}}
+    res = Religion.order_by_custom.collect {|r| {:val=>r.id,:txt=>r.fullname}}
     render json: res
   end
 
   def getcommunities
     @major_communities = Community.where(major: true).order(:fullname)
     #@more_communities = Community.where(more: true).order(:fullname)
-    res = @major_communities.collect {|r| {:val=>r.id,:txt=>r.fullname}}
+    res = @major_communities.collect {|r| {
+      :id=>r.id,
+      :fullname=>r.fullname,
+      :tagname=>r.tagname,
+      :logo=>r.logo.exists? ? r.logo.url : '',
+    }}
     render json: res
   end
   
