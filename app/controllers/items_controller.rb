@@ -2673,7 +2673,7 @@ class ItemsController < ApplicationController
           @moontime = moondate + ' ' + moontime
         end
 
-        logger.info("items#geoslider_update show_result after processing @crit:#{@crit.inspect} @data:#{@data} @moontime:#{@moontime}")
+        #logger.info("items#geoslider_update show_result after processing @crit:#{@crit.inspect} @data:#{@data} @moontime:#{@moontime}")
     
         render :partial=>'simple_result'
     
