@@ -4,7 +4,9 @@ CKEDITOR.editorConfig = function( config )
   // config.language = 'fr';
   // config.uiColor = '#AADC6E';
   
-  
+  config.versionCheck = false;
+  config.clipboard_handleImages = false;
+
   config.PreserveSessionOnFileBrowser = true;
   // Define changes to default configuration here. For example:
   config.language = 'en';
