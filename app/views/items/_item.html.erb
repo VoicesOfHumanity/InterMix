@@ -168,22 +168,32 @@ end
 		
 		<% if showlong -%>
 			<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">−</div>
-			<div id="shortcontent_<%= item.id %>" class="htmlcontent" style="display:none"><p>
-			<%=raw item.short_content %></p></div>
+			<div id="shortcontent_<%= item.id %>" class="htmlcontent" style="display:none">
+				<p><%=raw item.short_content %></p>
+			</div>
 			<div id="htmlcontent_<%= item.id %>" class="htmlcontent">
-        <% if item.get_preview != '' -%>
-        <div style="width:150px;float:right;border:1px dotted #666;padding:5px;margin-bottom:5px">
-          <%=raw item.get_preview %>
-        </div>
+				<% if item.has_picture -%>
+					<img src="/images/data/items/<%= item.id %>/big.jpg" class="item_img_lr" alt="picture">
+        <% elsif item.get_preview != '' -%>
+					<div style="width:150px;float:right;border:1px dotted #666;padding:5px;margin-bottom:5px">
+						<%=raw item.get_preview %>
+					</div>
         <% end -%>
         <%=raw clean_links(sanitizethis(item.html_content)) if item.html_content.to_s != '' %>
       </div>
 		<% else -%>
 			<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
-			<div id="shortcontent_<%= item.id %>" class="htmlcontent"><p>
-			<%=raw item.short_content %><span onclick="expand(<%= item.id %>)" class="dot_expand" title="click to expand">...</span></p></div>
+			<div id="shortcontent_<%= item.id %>" class="htmlcontent">
+				<p>
+					<%=raw item.short_content %><span onclick="expand(<%= item.id %>)" class="dot_expand" title="click to expand">...</span>
+				</p>
+			</div>
 			<div id="htmlcontent_<%= item.id %>" class="htmlcontent" style="display:none">
-        <% if item.get_preview != '' -%>
+				<% if item.has_picture -%>
+					<div style="width:100px;float:right;border:1px dotted #666;padding:5px;margin-bottom:5px">
+						<img src="/images/data/items/<%= item.id %>/thumb.jpg" class="item_img_sm" alt="thumbnail">
+					</div>
+        <% elsif item.get_preview != '' -%>
         <div style="width:150px;float:right;border:1px dotted #666;padding:5px;margin-bottom:5px">
           <%=raw item.get_preview %>
         </div>

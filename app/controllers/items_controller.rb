@@ -3473,6 +3473,7 @@ class ItemsController < ApplicationController
         @item.save
       end
 
+      logger.info("items#itempicupload storing image #{original_filename} for item:#{@item}")
       @item.add_image(tempfilepath)
     end
     

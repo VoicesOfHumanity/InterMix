@@ -267,6 +267,11 @@ class Item < ActiveRecord::Base
     
     end
   end  
+
+  def has_image
+    #-- Return true if there is a picture associated with this item
+    return self.has_picture
+  end
   
   def process_new_item
     #-- Do stuff that needs to be done to process and distrubte a new item
