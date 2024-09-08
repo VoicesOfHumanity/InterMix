@@ -1452,6 +1452,8 @@ class ItemsController < ApplicationController
     #-- Create an item, called remotely by json, which should be turned into params automatically
     #-- We should be receiving an authorization token to log in in the user
     
+    #   Parameters: {"subject"=>"image test", "user_id"=>"2626", "message"=>"text", "reply_to"=>"0", "auth_token"=>"7VxZK8NJmfc9NSy3EmFG", "post_image"=>#<ActionDispatch::Http::UploadedFile:0x00007f5d2870c6a0 @tempfile=#<Tempfile:/tmp/RackMultipart20240814-9032-mmwutt.jpg>, @original_filename="image_picker_59127FB7-EE6A-4D0D-ACF3-80EE6E284ACC-14089-0000006A2935BFCD.jpg", @content_type="image/jpeg", @headers="content-type: image/jpeg\r\ncontent-disposition: form-data; name=\"post_image\"; filename=\"image_picker_59127FB7-EE6A-4D0D-ACF3-80EE6E284ACC-14089-0000006A2935BFCD.jpg\"\r\n">}
+
     posted_by = params[:user_id].to_i
 
     auth_token = params[:auth_token].presence
@@ -3162,6 +3164,9 @@ class ItemsController < ApplicationController
     else
       @item.posted_to_forum = true      
     end    
+
+    # Do this also if it is text mode, because we might get an image
+    itempicupload
     
     if @item.media_type == 'video' or @item.media_type == 'audio'
       if @item.link.to_s != ''
@@ -3174,8 +3179,8 @@ class ItemsController < ApplicationController
           end  
         end
       end
-    elsif @item.media_type == 'picture'
-      itempicupload
+    #elsif @item.media_type == 'picture'
+    #  itempicupload
     else
       logger.info("items#itemprocess before clean:#{@item.html_content.inspect}") 
       #@item.html_content = Sanitize.clean(@item.html_content, 
@@ -3368,13 +3373,24 @@ class ItemsController < ApplicationController
   
   def itempicupload
     #-- Put any uploaded or grabbed picture in the right place
+    #-- This is called from itemprocess
+    #-- It was originally only for pictures, but now it is also for text messages, particularly from the app
     @participant_id = current_participant.id
     got_file = false
     tempfilepath = "/tmp/#{current_participant.id}_#{Time.now.to_i}"
     `rm -f #{tempfilepath}`    
     logger.info("items#itempicupload tempfilepath:#{tempfilepath}")
-    
-    if params[:uploadfile_base64] and params[:uploadfile_base64].to_s != ''
+
+    post_image = params[:post_image] # A file from the new app
+
+    if post_image
+      #-- We got a file from the app
+      original_filename = post_image.original_filename.to_s
+      logger.info("items#itempicupload uploaded file from app:#{original_filename}")      
+      f = File.new(tempfilepath, "wb")
+      f.write post_image.read
+      f.close
+    elsif params[:uploadfile_base64] and params[:uploadfile_base64].to_s != ''
       logger.info("items#itempicupload uploaded base64 file")      
       f = File.new(tempfilepath, "wb")      
       f.write(Base64.decode64(params[:uploadfile_base64]))
