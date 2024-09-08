@@ -587,8 +587,8 @@ class ItemsController < ApplicationController
     
     if item.has_picture
       img_link = "https://#{BASEDOMAIN}/images/data/items/#{item.id}/big.jpg"
-    elsif item.participant.picture.url.to_s != ''
-      img_link = item.participant.picture.url
+    #elsif item.participant.picture.url.to_s != ''
+    #  img_link = item.participant.picture.url
     else
       img_link = ""
     end
