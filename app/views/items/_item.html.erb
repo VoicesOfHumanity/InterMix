@@ -1,4 +1,4 @@
-<% showlong = (item.media_type!='text' or from=='individual' or (item.short_content.to_s != '' and (item.html_content.length < 140 or item.html_content == "<p>#{item.short_content}</p>")) or (exp_item_id.to_i>0 and exp_item_id==item.id)) unless showlong -%>
+<% showlong = (item.media_type!='text' or from=='individual' or (item.short_content.to_s != '' and not item.has_picture and (item.html_content.length < 140 or item.html_content == "<p>#{item.short_content}</p>")) or (exp_item_id.to_i>0 and exp_item_id==item.id)) unless showlong -%>
 <% @show_meta = false -%>
 <%
 intclass = 'interest'
@@ -170,7 +170,7 @@ end
 			<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">−</div>
 			<div id="shortcontent_<%= item.id %>" class="htmlcontent" style="display:none">
 				<% if item.has_picture -%>
-					<div style="width:100px;float:right;border:1px dotted #666;padding:5px;margin-bottom:5px">
+					<div style="width:50px;float:right;border:1px dotted #666;padding:5px;margin-bottom:5px">
 						<img src="/images/data/items/<%= item.id %>/thumb.jpg" class="item_img_sm" alt="thumbnail">
 					</div>
 				<% end -%>
@@ -190,7 +190,7 @@ end
 			<div id="expand_<%= item.id %>" class="item_expand" onclick="expand(<%= item.id %>)">+</div>
 			<div id="shortcontent_<%= item.id %>" class="htmlcontent">
 				<% if item.has_picture -%>
-					<div style="width:100px;float:right;border:1px dotted #666;padding:5px;margin-bottom:5px">
+					<div style="width:50px;float:right;border:1px dotted #666;padding:5px;margin-bottom:5px">
 						<img src="/images/data/items/<%= item.id %>/thumb.jpg" class="item_img_sm" alt="thumbnail">
 					</div>
 				<% end -%>
