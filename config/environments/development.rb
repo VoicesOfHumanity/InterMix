@@ -85,11 +85,11 @@ MAILDOMAIN = 'trantor.cr8.com'
 
 #Paperclip.options[:command_path] = "/opt/local/bin"
 
-TWITTER_CONSUMER_KEY = 'Ew8NROMK7YbDa3XIph6gA'   # = API key. And this is for the Posting app, not the Login app
-TWITTER_CONSUMER_SECRET = 'ghQ41Vu377BAh3oVRACpKdYzeUo5SJardQunvALkj8'
+TWITTER_CONSUMER_KEY = Rails.application.credentials.twitter[:api_key]   # = API key. And this is for the Posting app, not the Login app
+TWITTER_CONSUMER_SECRET = Rails.application.credentials.twitter[:api_secret]
 
-FACEBOOK_APP_ID          = '1406266652976637'
-FACEBOOK_API_SECRET      = 'ec6fc05777932b40f23434bdbdadabec'
+FACEBOOK_APP_ID          = Rails.application.credentials.facebook[:app_id]
+FACEBOOK_API_SECRET      = Rails.application.credentials.facebook[:app_secret]
 
 VOH_DISCUSSION_ID = 5
 VOL_LOGO = "/images/data/dialogs/logos/7/original_blacksheep1S.jpg"

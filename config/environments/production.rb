@@ -3,7 +3,7 @@ if (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ 
   ROOTDOMAIN = 'intermix.cr8.com'
   MAILDOMAIN = 'trantor.cr8.com'
   FACEBOOK_APP_ID          = Rails.application.credentials.facebook[:app_id]
-  FACEBOOK_API_SECRET      = Rails.application.credentials.facebook[:app_id]
+  FACEBOOK_API_SECRET      = Rails.application.credentials.facebook[:app_secret]
   VOL_LOGO = "/images/data/photos/7/67.jpg"
   INT_CONVERSATION_ID = 1
   INT_CONVERSATION_CODE = 'The_Nations'
