@@ -32,7 +32,7 @@ module Intermix
     
     #-- Using postmark for mailing
     config.action_mailer.delivery_method   = :postmark
-    config.action_mailer.postmark_settings = { api_key: "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb", message_stream: 'broadcast-stream' }
+    config.action_mailer.postmark_settings = { api_key: Rails.application.credentials.postmark[:api_key], message_stream: 'broadcast-stream' }
 
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
@@ -185,8 +185,8 @@ GENDER_CHOICES = {207=> "Men", 208=> "Female", 408=> "Simply-Human"}
 #FACEBOOK_APP_ID          = 'xxxxxx'
 #FACEBOOK_API_SECRET      = 'xxxxxx'
 
-BITLY_USERNAME = 'intermix2'
-BITLY_TOKEN = 'c9d06623cb928bca6977ae80bbdb1a4cc676309c'
+#BITLY_USERNAME = Rails.application.credentials.bitly[:bitly_username]
+#BITLY_TOKEN = Rails.application.credentials.bitly[:bitly_token]
 
 #EMBEDLY_API_KEY = '69a93eaedc814b13ad46aa4952e75107'
 

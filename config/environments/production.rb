@@ -2,8 +2,8 @@ if (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ 
   BASEDOMAIN = 'intermix.cr8.com'
   ROOTDOMAIN = 'intermix.cr8.com'
   MAILDOMAIN = 'trantor.cr8.com'
-  FACEBOOK_APP_ID          = '604196779657027'
-  FACEBOOK_API_SECRET      = '03a98fc919e2ea25970367510d0c9b01'
+  FACEBOOK_APP_ID          = Rails.application.credentials.facebook[:app_id]
+  FACEBOOK_API_SECRET      = Rails.application.credentials.facebook[:app_id]
   VOL_LOGO = "/images/data/photos/7/67.jpg"
   INT_CONVERSATION_ID = 1
   INT_CONVERSATION_CODE = 'The_Nations'
@@ -24,8 +24,8 @@ else
   BASEDOMAIN = 'voh.intermix.org'
   ROOTDOMAIN = 'intermix.org'
   MAILDOMAIN = 'intermix.org'
-  FACEBOOK_APP_ID          = '151526481561013'
-  FACEBOOK_API_SECRET      = '3653366f2b6d4778e09db3d666d1fedf'
+  FACEBOOK_APP_ID          = Rails.application.credentials.facebook[:app_id]
+  FACEBOOK_API_SECRET      = Rails.application.credentials.facebook[:app_id]
   VOL_LOGO = "/images/data/photos/7/67.jpg"
   INT_CONVERSATION_ID = 2
   INT_CONVERSATION_CODE = 'The_Nations'
@@ -169,8 +169,8 @@ end
 
 Paperclip.options[:command_path] = "/usr/bin"
 
-TWITTER_CONSUMER_KEY = 'Ew8NROMK7YbDa3XIph6gA'   # = API key. And this is for the Posting app, not the Login app
-TWITTER_CONSUMER_SECRET = 'ghQ41Vu377BAh3oVRACpKdYzeUo5SJardQunvALkj8'
+TWITTER_CONSUMER_KEY = Rails.application.credentials.twitter[:api_key]   # = API key. And this is for the Posting app, not the Login app
+TWITTER_CONSUMER_SECRET = Rails.application.credentials.twitter[:api_secret]
 
 GLOBAL_GROUP_ID = 20
 VOH_DISCUSSION_ID = 7

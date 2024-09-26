@@ -669,7 +669,7 @@ class Item < ActiveRecord::Base
     permalink = "//#{BASEDOMAIN}/items/#{self.id}/view"
     
     #-- Get the shortened url from bitly
-    bitlyurl = "https://api-ssl.bitly.com/v3/shorten?access_token=#{BITLY_TOKEN}&longUrl=" + Rack::Utils.escape(permalink)
+    bitlyurl = "https://api-ssl.bitly.com/v3/shorten?access_token=#{Rails.application.credentials.bitly[:bitly_token]}&longUrl=" + Rack::Utils.escape(permalink)
     begin
       bitly_response = open(bitlyurl).read
       # { "data": [ ], "status_code": 500, "status_txt": "INVALID_ARG_ACCESS_TOKEN" }
@@ -698,8 +698,8 @@ class Item < ActiveRecord::Base
     
     begin
       Twitter.configure do |config|
-        config.consumer_key = TWITTER_CONSUMER_KEY
-        config.consumer_secret = TWITTER_CONSUMER_SECRET
+        config.consumer_key = Rails.application.credentials.twitter[:api_key]
+        config.consumer_secret = Rails.application.credentials.twitter[:api_secret]
         config.oauth_token = @participant.twitter_oauth_token
         config.oauth_token_secret = @participant.twitter_oauth_secret
       end
