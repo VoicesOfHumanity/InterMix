@@ -33,8 +33,10 @@ secrets
 /public/assets
 .byebug_history
 
-# Ignore master key for decrypting credentials and more.
+# Ignore master key for decrypting credentials and more, and other secrets
 /config/master.key
+/config/secrets.yml
+/config/initializers/secret_token.rb
 
 /public/packs
 /public/packs-test
