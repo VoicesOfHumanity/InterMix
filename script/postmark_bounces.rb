@@ -5,19 +5,19 @@ require 'openssl'
 #curl "https://api.postmarkapp.com/bounces?type=HardBounce&inactive=true&count=50&offset=0" \
 #  -X GET \
 #  -H "Accept: application/json" \
-#  -H "X-Postmark-Server-Token: cc26728f-ff0c-403f-9c4a-be1b0c92d8bb"
+#  -H "X-Postmark-Server-Token: xxx"
 
 uri = URI("https://api.postmarkapp.com/bounces?type=HardBounce&inactive=true&count=50&offset=0")
 
 #req = Net::HTTP::Get.new(uri)
-#req['X-Postmark-Server-Token'] = "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb"
+#req['X-Postmark-Server-Token'] = "xxx"
 #req['Accept'] = "application/json"
 
 http = Net::HTTP.new(uri.host, uri.port)
 http.use_ssl = true
 http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 request = Net::HTTP::Get.new(uri)
-request['X-Postmark-Server-Token'] = "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb"
+request['X-Postmark-Server-Token'] = Rails.application.credentials.postmark[:api_key]
 request['Accept'] = "application/json"
 
 response = http.request(request)
@@ -55,7 +55,7 @@ response = http.request(request)
       "ServerID": 23,
       "Description": "The server was unable to deliver your message (ex: unknown user, mailbox not found).",
       "Details": "smtp;554 delivery error: dd This user doesn't have a yahoo.com account (vicelcown@yahoo.com) [0] - mta1543.mail.ne1.yahoo.com",
-      "Email": "vicelcown@yahoo.com",
+      "Email": "xxxwn@yahoo.com",
       "From": "sender@postmarkapp.com",
       "BouncedAt": "2013-10-18T09:49:59.8253577-04:00",
       "DumpAvailable": false,

@@ -17,7 +17,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { :host => 'intermix.test' }
   if true
     config.action_mailer.delivery_method   = :postmark
-    #config.action_mailer.postmark_settings = { :api_key => "cc26728f-ff0c-403f-9c4a-be1b0c92d8bb" }
+    #config.action_mailer.postmark_settings = { :api_key => "xxx" }
     #config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
       :address => "mail.worldtrans.org",
