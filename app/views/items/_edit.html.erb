@@ -200,7 +200,7 @@ if (CKEDITOR.instances['item_html_content']) {
   	</div>
     </li>
 
-    <li class="text optional" id="item_short_content_input"><label for="item_short_content" style="width: 500px"><% if @item.media_type == 'question' %>Optional Explanation<% else %>Short summary / twitter version<% end %> (<span id="charsused">0</span> of 240 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px;font-size:15px" disabled="disabled"><%= @item.short_content %></textarea></li>
+    <li class="text optional" id="item_short_content_input"><label for="item_short_content" style="width: 500px"><% if @item.media_type == 'question' %>Optional Explanation<% else %>Short summary / twitter version<% end %> (<span id="charsused">0</span> of 240 char)</label><textarea cols="50" id="item_short_content" name="item[short_content]" onkeyup="update_characters()" rows="5" style="width: <%= @item.reply_to.to_i>0 ? 500 : 516 %>px;height: 80px;font-size:15px"><%= @item.short_content %></textarea></li>
 
     <% if @item.media_type == 'question' -%>
       <li>
@@ -259,10 +259,11 @@ function editor_change() {
 		html_to_short(htmlval,plainval);
 	}
 	mess_characters(htmlval,plainval);
-  if (!short_allowed && !editor_change_first && plainval != '') {
-    $('#item_short_content').prop("disabled", false );
-    short_allowed = true;
-  }
+  // if (!short_allowed && !editor_change_first && plainval != '') {
+  //   $('#item_short_content').prop("disabled", false );
+  //   short_allowed = true;
+  // }
+	short_allowed = true;
   editor_change_first = false;
 }
 var cur_media_type = $('#item_media_type').val();
