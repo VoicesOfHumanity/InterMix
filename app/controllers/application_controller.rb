@@ -111,9 +111,17 @@ class ApplicationController < ActionController::Base
   end
 
   def getcommunities
-    @major_communities = Community.where(major: true).order(:fullname)
-    #@more_communities = Community.where(more: true).order(:fullname)
-    res = @major_communities.collect {|r| {
+    which_com = params[:which_com].to_s
+    if which_com == 'more'
+      @communities = Community.where(more: true).order(:fullname)
+    elsif which_com == 'ungoals'
+      @communities = Community.where(ungoals: true).order(:fullname)
+    elsif which_com == 'sustdev'
+      @communities = Community.where(sustdev: true).order(:fullname)
+    else
+      @communities = Community.where(major: true).order(:fullname)
+    end
+    res = @communities.collect {|r| {
       :id=>r.id,
       :fullname=>r.fullname,
       :tagname=>r.tagname,
