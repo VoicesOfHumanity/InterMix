@@ -13,6 +13,8 @@ class ApplicationController < ActionController::Base
   
   before_action :get_global_data
 
+  before_action :log_in_as_visitor_if_no_referrer
+
   #def store_location
     # store last url, particularly so we can set it after login
     # https://stackoverflow.com/questions/15944159/devise-redirect-back-to-the-original-location-after-sign-in-or-sign-up
@@ -1032,6 +1034,19 @@ class ApplicationController < ActionController::Base
         @participant.timezone_offset = TZInfo::Timezone.get(@participant.timezone).period_for_utc(Time.new).utc_offset / 3600      
       end
       @participant.save      
+    end
+
+    def log_in_as_visitor_if_no_referrer
+      # If a user seems to come from a search engine, particularly with URLs found
+      # in the the site map, log them in a visitor, so they can see the content
+      if !participant_signed_in? && request.referrer.nil? && !request.path == root_path && matches_sitemap_url_pattern?(request.path)
+        @participant = Participant.find_by_id(VISITOR_ID)
+        sign_in(:participant, @participant) if @participant
+      end
+    end
+
+    def matches_sitemap_url_pattern?(path)
+      path.match?(/^\/(conversations|communities|items)\/\d+$/)
     end
         
 end

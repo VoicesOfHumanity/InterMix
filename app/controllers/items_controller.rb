@@ -1595,7 +1595,7 @@ class ItemsController < ApplicationController
     @item.destroy
     render plain: "The item has been deleted"    
   end  
-  
+
   def view
     #-- Show an individual post
     return if redirect_if_not_voh
@@ -1716,6 +1716,8 @@ class ItemsController < ApplicationController
 
     render :action=>'item'
   end  
+
+  alias_method :show, :view
   
   def thread
     #-- Show the whole thread, based on an item
