@@ -127,7 +127,7 @@ class ApplicationController < ActionController::Base
       @communities = Community.all()
     elsif which_com == 'other'
       # Other than ungoals
-      @communities = Community.where("ungoals=false")
+      @communities = Community.where(more: true, major: false, ungoals: false)
     elsif which_com == 'my' and participant_id > 0
       participant = Participant.find(participant_id)
       if participant
