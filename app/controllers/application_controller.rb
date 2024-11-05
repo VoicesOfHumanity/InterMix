@@ -156,6 +156,7 @@ class ApplicationController < ActionController::Base
       :fullname=>r.fullname,
       :tagname=>r.tagname,
       :logo=>r.logo.exists? ? r.logo.url : '',
+      :count=>Item.tagged_with(r.tagname).where('items.created_at > ?', 31.days.ago).count
     }}
     render json: res
   end
