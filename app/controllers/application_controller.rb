@@ -114,15 +114,40 @@ class ApplicationController < ActionController::Base
 
   def getcommunities
     which_com = params[:which_com].to_s
+    participant_id = params[:participant_id].to_i
     if which_com == 'more'
-      @communities = Community.where(more: true).order(:fullname)
+      @communities = Community.where(more: true)
     elsif which_com == 'ungoals'
-      @communities = Community.where(ungoals: true).order(:fullname)
+      @communities = Community.where(ungoals: true)
     elsif which_com == 'sustdev'
-      @communities = Community.where(sustdev: true).order(:fullname)
+      @communities = Community.where(sustdev: true)
+    elsif which_com == 'major' 
+      @communities = Community.where(major: true)
+    elsif which_com == 'all'
+      @communities = Community.all()
+    elsif which_com == 'other'
+      # Other than ungoals
+      @communities = Community.where("ungoals=false")
+    elsif which_com == 'my' and participant_id > 0
+      participant = Participant.find(participant_id)
+      if participant
+        comtags = {}
+        for tag in participant.tag_list_downcase
+          comtags[tag] = true
+        end
+        if comtags.length > 0
+          comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
+          @communities = Community.where("tagname in (#{comtag_list})")
+        else
+          @communities = Community.where("1=0")
+        end
+      else
+        @communities = Community.where("1=0")
+      end
     else
-      @communities = Community.where(major: true).order(:fullname)
+      @communities = Community.where(major: true)
     end
+    @communities = @communities.where(is_sub: false).where("context not in ('city','nation','religion')").where.not(visibility: "private").order(:fullname)
     res = @communities.collect {|r| {
       :id=>r.id,
       :fullname=>r.fullname,
