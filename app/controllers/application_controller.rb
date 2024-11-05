@@ -147,7 +147,10 @@ class ApplicationController < ActionController::Base
     else
       @communities = Community.where(major: true)
     end
-    @communities = @communities.where(is_sub: false).where("context not in ('city','nation','religion')").where.not(visibility: "private").order(:fullname)
+    if which_com != 'my'
+      @communities = @communities.where(is_sub: false).where("context not in ('city','nation','religion')").where.not(visibility: "private")
+    end
+    @communities = @communities.order(:fullname)
     res = @communities.collect {|r| {
       :id=>r.id,
       :fullname=>r.fullname,
