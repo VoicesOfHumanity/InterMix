@@ -162,7 +162,7 @@ Rails.application.configure do
     :email => {
       :email_prefix => "[InterMix Bug] ",
       :sender_address => %{"Exception Notifier" <questions@intermix.org>},
-      :exception_recipients => %w{ffunch@gmail.com}
+      :exception_recipients => %w{ffunch@cr8.com}
     }   
   
 end
