@@ -33,6 +33,12 @@ GEM
       activemodel (= 5.2.8.1)
       activesupport (= 5.2.8.1)
       arel (>= 9.0)
+    activerecord-session_store (2.0.0)
+      actionpack (>= 5.2.4.1)
+      activerecord (>= 5.2.4.1)
+      multi_json (~> 1.11, >= 1.11.2)
+      rack (>= 2.0.8, < 3)
+      railties (>= 5.2.4.1)
     activestorage (5.2.8.1)
       actionpack (= 5.2.8.1)
       activerecord (= 5.2.8.1)
@@ -190,6 +196,7 @@ GEM
     mini_racer (0.4.0)
       libv8-node (~> 15.14.0.0)
     minitest (5.17.0)
+    multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.2.3)
     mysql2 (0.5.5)
@@ -419,6 +426,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord-session_store
   acts-as-taggable-on
   cancancan
   capistrano

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_30_183920) do
+ActiveRecord::Schema.define(version: 2024_11_18_225101) do
 
   create_table "action_text_rich_texts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -1112,6 +1112,15 @@ ActiveRecord::Schema.define(version: 2024_01_30_183920) do
     t.index ["account"], name: "index_remote_actors_on_account", length: 30
     t.index ["account_url"], name: "index_remote_actors_on_account_url"
     t.index ["name"], name: "index_remote_actors_on_name"
+  end
+
+  create_table "sessions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "session_id", null: false
+    t.text "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
   create_table "sys_data", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
