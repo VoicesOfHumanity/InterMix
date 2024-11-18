@@ -160,9 +160,11 @@ Rails.application.configure do
   # changes in syntax: https://github.com/smartinez87/exception_notification
   config.middleware.use ExceptionNotification::Rack,
     :email => {
-      :email_prefix => "[InterMix Bug] ",
-      :sender_address => %{"Exception Notifier" <questions@intermix.org>},
-      :exception_recipients => %w{ffunch@cr8.com}
+      email_prefix: "[InterMix Bug] ",
+      sender_address: %{"Exception Notifier" <questions@intermix.org>},
+      exception_recipients: => %w{ffunch@cr8.com},
+      delivery_method: :postmark,
+      postmark_settings: { api_key: Rails.application.credentials.postmark[:api_key] }
     }   
   
 end
