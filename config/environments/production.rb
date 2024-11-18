@@ -162,7 +162,7 @@ Rails.application.configure do
     :email => {
       email_prefix: "[InterMix Bug] ",
       sender_address: %{"Exception Notifier" <questions@intermix.org>},
-      exception_recipients: => %w{ffunch@cr8.com},
+      exception_recipients: %w{ffunch@cr8.com},
       delivery_method: :postmark,
       postmark_settings: { api_key: Rails.application.credentials.postmark[:api_key] }
     }   
