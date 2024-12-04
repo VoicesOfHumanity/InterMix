@@ -296,7 +296,7 @@ class ItemsController < ApplicationController
     if @community_id > 0
       community = Community.find_by_id(@community_id)
       if community
-        @comtag = community.tag
+        @comtag = community.tagname
       end
     end
 
