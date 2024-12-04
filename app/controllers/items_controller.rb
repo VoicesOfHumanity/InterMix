@@ -290,6 +290,16 @@ class ItemsController < ApplicationController
       @gender = 0
     end
 
+    @conversation_id = params[:conv_id].to_i
+    @community_id = params[:com_id].to_i
+    @comtag = ''
+    if @community_id > 0
+      community = Community.find_by_id(@community_id)
+      if community
+        @comtag = community.tag
+      end
+    end
+
     #items = Item.where(is_first_in_thread: true)
     #if @tag != ''
     #  items = items.tagged_with(@messtag)
@@ -305,7 +315,9 @@ class ItemsController < ApplicationController
       'messtag': @messtag,
       'geo_level': @geo_level,
       'age': @age,
-      'gender': @gender
+      'gender': @gender,
+      'conversation_id': @conversation_id,
+      'comtag': @comtag
     }
 
     sort = params[:sort].to_i
