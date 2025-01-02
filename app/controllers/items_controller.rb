@@ -299,6 +299,9 @@ class ItemsController < ApplicationController
         @comtag = community.tagname
       end
     end
+    if @comtag != '' and @messtag == ''
+      @messtag = @comtag
+    end
 
     #items = Item.where(is_first_in_thread: true)
     #if @tag != ''

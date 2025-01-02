@@ -1234,7 +1234,7 @@ class Item < ActiveRecord::Base
   def self.get_items(crit,current_participant,rootonly=false)
     #-- Get the items and records that match a certain criteria. Mainly for geoslider
   
-    logger.info("item#get_items crit:#{crit} rootonly:#{rootonly}")
+    logger.info("item#get_items crit1:#{crit} rootonly:#{rootonly}")
   
     # Start preparing the queries
     items = Item.where(nil)
@@ -1729,14 +1729,16 @@ class Item < ActiveRecord::Base
           end
         end
       end
-      plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
-      if plist != ''
+      ps = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}
+      if ps.length > 0
         # Items posted by authors who have that tag
+        plist = ps.join(',')
         items = items.where("participants.id in (#{plist})")
+        logger.info("item#get_items by comtag #{crit[:comtag]}: by #{ps.length} participants")
       else
+        logger.info("item#get_items by comtag #{crit[:comtag]}: no participants")
         items = items.where("1=0")
       end
-      logger.info("item#get_items by comtag #{crit[:comtag]}")
 
       # Show items that either are public, or specifically for this community
       items = items.where("items.intra_com='public' or items.intra_com='@#{crit[:comtag]}'")
@@ -1788,7 +1790,7 @@ class Item < ActiveRecord::Base
       #end          
       #logger.info("item#get_items nvaction:#{crit[:nvaction]} nvaction_included:#{crit[:nvaction_included]}")
     end
-    logger.info("item#get_items crit:#{crit.inspect}")
+    logger.info("item#get_items crit2:#{crit.inspect}")
       
     if rootonly
       # Leaving non-roots in there. Will be sorted out in get_itemsproc
@@ -1820,7 +1822,7 @@ class Item < ActiveRecord::Base
       # This should probably be more nuanced. Currently it means that external items only show in one's friend feed and not in the main forum
       # Should maybe change if they have up votes?
       items = items.where(int_ext: 'int')
-      logger.info("item#get_items only int items")
+      logger.info("item#get_items only inernal items")
     end
 
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
