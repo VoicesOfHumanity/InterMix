@@ -414,7 +414,7 @@ class ItemsController < ApplicationController
           'rating_summary': '',
           'is_first_in_thread': 0,
           'first_in_thread': comment.first_in_thread,
-          'link': link,
+          'link': img_link,
           'user_img_link': user_img_link,
           'importance': 0,
         }
