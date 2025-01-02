@@ -386,6 +386,11 @@ class ItemsController < ApplicationController
           short_content = plain_content
         end
         short_content = short_content[0,140] + '...' if short_content.length > 140
+        if comment.has_picture
+          img_link = "https://#{BASEDOMAIN}/images/data/items/#{comment.id}/big.jpg"
+        else
+          img_link = ""
+        end
         if comment.participant and comment.participant.picture.exists?
           user_img_link = comment.participant.picture.url(:thumb)
         elsif comment.remote_poster
@@ -409,6 +414,7 @@ class ItemsController < ApplicationController
           'rating_summary': '',
           'is_first_in_thread': 0,
           'first_in_thread': comment.first_in_thread,
+          'link': link,
           'user_img_link': user_img_link,
           'importance': 0,
         }
