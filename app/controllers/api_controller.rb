@@ -479,9 +479,11 @@ class ApiController < ApplicationController
         if participant
             token = participant.generate_reset_password_token
             begin
+                logger.info("api#forget_password calling participant.send_reset_password_instructions")
                 participant.send_reset_password_instructions
             rescue Exception => e
                 # It wants to show a blank web page. Just ignore
+                logger.info("api#forget_password problem sending email with send_reset_password_instructions: #{e}")
             end
             if false
                 html_content = "<p>Hello #{participant.email}</p>"

@@ -1822,7 +1822,7 @@ class Item < ActiveRecord::Base
       # This should probably be more nuanced. Currently it means that external items only show in one's friend feed and not in the main forum
       # Should maybe change if they have up votes?
       items = items.where(int_ext: 'int')
-      logger.info("item#get_items only inernal items")
+      logger.info("item#get_items only internal items")
     end
 
     #-- If a participant_id is given, we'll include that person's rating for each item, if there is any
