@@ -1,6 +1,6 @@
 class CustomDeviseMailer < Devise::Mailer
   default from: 'questions@intermix.org'
-  layout 'message_mailer/system'
+  layout 'mailer'
 
   # Ensure the mailer uses the Postmark delivery method
   def headers_for(action, opts)
