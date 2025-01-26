@@ -1,3 +1,4 @@
+# I don't think we need this. Just an attempt at making emails work from devise
 class CustomDeviseMailer < Devise::Mailer
   default from: 'questions@intermix.org'
   layout 'mailer'

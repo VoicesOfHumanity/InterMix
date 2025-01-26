@@ -478,14 +478,14 @@ class ApiController < ApplicationController
         participant = Participant.find_by(email: email)
         if participant
             token = participant.generate_reset_password_token
-            begin
-                logger.info("api#forget_password calling participant.send_reset_password_instructions")
-                participant.send_reset_password_instructions
-            rescue Exception => e
-                # It wants to show a blank web page. Just ignore
-                logger.info("api#forget_password problem sending email with send_reset_password_instructions: #{e}")
-            end
-            if false
+            # begin
+            #     logger.info("api#forget_password calling participant.send_reset_password_instructions")
+            #     participant.send_reset_password_instructions
+            # rescue Exception => e
+            #     # It wants to show a blank web page. Just ignore
+            #     logger.info("api#forget_password problem sending email with send_reset_password_instructions: #{e}")
+            # end
+            if true
                 html_content = "<p>Hello #{participant.email}</p>"
                 html_content += "<p>Someone has requested a link to reset your password, and you can do this through the link below.</p>"
                 html_content += "<p><a href=\"http://voh.intermix.org/participants/password/edit?reset_password_token=#{token}\">Reset my password</a></p>" 

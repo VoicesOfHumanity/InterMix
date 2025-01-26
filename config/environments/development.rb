@@ -19,15 +19,15 @@ Rails.application.configure do
     config.action_mailer.delivery_method   = :postmark
     #config.action_mailer.postmark_settings = { :api_key => "xxx" }
     #config.action_mailer.delivery_method = :smtp
-    config.action_mailer.smtp_settings = {
-      :address => "mail.worldtrans.org",
-      :port => 25,
-      :domain => "xxx.intermix.org",
-      :authentication => :login,
-      :user_name => "xxxxx",
-      :password => "xxxx",
-      :enable_starttls_auto => false
-    }
+    # config.action_mailer.smtp_settings = {
+    #   :address => "mail.worldtrans.org",
+    #   :port => 25,
+    #   :domain => "xxx.intermix.org",
+    #   :authentication => :login,
+    #   :user_name => "xxxxx",
+    #   :password => "xxxx",
+    #   :enable_starttls_auto => false
+    # }
   end
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
