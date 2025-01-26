@@ -503,13 +503,15 @@ class ApiController < ApplicationController
                     message_id = email.message_id
                     render json: {
                         status: 'success'
-                    }            
+                    }   
+                    return         
                 rescue Exception => e
                     logger.info("api#forget_password problem delivering email to #{participant.id}:#{participant.name}: #{e}")
                     render json: {
                         status: 'error',
                         message: "Problem delivering email"
                     }
+                    return
                 end
             end
             render json: {
