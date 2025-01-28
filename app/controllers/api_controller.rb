@@ -534,7 +534,8 @@ class ApiController < ApplicationController
         community = Community.find_by_id(community_id)
         if participant and community
             if not participant.tag_list_downcase.include?(community.tagname.downcase)
-                participant.tag_list.add(community.tagname)
+                participant.tag_list.add(community.tagname)\
+                participant.save
             end
             render json: {
                 status: 'success'
@@ -555,6 +556,7 @@ class ApiController < ApplicationController
         if participant and community
             if participant.tag_list_downcase.include?(community.tagname.downcase)
                 participant.tag_list.remove(community.tagname)
+                participant.save
             end
             render json: {
                 status: 'success'
