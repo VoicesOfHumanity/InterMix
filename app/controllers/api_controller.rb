@@ -21,6 +21,8 @@ class ApiController < ApplicationController
     # thumbrate
     # report_complaint
     # forgot_password
+    # join_community
+    # leave_community
 
 
     def verify_email
@@ -521,6 +523,46 @@ class ApiController < ApplicationController
             render json: {
                 status: 'error',
                 message: "User not found"
+            }
+        end
+    end
+
+    def join_community
+        user_id = params[:user_id].to_i
+        community_id = params[:community_id].to_i
+        participant = Participant.find_by_id(user_id)
+        community = Community.find_by_id(community_id)
+        if participant and community
+            if not participant.tag_list_downcase.include?(community.tagname.downcase)
+                participant.tag_list.add(community.tagname)
+            end
+            render json: {
+                status: 'success'
+            }
+        else
+            render json: {
+                status: 'error',
+                message: "User or community not found"
+            }
+        end
+    end
+
+    def leave_community
+        user_id = params[:user_id].to_i
+        community_id = params[:community_id].to_i
+        participant = Participant.find_by_id(user_id)
+        community = Community.find_by_id(community_id)
+        if participant and community
+            if participant.tag_list_downcase.include?(community.tagname.downcase)
+                participant.tag_list.remove(community.tagname)
+            end
+            render json: {
+                status: 'success'
+            }
+        else
+            render json: {
+                status: 'error',
+                message: "User or community not found"
             }
         end
     end
