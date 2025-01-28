@@ -199,6 +199,8 @@ Rails.application.routes.draw do
   post 'api/importance', to: 'api#importance'
   post 'api/report_complaint', to: 'api#report_complaint'
   get 'api/forgot_password', to: 'api#forgot_password'
+  post 'api/leave_community', to: 'api#leave_community'
+  post 'api/join_community', to: 'api#join_community'
 
   resources :authentications
 
