@@ -398,10 +398,11 @@ class Participant < ActiveRecord::Base
     end
     if comtags.length > 0
       comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
-      @communities = Community.where("tagname in (#{comtag_list})")
+      communities = Community.where("tagname in (#{comtag_list})")
     else
-      @communities = Community.where("1=0")
+      communities = Community.where("1=0")
     end
+    communities.map{|c| c.id}
   end
   
   def them
