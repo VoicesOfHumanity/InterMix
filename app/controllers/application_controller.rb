@@ -108,7 +108,7 @@ class ApplicationController < ActionController::Base
   end
 
   def getreligions
-    res = Religion.order_by_custom.collect {|r| {:val=>r.id,:txt=>r.fullname}}
+    res = Religion.order_by_custom.collect {|r| {:val=>r.id,:txt=>r.name}}
     render json: res
   end
 

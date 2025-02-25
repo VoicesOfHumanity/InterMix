@@ -391,7 +391,17 @@ class Participant < ActiveRecord::Base
   end
 
   def community_ids
-    self.communities.map{|c| c.id}
+    #self.communities.map{|c| c.id}
+    comtags = {}
+    for tag in self.tag_list_downcase
+      comtags[tag] = true
+    end
+    if comtags.length > 0
+      comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
+      @communities = Community.where("tagname in (#{comtag_list})")
+    else
+      @communities = Community.where("1=0")
+    end
   end
   
   def them
