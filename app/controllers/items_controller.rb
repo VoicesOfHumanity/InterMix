@@ -1544,7 +1544,11 @@ class ItemsController < ApplicationController
     end
     if community_id > 0
       @item.community_id = community_id
+      if !CommunityItem.exists?(item_id: @item.id, community_id: community_id)
+        CommunityItem.create!(item_id: @item.id, community_id: community_id)
+      end
     end
+    
 
     itemprocess
     
