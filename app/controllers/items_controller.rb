@@ -1542,6 +1542,9 @@ class ItemsController < ApplicationController
     else
       @item.is_first_in_thread = true
     end
+    if community_id > 0
+      @item.community_id = community_id
+    end
 
     itemprocess
     
