@@ -1488,10 +1488,42 @@ class ItemsController < ApplicationController
       return
     end
 
+    community_id = params[:community_id].to_i
+    comtag = params[:community_tag].to_s
+    if community_id > 0
+      community = Community.find_by_id(community_id)
+      if community
+        comtag = community.tagname
+      end
+    elsif comtag.to_s != ''
+      community = Community.find_by_tagname(comtag)
+      if community
+        community_id = community.id
+      end
+    end
+
     subject = params[:subject].to_s
     reply_to = params[:reply_to].to_i
 
     message = params[:message].to_s
+
+    # Extract hashtags from the end of the message
+    hashtags = []
+    message_lines = message.strip.split("\n")
+    if message_lines.length > 0 && message_lines[-1].strip =~ /^#\S/
+      hashtags = message_lines.pop.strip.split(/\s+/)
+      message = message_lines.join("\n").strip
+    end
+
+    # Add comtag if it's not already in hashtags
+    if comtag.to_s != ''
+      comtag_with_hash = comtag.start_with?('#') ? comtag : "##{comtag}"
+      hashtags << comtag_with_hash unless hashtags.include?(comtag_with_hash)
+    end
+
+    # Add hashtags back to message
+    message = message + "\n\n" + hashtags.join(' ') unless hashtags.empty?
+    
     html_content = "<p>" + message.gsub(/\n/, "<br />") + "</p>"
     short_content = message[0,140]
 
@@ -2619,7 +2651,8 @@ class ItemsController < ApplicationController
                   item = @items[0]
                   iproc = @itemsproc[item.id]
                 end
-              end          
+              end
+            
               @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
             end
           end
@@ -2671,7 +2704,8 @@ class ItemsController < ApplicationController
                   item = @items[0]
                   iproc = @itemsproc[item.id]
                 end
-              end          
+              end
+            
               @data[code] = {name: name, item: item, iproc: iproc, itemcount: items.length, ratingcount: ratings.length, extras: @extras}
             end
           end
