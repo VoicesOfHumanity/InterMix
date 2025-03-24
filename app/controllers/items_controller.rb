@@ -3210,7 +3210,7 @@ class ItemsController < ApplicationController
     end
     xtxt = ActionView::Base.full_sanitizer.sanitize(xtxt)
     logger.info("items#itemprocess xtxt:#{xtxt}") 
-    tagmatches = xtxt.scan(/(?:\s|^)(?:#(?!\d+(?:\s|$)))(\w+)(?=\s|$|,|;|:|-|\.|\?)/i).map{|s| s[0]}
+    tagmatches = xtxt.scan(/#(\w+)/).map{|s| s[0]}
     tagmatches2 = []
     for tagmatch in tagmatches
       tagmatch.gsub!(/[^0-9A-za-z_]/,'')
