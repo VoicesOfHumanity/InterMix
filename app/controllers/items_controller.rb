@@ -1561,7 +1561,7 @@ class ItemsController < ApplicationController
       geo_level_num = 2
     elsif geo_level_num_app == 2
       geo_level_num = 4
-    elsif geo_level_num == 1
+    elsif geo_level_num_app == 1
       geo_level_num = 5
     elsif geo_level_num_app == 0
       geo_level_num = 6
