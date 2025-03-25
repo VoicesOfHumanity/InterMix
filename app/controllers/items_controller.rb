@@ -1556,22 +1556,20 @@ class ItemsController < ApplicationController
     # so we need to convert
     geo_level_num_app = params[:geo_level_num].to_i
     if geo_level_num_app == 4
-      geo_level_num = 1
-    geo_level_num_app == 3
-      geo_level_num = 2
+      geo_level_num = 'city'
+    elsif geo_level_num_app == 3
+      geo_level_num = 'county'
     elsif geo_level_num_app == 2
-      geo_level_num = 4
+      geo_level_num = 'state'
     elsif geo_level_num_app == 1
-      geo_level_num = 5
+      geo_level_num = 'nation'
     elsif geo_level_num_app == 0
-      geo_level_num = 6
+      geo_level_num = 'planet'
     else
-      geo_level_num = 6
+      geo_level_num = 'planet'
     end
-    if geo_level_num > 0 && geo_level_num <= GEO_LEVELS.length
-      @item.geo_level = GEO_LEVELS[geo_level_num-1]
-    end
-    logger.info("items#create_api got geo_level_num:#{geo_level_num_app} from app, converted to geo_level_num:#{geo_level_num} and stored as geo_level:#{@item.geo_level}")
+    @item.geo_level = geo_level
+    logger.info("items#create_api got geo_level_num:#{geo_level_num_app} from app, stored as geo_level:#{@item.geo_level}")
 
     itemprocess
     
