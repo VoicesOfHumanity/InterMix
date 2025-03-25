@@ -1548,7 +1548,29 @@ class ItemsController < ApplicationController
         CommunityItem.create!(item_id: @item.id, community_id: community_id)
       end
     end
-    
+
+    # In DB and on the site we use:
+    # GEO_LEVELS = {1 => 'city', 2 => 'county', 3 => 'metro', 4 => 'state', 5 => 'nation', 6 => 'planet'}
+    # but the app uses:
+    # GEO_LEVELS = {4 => 'city', 3 => 'county', 2 => 'state', 1 => 'nation', 0 => 'planet earth'}
+    # so we need to convert
+    geo_level_num_app = params[:geo_level_num].to_i
+    if geo_level_num_app == 4
+      geo_level_num = 1
+    geo_level_num_app == 3
+      geo_level_num = 2
+    elsif geo_level_num_app == 2
+      geo_level_num = 4
+    elsif geo_level_num == 1
+      geo_level_num = 5
+    elsif geo_level_num_app == 0
+      geo_level_num = 6
+    else
+      geo_level_num = 6
+    end
+    if geo_level_num > 0 && geo_level_num <= GEO_LEVELS.length
+      @item.geo_level = GEO_LEVELS[geo_level_num]
+    end
 
     itemprocess
     
