@@ -1569,8 +1569,9 @@ class ItemsController < ApplicationController
       geo_level_num = 6
     end
     if geo_level_num > 0 && geo_level_num <= GEO_LEVELS.length
-      @item.geo_level = GEO_LEVELS[geo_level_num]
+      @item.geo_level = GEO_LEVELS[geo_level_num-1]
     end
+    logger.info("items#create_api got geo_level_num:#{geo_level_num_app} from app, converted to geo_level_num:#{geo_level_num} and stored as geo_level:#{@item.geo_level}")
 
     itemprocess
     
