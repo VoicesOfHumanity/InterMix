@@ -21,7 +21,7 @@
     <li class="text input optional" id="community_description_input"><label for="community_description" class="label">Description</label><textarea rows="2" id="community_description" name="community[description]"><%= @community.description %></textarea><br><label>&nbsp;</label>(basic HTML ok)
     </li>
 		
-    <% if current_participant.sysadmin or @is_admin %>
+    <% if (current_participant.sysadmin or @is_admin) and @members %>
       <%= f.input :administrator_id, as: :select, collection: @members.collect{|m| [m.name, m.id]}, label: "Administrator" %>
     <% end -%>
 

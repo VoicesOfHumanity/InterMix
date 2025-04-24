@@ -360,9 +360,17 @@ class CommunitiesController < ApplicationController
       tagname = params[:community][:tagname].strip.gsub(/[^0-9A-za-z_]/,'')
       community = Community.where(tagname: tagname).first
       if community
-        flash.now[:alert] += "There's already a @#{tagname} community"
+        flash.now[:alert] += "There's already a @#{tagname} community<br/>"
       end
       @community.tagname = tagname
+    end
+    tagname = params[:community][:tagname].strip.gsub(/[^0-9A-za-z_]/,'').downcase
+    if ['voh','intermix'].include?(tagname)
+      flash.now[:alert] += "That's not a valid short name.<br/>"
+    end
+    longname = params[:community][:fullname].strip.gsub(/[^0-9A-za-z_]/,'').downcase
+    if ['voicesofhumanity','voiceofhumanity','voh','intermix','orderoutofchaos'].include?(longname)
+      flash.now[:alert] += "That's not a valid long name.<br/>"
     end
     @community.created_by = current_participant.id
     if flash.now[:alert] != ''  
