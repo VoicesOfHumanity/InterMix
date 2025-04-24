@@ -490,7 +490,7 @@ class ApiController < ApplicationController
             if true
                 html_content = "<p>Hello #{participant.email}</p>"
                 html_content += "<p>Someone has requested a link to reset your password, and you can do this through the link below.</p>"
-                html_content += "<p><a href=\"http://voh.intermix.org/participants/password/edit?reset_password_token=#{token}\">Reset my password</a></p>" 
+                html_content += "<p><a href=\"https://#{BASEDOMAIN}/participants/password/edit?reset_password_token=#{token}\">Reset my password</a></p>" 
                 html_content += "<p>If you didn't request this, please ignore this email.</p>"
                 html_content += "<p>Your password won't change until you access the link above and create a new one.</p>"
                 cdata = {}
