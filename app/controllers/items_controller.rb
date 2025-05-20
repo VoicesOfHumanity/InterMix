@@ -1693,6 +1693,11 @@ class ItemsController < ApplicationController
     @item = @item.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,'' as explanation") if participant_signed_in?    
     @item = @item.find_by_id(@item_id)
     
+    if not @item
+      render :status => 404
+      return
+    end
+
     @item.voting_ok(participant_signed_in? ? current_participant.id : 0)
 
     @is_private = false

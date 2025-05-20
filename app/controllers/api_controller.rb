@@ -405,11 +405,15 @@ class ApiController < ApplicationController
         importance = params[:importance].to_i
         rating = Rating.where(item_id: item_id, participant_id: user_id).first
         if not rating
-            rating = Rating.new(item_id: item_id, participant_id: user_id)
+            rating = Rating.new(item_id: item_id, participant_id: user_id, interest: 0, approval: 0, importance: importance)
         end
         if rating
             rating.importance = importance
-            rating.interest += 1
+            if importance > 0
+                rating.interest += 1
+            else
+                rating.interest -= 1
+            end
             rating.save
             render json: {
                 status: 'success'
