@@ -1505,6 +1505,11 @@ class ItemsController < ApplicationController
     subject = params[:subject].to_s
     reply_to = params[:reply_to].to_i
 
+    # Remove "re:" or "Re:" prefix if not actually replying
+    if (reply_to.nil? || reply_to == 0) && subject.downcase.start_with?('re:')
+      subject = subject.sub(/^re:\s*/i, '').strip
+    end
+
     message = params[:message].to_s
 
     # Extract hashtags from the end of the message
