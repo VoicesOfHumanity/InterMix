@@ -1573,6 +1573,7 @@ class ItemsController < ApplicationController
 
     itemprocess
     
+    # updated encoding to utf8mb4
     @item.save!
     if reply_to == 0
       @item.first_in_thread = @item.id
