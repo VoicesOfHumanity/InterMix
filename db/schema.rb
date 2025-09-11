@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_11_18_225101) do
+ActiveRecord::Schema.define(version: 2025_09_11_205146) do
 
   create_table "action_text_rich_texts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -220,6 +220,7 @@ ActiveRecord::Schema.define(version: 2024_11_18_225101) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["complainer_id", "item_id"], name: "index_complaints_on_complainer_id_and_item_id"
     t.index ["complainer_id"], name: "index_complaints_on_complainer_id"
     t.index ["item_id"], name: "index_complaints_on_item_id"
     t.index ["poster_id"], name: "index_complaints_on_poster_id"
@@ -397,6 +398,7 @@ ActiveRecord::Schema.define(version: 2024_11_18_225101) do
     t.index ["followed_id", "following_id"], name: "index_follows_on_followed_id_and_following_id"
     t.index ["following_fulluniq", "followed_fulluniq"], name: "index_follows_on_following_fulluniq_and_followed_fulluniq", length: { following_fulluniq: 30, followed_fulluniq: 10 }
     t.index ["following_id", "followed_id"], name: "index_follows_on_following_id_and_followed_id"
+    t.index ["following_id", "followed_remote_actor_id"], name: "index_follows_on_following_id_and_followed_remote_actor_id"
   end
 
   create_table "geoadmin1s", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -731,17 +733,23 @@ ActiveRecord::Schema.define(version: 2024_11_18_225101) do
     t.text "received_json"
     t.integer "api_request_id"
     t.boolean "remote_delivery_done", default: true
+    t.index ["conversation_id", "created_at", "censored"], name: "index_items_on_conversation_id_and_created_at_and_censored"
     t.index ["conversation_id"], name: "index_items_on_conversation_id"
     t.index ["created_at"], name: "index_items_on_created_at"
     t.index ["dialog_id", "created_at"], name: "index_items_on_dialog_id_and_created_at"
     t.index ["first_in_thread", "id"], name: "index_items_on_first_in_thread_and_id"
+    t.index ["geo_level", "conversation_id", "created_at"], name: "index_items_on_geo_level_and_conversation_id_and_created_at"
     t.index ["geo_level", "id"], name: "index_items_on_geo_level_and_id", length: { geo_level: 10 }
     t.index ["group_id", "created_at"], name: "index_items_on_group_id_and_created_at"
+    t.index ["intra_com", "created_at", "censored"], name: "index_items_on_intra_com_and_created_at_and_censored"
+    t.index ["intra_conv", "created_at", "censored"], name: "index_items_on_intra_conv_and_created_at_and_censored"
     t.index ["old_message_id"], name: "index_items_on_old_message_id"
     t.index ["period_id", "id"], name: "index_items_on_period_id_and_id"
+    t.index ["posted_by", "created_at", "censored"], name: "index_items_on_posted_by_and_created_at_and_censored"
     t.index ["posted_by", "created_at"], name: "index_items_on_posted_by_and_created_at"
     t.index ["posted_by_remote_actor_id"], name: "index_items_on_posted_by_remote_actor_id"
     t.index ["remote_delivery_done"], name: "index_items_on_remote_delivery_done"
+    t.index ["wall_post", "wall_delivery", "created_at"], name: "index_items_on_wall_post_and_wall_delivery_and_created_at"
   end
 
   create_table "messages", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -999,7 +1007,10 @@ ActiveRecord::Schema.define(version: 2024_11_18_225101) do
     t.text "private_key"
     t.text "public_key"
     t.index ["account_uniq"], name: "index_participants_on_account_uniq"
+    t.index ["admin2uniq", "metro_area_id"], name: "index_participants_on_admin2uniq_and_metro_area_id"
+    t.index ["city", "admin1uniq"], name: "index_participants_on_city_and_admin1uniq"
     t.index ["confirmation_token"], name: "index_participants_on_confirmation_token", unique: true
+    t.index ["country_code", "admin1uniq", "city"], name: "index_participants_on_country_code_and_admin1uniq_and_city"
     t.index ["country_code", "state_code", "city"], name: "index_participants_on_country_code_and_state_code_and_city", length: { city: 20 }
     t.index ["direct_email_code"], name: "index_participants_on_direct_email_code", length: 20
     t.index ["email"], name: "index_participants_on_email", unique: true
@@ -1079,8 +1090,12 @@ ActiveRecord::Schema.define(version: 2024_11_18_225101) do
     t.datetime "updated_at"
     t.integer "period_id"
     t.integer "conversation_id"
+    t.index ["conversation_id", "participant_id"], name: "index_ratings_on_conversation_id_and_participant_id"
     t.index ["group_id", "id"], name: "index_ratings_on_group_id_and_id"
+    t.index ["item_id", "created_at"], name: "index_ratings_on_item_id_and_created_at"
     t.index ["item_id", "id"], name: "index_ratings_on_item_id_and_id"
+    t.index ["item_id", "participant_id", "created_at"], name: "index_ratings_on_item_id_and_participant_id_and_created_at"
+    t.index ["participant_id", "created_at"], name: "index_ratings_on_participant_id_and_created_at"
     t.index ["participant_id", "id"], name: "index_ratings_on_participant_id_and_id"
     t.index ["remote_actor_id", "id"], name: "index_ratings_on_remote_actor_id_and_id"
   end
