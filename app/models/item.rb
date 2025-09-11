@@ -30,6 +30,8 @@ class Item < ActiveRecord::Base
   acts_as_taggable_on :subgroups
   
   after_create :process_new_item
+  after_update :invalidate_items_cache
+  after_destroy :invalidate_items_cache
   
   validates :item_type, :presence => true, :inclusion => { :in => ITEM_TYPES }
   validates :media_type, :presence => true, :inclusion => { :in => MEDIA_TYPES }
@@ -1264,8 +1266,656 @@ class Item < ActiveRecord::Base
     end
   end
 
-  #------- get_items ------------------------------------------------------------
+  #------- get_items_base (cacheable part) ------------------------------------------------------------
+  def self.get_items_base(crit, rootonly=false)
+    #-- Get base items and ratings that don't depend on current user
+    #-- This can be cached since it doesn't include user-specific data
+    
+    cache_key = "items_base:#{crit.hash}:#{rootonly}"
+    
+    Rails.cache.fetch(cache_key, expires_in: 15.minutes) do
+      # Start preparing the queries
+      items = Item.where(nil)
+      ratings = Rating.where(nil)
+      title = ''
+      select_explain = ''
+      kind_messages = ''
+
+      # Date period (not user-specific)
+      if crit.has_key?(:datefromuse) and crit[:datefromuse].to_s != ''
+        if crit[:datefromuse].class == Date
+          datefromuse = crit[:datefromuse].dup.strftime("%Y-%m-%d")
+        else
+          datefromuse = crit[:datefromuse].dup.to_s
+        end
+        datefromuse << ' 00:00:00'
+        items = items.where("items.created_at >= ?", datefromuse)
+        logger.info("item#get_items_base from date: #{crit[:datefromuse]}")
+      end
+      if crit.has_key?(:datefromto) and crit[:datefromto].to_s != ''
+        if crit[:datefromto].class == Date
+          datefromto = crit[:datefromto].dup.strftime("%Y-%m-%d")
+        else
+          datefromto = crit[:datefromto].dup.to_s
+        end
+        datefromto << ' 23:59:59'
+        items = items.where("items.created_at <= ?", datefromto)
+        logger.info("item#get_items_base to date: #{crit[:datefromto]}")
+      end
+
+      # Basic includes (not user-specific)
+      items = items.includes(:participant).references(:participant)
+      ratings = ratings.includes(:participant).references(:participant)
+      
+      # Process network criteria (already cached)
+      if crit[:network_id].to_i > 0
+        crit = process_network_criteria(crit)
+        
+        if crit[:network_participant_ids].any?
+          items = items.where(
+            posted_by: crit[:network_participant_ids],
+            intra_com: 'public'
+          )
+          logger.info("item#get_items_base network users with network tags")
+        else
+          items = items.where("1=0")
+        end
+      end
+
+      # Geo level filtering (only when geo_level_id is provided - not user-specific)
+      if crit[:geo_level] == 'city'
+        if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+          items = items.where("participants.city=?", crit[:geo_level_id])
+          ratings = ratings.where("participants.city=?", crit[:geo_level_id])
+          title += "#{crit[:geo_level_detail]}"
+        else
+          # This part depends on current_participant, so we'll handle it in user-specific part
+          items = items.where("1=0")
+          ratings = ratings.where("1=0")
+          title += "Unknown City"
+        end
+      elsif crit[:geo_level] == 'county'
+        if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+          items = items.where("participants.admin2uniq=?", crit[:geo_level_id])
+          ratings = ratings.where("participants.admin2uniq=?", crit[:geo_level_id])
+          title += "#{crit[:geo_level_detail]}"
+        else
+          items = items.where("1=0")
+          ratings = ratings.where("1=0")
+          title += "Unknown County"
+        end
+      elsif crit[:geo_level] == 'metro'
+        if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+          items = items.where("participants.metro_area_id=?", crit[:geo_level_id])
+          ratings = ratings.where("participants.metro_area_id=?", crit[:geo_level_id])
+          title += "#{crit[:geo_level_detail]}"
+        else
+          items = items.where("1=0")
+          ratings = ratings.where("1=0")
+          title += "Unknown Metro Area"
+        end
+      elsif crit[:geo_level] == 'state'
+        if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+          items = items.where("participants.admin1uniq=?", crit[:geo_level_id])
+          ratings = ratings.where("participants.admin1uniq=?", crit[:geo_level_id])
+          title += "#{crit[:geo_level_detail]}"
+        else
+          items = items.where("1=0")
+          ratings = ratings.where("1=0")
+          title += "Unknown State"
+        end
+      elsif crit[:geo_level] == 'nation'
+        if crit.has_key?(:geo_level_id) and crit[:geo_level_id] != ''
+          items = items.where("participants.country_code=?", crit[:geo_level_id])
+          ratings = ratings.where("participants.country_code=?", crit[:geo_level_id])
+          title += "#{crit[:geo_level_detail]}"
+        else
+          items = items.where("1=0")
+          ratings = ratings.where("1=0")
+          title += "Unknown Nation"
+        end
+      elsif crit[:geo_level] == 'planet'
+        title += "Planet Earth"
+        logger.info("item#get_items_base planet")
+      elsif crit[:geo_level] == 'all'
+        title += "All Perspectives"
+        logger.info("item#get_items_base all perspectives")
+      end
+
+      # Conversation filtering (not user-specific when result2c is specified)
+      if crit[:conversation_id].to_i > 0
+        items = items.where("items.conversation_id=#{crit[:conversation_id]}")
+        ratings = ratings.where(conversation_id: crit[:conversation_id])
+        @conversation = Conversation.find_by_id(crit[:conversation_id])
+        items = items.where("items.intra_com='public'")
+        items = items.where("items.intra_conv='public' or items.intra_conv='#{@conversation.shortname}'")
+        logger.info("item#get_items_base conversation: #{@conversation.shortname}")
+        
+        if crit[:topic].to_s != '' and crit[:topic] != '*'
+          @topic = crit[:topic]
+          items = items.where(topic: @topic)
+        end
+
+        # Handle twocountry conversation logic that doesn't depend on current_participant
+        if @conversation.context == 'twocountry' and crit[:result2c].present?
+          # This is the part that can be cached - when result2c is explicitly specified
+          ucom  = Community.find_by_id(@conversation.twocountry_common)
+          ccom1 = Community.find_by_id(@conversation.twocountry_country1)
+          ccom2 = Community.find_by_id(@conversation.twocountry_country2)
+          scom1 = Community.find_by_id(@conversation.twocountry_supporter1)
+          scom2 = Community.find_by_id(@conversation.twocountry_supporter2)
+          
+          ucom_tag = ucom ? ucom.tagname : ''
+          ccom1_tag = ccom1 ? ccom1.tagname : ''
+          ccom2_tag = ccom2 ? ccom2.tagname : ''
+          scom1_tag = scom1 ? scom1.tagname : ''
+          scom2_tag = scom2 ? scom2.tagname : ''
+          
+          country1 = Geocountry.find_by_iso3(ccom1.context_code) if ccom1
+          country2 = Geocountry.find_by_iso3(ccom2.context_code) if ccom2
+          
+          whichres = crit[:result2c]
+          
+          if whichres == 'ccom1' and country1
+            select_explain = "(candidate messages and votes from #{ccom1.fullname} only)"
+            kind_messages = ccom1.fullname
+            ratings = ratings.where("participants.country_code=? ", country1.iso)
+          elsif whichres == 'ccom2' and country2
+            select_explain = "(candidate messages and votes from #{ccom2.fullname} only)"
+            kind_messages = ccom2.fullname
+            ratings = ratings.where("participants.country_code=?", country2.iso)
+          elsif whichres == 'scom1'
+            select_explain = "(candidate messages and votes from #{scom1.fullname} only)"
+            kind_messages = scom1.fullname
+            supporter_comtags = [scom1_tag]
+            plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+            if plist != ''
+              ratings = ratings.where("participants.id in (#{plist})")
+            end
+          elsif whichres == 'scom2'
+            select_explain = "(candidate messages and votes from #{scom2.fullname} only)"
+            kind_messages = scom2.fullname
+            supporter_comtags = [scom2_tag]
+            plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+            if plist != ''
+              ratings = ratings.where("participants.id in (#{plist})")
+            end
+          elsif whichres == 'ucom'
+            select_explain = "(candidate messages and votes from #{ucom.fullname} supporters only)"
+            kind_messages = ucom.fullname
+            supporter_comtags = [ucom_tag]
+            plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+            if plist != ''
+              ratings = ratings.where("participants.id in (#{plist})")
+            end
+          elsif whichres == 'country'
+            if (country1 and country1.name == 'Israel') or (country2 and country2.name == 'Israel')
+              select_explain = "(candidate messages and votes from Israelis and Palestinians only)"
+              kind_messages = "Israeli/Palestinian"
+            else
+              select_explain = "(candidate messages and votes from the two countries only)"
+              kind_messages = "Country"
+            end
+            ratings = ratings.where("(participants.country_code=? or participants.country_code=?)", country1.iso, country2.iso)
+            if @conversation.together_apart == 'together'
+              items = items.where("lower(items.representing_com)='#{ccom1_tag.downcase}' or lower(items.representing_com)='#{ccom2_tag.downcase}'")
+            end
+          elsif whichres == 'supporter'
+            if (country1 and country1.name == 'Israel') or (country2 and country2.name == 'Israel')
+              select_explain = "(candidate messages and votes from Israelis, Palestinians and their supporters only)"
+              kind_messages = "Israeli/Palestinian and Supporter"
+            else
+              select_explain = "(candidate messages and votes from the two countries and their supporters only)"
+              kind_messages = "Country and Supporter"
+            end
+            supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag]
+            plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+            if plist != ''
+              ratings = ratings.where("participants.id in (#{plist})")
+            end
+            if @conversation.together_apart == 'together'
+              items = items.where("lower(items.representing_com)='#{ccom1_tag.downcase}' or lower(items.representing_com)='#{ccom2_tag.downcase}' or lower(items.representing_com)='#{scom1_tag.downcase}' or lower(items.representing_com)='#{scom2_tag.downcase}'")
+            end
+          else
+            select_explain = "(candidate messages and votes from all participants)"
+            kind_messages = ""
+            supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag, ucom_tag]
+            plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+            if plist != ''
+              ratings = ratings.where("participants.id in (#{plist})")
+            end
+          end
+        elsif @conversation.together_apart == 'apart' and crit[:resulttype] == 'apart' and crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+          logger.info("item#get_items_base apart results, for only #{crit[:comtag]}")
+          plist = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}.join(',')
+          if plist != ''
+            ratings = ratings.where("participants.id in (#{plist})")
+          end
+          select_explain = "(candidate messages and votes from @#{crit[:comtag]})"
+          kind_messages = "#{crit[:comtag]}"
+        end
+      else
+        items = items.where("intra_conv='public'")
+      end
+
+      # Gender/age filtering (not user-specific when specified in crit)
+      if crit[:gender].to_i != 0
+        items = items.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=items.posted_by and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")
+        ratings = ratings.joins("inner join metamap_node_participants p_mnp_3 on (p_mnp_3.participant_id=ratings.participant_id and p_mnp_3.metamap_id=3 and p_mnp_3.metamap_node_id=#{crit[:gender]})")
+        logger.info("item#get_items_base by gender")
+      end
+      if crit[:age].to_i != 0
+        items = items.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=items.posted_by and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")
+        ratings = ratings.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=ratings.participant_id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{crit[:age]})")
+        logger.info("item#get_items_base by age")
+      end
+
+      # Add gender/age to title
+      if crit[:gender].to_i > 0 and crit[:age].to_i == 0
+        gender = MetamapNode.find_by_id(crit[:gender].to_i)
+        title += " | #{gender.name_as_group}"
+      elsif crit[:gender].to_i == 0 and crit[:age].to_i > 0
+        age = MetamapNode.find_by_id(crit[:age].to_i)
+        title += " | #{age.name_as_group}"
+      elsif crit[:gender].to_i > 0 and crit[:age].to_i > 0
+        gender = MetamapNode.find_by_id(crit[:gender].to_i)
+        age = MetamapNode.find_by_id(crit[:age].to_i)
+        xtit = gender.name_as_group
+        xtit2 = xtit[0..8] + age.name.capitalize + ' ' + xtit[9..100]
+        title += " | #{xtit2}"
+      elsif not crit[:show_result]
+        title += " | Voice of Humanity"
+      end
+
+      # Community filtering (not user-specific when comtag is specified and not '*my*')
+      if crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+        title += " | @#{crit[:comtag]}"
+        ps = Participant.tagged_with(crit[:comtag]).collect {|p| p.id}
+        if ps.length > 0
+          plist = ps.join(',')
+          items = items.where("participants.id in (#{plist})")
+          logger.info("item#get_items_base by comtag #{crit[:comtag]}: by #{ps.length} participants")
+        else
+          logger.info("item#get_items_base by comtag #{crit[:comtag]}: no participants")
+          items = items.where("1=0")
+        end
+
+        items = items.where("items.intra_com='public' or items.intra_com='@#{crit[:comtag]}'")
+        items = items.where("items.visible_com='public' or items.visible_com='@#{crit[:comtag]}'")
+      elsif crit[:comtag].to_s == '*my*'
+        # This depends on current_participant, handle in user-specific part
+        items = items.where("1=0")
+      else
+        items = items.where("items.intra_com='public'")
+      end
+
+      # Message tags, nvaction, etc. (not user-specific)
+      if crit[:messtag].to_s != ''
+        title += " | ##{crit[:messtag]}"
+        items = items.tagged_with(crit[:messtag])
+        logger.info("item#get_items_base messtag: #{crit[:messtag]}")
+      end
+
+      if crit.has_key?(:nvaction) and crit[:nvaction] === true
+        items = items.tagged_with('nvaction')
+        logger.info("item#get_items_base nvaction:#{crit[:nvaction]} include nvaction")
+      end
+
+      # Wall post filtering (not user-specific when posted_by is specified)
+      if crit[:posted_by].to_i > 0
+        items = items.where(posted_by: crit[:posted_by])
+        logger.info("item#get_items_base posted_by:#{crit[:posted_by]}")
+        # Note: visible_com filtering depends on current_participant, so we'll handle it in user-specific part
+      end
+
+      if crit[:followed_by].to_i > 0
+        items = items.joins("join follows on ((follows.followed_id=items.posted_by or follows.followed_remote_actor_id=items.posted_by_remote_actor_id) and follows.following_id=#{crit[:followed_by]})")
+        logger.info("item#get_items_base only users we follow")
+      else
+        items = items.where(int_ext: 'int')
+        logger.info("item#get_items_base only internal items")
+      end
+
+      # Wall post filtering
+      if crit[:posted_by].to_i == 0
+        items = items.where("(items.wall_post=0 or items.wall_delivery='public')")
+        logger.info("item#get_items_base not wall post, or public")
+      end
+
+      # Return base data structure
+      {
+        items: items,
+        ratings: ratings,
+        title: title,
+        select_explain: select_explain,
+        kind_results: kind_messages,
+        crit: crit  # Pass along the processed crit for user-specific processing
+      }
+    end
+  end
+
+  #------- get_items_user_specific (not cacheable) ------------------------------------------------------------
+  def self.get_items_user_specific(base_data, current_participant)
+    #-- Add user-specific data that can't be cached
+    
+    items = base_data[:items]
+    ratings = base_data[:ratings]
+    crit = base_data[:crit]
+    
+    # Exclude items that this user has complained about
+    if current_participant
+      items = items.where.not(id: Complaint.where(complainer_id: current_participant.id).pluck(:item_id))
+    end
+
+    # Handle geo level filtering that depends on current_participant
+    if crit[:geo_level] == 'city' and not crit.has_key?(:geo_level_id)
+      if current_participant and current_participant.city.to_s != ''
+        items = items.where("participants.city=?", current_participant.city)
+        ratings = ratings.where("participants.city=?", current_participant.city)
+        base_data[:title] += "#{current_participant.city}"
+      else
+        items = items.where("1=0")
+        ratings = ratings.where("1=0")
+        base_data[:title] += "Unknown City"
+      end
+    elsif crit[:geo_level] == 'county' and not crit.has_key?(:geo_level_id)
+      if current_participant and current_participant.admin2uniq.to_s != '' and current_participant.geoadmin2
+        items = items.where("participants.admin2uniq=?", current_participant.admin2uniq)
+        ratings = ratings.where("participants.admin2uniq=?", current_participant.admin2uniq)
+        base_data[:title] += "#{current_participant.geoadmin2.name}"
+      else
+        items = items.where("1=0")
+        ratings = ratings.where("1=0")
+        base_data[:title] += "Unknown County"
+      end
+    elsif crit[:geo_level] == 'metro' and not crit.has_key?(:geo_level_id)
+      if current_participant and current_participant.metro_area_id.to_i > 0 and current_participant.metro_area
+        items = items.where("participants.metro_area_id=?", current_participant.metro_area_id)
+        ratings = ratings.where("participants.metro_area_id=?", current_participant.metro_area_id)
+        base_data[:title] += "#{current_participant.metro_area.name}"
+      else
+        items = items.where("1=0")
+        ratings = ratings.where("1=0")
+        base_data[:title] += "Unknown Metro Area"
+      end
+    elsif crit[:geo_level] == 'state' and not crit.has_key?(:geo_level_id)
+      if current_participant and current_participant.admin1uniq.to_s != '' and current_participant.geoadmin1
+        items = items.where("participants.admin1uniq=?", current_participant.admin1uniq)
+        ratings = ratings.where("participants.admin1uniq=?", current_participant.admin1uniq)
+        base_data[:title] += "#{current_participant.geoadmin1.name}"
+      else
+        items = items.where("1=0")
+        ratings = ratings.where("1=0")
+        base_data[:title] += "Unknown State"
+      end
+    elsif crit[:geo_level] == 'nation' and not crit.has_key?(:geo_level_id)
+      if current_participant
+        items = items.where("participants.country_code=?", current_participant.country_code)
+        ratings = ratings.where("participants.country_code=?", current_participant.country_code)
+        base_data[:title] += "#{current_participant.geocountry.name}"
+      else
+        items = items.where("1=0")
+        ratings = ratings.where("1=0")
+        base_data[:title] += "Unknown Nation"
+      end
+    end
+
+    # Handle twocountry conversation logic that depends on current_participant
+    if crit[:conversation_id].to_i > 0 and @conversation and @conversation.context == 'twocountry' and not crit[:result2c].present?
+      ucom  = Community.find_by_id(@conversation.twocountry_common)
+      ccom1 = Community.find_by_id(@conversation.twocountry_country1)
+      ccom2 = Community.find_by_id(@conversation.twocountry_country2)
+      scom1 = Community.find_by_id(@conversation.twocountry_supporter1)
+      scom2 = Community.find_by_id(@conversation.twocountry_supporter2)
+      
+      ucom_tag = ucom ? ucom.tagname : ''
+      ccom1_tag = ccom1 ? ccom1.tagname : ''
+      ccom2_tag = ccom2 ? ccom2.tagname : ''
+      scom1_tag = scom1 ? scom1.tagname : ''
+      scom2_tag = scom2 ? scom2.tagname : ''
+      
+      country1 = Geocountry.find_by_iso3(ccom1.context_code) if ccom1
+      country2 = Geocountry.find_by_iso3(ccom2.context_code) if ccom2
+      
+      whichres = ''
+      if @conversation.together_apart=='together' and (ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag.downcase)) or (ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag.downcase))
+        whichres = 'country'
+        logger.info("item#get_items_user_specific #{whichres} results, because user is in one of the countries")
+      elsif @conversation.together_apart=='together' and (scom1 and current_participant.tag_list_downcase.include?(scom1_tag.downcase)) or (scom2 and current_participant.tag_list_downcase.include?(scom2_tag.downcase))
+        whichres = 'supporter'
+        logger.info("item#get_items_user_specific #{whichres} results, because user is in one of the supporter communities")
+      elsif @conversation.together_apart=='apart' and ccom1 and current_participant.tag_list_downcase.include?(ccom1_tag.downcase)
+        whichres = 'ccom1'
+        logger.info("item#get_items_user_specific #{whichres} results, because user is in that country")
+      elsif @conversation.together_apart=='apart' and ccom2 and current_participant.tag_list_downcase.include?(ccom2_tag.downcase)
+        whichres = 'ccom2'
+        logger.info("item#get_items_user_specific #{whichres} results, because user is in that country")
+      elsif @conversation.together_apart=='apart' and scom1 and current_participant.tag_list_downcase.include?(scom1_tag.downcase)
+        whichres = 'scom1'
+        logger.info("item#get_items_user_specific #{whichres} results, because user is in that supporter community")
+      elsif @conversation.together_apart=='apart' and scom2 and current_participant.tag_list_downcase.include?(scom2_tag.downcase)
+        whichres = 'scom2'
+        logger.info("item#get_items_user_specific #{whichres} results, because user is in that supporter community")
+      else
+        whichres = 'general'
+        logger.info("item#get_items_user_specific #{whichres} results, because user isn't in country or supporter communities")
+      end
+      
+      # Apply the same logic as in the base method but with user-specific data
+      if whichres == 'ccom1' and country1
+        base_data[:select_explain] = "(candidate messages and votes from #{ccom1.fullname} only)"
+        base_data[:kind_results] = ccom1.fullname
+        ratings = ratings.where("participants.country_code=? ", country1.iso)
+      elsif whichres == 'ccom2' and country2
+        base_data[:select_explain] = "(candidate messages and votes from #{ccom2.fullname} only)"
+        base_data[:kind_results] = ccom2.fullname
+        ratings = ratings.where("participants.country_code=?", country2.iso)
+      elsif whichres == 'scom1'
+        base_data[:select_explain] = "(candidate messages and votes from #{scom1.fullname} only)"
+        base_data[:kind_results] = scom1.fullname
+        supporter_comtags = [scom1_tag]
+        plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+        if plist != ''
+          ratings = ratings.where("participants.id in (#{plist})")
+        end
+      elsif whichres == 'scom2'
+        base_data[:select_explain] = "(candidate messages and votes from #{scom2.fullname} only)"
+        base_data[:kind_results] = scom2.fullname
+        supporter_comtags = [scom2_tag]
+        plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+        if plist != ''
+          ratings = ratings.where("participants.id in (#{plist})")
+        end
+      elsif whichres == 'ucom'
+        base_data[:select_explain] = "(candidate messages and votes from #{ucom.fullname} supporters only)"
+        base_data[:kind_results] = ucom.fullname
+        supporter_comtags = [ucom_tag]
+        plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+        if plist != ''
+          ratings = ratings.where("participants.id in (#{plist})")
+        end
+      elsif whichres == 'country'
+        if (country1 and country1.name == 'Israel') or (country2 and country2.name == 'Israel')
+          base_data[:select_explain] = "(candidate messages and votes from Israelis and Palestinians only)"
+          base_data[:kind_results] = "Israeli/Palestinian"
+        else
+          base_data[:select_explain] = "(candidate messages and votes from the two countries only)"
+          base_data[:kind_results] = "Country"
+        end
+        ratings = ratings.where("(participants.country_code=? or participants.country_code=?)", country1.iso, country2.iso)
+        if @conversation.together_apart == 'together'
+          items = items.where("lower(items.representing_com)='#{ccom1_tag.downcase}' or lower(items.representing_com)='#{ccom2_tag.downcase}'")
+        end
+      elsif whichres == 'supporter'
+        if (country1 and country1.name == 'Israel') or (country2 and country2.name == 'Israel')
+          base_data[:select_explain] = "(candidate messages and votes from Israelis, Palestinians and their supporters only)"
+          base_data[:kind_results] = "Israeli/Palestinian and Supporter"
+        else
+          base_data[:select_explain] = "(candidate messages and votes from the two countries and their supporters only)"
+          base_data[:kind_results] = "Country and Supporter"
+        end
+        supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag]
+        plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+        if plist != ''
+          ratings = ratings.where("participants.id in (#{plist})")
+        end
+        if @conversation.together_apart == 'together'
+          items = items.where("lower(items.representing_com)='#{ccom1_tag.downcase}' or lower(items.representing_com)='#{ccom2_tag.downcase}' or lower(items.representing_com)='#{scom1_tag.downcase}' or lower(items.representing_com)='#{scom2_tag.downcase}'")
+        end
+      else
+        base_data[:select_explain] = "(candidate messages and votes from all participants)"
+        base_data[:kind_results] = ""
+        supporter_comtags = [ccom1_tag, ccom2_tag, scom1_tag, scom2_tag, ucom_tag]
+        plist = Participant.tagged_with(supporter_comtags).collect {|p| p.id}.join(',')
+        if plist != ''
+          ratings = ratings.where("participants.id in (#{plist})")
+        end
+      end
+    end
+
+    # Handle conversation apart mode filtering
+    if crit['in'] == 'conversation' and @conversation and @conversation.together_apart == 'apart'
+      if crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+        logger.info("item#get_items_user_specific limit to representing_com:#{crit[:comtag].downcase}")
+        items = items.where("items.representing_com='public' or lower(items.representing_com)='#{crit[:comtag].downcase}'")
+      else
+        items = items.where("items.representing_com='public'")
+      end
+      
+      if crit[:conversation_id] == INT_CONVERSATION_ID and @conversation.together_apart == 'apart'
+        items = items.where("items.representing_com!=''")
+        items = items.joins("left join items o on (items.reply_to=o.id)").where("items.reply_to=0 or o.representing_com=items.representing_com")
+      end
+      
+      logger.info("item#get_items_user_specific conversation in apart mode")
+    end
+
+    # Handle "my communities" filtering
+    if crit[:comtag].to_s == '*my*'
+      base_data[:title] += " | My Communities"
+      plist = ''
+      comtag_list = ''
+      comtags = {}
+      ps = {}
+      for tag in current_participant.tag_list_downcase
+        comtags[tag] = true
+        for p in Participant.tagged_with(tag)
+          ps[p.id] = true
+        end
+      end
+      comtag_list = comtags.collect{|k, v| "'@#{k}'"}.join(',')
+      plist = ps.collect{|k, v| k}.join(',')
+      if plist != ''
+        items = items.where("participants.id in (#{plist})")
+      else
+        items = items.where("1=0")
+      end
+      
+      items = items.where("items.intra_com='public' or items.intra_com in (#{comtag_list})")
+      logger.info("item#get_items_user_specific my communities by tag")
+    end
+
+    # Handle community filtering that depends on current_participant
+    if crit[:comtag].to_s != '' and crit[:comtag].to_s != '*my*'
+      # Check if user has the tag and update title accordingly
+      has_tag = false
+      for tag in current_participant.tag_list_downcase
+        if tag == crit[:comtag].downcase
+          has_tag = true
+        end
+      end
+      
+      com = Community.find_by_tagname(crit[:comtag])
+      prof_nation = false
+      prof_city = false
+      prof_religion = false
+      prof_gender = false
+      prof_generation = false
+      
+      if com and com.context=='nation'
+        geocountry = Geocountry.find_by_iso3(com.context_code)
+        if geocountry and (geocountry.iso == current_participant.country_code or geocountry.iso == current_participant.country_code2)
+          prof_nation = true
+        end
+      elsif com and com.context=='city'
+        if current_participant.city_uniq != '' and com.context_code == current_participant.city_uniq
+          prof_city = true
+        end
+      elsif com.context=='gender'
+        if current_participant.gender_id == com.context_code.to_i
+          prof_gender = true
+        end
+      elsif com.context=='generation'
+        if current_participant.generation_id == com.context_code.to_i
+          prof_generation = true
+        end
+      end
+      
+      if com
+        if com.context == 'nation'
+          base_data[:title] += " in&nbsp;profile" if prof_nation
+        elsif com.context == 'city'
+          base_data[:title] += " in&nbsp;profile" if prof_city
+        elsif com.context == 'gender'
+          base_data[:title] += " in&nbsp;profile" if prof_gender
+        elsif com.context == 'generation'
+          base_data[:title] += " in&nbsp;profile" if prof_generation
+        elsif com.context != 'religion' and com.context != 'twocountry'
+          if has_tag
+            base_data[:title] += " <input type=\"button\" value=\"leave\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+          else
+            base_data[:title] += " <input type=\"button\" value=\"join\" onclick=\"joinleave('#{crit[:comtag]}')\" id=\"comtagjoin\">"
+          end
+        end
+      end
+
+      if not has_tag and com and com.visibility != 'public'
+        items = items.where("1=0")
+      end
+    end
+
+    # Handle wall post filtering that depends on current_participant
+    if crit[:posted_by].to_i > 0
+      p_tags = ''
+      for tag in current_participant.tag_list_downcase
+        if p_tags != ''
+          p_tags += ','
+        end
+        p_tags += "'@" + tag + "'"
+      end
+      items = items.where("(items.visible_com='public' or lower(items.visible_com) in (#{p_tags}))")
+    end
+
+    # Add user's personal ratings
+    if current_participant
+      items = items.joins("left join ratings r_has on (r_has.item_id=items.id and r_has.participant_id=#{current_participant.id})")
+      items = items.select("items.*,r_has.participant_id as hasrating,r_has.approval as rateapproval,r_has.interest as rateinterest,r_has.importance as rateimportance,'' as explanation")
+      logger.info("item#get_items_user_specific include personal ratings")
+    end
+
+    # Update the base_data with modified queries
+    base_data[:items] = items
+    base_data[:ratings] = ratings
+    
+    # Return the same format as original method
+    return base_data[:items], base_data[:ratings], base_data[:title], base_data[:select_explain], base_data[:kind_results]
+  end
+
+  #------- get_items (main method - now just orchestrates) ------------------------------------------------------------
   def self.get_items(crit,current_participant,rootonly=false)
+    #-- Get the items and records that match a certain criteria. Mainly for geoslider
+  
+    logger.info("item#get_items crit1:#{crit} rootonly:#{rootonly}")
+
+    # Get base data (cacheable)
+    base_data = get_items_base(crit, rootonly)
+    
+    # Add user-specific data (not cacheable)
+    get_items_user_specific(base_data, current_participant)
+  end
+
+  #------- get_items_original (backup of original method) ------------------------------------------------------------
+  def self.get_items_original(crit,current_participant,rootonly=false)
     #-- Get the items and records that match a certain criteria. Mainly for geoslider
   
     logger.info("item#get_items crit1:#{crit} rootonly:#{rootonly}")
@@ -3239,6 +3889,32 @@ class Item < ActiveRecord::Base
     else
       return('')
     end  
+  end
+
+  #------- Cache invalidation methods ------------------------------------------------------------
+  def self.invalidate_items_cache(crit_hash = nil)
+    if crit_hash
+      Rails.cache.delete("items_base:#{crit_hash}:false")
+      Rails.cache.delete("items_base:#{crit_hash}:true")
+    else
+      # Clear all items cache (use with caution)
+      Rails.cache.delete_matched("items_base:*")
+    end
+  end
+
+  def self.invalidate_cache_on_item_change
+    # Clear cache for common criteria
+    invalidate_items_cache
+  end
+
+  def self.invalidate_network_cache(network_id)
+    Rails.cache.delete("network_criteria:#{network_id}")
+  end
+
+  private
+
+  def invalidate_items_cache
+    Item.invalidate_cache_on_item_change
   end
       
 end

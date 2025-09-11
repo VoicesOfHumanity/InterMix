@@ -1419,7 +1419,8 @@ class ItemsController < ApplicationController
       if @item.is_first_in_thread
         @item.first_in_thread = @item.id    
         @item.save    
-      end 
+      end
+      Item.invalidate_cache_on_item_change 
       
       if @item.reply_to.to_i > 0 
         #-- If it is a reply, they'll have interest rating 4 on whatever they replied to, and the top of the thread, if not the same  
@@ -1584,6 +1585,7 @@ class ItemsController < ApplicationController
       @item.first_in_thread = @item.id
     end
     if @item.save
+      Item.invalidate_cache_on_item_change
       render json: {'status': 'success', 'message': 'item created', 'item_id': @item.id}
       return
     else
@@ -1627,6 +1629,7 @@ class ItemsController < ApplicationController
     @item.save!
     @item.first_in_thread = @item.id    
     if @item.save
+      Item.invalidate_cache_on_item_change
       render json: {'result': 'success', 'item_id': @item.id}
       return
     else
@@ -1660,6 +1663,7 @@ class ItemsController < ApplicationController
     #if @item.update_attributes(params[:item])
       itemprocess
       @item.save
+      Item.invalidate_cache_on_item_change
       #showmess = (@error_message.to_s != '') ? @error_message : "Item was successfully updated."
       if @error_message.to_s != ''
         results = {'error'=>true,'message'=>@error_message,'item_id'=>@item.id}
@@ -1680,6 +1684,7 @@ class ItemsController < ApplicationController
       return
     end  
     @item.destroy
+    Item.invalidate_cache_on_item_change
     render plain: "The item has been deleted"    
   end  
 
@@ -1938,6 +1943,7 @@ class ItemsController < ApplicationController
     item.controversy = item_rating_summary.controversy
     item.edit_locked = true if current_participant.id != item.posted_by
     item.save
+    Item.invalidate_cache_on_item_change
     
     render plain: vote
   end 
