@@ -1230,6 +1230,40 @@ class Item < ActiveRecord::Base
     
   end
   
+
+  def self.process_network_criteria(crit)
+    #-- Process the network criteria, cached, to use in get_items
+    return crit unless crit[:network_id].to_i > 0
+    
+    network_id = crit[:network_id]
+    cache_key = "network_criteria:#{network_id}"
+    
+    Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      network = Network.find_by_id(network_id)
+      return crit unless network
+      
+      # Create a copy of crit to avoid modifying the original
+      updated_crit = crit.dup
+      
+      # Apply network settings
+      if network.geo_level.to_i > 0
+        updated_crit[:geo_level] = GEO_LEVELS[network.geo_level]
+        updated_crit[:geo_level_id] = network.geo_level_id if network.geo_level_id.present?
+        updated_crit[:geo_level_detail] = network.geo_level_detail if network.geo_level_detail.present?
+      end
+      
+      updated_crit[:gender] = network.gender if network.gender.to_i > 0
+      updated_crit[:age] = network.age if network.age.to_i > 0
+      
+      # Get participant IDs
+      network_comtags = network.communities.pluck(:tagname)
+      updated_crit[:network_participant_ids] = network_comtags.any? ? 
+        Participant.tagged_with(network_comtags).pluck(:id) : []
+      
+      updated_crit
+    end
+  end
+
   #------- get_items ------------------------------------------------------------
   def self.get_items(crit,current_participant,rootonly=false)
     #-- Get the items and records that match a certain criteria. Mainly for geoslider
@@ -1278,31 +1312,18 @@ class Item < ActiveRecord::Base
     title = ''
   
     if crit[:network_id].to_i > 0
-      # A network will have some fixed comtags, possible age, gender and geo level
-      @network = Network.find_by_id(crit[:network_id]) if not @network
-      if @network.geo_level.to_i > 0
-        crit[:geo_level] = GEO_LEVELS[@network.geo_level]
-        if @network.geo_level_id.to_s != ''
-          crit[:geo_level_id] = @network.geo_level_id
-        end
-        if @network.geo_level_detail.to_s != ''
-          crit[:geo_level_detail] = @network.geo_level_detail
-        end
-      end
-      crit[:gender] = @network.gender if @network.gender.to_i > 0
-      crit[:age] = @network.age if @network.age.to_i > 0
+      crit = process_network_criteria(crit)
       
-      network_comtags = @network.communities.collect{|com| com.tagname }
-            
-      plist = Participant.tagged_with(network_comtags).collect {|p| p.id}.join(',')
-      if plist != ''
-        items = items.where("participants.id in (#{plist})")
-        items = items.where("items.intra_com='public'")       
-        logger.info("item#get_items network users with network tags")     
+      if crit[:network_participant_ids].any?
+        items = items.where(
+          posted_by: crit[:network_participant_ids],
+          intra_com: 'public'
+        )
+        logger.info("item#get_items network users with network tags")
       else
         items = items.where("1=0")
       end
-    end
+    end   
   
     # Either posted in that geo level or no geo level given
     #items = items.where("geo_level = ? or geo_level is null or geo_level = ''", crit[:geo_level]) if (crit[:geo_level].to_s != '' and crit[:geo_level] != 'all')
