@@ -227,6 +227,8 @@ class ApiController < ApplicationController
         Rails.logger.info("api#user_post_count: id: #{id}")
         participant = Participant.find_by_id(id)
         if participant
+            post_count = participant.items.count
+            Rails.logger.info("api#user_post_count: id: #{id}: post_count: #{post_count}")
             render json: {
                 status: 'success',
                 post_count: participant.items.count
