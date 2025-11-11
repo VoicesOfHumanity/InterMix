@@ -222,6 +222,18 @@ class ApiController < ApplicationController
         end
     end
 
+    def user_post_count
+        id = params[:id].to_i
+        Rails.logger.info("api#user_post_count: id: #{id}")
+        participant = Participant.find_by_id(id)
+        if participant
+            render json: {
+                status: 'success',
+                post_count: participant.items.count
+            }
+        end
+    end
+
     def update_user_field
         data = JSON.parse(request.raw_post)
         id = data['user_id'].to_i

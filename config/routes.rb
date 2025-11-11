@@ -192,6 +192,7 @@ Rails.application.routes.draw do
   post 'api/register', to: 'api#register'
   post 'api/user_from_facebook', to: 'api#user_from_facebook'
   get 'api/get_user', to: 'api#get_user'
+  get 'api/user_post_count', to: 'api#user_post_count'
   get 'api/update_user', to: 'api#update_user'
   post 'api/update_user', to: 'api#update_user'
   post 'api/update_user_field', to: 'api#update_user_field'
