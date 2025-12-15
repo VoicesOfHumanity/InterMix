@@ -1605,6 +1605,11 @@ class Item < ActiveRecord::Base
     # Exclude items that this user has complained about
     if current_participant
       items = items.where.not(id: Complaint.where(complainer_id: current_participant.id).pluck(:item_id))
+      blocked_ids = current_participant.blocked_participants.pluck(:id)
+      if blocked_ids.any?
+        items = items.where.not(posted_by: blocked_ids)
+        ratings = ratings.where.not(participant_id: blocked_ids)
+      end
     end
 
     # Handle geo level filtering that depends on current_participant

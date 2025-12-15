@@ -48,6 +48,11 @@ class Participant < ActiveRecord::Base
 
   has_many :community_participants
   has_many :communities, :through => :community_participants
+
+  has_many :blocks, :foreign_key => :blocker_id, :dependent => :destroy
+  has_many :blocked_participants, :through => :blocks, :source => :blocked
+  has_many :inverse_blocks, :class_name => 'Block', :foreign_key => :blocked_id, :dependent => :destroy
+  has_many :blockers, :through => :inverse_blocks, :source => :blocker
   
   
   #has_many :gender_metamap_node_participants, :class_name => "MetamapNodeParticipant", :conditions => "metamap_id=3"

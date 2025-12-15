@@ -417,6 +417,60 @@ class ApiController < ApplicationController
         end
     end
 
+    def block_user
+        user_id = params[:user_id].to_i
+        blocked_user_id = params[:blocked_user_id].to_i
+
+        Rails.logger.info("api#block_user user:#{user_id} blocked_user:#{blocked_user_id}")
+
+        if user_id == 0 || blocked_user_id == 0
+            render json: {
+                status: 'error',
+                message: 'User and blocked_user must be specified'
+            }
+            return
+        end
+
+        if user_id == blocked_user_id
+            render json: {
+                status: 'error',
+                message: 'You cannot block yourself'
+            }
+            return
+        end
+
+        blocker = Participant.find_by_id(user_id)
+        blocked = Participant.find_by_id(blocked_user_id)
+
+        unless blocker && blocked
+            render json: {
+                status: 'error',
+                message: 'User or blocked user not found'
+            }
+            return
+        end
+
+        block = Block.where(blocker_id: blocker.id, blocked_id: blocked.id).first_or_initialize
+
+        if block.new_record?
+            if block.save
+                render json: {
+                    status: 'success'
+                }
+            else
+                render json: {
+                    status: 'error',
+                    message: 'Could not create block'
+                }
+            end
+        else
+            # Idempotent: already blocked
+            render json: {
+                status: 'success'
+            }
+        end
+    end
+
     def importance
         # update importance for an item
         item_id = params[:item_id].to_i
@@ -492,10 +546,54 @@ class ApiController < ApplicationController
             }
         else
             render json: {
-                status: 'error',
-                message: "Item not found"
+            status: 'error',
+            message: "Item not found"
             }
         end
+    end
+
+    def unblock_user
+        user_id = params[:user_id].to_i
+        blocked_user_id = params[:blocked_user_id].to_i
+
+        Rails.logger.info("api#unblock_user user:#{user_id} blocked_user:#{blocked_user_id}")
+
+        if user_id == 0 || blocked_user_id == 0
+            render json: {
+                status: 'error',
+                message: 'User and blocked_user must be specified'
+            }
+            return
+        end
+
+        if user_id == blocked_user_id
+            render json: {
+                status: 'error',
+                message: 'You cannot unblock yourself'
+            }
+            return
+        end
+
+        blocker = Participant.find_by_id(user_id)
+        blocked = Participant.find_by_id(blocked_user_id)
+
+        unless blocker && blocked
+            render json: {
+                status: 'error',
+                message: 'User or blocked user not found'
+            }
+            return
+        end
+
+        block = Block.where(blocker_id: blocker.id, blocked_id: blocked.id).first
+
+        if block
+            block.destroy
+        end
+
+        render json: {
+            status: 'success'
+        }
     end
 
     def forgot_password
@@ -592,6 +690,37 @@ class ApiController < ApplicationController
                 message: "User or community not found"
             }
         end
+    end
+
+    def list_blocks
+        user_id = params[:user_id].to_i
+
+        Rails.logger.info("api#list_blocks user:#{user_id}")
+
+        if user_id == 0
+            render json: {
+                status: 'error',
+                message: 'User must be specified'
+            }
+            return
+        end
+
+        blocker = Participant.find_by_id(user_id)
+
+        unless blocker
+            render json: {
+                status: 'error',
+                message: 'User not found'
+            }
+            return
+        end
+
+        blocked_users = blocker.blocked_participants
+
+        render json: {
+            status: 'success',
+            blocked_users: blocked_users.map { |p| user_info(p) }
+        }
     end
 
     protected
