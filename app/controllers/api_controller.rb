@@ -7,6 +7,7 @@ class ApiController < ApplicationController
     append_before_action :check_api_code
 
     include ItemLib
+    include ActivityPub
 
     # List of methods in this file:
     # verify_email
@@ -721,6 +722,102 @@ class ApiController < ApplicationController
             status: 'success',
             blocked_users: blocked_users.map { |p| user_info(p) }
         }
+    end
+
+    def delete_account
+        user_id = params[:user_id].to_i
+        password = params[:password].to_s
+        confirmation_string = params[:confirmation_string].to_s
+
+        Rails.logger.info("api#delete_account user:#{user_id}")
+
+        if user_id == 0
+            render json: {
+                status: 'error',
+                message: 'User must be specified'
+            }
+            return
+        end
+
+        participant = Participant.find_by_id(user_id)
+
+        unless participant
+            render json: {
+                status: 'error',
+                message: 'User not found'
+            }
+            return
+        end
+
+        # Validate password
+        unless participant.valid_password?(password)
+            render json: {
+                status: 'error',
+                message: 'Invalid password'
+            }
+            return
+        end
+
+        # Validate confirmation string (case insensitive)
+        unless confirmation_string.to_s.strip.downcase == "delete account"
+            render json: {
+                status: 'error',
+                message: 'Incorrect confirmation text'
+            }
+            return
+        end
+
+        # Save original email before deletion
+        original_email = participant.email
+        original_name = participant.name
+
+        begin
+            # Perform deletion using shared method
+            stats = delete_participant_data(participant)
+
+            # Send confirmation email
+            html_content = "<p>Hello #{original_name},</p>"
+            html_content += "<p>As requested, we have deleted your Voices of Humanity account.</p>"
+            html_content += "<p>Here's a summary of what was removed:</p>"
+            html_content += "<ul>"
+            html_content += "<li>Your profile picture</li>" if stats[:pictures_deleted]
+            html_content += "<li>#{stats[:messages_deleted]} private message(s)</li>"
+            html_content += "<li>#{stats[:items_deleted]} post(s) with no replies</li>"
+            html_content += "<li>#{stats[:items_anonymized]} post(s) with replies</li>" if stats[:items_anonymized] > 0
+            html_content += "<li>All personal information (name, address, email, etc.)</li>"
+            html_content += "<li>#{stats[:follows_deleted]} follow relationship(s)</li>"
+            html_content += "</ul>"
+            html_content += "<p>Your account is now removed and you will no longer be able to log in.</p>"
+            html_content += "<p>This is irreversible and cannot be undone, because the data is no longer there.</p>"
+            html_content += "<p>Thank you for being part of Voices of Humanity.</p>"
+
+            cdata = {}
+            cdata['recipient'] = participant
+            cdata['participant'] = participant
+            msubject = "Your Voices of Humanity account has been deleted"
+            
+            email = SystemMailer.generic(SYSTEM_SENDER, original_email, msubject, html_content, cdata)
+            begin
+                Rails.logger.info("api#delete_account delivering email to #{original_email}")
+                email.deliver
+                message_id = email.message_id
+            rescue Exception => e
+                Rails.logger.info("api#delete_account problem delivering email to #{original_email}: #{e}")
+                # Continue even if email fails
+            end
+
+            render json: {
+                status: 'success',
+                message: 'Account has been deleted'
+            }
+        rescue Exception => e
+            Rails.logger.error("api#delete_account error: #{e}")
+            Rails.logger.error(e.backtrace.join("\n"))
+            render json: {
+                status: 'error',
+                message: 'An error occurred while deleting your account. Please contact support.'
+            }
+        end
     end
 
     protected

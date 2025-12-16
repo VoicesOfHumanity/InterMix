@@ -519,7 +519,7 @@ class ItemsController < ApplicationController
     #@items = own_items_sorted + other_items
     
     logger.info("items#list_api returning #{@items.length} items. First by user ID #{@items.length > 0 ? @items[0]['posted_by'] : '?'} subject #{@items.length > 0 ? @items[0]['subject'] : '?'}")
-    logger.info("items#list_api items: #{@items.inspect}")
+    #logger.info("items#list_api items: #{@items.inspect}")
 
     render json: @items
   end

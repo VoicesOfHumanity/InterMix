@@ -1066,6 +1066,102 @@ class ApplicationController < ActionController::Base
       @participant.save      
     end
 
+    def delete_participant_data(participant)
+      #-- Shared method to delete/remove participant data
+      #-- Returns a hash with statistics about what was deleted
+      #-- This is used by both the admin removedata action and the API delete_account action
+      
+      stats = {
+        items_deleted: 0,
+        items_anonymized: 0,
+        messages_deleted: 0,
+        pictures_deleted: false,
+        follows_deleted: 0
+      }
+      
+      p = participant
+      
+      # Delete picture files
+      picdir = "#{DATADIR}/participants/pictures/#{p.id}"
+      if File.exist?(picdir)
+        `/bin/rm -f #{picdir}/*`
+        stats[:pictures_deleted] = true
+      end
+      
+      # Delete messages
+      messages_count = Message.where("from_participant_id=#{p.id} or to_participant_id=#{p.id}").count
+      Message.where("from_participant_id=#{p.id} or to_participant_id=#{p.id}").delete_all
+      stats[:messages_deleted] = messages_count
+      
+      # Handle items - delete if no replies, anonymize if there are replies
+      for item in participant.items
+        num_replies = Item.where(reply_to: item.id).count
+        if num_replies == 0
+          item.destroy
+          stats[:items_deleted] += 1
+        else
+          item.subject = 'Data Deleted'
+          item.short_content = 'Data Deleted'
+          item.html_content = '<p>Data Deleted</p>'
+          item.save
+          stats[:items_anonymized] += 1
+        end
+      end
+
+      # Anonymize personal data
+      p.first_name = '*'
+      p.last_name = '*'
+      p.address1 = ''
+      p.address2 = ''
+      p.city = ''
+      p.city_uniq = ''
+      p.state_code = ''
+      p.state_name = ''
+      p.country_code = ''
+      p.country_name = ''
+      p.zip = ''
+      p.phone = ''
+      p.county_code = ''
+      p.county_name = ''
+      p.admin1uniq = ''
+      p.fb_uid = ''
+      p.fb_link = ''
+      p.twitter_username = ''
+      p.twitter_oauth_token = ''
+      p.email = "datadeleted#{p.id}@intermix.org"
+      p.no_email = true
+      p.old_email = ''
+      p.direct_email_code = ''
+      p.encrypted_password = "ewrwerwerr345324324#{p.id}"
+      p.confirmation_token = "ewrwerwerassdaasd3#{p.id}"
+      p.authentication_token = "324533eweder2342423423dssd#{p.id}"
+      p.google_uid = ''
+      p.account_uniq = ''
+      p.account_uniq_full = ''
+      p.tag_list = ''
+      p.status = 'removed'
+      p.save!
+      
+      # Handle ActivityPub remote followers
+      # Note: send_delete_actor requires ActivityPub module to be included in the calling controller
+      remote_followers = Follow.where("followed_id=#{p.id} and following_remote_actor_id is not null")
+      for rfollow in remote_followers
+        if rfollow.remote_follower
+          # Only call send_delete_actor if ActivityPub is available (e.g., in ParticipantsController)
+          if respond_to?(:send_delete_actor, true)
+            send_delete_actor(p, rfollow.remote_follower)
+          end
+        end
+      end
+      
+      # Delete all follow records
+      follows_count = Follow.where("following_id=#{p.id} or followed_id=#{p.id}").count
+      Follow.where("following_id=#{p.id} or followed_id=#{p.id}").delete_all
+      stats[:follows_deleted] = follows_count
+      
+      return stats
+    end
+
     # def log_in_as_visitor_if_no_referrer
     #   # If a user seems to come from a search engine, particularly with URLs found
     #   # in the site map, log them in a visitor, so they can see the content

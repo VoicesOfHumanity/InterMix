@@ -203,6 +203,7 @@ Rails.application.routes.draw do
   get 'api/forgot_password', to: 'api#forgot_password'
   post 'api/leave_community', to: 'api#leave_community'
   post 'api/join_community', to: 'api#join_community'
+  post 'api/delete_account', to: 'api#delete_account'
 
   resources :authentications
 
