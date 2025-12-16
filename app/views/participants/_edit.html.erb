@@ -29,6 +29,11 @@
 			
 	<% end %>
 
+	<%= f.inputs :name => "Password (optional)" do %>
+		<%= f.input :password, :label => "New password", :as => :password, :hint => "Leave blank to keep current password" %>
+		<%= f.input :password_confirmation, :label => "Confirm new password", :as => :password %>
+	<% end %>
+
 <% end %>
 
 <p>
