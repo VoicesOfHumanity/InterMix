@@ -662,6 +662,7 @@ class ItemsController < ApplicationController
     rec['thumbs'] = rating ? rating.approval.to_i : 0
     rec['importance'] = rating ? rating.importance.to_i : 0
 
+    logger.info("items#item_api rec:#{rec}")
     render json: rec
   end
   
