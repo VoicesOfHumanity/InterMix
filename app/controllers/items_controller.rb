@@ -518,7 +518,7 @@ class ItemsController < ApplicationController
     #own_items_sorted = own_items.sort {|a,b| b[:id]<=>a[:id]}  
     #@items = own_items_sorted + other_items
     
-    logger.info("items#list_api returning #{@items.length} items. First by user # #{@items.length > 0 ? @items[0]['posted_by'] : '?'}")
+    logger.info("items#list_api returning #{@items.length} items. First by user ID #{@items.length > 0 ? @items[0]['posted_by'] : '?'} subject #{@items.length > 0 ? @items[0]['subject'] : '?'}")
     
     render json: @items
   end
