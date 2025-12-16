@@ -110,10 +110,47 @@ class ParticipantsController < ApplicationController
     @participant = Participant.find(params[:id])
     #@participant.attributes = params[:participant]
     logger.info("participants#update #{@participant.id}")
+    
+    # Handle password update separately - only if both password and confirmation are provided
+    password_params = participant_params
+    new_password = password_params[:password].to_s.strip
+    password_confirmation = password_params[:password_confirmation].to_s.strip
+    
+    # Remove password fields from params if they're blank, so we don't try to update password
+    if new_password.blank? && password_confirmation.blank?
+      # Both are blank - don't update password
+      password_params = password_params.except(:password, :password_confirmation)
+    elsif new_password.blank? || password_confirmation.blank?
+      # One is provided but not both - add error
+      @participant.errors.add(:password, "Both password fields must be filled if you want to change the password")
+      respond_to do |format|
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @participant.errors, :status => :unprocessable_entity }
+      end
+      return
+    elsif new_password != password_confirmation
+      # Passwords don't match
+      @participant.errors.add(:password_confirmation, "doesn't match Password")
+      respond_to do |format|
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @participant.errors, :status => :unprocessable_entity }
+      end
+      return
+    elsif new_password.length < 4
+      # Password too short
+      @participant.errors.add(:password, "is too short (minimum is 4 characters)")
+      respond_to do |format|
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @participant.errors, :status => :unprocessable_entity }
+      end
+      return
+    end
+    # If we get here, both passwords are provided, match, and are long enough - password will be updated
+    
     geoupdate
 
     respond_to do |format|
-      if @participant.update_attributes(participant_params)
+      if @participant.update_attributes(password_params)
       #if @participant.save
         format.html { render :partial=>'show', :layout=>false, :notice => 'Participant was successfully updated.' }
         format.xml  { head :ok }
@@ -229,7 +266,7 @@ class ParticipantsController < ApplicationController
     :first_name, :last_name, :title, :self_description, :address1, :address2, :city, :admin2uniq, :country_code, :country_name, :admin1uniq, :state_code, :state_name, :county_code, :county_name, :zip, :phone,
     :latitude, :longitude, :timezone, :timezone_offset, :metropolitan_area, :metro_area_id, :bioregion, :bioregion_id, :faith_tradition, :faith_tradition_id, :political, :political_id, :email, :visibility,
     :wall_visibility, :item_to_forum, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :forum_email, :group_email, :subgroup_email, :private_email, :system_email, :no_email, :handle,
-    :tag_list, :mycom_email, :othercom_email
+    :tag_list, :mycom_email, :othercom_email, :password, :password_confirmation
     )
   end
   
