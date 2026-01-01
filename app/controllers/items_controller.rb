@@ -1707,7 +1707,7 @@ class ItemsController < ApplicationController
     @item = @item.find_by_id(@item_id)
     
     if not @item
-      render :status => 404
+      render file: "#{Rails.root}/public/404.html", status: :not_found, layout: false
       return
     end
 
