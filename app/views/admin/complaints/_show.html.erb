@@ -1,12 +1,53 @@
 <table class="edittable">
-<tr><td class="left">ID:</td><td><%= @complaint.id %></td></tr>	
-<tr><td class="left">Item:</td><td><%= @complaint.item.subject %></td></tr>	
-<tr><td class="left">Reporter:</td><td><%= @complaint.complainer.name %></td></tr>
+<tr><td class="left">ID:</td><td><%= @complaint.id %></td></tr>
+<tr><td class="left">Created:</td><td><%= @complaint.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>
+<tr><td class="left">Item:</td><td><%= @complaint.item ? @complaint.item.subject_or_excerpt : "Item ##{@complaint.item_id} (deleted)" %> (ID: <%= @complaint.item_id %>)</td></tr>
+<tr><td class="left">Poster:</td><td><%= @complaint.poster ? "#{@complaint.poster.name} (ID: #{@complaint.poster_id}) — status: #{@complaint.poster.status}" : "Participant ##{@complaint.poster_id} (deleted)" %></td></tr>
+<tr><td class="left">Reporter:</td><td><%= @complaint.complainer ? @complaint.complainer.name : "Participant ##{@complaint.complainer_id}" %></td></tr>
+<% if @complaint.reason.to_s != '' %><tr><td class="left">Reason:</td><td><%= @complaint.reason %></td></tr><% end %>
 <tr><td class="left">Status:</td><td><%= @complaint.status %></td></tr>
-<tr><td class="left">Created:</td><td><%= @complaint.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
-<tr><td class="left">Updated:</td><td><%= @complaint.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>	
+<tr><td class="left">Updated:</td><td><%= @complaint.updated_at.strftime("%Y-%m-%d %H:%M") %></td></tr>
 </table>
+
+<p><strong>Moderator actions</strong></p>
+<p>
+  <% item = @complaint.item %>
+  <% poster = @complaint.poster %>
+  <% if item.nil? %>
+    <em>Item was deleted. No actions available.</em>
+  <% elsif item.censored %>
+    <em>Message is already hidden (censored).</em>
+  <% else %>
+    <input type="button" value="Hide message (censor)" onclick="complaint_action(<%= @complaint.id %>, 'hide_message')" title="Hides the post content from everybody; post shows as &quot;Message Censored&quot;" />
+  <% end %>
+  &nbsp;
+  <% if poster.nil? %>
+    <em>Poster account was deleted.</em>
+  <% elsif poster.status == 'inactive' || poster.status == 'disallowed' || poster.status == 'blocked' %>
+    <em>Poster is already disabled (status: <%= poster.status %>).</em>
+  <% else %>
+    <input type="button" value="Disable poster" onclick="complaint_action(<%= @complaint.id %>, 'disable_poster')" title="Sets the poster&#39;s account to inactive" />
+  <% end %>
+  &nbsp;
+  <input type="button" value="Mark resolved" onclick="complaint_action(<%= @complaint.id %>, 'resolve')" title="Mark this complaint as resolved (no other action)" />
+</p>
 
 <script>
 curid1 = <%= @complaint.id %>;
+function complaint_action(complaint_id, action) {
+  var msg = action === 'hide_message' ? 'Hide this message from everybody (censor)?' :
+            action === 'disable_poster' ? 'Disable the poster\'s account?' :
+            'Mark this complaint as resolved?';
+  if (!confirm(msg)) return;
+  $('#rec1box').css('opacity', '0.5');
+  $.ajax({
+    type: 'POST',
+    url: '/admin/complaints/' + complaint_id + '/' + action,
+    data: { authenticity_token: '<%= form_authenticity_token %>' },
+    complete: function(t) {
+      $('#rec1box').css('opacity', '1.0');
+      viewrec1(complaint_id);
+    }
+  });
+}
 </script>

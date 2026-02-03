@@ -346,6 +346,7 @@ GEM
     responds_to_parent (2.0.0)
       actionpack (>= 3.2.22, < 6.0)
     rest-graph (2.0.3)
+    rexml (3.4.4)
     rmagick (5.5.0)
       observer (~> 0.1)
       pkg-config (~> 1.4)
@@ -501,6 +502,7 @@ DEPENDENCIES
   rake
   responds_to_parent
   rest-graph
+  rexml (~> 3.2)
   rmagick
   rspec-rails
   ruby-prof

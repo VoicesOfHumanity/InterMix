@@ -110,5 +110,35 @@ class Admin::ComplaintsController < ApplicationController
       format.xml  { head :ok }
     end
   end
-  
+
+  # POST /admin/complaints/:id/hide_message — censor the reported item so it's hidden from everybody
+  def hide_message
+    @complaint = Complaint.find(params[:id])
+    item = @complaint.item
+    item.censored = true
+    item.moderation_status = 'hidden'
+    item.moderated_at = Time.current
+    item.moderated_by = current_participant.id
+    item.save!
+    @complaint.update_attributes(status: 'resolved')
+    render plain: 'ok'
+  end
+
+  # POST /admin/complaints/:id/disable_poster — set the poster's account to inactive
+  def disable_poster
+    @complaint = Complaint.find(params[:id])
+    poster = @complaint.poster
+    poster.status = 'inactive'
+    poster.save!
+    @complaint.update_attributes(status: 'resolved')
+    render plain: 'ok'
+  end
+
+  # POST /admin/complaints/:id/resolve — mark complaint as resolved (no other action)
+  def resolve
+    @complaint = Complaint.find(params[:id])
+    @complaint.update_attributes(status: 'resolved')
+    render plain: 'ok'
+  end
+
 end

@@ -8,6 +8,8 @@
   <tr>
 		<th><input type="checkbox" name="markall" class="cammark" title="mark all" value="1" onclick="markall()" /></th>
     <th>ID</th>
+    <th>Created</th>
+    <th>Time left</th>
     <th>Item</th>
     <th>Reporter</th>
     <th>Status</th>
@@ -16,10 +18,22 @@
 <% odd_or_even = 0 %>
 <% @complaints.each do |complaint| %>
 	<% odd_or_even = 1-odd_or_even%>
+	<% created = complaint.created_at || Time.current %>
+	<% deadline = created + 24.hours %>
+	<% now = Time.current %>
+	<% if deadline > now
+	     time_left = distance_of_time_in_words(now, deadline)
+	     time_left_style = (deadline - now) < 4.hours ? 'color:red;font-weight:bold' : ''
+	   else
+	     time_left = "Overdue"
+	     time_left_style = 'color:red;font-weight:bold'
+	   end %>
 	<tr class="line<%= odd_or_even %>">
 		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= complaint.id %>" /></td>
 		<td><a href="#" onclick="viewrec1(<%= complaint.id %>)"><%= complaint.id %></a></td>
-    <td><a href="#" onclick="viewrec1(<%= complaint.id %>)"><%= complaint.item.subject %></a></td>
+    <td><%= created.strftime("%Y-%m-%d %H:%M") %></td>
+    <td style="<%= time_left_style %>"><%= time_left %></td>
+    <td><a href="#" onclick="viewrec1(<%= complaint.id %>)"><%= complaint.item ? complaint.item.subject_or_excerpt : "Item ##{complaint.item_id} (deleted)" %></a></td>
     <td><%= complaint.complainer.name %></td>
     <td><%= complaint.status %></td>
   </tr>

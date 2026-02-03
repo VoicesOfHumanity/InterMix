@@ -75,6 +75,9 @@ Rails.application.routes.draw do
 
     resources :complaints do
       get :search, :on => :collection
+      post :hide_message, :on => :member
+      post :disable_poster, :on => :member
+      post :resolve, :on => :member
     end
 
     resources :communities do

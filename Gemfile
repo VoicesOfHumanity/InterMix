@@ -114,6 +114,7 @@ group :development, :test do
   #gem 'factory_girl_rails'
   gem 'factory_bot_rails'
   gem 'thin'
+  gem 'rexml', '~> 3.2'
 end
 
 # Gems used only for assets and not required
