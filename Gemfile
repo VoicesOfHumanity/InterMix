@@ -100,6 +100,8 @@ gem 'sitemap_generator'
 # assets:precompile seems to be missing this
 gem "date"
 
+gem 'rexml', '~> 3.2'
+
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
@@ -114,7 +116,6 @@ group :development, :test do
   #gem 'factory_girl_rails'
   gem 'factory_bot_rails'
   gem 'thin'
-  gem 'rexml', '~> 3.2'
 end
 
 # Gems used only for assets and not required
