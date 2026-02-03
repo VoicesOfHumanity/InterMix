@@ -2,6 +2,10 @@
 <tr><td class="left">ID:</td><td><%= @complaint.id %></td></tr>
 <tr><td class="left">Created:</td><td><%= @complaint.created_at.strftime("%Y-%m-%d %H:%M") %></td></tr>
 <tr><td class="left">Item:</td><td><%= @complaint.item ? @complaint.item.subject_or_excerpt : "Item ##{@complaint.item_id} (deleted)" %> (ID: <%= @complaint.item_id %>)</td></tr>
+<tr style="vertical-align: top;">
+  <td class="left">Content:</td>
+  <td style="border: 1px solid #ddd; background: #f8f8f8; padding: 10px; border-radius: 4px;"><%= @complaint.item ? raw(@complaint.item.html_content) : "Item ##{@complaint.item_id} (deleted)" %></td>
+</tr>
 <tr><td class="left">Poster:</td><td><%= @complaint.poster ? "#{@complaint.poster.name} (ID: #{@complaint.poster_id}) — status: #{@complaint.poster.status}" : "Participant ##{@complaint.poster_id} (deleted)" %></td></tr>
 <tr><td class="left">Reporter:</td><td><%= @complaint.complainer ? @complaint.complainer.name : "Participant ##{@complaint.complainer_id}" %></td></tr>
 <% if @complaint.reason.to_s != '' %><tr><td class="left">Reason:</td><td><%= @complaint.reason %></td></tr><% end %>
