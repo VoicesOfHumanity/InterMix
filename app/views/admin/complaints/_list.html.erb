@@ -21,13 +21,16 @@
 	<% created = complaint.created_at || Time.current %>
 	<% deadline = created + 24.hours %>
 	<% now = Time.current %>
-	<% if deadline > now
-	     time_left = distance_of_time_in_words(now, deadline)
-	     time_left_style = (deadline - now) < 4.hours ? 'color:red;font-weight:bold' : ''
-	   else
-	     time_left = "Overdue"
-	     time_left_style = 'color:red;font-weight:bold'
-	   end %>
+	<% if complaint.status == 'resolved' %>
+		<% time_left = "-" %>
+		<% time_left_style = '' %>
+	<% elsif deadline > now %>
+		<% time_left = distance_of_time_in_words(now, deadline) %>
+		<% time_left_style = (deadline - now) < 4.hours ? 'color:red;font-weight:bold' : '' %>
+	<% else %>
+		<% time_left = "Overdue" %>
+		<% time_left_style = 'color:red;font-weight:bold' %>
+	<% end %>
 	<tr class="line<%= odd_or_even %>">
 		<td><input type="checkbox" name="mark[]" class="cammark" title="mark" value="<%= complaint.id %>" /></td>
 		<td><a href="#" onclick="viewrec1(<%= complaint.id %>)"><%= complaint.id %></a></td>
