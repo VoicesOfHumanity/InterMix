@@ -7,9 +7,9 @@
 #role :web, "ploy@sirius.cr8.com"                          # Your HTTP server, Apache/etc
 #role :app, "ploy@sirius.cr8.com"                          # This may be the same as your `Web` server
 #role :db,  "ploy@sirius.cr8.com", :primary => true # This is where Rails migrations will run
-role :web, "ploy@34.30.183.18"                          # Your HTTP server, Apache/etc
-role :app, "ploy@34.30.183.18"                          # This may be the same as your `Web` server
-role :db,  "ploy@34.30.183.18", :primary => true # This is where Rails migrations will run
+role :web, "ploy@116.203.184.193"                          # Your HTTP server, Apache/etc
+role :app, "ploy@116.203.184.193"                          # This may be the same as your `Web` server
+role :db,  "ploy@116.203.184.193", :primary => true # This is where Rails migrations will run
 
 # Extended Server Syntax
 # ======================
