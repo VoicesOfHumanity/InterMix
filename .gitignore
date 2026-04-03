@@ -46,3 +46,5 @@ yarn-debug.log*
 .yarn-integrity
 
 /public/sitemap*.xml.gz
+
+.claude/
