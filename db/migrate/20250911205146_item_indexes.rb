@@ -7,10 +7,10 @@ class ItemIndexes < ActiveRecord::Migration[5.2]
     safe_add_index :items, [:geo_level, :conversation_id, :created_at], length: { geo_level: 10 }
     # MyISAM + utf8mb4: prefix city (varchar 255)
     safe_add_index :participants, [:country_code, :admin1uniq, :city], length: { city: 100 }
-    safe_add_index :items, [:intra_com, :created_at, :censored]
-    safe_add_index :items, [:intra_conv, :created_at, :censored]
+    safe_add_index :items, [:intra_com, :created_at, :censored], length: { intra_com: 30 }
+    safe_add_index :items, [:intra_conv, :created_at, :censored], length: { intra_conv: 30 }
     safe_add_index :items, [:posted_by, :created_at, :censored]
-    safe_add_index :items, [:wall_post, :wall_delivery, :created_at]
+    safe_add_index :items, [:wall_post, :wall_delivery, :created_at], length: { wall_delivery: 30 }
     safe_add_index :participants, [:admin2uniq, :metro_area_id]
     safe_add_index :participants, [:city, :admin1uniq], length: { city: 100 }
     safe_add_index :ratings, [:item_id, :created_at]
