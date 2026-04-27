@@ -102,6 +102,9 @@ gem "date"
 
 gem 'rexml', '~> 3.2'
 
+# Ruby 2.7 compatibility: ffi 1.17+ requires Ruby >= 3.0
+gem 'ffi', '< 1.17'
+
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
