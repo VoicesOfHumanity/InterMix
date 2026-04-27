@@ -48,3 +48,5 @@ yarn-debug.log*
 /public/sitemap*.xml.gz
 
 .claude/
+CLAUDE.md
+STATUs.md
