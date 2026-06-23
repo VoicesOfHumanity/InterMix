@@ -15,7 +15,7 @@
 # Cutoff is configurable (days); default 30:
 #   AP_BACKLOG_CUTOFF_DAYS=30 ... rails runner script/activitypub_backlog_triage.rb
 
-require File.dirname(__FILE__)+'/cron_helper'
+require_relative 'cron_helper'
 
 cutoff_days = (ENV['AP_BACKLOG_CUTOFF_DAYS'] || 30).to_i
 cutoff = cutoff_days.days.ago

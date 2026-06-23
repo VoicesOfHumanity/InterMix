@@ -1,6 +1,6 @@
 # Deliver new posts to remote followers
 
-require File.dirname(__FILE__)+'/cron_helper'
+require_relative 'cron_helper'
 
 include ActivityPub
 
