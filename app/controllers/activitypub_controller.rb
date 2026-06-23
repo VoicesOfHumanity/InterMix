@@ -109,19 +109,16 @@ class ActivitypubController < ApplicationController
   def community_info
     # account info for a community
     # /ap/com/:comtag
-
-    results_json = results.to_json
-    expires_in 3.days, public: true
-    render json: results_json, content_type: 'application/activity+json'
+    # Not yet implemented as a federatable actor. Return 404 rather than crashing
+    # (this previously referenced an undefined `results` and raised a 500).
+    render json: {"error" => "Community actor not available"}, status: :not_found, content_type: 'application/activity+json'
   end
-  
+
   def conversation_info
     # account info for a conversation
     # /ap/conv/:tag
-
-    results_json = results.to_json
-    expires_in 3.days, public: true
-    render json: results_json, content_type: 'application/activity+json'
+    # Not yet implemented as a federatable actor. Return 404 rather than crashing.
+    render json: {"error" => "Conversation actor not available"}, status: :not_found, content_type: 'application/activity+json'
   end
   
   def voh_info

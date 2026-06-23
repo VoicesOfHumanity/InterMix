@@ -277,12 +277,24 @@ module ActivityPub
       our_function: our_function
     )
 
-    res = HTTP.headers(headers).post(inbox_url, body: object.to_json)
-    
+    begin
+      res = HTTP.timeout(connect: 10, read: 20).headers(headers).post(inbox_url, body: object.to_json)
+    rescue => e
+      # Network/TLS/timeout failure talking to the remote inbox. Record it and
+      # return false rather than raising: an unhandled raise here would crash the
+      # whole delivery run and leave the item undelivered, causing it to be retried
+      # every cron tick (the cause of the historical runaway send loop).
+      Rails.logger.info "activitypub#sign_and_send delivery to #{inbox_url} failed: #{e.class}: #{e}"
+      @api_send.response_code = 'error'
+      @api_send.response_body = "#{e.class}: #{e}"
+      @api_send.save
+      return false
+    end
+
     @api_send.response_code = res.code
     @api_send.response_body = res.body
     @api_send.save
-    
+
     return @api_send
   end
 
@@ -993,10 +1005,12 @@ module ActivityPub
     }
 
     req = sign_and_send(from_participant.id, to_remote_actor, object, 'send_public_post')
-    
-    return true
+
+    # Return the actual delivery result (false on failure) so callers can track
+    # success/failure instead of always assuming delivery worked.
+    return req ? true : false
   end
-  
+
   def respond_to_delete_actor(from_remote_actor)
     #-- A remote account has disappared. Let's remove it from follows
     if not from_remote_actor
@@ -1029,15 +1043,9 @@ module ActivityPub
     }
             
     req = sign_and_send(participant.id, to_remote_actor, object, 'send_delete_actor')
-    puts "delete actor sent"
-  
-    if req
-      follow.accepted = true
-      follow.accept_record_id = req.id
-      follow.save
-    end
-        
-    return true
+    Rails.logger.info "activitypub#send_delete_actor delete actor sent to #{to_remote_actor.account} (#{req ? 'ok' : 'failed'})"
+
+    return req ? true : false
   end
   
   def respond_to_like(from_remote_actor, ref_id)

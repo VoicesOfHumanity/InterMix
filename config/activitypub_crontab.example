@@ -1,0 +1,26 @@
+# ActivityPub cron jobs (install with `crontab -e` as the `ploy` user).
+#
+# IMPORTANT — SYS_MODE:
+#   On the STAGING server the web app runs with `SYS_MODE=staging` (set via Apache
+#   `SetEnv` in the vhost), which makes BASEDOMAIN = intermix.cr8.com. A cron job
+#   WITHOUT SYS_MODE resolves BASEDOMAIN to the PRODUCTION value (voh.intermix.org),
+#   which would sign outgoing activities with the wrong key domain and break
+#   signature verification. So on staging these jobs MUST set SYS_MODE=staging.
+#   On the PRODUCTION server, do NOT set SYS_MODE (omit it) so BASEDOMAIN resolves
+#   to voh.intermix.org.
+#
+# `bash -lc` is used so rbenv (Ruby 2.7.7) is on PATH. `flock -n` prevents
+# overlapping runs if a batch takes longer than the interval.
+#
+# ---- STAGING (intermix.cr8.com) ----
+#
+# Process incoming activities (follows, posts, replies, likes) every 2 minutes:
+*/2 * * * * /usr/bin/flock -n /tmp/ap_responses.lock /bin/bash -lc 'cd /home/apps/intermix/current && SYS_MODE=staging RAILS_ENV=production bundle exec rails runner script/activitypub_responses.rb' >> /home/apps/intermix/shared/log/activitypub_responses.log 2>&1
+#
+# Deliver new local public posts to remote followers every 2 minutes:
+*/2 * * * * /usr/bin/flock -n /tmp/ap_delivery.lock /bin/bash -lc 'cd /home/apps/intermix/current && SYS_MODE=staging RAILS_ENV=production bundle exec rails runner script/activitypub_delivery.rb' >> /home/apps/intermix/shared/log/activitypub_delivery.log 2>&1
+#
+# ---- PRODUCTION (voh.intermix.org) — same, but WITHOUT SYS_MODE ----
+#
+# */2 * * * * /usr/bin/flock -n /tmp/ap_responses.lock /bin/bash -lc 'cd /home/apps/intermix/current && RAILS_ENV=production bundle exec rails runner script/activitypub_responses.rb' >> /home/apps/intermix/shared/log/activitypub_responses.log 2>&1
+# */2 * * * * /usr/bin/flock -n /tmp/ap_delivery.lock /bin/bash -lc 'cd /home/apps/intermix/current && RAILS_ENV=production bundle exec rails runner script/activitypub_delivery.rb' >> /home/apps/intermix/shared/log/activitypub_delivery.log 2>&1
