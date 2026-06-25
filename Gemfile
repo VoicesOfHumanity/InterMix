@@ -126,7 +126,7 @@ end
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   #gem 'therubyracer', :platforms => :ruby
-  gem 'mini_racer', '~> 0.4.0'
+  gem 'mini_racer', '~> 0.6.4'
 
   gem 'uglifier'
 
