@@ -126,11 +126,11 @@ class GroupsController < ApplicationController
     else
       #-- Check if the shortname is unique
       xshortname = params[:group][:shortname]
-      xgroup = Group.where("shortname='#{xshortname}' and id!=#{@group.id.to_i}").first
+      xgroup = Group.where(shortname: xshortname).where.not(id: @group.id.to_i).first
       if xgroup
         flash[:alert] += "There is already another group with the prefix \"#{xshortname}\"<br/>"
       else  
-        xdialog = Dialog.where("shortname='#{xshortname}'").first
+        xdialog = Dialog.where(shortname: xshortname).first
         if xdialog
           flash[:alert] += "There is already a discussion with the prefix \"#{xshortname}\"<br/>"
         end  

@@ -188,13 +188,11 @@ class NetworksController < ApplicationController
     end
 
     def prepare_edit
-      comtag_list = ''.dup
       comtags = {}
       for tag in current_participant.tag_list_downcase
         comtags[tag] = true
       end
-      comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
-      @mycommunities = Community.where("tagname in (#{comtag_list})")
+      @mycommunities = Community.where(tagname: comtags.keys)
     
       @geo_levels = []
       GEO_LEVELS.each do |num, name|
