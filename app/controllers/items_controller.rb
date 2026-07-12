@@ -201,9 +201,13 @@ class ItemsController < ApplicationController
     @items = @items.paginate :page=>@page, :per_page => @perscr  
 
     if participant_signed_in?
-      current_participant.forum_settings = {'sortby'=>sortby,'perscr'=>@perscr,'threads'=>@threads,'group_id'=>@group_id,'dialog_id'=>@dialog_id}
-      current_participant.save
-    end  
+      new_forum_settings = {'sortby'=>sortby,'perscr'=>@perscr,'threads'=>@threads,'group_id'=>@group_id,'dialog_id'=>@dialog_id}
+      #-- Persist just this column, and only when it changed, instead of a full
+      #-- participant save (validations/callbacks/updated_at) on every list AJAX.
+      if current_participant.forum_settings != new_forum_settings
+        current_participant.update_column(:forum_settings, new_forum_settings)
+      end
+    end
     
     #-- Try to figure out if the user is allowed to post. Mainly to know which message to show them if there are no messages.
     @can_post = false
