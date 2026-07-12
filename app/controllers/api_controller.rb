@@ -1,10 +1,18 @@
+require 'net/http'
+
 class ApiController < ApplicationController
-    #-- This is mainly a back end for apps 
+    #-- This is mainly a back end for apps
 
     logger                                         = Logger.new(STDOUT)
     logger.level                                   = Logger::INFO
 
     append_before_action :check_api_code
+    #-- Endpoints that act on behalf of a user must present that user's auth_token
+    #-- (issued at login/register). Set API_LEGACY_AUTH=1 to temporarily allow the
+    #-- old user_id-only calls from app versions that predate token auth.
+    append_before_action :require_api_user!, except: [:verify_email, :login, :logout, :register,
+                                                      :user_from_facebook, :forgot_password,
+                                                      :user_post_count, :delete_account]
 
     include ItemLib
     include ActivityPub
@@ -31,9 +39,9 @@ class ApiController < ApplicationController
         participant = Participant.find_by(email: params[:email])
         if participant
             Rails.logger.info("api verify_email: ok")
+            #-- Only confirm existence; profile data (and auth_token) require a password
             render json: {
-                status: 'success',
-                user: user_info(participant)
+                status: 'success'
             }
         else
             logger.info("api verify_email: not found")
@@ -51,6 +59,7 @@ class ApiController < ApplicationController
         Rails.logger.info("api login: user found") if participant
         if participant and participant.valid_password?(password)
             Rails.logger.info("api login: password ok")
+            participant.ensure_authentication_token!
             render json: {
                 status: 'success',
                 user: user_info(participant)
@@ -150,11 +159,23 @@ class ApiController < ApplicationController
         # Return the user info
         Rails.logger.info("api#user_from_facebook")
         data = JSON.parse(request.raw_post)
-        Rails.logger.info("api#user_from_facebook: data: #{data.inspect}")
         fb_uid = data['facebook_id']
         email = data['email']
         name = data['name']
         explanation = ''
+
+        #-- The claimed facebook identity must be proven with a Facebook access
+        #-- token, otherwise anyone could take over the account tied to an email.
+        unless facebook_identity_verified?(fb_uid, data['fb_access_token'].to_s)
+            unless ENV['API_LEGACY_AUTH'] == '1'
+                render json: {
+                    status: 'error',
+                    message: 'Facebook identity could not be verified'
+                }, status: 401
+                return
+            end
+            Rails.logger.warn("api#user_from_facebook: LEGACY unverified facebook identity accepted for fb_uid #{fb_uid}")
+        end
 
         participant = Participant.where(fb_uid: fb_uid, email: email).first
         if participant
@@ -183,7 +204,7 @@ class ApiController < ApplicationController
             Rails.logger.info("api#user_from_facebook: creating participant")
             explanation = 'new user created'
             participant = Participant.new
-            narr = @name.split(' ')
+            narr = name.to_s.split(' ')
             last_name = narr[narr.length-1]
             first_name = ''
             first_name = narr[0,narr.length-1].join(' ') if narr.length > 1
@@ -199,6 +220,7 @@ class ApiController < ApplicationController
             participant.picture = URI.parse(url).open
             participant.save
         end
+        participant.ensure_authentication_token!
         render json: {
             status: 'success',
             message: explanation,
@@ -207,18 +229,19 @@ class ApiController < ApplicationController
     end
 
     def get_user
+        #-- Full user info (including email and auth_token) is only for the
+        #-- authenticated user themselves
         id = params[:id].to_i
         Rails.logger.info("api#get_user: id: #{id}")
-        participant = Participant.find_by_id(id)
-        if participant
-            render json: {
-                status: 'success',
-                user: user_info(participant)
-            }
-        else
+        if id > 0 and id != @api_user.id
             render json: {
                 status: 'error',
-                message: 'User not found'
+                message: 'Not allowed'
+            }, status: 403
+        else
+            render json: {
+                status: 'success',
+                user: user_info(@api_user)
             }
         end
     end
@@ -244,11 +267,10 @@ class ApiController < ApplicationController
 
     def update_user_field
         data = JSON.parse(request.raw_post)
-        id = data['user_id'].to_i
-        Rails.logger.info("api#update_user_field: id: #{id}")
+        Rails.logger.info("api#update_user_field: id: #{@api_user.id}")
         field_name = data['field_name']
         field_value = data['field_value']
-        p = Participant.find_by_id(id)
+        p = @api_user
         if p
             @participant = p
             @oldparticipant = p.dup
@@ -322,16 +344,15 @@ class ApiController < ApplicationController
         else
             render json: {
                 status: 'error',
-                message: "User #{id} not found"
+                message: "User not found"
             }
         end
     end
 
     def update_user
         data = JSON.parse(request.raw_post)
-        id = data['user_id'].to_i
-        Rails.logger.info("api#update_user: id: #{id}")
-        p = Participant.find_by_id(id)
+        Rails.logger.info("api#update_user: id: #{@api_user.id}")
+        p = @api_user
         if p
             @participant = p
             @oldparticipant = p.dup
@@ -413,26 +434,25 @@ class ApiController < ApplicationController
         else
             render json: {
                 status: 'error',
-                message: "User #{id} not found"
+                message: "User not found"
             }
         end
     end
 
     def block_user
-        user_id = params[:user_id].to_i
         blocked_user_id = params[:blocked_user_id].to_i
 
-        Rails.logger.info("api#block_user user:#{user_id} blocked_user:#{blocked_user_id}")
+        Rails.logger.info("api#block_user user:#{@api_user.id} blocked_user:#{blocked_user_id}")
 
-        if user_id == 0 || blocked_user_id == 0
+        if blocked_user_id == 0
             render json: {
                 status: 'error',
-                message: 'User and blocked_user must be specified'
+                message: 'blocked_user must be specified'
             }
             return
         end
 
-        if user_id == blocked_user_id
+        if @api_user.id == blocked_user_id
             render json: {
                 status: 'error',
                 message: 'You cannot block yourself'
@@ -440,7 +460,7 @@ class ApiController < ApplicationController
             return
         end
 
-        blocker = Participant.find_by_id(user_id)
+        blocker = @api_user
         blocked = Participant.find_by_id(blocked_user_id)
 
         unless blocker && blocked
@@ -475,7 +495,7 @@ class ApiController < ApplicationController
     def importance
         # update importance for an item
         item_id = params[:item_id].to_i
-        user_id = params[:user_id].to_i
+        user_id = @api_user.id
         importance = params[:importance].to_i
         rating = Rating.where(item_id: item_id, participant_id: user_id).first
         if not rating
@@ -505,15 +525,19 @@ class ApiController < ApplicationController
         @from = params[:from] || 'api'
         item_id = params[:item_id].to_i
         vote = params[:vote].to_i
-        user_id = params[:user_id].to_i
         Rails.logger.level = 1
-        Rails.logger.info("api#thumbrate item:#{item_id} user:#{user_id} vote:#{vote}")
+        Rails.logger.info("api#thumbrate item:#{item_id} user:#{@api_user.id} vote:#{vote}")
 
-        participant = Participant.find_by_id(user_id)
-        sign_in participant
-    
         item = Item.includes(:dialog,:group).find_by_id(item_id)
-    
+
+        if not item
+            render json: {
+                status: 'error',
+                message: "Item not found"
+            }
+            return
+        end
+
         #-- Check if they're allowed to rate it
         if not item.voting_ok(current_participant.id)
             render json: {
@@ -532,7 +556,7 @@ class ApiController < ApplicationController
 
     def report_complaint
         item_id = params[:item_id].to_i
-        user_id = params[:user_id].to_i
+        user_id = @api_user.id
         reason = params[:reason].to_s
 
         Rails.logger.info("api#report_complaint item:#{item_id} user:#{user_id} reason:#{reason}")
@@ -554,20 +578,19 @@ class ApiController < ApplicationController
     end
 
     def unblock_user
-        user_id = params[:user_id].to_i
         blocked_user_id = params[:blocked_user_id].to_i
 
-        Rails.logger.info("api#unblock_user user:#{user_id} blocked_user:#{blocked_user_id}")
+        Rails.logger.info("api#unblock_user user:#{@api_user.id} blocked_user:#{blocked_user_id}")
 
-        if user_id == 0 || blocked_user_id == 0
+        if blocked_user_id == 0
             render json: {
                 status: 'error',
-                message: 'User and blocked_user must be specified'
+                message: 'blocked_user must be specified'
             }
             return
         end
 
-        if user_id == blocked_user_id
+        if @api_user.id == blocked_user_id
             render json: {
                 status: 'error',
                 message: 'You cannot unblock yourself'
@@ -575,7 +598,7 @@ class ApiController < ApplicationController
             return
         end
 
-        blocker = Participant.find_by_id(user_id)
+        blocker = @api_user
         blocked = Participant.find_by_id(blocked_user_id)
 
         unless blocker && blocked
@@ -650,9 +673,8 @@ class ApiController < ApplicationController
     end
 
     def join_community
-        user_id = params[:user_id].to_i
         community_id = params[:community_id].to_i
-        participant = Participant.find_by_id(user_id)
+        participant = @api_user
         community = Community.find_by_id(community_id)
         if participant and community
             if not participant.tag_list_downcase.include?(community.tagname.downcase)
@@ -672,9 +694,8 @@ class ApiController < ApplicationController
     end
 
     def leave_community
-        user_id = params[:user_id].to_i
         community_id = params[:community_id].to_i
-        participant = Participant.find_by_id(user_id)
+        participant = @api_user
         community = Community.find_by_id(community_id)
         if participant and community
             if participant.tag_list_downcase.include?(community.tagname.downcase)
@@ -694,33 +715,15 @@ class ApiController < ApplicationController
     end
 
     def list_blocks
-        user_id = params[:user_id].to_i
+        Rails.logger.info("api#list_blocks user:#{@api_user.id}")
 
-        Rails.logger.info("api#list_blocks user:#{user_id}")
-
-        if user_id == 0
-            render json: {
-                status: 'error',
-                message: 'User must be specified'
-            }
-            return
-        end
-
-        blocker = Participant.find_by_id(user_id)
-
-        unless blocker
-            render json: {
-                status: 'error',
-                message: 'User not found'
-            }
-            return
-        end
+        blocker = @api_user
 
         blocked_users = blocker.blocked_participants
 
         render json: {
             status: 'success',
-            blocked_users: blocked_users.map { |p| user_info(p) }
+            blocked_users: blocked_users.map { |p| public_user_info(p) }
         }
     end
 
@@ -833,6 +836,86 @@ class ApiController < ApplicationController
                 message: 'Access denied'
             }
         end
+    end
+
+    def require_api_user!
+        token = params[:auth_token].presence
+        if token.blank? and request.post? and request.raw_post.present?
+            begin
+                data = JSON.parse(request.raw_post)
+                token = data['auth_token'].presence if data.is_a?(Hash)
+            rescue JSON::ParserError
+            end
+        end
+        @api_user = token.present? ? Participant.find_by_authentication_token(token.to_s) : nil
+
+        if @api_user
+            claimed = api_claimed_user_id
+            if claimed > 0 and claimed != @api_user.id
+                Rails.logger.warn("api#require_api_user!: auth_token participant #{@api_user.id} claimed user_id #{claimed}")
+                render json: {
+                    status: 'error',
+                    message: 'auth_token does not match user_id'
+                }, status: 403
+                return
+            end
+            sign_in @api_user
+            return
+        end
+
+        if ENV['API_LEGACY_AUTH'] == '1'
+            claimed = api_claimed_user_id
+            @api_user = Participant.find_by_id(claimed) if claimed > 0
+            if @api_user
+                Rails.logger.warn("api#require_api_user!: LEGACY user_id-only auth for participant #{@api_user.id} on #{action_name}")
+                sign_in @api_user
+                return
+            end
+        end
+
+        render json: {
+            status: 'error',
+            message: 'Invalid or missing auth_token'
+        }, status: 401
+    end
+
+    def api_claimed_user_id
+        claimed = params[:user_id].to_i
+        if claimed == 0 and request.post? and request.raw_post.present?
+            begin
+                data = JSON.parse(request.raw_post)
+                claimed = data['user_id'].to_i if data.is_a?(Hash)
+            rescue JSON::ParserError
+            end
+        end
+        claimed
+    end
+
+    def facebook_identity_verified?(fb_uid, access_token)
+        return false if fb_uid.to_s == '' or access_token == ''
+        begin
+            uri = URI("https://graph.facebook.com/me?fields=id&access_token=#{CGI.escape(access_token)}")
+            response = Net::HTTP.get_response(uri)
+            return false unless response.is_a?(Net::HTTPSuccess)
+            JSON.parse(response.body)['id'].to_s == fb_uid.to_s
+        rescue StandardError => e
+            Rails.logger.warn("api#facebook_identity_verified?: #{e}")
+            false
+        end
+    end
+
+    def public_user_info(participant)
+        if participant.picture.exists?
+            user_img_link = participant.picture.url(:thumb)
+        else
+            user_img_link = "/images/default_user_icon-50x50.png"
+        end
+        user_img_link = "https://#{BASEDOMAIN}#{user_img_link}"
+        {
+            id: participant.id,
+            name: participant.name,
+            user_img_link: user_img_link
+        }
     end
 
     def user_info(participant)

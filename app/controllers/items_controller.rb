@@ -344,7 +344,9 @@ class ItemsController < ApplicationController
     
     if participant_signed_in?
       cp = current_participant
-    elsif user_id > 0
+    elsif user_id > 0 and ENV['API_LEGACY_AUTH'] == '1'
+      #-- Personalizing by bare user_id exposes that user's ratings; only for old app versions
+      Rails.logger.warn("items#list_api: LEGACY user_id-only personalization for participant #{user_id}")
       cp = Participant.find_by_id(user_id)
     else
       cp = nil
@@ -676,9 +678,20 @@ class ItemsController < ApplicationController
     subject = "App post reported"
     
     item = Item.find_by_id(item_id)
-    reporter = Participant.find_by_id(posted_by)
-    
-    message = "<p>Item ##{item_id}:#{item.subject} reported by user ##{posted_by}:#{reporter.email}</p><p>#{text}</p>"
+    if participant_signed_in?
+      reporter = current_participant
+    elsif ENV['API_LEGACY_AUTH'] == '1'
+      reporter = Participant.find_by_id(posted_by)
+    else
+      reporter = nil
+    end
+
+    if item.nil? or reporter.nil?
+      render json: {'result': 'error', 'message': 'item or reporter not found'}
+      return
+    end
+
+    message = "<p>Item ##{item_id}:#{item.subject} reported by user ##{reporter.id}:#{reporter.email}</p><p>#{text}</p>"
     
     toemail = 'appreport@intermix.org'
     
