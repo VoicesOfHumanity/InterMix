@@ -1035,7 +1035,11 @@ class Item < ActiveRecord::Base
 
     items2 = []     # The items for the next step
     
-    logger.info("item#list_and_results going through #{items.length} items and #{ratings.length} ratings")    
+    logger.info("item#list_and_results going through #{items.length} items and #{ratings.length} ratings")
+    #-- Group ratings by item once so the per-item loop is a hash lookup instead
+    #-- of a full scan of every rating (kills the O(items*ratings) blowup).
+    #-- group_by preserves rating order per item, so results are identical.
+    ratings_by_item = ratings.group_by { |r| r.item_id }
     for item in items
       #-- Add up stats, and filter out non-roots, if necessary, into items2
       iproc = {'id'=>item.id,'name'=>(item.participant ? item.participant.name : '???'),'subject'=>item.subject,'votes'=>0,'num_interest'=>0,'tot_interest'=>0,'avg_interest'=>0.0,'num_approval'=>0,'tot_approval'=>0,'avg_approval'=>0.0,'value'=>0.0,'int_0_count'=>0,'int_1_count'=>0,'int_2_count'=>0,'int_3_count'=>0,'int_4_count'=>0,'app_n3_count'=>0,'app_n2_count'=>0,'app_n1_count'=>0,'app_0_count'=>0,'app_p1_count'=>0,'app_p2_count'=>0,'app_p3_count'=>0,'controversy'=>0,'item'=>item,'replies'=>[],'hasrating'=>0,'rateapproval'=>0,'rateinterest'=>0,'num_raters'=>0,'ratings'=>[]}
@@ -1055,7 +1059,7 @@ class Item < ActiveRecord::Base
           end
         end
       end
-      for rating in ratings
+      for rating in (ratings_by_item[item.id] || [])
         if rating.item_id == item.id
           iproc['votes'] += 1
           if rating.interest
