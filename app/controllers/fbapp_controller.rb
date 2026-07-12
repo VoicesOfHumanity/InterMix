@@ -133,7 +133,7 @@ class FbappController < ApplicationController
     getfbstuff
     if params[:q].to_s != ''
       @q = params[:q]
-      @items = Item.where("items.dialog_id=#{@dialog_id} and items.has_picture=1 and items.media_type='picture' and is_flagged!=1 and items.short_content like '%#{@q}%'").includes(:participant).order("items.id desc").limit(12)   
+      @items = Item.where("items.dialog_id=? and items.has_picture=1 and items.media_type='picture' and is_flagged!=1 and items.short_content like ?", @dialog_id, "%#{@q}%").includes(:participant).order("items.id desc").limit(12)
     else
       @items = []
     end

@@ -402,8 +402,7 @@ class Participant < ActiveRecord::Base
       comtags[tag] = true
     end
     if comtags.length > 0
-      comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
-      communities = Community.where("tagname in (#{comtag_list})")
+      communities = Community.where(tagname: comtags.keys)
     else
       communities = Community.where("1=0")
     end

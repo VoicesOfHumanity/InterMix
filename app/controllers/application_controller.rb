@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
       res = []
     else
       #res = [{:val=>0, :txt=>''}] + Geoadmin1.where("country_code='#{@country_code}' and admin1_code!='00'").order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
-      res = Geoadmin1.where("country_code='#{@country_code}' and admin1_code!='00'").order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
+      res = Geoadmin1.where(country_code: @country_code).where.not(admin1_code: '00').order("name").collect {|r| {:val=>r.admin1uniq,:txt=>r.name}}
     end          
     #render :layout=>false, :text => res.to_json
     render json: res
@@ -48,9 +48,9 @@ class ApplicationController < ActionController::Base
     if @admin1uniq == '' and @country_code == '' 
       res = [{:val=>0, :txt=>''}]
     elsif @admin1uniq != ""
-      res = [{:val=>0, :txt=>''}] + Geoadmin2.where("admin1uniq='#{@admin1uniq}'").order("name").collect {|r| {:val=>r.admin2uniq,:txt=>r.name}}
+      res = [{:val=>0, :txt=>''}] + Geoadmin2.where(admin1uniq: @admin1uniq).order("name").collect {|r| {:val=>r.admin2uniq,:txt=>r.name}}
     elsif @country_code != ""
-      res = [{:val=>0, :txt=>''}] + Geoadmin2.where("country_code='#{@country_code}'").order("name").collect {|r| {:val=>r.admin2uniq,:txt=>r.name}}
+      res = [{:val=>0, :txt=>''}] + Geoadmin2.where(country_code: @country_code).order("name").collect {|r| {:val=>r.admin2uniq,:txt=>r.name}}
     end
     #render :layout=>false, :text => res.to_json
     render json: res
@@ -136,8 +136,7 @@ class ApplicationController < ActionController::Base
           comtags[tag] = true
         end
         if comtags.length > 0
-          comtag_list = comtags.collect{|k, v| "'#{k}'"}.join(',')
-          @communities = Community.where("tagname in (#{comtag_list})")
+          @communities = Community.where(tagname: comtags.keys)
         else
           @communities = Community.where("1=0")
         end

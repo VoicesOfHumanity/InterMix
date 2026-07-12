@@ -1799,7 +1799,6 @@ class Item < ActiveRecord::Base
     if crit[:comtag].to_s == '*my*'
       base_data[:title] += " | My Communities"
       plist = ''
-      comtag_list = ''
       comtags = {}
       ps = {}
       for tag in current_participant.tag_list_downcase
@@ -1808,15 +1807,15 @@ class Item < ActiveRecord::Base
           ps[p.id] = true
         end
       end
-      comtag_list = comtags.collect{|k, v| "'@#{k}'"}.join(',')
+      comtag_arr = comtags.keys.collect{|k| "@#{k}"}
       plist = ps.collect{|k, v| k}.join(',')
       if plist != ''
         items = items.where("participants.id in (#{plist})")
       else
         items = items.where("1=0")
       end
-      
-      items = items.where("items.intra_com='public' or items.intra_com in (#{comtag_list})")
+
+      items = items.where("items.intra_com='public' or items.intra_com in (?)", comtag_arr)
       logger.info("item#get_items_user_specific my communities by tag")
     end
 
@@ -2324,7 +2323,6 @@ class Item < ActiveRecord::Base
     elsif crit[:comtag].to_s == '*my*'
       title += " | My Communities"
       plist = ''
-      comtag_list = ''
       comtags = {}
       ps = {}
       for tag in current_participant.tag_list_downcase
@@ -2333,16 +2331,16 @@ class Item < ActiveRecord::Base
           ps[p.id] = true
         end
       end
-      comtag_list = comtags.collect{|k, v| "'@#{k}'"}.join(',')
+      comtag_arr = comtags.keys.collect{|k| "@#{k}"}
       plist = ps.collect{|k, v| k}.join(',')
       if plist != ''
         items = items.where("participants.id in (#{plist})")
       else
         items = items.where("1=0")
-      end      
-      
+      end
+
       # show items from members of any of my groups
-      items = items.where("items.intra_com='public' or items.intra_com in (#{comtag_list})")
+      items = items.where("items.intra_com='public' or items.intra_com in (?)", comtag_arr)
       logger.info("item#get_items my communities by tag")
       
     elsif crit[:comtag].to_s != ''
