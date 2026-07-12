@@ -90,7 +90,7 @@ class Admin::TemplatesController < ApplicationController
     logger.info("Updating template #{@template.id}")
 
     respond_to do |format|
-      if @template.update_attributes(template_params)
+      if @template.update(template_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Template was successfully updated.' }
         format.xml  { head :ok }
       else

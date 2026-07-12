@@ -86,7 +86,7 @@ class GroupsController < ApplicationController
     @metamaps = Metamap.where(nil)
     #logger.info("groups#update metamap parameter: #{params[:metamap]}")
     respond_to do |format|
-      if gvalidate and @group.update_attributes(group_params)
+      if gvalidate and @group.update(group_params)
         @group.shortdesc = view_context.strip_tags(@group.shortdesc)[0..123]
         @group.save
         for metamap in Metamap.where(nil)

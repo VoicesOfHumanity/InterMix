@@ -89,7 +89,7 @@ class Admin::ComplaintsController < ApplicationController
     @complaint = Complaint.find(params[:id])
 
     respond_to do |format|
-      if @complaint.update_attributes(complaint_params)
+      if @complaint.update(complaint_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -120,7 +120,7 @@ class Admin::ComplaintsController < ApplicationController
     item.moderated_at = Time.current
     item.moderated_by = current_participant.id
     item.save!
-    @complaint.update_attributes(status: 'resolved')
+    @complaint.update(status: 'resolved')
     render plain: 'ok'
   end
 
@@ -130,14 +130,14 @@ class Admin::ComplaintsController < ApplicationController
     poster = @complaint.poster
     poster.status = 'inactive'
     poster.save!
-    @complaint.update_attributes(status: 'resolved')
+    @complaint.update(status: 'resolved')
     render plain: 'ok'
   end
 
   # POST /admin/complaints/:id/resolve — mark complaint as resolved (no other action)
   def resolve
     @complaint = Complaint.find(params[:id])
-    @complaint.update_attributes(status: 'resolved')
+    @complaint.update(status: 'resolved')
     render plain: 'ok'
   end
 

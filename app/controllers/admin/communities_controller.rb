@@ -113,7 +113,7 @@ class Admin::CommunitiesController < ApplicationController
     @community = Community.find(params[:id])
 
     respond_to do |format|
-      if @community.update_attributes(community_params)
+      if @community.update(community_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Community was successfully updated.' }
         format.xml  { head :ok }
       else

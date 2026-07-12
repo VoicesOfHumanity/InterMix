@@ -401,7 +401,7 @@ class CommunitiesController < ApplicationController
   def update
     @community_id = params[:id].to_i
     @community = Community.find(@community_id)
-    @community.update_attributes(community_params)
+    @community.update(community_params)
     #@community.tagname.downcase!
     @community.description = sanitizethis(@community.description).strip
     @community.save

@@ -86,7 +86,7 @@ class Admin::ConversationsController < ApplicationController
   # PATCH/PUT /conversations/1
   def update
     respond_to do |format|
-      if @conversation.update_attributes(conversation_params)
+      if @conversation.update(conversation_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Conversation was successfully updated.' }
         format.xml  { head :ok }
       else

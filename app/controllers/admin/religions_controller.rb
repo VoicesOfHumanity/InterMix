@@ -89,7 +89,7 @@ class Admin::ReligionsController < ApplicationController
     @religion = Religion.find(params[:id])
 
     respond_to do |format|
-      if @religion.update_attributes(religion_params)
+      if @religion.update(religion_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else

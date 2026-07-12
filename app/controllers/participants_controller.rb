@@ -150,7 +150,7 @@ class ParticipantsController < ApplicationController
     geoupdate
 
     respond_to do |format|
-      if @participant.update_attributes(password_params)
+      if @participant.update(password_params)
       #if @participant.save
         format.html { render :partial=>'show', :layout=>false, :notice => 'Participant was successfully updated.' }
         format.xml  { head :ok }

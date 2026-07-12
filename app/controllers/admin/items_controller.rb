@@ -103,7 +103,7 @@ class Admin::ItemsController < ApplicationController
     itemprocess
 
     respond_to do |format|
-      if @item.update_attributes(item_params)
+      if @item.update(item_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Item was successfully updated.' }
         format.xml  { head :ok }
       else

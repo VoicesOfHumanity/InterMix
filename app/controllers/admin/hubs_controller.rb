@@ -89,7 +89,7 @@ class Admin::HubsController < ApplicationController
     @hub = Hub.find(params[:id])
 
     respond_to do |format|
-      if @hub.update_attributes(hub_params)
+      if @hub.update(hub_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else

@@ -777,7 +777,7 @@ class DialogsController < ApplicationController
       redirect_to :action=>:view
     end 
     respond_to do |format|
-      if dvalidate and @dialog.update_attributes(dialog_params)
+      if dvalidate and @dialog.update(dialog_params)
         @dialog.shortdesc = view_context.strip_tags(@dialog.shortdesc)[0..123]
         @dialog.save
         for metamap in Metamap.where(nil)
@@ -1132,7 +1132,7 @@ class DialogsController < ApplicationController
     @period.shortdesc = view_context.strip_tags(@period.shortdesc.to_s)[0..123]
     #@period.shortdesc = ActionController::Base.helpers.strip_tags(@period.shortdesc.to_s)[0..123]
     @period.save!    
-    @period.update_attributes(period_params)
+    @period.update(period_params)
     #@period.required_meta = params[:period][:required_meta]
 		#@period.required_message = params[:period][:required_message]
 		#@period.required_subject = params[:period][:required_subject]

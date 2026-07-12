@@ -1675,7 +1675,7 @@ class ItemsController < ApplicationController
       render :partial=>'edit', :layout=>false
       return
     end
-    #if @item.update_attributes(params[:item])
+    #if @item.update(params[:item])
       itemprocess
       @item.save
       Item.invalidate_cache_on_item_change

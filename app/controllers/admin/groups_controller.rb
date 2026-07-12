@@ -92,7 +92,7 @@ class Admin::GroupsController < ApplicationController
     logger.info("groups#update #{@group.id}")
 
     respond_to do |format|
-      if @group.update_attributes(group_params)
+      if @group.update(group_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else

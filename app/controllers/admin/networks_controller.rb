@@ -80,7 +80,7 @@ class Admin::NetworksController < ApplicationController
 
   def update
     respond_to do |format|
-      if @network.update_attributes(network_params)
+      if @network.update(network_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Network was successfully updated.' }
         format.xml  { head :ok }
       else

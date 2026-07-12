@@ -98,7 +98,7 @@ class Admin::MoonsController < ApplicationController
     @moon = Moon.find(params[:id])
 
     respond_to do |format|
-      if @moon.update_attributes(moon_params)
+      if @moon.update(moon_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
