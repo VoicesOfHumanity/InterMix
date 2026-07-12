@@ -71,7 +71,7 @@ class Admin::ConversationsController < ApplicationController
 
   # POST /conversations
   def create
-    @conversation = Conversation.new(params[:conversation])
+    @conversation = Conversation.new(conversation_params)
     respond_to do |format|
       if @conversation.save
         format.html { render :partial=>'show', :layout=>false, :notice => 'Conversation was successfully created.' }
@@ -86,7 +86,7 @@ class Admin::ConversationsController < ApplicationController
   # PATCH/PUT /conversations/1
   def update
     respond_to do |format|
-      if @conversation.update_attributes(params[:conversation])
+      if @conversation.update_attributes(conversation_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Conversation was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -146,4 +146,8 @@ class Admin::ConversationsController < ApplicationController
     def conversation_params
       params.require(:conversation).permit(:name, :shortname, :description, :front_template)
     end
+
+  def conversation_params
+    params.require(:conversation).permit(:name, :shortname, :description, :front_template, :context, :context_code, :together_apart, :active, :topics, :default_topic, :twocountry, :twocountry_common)
+  end
 end

@@ -70,7 +70,7 @@ class Admin::TemplatesController < ApplicationController
   # POST /hubs
   # POST /hubs.xml
   def create
-    @template = Template.new(params[:template])
+    @template = Template.new(template_params)
 
     respond_to do |format|
       if @template.save
@@ -90,7 +90,7 @@ class Admin::TemplatesController < ApplicationController
     logger.info("Updating template #{@template.id}")
 
     respond_to do |format|
-      if @template.update_attributes(params[:template])
+      if @template.update_attributes(template_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Template was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -110,5 +110,9 @@ class Admin::TemplatesController < ApplicationController
       format.html { render plain: "<p>Template ##{params[:id]} has been deleted</p>" }
       format.xml  { head :ok }
     end
+  end
+
+  def template_params
+    params.require(:template).permit(:name, :section, :mail_web, :title, :html_body, :footer, :dialog_id, :group_id, :round_id)
   end
 end

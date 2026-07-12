@@ -94,7 +94,7 @@ class Admin::CommunitiesController < ApplicationController
   # POST /communities
   # POST /communities.xml
   def create
-    @community = Community.new(params[:community])
+    @community = Community.new(community_params)
 
     respond_to do |format|
       if @community.save
@@ -113,7 +113,7 @@ class Admin::CommunitiesController < ApplicationController
     @community = Community.find(params[:id])
 
     respond_to do |format|
-      if @community.update_attributes(params[:community])
+      if @community.update_attributes(community_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Community was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -171,4 +171,8 @@ class Admin::CommunitiesController < ApplicationController
   end
 
     
+
+  def community_params
+    params.require(:community).permit(:tagname, :description, :twitter_post, :twitter_username, :twitter_oauth_token, :twitter_oauth_secret, :twitter_hash_tag, :tweet_approval_min, :tweet_what, :logo, :major, :more, :ungoals, :sustdev, :bold, :fullname, :front_template, :member_template, :invite_template, :import_template, :signup_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :autotags, :is_sub, :sub_of, :context, :context_code, :voice_of_humanity, :voice_of_women, :voice_of_men, :voice_of_young, :voice_of_middleage, :voice_of_old, :moderated, :active, :conversation_id, :visibility, :message_visibility, :created_by, :administrator_id, :who_add_members)
+  end
 end

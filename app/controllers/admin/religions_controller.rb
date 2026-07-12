@@ -70,7 +70,7 @@ class Admin::ReligionsController < ApplicationController
   # POST /religions
   # POST /religions.xml
   def create
-    @religion = Religion.new(params[:religion])
+    @religion = Religion.new(religion_params)
 
     respond_to do |format|
       if @religion.save
@@ -89,7 +89,7 @@ class Admin::ReligionsController < ApplicationController
     @religion = Religion.find(params[:id])
 
     respond_to do |format|
-      if @religion.update_attributes(params[:religion])
+      if @religion.update_attributes(religion_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -111,4 +111,8 @@ class Admin::ReligionsController < ApplicationController
     end
   end
  
+
+  def religion_params
+    params.require(:religion).permit(:name, :shortname, :subdiv)
+  end
 end

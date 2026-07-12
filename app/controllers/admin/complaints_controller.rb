@@ -70,7 +70,7 @@ class Admin::ComplaintsController < ApplicationController
   # POST /complaints
   # POST /complaints.xml
   def create
-    @complaint = Complaint.new(params[:complaint])
+    @complaint = Complaint.new(complaint_params)
 
     respond_to do |format|
       if @complaint.save
@@ -89,7 +89,7 @@ class Admin::ComplaintsController < ApplicationController
     @complaint = Complaint.find(params[:id])
 
     respond_to do |format|
-      if @complaint.update_attributes(params[:complaint])
+      if @complaint.update_attributes(complaint_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -141,4 +141,8 @@ class Admin::ComplaintsController < ApplicationController
     render plain: 'ok'
   end
 
+
+  def complaint_params
+    params.require(:complaint).permit(:item_id, :poster_id, :complainer_id, :reason, :status)
+  end
 end
