@@ -1841,21 +1841,6 @@ class FrontController < ApplicationController
     end
   end
     
-  def test
-  end  
-  
-  def testajaxjson
-    #-- Return some json, without needing login
-    id = params[:somedata].to_i
-    p = Participant.find_by_id(id)
-    if p
-      ret = {'name': p.name,'dummy': 'something'}
-      render json: ret     
-    else
-      render json: {}   
-    end
-  end
-  
   def api_fb_login_join
     #-- Ajax call from some external app
     #-- Assuming they've already logged into FB on the app

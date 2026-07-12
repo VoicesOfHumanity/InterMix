@@ -322,7 +322,6 @@ Rails.application.routes.draw do
       get :forum
       get :meta
       get :result
-      get :result_old
       get :previous_result
       get :period_edit
       patch :period_save
@@ -386,7 +385,6 @@ Rails.application.routes.draw do
   get 'front/getcommunities'
   get 'front/setsess' => 'front#setsess'
   get 'front/updatemoreless' => 'front#updatemoreless'
-  get 'front/test' => 'front#test'
   get 'helptext(/:code)', :controller=>:front, :action=>:helptext
 
   get 'front/instantjointest', :controller=>:front, :action=>:instantjointest
@@ -409,7 +407,6 @@ Rails.application.routes.draw do
   post 'front/fbjoin', :controller=>:front, :action=>:fbjoin
   get 'youarehere', :controller=>:front, :action=>:youarehere
   get 'fbjoinlink', controller: :front, action: :fbjoinlink
-  get 'front/testajaxjson', controller: :front, action: :testajaxjson
   get 'front/api_fb_login_join', controller: :front, action: :api_fb_login_join
   
   get 'front/confirm', :controller=>:front, :action=>:confirm
