@@ -306,11 +306,12 @@ class ApplicationController < ActionController::Base
   def update_last_url(url='')
     #-- Record where the user last was, so they can get back there next time they log in
     url = request.env['PATH_INFO'] if url == ''
-    if current_participant
-      current_participant.last_url = url
-      current_participant.save()
-    end  
-  end  
+    if current_participant and current_participant.last_url != url
+      #-- Navigation breadcrumb: write the single column directly, skipping the
+      #-- full save (validations, callbacks, updated_at touch) on every page view.
+      current_participant.update_column(:last_url, url)
+    end
+  end
     
   def after_sign_in_path_for(resource_or_scope)
     #-- Overrides the devise function to go to our remembered URL after logging in
