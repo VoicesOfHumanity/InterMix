@@ -540,7 +540,12 @@ class ProfilesController < ApplicationController
   def api_get_user_info
     #-- Return basic user information for the settings screen on app
     ret = {'status': '', 'country_code': '', 'admin1uniq': '', 'city': '', 'gender': 0, 'age': 0, 'regions': []}
-    @participant = Participant.find(params[:id])
+    @participant = Participant.find_by_id(params[:id])
+    if @participant.nil? or @participant.id != current_participant.id
+      #-- Only the user themselves may read their settings info
+      render json: {'status': 'error', 'message': 'not allowed'}, status: 403
+      return
+    end
     if @participant
       ret['country_code'] = @participant.country_code
       ret['country_name'] = @participant.geocountry ? @participant.geocountry.name : ''
@@ -553,7 +558,7 @@ class ProfilesController < ApplicationController
       ret['age_name'] = @participant.generation
     end    
     # Provide the choices of regions for their country
-    ret['regions'] = Geoadmin1.where("country_code='#{@participant.country_code}' and admin1_code!='00'").order("name").collect {|r| {key: r.admin1uniq,label: r.name}}
+    ret['regions'] = Geoadmin1.where(country_code: @participant.country_code).where.not(admin1_code: '00').order("name").collect {|r| {key: r.admin1uniq,label: r.name}}
     render json: ret 
   end
   
