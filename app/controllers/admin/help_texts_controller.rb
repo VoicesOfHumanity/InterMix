@@ -94,7 +94,7 @@ class Admin::HelpTextsController < ApplicationController
       @help_text = HelpText.find(params[:id])
 
       respond_to do |format|
-        if @help_text.update_attributes(help_text_params)
+        if @help_text.update(help_text_params)
           format.html { render :partial=>'show', :layout=>false, :notice => 'Help was successfully updated.' }
           format.xml  { head :ok }
         else

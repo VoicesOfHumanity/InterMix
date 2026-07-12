@@ -76,7 +76,7 @@ class Admin::GroupParticipantsController < ApplicationController
     @group_participant = GroupParticipant.find(params[:id])
 
     respond_to do |format|
-      if @group_participant.update_attributes(group_participant_params)
+      if @group_participant.update(group_participant_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group membership was successfully updated.' }
         format.xml  { head :ok }
       else

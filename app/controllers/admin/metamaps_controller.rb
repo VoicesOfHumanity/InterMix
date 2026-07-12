@@ -83,7 +83,7 @@ class Admin::MetamapsController < ApplicationController
     @metamap = Metamap.find(params[:id])
 
     respond_to do |format|
-      if @metamap.update_attributes(metamap_params)
+      if @metamap.update(metamap_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Metamap was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -150,7 +150,7 @@ class Admin::MetamapsController < ApplicationController
     @metamap_node_id = params[:node_id].to_i
     @metamap_node = MetamapNode.find_by_id(@metamap_node_id)
     @metamap_id = @metamap_node.metamap_id 
-    if @metamap_node.update_attributes(node_params)
+    if @metamap_node.update(node_params)
       render :partial=>'node_show', :layout=>false, :notice => 'Node was successfully updated.'
     else
       render :partial => "node_edit", :layout=>false

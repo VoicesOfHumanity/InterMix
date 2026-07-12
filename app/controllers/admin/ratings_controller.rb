@@ -74,7 +74,7 @@ class Admin::RatingsController < ApplicationController
     @rating = Rating.find(params[:id])
 
     respond_to do |format|
-      if @rating.update_attributes(rating_params)
+      if @rating.update(rating_params)
         format.html { redirect_to(@rating, :notice => 'Rating was successfully updated.') }
         format.xml  { head :ok }
       else

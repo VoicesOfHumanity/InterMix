@@ -91,7 +91,7 @@ class Admin::DialogsController < ApplicationController
     @dialog.created_by = current_participant.id if not @dialog.created_by
 
     respond_to do |format|
-      if @dialog.update_attributes(dialog_params)
+      if @dialog.update(dialog_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
