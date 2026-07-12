@@ -8,7 +8,7 @@
 <tr><td class="left">Round:</td><td><%= @item.dialog_round_id %></td></tr>	
 <tr><td class="left">Subject:</td><td><%= @item.subject %></td></tr>
 <tr><td class="left">Link:</td><td><%= @item.link %></td></tr>
-<tr><td class="left">Short:</td><td><%=raw @item.short_content %></td></tr>	
+<tr><td class="left">Short:</td><td><%=raw sanitizethis(@item.short_content.to_s) %></td></tr>	
 <tr><td class="left">HTML:</td><td><%=raw @item.html_content %></td></tr>	
 <tr><td class="left">XML:</td><td><pre><%= @item.xml_content %></pre></td></tr>	
 <tr><td class="left">Oembed Data:</td><td><pre><%= h(@item.oembed_response.inspect).gsub(', ',',<br>') %></pre></td></tr>	
