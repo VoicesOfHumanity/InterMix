@@ -54,7 +54,7 @@ class Admin::RatingsController < ApplicationController
   # POST /ratings.xml
   def create
     @from = params[:from]
-    @rating = Rating.new(params[:rating])
+    @rating = Rating.new(rating_params)
 
     respond_to do |format|
       if @rating.save
@@ -74,7 +74,7 @@ class Admin::RatingsController < ApplicationController
     @rating = Rating.find(params[:id])
 
     respond_to do |format|
-      if @rating.update_attributes(params[:rating])
+      if @rating.update_attributes(rating_params)
         format.html { redirect_to(@rating, :notice => 'Rating was successfully updated.') }
         format.xml  { head :ok }
       else
@@ -95,5 +95,9 @@ class Admin::RatingsController < ApplicationController
       format.html { redirect_to(ratings_url) }
       format.xml  { head :ok }
     end
+  end
+
+  def rating_params
+    params.require(:rating).permit(:item_id, :participant_id, :remote_actor_id, :rating_type, :group_id, :dialog_id, :dialog_round_id, :approval, :interest, :importance, :period_id, :conversation_id)
   end
 end

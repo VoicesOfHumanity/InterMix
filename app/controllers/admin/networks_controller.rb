@@ -65,7 +65,7 @@ class Admin::NetworksController < ApplicationController
   end
 
   def create
-    @network = Network.new(params[:network])
+    @network = Network.new(network_params)
     @network.created_by = current_participant.id
     respond_to do |format|
       if @network.save
@@ -80,7 +80,7 @@ class Admin::NetworksController < ApplicationController
 
   def update
     respond_to do |format|
-      if @network.update_attributes(params[:network])
+      if @network.update_attributes(network_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Network was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -141,4 +141,8 @@ class Admin::NetworksController < ApplicationController
       params.require(:network).permit(:name, :created_by, :age, :gender, :geo_level)
     end
 
+
+  def network_params
+    params.require(:network).permit(:name, :created_by, :communityarray, :age, :gender, :geo_level, :geo_level_detail, :geo_level_id)
+  end
 end

@@ -58,7 +58,7 @@ class Admin::GroupParticipantsController < ApplicationController
 
   def create
     @from = params[:from] || ''
-    @group_participant = GroupParticipant.new(params[:group_participant])
+    @group_participant = GroupParticipant.new(group_participant_params)
 
     respond_to do |format|
       if @group_participant.save
@@ -76,7 +76,7 @@ class Admin::GroupParticipantsController < ApplicationController
     @group_participant = GroupParticipant.find(params[:id])
 
     respond_to do |format|
-      if @group_participant.update_attributes(params[:group_participant])
+      if @group_participant.update_attributes(group_participant_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group membership was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -98,4 +98,8 @@ class Admin::GroupParticipantsController < ApplicationController
   end
   
   
+
+  def group_participant_params
+    params.require(:group_participant).permit(:group_id, :participant_id, :moderator, :active, :status, :direct_email_code)
+  end
 end

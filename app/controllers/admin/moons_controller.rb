@@ -79,7 +79,7 @@ class Admin::MoonsController < ApplicationController
   # POST /moons
   # POST /moons.xml
   def create
-    @moon = Moon.new(params[:moon])
+    @moon = Moon.new(moon_params)
 
     respond_to do |format|
       if @moon.save
@@ -98,7 +98,7 @@ class Admin::MoonsController < ApplicationController
     @moon = Moon.find(params[:id])
 
     respond_to do |format|
-      if @moon.update_attributes(params[:moon])
+      if @moon.update_attributes(moon_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -155,4 +155,8 @@ class Admin::MoonsController < ApplicationController
     admins
   end
   
+
+  def moon_params
+    params.require(:moon).permit(:mdate, :topic, :top_text, :bottom_text, :new_or_full, :mtime, :mailing_sent)
+  end
 end

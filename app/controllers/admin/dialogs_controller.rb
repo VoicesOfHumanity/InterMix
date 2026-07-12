@@ -70,7 +70,7 @@ class Admin::DialogsController < ApplicationController
   # POST /dialogs
   # POST /dialogs.xml
   def create
-    @dialog = Dialog.new(params[:dialog])
+    @dialog = Dialog.new(dialog_params)
     @dialog.created_by = current_participant.id
 
     respond_to do |format|
@@ -91,7 +91,7 @@ class Admin::DialogsController < ApplicationController
     @dialog.created_by = current_participant.id if not @dialog.created_by
 
     respond_to do |format|
-      if @dialog.update_attributes(params[:dialog])
+      if @dialog.update_attributes(dialog_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -183,4 +183,8 @@ class Admin::DialogsController < ApplicationController
     groups
   end
   
+
+  def dialog_params
+    params.require(:dialog).permit(:name, :description, :shortdesc, :instructions, :coordinators, :visibility, :publishing, :max_voting_distribution, :max_characters, :max_words, :shortname, :created_by, :multigroup, :group_id, :openness, :max_mess_length, :signup_template, :front_template, :confirm_template, :confirm_email_template, :confirm_welcome_template, :member_template, :list_template, :metamap_vote_own, :logo, :default_message, :required_message, :required_subject, :alt_logins, :max_messages, :new_message_title, :allow_replies, :required_meta, :value_calc, :profiles_visible, :names_visible_voting, :names_visible_general, :in_voting_round, :posting_open, :voting_open, :current_period, :twitter_hash_tag, :default_datetype, :default_datefixed, :default_datefrom)
+  end
 end

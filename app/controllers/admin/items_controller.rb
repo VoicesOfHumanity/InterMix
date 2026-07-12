@@ -82,7 +82,7 @@ class Admin::ItemsController < ApplicationController
   # POST /items
   # POST /items.xml
   def create
-    @item = Item.new(params[:item])
+    @item = Item.new(item_params)
     itemprocess
 
     respond_to do |format|
@@ -103,7 +103,7 @@ class Admin::ItemsController < ApplicationController
     itemprocess
 
     respond_to do |format|
-      if @item.update_attributes(params[:item])
+      if @item.update_attributes(item_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Item was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -143,4 +143,8 @@ class Admin::ItemsController < ApplicationController
   end  
     
   
+
+  def item_params
+    params.require(:item).permit(:item_type, :media_type, :int_ext, :posted_by, :posted_by_remote_actor_id, :group_id, :dialog_id, :dialog_round_id, :conversation_id, :community_id, :subject, :subject_id, :promoted_to_forum, :posted_to_forum, :election_area_type, :moderation_status, :moderated_at, :moderated_by, :short_content, :html_content, :xml_content, :link, :approval, :interest, :value, :controversy, :oembed_response, :embed_code, :thumb_id, :has_picture, :posted_via, :reply_to, :is_first_in_thread, :first_in_thread, :old_message_id, :is_flagged, :edit_locked, :period_id, :first_in_thread_group_id, :tweeted_user, :tweeted_user_at, :tweeted_group, :tweeted_group_at, :been_moderated, :censored, :geo_level, :intra_com, :visible_com, :intra_conv, :outside_com_post, :outside_com_details, :outside_conv_reply, :representing_com, :together_apart, :topic, :wall_delivery, :wall_post, :comment_email_to, :remote_reference, :received_json, :api_request_id, :remote_delivery_done)
+  end
 end

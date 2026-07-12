@@ -346,7 +346,7 @@ class CommunitiesController < ApplicationController
     #-- Create a community, the first time
     @section = 'communities'
     @csection = 'edit'
-    @community = Community.new(params[:community])
+    @community = Community.new(community_params)
     #@community.tagname.downcase!
     flash.now[:alert] = ''
     if params[:community][:tagname].to_s == ''

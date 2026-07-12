@@ -42,7 +42,10 @@ module Intermix
     # in your app. As such, your models will need to explicitly whitelist or blacklist accessible
     # parameters by using an attr_accessible or attr_protected declaration.
     #config.active_record.whitelist_attributes = false
-    config.action_controller.permit_all_parameters = true
+    # Strong parameters enforced: every mass-assignment site uses an explicit
+    # .permit list (see the *_params methods in the admin controllers and
+    # CommunitiesController#community_params). Do NOT re-enable permit_all.
+    config.action_controller.permit_all_parameters = false
 
     # Enable the asset pipeline
     config.assets.enabled = true

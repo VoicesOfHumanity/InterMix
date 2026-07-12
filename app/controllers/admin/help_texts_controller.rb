@@ -75,7 +75,7 @@ class Admin::HelpTextsController < ApplicationController
     # POST /help_texts
     # POST /help_texts.xml
     def create
-      @help_text = HelpText.new(params[:help_text])
+      @help_text = HelpText.new(help_text_params)
 
       respond_to do |format|
         if @help_text.save
@@ -94,7 +94,7 @@ class Admin::HelpTextsController < ApplicationController
       @help_text = HelpText.find(params[:id])
 
       respond_to do |format|
-        if @help_text.update_attributes(params[:help_text])
+        if @help_text.update_attributes(help_text_params)
           format.html { render :partial=>'show', :layout=>false, :notice => 'Help was successfully updated.' }
           format.xml  { head :ok }
         else
@@ -117,4 +117,8 @@ class Admin::HelpTextsController < ApplicationController
     end
 
   
+
+  def help_text_params
+    params.require(:help_text).permit(:code, :description, :text)
+  end
 end

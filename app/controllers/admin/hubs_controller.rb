@@ -70,7 +70,7 @@ class Admin::HubsController < ApplicationController
   # POST /hubs
   # POST /hubs.xml
   def create
-    @hub = Hub.new(params[:hub])
+    @hub = Hub.new(hub_params)
 
     respond_to do |format|
       if @hub.save
@@ -89,7 +89,7 @@ class Admin::HubsController < ApplicationController
     @hub = Hub.find(params[:id])
 
     respond_to do |format|
-      if @hub.update_attributes(params[:hub])
+      if @hub.update_attributes(hub_params)
         format.html { render :partial=>'show', :layout=>false, :notice => 'Group was successfully updated.' }
         format.xml  { head :ok }
       else
@@ -146,4 +146,8 @@ class Admin::HubsController < ApplicationController
     admins
   end
   
+
+  def hub_params
+    params.require(:hub).permit(:name)
+  end
 end
