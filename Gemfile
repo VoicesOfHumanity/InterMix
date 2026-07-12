@@ -108,7 +108,6 @@ group :development, :test do
   gem 'capistrano-rails'
   gem 'ed25519', '~> 1.3'
   gem 'bcrypt_pbkdf', '>= 1.1', '< 2.0'
-  gem 'web-console'  
   gem 'rspec-rails'
   #gem 'capybara'
   #gem 'selenium-webdriver'
@@ -116,6 +115,11 @@ group :development, :test do
   #gem 'factory_girl_rails'
   gem 'factory_bot_rails'
   gem 'thin'
+end
+
+group :development do
+  # web-console must NOT load in test: it calls exit during boot there.
+  gem 'web-console'
 end
 
 # Gems used only for assets and not required

@@ -6,7 +6,11 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
-require 'capybara/rspec'
+# capybara is not bundled (feature specs are dormant); load it only if present
+begin
+  require 'capybara/rspec'
+rescue LoadError
+end
 
 # https://github.com/plataformatec/devise/wiki/How-To:-Test-with-Capybara
 include Warden::Test::Helpers
