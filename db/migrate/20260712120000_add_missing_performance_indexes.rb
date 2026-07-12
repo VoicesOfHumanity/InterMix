@@ -14,7 +14,10 @@ class AddMissingPerformanceIndexes < ActiveRecord::Migration[5.2]
     end
 
     unless index_exists?(:authentications, [:provider, :uid], name: "index_authentications_on_provider_and_uid")
-      add_index :authentications, [:provider, :uid], name: "index_authentications_on_provider_and_uid"
+      # authentications is MyISAM/utf8; two full varchar(255) columns blow past
+      # the 1000-byte key limit, so index prefixes (plenty for provider names and
+      # OAuth uids).
+      add_index :authentications, [:provider, :uid], name: "index_authentications_on_provider_and_uid", length: { provider: 64, uid: 128 }
     end
 
     add_index :api_requests, :processed, name: "index_api_requests_on_processed" unless index_exists?(:api_requests, :processed, name: "index_api_requests_on_processed")
