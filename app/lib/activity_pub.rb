@@ -577,32 +577,39 @@ module ActivityPub
       puts "follow created"
     end
     
-    if follow.accepted
-      puts "follow has already been accepted"
-    else    
-      # We will automatically send back an accept
-      object = {
-        "@context": "https://www.w3.org/ns/activitystreams",
-        "summary": "Accepting a follow request",
-        "type": "Accept",
-        "actor": participant.activitypub_url,
-        "object": {
-          "id": their_follow_id,
-          "type": "Follow",
-          "actor": remote_actor.account_url,
-          "object": participant.activitypub_url
-        }
+    # Always send back an Accept when we receive a Follow: the remote server is
+    # waiting for it to confirm the follow. Re-sending for an already-accepted
+    # follow is idempotent (the remote dedupes on the follow id), whereas the old
+    # behaviour — skipping the Accept when we already had an accepted record —
+    # left the remote's follow stuck as "pending"/"requested" whenever they
+    # re-followed after an unfollow, so their posts never reached us either.
+    # Use the incoming (fresh) their_follow_id so the Accept matches their
+    # current pending Follow.
+    if not newfollow
+      follow.remote_reference = their_follow_id
+      follow.api_request_id = api_request_id
+    end
+
+    object = {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      "summary": "Accepting a follow request",
+      "type": "Accept",
+      "actor": participant.activitypub_url,
+      "object": {
+        "id": their_follow_id,
+        "type": "Follow",
+        "actor": remote_actor.account_url,
+        "object": participant.activitypub_url
       }
-              
-      req = sign_and_send(participant.id, remote_actor, object, 'respond_to_follow')
-      puts "follow accept sent"
-    
-      if req
-        follow.accepted = true
-        follow.accept_record_id = req.id
-        follow.save
-      end
-    
+    }
+
+    req = sign_and_send(participant.id, remote_actor, object, 'respond_to_follow')
+    puts "follow accept sent"
+
+    if req
+      follow.accepted = true
+      follow.accept_record_id = req.id
+      follow.save
     end
     
     # Check if it is mutual
