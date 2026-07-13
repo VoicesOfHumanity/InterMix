@@ -265,7 +265,7 @@ module ActivityPub
     signature     = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, signed_string))
     sig_header    = 'keyId="' + key_id + '",headers="(request-target) host date digest",signature="' + signature + '"'
 
-    headers = { 'Host': inbox_host, 'Date': date, 'Signature': sig_header, 'digest': "SHA-256="+digest }
+    headers = { 'Host': inbox_host, 'Date': date, 'Signature': sig_header, 'digest': "SHA-256="+digest, 'Content-Type': 'application/activity+json', 'Accept': 'application/activity+json' }
 
     @api_send = ApiSend.create(
       participant_id: from_user.id,
