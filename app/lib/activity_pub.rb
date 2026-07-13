@@ -910,7 +910,7 @@ module ActivityPub
     
     object = {
       "@context": "https://www.w3.org/ns/activitystreams",
-      "id": unique_message_id,
+      "id": "#{unique_message_id}/activity",
       "type": "Create",
       "actor": from_participant.activitypub_url,
       "object": {
@@ -988,7 +988,7 @@ module ActivityPub
     
     object = {
       "@context": "https://www.w3.org/ns/activitystreams",
-      "id": unique_post_id,
+      "id": "#{unique_post_id}/activity",
       "type": "Create",
       "actor": from_participant.activitypub_url,
       "object": {

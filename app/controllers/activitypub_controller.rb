@@ -201,7 +201,7 @@ class ActivitypubController < ApplicationController
       fullcontent = "<p><strong>** #{subject} **</strong></p>\n" + content
       
       post = {
-        "id": unique_post_id,
+        "id": "#{unique_post_id}/activity",
         "type": "Create",
         "actor": from_participant.activitypub_url,
         "object": {
