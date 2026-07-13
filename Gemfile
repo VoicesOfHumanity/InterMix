@@ -60,7 +60,11 @@ gem 'ckeditor', '4.2.4'
 #gem 'carrierwave'
 #gem 'mini_magick'
 gem 'cancancan'
-gem 'paperclip'
+# kt-paperclip is the maintained fork of paperclip; paperclip 3.2.1 (the version
+# the old unversioned line resolved to) is incompatible with Rails 5.2 — its
+# post_process callback calls run_callbacks with the pre-5.0 arity and crashes
+# every image upload. kt-paperclip keeps the same `Paperclip` API.
+gem 'kt-paperclip', '~> 6.4', require: 'paperclip'
 gem 'sanitize'
 #gem 'formtastic', '~> 1.2.4'
 gem 'formtastic'
