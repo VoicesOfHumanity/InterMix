@@ -39,9 +39,15 @@ class ApiController < ApplicationController
         participant = Participant.find_by(email: params[:email])
         if participant
             Rails.logger.info("api verify_email: ok")
-            #-- Only confirm existence; profile data (and auth_token) require a password
+            #-- Back-compat: return the user object the app expects, but NEVER the
+            #-- auth_token — handing that out for any email with no password was the
+            #-- account-takeover hole. (Can be tightened to status-only once the app
+            #-- no longer reads this response.)
+            info = user_info(participant)
+            info.delete(:auth_token)
             render json: {
-                status: 'success'
+                status: 'success',
+                user: info
             }
         else
             logger.info("api verify_email: not found")
@@ -229,15 +235,18 @@ class ApiController < ApplicationController
     end
 
     def get_user
-        #-- Full user info (including email and auth_token) is only for the
-        #-- authenticated user themselves
+        #-- Full user info (email + auth_token) only for the authenticated user
+        #-- themselves; for anyone else, return public fields only (name/avatar),
+        #-- never their email or auth_token.
         id = params[:id].to_i
         Rails.logger.info("api#get_user: id: #{id}")
         if id > 0 and id != @api_user.id
-            render json: {
-                status: 'error',
-                message: 'Not allowed'
-            }, status: 403
+            target = Participant.find_by_id(id)
+            if target
+                render json: { status: 'success', user: public_user_info(target) }
+            else
+                render json: { status: 'error', message: 'User not found' }
+            end
         else
             render json: {
                 status: 'success',

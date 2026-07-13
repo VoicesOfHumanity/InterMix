@@ -52,17 +52,38 @@ RSpec.describe 'Audit security fixes', type: :request do
       expect(actor.reload.tag_list_downcase).to include(community.tagname.downcase)
     end
 
-    it 'get_user refuses to return another user\'s record (403)' do
+    it 'get_user returns only PUBLIC fields for another user (no email/auth_token)' do
       get '/api/get_user', params: { x: API_CODE, auth_token: actor.authentication_token, id: victim.id }
-      expect(response.status).to eq(403)
+      expect(response.status).to eq(200)
+      user = JSON.parse(response.body)['user']
+      expect(user['name']).to eq(victim.name)
+      expect(user).not_to have_key('email')
+      expect(user).not_to have_key('auth_token')
     end
 
-    it 'verify_email no longer leaks profile data for an arbitrary email' do
+    it 'get_user returns full info (incl. auth_token) for the caller themselves' do
+      get '/api/get_user', params: { x: API_CODE, auth_token: actor.authentication_token, id: actor.id }
+      user = JSON.parse(response.body)['user']
+      expect(user['auth_token']).to eq(actor.authentication_token)
+    end
+
+    it 'verify_email never returns an auth_token for an arbitrary email' do
       target = make_participant
       get '/api/verify_email', params: { x: API_CODE, email: target.email }
       body = JSON.parse(response.body)
       expect(body['status']).to eq('success')
-      expect(body).not_to have_key('user')   # used to return id/email/name/avatar + auth_token
+      expect(body['user']).not_to have_key('auth_token')   # the account-takeover vector
+    end
+
+    it 'legacy bridge (API_LEGACY_AUTH=1) still accepts a user_id-only call' do
+      begin
+        ENV['API_LEGACY_AUTH'] = '1'
+        post '/api/join_community', params: { x: API_CODE, user_id: actor.id, community_id: community.id }
+        expect(JSON.parse(response.body)['status']).to eq('success')
+        expect(actor.reload.tag_list_downcase).to include(community.tagname.downcase)
+      ensure
+        ENV.delete('API_LEGACY_AUTH')
+      end
     end
   end
 

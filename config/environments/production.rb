@@ -1,3 +1,12 @@
+# TEMPORARY API auth transition bridge (added 2026-07-13):
+# The mobile API now authenticates each request by the caller's own auth_token.
+# While this is set, endpoints still accept the old params[:user_id]-only calls
+# (logged as warnings) so un-updated Voices of Humanity app builds keep working.
+# REMOVE this line (or set to '0') and redeploy once the app ships auth_token on
+# every call and the logs show no more "LEGACY" warnings — that closes the
+# remaining user_id impersonation path.
+ENV['API_LEGACY_AUTH'] ||= '1'
+
 if (ENV and ENV['SYS_MODE'] and ENV['SYS_MODE'] == 'staging') or (`hostname` =~ /ovh.net/) or (File.dirname(__FILE__) =~ /cr8/) or (ENV['HTTP_HOST'] =~ /cr8/ ) or (`hostname` =~ /sirius/ )
   BASEDOMAIN = 'intermix.cr8.com'
   ROOTDOMAIN = 'intermix.cr8.com'
