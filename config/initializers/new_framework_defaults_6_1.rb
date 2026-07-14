@@ -10,15 +10,14 @@
 # (authenticated cookie/message encryption + the cache-related defaults) and
 # remain in force — this file only covers the 6.0→6.1 delta.
 
-# --- PINNED (risky, migrate later) ---------------------------------------
-# cookies_same_site_protection: 6.1 defaults this to :lax, adding
-# SameSite=Lax to cookies. This is the OAuth-sensitive flip — the session
-# cookie has to survive the cross-site redirect back from Google/Facebook/
-# Twitter. Keep legacy (no SameSite attribute) for now; enable :lax as its own
-# increment and RE-TEST all three OAuth logins on staging before shipping.
-Rails.application.config.action_dispatch.cookies_same_site_protection = nil
-
-# --- ENABLED (left on the 6.1 default; low risk) -------------------------
+# --- ENABLED (left on the 6.1 defaults) ----------------------------------
+# cookies_same_site_protection = :lax (6.1 default): adds SameSite=Lax to
+# cookies. This is the OAuth-sensitive one — the session cookie must survive
+# the cross-site redirect back from Google/Facebook/Twitter. Lax sends cookies
+# on top-level redirect-GET navigations (which is how these OAuth callbacks
+# return), so it should hold. MIGRATED here; re-verified with a staging OAuth
+# test (Google/FB/Twitter) as part of enabling it.
+#
 # has_many_inversing = true: sets up inverse associations in memory so a parent
 # and its loaded children share one object identity. Safe here; no code relies
 # on parent/child being distinct instances.
