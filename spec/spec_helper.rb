@@ -16,6 +16,10 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 
+# require 'logger' before devise: devise pulls in ActiveSupport, and on Rails 6 +
+# concurrent-ruby >= 1.3.5 that hits an uninitialized Logger constant unless logger
+# is already loaded (config/boot.rb hasn't run yet at this point).
+require 'logger'
 require 'devise'
 
 RSpec.configure do |config|
@@ -44,7 +48,7 @@ RSpec.configure do |config|
   
   #config.include Rack::Test::Methods
   
-  config.include Devise::TestHelpers, :type => :controller
+  config.include Devise::Test::ControllerHelpers, :type => :controller
 
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.

@@ -24,6 +24,13 @@ module Intermix
     # Do not swallow errors in after_commit/after_rollback callbacks.
     #config.active_record.raise_in_transactional_callbacks = true
     
+    # Rails 6.0 upgrade (step 1): stay on the classic autoloader for now so the
+    # 6.0 bump is decoupled from the Zeitwerk migration (which needs strict
+    # file/constant naming across this legacy app). Migrate to :zeitwerk in a
+    # later step (`rails zeitwerk:check`), which will also let the ckeditor
+    # autoload_paths line below be removed.
+    config.autoloader = :classic
+
     #-- This is for ckeditor
     config.autoload_paths += %W( #{config.root}/app/models/ckeditor )
     
