@@ -416,8 +416,18 @@ Rails.application.routes.draw do
   get 'delete_my_account', :controller=>:front, :action=>:delete_account_screen
   post 'delete_my_account', :controller=>:front, :action=>:delete_account_action
 
-  get 'forum(/:action(/:id(.:format)))', :controller=>:forum
-  get 'people(/:action(/:id(.:format)))', :controller=>:people
+  # Rails 6.1 prep: dynamic :action segment routes are removed in 6.1. These
+  # two catch-alls are replaced by explicit per-action routes that reproduce
+  # the exact same URL shape (/:controller/:action(/:id(.:format))). Only
+  # /forum, /people, /people/list, /people/follow are actually referenced in
+  # the app (all as literal URL strings — no path helpers or controller-hash
+  # url_for depend on these), but every public action is enumerated so nothing
+  # that previously routed can 404.
+  get 'forum(.:format)', :controller => :forum, :action => :index  # ForumController only has #index
+  %w[index list getlist followeds followings friends profile remote_profile wall follow removed].each do |people_action|
+    get "people/#{people_action}(/:id(.:format))", :controller => :people, :action => people_action
+  end
+  get 'people(.:format)', :controller => :people, :action => :index
   get 'people/remote/:remote_actor_id/profile' => 'people#remote_profile'
   get 'people/removed', :controller=>:people, :action=>:removed
   
