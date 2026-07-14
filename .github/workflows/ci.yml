@@ -39,6 +39,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # rmagick needs ImageMagick dev headers to build its native extension.
+      # Must run BEFORE setup-ruby, since bundler-cache: true bundles there.
+      - name: Install system build deps
+        run: sudo apt-get update && sudo apt-get install -y libmagickwand-dev
+
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7.7'
