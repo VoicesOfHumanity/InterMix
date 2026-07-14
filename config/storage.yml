@@ -1,0 +1,12 @@
+test:
+  service: Disk
+  root: <%= Rails.root.join("tmp/storage") %>
+
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+
+# NOTE: This app does not use ActiveStorage (file uploads go through Paperclip
+# / kt-paperclip). This file exists only because Rails 6.1 eager-loads the
+# ActiveStorage config and raises without it. Kept at the stock default; no
+# service here is actually exercised at runtime.

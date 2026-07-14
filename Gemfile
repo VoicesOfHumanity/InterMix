@@ -4,7 +4,7 @@ ruby '2.7.7'
 
 #gem 'rails', '~> 3.2'
 #gem 'rails', '~> 4.2'
-gem 'rails', '~> 6.0.0'
+gem 'rails', '~> 6.1.0'
 gem 'rake'
 
 gem 'activerecord-session_store'
