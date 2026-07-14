@@ -1,5 +1,5 @@
 class Authentication < ActiveRecord::Base
-  belongs_to :participant
+  belongs_to :participant, optional: true
   
   def provider_name
     if provider == 'open_id'

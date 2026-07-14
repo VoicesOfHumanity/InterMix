@@ -1,5 +1,5 @@
 class MetamapNode < ActiveRecord::Base
-  belongs_to :metamap
+  belongs_to :metamap, optional: true
   has_many :metamap_node_participants
   has_many :participants, :through=>:metamap_node_participants
   

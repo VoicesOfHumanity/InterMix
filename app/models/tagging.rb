@@ -1,7 +1,7 @@
 class Tagging < ActiveRecord::Base
 
-  belongs_to :tag
-  belongs_to :taggable, :polymorphic => true
+  belongs_to :tag, optional: true
+  belongs_to :taggable, optional: true, :polymorphic => true
   
   def self.tags_for(type,fname='showbytag')
     uniqtags = self.find_by_sql("select distinct(tag_id),tags.name from taggings,tags where taggable_type='#{type}' and taggings.tag_id=tags.id")

@@ -1,4 +1,4 @@
 class ConversationCommunity < ApplicationRecord
-  belongs_to :conversation
-  belongs_to :community
+  belongs_to :conversation, optional: true
+  belongs_to :community, optional: true
 end

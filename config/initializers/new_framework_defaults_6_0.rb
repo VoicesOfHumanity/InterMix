@@ -17,20 +17,20 @@
 # ENABLED and not listed here.
 
 # --- 5.0 -----------------------------------------------------------------
-# HIGH RISK. 76 of 93 belongs_to associations have no optional:/required:.
-# Enabling this makes every one required, so any save with a nil FK
-# (poster_id, complainer_id, geo lookups, creator, ...) fails validation.
-# Migrate only after auditing each association and marking the genuinely
-# optional ones `optional: true`.
-Rails.application.config.active_record.belongs_to_required_by_default = false
+# belongs_to_required_by_default: MIGRATED (now on the 6.0 default = true).
+# Audited all 93 belongs_to against DB nullability + real null counts: every
+# FK column is nullable except Block.blocker_id/blocked_id (NOT NULL), and
+# many carry real nulls (Item.conversation_id 750/918, Participant geo FKs,
+# Rating.period_id 294/538, ...). Marked the 68 nullable associations
+# `optional: true`; left Block required (DB-enforced). Byte-neutral flip.
 
-# Per-form CSRF tokens and Origin-header forgery check. Legacy off.
-Rails.application.config.action_controller.per_form_csrf_tokens = false
-Rails.application.config.action_controller.forgery_protection_origin_check = false
+# per_form_csrf_tokens / forgery_protection_origin_check: MIGRATED (on the
+# 6.0 defaults = true). Low blast radius; suite + boot verified.
 
 # --- 5.1 -----------------------------------------------------------------
-# form_with would generate remote (AJAX) forms by default. Keep local.
-Rails.application.config.action_view.form_with_generates_remote_forms = true
+# form_with_generates_remote_forms: pin removed. NOTE this stays true under
+# 6.0 (the flip to local-by-default false is a 6.1 default, so it belongs to
+# the 6.1 step, not here). Only 4 form_with call sites in the app.
 
 # --- 5.2 -----------------------------------------------------------------
 # Authenticated cookie/message encryption: flipping these invalidates every
@@ -45,9 +45,8 @@ Rails.application.config.active_support.hash_digest_class = OpenSSL::Digest::MD5
 Rails.application.config.active_record.cache_versioning = false
 
 # --- 6.0 -----------------------------------------------------------------
-# Keep the hidden utf8 form field (default_enforce_utf8 true) so form markup
-# is identical to before.
-Rails.application.config.action_view.default_enforce_utf8 = true
+# default_enforce_utf8: MIGRATED (on the 6.0 default = false). Drops the
+# hidden `utf8=✓` snowman field from forms; only mattered for pre-modern IE.
 
 # Purpose+expiry metadata embedded in signed/encrypted cookies changes the
 # cookie format; keep legacy to avoid churn alongside the encryption pins.
