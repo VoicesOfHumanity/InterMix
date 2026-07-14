@@ -8,6 +8,15 @@ Bundler.require(*Rails.groups)
 
 module Intermix
   class Application < Rails::Application
+    # Rails 6.0 upgrade (step 3): load the 6.0 framework defaults. The app
+    # previously had NO load_defaults line, so it ran on pre-5.0 defaults —
+    # this flips the whole 5.0→6.0 stack at once. The behaviorally-risky flips
+    # are pinned back to legacy values in
+    # config/initializers/new_framework_defaults_6_0.rb and migrated one at a
+    # time from there. Do not remove that initializer without migrating each
+    # pinned default first.
+    config.load_defaults 6.0
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
