@@ -1,4 +1,4 @@
 class CommunityAdmin < ActiveRecord::Base
-  belongs_to :community
-  belongs_to :participant
+  belongs_to :community, optional: true
+  belongs_to :participant, optional: true
 end

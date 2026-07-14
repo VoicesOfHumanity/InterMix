@@ -1,5 +1,5 @@
 class Geoadmin1 < ActiveRecord::Base
-  belongs_to :geocountry, :foreign_key=>:country_code, :primary_key=>:iso
+  belongs_to :geocountry, optional: true, :foreign_key=>:country_code, :primary_key=>:iso
   has_many :geoadmin2s, :foreign_key=>:admin1uniq, :primary_key=>:admin1uniq
 
   def self.findornot(id)

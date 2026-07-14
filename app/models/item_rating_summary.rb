@@ -1,5 +1,5 @@
 class ItemRatingSummary < ActiveRecord::Base
-  belongs_to :item
+  belongs_to :item, optional: true
   
   def recalculate(explain=false,dialog=nil)
     #-- Add up all the numbers for a ratings summary record

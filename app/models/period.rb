@@ -1,6 +1,6 @@
 class Period < ActiveRecord::Base
-  belongs_to :group
-  belongs_to :dialog
+  belongs_to :group, optional: true
+  belongs_to :dialog, optional: true
   has_many :items
   has_many :ratings
   
