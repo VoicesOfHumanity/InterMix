@@ -1311,7 +1311,12 @@ class Item < ActiveRecord::Base
       end
 
       # Basic includes (not user-specific)
-      items = items.includes(:participant).references(:participant)
+      # Eager-load the associations the _item partial dereferences per row
+      # (item.dialog / item.conversation / item.orig_item) to kill the N+1 there.
+      # Use preload (separate queries) NOT includes: with `references(:participant)`
+      # Rails turns every include into a JOIN, and joining orig_item (a self-join on
+      # items) makes the unqualified `intra_conv` in the WHERE ambiguous.
+      items = items.includes(:participant).references(:participant).preload(:dialog, :conversation, :orig_item)
       ratings = ratings.includes(:participant).references(:participant)
       
       # Process network criteria (already cached)
