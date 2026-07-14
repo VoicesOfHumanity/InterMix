@@ -1,4 +1,4 @@
 class DialogParticipant < ActiveRecord::Base
-  belongs_to :dialog
-  belongs_to :participant
+  belongs_to :dialog, optional: true
+  belongs_to :participant, optional: true
 end

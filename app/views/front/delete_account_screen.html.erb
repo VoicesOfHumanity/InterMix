@@ -18,7 +18,7 @@ and for all personal data and identifying information to be deleted from our sys
   You will receive an email with a link that will log you in and bring you back to this page where
   you can delete your account.</p>
 
-  <%= form_with(url: '/delete_my_account', method: :post) do |f| %>
+  <%= form_with(url: '/delete_my_account', method: :post, local: true) do |f| %>
 
     <div class="form-group">
       <%= f.label :email %>
