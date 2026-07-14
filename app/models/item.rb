@@ -840,7 +840,7 @@ class Item < ActiveRecord::Base
     # trying to leave this out, to make the query more simple
     #items = items.includes([:dialog,:group,:period,:item_rating_summary])
 
-    items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant)
+    items = items.includes(:participant=>{:metamap_node_participants=>:metamap_node}).references(:participant).preload(:dialog, :conversation, :orig_item)
     #items = items.joins(:participant=>{:metamap_node_participants=>:metamap_node})
     #items = items.joins("left join participants on participants.id=items.posted_by")
     #items = items.joins("left join metamap_node_participants on metamap_node_participants.participant_id=items.posted_by")
