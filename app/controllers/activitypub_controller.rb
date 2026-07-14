@@ -196,8 +196,8 @@ class ActivitypubController < ApplicationController
         end
       end
 
-      subject = item.subject
-      content = item.html_content
+      subject = item.subject.to_s
+      content = item.html_content.to_s
       fullcontent = "<p><strong>** #{subject} **</strong></p>\n" + content
       
       post = {

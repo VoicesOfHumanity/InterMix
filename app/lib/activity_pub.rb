@@ -949,8 +949,8 @@ module ActivityPub
     subject = item.subject
     #content = item.html_content
     
-    images = get_image_urls(item.html_content)
-    content = remove_images(item.html_content)
+    images = get_image_urls(item.html_content.to_s)
+    content = remove_images(item.html_content.to_s)
 
     fullcontent = "<p><strong>** #{subject} **</strong></p>\n" + content
     
