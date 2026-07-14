@@ -48,6 +48,15 @@ yarn-debug.log*
 /public/sitemap*.xml.gz
 
 .claude/
+
+# Local project/process meta files — kept out of git so they don't diverge
+# between the master and production branches (they're per-working-copy notes,
+# not deployable code).
 CLAUDE.md
-STATUs.md
+PROJECT.md
+STATUS.md
+REGISTRY.md
+CONVENTIONS.md
+LOG.md
 ORCHESTRATION.md
+AUDIT.md

@@ -453,7 +453,6 @@ Rails.application.routes.draw do
     post :api_save_user_info, on: :member
   end
   
-  get 'fbapp(/:action)', :controller=>:fbapp
   
   get 'helppage/:code', :controller=>:front, :action=>:helppage
   

@@ -698,19 +698,13 @@ class Item < ActiveRecord::Base
     wantlength = 140 - txt.length
     txt = self.short_content[0,wantlength] + txt
     
-    begin
-      Twitter.configure do |config|
-        config.consumer_key = Rails.application.credentials.twitter[:api_key]
-        config.consumer_secret = Rails.application.credentials.twitter[:api_secret]
-        config.oauth_token = @participant.twitter_oauth_token
-        config.oauth_token_secret = @participant.twitter_oauth_secret
-      end
-      Twitter.update(txt)
-    rescue Exception => e
-      logger.info("Item#personal_twitter problem posting to twitter" + e.message)
-    end     
-    
-  end  
+    #-- Twitter posting removed: the `twitter` gem's Twitter.configure/update API was
+    #-- removed back in twitter 5.0, so this raised on every call (silently swallowed)
+    #-- and hasn't posted anything for years. The tweet text (txt) is still computed
+    #-- above; nothing sends it now. (Twitter *login* via omniauth-twitter is separate
+    #-- and untouched.)
+
+  end
   
   def create_xml
     item = {}

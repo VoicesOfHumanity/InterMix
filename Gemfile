@@ -49,7 +49,6 @@ gem 'omniauth-google-oauth2'
 #gem 'omniauth-google_apps'
 gem "omniauth-rails_csrf_protection"
 
-gem 'rest-graph'
 
 gem 'rmagick', :require => "rmagick"
 gem 'acts-as-taggable-on'
@@ -70,12 +69,15 @@ gem 'sanitize'
 gem 'formtastic'
 #gem "will_paginate", "~> 3.0.pre2"
 gem "will_paginate", "~> 3.1.7"
-gem "nifty-generators"
 gem "nokogiri"
 gem "liquid"
+# The ActivityPub code (app/lib/activity_pub.rb, activitypub_controller) uses the
+# `http` gem (HTTP.timeout / HTTP.get). It used to come transitively via the now-
+# removed `twitter` gem, so declare it directly. Pin to 4.x (what it was written
+# against; 5.x needs Ruby 3.0).
+gem 'http', '~> 4.4'
 #gem 'imagesize', :require => 'image_size'
 gem 'image_size'
-gem 'twitter'
 gem "json"
 gem 'link_thumbnailer'
 #gem 'ruby-oembed', :require => 'oembed'
@@ -89,7 +91,6 @@ gem 'exception_notification'
 gem 'postmark'
 gem 'postmark-rails'
 
-gem 'responds_to_parent'
 
 gem 'deep_cloneable'
 
