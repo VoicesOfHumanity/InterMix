@@ -1275,9 +1275,12 @@ class Item < ActiveRecord::Base
     #-- Get base items and ratings that don't depend on current user
     #-- This can be cached since it doesn't include user-specific data
     
-    cache_key = "items_base:#{crit.hash}:#{rootonly}"
-    
-    Rails.cache.fetch(cache_key, expires_in: 15.minutes) do
+    #-- NOTE: this used to be wrapped in Rails.cache.fetch("items_base:#{crit.hash}…"),
+    #-- but that cache was a no-op with real overhead: crit.hash is per-process seeded
+    #-- so the key never matched across Passenger workers (or after a restart), and the
+    #-- cached value was an *unloaded* relation so the SQL re-ran on every "hit" anyway —
+    #-- while delete_matched("items_base:*") fired on every vote. Build the base directly.
+    begin
       # Start preparing the queries
       items = Item.where(nil)
       ratings = Rating.where(nil)
@@ -3905,13 +3908,10 @@ class Item < ActiveRecord::Base
 
   #------- Cache invalidation methods ------------------------------------------------------------
   def self.invalidate_items_cache(crit_hash = nil)
-    if crit_hash
-      Rails.cache.delete("items_base:#{crit_hash}:false")
-      Rails.cache.delete("items_base:#{crit_hash}:true")
-    else
-      # Clear all items cache (use with caution)
-      Rails.cache.delete_matched("items_base:*")
-    end
+    #-- No-op: the items_base cache was removed (it never functioned — see
+    #-- get_items_base). Kept as a no-op so the existing call sites (every vote/post
+    #-- change) don't break, and so the old delete_matched("items_base:*") scan no
+    #-- longer runs on every write.
   end
 
   def self.invalidate_cache_on_item_change
