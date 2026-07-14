@@ -1,0 +1,66 @@
+# Smoke CI — runs the rspec suite (incl. spec/smoke_spec.rb's eager_load! /
+# route / model checks) on every push + PR. This is the safety net to keep
+# green through the staged Rails 5.2 -> 6.0 -> 6.1 -> Ruby 3.1 -> 7.0 upgrade.
+#
+# ONE-TIME SETUP required before this passes:
+#   1. Add repo secret RAILS_MASTER_KEY = the contents of config/master.key
+#      (Settings -> Secrets and variables -> Actions). Needed because
+#      application.rb reads credentials.postmark at boot.
+#   2. That's it — this workflow writes a CI-only config/database.yml (the real
+#      one is gitignored) pointing at the MySQL service.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: intermix_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      RAILS_ENV: test
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.7'
+          bundler-cache: true   # runs bundle install + caches gems
+
+      - name: Write CI database.yml (the real one is gitignored)
+        run: |
+          cat > config/database.yml <<'YML'
+          test:
+            adapter: mysql2
+            encoding: utf8mb4
+            collation: utf8mb4_unicode_ci
+            host: 127.0.0.1
+            port: 3306
+            database: intermix_test
+            username: root
+            password: root
+            pool: 5
+          YML
+
+      - name: Load schema + apply migrations
+        run: bundle exec rails db:schema:load db:migrate
+
+      - name: Run specs
+        run: bundle exec rspec
