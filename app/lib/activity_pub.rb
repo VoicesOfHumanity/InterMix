@@ -265,7 +265,7 @@ module ActivityPub
     signature     = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, signed_string))
     sig_header    = 'keyId="' + key_id + '",headers="(request-target) host date digest",signature="' + signature + '"'
 
-    headers = { 'Host': inbox_host, 'Date': date, 'Signature': sig_header, 'digest': "SHA-256="+digest }
+    headers = { 'Host': inbox_host, 'Date': date, 'Signature': sig_header, 'digest': "SHA-256="+digest, 'Content-Type': 'application/activity+json', 'Accept': 'application/activity+json' }
 
     @api_send = ApiSend.create(
       participant_id: from_user.id,
@@ -277,12 +277,24 @@ module ActivityPub
       our_function: our_function
     )
 
-    res = HTTP.headers(headers).post(inbox_url, body: object.to_json)
-    
+    begin
+      res = HTTP.timeout(connect: 10, read: 20).headers(headers).post(inbox_url, body: object.to_json)
+    rescue => e
+      # Network/TLS/timeout failure talking to the remote inbox. Record it and
+      # return false rather than raising: an unhandled raise here would crash the
+      # whole delivery run and leave the item undelivered, causing it to be retried
+      # every cron tick (the cause of the historical runaway send loop).
+      Rails.logger.info "activitypub#sign_and_send delivery to #{inbox_url} failed: #{e.class}: #{e}"
+      @api_send.response_code = 'error'
+      @api_send.response_body = "#{e.class}: #{e}"
+      @api_send.save
+      return false
+    end
+
     @api_send.response_code = res.code
     @api_send.response_body = res.body
     @api_send.save
-    
+
     return @api_send
   end
 
@@ -565,32 +577,39 @@ module ActivityPub
       puts "follow created"
     end
     
-    if follow.accepted
-      puts "follow has already been accepted"
-    else    
-      # We will automatically send back an accept
-      object = {
-        "@context": "https://www.w3.org/ns/activitystreams",
-        "summary": "Accepting a follow request",
-        "type": "Accept",
-        "actor": participant.activitypub_url,
-        "object": {
-          "id": their_follow_id,
-          "type": "Follow",
-          "actor": remote_actor.account_url,
-          "object": participant.activitypub_url
-        }
+    # Always send back an Accept when we receive a Follow: the remote server is
+    # waiting for it to confirm the follow. Re-sending for an already-accepted
+    # follow is idempotent (the remote dedupes on the follow id), whereas the old
+    # behaviour — skipping the Accept when we already had an accepted record —
+    # left the remote's follow stuck as "pending"/"requested" whenever they
+    # re-followed after an unfollow, so their posts never reached us either.
+    # Use the incoming (fresh) their_follow_id so the Accept matches their
+    # current pending Follow.
+    if not newfollow
+      follow.remote_reference = their_follow_id
+      follow.api_request_id = api_request_id
+    end
+
+    object = {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      "summary": "Accepting a follow request",
+      "type": "Accept",
+      "actor": participant.activitypub_url,
+      "object": {
+        "id": their_follow_id,
+        "type": "Follow",
+        "actor": remote_actor.account_url,
+        "object": participant.activitypub_url
       }
-              
-      req = sign_and_send(participant.id, remote_actor, object, 'respond_to_follow')
-      puts "follow accept sent"
-    
-      if req
-        follow.accepted = true
-        follow.accept_record_id = req.id
-        follow.save
-      end
-    
+    }
+
+    req = sign_and_send(participant.id, remote_actor, object, 'respond_to_follow')
+    puts "follow accept sent"
+
+    if req
+      follow.accepted = true
+      follow.accept_record_id = req.id
+      follow.save
     end
     
     # Check if it is mutual
@@ -898,7 +917,7 @@ module ActivityPub
     
     object = {
       "@context": "https://www.w3.org/ns/activitystreams",
-      "id": unique_message_id,
+      "id": "#{unique_message_id}/activity",
       "type": "Create",
       "actor": from_participant.activitypub_url,
       "object": {
@@ -930,8 +949,8 @@ module ActivityPub
     subject = item.subject
     #content = item.html_content
     
-    images = get_image_urls(item.html_content)
-    content = remove_images(item.html_content)
+    images = get_image_urls(item.html_content.to_s)
+    content = remove_images(item.html_content.to_s)
 
     fullcontent = "<p><strong>** #{subject} **</strong></p>\n" + content
     
@@ -976,7 +995,7 @@ module ActivityPub
     
     object = {
       "@context": "https://www.w3.org/ns/activitystreams",
-      "id": unique_post_id,
+      "id": "#{unique_post_id}/activity",
       "type": "Create",
       "actor": from_participant.activitypub_url,
       "object": {
@@ -993,10 +1012,12 @@ module ActivityPub
     }
 
     req = sign_and_send(from_participant.id, to_remote_actor, object, 'send_public_post')
-    
-    return true
+
+    # Return the actual delivery result (false on failure) so callers can track
+    # success/failure instead of always assuming delivery worked.
+    return req ? true : false
   end
-  
+
   def respond_to_delete_actor(from_remote_actor)
     #-- A remote account has disappared. Let's remove it from follows
     if not from_remote_actor
@@ -1029,15 +1050,9 @@ module ActivityPub
     }
             
     req = sign_and_send(participant.id, to_remote_actor, object, 'send_delete_actor')
-    puts "delete actor sent"
-  
-    if req
-      follow.accepted = true
-      follow.accept_record_id = req.id
-      follow.save
-    end
-        
-    return true
+    Rails.logger.info "activitypub#send_delete_actor delete actor sent to #{to_remote_actor.account} (#{req ? 'ok' : 'failed'})"
+
+    return req ? true : false
   end
   
   def respond_to_like(from_remote_actor, ref_id)

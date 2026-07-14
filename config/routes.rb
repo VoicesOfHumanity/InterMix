@@ -167,7 +167,8 @@ Rails.application.routes.draw do
   get '.well-known/webfinger', to: 'well_known#webfinger'
   get '.well-known/host-meta', to: 'well_known#hostmeta'
   get '.well-known/nodeinfo', to: 'well_known#nodeinfo'
-  
+  get 'nodeinfo/2.0', to: 'well_known#nodeinfo_schema'
+
   # activitypub
   post 'u/:acct_id/inbox.json', to: 'activitypub#inbox'
   post 'u/:acct_id/inbox', to: 'activitypub#inbox'

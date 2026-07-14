@@ -80,9 +80,50 @@ class WellKnownController < ApplicationController
   end
   
   def hostmeta
+    # /.well-known/host-meta — XRD document advertising the webfinger endpoint.
+    # Some servers fetch this to discover the webfinger template before querying.
+    xml = <<~XRD
+      <?xml version="1.0" encoding="UTF-8"?>
+      <XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+        <Link rel="lrdd" type="application/jrd+json" template="https://#{BASEDOMAIN}/.well-known/webfinger?resource={uri}"/>
+      </XRD>
+    XRD
+    expires_in 3.days, public: true
+    render xml: xml, content_type: 'application/xrd+xml'
   end
-  
+
   def nodeinfo
+    # /.well-known/nodeinfo — discovery document pointing at the NodeInfo 2.0 schema.
+    results = {
+      'links' => [
+        {
+          'rel' => 'http://nodeinfo.diaspora.software/ns/schema/2.0',
+          'href' => "https://#{BASEDOMAIN}/nodeinfo/2.0"
+        }
+      ]
+    }
+    expires_in 1.day, public: true
+    render json: results.to_json, content_type: 'application/json'
+  end
+
+  def nodeinfo_schema
+    # /nodeinfo/2.0 — the actual NodeInfo 2.0 document with instance metadata.
+    total_users = (Participant.where(status: 'active').count rescue 0)
+    local_posts = (Item.where(int_ext: 'int').count rescue 0)
+    results = {
+      'version' => '2.0',
+      'software' => { 'name' => 'intermix', 'version' => '1.0' },
+      'protocols' => ['activitypub'],
+      'services' => { 'inbound' => [], 'outbound' => [] },
+      'openRegistrations' => true,
+      'usage' => {
+        'users' => { 'total' => total_users },
+        'localPosts' => local_posts
+      },
+      'metadata' => { 'nodeName' => 'InterMix' }
+    }
+    expires_in 1.day, public: true
+    render json: results.to_json, content_type: 'application/json; profile="http://nodeinfo.diaspora.software/ns/schema/2.0#"'
   end
 
 end
