@@ -4,7 +4,7 @@ ruby '3.2.11'
 
 #gem 'rails', '~> 3.2'
 #gem 'rails', '~> 4.2'
-gem 'rails', '~> 7.0.0'
+gem 'rails', '~> 7.1.0'
 gem 'rake'
 
 gem 'activerecord-session_store'
@@ -120,12 +120,16 @@ gem 'racc', '1.6.2'
 gem 'logger', '1.5.3'
 gem 'net-protocol', '0.2.1'
 gem 'ostruct', '0.5.5'
-gem 'timeout', '0.3.1'
+# NOTE timeout + securerandom are NOT pinned to the Ruby 3.2 default: Rails 7.1
+# requires timeout >= 0.4.0 and securerandom >= 0.3, newer than Ruby 3.2.11
+# ships. They are therefore ahead of the system default — if the Passenger
+# rack-preloader pre-activates either before Bundler, boot would Gem::LoadError
+# (as base64 did on the Ruby-3 bump). Verify on staging; if it bites, install
+# the newer versions into the server rbenv Ruby (gem install timeout -v ...).
 # Added with the Rails 7 bump (Rails 7 pulls these as explicit deps):
 gem 'benchmark', '0.2.1'
 gem 'drb', '2.1.1'
 gem 'mutex_m', '0.1.2'
-gem 'securerandom', '0.2.2'
 gem 'cgi', '0.3.7'
 # json + openssl pinned at their existing declarations above (lines ~17, ~81)
 
