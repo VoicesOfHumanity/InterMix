@@ -60,7 +60,7 @@ class Item < ActiveRecord::Base
     else
       txt = excerpt
       first = txt.split.first
-      if first[0] == '@'
+      if first && first[0] == '@'
         txt = txt.split[1..-1].join(' ')
       end
       return txt[0..30]
