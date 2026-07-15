@@ -14,7 +14,15 @@ module Intermix
     # values in config/initializers/new_framework_defaults_{6_0,6_1,7_0}.rb and
     # migrated one at a time from there. Do not remove those initializers
     # without migrating each pinned default first.
-    config.load_defaults 7.0
+    config.load_defaults 7.1
+
+    # Rails 7.1 sets default_column_serializer to nil, so a bare `serialize :col`
+    # (used in ~10 models: item, participant#forum_settings, api_send, etc.)
+    # raises "missing keyword: :coder" at model load. Restore the 7.0 default
+    # (YAML) so those keep working. MUST be set here (application.rb), not in a
+    # config/initializer — it is read before models load. Migrate later by adding
+    # explicit `coder: YAML` to each serialize call, then drop this.
+    config.active_record.default_column_serializer = ActiveRecord::Coders::YAMLColumn
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
