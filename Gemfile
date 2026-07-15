@@ -160,6 +160,10 @@ end
   gem 'mini_racer', '~> 0.6.4'
 
   gem 'uglifier'
+  # Rails 7 pulls actiontext/activestorage, whose engines register ES6 JS for
+  # precompilation; Uglifier (ES5-only) chokes on `const`. terser is the modern
+  # ES6-aware minifier (drop-in replacement) — see js_compressor in production.rb.
+  gem 'terser'
 
   gem 'sprockets', '~> 3.7.2'
   
