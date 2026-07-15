@@ -441,6 +441,8 @@ GEM
       ostruct
     terrapin (0.6.0)
       climate_control (>= 0.0.3, < 1.0)
+    terser (1.2.8)
+      execjs (>= 0.3.0, < 3)
     thin (2.0.1)
       daemons (~> 1.0, >= 1.0.9)
       eventmachine (~> 1.0, >= 1.0.4)
@@ -543,6 +545,7 @@ DEPENDENCIES
   securerandom (= 0.2.2)
   sitemap_generator
   sprockets (~> 3.7.2)
+  terser
   thin
   timeout (= 0.3.1)
   uglifier
