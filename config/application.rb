@@ -38,6 +38,12 @@ module Intermix
     # so no extra root is needed (an explicit root would have made it ::Picture).
     config.autoloader = :zeitwerk
 
+    # Rails 7.1 requires an Active Storage service to be named once AS is
+    # eager-loaded (production has eager_load = true), even though this app uses
+    # Paperclip, not Active Storage. Point at the disk `local` service defined
+    # in config/storage.yml — a valid no-op (nothing actually uses AS).
+    config.active_storage.service = :local
+
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
     
