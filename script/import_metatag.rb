@@ -30,7 +30,7 @@ if not metamap
   exit
 end
 
-if not File.exists?(filename)
+if not File.exist?(filename)
   puts "File doesn't exist"
   exit
 end
