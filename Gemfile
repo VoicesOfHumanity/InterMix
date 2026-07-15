@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '2.7.7'
+ruby '3.2.11'
 
 #gem 'rails', '~> 3.2'
 #gem 'rails', '~> 4.2'
@@ -14,7 +14,7 @@ gem 'activerecord-session_store'
 
 gem 'rack-cors', :require => 'rack/cors'
 
-gem "openssl"
+gem "openssl", '3.1.0'  # Ruby 3.2 default-gem pin (Passenger preload; see block below)
 
 gem 'mysql2'
 #gem 'mysql2', '~> 0.3.18'
@@ -78,7 +78,7 @@ gem "liquid"
 gem 'http', '~> 4.4'
 #gem 'imagesize', :require => 'image_size'
 gem 'image_size'
-gem "json"
+gem "json", '2.6.3'  # Ruby 3.2 default-gem pin (Passenger preload; see block below)
 gem 'link_thumbnailer'
 #gem 'ruby-oembed', :require => 'oembed'
 #gem 'ruby-oembed'
@@ -103,9 +103,25 @@ gem "mimemagic", ">=0.3.10"
 gem 'sitemap_generator'
 
 # assets:precompile seems to be missing this
-gem "date"
+gem "date", '3.3.3'  # Ruby 3.2 default-gem pin (see block below)
 
 gem 'rexml', '~> 3.2'
+
+# Ruby 3.2 default-gem pins. These ship WITH Ruby 3.2.11 as default gems, and
+# Passenger's rack-preloader activates the Ruby-shipped versions before Bundler
+# runs. If the lock pins newer versions, boot dies with
+# "already activated <gem> X, but your Gemfile requires Y (Gem::LoadError)".
+# Pin each to the exact version Ruby 3.2.11 ships so there is no conflict.
+# (bigdecimal 4.x additionally requires Ruby >= 3.4.) Revisit on the next Ruby bump.
+gem 'base64', '0.1.1'
+gem 'bigdecimal', '3.1.3'
+gem 'observer', '0.1.1'
+gem 'racc', '1.6.2'
+gem 'logger', '1.5.3'
+gem 'net-protocol', '0.2.1'
+gem 'ostruct', '0.5.5'
+gem 'timeout', '0.3.1'
+# json + openssl pinned at their existing declarations above (lines ~17, ~81)
 
 group :development, :test do
   gem 'capistrano'
