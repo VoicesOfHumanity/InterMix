@@ -8,13 +8,13 @@ Bundler.require(*Rails.groups)
 
 module Intermix
   class Application < Rails::Application
-    # Rails 6.x upgrade: load the 6.1 framework defaults. The app originally had
-    # NO load_defaults line (pre-5.0 behavior); it was moved to 6.0, then 6.1.
+    # Rails 6.x/7.x upgrade: load the 7.0 framework defaults. The app originally
+    # had NO load_defaults line (pre-5.0 behavior); moved 6.0 → 6.1 → 7.0.
     # The behaviorally-risky flips at each level are pinned back to legacy
-    # values in config/initializers/new_framework_defaults_6_{0,1}.rb and
+    # values in config/initializers/new_framework_defaults_{6_0,6_1,7_0}.rb and
     # migrated one at a time from there. Do not remove those initializers
     # without migrating each pinned default first.
-    config.load_defaults 6.1
+    config.load_defaults 7.0
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
