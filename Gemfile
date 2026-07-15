@@ -69,7 +69,7 @@ gem 'sanitize'
 gem 'formtastic'
 #gem "will_paginate", "~> 3.0.pre2"
 gem "will_paginate", "~> 3.1.7"
-gem "nokogiri"
+gem "nokogiri", '1.15.7'  # pin: production Ubuntu 18.04 (glibc 2.27); nokogiri 1.16+ linux gems need glibc 2.28
 gem "liquid"
 # The ActivityPub code (app/lib/activity_pub.rb, activitypub_controller) uses the
 # `http` gem (HTTP.timeout / HTTP.get). It used to come transitively via the now-
