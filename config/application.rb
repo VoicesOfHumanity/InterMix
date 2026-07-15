@@ -8,6 +8,14 @@ Bundler.require(*Rails.groups)
 
 module Intermix
   class Application < Rails::Application
+    # Rails 6.x upgrade: load the 6.1 framework defaults. The app originally had
+    # NO load_defaults line (pre-5.0 behavior); it was moved to 6.0, then 6.1.
+    # The behaviorally-risky flips at each level are pinned back to legacy
+    # values in config/initializers/new_framework_defaults_6_{0,1}.rb and
+    # migrated one at a time from there. Do not remove those initializers
+    # without migrating each pinned default first.
+    config.load_defaults 6.1
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -24,9 +32,12 @@ module Intermix
     # Do not swallow errors in after_commit/after_rollback callbacks.
     #config.active_record.raise_in_transactional_callbacks = true
     
-    #-- This is for ckeditor
-    config.autoload_paths += %W( #{config.root}/app/models/ckeditor )
-    
+    # Rails 6.0 upgrade (step 2): Zeitwerk autoloader. The old ckeditor
+    # autoload_paths line was removed — under app/models as a Zeitwerk root,
+    # app/models/ckeditor/picture.rb autoloads as Ckeditor::Picture correctly,
+    # so no extra root is needed (an explicit root would have made it ::Picture).
+    config.autoloader = :zeitwerk
+
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
     

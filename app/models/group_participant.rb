@@ -1,6 +1,6 @@
 class GroupParticipant < ActiveRecord::Base
-  belongs_to :group, :counter_cache => true
-  belongs_to :participant  
+  belongs_to :group, optional: true, :counter_cache => true
+  belongs_to :participant, optional: true
   
   def subtags
     # Return a list of subtags (sub-groups) for this member in this group

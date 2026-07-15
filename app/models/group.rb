@@ -15,7 +15,7 @@ class Group < ActiveRecord::Base
   has_many :ratings
   has_many :templates
   has_many :messages, :primary_key => :to_group_id
-  belongs_to :owner_participant, :class_name => "Participant", :foreign_key => :owner
+  belongs_to :owner_participant, optional: true, :class_name => "Participant", :foreign_key => :owner
   has_many :periods
   has_many :group_subtags
   

@@ -2,10 +2,10 @@ class Item < ActiveRecord::Base
   belongs_to :participant, counter_cache: true, foreign_key: :posted_by, optional: true
   belongs_to :remote_poster, optional: true, class_name: 'RemoteActor', foreign_key: :posted_by_remote_actor_id
   belongs_to :moderatedparticipant, class_name: "Participant", foreign_key: :moderated_by, optional: true
-  belongs_to :group, :counter_cache => true
-  belongs_to :dialog
-  belongs_to :period
-  belongs_to :conversation
+  belongs_to :group, optional: true, :counter_cache => true
+  belongs_to :dialog, optional: true
+  belongs_to :period, optional: true
+  belongs_to :conversation, optional: true
   has_many :allratings, :class_name=>"Rating"
   has_one :item_rating_summary
 
@@ -60,7 +60,7 @@ class Item < ActiveRecord::Base
     else
       txt = excerpt
       first = txt.split.first
-      if first[0] == '@'
+      if first && first[0] == '@'
         txt = txt.split[1..-1].join(' ')
       end
       return txt[0..30]

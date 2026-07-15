@@ -2,7 +2,7 @@ class Network < ApplicationRecord
 
   has_many :network_communities
   has_many :communities, :through => :network_communities
-  belongs_to :participant, :foreign_key => :created_by
+  belongs_to :participant, optional: true, :foreign_key => :created_by
 
   attr_accessor :activity
   
