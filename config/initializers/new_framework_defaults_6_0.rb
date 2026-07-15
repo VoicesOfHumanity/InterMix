@@ -32,6 +32,17 @@
 # 6.0 (the flip to local-by-default false is a 6.1 default, so it belongs to
 # the 6.1 step, not here). Only 4 form_with call sites in the app.
 
+# --- 5.1 -----------------------------------------------------------------
+# unknown_asset_fallback: 5.1+ defaults this to FALSE, which makes a missing
+# pipeline asset RAISE in production instead of falling back to the given path.
+# This app keeps many images in public/images/ and references them via bare
+# `image_tag("foo.png")` (not through Sprockets), so false 500s those pages
+# (e.g. front/privacy, items/item — the CC-attribution logo). Keep the legacy
+# fallback (image_tag resolves to /images/foo.png, matching Rails 5.2). It only
+# logs a deprecation warning. Proper fix later: reference public assets with a
+# leading slash or skip_pipeline: true, then drop this pin.
+Rails.application.config.assets.unknown_asset_fallback = true
+
 # --- 5.2 -----------------------------------------------------------------
 # Authenticated cookie/message encryption: flipping these invalidates every
 # existing session cookie (logs all users out). Keep legacy until a chosen
