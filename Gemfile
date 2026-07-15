@@ -107,9 +107,6 @@ gem "date"
 
 gem 'rexml', '~> 3.2'
 
-# Ruby 2.7 compatibility: ffi 1.17+ requires Ruby >= 3.0
-gem 'ffi', '< 1.17'
-
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-rbenv'
@@ -138,7 +135,7 @@ end
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   #gem 'therubyracer', :platforms => :ruby
-  gem 'mini_racer', '~> 0.4.0'
+  gem 'mini_racer', '~> 0.6.4'
 
   gem 'uglifier'
 
