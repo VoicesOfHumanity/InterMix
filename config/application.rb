@@ -14,7 +14,15 @@ module Intermix
     # values in config/initializers/new_framework_defaults_{6_0,6_1,7_0}.rb and
     # migrated one at a time from there. Do not remove those initializers
     # without migrating each pinned default first.
-    config.load_defaults 7.0
+    config.load_defaults 7.1
+
+    # Rails 7.1 sets default_column_serializer to nil, so a bare `serialize :col`
+    # (used in ~10 models: item, participant#forum_settings, api_send, etc.)
+    # raises "missing keyword: :coder" at model load. Restore the 7.0 default
+    # (YAML) so those keep working. MUST be set here (application.rb), not in a
+    # config/initializer — it is read before models load. Migrate later by adding
+    # explicit `coder: YAML` to each serialize call, then drop this.
+    config.active_record.default_column_serializer = ActiveRecord::Coders::YAMLColumn
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -37,6 +45,12 @@ module Intermix
     # app/models/ckeditor/picture.rb autoloads as Ckeditor::Picture correctly,
     # so no extra root is needed (an explicit root would have made it ::Picture).
     config.autoloader = :zeitwerk
+
+    # Rails 7.1 requires an Active Storage service to be named once AS is
+    # eager-loaded (production has eager_load = true), even though this app uses
+    # Paperclip, not Active Storage. Point at the disk `local` service defined
+    # in config/storage.yml — a valid no-op (nothing actually uses AS).
+    config.active_storage.service = :local
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
