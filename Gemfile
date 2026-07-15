@@ -4,7 +4,7 @@ ruby '3.2.11'
 
 #gem 'rails', '~> 3.2'
 #gem 'rails', '~> 4.2'
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 7.0.0'
 gem 'rake'
 
 gem 'activerecord-session_store'
@@ -121,6 +121,12 @@ gem 'logger', '1.5.3'
 gem 'net-protocol', '0.2.1'
 gem 'ostruct', '0.5.5'
 gem 'timeout', '0.3.1'
+# Added with the Rails 7 bump (Rails 7 pulls these as explicit deps):
+gem 'benchmark', '0.2.1'
+gem 'drb', '2.1.1'
+gem 'mutex_m', '0.1.2'
+gem 'securerandom', '0.2.2'
+gem 'cgi', '0.3.7'
 # json + openssl pinned at their existing declarations above (lines ~17, ~81)
 
 group :development, :test do
