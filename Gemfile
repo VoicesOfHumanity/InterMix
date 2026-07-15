@@ -4,7 +4,7 @@ ruby '3.2.11'
 
 #gem 'rails', '~> 3.2'
 #gem 'rails', '~> 4.2'
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 7.0.0'
 gem 'rake'
 
 gem 'activerecord-session_store'
@@ -69,7 +69,7 @@ gem 'sanitize'
 gem 'formtastic'
 #gem "will_paginate", "~> 3.0.pre2"
 gem "will_paginate", "~> 3.1.7"
-gem "nokogiri"
+gem "nokogiri", '1.15.7'  # pin: production Ubuntu 18.04 (glibc 2.27); nokogiri 1.16+ linux gems need glibc 2.28
 gem "liquid"
 # The ActivityPub code (app/lib/activity_pub.rb, activitypub_controller) uses the
 # `http` gem (HTTP.timeout / HTTP.get). It used to come transitively via the now-
@@ -121,6 +121,12 @@ gem 'logger', '1.5.3'
 gem 'net-protocol', '0.2.1'
 gem 'ostruct', '0.5.5'
 gem 'timeout', '0.3.1'
+# Added with the Rails 7 bump (Rails 7 pulls these as explicit deps):
+gem 'benchmark', '0.2.1'
+gem 'drb', '2.1.1'
+gem 'mutex_m', '0.1.2'
+gem 'securerandom', '0.2.2'
+gem 'cgi', '0.3.7'
 # json + openssl pinned at their existing declarations above (lines ~17, ~81)
 
 group :development, :test do
@@ -154,6 +160,10 @@ end
   gem 'mini_racer', '~> 0.6.4'
 
   gem 'uglifier'
+  # Rails 7 pulls actiontext/activestorage, whose engines register ES6 JS for
+  # precompilation; Uglifier (ES5-only) chokes on `const`. terser is the modern
+  # ES6-aware minifier (drop-in replacement) — see js_compressor in production.rb.
+  gem 'terser'
 
   gem 'sprockets', '~> 3.7.2'
   
