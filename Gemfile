@@ -68,7 +68,7 @@ gem 'sanitize'
 #gem 'formtastic', '~> 1.2.4'
 gem 'formtastic'
 #gem "will_paginate", "~> 3.0.pre2"
-gem "will_paginate", "~> 3.1.7"
+gem "will_paginate", "~> 4.0"  # 4.0 adds Rails 7 support (3.x helper breaks under Rails 7.1)
 gem "nokogiri", '1.15.7'  # pin: production Ubuntu 18.04 (glibc 2.27); nokogiri 1.16+ linux gems need glibc 2.28
 gem "liquid"
 # The ActivityPub code (app/lib/activity_pub.rb, activitypub_controller) uses the
