@@ -4,7 +4,7 @@ ruby '3.2.11'
 
 #gem 'rails', '~> 3.2'
 #gem 'rails', '~> 4.2'
-gem 'rails', '~> 7.2.0'
+gem 'rails', '~> 8.0.0'
 gem 'rake'
 
 gem 'activerecord-session_store'
@@ -127,7 +127,6 @@ gem 'ostruct', '0.5.5'
 # (as base64 did on the Ruby-3 bump). Verify on staging; if it bites, install
 # the newer versions into the server rbenv Ruby (gem install timeout -v ...).
 # Added with the Rails 7 bump (Rails 7 pulls these as explicit deps):
-gem 'benchmark', '0.2.1'
 gem 'drb', '2.1.1'
 gem 'mutex_m', '0.1.2'
 gem 'cgi', '0.3.7'
