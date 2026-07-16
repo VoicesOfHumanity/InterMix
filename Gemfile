@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '3.2.11'
+ruby '3.3.11'
 
 #gem 'rails', '~> 3.2'
 #gem 'rails', '~> 4.2'
@@ -14,7 +14,7 @@ gem 'activerecord-session_store'
 
 gem 'rack-cors', :require => 'rack/cors'
 
-gem "openssl", '3.1.0'  # Ruby 3.2 default-gem pin (Passenger preload; see block below)
+gem "openssl", '3.2.2'  # Ruby 3.3 default-gem pin (Passenger preload; see block below)
 
 gem 'mysql2'
 #gem 'mysql2', '~> 0.3.18'
@@ -78,7 +78,7 @@ gem "liquid"
 gem 'http', '~> 4.4'
 #gem 'imagesize', :require => 'image_size'
 gem 'image_size'
-gem "json", '2.6.3'  # Ruby 3.2 default-gem pin (Passenger preload; see block below)
+gem "json", '2.7.2'  # Ruby 3.3 default-gem pin (Passenger preload; see block below)
 gem 'link_thumbnailer'
 #gem 'ruby-oembed', :require => 'oembed'
 #gem 'ruby-oembed'
@@ -103,23 +103,22 @@ gem "mimemagic", ">=0.3.10"
 gem 'sitemap_generator'
 
 # assets:precompile seems to be missing this
-gem "date", '3.3.3'  # Ruby 3.2 default-gem pin (see block below)
+gem "date", '3.3.4'  # Ruby 3.3 default-gem pin (see block below)
 
 gem 'rexml', '~> 3.2'
 
-# Ruby 3.2 default-gem pins. These ship WITH Ruby 3.2.11 as default gems, and
+# Ruby 3.3 default-gem pins. These ship WITH Ruby 3.2.11 as default gems, and
 # Passenger's rack-preloader activates the Ruby-shipped versions before Bundler
 # runs. If the lock pins newer versions, boot dies with
 # "already activated <gem> X, but your Gemfile requires Y (Gem::LoadError)".
-# Pin each to the exact version Ruby 3.2.11 ships so there is no conflict.
+# Pin each to the exact version Ruby 3.3.11 ships so there is no conflict.
 # (bigdecimal 4.x additionally requires Ruby >= 3.4.) Revisit on the next Ruby bump.
-gem 'base64', '0.1.1'
-gem 'bigdecimal', '3.1.3'
-gem 'observer', '0.1.1'
-gem 'racc', '1.6.2'
-gem 'logger', '1.5.3'
-gem 'net-protocol', '0.2.1'
-gem 'ostruct', '0.5.5'
+gem 'base64', '0.2.0'
+gem 'bigdecimal', '3.1.5'
+gem 'observer', '0.1.2'
+gem 'logger', '1.6.0'
+gem 'net-protocol', '0.2.2'
+gem 'ostruct', '0.6.0'
 # NOTE timeout + securerandom are NOT pinned to the Ruby 3.2 default: Rails 7.1
 # requires timeout >= 0.4.0 and securerandom >= 0.3, newer than Ruby 3.2.11
 # ships. They are therefore ahead of the system default — if the Passenger
@@ -127,10 +126,10 @@ gem 'ostruct', '0.5.5'
 # (as base64 did on the Ruby-3 bump). Verify on staging; if it bites, install
 # the newer versions into the server rbenv Ruby (gem install timeout -v ...).
 # Added with the Rails 7 bump (Rails 7 pulls these as explicit deps):
-gem 'benchmark', '0.2.1'
-gem 'drb', '2.1.1'
-gem 'mutex_m', '0.1.2'
-gem 'cgi', '0.3.7'
+gem 'benchmark', '0.3.0'
+gem 'drb', '2.2.0'
+gem 'mutex_m', '0.2.0'
+gem 'cgi', '0.4.2'
 # json + openssl pinned at their existing declarations above (lines ~17, ~81)
 
 group :development, :test do
