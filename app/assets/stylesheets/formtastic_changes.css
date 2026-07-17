@@ -43,7 +43,13 @@ form.formtastic.item fieldset > ol > li.string input {
     box-sizing: border-box;
 }
 /* Short labels (Media, Subject) shouldn't eat a wide column and push their
-   fields/choices far to the right — keep them snug. */
+   fields/choices far to the right — keep them snug. Nudge up ~4px so the label
+   text lines up with its field/choices. */
 form.formtastic.item fieldset > ol > li > label {
     width: 60px;
+    margin-top: -4px;
+}
+/* A little breathing room below the Subject row. */
+form.formtastic.item fieldset > ol > li.string {
+    margin-bottom: 6px;
 }
