@@ -29,12 +29,5 @@ class Ability
     # See the wiki for details:
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
     
-    # Always performed
-    can :access, :ckeditor   # needed to access Ckeditor filebrowser
-
-    # Performed checks for actions:
-    can [:read, :create, :update, :destroy], Ckeditor::Picture
-    can [:read, :create, :update, :destroy], Ckeditor::AttachmentFile
-    
   end
 end

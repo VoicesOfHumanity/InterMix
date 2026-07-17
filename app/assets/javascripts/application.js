@@ -12,11 +12,11 @@
 //
 //= require jquery3
 //= require jquery_ujs
+//= require trix
+//= require trix_uploads
 //= require main
 //= require front
 //= require forum
-//= require ckeditor_fix
-// require ckeditor/init
 
 //= require jquery-ui
 // require jquery.ui.core

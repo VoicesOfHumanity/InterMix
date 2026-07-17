@@ -10,7 +10,7 @@
 			<div style="width:25%;float:left">HTML Body</div>
 			<div style="width:75%;float:left">
 			<% "ckeditor_textarea( :template, :html_body, :ajax => true, :width=>'97%', :height=>'300', :toolbar=>'Full' )" %> 
-			<%= cktext_area(:template, :html_body, :ajax => true, :width=>'97%', :height=>'300', :toolbar=>'Full')%>
+			<%= trix_editor(:template, :html_body) %>
 			</div>
 		</li>		
 
@@ -24,5 +24,5 @@
 
 <p>
   <input type="button" value="Cancel" onclick="viewrec1(<%= @template.id.to_i %>)" />
-  <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saverec1()" />
+  <input type="button" value="Save" onclick="saverec1()" />
 </p>

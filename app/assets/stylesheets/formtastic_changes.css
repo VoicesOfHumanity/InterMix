@@ -28,3 +28,34 @@ form.formtastic fieldset {
 form.formtastic fieldset > ol > li.string input {
     max-width: 500px;
 }
+
+/* The item post/edit form hosts the rich-text editor, which needs the full
+   content column — not the default fixed 500px formtastic fieldset. Scoped to
+   the item form (class "formtastic item") so other forms keep their 500px. */
+form.formtastic.item fieldset {
+    width: auto;
+}
+/* Stretch the Subject field to the right edge, aligning with the editor below,
+   with a small horizontal gap after the label. */
+form.formtastic.item fieldset > ol > li.string input {
+    display: inline-block;
+    margin-left: 6px;
+    width: calc(100% - 82px);
+    max-width: 100%;
+    box-sizing: border-box;
+}
+/* Short labels (Media, Subject) shouldn't eat a wide column and push their
+   fields/choices far to the right — keep them snug, at their default vertical
+   position. */
+form.formtastic.item fieldset > ol > li > label {
+    width: 60px;
+}
+/* Nudge just the Media choices row (text | question | ...) up ~2px. */
+form.formtastic.item fieldset > ol > li.hidden + li {
+    position: relative;
+    top: -2px;
+}
+/* Breathing room below the Subject row, before the Message/editor. */
+form.formtastic.item fieldset > ol > li.string {
+    margin-bottom: 14px;
+}

@@ -29,7 +29,7 @@
 			<div style="width:100%;float:left">
         <b>Message</b><br>
 
-				<%= cktext_area(:message, :message, :ckeditor => {:ajax => true, :width=>500, :height=>200, :toolbar=>'Custom'}) %>
+				<%= trix_editor(:message, :message) %>
 
 			</div>
 		</li>
@@ -38,7 +38,7 @@
 
 	<p>
 	  <input type="button" value="Cancel" onclick="newmess()" />
-	  <input type="button" value="Send" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};savemess()" />
+	  <input type="button" value="Send" onclick="savemess()" />
 	</p>
   
   <% if @message.to_friend_id.to_i > 0 and not @follow_mutual -%>

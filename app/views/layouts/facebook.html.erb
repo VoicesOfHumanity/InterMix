@@ -8,7 +8,7 @@
 	<%= stylesheet_link_tag 'blueprint/ie', :media => "screen, projection" %>
 	<![endif]-->
   <%= stylesheet_link_tag "main", "formtastic", "formtastic_changes", "jquery.treeview.css", "extra" %>
-  <%= javascript_include_tag :defaults, :ckeditor, "forum", "front", "jquery.treeview.js" %>
+  <%= javascript_include_tag :defaults, "forum", "front", "jquery.treeview.js" %>
   <%= csrf_meta_tag %>
   <% if @item and controller_name == 'items' -%>
   <meta property="og:title" content="Voices of Humanity: <%= @item.subject %>">

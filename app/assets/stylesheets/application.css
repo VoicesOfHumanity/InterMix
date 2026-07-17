@@ -18,4 +18,6 @@
  *= require 'jquery.treeview.css'
  *= require 'tooltipster.css'
  *= require 'extra'
+ *= require trix
+ *= require trix_overrides
  */

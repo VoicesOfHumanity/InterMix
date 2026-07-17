@@ -1,0 +1,65 @@
+/* Sizing/appearance for the Trix editor (replaces CKEditor's width/height args). */
+
+/* Fill the available width of the container (the ~75% content column),
+   like CKEditor's width:97% did — instead of a fixed max-width. */
+trix-editor,
+trix-toolbar {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+trix-editor {
+  min-height: 220px;
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  padding: 8px;
+}
+
+/* Trix 2.x button rows are `flex-wrap: nowrap; overflow-x: auto`, which gives a
+   horizontal scrollbar when the buttons don't fit. Let them wrap to a 2nd line. */
+trix-toolbar .trix-button-row {
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+
+/* The default gap between toolbar sections is 1.5vw (~15-20px on a wide screen),
+   which pushes the toolbar onto a second line. Tighten it so it fits one row. */
+trix-toolbar .trix-button-group:not(:first-child) {
+  margin-left: 0.4em;
+}
+trix-toolbar .trix-button {
+  padding: 0 0.35em;
+}
+
+/* Inline images shouldn't blow out the editor width */
+trix-editor img,
+.trix-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Inserted images should read as plain article pictures, not file
+   "attachments": hide the caption / filename / size / metadata chrome in the
+   editor. (Captions are stripped on the published page and summary anyway.) The
+   attachment toolbar is kept so an image can still be selected/removed. */
+trix-editor .attachment__caption,
+trix-editor .attachment__caption-editor,
+trix-editor .attachment__name,
+trix-editor .attachment__size,
+trix-editor .attachment__metadata,
+trix-editor .attachment__metadata-container {
+  display: none !important;
+}
+
+/* Published item content: Trix stores paragraphs as <div> (no default margin)
+   and images as plain <img> after sanitize. Give paragraphs a little spacing
+   like CKEditor's <p> had, and keep images responsive. */
+.htmlcontent > div {
+  margin: 0 0 0.6em;
+}
+.htmlcontent img {
+  max-width: 100%;
+  height: auto;
+}
