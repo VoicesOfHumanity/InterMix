@@ -35,11 +35,15 @@ form.formtastic fieldset > ol > li.string input {
 form.formtastic.item fieldset {
     width: auto;
 }
+/* Stretch the Subject field to the right edge, aligning with the editor below. */
 form.formtastic.item fieldset > ol > li.string input {
+    display: inline-block;
+    width: calc(100% - 75px);
     max-width: 100%;
+    box-sizing: border-box;
 }
-/* Short labels (Media, Subject) shouldn't eat a 25% column and push their
-   fields far to the right. */
+/* Short labels (Media, Subject) shouldn't eat a wide column and push their
+   fields/choices far to the right — keep them snug. */
 form.formtastic.item fieldset > ol > li > label {
-    width: 90px;
+    width: 60px;
 }
