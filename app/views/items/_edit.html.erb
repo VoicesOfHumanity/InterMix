@@ -1,8 +1,3 @@
-<script>
-if (CKEDITOR.instances['item_html_content']) { 
-	CKEDITOR.remove(CKEDITOR.instances['item_html_content']);
-}
-</script>
 <form accept-charset="UTF-8" action="/items/<%= @item.id %>" class="formtastic item" id="edit_item_<%= @item.id %>" method="post" enctype="multipart/form-data">
 <div style="margin:0;padding:0;display:inline">
 	<input name="utf8" type="hidden" value="&#x2713;" />
@@ -108,7 +103,7 @@ if (CKEDITOR.instances['item_html_content']) {
   	<div style="width:70%;float:left">
       <% if @item.media_type != 'question' -%>
   	    <input type="button" value="Cancel" onclick="canceledit(<%= @item.id.to_i %>)" />
-  	    <input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" />
+  	    <input type="button" value="Save" onclick="saveitem()" />
       <% end -%>
 	 
 	 	  <% if @conversation and @conversation.together_apart == 'together' -%>
@@ -229,31 +224,22 @@ console.log('_edit');
 //editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'} )
 //console.log('after editor replace')
 
-//$(document).ready(function() {
 <% if @item.media_type != 'question' -%>
-	if (!CKEDITOR.instances) {
-		alert('CKEDITOR: ' + JSON.stringify(CKEDITOR));
-	} else if (!('item_html_content' in CKEDITOR.instances)) {
-		alert('CKEDITOR.instances: ' + JSON.stringify(CKEDITOR.instances));
-		//var xinstance = CKEDITOR.replace($('#item_html_content'));
-		var xinstance = CKEDITOR.replace($('#item_html_content'), {"language":"en","ajax":true,"width":"97%","height":"250","toolbar":"Basic"}); 
-		alert('CKEDITOR instance: ' + JSON.stringify(xinstance));
-		CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
-			this.document.on("keyup", editor_change);
-		});
-	} else {
-		CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
-			this.document.on("keyup", editor_change);
-      CKEDITOR.instances['item_html_content'].focus();
-		});
-	}
-<% end -%>  
-//});
+	// Trix auto-upgrades the <trix-editor> in this partial. Bind the live
+	// short-content/char-count preview to its change event, and focus it.
+	(function() {
+		var trix = document.querySelector('trix-editor[input="item_html_content"]');
+		if (trix) {
+			trix.addEventListener("trix-change", editor_change);
+			setTimeout(function() { try { trix.focus(); } catch (e) {} }, 50);
+		}
+	})();
+<% end -%>
 var short_updated = <%= (@item.id.to_i > 0 or flash[:alert].to_s !="" or @item.media_type != 'text') ? "true" : "false" %>;
 var short_allowed = false;
 var editor_change_first = true;
 function editor_change() {
-	var htmlval = CKEDITOR.instances['item_html_content'].getData();
+	var htmlval = $('#item_html_content').val();  // Trix syncs its HTML to the input
 	var plainval = $.trim(strip(htmlval));
 	if (!short_updated) {
 		html_to_short(htmlval,plainval);
