@@ -39,3 +39,24 @@ trix-editor img,
   max-width: 100%;
   height: auto;
 }
+
+/* Inserted images should read as plain article pictures, not file
+   "attachments": hide the caption/metadata chrome in the editor. (Captions are
+   stripped on the published page anyway.) The attachment toolbar is kept so an
+   image can still be selected/removed. */
+trix-editor .attachment--preview .attachment__caption,
+trix-editor .attachment__metadata,
+trix-editor .attachment__metadata-container {
+  display: none !important;
+}
+
+/* Published item content: Trix stores paragraphs as <div> (no default margin)
+   and images as plain <img> after sanitize. Give paragraphs a little spacing
+   like CKEditor's <p> had, and keep images responsive. */
+.htmlcontent > div {
+  margin: 0 0 0.6em;
+}
+.htmlcontent img {
+  max-width: 100%;
+  height: auto;
+}

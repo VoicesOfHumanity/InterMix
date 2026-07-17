@@ -291,13 +291,20 @@ class ApplicationController < ActionController::Base
   end  
   
   def sanitizethis(sometext)
-    Sanitize.clean(sometext.force_encoding("UTF-8"), 
-      :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'ol', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img'],
+    Sanitize.clean(sometext.force_encoding("UTF-8"),
+      # Trix (unlike CKEditor) separates paragraphs with <div> and wraps images
+      # in <figure class="attachment"><img><figcaption>. Allow <div> so paragraph
+      # breaks survive, drop <figcaption> with its contents so the filename/size
+      # (or typed caption) doesn't leak as stray text next to the image, and keep
+      # <blockquote>/<pre>/<del>/<s> which Trix's toolbar can produce. The <img>
+      # itself survives and renders as a plain article picture — no attachment chrome.
+      :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'ol', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td','img','div','blockquote','pre','del','s'],
       :attributes => {'a' => ['href', 'title', 'target'], 'img' => ['src', 'alt', 'width', 'height', 'align', 'vspace', 'hspace', 'style']},
       :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]}, 'img' => {'src'  => ['http', 'https', :relative]} },
       :css => {
           :properties => ['width','height','float','border-width','border-style','margin']
       },
+      :remove_contents => ['figcaption', 'script', 'style'],
       :allow_comments => false,
       :output => :html
     )
