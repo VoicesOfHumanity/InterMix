@@ -1,16 +1,29 @@
-/* Sizing/appearance for the Trix editor (replaces CKEditor's width/height args).
-   Refine after the staging visual check. */
+/* Sizing/appearance for the Trix editor (replaces CKEditor's width/height args). */
+
+/* Fill the available width of the container (the ~75% content column),
+   like CKEditor's width:97% did — instead of a fixed max-width. */
+trix-editor,
+trix-toolbar {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 trix-editor {
   min-height: 220px;
-  max-width: 700px;
   background: #fff;
   border: 1px solid #bbb;
   border-radius: 3px;
   padding: 8px;
 }
-trix-toolbar {
-  max-width: 700px;
+
+/* Trix 2.x button rows are `flex-wrap: nowrap; overflow-x: auto`, which gives a
+   horizontal scrollbar when the buttons don't fit. Let them wrap to a 2nd line. */
+trix-toolbar .trix-button-row {
+  flex-wrap: wrap;
+  overflow-x: visible;
 }
+
 /* Inline images shouldn't blow out the editor width */
 trix-editor img,
 .trix-content img {
