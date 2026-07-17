@@ -28,3 +28,18 @@ form.formtastic fieldset {
 form.formtastic fieldset > ol > li.string input {
     max-width: 500px;
 }
+
+/* The item post/edit form hosts the rich-text editor, which needs the full
+   content column — not the default fixed 500px formtastic fieldset. Scoped to
+   the item form (class "formtastic item") so other forms keep their 500px. */
+form.formtastic.item fieldset {
+    width: auto;
+}
+form.formtastic.item fieldset > ol > li.string input {
+    max-width: 100%;
+}
+/* Short labels (Media, Subject) shouldn't eat a 25% column and push their
+   fields far to the right. */
+form.formtastic.item fieldset > ol > li > label {
+    width: 90px;
+}
