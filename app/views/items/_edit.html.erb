@@ -240,7 +240,10 @@ var short_allowed = false;
 var editor_change_first = true;
 function editor_change() {
 	var htmlval = $('#item_html_content').val();  // Trix syncs its HTML to the input
-	var plainval = $.trim(strip(htmlval));
+	// Trix wraps images in <figure>...<figcaption>filename size</figcaption></figure>.
+	// Drop the caption before extracting plain text so the filename/size don't
+	// leak into the short summary or the character count.
+	var plainval = $.trim(strip(htmlval.replace(/<figcaption[\s\S]*?<\/figcaption>/gi, '')));
 	if (!short_updated) {
 		html_to_short(htmlval,plainval);
 	}
