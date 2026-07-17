@@ -38,7 +38,7 @@
 
 	<p>
 	  <input type="button" value="Cancel" onclick="newmess()" />
-	  <input type="button" value="Send" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};savemess()" />
+	  <input type="button" value="Send" onclick="savemess()" />
 	</p>
   
   <% if @message.to_friend_id.to_i > 0 and not @follow_mutual -%>

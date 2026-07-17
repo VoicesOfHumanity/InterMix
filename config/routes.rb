@@ -55,7 +55,6 @@ Rails.application.routes.draw do
   #     resources :products
   #   end
   
-  mount Ckeditor::Engine => '/ckeditor'
 
   # Trix editor inline image/file uploads (replaces the CKEditor filebrowser).
   post 'uploads' => 'uploads#create'

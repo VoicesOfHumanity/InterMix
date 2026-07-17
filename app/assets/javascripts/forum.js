@@ -230,12 +230,6 @@ function newitem(token, media_type) {
 	$('.reply_link').each(function(i,obj) {
 	    $(this).css('opacity','0.4');
 	});
-	if (CKEDITOR.instances['item_html_content']) { 
-		CKEDITOR.remove(CKEDITOR.instances['item_html_content']);
-	}
-	if (CKEDITOR.instances['item_html_content_editor']) { 
-		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
-	}
     if ($('#newforumitem').length) {
         $('#per_main').prepend($('#newforumitem'));       
     } else {
@@ -328,7 +322,6 @@ function newitem(token, media_type) {
                 //$('#item_short_content').val('');
                 short_updated = false;
                 //console.log('before editor replace')
-                //editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'} )
                 //console.log('after editor replace')
   		    }
 		}
@@ -352,9 +345,6 @@ function reply(item_id,to_reply) {
 	$('.reply_link').each(function(i,obj) {
 	    $(this).css('opacity','0.4');
 	});
-	if (CKEDITOR.instances['item_html_content_editor']) { 
-		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
-	}
 	
 	var newcontent = '<div class="forumitem forumreply" id="reply_'+item_id+'">working...</div>';
 	if (to_reply) {
@@ -413,7 +403,6 @@ function reply(item_id,to_reply) {
             //$(document.body).scrollTop($('#mediatitle2').offset().top);
             $('html,body').animate({scrollTop: $('#comment_title').offset().top}, 500);
             
-            //editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
 		}
 	});	
 }
@@ -434,9 +423,6 @@ function edititem(id) {
 	$('.reply_link').each(function(i,obj) {
 	    $(this).css('opacity','0.4');
 	});
-	if (CKEDITOR.instances['item_html_content_editor']) { 
-		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
-	}
 	curid = id;
 	oldval = $('#htmlcontent_'+id).html();
 	var token = $('#authenticity_token') ? $('#authenticity_token').val() : '';
@@ -450,29 +436,12 @@ function edititem(id) {
         complete: function(t){	
           $('#htmlcontent_'+id).html(t.responseText);
           short_updated = false;
-          editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
-      	  CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
-      			this.document.on("keyup", editor_change);
-      	  });
+          // The loaded _edit partial auto-upgrades its <trix-editor> and binds
+          // editor_change itself — nothing to init here.
         }
      });	
 }
-function edititem_old(id) {	
-	curid = id;
-	oldval = $('#htmlcontent_'+id).html();
-	$('#htmlcontent_'+id).html(
-	'<form id="edit_item_' + id +'">'	
-	+ '<input type="hidden" id="item_id" name="item[id]" value="' + id +'" />'
-	+	'<textarea ajax="true" class="editor" cols="70" id="item_html_content_editor" name="item[html_content]" rows="20" style="width:97%;height:250">' + oldval + '</textarea>'
-	+ '<p><input type="button" value="Cancel" onclick="canceledit(' + id + ')" />'
-	+ '<input type="button" value="Save" onclick="for (instance in CKEDITOR.instances){CKEDITOR.instances[instance].updateElement();};saveitem()" /></p>'
-	+ '</form>'
-	);
-	if (CKEDITOR.instances['item_html_content_editor']) { 
-		CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
-	}
-	CKEDITOR.replace('item_html_content_editor', { filebrowserBrowseUrl: '/ckeditor/files',language: 'en',filebrowserUploadUrl: '/ckeditor/create/file',height: '250',filebrowserImageBrowseUrl: '/ckeditor/images',width: '97%',toolbar: 'Basic',filebrowserImageUploadUrl: '/ckeditor/create/image' });
-}
+// (edititem_old removed — dead CKEditor-based edit path, superseded by edititem)
 function canceledit(id) {
 	if (typeof(id)!='undefined' && id != 0) {
 		$('#htmlcontent_'+id).html(oldval);
@@ -603,17 +572,11 @@ function saveitem() {
 			}
 			if (was_error) {
 				console.log('saveitem was_error');
-				if (CKEDITOR.instances['item_html_content_editor']) { 
-					CKEDITOR.remove(CKEDITOR.instances['item_html_content_editor']);
-				}
+				// Form (with its Trix editor) is still in the DOM on error — no re-init.
 				issaving = false;
-				editor = CKEDITOR.replace( 'item_html_content', {toolbar: 'Custom'}, $('#item_html_content').val() )
 				removeHash();
 				$(window).scrollTop(0);
-				CKEDITOR.instances['item_html_content'].on('instanceReady', function() {
-					this.document.on("keyup", editor_change);
-				});
-			} else {    
+			} else {
 				console.log('saveitem not was_error');
 				removeHash();
 				if ($('#from') && $('#from').val()=='individual') {
@@ -1019,7 +982,7 @@ function clickimportance(item_id) {
 
 function html_to_short(htmlval,plainval) {
     if (typeof htmlval === "undefined") {
-        htmlval = CKEDITOR.instances['item_html_content'].getData();
+        htmlval = $('#item_html_content').val();
     }
     if (typeof plainval === "undefined") {
 	    plainval = $.trim(strip(htmlval));
