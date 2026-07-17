@@ -41,10 +41,13 @@ trix-editor img,
 }
 
 /* Inserted images should read as plain article pictures, not file
-   "attachments": hide the caption/metadata chrome in the editor. (Captions are
-   stripped on the published page anyway.) The attachment toolbar is kept so an
-   image can still be selected/removed. */
-trix-editor .attachment--preview .attachment__caption,
+   "attachments": hide the caption / filename / size / metadata chrome in the
+   editor. (Captions are stripped on the published page and summary anyway.) The
+   attachment toolbar is kept so an image can still be selected/removed. */
+trix-editor .attachment__caption,
+trix-editor .attachment__caption-editor,
+trix-editor .attachment__name,
+trix-editor .attachment__size,
 trix-editor .attachment__metadata,
 trix-editor .attachment__metadata-container {
   display: none !important;
