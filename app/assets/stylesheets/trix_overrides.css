@@ -24,6 +24,15 @@ trix-toolbar .trix-button-row {
   overflow-x: visible;
 }
 
+/* The default gap between toolbar sections is 1.5vw (~15-20px on a wide screen),
+   which pushes the toolbar onto a second line. Tighten it so it fits one row. */
+trix-toolbar .trix-button-group:not(:first-child) {
+  margin-left: 0.4em;
+}
+trix-toolbar .trix-button {
+  padding: 0 0.35em;
+}
+
 /* Inline images shouldn't blow out the editor width */
 trix-editor img,
 .trix-content img {
