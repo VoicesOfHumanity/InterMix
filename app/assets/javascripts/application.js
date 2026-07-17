@@ -12,6 +12,8 @@
 //
 //= require jquery3
 //= require jquery_ujs
+//= require trix
+//= require trix_uploads
 //= require main
 //= require front
 //= require forum
