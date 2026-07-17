@@ -1,0 +1,19 @@
+/* Sizing/appearance for the Trix editor (replaces CKEditor's width/height args).
+   Refine after the staging visual check. */
+trix-editor {
+  min-height: 220px;
+  max-width: 700px;
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  padding: 8px;
+}
+trix-toolbar {
+  max-width: 700px;
+}
+/* Inline images shouldn't blow out the editor width */
+trix-editor img,
+.trix-content img {
+  max-width: 100%;
+  height: auto;
+}

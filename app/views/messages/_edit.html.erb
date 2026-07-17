@@ -29,7 +29,7 @@
 			<div style="width:100%;float:left">
         <b>Message</b><br>
 
-				<%= cktext_area(:message, :message, :ckeditor => {:ajax => true, :width=>500, :height=>200, :toolbar=>'Custom'}) %>
+				<%= trix_editor(:message, :message) %>
 
 			</div>
 		</li>

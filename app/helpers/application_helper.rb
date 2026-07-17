@@ -1,5 +1,22 @@
 module ApplicationHelper
-  
+
+  # Trix rich-text editor bound to a plain HTML column (replaces cktext_area /
+  # CKEditor). Renders a hidden input carrying the current HTML plus a
+  # <trix-editor> that reads/writes it. The form still submits `obj[method]`
+  # HTML to the same column — no data-model change. Sizing is via CSS
+  # (.trix-content / trix-editor), not width/height args like CKEditor took.
+  #   <%= trix_editor(:item, :html_content) %>
+  def trix_editor(object_name, method, value = nil, html_options = {})
+    input_id = html_options.delete(:id) || "#{object_name}_#{method}"
+    if value.nil?
+      obj = instance_variable_get("@#{object_name}") rescue nil
+      value = obj.respond_to?(method) ? obj.send(method) : nil
+    end
+    hidden = hidden_field_tag("#{object_name}[#{method}]", value, id: input_id)
+    editor = content_tag("trix-editor", "".html_safe, { input: input_id }.merge(html_options))
+    safe_join([hidden, editor])
+  end
+
   def clean_links(oldhtml)
     #-- Assume we're getting an item full html, possibly with some embedded images. 
     #-- Turn http into https if they're our own. If foreign http hot links, remove them.
