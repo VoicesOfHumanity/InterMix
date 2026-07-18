@@ -236,9 +236,6 @@ GEM
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2026.0701)
-    mimemagic (0.4.3)
-      nokogiri (~> 1)
-      rake
     mini_mime (1.1.5)
     mini_racer (0.6.4)
       libv8-node (~> 16.19.0.0)
@@ -540,7 +537,6 @@ DEPENDENCIES
   link_thumbnailer
   liquid
   logger (= 1.5.3)
-  mimemagic (>= 0.3.10)
   mini_racer (~> 0.6.4)
   mutex_m (= 0.1.2)
   mysql2
