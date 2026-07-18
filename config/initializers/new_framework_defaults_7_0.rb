@@ -10,16 +10,20 @@
 
 # --- PINNED (risky, migrate later) ---------------------------------------
 
-# raise_on_open_redirects (7.0 => true): redirect_to an external host now RAISES
-# unless allow_other_host: true. The app does external redirects (OAuth provider
-# callbacks, cross-domain voh/intermix hops). Keep legacy (no raise) until every
-# external redirect_to is audited + marked allow_other_host.
-Rails.application.config.action_controller.raise_on_open_redirects = false
+# raise_on_open_redirects: MIGRATED to the 7.0 default (true). Audited every
+# redirect_to: the internal `/path` redirects are same-origin (no raise); the 18
+# cross-host ones (protocol-relative `//BASEDOMAIN/...` join/slider hops and
+# `//shortname.ROOTDOMAIN/` subdomain hops in front/communities/groups
+# controllers, all to the app's OWN domains) are now marked allow_other_host:
+# true. Removed the pin. NB: user-supplied redirect targets would now raise —
+# none found (no redirect_to params[...]/return_to/referer in the app).
 
-# button_to_generates_button_tag (7.0 => true): button_to renders <button>
-# instead of <input type=submit>, which changes markup/CSS/JS hooks. Keep the
-# <input> form until the UI is checked.
-Rails.application.config.action_view.button_to_generates_button_tag = false
+# button_to_generates_button_tag: MIGRATED to the 7.0 default (true). Audited
+# all 7 button_to sites: 6 are block-form OAuth login buttons (`button_to url do`)
+# which ALWAYS render <button> regardless of this flag; only the
+# delete-account button (front/delete_account_screen) is non-block and switches
+# <input> -> <button> (same .btn styling, text label preserved). Needs a quick
+# visual confirm on staging. Removed the pin.
 
 # partial_inserts: MIGRATED to the 7.0 default (false) — INSERTs now always
 # include every column (with its default), which is the safer, explicit form on

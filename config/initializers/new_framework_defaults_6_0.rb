@@ -33,15 +33,13 @@
 # the 6.1 step, not here). Only 4 form_with call sites in the app.
 
 # --- 5.1 -----------------------------------------------------------------
-# unknown_asset_fallback: 5.1+ defaults this to FALSE, which makes a missing
-# pipeline asset RAISE in production instead of falling back to the given path.
-# This app keeps many images in public/images/ and references them via bare
-# `image_tag("foo.png")` (not through Sprockets), so false 500s those pages
-# (e.g. front/privacy, items/item — the CC-attribution logo). Keep the legacy
-# fallback (image_tag resolves to /images/foo.png, matching Rails 5.2). It only
-# logs a deprecation warning. Proper fix later: reference public assets with a
-# leading slash or skip_pipeline: true, then drop this pin.
-Rails.application.config.assets.unknown_asset_fallback = true
+# unknown_asset_fallback: MIGRATED to the 5.1+ default (false) — a missing
+# pipeline asset now RAISES instead of silently falling back. Prerequisite done:
+# a bulletproof scan (every image_tag first-arg) found exactly ONE bare public
+# reference, ccattribution4point0.png, used in front/privacy + items/item.
+# Both now use the leading-slash form image_tag("/images/ccattribution4point0.png")
+# which bypasses the pipeline. No other bare-name asset refs exist (CSS/JS go
+# through the manifest). Removed the pin.
 
 # --- 5.2 -----------------------------------------------------------------
 # Authenticated cookie/message encryption: flipping these invalidates every

@@ -46,9 +46,11 @@ class ProfilesController < ApplicationController
       # If indigenous as country, add to religion, if not there
       has_indig = false
       for p_r in @participant.participant_religions
-        if p_r.religion.name == 'Indigenous'
+        # p_r.religion can be nil for orphaned rows (religion deleted but the
+        # join row left behind); guard against it.
+        if p_r.religion&.name == 'Indigenous'
           has_indig = true
-        end 
+        end
       end
       if not has_indig
         logger.info("profiles#settings adding missing indigenous religion")

@@ -1297,7 +1297,7 @@ class GroupsController < ApplicationController
     
     #-- Send use to authorization
     #redirect_to '/auth/twitter'
-    redirect_to authorize_url 
+    redirect_to authorize_url, allow_other_host: true   # external Twitter OAuth authorize URL
         
   end  
 
@@ -1400,7 +1400,7 @@ class GroupsController < ApplicationController
     if request.get? and session[:cur_prefix] != '' and Rails.env == 'production' and (request.host == BASEDOMAIN or request.host == ROOTDOMAIN)
       host_should_be = "#{session[:cur_prefix]}.#{ROOTDOMAIN}"
       if request.host != host_should_be
-        redirect_to "//#{host_should_be}#{request.fullpath}"
+        redirect_to "//#{host_should_be}#{request.fullpath}", allow_other_host: true
       end
     end
   end

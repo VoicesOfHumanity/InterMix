@@ -296,23 +296,23 @@ class FrontController < ApplicationController
 
     if not @group
       flash[:alert] = "No group was identified"
-      redirect_to "//#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return
     elsif not @dialog
       flash[:alert] = "No discussion was identified"
-      redirect_to "//#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return
     elsif @dialog and current_participant and participant_signed_in?
       flash[:alert] = "You were already logged in. No need to join again."
-      redirect_to "//#{@dialog.shortname}.#{ROOTDOMAIN}/"
+      redirect_to "//#{@dialog.shortname}.#{ROOTDOMAIN}/", allow_other_host: true
       return
     elsif @group and current_participant and participant_signed_in?
       flash[:alert] = "You were already logged in. No need to join again."
-      redirect_to "//#{@group.shortname}.#{ROOTDOMAIN}/"
+      redirect_to "//#{@group.shortname}.#{ROOTDOMAIN}/", allow_other_host: true
       return
     elsif @group and not ( @group.openness == 'open' or @group.openness == 'open_to_apply' )
       flash[:alert] = "Sorry, you can not join that group by yourself"
-      redirect_to "//#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return      
     end
     
@@ -336,7 +336,7 @@ class FrontController < ApplicationController
 
     if request.get?
       flash[:alert] = "Not allowed"
-      redirect_to "//#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return
     end
 
@@ -356,15 +356,15 @@ class FrontController < ApplicationController
 
     if not @group
       flash[:alert] = "No group was identified"
-      redirect_to "//#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return
     elsif not @dialog
       flash[:alert] = "No discussion was identified"
-      redirect_to "//#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return
     elsif @group and not ( @group.openness == 'open' or @group.openness == 'open_to_apply' )
       flash[:alert] = "Sorry, you can not join that group by yourself"
-      redirect_to "//#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return   
     end     
     
@@ -787,15 +787,15 @@ class FrontController < ApplicationController
     
     if not @group
       flash[:alert] = "Group not found"
-      redirect_to "//#{BASEDOMAIN}/join"
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return  
     elsif @dialog and current_participant and participant_signed_in?
       flash[:alert] = "You were already logged in. No need to join again."
-      redirect_to "//#{@dialog.shortname}.#{ROOTDOMAIN}/"
+      redirect_to "//#{@dialog.shortname}.#{ROOTDOMAIN}/", allow_other_host: true
       return
     elsif @group.shortname.to_s != '' and current_participant and participant_signed_in?
       flash[:alert] = "You were already logged in. No need to join again."
-      redirect_to "//#{@group.shortname}.#{ROOTDOMAIN}/"
+      redirect_to "//#{@group.shortname}.#{ROOTDOMAIN}/", allow_other_host: true
       return
     elsif @group.openness == 'private'
       render inline: "This is a private group", :layout => 'front'
@@ -829,7 +829,7 @@ class FrontController < ApplicationController
 
     if request.get?
       flash[:alert] = "Not allowed"
-      redirect_to "//#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return
     end
     
@@ -1190,7 +1190,7 @@ class FrontController < ApplicationController
           @participant.save
         end
         session[:comtag] = @comtag
-        redirect_to "//#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider?comtag=#{@comtag}"
+        redirect_to "//#{BASEDOMAIN}/dialogs/#{@dialog.id}/slider?comtag=#{@comtag}", allow_other_host: true
         return
       elsif @dialog and @group
         cdata['domain'] = "#{@dialog.shortname}.#{@group.shortname}.#{ROOTDOMAIN}" if @dialog.shortname.to_s != "" and @group.shortname.to_s != ""
@@ -1592,7 +1592,7 @@ class FrontController < ApplicationController
 
     if request.get?
       flash[:alert] = "Not allowed"
-      redirect_to "//#{BASEDOMAIN}/join" 
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return
     end
 
