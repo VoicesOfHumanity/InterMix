@@ -18,7 +18,8 @@
 # until the metamap/dialog/community associations are checked.
 Rails.application.config.active_record.automatically_invert_plural_associations = false
 
-# yjit (7.2 => true): auto-enables YJIT. Keep off to match 7.1 (this server's
-# Ruby 3.2.11 was built without YJIT anyway, so it is a no-op there). Enable
-# later as a deliberate perf step after checking memory on the prod box.
-Rails.application.config.yjit = false
+# yjit: MIGRATED — removed the pin; load_defaults 8.0 sets it true. Verified a
+# genuine no-op on both local and the production server: their Ruby 3.2.11 is
+# built WITHOUT YJIT (RubyVM::YJIT absent), so Rails' enable step is skipped.
+# Becomes a real perf win only after Ruby is rebuilt with YJIT (ties to the
+# deferred Passenger/OS modernization).
