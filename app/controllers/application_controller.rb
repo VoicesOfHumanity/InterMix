@@ -481,7 +481,7 @@ class ApplicationController < ActionController::Base
       if xsub != 'voh'
         new_url =  "https://voh.#{ROOTDOMAIN}#{request.fullpath}"
         logger.info("application#redirect_if_not_voh redirecting to #{new_url}")
-        redirect_to new_url
+        redirect_to new_url, allow_other_host: true
         return true
       end
     end    

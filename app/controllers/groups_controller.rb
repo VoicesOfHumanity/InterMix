@@ -1297,7 +1297,7 @@ class GroupsController < ApplicationController
     
     #-- Send use to authorization
     #redirect_to '/auth/twitter'
-    redirect_to authorize_url 
+    redirect_to authorize_url, allow_other_host: true   # external Twitter OAuth authorize URL
         
   end  
 
