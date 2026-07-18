@@ -12,8 +12,10 @@
 <p><!--<a href="/participants/auth/facebook">
 <img alt="Facebook Sign-in" height="64" src="https://voh.intermix.org/images/login/facebook_64.png" style="float:left; margin:0 10px 10px 0;" width="64" title ="Facebook Sign-in" /></a>
 -->
+<% if SHOW_FACEBOOK_LOGIN %>
 <%= button_to "/participants/auth/facebook", class: "btn btn-danger", method: :post, data: {turbo: "false"} do %>
   <%= image_tag("https://voh.intermix.org/images/login/facebook_64.png", alt: "Facebook Sign-in", style: "display:inline-block;vertical-align:middle", width: "64", height: "64") %>
+<% end %>
 <% end %>
 </p>
 
