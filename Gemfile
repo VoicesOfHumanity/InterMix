@@ -62,7 +62,11 @@ gem 'cancancan'
 # the old unversioned line resolved to) is incompatible with Rails 5.2 — its
 # post_process callback calls run_callbacks with the pre-5.0 arity and crashes
 # every image upload. kt-paperclip keeps the same `Paperclip` API.
-gem 'kt-paperclip', '~> 6.4', require: 'paperclip'
+# 7.x is Rails-7/8-aware (fixed the AttachmentSizeValidator::CHECKS constant Rails 7
+# removed) so the paperclip_rails7_size_validator shim is no longer needed. 7.0
+# swapped mimemagic -> marcel for content-type detection (image/* validations
+# unaffected). Staying on 7.x (8.0 is brand-new + adds deprecations).
+gem 'kt-paperclip', '~> 7.3', require: 'paperclip'
 gem 'sanitize'
 #gem 'formtastic', '~> 1.2.4'
 gem 'formtastic'
