@@ -31,7 +31,5 @@ Rails.application.config.active_record.partial_inserts = true
 # legacy (explicit-only) to avoid surprises in the metamap/dialog associations.
 Rails.application.config.active_record.automatic_scope_inversing = false
 
-# cache_format_version (7.0 => 7.0): changes the serialized cache entry format.
-# Caching work is deferred (see STATUS + the 6_0 pins); keep the 6.1 format so
-# nothing about cache entries changes under us.
-Rails.application.config.active_support.cache_format_version = 6.1
+# cache_format_version: MIGRATED — removed the 6.1 pin; load_defaults 8.0 sets
+# the current format. Cold-cache-only (default file store, app barely caches).
