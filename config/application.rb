@@ -98,6 +98,10 @@ module Intermix
 end
 
 
+# Feature flag: Facebook OAuth login is currently disabled (the FB app isn't
+# active). Set true to re-show the "Sign in with Facebook" buttons/links.
+SHOW_FACEBOOK_LOGIN = false
+
 PARTICIPANT_STATUSES = ['unconfirmed','active','inactive','never-contact','disallowed']
 PARTICIPANT_VISIBILITY = ['visible_to_all','visible_to_group_members']
 PARTICIPANT_VISIBILITY_TEXT = {'visible_to_all'=>'Visible to all', 'visible_to_group_members'=>'Visible only to members of my groups'}

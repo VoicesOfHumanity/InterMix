@@ -22,10 +22,12 @@
   <p><strong>Sign in through one of these services:</strong></p>
 <% end %>
 
+<% if SHOW_FACEBOOK_LOGIN %>
 <a href="/participants/auth/facebook" class="auth_provider">
   <%= image_tag "/images/login/facebook_64.png", :size => "64x64", :alt => "Facebook" %>
   Facebook
 </a>
+<% end %>
 <a href="/participants/auth/google_oauth2" class="auth_provider">
   <%= image_tag "/images/login/google_oauth2_64.png", :size => "64x64", :alt => "Google" %>
   Google
