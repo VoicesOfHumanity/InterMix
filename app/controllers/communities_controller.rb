@@ -960,11 +960,11 @@ class CommunitiesController < ApplicationController
     @community = Community.find_by_id(@community_id)    
     if not @community
       flash[:alert] = "Community not found"
-      redirect_to "//#{BASEDOMAIN}/join"
+      redirect_to "//#{BASEDOMAIN}/join", allow_other_host: true
       return  
     elsif @community and current_participant and participant_signed_in?
       flash[:alert] = "You are already logged in"
-      redirect_to "//#{BASEDOMAIN}/communities/#{@community.id}"
+      redirect_to "//#{BASEDOMAIN}/communities/#{@community.id}", allow_other_host: true
       return
     end
     #prepare_gjoin    
