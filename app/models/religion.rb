@@ -9,6 +9,8 @@ class Religion < ApplicationRecord
     ret << " END"
   end
   
-  scope :order_by_custom, -> { order(custom_order) }
+  # custom_order is a hardcoded CASE expression (no user input); Rails 6.1+
+  # requires raw SQL passed to order() to be wrapped in Arel.sql().
+  scope :order_by_custom, -> { order(Arel.sql(custom_order)) }
   
 end
