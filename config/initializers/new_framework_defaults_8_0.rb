@@ -7,16 +7,20 @@
 #
 # The earlier pin files still apply; this covers only the 7.2 → 8.0 delta.
 
-# --- PINNED (risky, migrate later) ---------------------------------------
+# --- MIGRATED --------------------------------------------------------------
+#
+# raise_on_missing_callback_actions: a controller raises at request time if a
+# before/after_action's :only/:except names an action the controller doesn't
+# define. This flag is NOT part of load_defaults (its mattr default is false),
+# so it must be enabled explicitly. Audited every controller (replicating
+# Rails' ActionFilter#match? check via available_action?): the only stale
+# references were three :except lists on ConversationsController naming a
+# long-gone :join action — removed those. Now enabled, so a future stale filter
+# surfaces loudly instead of silently mis-scoping a callback.
+Rails.application.config.action_controller.raise_on_missing_callback_actions = true
 
-# raise_on_missing_callback_actions (8.0 => true): a controller raises at
-# request time if a before/after_action's :only/:except names an action the
-# controller doesn't define. Old controllers here have accumulated such
-# filters; keep legacy (silently ignore) until they're audited, so no page
-# 500s on a stale filter reference.
-Rails.application.config.action_controller.raise_on_missing_callback_actions = false
-
-# strict_freshness (8.0 => true): makes ETag take precedence over
-# Last-Modified per RFC 7232 when both conditional headers are present, which
-# changes 304 behavior. Keep legacy precedence until HTTP caching is reviewed.
-Rails.application.config.action_dispatch.strict_freshness = false
+# strict_freshness (8.0 => true): ETag takes precedence over Last-Modified per
+# RFC 7232 when both conditional headers are present. Verified no-op here — the
+# app uses no conditional GET (no fresh_when/stale?/etag/last_modified anywhere),
+# so there are never both headers to arbitrate. Removed the pin; load_defaults
+# 8.0 now sets it true (verified applied).
