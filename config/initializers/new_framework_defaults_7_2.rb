@@ -12,11 +12,10 @@
 # (to_time_preserves_timezone is NOT changed by 7.2 — it stays `true`/:offset;
 # the :zone default arrives in Rails 8, so nothing to pin here for it.)
 
-# automatically_invert_plural_associations (7.2 => true): AR infers inverse_of
-# for has_many/belongs_to whose names differ only by pluralization, which can
-# change which records load through associations. Keep legacy (explicit-only)
-# until the metamap/dialog/community associations are checked.
-Rails.application.config.active_record.automatically_invert_plural_associations = false
+# automatically_invert_plural_associations: MIGRATED to the 7.2 recommended
+# value (true). NB this is NOT set by load_defaults (its mattr default is false),
+# so it must be enabled explicitly. Boot + full suite green.
+Rails.application.config.active_record.automatically_invert_plural_associations = true
 
 # yjit: MIGRATED — removed the pin; load_defaults 8.0 sets it true. Verified a
 # genuine no-op on both local and the production server: their Ruby 3.2.11 is
