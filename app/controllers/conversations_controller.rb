@@ -2,9 +2,12 @@ class ConversationsController < ApplicationController
 
 	layout "front"
   before_action :set_conversation, only: [:show, :edit, :update, :destroy, :change_perspective, :top_posts]
-  before_action :authenticate_user_from_token!, except: [:join, :front, :fronttag]
-  before_action :authenticate_participant!, except: [:join, :front, :fronttag]
-  before_action :check_is_admin, except: [:index, :join, :front, :fronttag]
+  # NB: :join was removed from these :except lists — there is no join action
+  # (or route) on this controller, so it was a dead reference that Rails 8's
+  # raise_on_missing_callback_actions flags.
+  before_action :authenticate_user_from_token!, except: [:front, :fronttag]
+  before_action :authenticate_participant!, except: [:front, :fronttag]
+  before_action :check_is_admin, except: [:index, :front, :fronttag]
 
   def fronttag
     #-- Show the public front page
