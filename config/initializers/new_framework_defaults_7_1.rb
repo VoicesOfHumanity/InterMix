@@ -19,16 +19,15 @@
 #     the app has no bare `require` of app-dir files, so dropping app/* from
 #     $LOAD_PATH is safe (verified).
 
-# run_commit_callbacks_on_first_saved_instances_in_transaction (7.1 => true):
-# changes which instance runs after_commit when the same record is saved more
-# than once in a transaction. Keep legacy (last-instance) semantics until the
-# AP/item save paths are checked.
-Rails.application.config.active_record.run_commit_callbacks_on_first_saved_instances_in_transaction = false
+# run_commit_callbacks_on_first_saved_instances_in_transaction: MIGRATED to true.
+# NB not a load_defaults value (its mattr default is false), so it must be set
+# explicitly. Verified no-op — the app defines NO after_commit / after_*_commit
+# callbacks in any model, so there is no callback whose instance/timing changes.
+Rails.application.config.active_record.run_commit_callbacks_on_first_saved_instances_in_transaction = true
 
-# raise_on_assign_to_attr_readonly (7.1 => true): assigning to an attr_readonly
-# attribute now raises instead of being silently ignored on update. Keep legacy
-# (silent) to avoid surprise 500s on existing update paths.
-Rails.application.config.active_record.raise_on_assign_to_attr_readonly = false
+# raise_on_assign_to_attr_readonly: MIGRATED to the 7.1 default (true). Verified
+# no-op — the app declares NO attr_readonly on any model, so no assignment can
+# violate it. Removed the pin.
 
 # Message serializer (7.1 => :json_allow_marshal) + metadata serializer: these
 # change the on-the-wire format of signed/encrypted messages (cookies, tokens).

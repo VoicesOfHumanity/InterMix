@@ -21,15 +21,13 @@ Rails.application.config.action_controller.raise_on_open_redirects = false
 # <input> form until the UI is checked.
 Rails.application.config.action_view.button_to_generates_button_tag = false
 
-# partial_inserts (7.0 => false): INSERTs would include only assigned columns.
-# This app is on MyISAM with legacy column defaults; keep full inserts (6.1
-# behavior) until verified on staging.
-Rails.application.config.active_record.partial_inserts = true
+# partial_inserts: MIGRATED to the 7.0 default (false) — INSERTs now always
+# include every column (with its default), which is the safer, explicit form on
+# MyISAM. Verified: boot + suite green, record creation exercised.
 
-# automatic_scope_inversing (7.0 => true): AR auto-infers inverse_of for scoped
-# associations, which can change which records load through associations. Keep
-# legacy (explicit-only) to avoid surprises in the metamap/dialog associations.
-Rails.application.config.active_record.automatic_scope_inversing = false
+# automatic_scope_inversing: MIGRATED to the 7.0 default (true). Boot + full
+# suite green (association loading through the metamap/dialog/community models
+# exercised by the model specs).
 
 # cache_format_version: MIGRATED — removed the 6.1 pin; load_defaults 8.0 sets
 # the current format. Cold-cache-only (default file store, app barely caches).
