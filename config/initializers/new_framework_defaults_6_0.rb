@@ -50,10 +50,10 @@ Rails.application.config.assets.unknown_asset_fallback = true
 Rails.application.config.action_dispatch.use_authenticated_cookie_encryption = false
 Rails.application.config.active_support.use_authenticated_message_encryption = false
 
-# Cache-key digest and versioning. Caching work is deferred (see STATUS.md);
-# keep legacy digest + non-versioned keys so cache behavior is unchanged.
-Rails.application.config.active_support.hash_digest_class = OpenSSL::Digest::MD5
-Rails.application.config.active_record.cache_versioning = false
+# hash_digest_class / cache_versioning: MIGRATED to the 6.0 defaults
+# (SHA256 digest + versioned cache keys). Only effect is cold-starting existing
+# cache entries (default file store, app barely caches); no conditional GET in
+# the app so the digest change doesn't touch ETags. Removed the pins.
 
 # --- 6.0 -----------------------------------------------------------------
 # default_enforce_utf8: MIGRATED (on the 6.0 default = false). Drops the
@@ -63,5 +63,5 @@ Rails.application.config.active_record.cache_versioning = false
 # cookie format; keep legacy to avoid churn alongside the encryption pins.
 Rails.application.config.action_dispatch.use_cookies_with_metadata = false
 
-# Collection cache versioning — deferred with the rest of the caching work.
-Rails.application.config.active_record.collection_cache_versioning = false
+# collection_cache_versioning: MIGRATED to the 6.0 default (true) — same
+# cold-cache-only rationale as hash_digest_class/cache_versioning above.
