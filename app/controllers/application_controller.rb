@@ -291,7 +291,9 @@ class ApplicationController < ActionController::Base
   end  
   
   def sanitizethis(sometext)
-    Sanitize.clean(sometext.force_encoding("UTF-8"),
+    # force_encoding mutates in place, so operate on a mutable copy: under Ruby
+    # 3.x nil.to_s (and other callers) can hand us a FROZEN "" -> FrozenError.
+    Sanitize.clean(sometext.to_s.dup.force_encoding("UTF-8"),
       # Trix (unlike CKEditor) separates paragraphs with <div> and wraps images
       # in <figure class="attachment"><img><figcaption>. Allow <div> so paragraph
       # breaks survive, drop <figcaption> with its contents so the filename/size
