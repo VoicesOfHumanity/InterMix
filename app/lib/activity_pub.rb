@@ -1321,8 +1321,10 @@ module ActivityPub
   end
   
   def remove_images(somehtml)
-    # Remove images in html, by sanitizing, and leaving img out
-    Sanitize.clean(somehtml.force_encoding("UTF-8"), 
+    # Remove images in html, by sanitizing, and leaving img out.
+    # Mutable copy: force_encoding mutates, and a frozen "" (Ruby 3.x nil.to_s)
+    # would otherwise raise FrozenError (same as sanitizethis).
+    Sanitize.clean(somehtml.to_s.dup.force_encoding("UTF-8"),
       :elements => ['a', 'p', 'br', 'u', 'b', 'em', 'strong', 'ul', 'ol', 'li', 'h1', 'h2', 'h3','table','tr','tbody','td'],
       :attributes => {'a' => ['href', 'title', 'target']},
       :protocols => {'a' => {'href' => ['http', 'https', 'mailto', :relative]} },
