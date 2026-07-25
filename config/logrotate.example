@@ -1,0 +1,43 @@
+# InterMix log rotation — Rails production.log + the ActivityPub worker logs.
+#
+# Install on staging and production as /etc/logrotate.d/intermix (root, 0644):
+#
+#   scp config/logrotate.example root@<host>:/etc/logrotate.d/intermix
+#   ssh root@<host> 'chmod 644 /etc/logrotate.d/intermix && \
+#                    logrotate -d /etc/logrotate.d/intermix'   # dry run first
+#
+# Both servers already run logrotate daily on their own (production via
+# /etc/cron.daily/logrotate, staging via the logrotate.timer systemd unit), so
+# dropping the file in is the whole install — nothing to schedule.
+#
+# WHY copytruncate: Passenger and the two cron workers hold this file handle
+# open for the life of the process. Renaming the file (logrotate's default)
+# would leave them appending to an unlinked inode — the rotated archive would
+# keep growing invisibly and the fresh production.log would stay empty until
+# the next app restart. copytruncate copies then truncates in place, so the
+# open handles keep working. Its known cost is a race: log lines written
+# between the copy and the truncate are lost. That is inherent to the
+# approach and acceptable for a request log.
+#
+# WHY su ploy ploy: the log directory belongs to ploy, not root. logrotate
+# 3.21 (staging) refuses to rotate files in a directory it does not own
+# unless told which user to act as. Production runs 3.11, which is laxer,
+# but the directive is honoured there too — keep both servers identical.
+#
+# NOTE the *.log glob deliberately does not match
+# production.log.archive-2020-03-09_2026-07-25.gz on production — that is a
+# permanent one-off archive of the first 5 years of logs (2 GB, 145 MB
+# gzipped, byte-verified before the live file was truncated on 2026-07-25).
+# It is outside the rotation pool on purpose, so `rotate 26` can never age it
+# out. Do not rename it to something ending in .log.
+
+/home/apps/intermix/shared/log/*.log {
+    weekly
+    rotate 26
+    maxsize 200M
+    missingok
+    notifempty
+    compress
+    copytruncate
+    su ploy ploy
+}
