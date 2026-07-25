@@ -148,9 +148,12 @@ class CommunitiesController < ApplicationController
     
     @communities = []
     if communities.length > 0
+      #-- One grouped query for every community on the page instead of a per-community
+      #-- activity_count call (that was 454 queries for 359 communities).
+      activity = Community.activity_counts(communities.map(&:tagname))
       communities.each do |community|
         #community.members = community.member_count
-        community.activity = community.activity_count
+        community.activity = activity[community.tagname.to_s.downcase]
         @communities << community
       end
     end

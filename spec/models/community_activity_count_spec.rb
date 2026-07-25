@@ -91,4 +91,70 @@ RSpec.describe Community, '#activity_count' do
     make_item(author: make_participant(tagged: true), tagged: true)
     expect(other.activity_count).to eq(0)
   end
+
+  describe '.activity_counts (batched)' do
+    def count_queries
+      n = 0
+      sub = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+        n += 1 unless payload[:name].to_s =~ /SCHEMA|TRANSACTION/
+      end
+      yield
+      n
+    ensure
+      ActiveSupport::Notifications.unsubscribe(sub)
+    end
+
+    it 'returns a 0-defaulting hash keyed by downcased tagname' do
+      counts = Community.activity_counts([tag])
+      expect(counts[tag.downcase]).to eq(0)
+      expect(counts['nobody-uses-this-tag']).to eq(0)
+    end
+
+    it 'handles no tagnames without touching the database' do
+      expect(Community.activity_counts([])).to eq({})
+      expect(Community.activity_counts(nil)['anything']).to eq(0)
+    end
+
+    it 'counts several communities correctly in one pass' do
+      make_item(author: make_participant(tagged: true), tagged: true)   # 1 for `tag`
+
+      other_tag = "actag#{rand(1e12).to_i}"
+      other = Community.create!(tagname: other_tag, fullname: 'Other')
+      cleanup << other
+      other_author = Participant.create!(first_name: 'AC', last_name: 'Other',
+                                         email: "aco_#{rand(1e12).to_i}@example.com",
+                                         password: 'password1')
+      other_author.tag_list.add(other_tag)
+      other_author.save!
+      cleanup << other_author
+      2.times do
+        i = Item.create!(subject: 'other', html_content: 'b',
+                         posted_by: other_author.id, created_at: 1.day.ago)
+        i.tag_list.add(other_tag)
+        i.save!
+        cleanup << i
+      end
+
+      counts = Community.activity_counts([tag, other_tag])
+      expect(counts[tag.downcase]).to eq(1)
+      expect(counts[other_tag.downcase]).to eq(2)
+    end
+
+    it 'matches tagnames case-insensitively, like tagged_with does' do
+      make_item(author: make_participant(tagged: true), tagged: true)
+      expect(Community.activity_counts([tag.upcase])[tag.downcase]).to eq(1)
+    end
+
+    it 'agrees with the per-community activity_count' do
+      make_item(author: make_participant(tagged: true), tagged: true)
+      expect(Community.activity_counts([tag])[tag.downcase]).to eq(community.activity_count)
+    end
+
+    it 'uses a single query regardless of how many communities are asked for' do
+      make_item(author: make_participant(tagged: true), tagged: true)
+      many = ([tag] * 3) + 40.times.map { |i| "nosuchtag#{i}" }
+      queries = count_queries { Community.activity_counts(many) }
+      expect(queries).to eq(1)
+    end
+  end
 end
