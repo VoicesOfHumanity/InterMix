@@ -33,16 +33,55 @@ class Community < ActiveRecord::Base
     Participant.tagged_with(self.tagname).where(status: 'active', no_email: false).count
   end
   
-  def activity_count
-    #-- Count the number of messages for that tag in the past month, based on hashtag and author  
-    #Item.where("intra_com='@#{self.tagname}'").where('created_at > ?', 31.days.ago).count
-    plist = Participant.tagged_with(self.tagname).collect {|p| p.id}.join(',')
-    if plist != ''
-      items = Item.includes(:participant).references(:participant).where("participants.id in (#{plist})")
-      items = items.tagged_with(self.tagname).where('items.created_at > ?', 31.days.ago).count
-    else
-      return 0
+  #-- Batched form of activity_count: one grouped query for any number of communities.
+  #-- The index page used to call activity_count once per community — 454 queries for 359
+  #-- communities at ~3.3ms each, which was the real cost of that page (not the per-call
+  #-- object churn the audit flagged). Returns a Hash of downcased tagname => count,
+  #-- defaulting to 0 for tagnames with no activity.
+  #--
+  #-- The SQL deliberately mirrors what acts-as-taggable-on generates, and two details of
+  #-- that are easy to get wrong:
+  #--   * Matching is case-INsensitive. With strict_case_match=false the gem emits
+  #--     LOWER(tags.name) LIKE …, so we compare on LOWER() and group by it. Author and item
+  #--     tags are matched by lowercased NAME rather than tag_id, so two tag rows differing
+  #--     only in case still pair up the way tagged_with would.
+  #--   * There is NO context filter. tagged_with does not restrict taggings.context, and
+  #--     Item is also acts_as_taggable_on :subgroups — there are more Item/subgroups
+  #--     taggings than Item/tags ones, so adding "context = 'tags'" here would silently
+  #--     change the numbers.
+  def self.activity_counts(tagnames, since: 31.days.ago)
+    names = Array(tagnames).map { |t| t.to_s.downcase }.reject(&:empty?).uniq
+    return Hash.new(0) if names.empty?
+
+    sql = sanitize_sql_array([<<~SQL, names, since])
+      SELECT LOWER(item_tags.name) AS tag, COUNT(DISTINCT items.id) AS n
+        FROM items
+        INNER JOIN taggings item_tg
+                ON item_tg.taggable_id = items.id
+               AND item_tg.taggable_type = 'Item'
+        INNER JOIN tags item_tags
+                ON item_tags.id = item_tg.tag_id
+        INNER JOIN taggings author_tg
+                ON author_tg.taggable_id = items.posted_by
+               AND author_tg.taggable_type = 'Participant'
+        INNER JOIN tags author_tags
+                ON author_tags.id = author_tg.tag_id
+               AND LOWER(author_tags.name) = LOWER(item_tags.name)
+       WHERE LOWER(item_tags.name) IN (?)
+         AND items.created_at > ?
+       GROUP BY LOWER(item_tags.name)
+    SQL
+
+    connection.select_all(sql).each_with_object(Hash.new(0)) do |row, counts|
+      counts[row['tag']] = row['n'].to_i
     end
+  end
+
+  def activity_count
+    #-- Count the number of messages for that tag in the past month, based on hashtag and
+    #-- author. Delegates to the batched query so there is only one implementation to keep
+    #-- correct; prefer Community.activity_counts when handling more than one community.
+    self.class.activity_counts([tagname])[tagname.to_s.downcase]
   end
   
   def activity_count_for_conversation(conversation, period)
