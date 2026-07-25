@@ -885,6 +885,7 @@ class CommunitiesController < ApplicationController
   def front
     #-- Show the public front page
     #-- http://voh.intermix.cr8.com/communities/30/front
+    force_html_format
     @community_id = params[:id].to_i
     @community = Community.find_by_id(@community_id)    
     if participant_signed_in?
@@ -910,6 +911,9 @@ class CommunitiesController < ApplicationController
   def fronttag
     #-- Show the public front page
     #-- http://voh.intermix.cr8.com/nuclear_disarm
+    #-- The catch-all /:tagname route carries an implicit (.:format), so this page
+    #-- gets requested as /sometag.zip by crawlers. It is only ever HTML.
+    force_html_format
     tagname = params[:tagname].to_s
     @community = Community.find_by_tagname(tagname)
     if not @community

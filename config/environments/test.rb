@@ -45,6 +45,10 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 end
 
+# Constants that production.rb / development.rb define but test.rb was missing —
+# any spec that renders a layout uses VOL_LOGO (og:image), so define it here too.
+VOL_LOGO = "/images/data/photos/7/67.jpg" unless defined?(VOL_LOGO)
+
 MAILDOMAIN = 'trantor.cr8.com'
 
 TWITTER_CONSUMER_KEY = 'Ew8NROMK7YbDa3XIph6gA'   # = API key. And this is for the Posting app, not the Login app
