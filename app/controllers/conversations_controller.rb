@@ -12,6 +12,9 @@ class ConversationsController < ApplicationController
   def fronttag
     #-- Show the public front page
     #-- http://voh.intermix.cr8.com/conversation/IPpeace
+    #-- Same as communities#fronttag: the route's implicit (.:format) lets crawlers
+    #-- ask for /conversation/foo.zip, which breaks template lookup. HTML only.
+    force_html_format
     tagname = params[:tagname].to_s
 
     @conversation = Conversation.find_by_shortname(tagname)

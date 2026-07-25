@@ -11,12 +11,13 @@ class WellKnownController < ApplicationController
     # We get here from a URL like this:
     # /.well-known/webfinger?resource=acct:ff6@voh.intermix.com
 
-    if not params.has_key? :resource
+    # to_s covers the missing param as well as ?resource with no value (nil) and
+    # ?resource[]=x (array/hash), all of which arrive here from crawlers.
+    resource = params[:resource].to_s.strip.downcase
+    if resource == ''
       render plain: "We would expect something like /.well-known/webfinger?resource=acct:username@#{BASEDOMAIN}", status: :bad_request
       return
     end
-    
-    resource = params[:resource].strip.downcase
     
     # To start with, we're expecting only webfinger requests for an account, not posts, etc
     # But we should really recognize http, https, mailto, and others

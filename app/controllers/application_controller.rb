@@ -197,6 +197,16 @@ class ApplicationController < ActionController::Base
       
   protected
 
+  def force_html_format
+    #-- For HTML-only actions on routes with an implicit (.:format) segment.
+    #-- Crawlers hit e.g. /sometag.zip, which otherwise makes Rails look for
+    #-- .zip templates and raise ActionView::MissingTemplate.
+    #-- lookup_context is set separately because it is already built by the time
+    #-- the action runs, so it does not pick up a change to request.formats.
+    request.formats = [:html]
+    lookup_context.formats = [:html]
+  end
+
 	def set_headers
 		headers["Content-Type"] = "text/html; charset=utf-8" 
     headers["P3P"] = 'CP="IDC DSP COR CUR ADMa OUR STP ONL UNI NAV CNT STA"'
