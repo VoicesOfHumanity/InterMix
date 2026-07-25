@@ -34,15 +34,23 @@ class Community < ActiveRecord::Base
   end
   
   def activity_count
-    #-- Count the number of messages for that tag in the past month, based on hashtag and author  
-    #Item.where("intra_com='@#{self.tagname}'").where('created_at > ?', 31.days.ago).count
-    plist = Participant.tagged_with(self.tagname).collect {|p| p.id}.join(',')
-    if plist != ''
-      items = Item.includes(:participant).references(:participant).where("participants.id in (#{plist})")
-      items = items.tagged_with(self.tagname).where('items.created_at > ?', 31.days.ago).count
-    else
-      return 0
-    end
+    #-- Count the number of messages for that tag in the past month, based on hashtag and author
+    #-- Called once per community on the communities index, so this runs hundreds of times
+    #-- per page. It used to load every tagged participant as a full AR object just to read
+    #-- their ids, interpolate those ids into a literal "participants.id in (…)" string, and
+    #-- then LEFT JOIN + eager-load participants purely to COUNT rows. Now: pluck the ids
+    #-- (no objects instantiated, no unbounded SQL string) and filter on items.posted_by,
+    #-- which is what belongs_to :participant maps to anyway — so the join disappears.
+    #-- Deliberately still an IN list rather than a subquery: the production box is old
+    #-- MySQL, where IN (SELECT …) can be re-evaluated per row and would risk being slower
+    #-- than what it replaces. Worth trying the subquery form on staging where it can be
+    #-- measured.
+    author_ids = Participant.tagged_with(self.tagname).pluck('participants.id').uniq
+    return 0 if author_ids.empty?
+    Item.tagged_with(self.tagname)
+        .where(posted_by: author_ids)
+        .where('items.created_at > ?', 31.days.ago)
+        .count
   end
   
   def activity_count_for_conversation(conversation, period)
