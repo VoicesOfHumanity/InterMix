@@ -129,7 +129,12 @@ class ApplicationController < ActionController::Base
       # Other than ungoals
       @communities = Community.where(more: true, major: false, ungoals: false)
     elsif which_com == 'my' and participant_id > 0
-      participant = Participant.find(participant_id)
+      #-- find_by_id, NOT find: find raises RecordNotFound for an unknown id, which Rails
+      #-- turns into a 404. So "My Communities" 404'd for any stale or unknown participant_id
+      #-- instead of returning an empty list — and it made the `else` below unreachable dead
+      #-- code, which is the giveaway that nil was the intent all along. Every other which_com
+      #-- value skips this branch, which is why only which_com=my was affected.
+      participant = Participant.find_by_id(participant_id)
       if participant
         comtags = {}
         for tag in participant.tag_list_downcase
