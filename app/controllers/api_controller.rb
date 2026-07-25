@@ -874,6 +874,13 @@ class ApiController < ApplicationController
 
         if ENV['API_LEGACY_AUTH'] == '1'
             claimed = api_claimed_user_id
+            #-- STOPGAP (goes away with API_LEGACY_AUTH): the app's auto-login calls
+            #-- get_user with the participant in :id, not :user_id, so the fallback
+            #-- below never matched it and every cold start 401'd -- users were logged
+            #-- out on each app launch. Deliberately scoped to this one action: on
+            #-- other endpoints :id is an item/community/dialog, and treating that as
+            #-- a participant id would sign in an arbitrary unrelated user.
+            claimed = params[:id].to_i if claimed == 0 and action_name == 'get_user'
             @api_user = Participant.find_by_id(claimed) if claimed > 0
             if @api_user
                 Rails.logger.warn("api#require_api_user!: LEGACY user_id-only auth for participant #{@api_user.id} on #{action_name}")
