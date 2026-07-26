@@ -1,4 +1,4 @@
-require File.dirname(__FILE__)+'/cron_helper'
+require_relative 'cron_helper'
 require 'net/http'
 require 'openssl'
 

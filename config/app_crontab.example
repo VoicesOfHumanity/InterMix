@@ -1,0 +1,71 @@
+# Non-ActivityPub application cron jobs (install with `crontab -e` as the `ploy` user).
+# For the two ActivityPub workers, see config/activitypub_crontab.example instead.
+#
+# ---------------------------------------------------------------------------
+# HISTORY — why this file exists (2026-07-26)
+#
+# These jobs used to live in PRODUCTION's *root* crontab, invoked via
+# /root/.rbenv/shims/ruby. They died silently on 2026-07-14 when the app moved to
+# Ruby 3.2.11: root's rbenv has only 2.4.1 and 2.7.7 installed, so the shim failed on
+# the app's .ruby-version with `rbenv: version '3.2.11' is not installed` on every
+# single run — for weeks, into /tmp/*.txt (~1.8 GB of it). Nobody noticed, because
+# nothing watches those files.
+#
+# Root's crontab ALSO ran the two ActivityPub workers every minute with no flock,
+# duplicating the ploy crontab's flocked 2-minute jobs. Those duplicate lines were
+# removed at the same time. **Do not install a Ruby into root's rbenv on production**
+# without checking root's crontab first — that alone would resurrect the duplicates.
+#
+# Everything now runs under `ploy`, whose rbenv has 3.2.11.
+# ---------------------------------------------------------------------------
+#
+# TWO THINGS TO GET RIGHT:
+#
+#   1. THE SCRIPT PATH MUST BE ABSOLUTE.
+#      These legacy scripts originally did `require File.dirname(__FILE__)+'/cron_helper'`,
+#      which only resolves when the script is invoked by absolute path — invoking them as
+#      `ruby script/foo.rb` dies with `cannot load such file -- script/cron_helper`,
+#      because Ruby 1.9+ dropped '.' from $LOAD_PATH. The five scripts below were since
+#      changed to `require_relative`, so they no longer care, but the absolute path is kept
+#      because most other scripts in script/ still use the old pattern.
+#
+#   2. PRODUCTION MUST NOT SET SYS_MODE. Staging must. Getting this backwards breaks
+#      ActivityPub request signing silently — see config/activitypub_crontab.example.
+#
+# `bash -lc` is used so rbenv is on PATH. `flock -n` prevents overlapping runs.
+# Logs go to shared/log/*.log, which config/logrotate.example rotates. Do NOT send them
+# to /tmp — that is exactly how the 1.8 GB happened.
+#
+# ---- PRODUCTION (voh.intermix.org) ----
+#
+# Refresh the sys_data row (current moon phase + together/apart) and propagate
+# together_apart to every conversation. This is live product state, not housekeeping:
+# if it stops, the whole site freezes on a stale moon phase.
+*/10 * * * * /usr/bin/flock -n /tmp/im_update_system.lock /bin/bash -lc "cd /home/apps/intermix/current && BUNDLE_GEMFILE=/home/apps/intermix/current/Gemfile RAILS_ENV=production bundle exec ruby /home/apps/intermix/current/script/update_system.rb" >> /home/apps/intermix/shared/log/cron_update_system.log 2>&1
+#
+# Send the new/full moon mailing. Fires on the moon day once the moon's `mtime` (UTC)
+# has passed, then sets moons.mailing_sent so it cannot double-send. Runs every 15 min
+# only to give the send hour that granularity. A moon more than ~1 day past is skipped
+# permanently, so a missed moon is never retroactively mailed.
+# ⚠️ This sends real email. Test with `-t 1` (test mode: no delivery, no Email rows,
+#    does not set mailing_sent).
+*/15 * * * * /usr/bin/flock -n /tmp/im_mail_moon.lock /bin/bash -lc "cd /home/apps/intermix/current && BUNDLE_GEMFILE=/home/apps/intermix/current/Gemfile RAILS_ENV=production bundle exec ruby /home/apps/intermix/current/script/mail_moon.rb" >> /home/apps/intermix/shared/log/cron_mail_moon.log 2>&1
+#
+# Daily/weekly digest batch mail, for everything up to last midnight — so run a little
+# after midnight. ⚠️ Sends real email; same `-t 1` test mode.
+10 0 * * * /usr/bin/flock -n /tmp/im_mail_send.lock /bin/bash -lc "cd /home/apps/intermix/current && BUNDLE_GEMFILE=/home/apps/intermix/current/Gemfile RAILS_ENV=production bundle exec ruby /home/apps/intermix/current/script/mail_send.rb" >> /home/apps/intermix/shared/log/cron_mail_send.log 2>&1
+#
+# Pull hard bounces from the Postmark API and set no_email + no_email_reason on the
+# matching participants. Sender-reputation hygiene: without it the app keeps mailing
+# addresses that bounce, which is how a Postmark account gets throttled.
+13 13 * * * /usr/bin/flock -n /tmp/im_postmark_bounces.lock /bin/bash -lc "cd /home/apps/intermix/current && BUNDLE_GEMFILE=/home/apps/intermix/current/Gemfile RAILS_ENV=production bundle exec ruby /home/apps/intermix/current/script/postmark_bounces.rb" >> /home/apps/intermix/shared/log/cron_postmark_bounces.log 2>&1
+#
+# Reconcile mutual follows (friends), including ActivityPub remote actors.
+1 1 * * * /usr/bin/flock -n /tmp/im_follow_mutual.lock /bin/bash -lc "cd /home/apps/intermix/current && BUNDLE_GEMFILE=/home/apps/intermix/current/Gemfile RAILS_ENV=production bundle exec ruby /home/apps/intermix/current/script/follow_mutual.rb" >> /home/apps/intermix/shared/log/cron_follow_mutual.log 2>&1
+#
+# ---- DELIBERATELY NOT SCHEDULED ----
+#
+# script/group_twitter.rb  — retired 2026-07-26. Pushed group items to Twitter; Twitter
+#   login is not active and the `twitter` gem is already out of the bundle. File kept.
+# script/mail_fetch.rb     — was already commented out in root's crontab before this
+#   change, i.e. disabled deliberately at some earlier point. Left disabled.

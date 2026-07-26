@@ -1,6 +1,6 @@
 # Make sure mutual followers (friends) are properly recorded
 
-require File.dirname(__FILE__)+'/cron_helper'
+require_relative 'cron_helper'
 
 numfollows = 0
 nummutual = 0

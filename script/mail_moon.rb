@@ -5,7 +5,7 @@
 # ruby mail_moon.rb -d2017-06-24 -p6
 # ruby mail_moon.rb -d2017-05-26 -p6
 
-require File.dirname(__FILE__)+'/cron_helper'
+require_relative 'cron_helper'
 require 'optparse'
 
 current_participant = nil
