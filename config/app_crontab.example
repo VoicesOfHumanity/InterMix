@@ -63,6 +63,18 @@
 # Reconcile mutual follows (friends), including ActivityPub remote actors.
 1 1 * * * /usr/bin/flock -n /tmp/im_follow_mutual.lock /bin/bash -lc "cd /home/apps/intermix/current && BUNDLE_GEMFILE=/home/apps/intermix/current/Gemfile RAILS_ENV=production bundle exec ruby /home/apps/intermix/current/script/follow_mutual.rb" >> /home/apps/intermix/shared/log/cron_follow_mutual.log 2>&1
 #
+# Watchdog: notices when any of the above stops running, and emails about it. Added
+# 2026-07-26, because the whole set above had been dead for weeks with no signal at all.
+# Judges staleness by each log's mtime in shared/log/ (every job prints on every run) and
+# greps log tails for failure signatures. Alerts on transitions only: once when broken,
+# a reminder every 12h while still broken, once on recovery.
+#   --test-alert  force an alert email, to verify delivery still works
+#   --dry-run     report without emailing
+# ⚠️ Nothing watches the watchdog. If it stops, or Rails stops booting, it goes quiet and
+#    silence is indistinguishable from health. A long gap in cron_watchdog.log is itself a
+#    symptom; the real fix is a check from off the box.
+5 * * * * /usr/bin/flock -n /tmp/im_cron_watchdog.lock /bin/bash -lc "cd /home/apps/intermix/current && BUNDLE_GEMFILE=/home/apps/intermix/current/Gemfile RAILS_ENV=production bundle exec ruby /home/apps/intermix/current/script/cron_watchdog.rb --quiet" >> /home/apps/intermix/shared/log/cron_watchdog_run.log 2>&1
+#
 # ---- DELIBERATELY NOT SCHEDULED ----
 #
 # script/group_twitter.rb  — retired 2026-07-26. Pushed group items to Twitter; Twitter
