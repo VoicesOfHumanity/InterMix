@@ -83,9 +83,19 @@ ERROR_SIGNATURES = [
   /Gem::LoadError/,
   /Mysql2::Error/,
   /\b(?:LoadError|NameError|NoMethodError|ArgumentError|TypeError)\b/,
-  /e-mail delivery problem/,                # mail_send / mail_moon own wording
   /command not found/,
 ].freeze
+
+# `e-mail delivery problem` is deliberately NOT in the list above. It is a PER-RECIPIENT
+# message, and on 2026-07-30 four suppressed addresses out of 44 successful sends flagged
+# the whole job BAD -- precisely the cry-wolf behaviour this watchdog is supposed to avoid.
+# The mailers print a job-level summary instead ("23 daily messages sent. 2 errors"), which
+# is the right thing to judge: a handful of bad addresses is normal operation, everything
+# failing is not. Partial failures are surfaced in the report without triggering an alert.
+SEND_SUMMARY = /(\d+) (\w+) messages sent\. (\d+) errors/.freeze
+
+# Fraction of failed sends that means "broken" rather than "some addresses are bad".
+SEND_FAILURE_RATIO = 0.5
 
 def load_state
   return {} unless File.exist?(STATE_FILE)
@@ -115,7 +125,7 @@ first_seen = Time.parse(state['first_seen'])
 
 results = JOBS.map do |job|
   path = File.join(LOG_DIR, job[:log])
-  r = job.merge(errors: [])
+  r = job.merge(errors: [], notes: [])
 
   if File.exist?(path)
     age_min = ((now - File.mtime(path).utc) / 60.0).round
@@ -128,6 +138,22 @@ results = JOBS.map do |job|
       r[:errors] << hit.strip[0, 200] if hit
     end
     r[:status] = 'ERRORS' if r[:status] == 'ok' && r[:errors].any?
+
+    # Job-level send summaries, for the mailers. Only a majority-failure counts as broken;
+    # a few suppressed or malformed addresses is normal and must not page anyone.
+    tail.scan(SEND_SUMMARY).each do |sent, kind, errs|
+      sent = sent.to_i
+      errs = errs.to_i
+      next if errs.zero?
+
+      total = sent + errs
+      if total.positive? && errs.to_f / total >= SEND_FAILURE_RATIO
+        r[:errors] << "#{kind}: #{errs} of #{total} sends failed"
+        r[:status] = 'ERRORS' unless r[:status] == 'STALE'
+      else
+        r[:notes] << "#{errs} #{kind} send error#{'s' if errs != 1} (of #{total})"
+      end
+    end
   else
     # No log yet. Only a problem once enough time has passed that the job really
     # should have run -- otherwise every freshly-installed daily job alerts at once.
@@ -146,6 +172,7 @@ host    = defined?(BASEDOMAIN) ? BASEDOMAIN : `hostname`.strip
 table = results.map do |r|
   age = r[:age_min].nil? ? 'never' : "#{r[:age_min]}m ago"
   line = format('  %-22s %-16s %-9s %s', r[:name], r[:schedule], r[:status], age)
+  line += "  [#{r[:notes].join('; ')}]" if r[:notes].any?
   line += "\n" + r[:errors].map { |e| "      ! #{e}" }.join("\n") if r[:errors].any?
   line
 end.join("\n")
