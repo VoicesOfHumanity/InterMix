@@ -30,7 +30,20 @@ class Community < ActiveRecord::Base
   end
   
   def member_count
-    Participant.tagged_with(self.tagname).where(status: 'active', no_email: false).count
+    #-- NOT filtered on no_email, deliberately. Membership has nothing to do with email
+    #-- preference, and every text a user reads before opting out says so: front#optout
+    #-- promises only to "stop receiving emails", and the profile setting is labelled
+    #-- "Block all emails?". Neither mentions being hidden from other members.
+    #--
+    #-- The no_email filter was also not protecting against deleted accounts: the
+    #-- delete-account path sets status='removed' as well, so `status: 'active'` already
+    #-- excludes them. What it actually did was hide 643 of 1259 active participants
+    #-- (2026-07-30) from member lists and counts purely for opting out of email, so
+    #-- every community's member count was understating by roughly half.
+    #--
+    #-- The mail paths that SHOULD honour no_email do it themselves and are untouched:
+    #-- mail_send.rb's audience query, groups_controller#807, Item#481, Message#33.
+    Participant.tagged_with(self.tagname).where(status: 'active').count
   end
   
   #-- Batched form of activity_count: one grouped query for any number of communities.
@@ -101,7 +114,8 @@ class Community < ActiveRecord::Base
   
   def geo_counts
     members = #Participant.tagged_with(self.tagname)
-    members = Participant.tagged_with(self.tagname).where(status: 'active', no_email: false)
+    #-- no_email filter removed 2026-07-30 -- see member_count above for why.
+    members = Participant.tagged_with(self.tagname).where(status: 'active')
     logger.info("community#geo_counts #{members.length} members")
     nations = {}
     states = {}

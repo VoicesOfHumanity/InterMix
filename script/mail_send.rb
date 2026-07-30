@@ -4,7 +4,7 @@
 #-- Right now we'll assume we only run this once per day. Later we might have a preferential hour set in each user's settings, and run it hourly.
 #-- We'll send everything for the last day/week, up until last midnight. So, this should run a bit after midnight.
 
-require File.dirname(__FILE__)+'/cron_helper'
+require_relative 'cron_helper'
 require 'optparse'
 
 participant_id = 0

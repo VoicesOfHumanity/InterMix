@@ -33,7 +33,8 @@ class Network < ApplicationRecord
   
   def members
     # A member is something who's in all the communities and has all the other settings too
-    members = Participant.tagged_with(self.community_tags).where(status: 'active', no_email: false)    
+    #-- no_email filter removed 2026-07-30 -- see Community#member_count for why.
+    members = Participant.tagged_with(self.community_tags).where(status: 'active')
     if self.age > 0
       members = members.joins("inner join metamap_node_participants p_mnp_5 on (p_mnp_5.participant_id=participants.id and p_mnp_5.metamap_id=5 and p_mnp_5.metamap_node_id=#{self.age})")   
     end

@@ -248,7 +248,8 @@ class CommunitiesController < ApplicationController
     
     title = ''.dup
 
-    members = Participant.where(status: 'active', no_email: false).tagged_with(@comtag)
+    #-- no_email filter removed 2026-07-30 -- see Community#member_count for why.
+    members = Participant.where(status: 'active').tagged_with(@comtag)
     
     geo_level_num = params.has_key?(:geo_level) ? params[:geo_level].to_i : 6
     @geo = GEO_LEVELS[geo_level_num] # {1: 'city', 2: 'county', 3: 'metro', 4: 'state', 5: 'nation', 6: 'planet'}
@@ -395,7 +396,8 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'edit'
     
-    @members = Participant.where(status: 'active', no_email: false).tagged_with(@comtag)
+    #-- no_email filter removed 2026-07-30 -- see Community#member_count for why.
+    @members = Participant.where(status: 'active').tagged_with(@comtag)
     
     @subcommunities = Community.where(sub_of: @community_id)
     
@@ -1034,7 +1036,8 @@ class CommunitiesController < ApplicationController
     @section = 'communities'
     @csection = 'members'
 
-    @participants = Participant.where(status: 'active', no_email: false).order("last_name,first_name,id")     
+    #-- no_email filter removed 2026-07-30 -- see Community#member_count for why.
+    @participants = Participant.where(status: 'active').order("last_name,first_name,id")
     
     @geo_levels = [
       [6,'Planet&nbsp;Earth'],

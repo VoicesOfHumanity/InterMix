@@ -1,4 +1,4 @@
-require File.dirname(__FILE__)+'/cron_helper'
+require_relative 'cron_helper'
 
 # This is run regularly, like every hour, to update current moon phase and together/apart, so that it doesn't have to be looked up everywhere
 
