@@ -125,6 +125,12 @@ gem 'observer', '0.1.1'
 gem 'racc', '1.6.2'
 gem 'logger', '1.5.3'
 gem 'net-protocol', '0.2.1'
+# net-http joined the tree with the 2026-08 oauth2 security bump (faraday-net_http
+# depends on it). faraday-net_http 3.4.x wants net-http ~> 0.5, which is AHEAD of
+# the 0.4.1 Ruby 3.2.11 ships — the exact Gem::LoadError shape described above.
+# Pinning to the Ruby default holds faraday-net_http at 3.3.x, which is happy with
+# any net-http. Lift this together with the Ruby bump, not before.
+gem 'net-http', '0.4.1'
 gem 'ostruct', '0.5.5'
 # NOTE timeout + securerandom are NOT pinned to the Ruby 3.2 default: Rails 7.1
 # requires timeout >= 0.4.0 and securerandom >= 0.3, newer than Ruby 3.2.11
