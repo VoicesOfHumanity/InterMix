@@ -21,19 +21,12 @@ RSpec.describe 'Formtastic forms render', type: :request do
     p
   end
 
-  #-- The "front" layout reads Conversation.find_by_id(INT_CONVERSATION_ID).active
-  #-- without a nil guard (unlike the neighbouring standing conversations), so the
-  #-- row has to exist for any page on that layout to render.
-  let!(:nations) do
-    Conversation.find_by_id(INT_CONVERSATION_ID) || begin
-      c = Conversation.create!(id: INT_CONVERSATION_ID, shortname: INT_CONVERSATION_CODE,
-                               name: 'The Nations', active: false, front_template: '')
-      cleanup << c
-      c
-    end
-  end
-
   before { login_as(participant, scope: :participant) }
+
+  #-- NOTE: these render with no standing-conversation rows at all. The "front"
+  #-- layout used to call .active straight off Conversation.find_by_id(
+  #-- INT_CONVERSATION_ID) with no nil guard, unlike its six neighbours, so a
+  #-- missing or renumbered Nations row 500'd every page on that layout.
 
   after do
     Warden.test_reset!

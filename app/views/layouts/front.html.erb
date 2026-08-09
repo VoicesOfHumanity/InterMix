@@ -234,7 +234,8 @@
                 <% if generation_conv and generation_conv.active -%>
                 <li id="generationbutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='generations' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= GENERATION_CONVERSATION_CODE %>">The Generations</a></li>
                 <% end -%>  																              
-                <% if Conversation.find_by_id(INT_CONVERSATION_ID).active -%>
+                <% int_conv = Conversation.find_by_id(INT_CONVERSATION_ID) %>
+                <% if int_conv and int_conv.active -%>
                 <li id="nationbutton" class="menu" style="display: <%= @moreless=='more' ? 'block' : 'none' %>"><a class="<%= 'selected' if @section=='nations' %>" href="/dialogs/<%= VOH_DISCUSSION_ID %>/slider?conv=<%= INT_CONVERSATION_CODE %>">The Nations</a></li>
                 <% end -%>
                 <% city_conv = Conversation.find_by_id(CITY_CONVERSATION_ID) %>
