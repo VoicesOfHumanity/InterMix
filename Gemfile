@@ -69,7 +69,12 @@ gem 'cancancan'
 gem 'kt-paperclip', '~> 7.3', require: 'paperclip'
 gem 'sanitize'
 #gem 'formtastic', '~> 1.2.4'
-gem 'formtastic'
+# 6.x is the Rails-7.2/8 line. 4.0 wraps every `column_for_attribute` call in
+# `ActiveSupport::Deprecation.silence`, which Rails 7.1 removed as a class method
+# (it's an instance now) — that raised NoMethodError on every f.input against an
+# AR object, i.e. every semantic_form_for page. 5.0 replaced it with a private
+# `ActiveSupport::Deprecation.new` deprecator; 6.0 needs actionpack >= 7.2.
+gem 'formtastic', '~> 6.0'
 #gem "will_paginate", "~> 3.0.pre2"
 gem "will_paginate", "~> 4.0"  # 4.0 adds Rails 7 support (3.x helper breaks under Rails 7.1)
 gem "nokogiri", '1.15.7'  # pin: production is Ubuntu 18.04 (glibc 2.27); nokogiri 1.16+ precompiled linux gems need glibc 2.28. 1.15.7 runs on 18.04 (used it through the Ruby upgrade).
