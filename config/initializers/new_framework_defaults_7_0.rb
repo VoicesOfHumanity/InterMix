@@ -17,6 +17,15 @@
 # controllers, all to the app's OWN domains) are now marked allow_other_host:
 # true. Removed the pin. NB: user-supplied redirect targets would now raise —
 # none found (no redirect_to params[...]/return_to/referer in the app).
+#   GAP FOUND 2026-08-10: that audit only looked at redirect_to call sites in
+#   app/. It missed the redirects Devise issues itself —
+#   DeviseController#require_no_authentication does a bare `redirect_to
+#   after_sign_in_path_for(resource)`, and our after_sign_in_path_for returns an
+#   absolute "https://#{BASEDOMAIN}/..." URL, so passwords#new / sessions#new /
+#   registrations#new 500'd for an already-signed-in participant arriving on any
+#   other host of ours. ApplicationController#redirect_to now auto-allows the
+#   app's own hosts (BASEDOMAIN, ROOTDOMAIN and its subdomains) and nothing
+#   else, which covers gem-issued redirects without weakening the check.
 
 # button_to_generates_button_tag: MIGRATED to the 7.0 default (true). Audited
 # all 7 button_to sites: 6 are block-form OAuth login buttons (`button_to url do`)
