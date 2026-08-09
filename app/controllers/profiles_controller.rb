@@ -828,9 +828,17 @@ class ProfilesController < ApplicationController
   
   def comtag
     #-- Join or leave a tag
-    comtag = params[:comtag]
-    which = params[:which]    
+    #-- dup so the gsub! below rewrites our copy, not the params hash. Anything
+    #-- that isn't a plain string (missing, or comtag[]=x) counts as not given.
+    comtag = params[:comtag].is_a?(String) ? params[:comtag].dup : ''
+    which = params[:which]
     logger.info("profiles#comtag #{which} #{comtag}")
+    if comtag == ''
+      #-- Nothing to join or leave. The join/leave links always pass a tag, so
+      #-- this is a bare hit on /me/comtag (crawler, stale bookmark).
+      render plain: 'no community given', status: :bad_request
+      return
+    end
     if which == 'join'
       comtag.gsub!(/[^0-9A-za-z_]/,'')
       #comtag.downcase!
@@ -863,7 +871,13 @@ class ProfilesController < ApplicationController
     
     #-- See if it affected the perspective in any conversations
     community = Community.find_by_tagname(comtag)
-    for conversation in community.conversations    
+    if not community
+      #-- A tag with no community behind it (free-form tag, or the join branch
+      #-- stripped the name down to nothing). Nothing to re-perspective.
+      render plain: 'ok'
+      return
+    end
+    for conversation in community.conversations
       # Pick an appropriate perspective for that conversation
       perspectives = {}    
       for com in conversation.communities
