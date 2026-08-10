@@ -77,7 +77,19 @@ gem 'sanitize'
 gem 'formtastic', '~> 6.0'
 #gem "will_paginate", "~> 3.0.pre2"
 gem "will_paginate", "~> 4.0"  # 4.0 adds Rails 7 support (3.x helper breaks under Rails 7.1)
-gem "nokogiri", '1.15.7'  # pin: production is Ubuntu 18.04 (glibc 2.27); nokogiri 1.16+ precompiled linux gems need glibc 2.28. 1.15.7 runs on 18.04 (used it through the Ruby upgrade).
+# nokogiri was pinned to 1.15.7 because production is Ubuntu 18.04 (glibc 2.27)
+# and the PRECOMPILED x86_64-linux gems need glibc 2.28 from 1.16 on. That pin
+# left 16 open CVEs (1 critical) on the one library that parses genuinely hostile
+# input here: Sanitize.clean runs on user posts and on inbound federated
+# ActivityPub HTML from arbitrary remote servers.
+# force_ruby_platform builds from source instead, against nokogiri's OWN vendored
+# libxml2/libxslt — which needs a compiler, not a new glibc. Verified on the 18.04
+# production box: 1.19.4 builds and loads there with packaged libxml2 2.13.9 +
+# libxslt 1.1.43. Cost is a one-off compile per bundle (the capistrano shared
+# bundle persists, so only on a version change).
+# Drop force_ruby_platform once production is off 18.04 — 18.04 went EOL in 2023
+# and is the actual root cause here.
+gem "nokogiri", '~> 1.19', force_ruby_platform: true
 gem "liquid"
 # The ActivityPub code (app/lib/activity_pub.rb, activitypub_controller) uses the
 # `http` gem (HTTP.timeout / HTTP.get). It used to come transitively via the now-
@@ -125,6 +137,12 @@ gem 'observer', '0.1.1'
 gem 'racc', '1.6.2'
 gem 'logger', '1.5.3'
 gem 'net-protocol', '0.2.1'
+# net-http joined the tree with the 2026-08 oauth2 security bump (faraday-net_http
+# depends on it). faraday-net_http 3.4.x wants net-http ~> 0.5, which is AHEAD of
+# the 0.4.1 Ruby 3.2.11 ships — the exact Gem::LoadError shape described above.
+# Pinning to the Ruby default holds faraday-net_http at 3.3.x, which is happy with
+# any net-http. Lift this together with the Ruby bump, not before.
+gem 'net-http', '0.4.1'
 gem 'ostruct', '0.5.5'
 # NOTE timeout + securerandom are NOT pinned to the Ruby 3.2 default: Rails 7.1
 # requires timeout >= 0.4.0 and securerandom >= 0.3, newer than Ruby 3.2.11

@@ -15,6 +15,23 @@ class ApplicationController < ActionController::Base
 
   #before_action :log_in_as_visitor_if_no_referrer
 
+  #-- Rails 7 raises UnsafeRedirectError on any cross-host redirect_to. This app
+  #-- hops between its own hosts all the time (BASEDOMAIN, and the per-group /
+  #-- per-dialog subdomains of ROOTDOMAIN), and the explicit call sites already
+  #-- pass allow_other_host: true. But some of these redirects are issued from
+  #-- inside Devise, where we cannot pass it: DeviseController#require_no_
+  #-- authentication does a bare `redirect_to after_sign_in_path_for(resource)`,
+  #-- and our after_sign_in_path_for returns an absolute "https://BASEDOMAIN/..."
+  #-- URL. So an already-signed-in participant who opens the forgot-password,
+  #-- sign-in or sign-up page from a group subdomain 500s.
+  #-- Allow the app's own hosts, and only those — any other host still raises.
+  def redirect_to(options = {}, response_options = {})
+    if not response_options.key?(:allow_other_host) and own_host_url?(options)
+      response_options = response_options.merge(allow_other_host: true)
+    end
+    super
+  end
+
   #def store_location
     # store last url, particularly so we can set it after login
     # https://stackoverflow.com/questions/15944159/devise-redirect-back-to-the-original-location-after-sign-in-or-sign-up
@@ -750,7 +767,25 @@ class ApplicationController < ActionController::Base
   #print "#{phase(1987,5,10)}\n"
 
   private
-  
+
+    def own_host_url?(target)
+      #-- True only for an absolute or protocol-relative URL pointing at one of
+      #-- this app's own hosts. A bare "/path" has no host and returns false —
+      #-- same-origin redirects never needed permission in the first place.
+      return false if not target.is_a?(String)
+      begin
+        host = URI.parse(target).host
+      rescue URI::Error
+        return false
+      end
+      return false if host.to_s == ''
+      host = host.downcase
+      #-- BASEDOMAIN/ROOTDOMAIN carry a port in development ("intermix.test:3002")
+      base = BASEDOMAIN.to_s.downcase.split(':').first
+      root = ROOTDOMAIN.to_s.downcase.split(':').first
+      host == base or host == root or (root.to_s != '' and host.end_with?(".#{root}"))
+    end
+
     def storable_location?
       # Its important that the location is NOT stored if:
       # - The request method is not GET (non idempotent)
