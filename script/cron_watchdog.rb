@@ -71,6 +71,12 @@ JOBS = [
   { name: 'follow_mutual',         log: 'cron_follow_mutual.log',    schedule: 'daily 01:01',  max_age_min: 26 * 60 },
   { name: 'activitypub_responses', log: 'activitypub_responses.log', schedule: 'every 2 min',  max_age_min: 15 },
   { name: 'activitypub_delivery',  log: 'activitypub_delivery.log',  schedule: 'every 2 min',  max_age_min: 15 },
+  # Backups, added 2026-08-15 with the Hetzner migration. They run as ROOT from
+  # root's crontab (mysqldump authenticates over the unix socket), but they log
+  # here alongside everything else precisely so this watchdog can see them --
+  # backups that fail silently are the whole reason backups fail.
+  { name: 'db_backup',             log: 'cron_db_backup.log',        schedule: 'daily 10:00',  max_age_min: 26 * 60 },
+  { name: 'offsite_backup',        log: 'cron_offsite_backup.log',   schedule: 'daily 10:30',  max_age_min: 26 * 60 },
 ].freeze
 
 # Signatures of a job that runs but dies. Kept narrow on purpose: the logs carry a
@@ -84,6 +90,10 @@ ERROR_SIGNATURES = [
   /Mysql2::Error/,
   /\b(?:LoadError|NameError|NoMethodError|ArgumentError|TypeError)\b/,
   /command not found/,
+  # Both backup scripts print "FAILED: <reason>" and exit non-zero. Without this a
+  # backup that runs on schedule and fails every time would look healthy, because
+  # its log mtime keeps refreshing.
+  /^\S+ FAILED:/,
 ].freeze
 
 # `e-mail delivery problem` is deliberately NOT in the list above. It is a PER-RECIPIENT
