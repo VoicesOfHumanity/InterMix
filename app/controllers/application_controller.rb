@@ -768,6 +768,24 @@ class ApplicationController < ActionController::Base
 
   private
 
+    def latin1_storable?(str)
+      #-- Most text columns in this schema are latin1_swedish_ci (68 of them across
+      #-- 10 tables) while the connection is utf8mb4. Comparing such a column against
+      #-- a string latin1 cannot represent does NOT simply fail to match -- MySQL and
+      #-- MariaDB both raise "Illegal mix of collations (latin1_swedish_ci,IMPLICIT)
+      #-- and (utf8mb4_unicode_ci,COERCIBLE)". Verified identical on MySQL 5.7 and
+      #-- MariaDB 10.11, so this long predates the 2026-08 server move.
+      #-- "No match" is the only answer such a lookup can have, because the column
+      #-- physically cannot hold the value. Callers use this to turn an unanswerable
+      #-- query into a miss instead of a 500.
+      #-- The real fix is converting those columns to utf8mb4, which is a migration
+      #-- in its own right -- the data may be double-encoded and needs checking first.
+      str.to_s.dup.force_encoding(Encoding::UTF_8).encode(Encoding::ISO_8859_1)
+      true
+    rescue Encoding::UndefinedConversionError, Encoding::InvalidByteSequenceError
+      false
+    end
+
     def own_host_url?(target)
       #-- True only for an absolute or protocol-relative URL pointing at one of
       #-- this app's own hosts. A bare "/path" has no host and returns false —

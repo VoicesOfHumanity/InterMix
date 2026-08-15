@@ -48,6 +48,32 @@ RSpec.describe 'Malformed crawler requests', type: :request do
     end
   end
 
+  # communities.tagname / conversations.shortname are latin1_swedish_ci while the
+  # connection is utf8mb4. Comparing them against a string latin1 cannot represent
+  # raises "Illegal mix of collations" rather than simply missing -- confirmed
+  # identical on MySQL 5.7 and MariaDB 10.11, so it long predates the server move.
+  # Crawlers walk the catch-all /:tagname route with arbitrary UTF-8.
+  describe 'catch-all routes with a tagname latin1 cannot store' do
+    ['日本', 'Мир', '😀'].each do |tag|
+      it "does not blow up on /#{tag}" do
+        # percent-encoded, which is how a crawler actually sends it (and Rack::Test
+        # rejects a raw non-ASCII path outright)
+        expect { get "/#{CGI.escape(tag)}" }.not_to raise_error
+        expect(response.status).to eq(302)
+      end
+
+      it "does not blow up on /conversation/#{tag}" do
+        expect { get "/conversation/#{CGI.escape(tag)}" }.not_to raise_error
+        expect(response.status).to eq(302)
+      end
+    end
+
+    it 'still handles a latin1-representable accented tagname' do
+      expect { get "/#{CGI.escape('café')}" }.not_to raise_error
+      expect(response.status).to eq(302)   # no such community, so it redirects
+    end
+  end
+
   describe 'well_known#webfinger with a missing or empty resource' do
     it 'returns 400 when resource is absent' do
       get '/.well-known/webfinger'
