@@ -870,7 +870,9 @@ class ProfilesController < ApplicationController
     current_participant.save!
     
     #-- See if it affected the perspective in any conversations
-    community = Community.find_by_tagname(comtag)
+    #-- latin1_storable? guard: communities.tagname is latin1, so a comtag it
+    #-- cannot hold raises instead of missing. Same treatment as no community.
+    community = latin1_storable?(comtag) ? Community.find_by_tagname(comtag) : nil
     if not community
       #-- A tag with no community behind it (free-form tag, or the join branch
       #-- stripped the name down to nothing). Nothing to re-perspective.

@@ -920,6 +920,12 @@ class CommunitiesController < ApplicationController
     #-- gets requested as /sometag.zip by crawlers. It is only ever HTML.
     force_html_format
     tagname = params[:tagname].to_s
+    #-- communities.tagname is latin1; a tagname latin1 cannot hold raises rather
+    #-- than missing. Crawlers walk this catch-all route with arbitrary UTF-8.
+    if not latin1_storable?(tagname)
+      redirect_to "/"
+      return
+    end
     @community = Community.find_by_tagname(tagname)
     if not @community
       # If it doesn't exist, maybe it is a conversation?

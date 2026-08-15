@@ -17,6 +17,11 @@ class ConversationsController < ApplicationController
     force_html_format
     tagname = params[:tagname].to_s
 
+    #-- conversations.shortname is latin1, same trap as communities#fronttag.
+    if not latin1_storable?(tagname)
+      redirect_to "/"
+      return
+    end
     @conversation = Conversation.find_by_shortname(tagname)
     if not @conversation
       redirect_to "/"
