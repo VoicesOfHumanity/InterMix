@@ -41,15 +41,22 @@ LOCAL_DB=${LOCAL_DB:-/var/backups/intermix/db}
 KEY=${KEY:-/root/.ssh/id_ed25519_storagebox}
 PORT=${PORT:-23}
 
-# Set these two in /etc/intermix-offsite.conf (root-only, mode 600):
-#   SB_USER=u123456
+# Set these in /etc/intermix-offsite.conf (root-only, mode 600):
+#   SB_USER=u123456-sub1
 #   SB_HOST=u123456.your-storagebox.de
+#   SB_PATH=                 # optional trailing-slash prefix, e.g. "intermix/"
+#
+# SB_PATH is empty when the account is a SUB-ACCOUNT jailed to its own home
+# directory, which is the arrangement here: the sub-account opens straight onto
+# db/ files/ config/. It only needs a value if you point a main account, which
+# sees the whole box, at a subdirectory of it.
 CONF=${CONF:-/etc/intermix-offsite.conf}
 [ -r "$CONF" ] || { echo "$(date -u +%FT%TZ) FAILED: $CONF missing"; exit 1; }
 # shellcheck source=/dev/null
 . "$CONF"
 : "${SB_USER:?SB_USER not set in $CONF}"
 : "${SB_HOST:?SB_HOST not set in $CONF}"
+SB_PATH=${SB_PATH:-}
 
 [ "$(id -u)" = "0" ] || { echo "$(date -u +%FT%TZ) FAILED: must run as root"; exit 1; }
 
@@ -73,14 +80,15 @@ chmod 600 "$STAGE/config.tar.gz"
 sync_one() {  # sync_one <local path> <remote subdir>
   echo "$(date -u +%FT%TZ)   -> $2"
   rsync -a --delete-after --partial --timeout=1800 \
-        -e "$RSH" "$1" "$REMOTE:intermix/$2/"
+        -e "$RSH" "$1" "$REMOTE:${SB_PATH}$2/"
 }
 
-$RSH "$REMOTE" "mkdir -p intermix/db intermix/files intermix/config" 2>/dev/null || true
+# The Storage Box shell has no `mkdir -p` and no `find`; create each level singly.
+for d in db files config; do $RSH "$REMOTE" "mkdir ${SB_PATH}$d" >/dev/null 2>&1 || true; done
 
 sync_one "$LOCAL_DB/"                              "db"
 sync_one "$APP_ROOT/shared/public/images/data/"    "files"
 sync_one "$STAGE/config.tar.gz"                    "config"
 
 echo "$(date -u +%FT%TZ) offsite sync complete"
-$RSH "$REMOTE" "du -sh intermix 2>/dev/null" || true
+$RSH "$REMOTE" "du -sh ${SB_PATH:-.}" 2>/dev/null || true
