@@ -5,7 +5,7 @@ PHP 5.6, 832 days uptime. EOL since April 2023.
 **To:** `5.78.151.159` — Hetzner Cloud CPX21 (`intermix-prod`), Hillsboro `hil-dc1`,
 3 vCPU / 3.8 GB / 75 GB, Ubuntu 24.04.4, MariaDB 10.11.
 
-**Status: new server built and verified. No DNS has been touched. Not cut over.**
+**Status: CUT OVER 2026-08-15 12:53–13:04 UTC. Live on the new server.**
 
 ## Why this rather than an in-place upgrade
 
@@ -95,9 +95,36 @@ paired with the DNS flip.** See step 5.
 Remember the SYS_MODE asymmetry from `config/activitypub_crontab.example`: **staging sets
 `SYS_MODE=staging`; production must omit it.** Cron does not inherit it from Apache.
 
-## Cutover runbook
+## Cutover — done 2026-08-15
 
-Nothing below has been done.
+Executed 12:53–13:04 UTC, about 11 minutes of downtime. Visitors saw a maintenance
+page rather than a connection error, because the new box was switched to a 503
+maintenance vhost *before* the old one was stopped — so DNS propagated during the
+data copy instead of after it.
+
+Sequence as run: disable old cron (backed up to `~/crontab.backup-cutover-20260815.txt`)
+-> stop old Apache -> maintenance vhost up -> DNS flipped at Cloudflare -> final dump
+with `--lock-all-tables` (19 s) -> transfer (369 MB) -> drop/recreate/restore (3m40s)
+-> row counts verified identical (61 tables, 7,954,543 rows) -> assets re-synced ->
+app vhost back -> certbot -> cron installed on new box only.
+
+**DNS is at Cloudflare, not GoDaddy** — the domain is registered at GoDaddy but the
+nameservers are `jermaine.ns.cloudflare.com` / `robin.ns.cloudflare.com`. TTLs were
+already 300 s so no pre-lowering was needed. Changed: A `intermix.org` and A
+`voh.intermix.org` to 5.78.151.159, and the SPF TXT to `ip4:5.78.151.159`.
+`www.intermix.org` is a CNAME and followed automatically. `mail.intermix.org` was
+deliberately left pointing at the old box.
+
+### One thing that bit during cutover
+
+`PassengerMaxPoolSize` and `PassengerPoolIdleTime` are **server-scope only**. Inside
+`<VirtualHost>` Apache logs "cannot occur within <VirtualHost> section" and *ignores*
+them — so the pool cap protecting this 3.8 GB box was never in effect, and the warning
+was buried in a passing `configtest`. They now live in
+`/etc/apache2/conf-available/passenger-tuning.conf`. Apache also stayed down after
+certbot's reload and needed an explicit `systemctl start`.
+
+### Original runbook (for reference)
 
 **1. Day before.** Lower TTL on `intermix.org` and `voh.intermix.org` A records at GoDaddy
 to 300 s. Confirm the current TTL has expired before proceeding.
