@@ -77,10 +77,21 @@ The `participants` ones are on the sign-in path, so this cannot be fudged.
 **Phase 0 — done.** `latin1_storable?` guards on `communities#fronttag`,
 `conversations#fronttag`, `profiles#comtag`. The 500s have stopped.
 
-**Phase 1 — MyISAM → InnoDB.** This removes the index blocker entirely by raising the key
-limit from 1000 to 3072 bytes, and is worth doing on its own merits: MyISAM has no
-transactions and no crash recovery. It would also let `db_backup.sh` drop
-`--lock-all-tables` for `--single-transaction`, i.e. backups with no write lock at all.
+**Phase 1 — MyISAM → InnoDB. DONE 2026-08-15.** All 31 tables converted in **1 second**,
+zero failures. They totalled only 27 MB — the big tables (`geonames` 7.4M rows, `sessions`,
+`emails`) were already InnoDB. Rehearsed first against a restore of the nightly backup in a
+scratch database: row counts and all 236 indexes identical afterwards. Same result on
+production, and the database got *smaller* (2392 → 2062 MB).
+
+Verified after: 61/61 InnoDB, all Dynamic row format, 236/236 indexes preserved, writes to
+converted tables work, tag joins work, signed-in pages and the public site all fine. The
+only row-count difference was `sessions` +1, which was already InnoDB and untouched — a
+visitor created a session mid-run.
+
+**`db_backup.sh` now uses `--single-transaction` instead of `--lock-all-tables`**, so the
+nightly backup no longer takes a write lock at all. Verified: dump restores to 61 tables
+with matching counts. **If a MyISAM table is ever reintroduced this must be reverted**, or
+its rows will be silently inconsistent in every backup.
 
 **Phase 2 — latin1 → utf8mb4** on the 68 columns. Only ~22 rows carry non-ASCII, all
 convertible, so a straight `CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
@@ -92,6 +103,13 @@ will take a while. Only needed to make emoji in a URL as safe as accented charac
 
 Rehearse the whole thing first by restoring the nightly backup into a scratch database on
 the same box — that costs ~4 minutes and ~2.4 GB, and exercises the backup as a bonus.
+
+## Operational note
+
+`script/db_backup.sh` and `script/offsite_backup.sh` are version-controlled, but the copies
+that actually run are `/usr/local/sbin/intermix-db-backup` and
+`/usr/local/sbin/intermix-offsite-backup`, installed by hand. **A `cap deploy` does not
+update them.** Editing the repo copy is not enough — reinstall after changing either.
 
 ## Caveats
 

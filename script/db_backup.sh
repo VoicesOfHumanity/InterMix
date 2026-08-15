@@ -12,9 +12,12 @@
 # application's own database user just so it could take a backup.
 #
 # Replaces the old IONOS box's /home/ffunch/dbbackup.php, with three changes:
-#   - --lock-all-tables instead of --single-transaction. This schema is 30 InnoDB
-#     tables AND 31 MyISAM; --single-transaction gives the MyISAM half no
-#     consistent snapshot at all. The lock costs ~20s on an idle box.
+#   - --single-transaction, i.e. NO write lock at all. This used to have to be
+#     --lock-all-tables, because half the schema was MyISAM and MyISAM gets no
+#     consistent snapshot from a transaction. All 61 tables were converted to
+#     InnoDB on 2026-08-15, so the lock-free form is now both correct and free.
+#     If a MyISAM table is ever reintroduced, this MUST go back to
+#     --lock-all-tables or its rows will be inconsistent in every backup.
 #   - --default-character-set=binary --hex-blob, so the dump is a faithful
 #     byte-for-byte copy of a mixed latin1/utf8mb3/utf8mb4 schema rather than a
 #     re-encode. This is how the 2026-08 migration cloned the database.
@@ -54,7 +57,7 @@ echo "$(date -u +%FT%TZ) starting backup of $DB"
 # Write to .partial and rename only on success, so an interrupted run can never
 # be mistaken for a good backup by the rotation at the bottom.
 if ! mysqldump --default-character-set=binary --hex-blob \
-      --lock-all-tables --quick --routines --triggers --events \
+      --single-transaction --quick --routines --triggers --events \
       "$DB" 2>/dev/null | gzip -1 > "$TMP"; then
   rm -f "$TMP"; echo "$(date -u +%FT%TZ) FAILED: mysqldump returned non-zero"; exit 1
 fi
