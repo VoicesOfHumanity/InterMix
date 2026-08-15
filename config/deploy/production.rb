@@ -1,12 +1,16 @@
+# Production. Moved 2026-08-15 from the IONOS bare-metal box 198.71.53.140
+# (Ubuntu 18.04, EOL) to a Hetzner CPX21 in Hillsboro. See
+# doc/migration-2026-08-hetzner.md. The old box is kept powered on with
+# Apache and cron OFF until it is cancelled.
 # Simple Role Syntax
 # ==================
 # Supports bulk-adding hosts to roles, the primary
 # server in each group is considered to be the first
 # unless any hosts have the primary property set.
 # Don't declare `role :all`, it's a meta role
-role :web, "ploy@198.71.53.140"                          # Your HTTP server, Apache/etc
-role :app, "ploy@198.71.53.140"                          # This may be the same as your `Web` server
-role :db,  "ploy@198.71.53.140", :primary => true # This is where Rails migrations will run
+role :web, "ploy@5.78.151.159"                          # Your HTTP server, Apache/etc
+role :app, "ploy@5.78.151.159"                          # This may be the same as your `Web` server
+role :db,  "ploy@5.78.151.159", :primary => true # This is where Rails migrations will run
 
 # Extended Server Syntax
 # ======================
