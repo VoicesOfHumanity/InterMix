@@ -167,6 +167,26 @@ Rails.application.configure do
   
   # changes in syntax: https://github.com/smartinez87/exception_notification
   config.middleware.use ExceptionNotification::Rack,
+    # Don't mail about requests that were simply malformed. Rails already answers
+    # all of these correctly with a 4xx -- InvalidType returns a clean 406, verified
+    # against production -- so the mail is pure noise, and it arrives constantly
+    # because scanners probe with junk Accept headers and query strings. An alert
+    # channel that cries wolf gets ignored, which is the failure mode the cron
+    # watchdog was built to avoid; the same applies here.
+    #
+    # The gem already ignores ActionController::UnknownFormat, which is also a 406.
+    # InvalidType is the same situation and was simply missing from its list.
+    #
+    # NOT added on purpose: InvalidAuthenticityToken, ParameterMissing and
+    # RecordInvalid. Those are also 4xx, but each can mean a genuine app bug
+    # rather than a bad client, so they should keep mailing.
+    ignore_exceptions: ExceptionNotifier.ignored_exceptions + %w[
+      ActionDispatch::Http::MimeNegotiation::InvalidType
+      ActionDispatch::Http::Parameters::ParseError
+      ActionController::BadRequest
+      Rack::Utils::InvalidParameterError
+      Rack::Utils::ParameterTypeError
+    ],
     :email => {
       email_prefix: "[InterMix Bug] ",
       sender_address: %{"Exception Notifier" <questions@intermix.org>},
