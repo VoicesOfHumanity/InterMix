@@ -170,3 +170,58 @@ IP. Inbound mail is unaffected — the MX for `intermix.org` already points at `
   Rails apps last touched in 2011 (`diaspora`, `bettermeans`, `attaway`), the 2016 WordPress
   at `/home/intermix/wpintermix`, and roger's static sites — none of which resolve to the box.
   Archive anything wanted from those **before** cancellation.
+
+## Backups (added 2026-08-15, after the cutover)
+
+The migration did not carry any backup across, and for about ten hours the new box
+had none at all. The old box's `dbbackup.php` wrote to `/home/backup` **on the same
+machine and the same RAID array**, and used `--single-transaction`, so the 31 MyISAM
+tables were never consistent in it. Three layers now:
+
+**1. On-box, nightly.** `script/db_backup.sh` -> `/usr/local/sbin/intermix-db-backup`,
+10:00 UTC (03:00 Pacific) from **root's** crontab. Runs as root so mysqldump can
+authenticate over the unix socket -- no credentials in the script, the crontab or the
+environment, and no need to grant global `RELOAD` to the application's own DB user
+just so it can take a backup. `--lock-all-tables` so MyISAM is consistent; binary +
+hex-blob so the dump is a faithful copy of the mixed-charset schema. Writes to
+`/var/backups`, deliberately outside the deploy tree. Keeps 7 daily + 8 weekly
+(~5.5 GB of 64 GB free). Refuses to keep a dump that fails `gzip -t` or is
+implausibly small, and writes through `.partial` -- a truncated backup is worse than
+none, because it still looks like one.
+
+**2. Offsite, nightly.** `script/offsite_backup.sh` ->
+`/usr/local/sbin/intermix-offsite-backup`, 10:30 UTC. rsync over SSH to a Hetzner
+Storage Box (`u651366.your-storagebox.de`, **port 23**, key-only via
+`/root/.ssh/id_ed25519_storagebox`; settings in root-only
+`/etc/intermix-offsite.conf`). Ships the dumps, `public/images/data` (66 MB of user
+photos, not in git and not reconstructible) and the three linked config files
+(`master.key` above all). Refuses to run if the newest local dump is >2 days old, so a
+silently broken `db_backup.sh` cannot leave a healthy-looking offsite copy quietly
+going stale. First run: 52 s, 441 MB, verified byte-identical by full checksum compare.
+
+Plain rsync of plain `.sql.gz`, not Borg, on purpose: Borg would dedupe and encrypt
+and store this far more efficiently, but needs Borg and a passphrase to read, and a
+lost passphrase makes the backup worthless. These restore with the Storage Box
+password and `gunzip`, by anyone. The trade-off is that the dump sits unencrypted at
+rest on a private key-authenticated box, and it contains participant emails and bcrypt
+hashes. Switch to Borg or pipe through `age` if that is not good enough.
+
+**3. Storage Box snapshots.** Set an automatic **daily** plan in the Hetzner console
+(10 slots). This is the layer rsync cannot provide: the sync uses `--delete-after` and
+therefore faithfully mirrors destruction. Snapshots are taken on Hetzner's side and
+**the server's key cannot alter or delete them**, so they survive a compromise of
+`intermix-prod` itself. Schedule around 11:00 UTC so each one captures a completed sync.
+
+**All of it is watched.** `db_backup` and `offsite_backup` are in `cron_watchdog.rb`'s
+`JOBS`, so they alert if they stop running -- and `/^\S+ FAILED:/` is in
+`ERROR_SIGNATURES`, because a backup that runs on schedule and fails every time keeps
+refreshing its log mtime and would otherwise look perfectly healthy. Watchdog now
+reports `OK 0/9 failing`.
+
+### Restore
+
+    gunzip -c /var/backups/intermix/db/daily/intermix-YYYY-MM-DD.sql.gz \
+      | mariadb --default-character-set=binary <database>
+
+Use `--default-character-set=binary`, matching the dump. Tested on 2026-08-15 into a
+throwaway database: 61 tables, 1333 participants, 2076 items, matching live.
