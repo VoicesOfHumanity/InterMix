@@ -52,6 +52,14 @@ module Intermix
     # in config/storage.yml — a valid no-op (nothing actually uses AS).
     config.active_storage.service = :local
 
+    # ...and since nothing uses it, don't draw its routes either. They were live
+    # in production regardless: scanners POST to /rails/active_storage/direct_uploads
+    # (and each one mailed an InvalidAuthenticityToken), and the disk service also
+    # exposes PUT /rails/active_storage/disk/:token. Now those are plain 404s.
+    # Trix uploads go to our own POST /uploads, which this does not touch.
+    # If Active Storage is ever adopted for real, remove this line.
+    config.active_storage.draw_routes = false
+
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
     
