@@ -203,3 +203,7 @@ end
 # group :development, :test do
 #   gem 'webrat'
 # end
+
+# Claude API for the /lab/agree experiment (duplicate detection, common-ground drafts).
+# Its base64/logger deps resolve to the pinned Ruby 3.2.11 defaults above.
+gem "anthropic", "~> 2.6"

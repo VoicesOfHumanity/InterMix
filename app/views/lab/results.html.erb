@@ -1,0 +1,160 @@
+<% content_for :title, "Results · #{@question.title}" %>
+<% my_labels = @memberships.to_h %>
+<p class="muted small"><%= link_to '← All questions', lab_index_path %></p>
+<h1><%= @question.title %></h1>
+<div class="stat-row">
+  <span><b><%= @rows.size %></b> answers</span>
+  <span><b><%= @tally.total_voters %></b> people voting</span>
+  <span><b><%= @tally.total_rounds %></b> rounds</span>
+</div>
+
+<div class="layout">
+  <section class="stack">
+    <% if @picked.any? %>
+      <div class="card yours">
+        <h2>Your picks</h2>
+        <ul style="padding-left: 20px; margin: 0;">
+          <% @picked.each do |pid| %>
+            <% row = @tally.row_for(pid) or next %>
+            <li>
+              &ldquo;<%= row.answer.body %>&rdquo;<br>
+              <span class="small">
+                <% mine = @memberships.map { |dim, label| [label, row.groups[dim][label]] }.select { |_, c| c.shown > 0 } %>
+                <% if mine.any? %>
+                  Picked by <%= mine.map { |label, c| "#{lab_pct(c.rate)} of #{label}" }.to_sentence %>
+                  &mdash; and <%= lab_pct(row.overall.rate) %> of everyone.
+                <% else %>
+                  Picked by <%= lab_pct(row.overall.rate) %> of everyone who has seen it.
+                <% end %>
+                <% if row.score %>
+                  Its weakest group still picks it <%= lab_pct(row.groups.values.flat_map(&:values).select(&:enough?).map(&:rate).min) %> of the time.
+                <% end %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+        <div class="actions" style="margin-top: 12px;">
+          <%= link_to 'Vote on five more', lab_question_path(@question), class: 'btn' %>
+        </div>
+      </div>
+    <% end %>
+
+    <h2 style="margin-top: 8px;">Where people agree</h2>
+    <p class="muted small" style="margin-top: -6px;">Ranked by how strongly the <em>least</em> enthusiastic group still picks each answer.</p>
+
+    <% rank = 0 %>
+    <% @rows.each do |row| %>
+      <% a = row.answer %>
+      <div class="card result<%= ' picked' if @picked.include?(a.id) %>" id="a<%= a.id %>">
+        <div class="head">
+          <span class="rank"><%= row.score ? "#{rank += 1}." : '·' %></span>
+          <div class="body">
+            <div>
+              <%= a.body %>
+              <%= lab_author_badge(a) %>
+              <% if @picked.include?(a.id) %><span class="badge mine">your pick</span><% end %>
+            </div>
+            <div class="meter">
+              <span class="label"><%= row.score ? 'Weakest group' : 'Everyone' %></span>
+              <% if row.score %>
+                <% weakest = row.groups.values.flat_map(&:values).select(&:enough?).min_by(&:rate) %>
+                <%= lab_bar(weakest) %>
+                <span class="val"><%= lab_pct(weakest.rate) %></span>
+              <% else %>
+                <%= lab_bar(row.overall) %>
+                <span class="val"><%= lab_pct(row.overall.rate) %></span>
+              <% end %>
+            </div>
+            <% if row.score %>
+              <div class="meter">
+                <span class="label">Everyone</span>
+                <%= lab_bar(row.overall) %>
+                <span class="val"><%= lab_pct(row.overall.rate) %></span>
+              </div>
+            <% else %>
+              <p class="small muted" style="margin: 6px 0 0;">Not enough votes yet to compare groups.</p>
+            <% end %>
+
+            <% if a.ai? && a.ai_note.present? %>
+              <div class="ai-note">
+                <%= a.ai_note %>
+                <% if a.source_ids.any? %>
+                  Drawn from:
+                  <%= safe_join(a.source_ids.map { |sid| link_to("##{sid}", "#a#{sid}") }, ', ') %>
+                <% end %>
+              </div>
+            <% end %>
+
+            <details>
+              <summary>By group</summary>
+              <div class="dims">
+                <% Lab::Groups::DIMENSIONS.each do |key, dim| %>
+                  <div class="dim">
+                    <h3><%= dim[:label] %></h3>
+                    <% row.groups[key].each do |label, cell| %>
+                      <% next if cell.shown.zero? %>
+                      <% is_mine = my_labels[key] == label %>
+                      <div class="grow<%= ' mine' if is_mine %><%= ' few' unless cell.enough? %>">
+                        <span class="g"><%= label %><%= ' (you)' if is_mine %></span>
+                        <%= lab_bar(cell, mine: is_mine) %>
+                        <span class="n"><%= cell.enough? ? lab_pct(cell.rate) : 'few' %></span>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            </details>
+
+            <% if current_participant&.sysadmin %>
+              <div class="admin">
+                #<%= a.id %> · shown <%= row.overall.shown %>, picked <%= row.overall.picked %>
+                <% if row.score %>· score <%= lab_pct(row.score) %><% end %> ·
+                <%= button_to 'hide', lab_hide_answer_path(@question, a.id), form_class: 'inline',
+                      data: { turbo: false } %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+  <aside class="stack">
+    <% unless @picked.any? %>
+      <div class="card stack">
+        <% if participant_signed_in? %>
+          <%= link_to 'Vote on this question', lab_question_path(@question), class: 'btn block' %>
+        <% else %>
+          <p class="small">Sign in to add your voice &mdash; your profile lets us show where groups agree.</p>
+          <%= link_to 'Sign in', lab_login_path(return: lab_question_path(@question)), class: 'btn block' %>
+          <%= button_to 'Try it as a guest', lab_visitor_path(return: lab_question_path(@question)), class: 'btn secondary block' %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="card explain stack">
+      <h3>How to read this</h3>
+      <p>Each time someone votes they see five answers and pick two, so an answer picked
+        <b><%= lab_pct(Lab::Tally::BASE) %></b> of the time is doing no better than chance &mdash; that&rsquo;s the
+        tick on each bar <%= lab_bar(Lab::Tally::Cell.new(10, 7)) %>.</p>
+      <p>Answers are ranked by their <b>weakest group</b>: the lowest pick rate among men and women,
+        each generation, and each region. An answer only ranks high if every group tends to choose it &mdash;
+        popularity with one group can&rsquo;t carry it.</p>
+      <p class="small muted">Groups need at least <%= Lab::Tally::MIN_SHOWN %> votes to count (&ldquo;few&rdquo; otherwise),
+        and small samples are nudged toward chance when ranking.</p>
+      <% if Lab::Ai.enabled? %>
+        <p class="small">Answers marked <span class="badge ai">AI-drafted</span> were written by an AI trying to
+          express what each group&rsquo;s favourite answers have in common. They have to win votes like any
+          other answer.</p>
+      <% end %>
+    </div>
+
+    <% if current_participant&.sysadmin && Lab::Ai.enabled? %>
+      <div class="card small stack">
+        <h3>Admin</h3>
+        <%= button_to 'Ask the AI for a common-ground draft now', lab_synthesize_path(@question), class: 'btn secondary block' %>
+        <p class="muted">Also happens automatically every <%= @question.synth_every %> new answers. Takes ~10&ndash;30 s.</p>
+      </div>
+    <% end %>
+  </aside>
+</div>

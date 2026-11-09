@@ -1,0 +1,21 @@
+<% content_for :title, @question.title %>
+<p class="muted small"><%= link_to '← Back to the question', lab_question_path(@question) %></p>
+<h1>Someone may have said this already</h1>
+<div class="layout">
+  <section class="stack">
+    <p class="muted">Your answer:</p>
+    <div class="card">&ldquo;<%= @body %>&rdquo;</div>
+    <p class="muted">sounds a lot like this one, which people are already voting on:</p>
+    <div class="card" style="border-color: var(--accent);">&ldquo;<%= @duplicate.body %>&rdquo; <%= lab_author_badge(@duplicate) %></div>
+    <% if @reason.present? %><p class="small muted"><%= @reason %></p><% end %>
+  </section>
+  <aside class="card stack">
+    <p>If it&rsquo;s the same idea, backing that one keeps the votes together and gives it a better chance.</p>
+    <%= link_to 'Vote on that one instead', lab_question_path(@question, include: @duplicate.id), class: 'btn block' %>
+    <%= form_with url: lab_answers_path(@question), method: :post, local: true do %>
+      <%= hidden_field_tag :body, @body %>
+      <%= hidden_field_tag :confirm, '1' %>
+      <button class="btn secondary block" type="submit">Mine is different &mdash; add it</button>
+    <% end %>
+  </aside>
+</div>

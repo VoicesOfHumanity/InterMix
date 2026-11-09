@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2026_07_12_120000) do
+ActiveRecord::Schema.define(version: 2026_11_09_120000) do
 
   create_table "action_text_rich_texts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -765,6 +765,51 @@ ActiveRecord::Schema.define(version: 2026_07_12_120000) do
     t.index ["remote_delivery_done"], name: "index_items_on_remote_delivery_done"
     t.index ["reply_to"], name: "index_items_on_reply_to"
     t.index ["wall_post", "wall_delivery", "created_at"], name: "index_items_on_wall_post_and_wall_delivery_and_created_at"
+  end
+
+  create_table "lab_answers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "lab_question_id", null: false
+    t.integer "participant_id"
+    t.string "author_kind", default: "person", null: false
+    t.string "body", limit: 300, null: false
+    t.string "status", default: "active", null: false
+    t.integer "gender_id"
+    t.integer "generation_id"
+    t.string "region", limit: 2
+    t.string "source_answer_ids"
+    t.text "ai_note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lab_question_id", "status"], name: "index_lab_answers_on_lab_question_id_and_status"
+    t.index ["participant_id"], name: "index_lab_answers_on_participant_id"
+  end
+
+  create_table "lab_questions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "intro"
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.integer "synth_every", default: 8, null: false
+    t.integer "answers_at_last_synth", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "lab_votes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "lab_question_id", null: false
+    t.integer "lab_answer_id", null: false
+    t.integer "participant_id"
+    t.string "round_token", limit: 32, null: false
+    t.boolean "picked", default: false, null: false
+    t.boolean "demo", default: false, null: false
+    t.integer "gender_id"
+    t.integer "generation_id"
+    t.string "country_code", limit: 2
+    t.string "region", limit: 2
+    t.datetime "created_at", null: false
+    t.index ["lab_question_id", "lab_answer_id"], name: "index_lab_votes_on_lab_question_id_and_lab_answer_id"
+    t.index ["participant_id", "lab_question_id"], name: "index_lab_votes_on_participant_id_and_lab_question_id"
+    t.index ["round_token", "lab_answer_id"], name: "index_lab_votes_on_round_token_and_lab_answer_id", unique: true
   end
 
   create_table "messages", id: :integer, options: "ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci", force: :cascade do |t|

@@ -386,12 +386,16 @@ class ApplicationController < ActionController::Base
     
     #-- This will check if required fields have been entered, and remember it, so we will show only their profile if we're missing something.
     session[:has_required] = current_participant.has_required
-    
+
+    #-- Came from the /lab/ experiment: go straight back there (LabController#login sets this)
+    lab_return = session.delete(:lab_return).to_s
+    return lab_return if lab_return.start_with?('/lab/')
+
     group_id,dialog_id = get_group_dialog_from_subdomain
     return if not group_id and not dialog_id
     group_id,dialog_id = check_group_and_dialog if session[:group_id].to_i == 0 and session[:dialog_id].to_i == 0
-    
-    session[:cur_baseurl] = "https://" + BASEDOMAIN    
+
+    session[:cur_baseurl] = "https://" + BASEDOMAIN
     logger.info("application#after_sign_in_path_for cur_baseurl:#{session[:cur_baseurl]}")
 
     hubadmins = HubAdmin.where("participant_id=#{current_participant.id} and active=1")

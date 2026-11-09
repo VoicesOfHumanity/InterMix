@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= content_for?(:title) ? "#{yield(:title)} · " : '' %>Can humanity agree?</title>
+  <meta name="robots" content="noindex">
+  <%= csrf_meta_tags %>
+  <%# Self-contained on purpose: no Sprockets assets, so the lab cannot disturb the
+      main site's styles (or be disturbed by them) while it is an experiment. %>
+  <style>
+    :root {
+      --bg: #f6f4ef; --surface: #ffffff; --surface-2: #efece4; --text: #1d1f22; --muted: #5d6168;
+      --line: #dcd7cc; --accent: #1f6f5c; --accent-ink: #ffffff; --accent-soft: #d7ece5;
+      --mine: #b5651d; --mine-soft: #f6e3cf; --ai: #5a4fb0; --ai-soft: #e6e3f7;
+      --warn-soft: #fbf0d0; --ok-soft: #dcefe4; --radius: 14px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a; --surface: #1d2026; --surface-2: #252931; --text: #eceae4; --muted: #a2a6ad;
+        --line: #343944; --accent: #4fb89b; --accent-ink: #0c1512; --accent-soft: #1d3a32;
+        --mine: #e59a52; --mine-soft: #3c2b1b; --ai: #a99ff0; --ai-soft: #2c2847;
+        --warn-soft: #3a3220; --ok-soft: #1f3529;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--bg); color: var(--text);
+      font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    a { color: var(--accent); }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+    header.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+    header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; }
+    .brand { font-weight: 700; text-decoration: none; color: var(--text); letter-spacing: .01em; }
+    .brand small { font-weight: 500; color: var(--muted); margin-left: 6px; }
+    .who { font-size: 14px; color: var(--muted); text-align: right; white-space: nowrap;
+      max-width: 40vw; overflow: hidden; text-overflow: ellipsis; }
+    @media (max-width: 599px) {
+      .brand small { display: block; margin-left: 0; font-size: 12px; line-height: 1.2; }
+      header.top .wrap { padding-top: 8px; padding-bottom: 8px; }
+    }
+    main { padding: 24px 0 48px; }
+    h1 { font-size: clamp(26px, 5.5vw, 40px); line-height: 1.15; margin: 0 0 10px; letter-spacing: -.01em; }
+    h2 { font-size: 21px; line-height: 1.25; margin: 0 0 12px; }
+    h3 { font-size: 16px; margin: 0 0 8px; }
+    p { margin: 0 0 12px; }
+    .lede { font-size: 19px; color: var(--muted); max-width: 40em; }
+    .muted { color: var(--muted); }
+    .small { font-size: 14px; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+    .stack > * + * { margin-top: 12px; }
+    .flash { border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; }
+    .flash.notice { background: var(--ok-soft); }
+    .flash.alert { background: var(--warn-soft); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px;
+      padding: 0 20px; border-radius: 999px; border: 0; font: inherit; font-weight: 600; cursor: pointer;
+      text-decoration: none; background: var(--accent); color: var(--accent-ink); }
+    .btn[disabled] { opacity: .45; cursor: not-allowed; }
+    .btn.secondary { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+    .btn.block { width: 100%; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    form.inline { display: inline; }
+    .badge { display: inline-block; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 9px; vertical-align: middle; }
+    .badge.ai { background: var(--ai-soft); color: var(--ai); }
+    .badge.demo { background: var(--surface-2); color: var(--muted); }
+    .badge.mine { background: var(--mine-soft); color: var(--mine); }
+
+    /* Question list */
+    .qgrid { display: grid; gap: 14px; margin-top: 24px; }
+    .qcard { display: block; text-decoration: none; color: inherit; transition: border-color .15s; }
+    .qcard:hover, .qcard:focus-visible { border-color: var(--accent); }
+    .qcard .leader { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 15px; }
+
+    /* Picking */
+    .layout { display: grid; gap: 20px; }
+    .choices { display: grid; gap: 10px; }
+    .choice { position: relative; display: block; cursor: pointer; }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice .card { display: flex; gap: 12px; align-items: flex-start; min-height: 64px; padding: 14px 16px;
+      transition: border-color .12s, background .12s, transform .12s; }
+    .choice .tick { flex: 0 0 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line);
+      display: grid; place-items: center; font-size: 15px; color: transparent; margin-top: 1px; }
+    .choice input:checked + .card { border-color: var(--accent); background: var(--accent-soft); }
+    .choice input:checked + .card .tick { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .choice input:focus-visible + .card { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .choice.locked .card { opacity: .5; }
+    .sticky-submit { position: sticky; bottom: 0; padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, var(--bg) 70%, transparent); }
+    .counter { font-size: 14px; color: var(--muted); text-align: center; margin-top: 6px; }
+    textarea { width: 100%; min-height: 96px; resize: vertical; font: inherit; color: var(--text);
+      background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+    textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
+
+    /* Results */
+    .stat-row { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 15px; color: var(--muted); margin-bottom: 18px; }
+    .stat-row b { color: var(--text); }
+    .result { scroll-margin-top: 16px; }
+    .result.picked { border-color: var(--mine); box-shadow: 0 0 0 1px var(--mine) inset; }
+    .result .head { display: flex; gap: 12px; align-items: flex-start; }
+    .rank { flex: 0 0 auto; font-weight: 700; font-size: 15px; color: var(--muted); min-width: 1.6em; padding-top: 2px; }
+    .result .body { flex: 1; }
+    .meter { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 14px; }
+    .meter .bar { flex: 1; }
+    .meter .label { min-width: 8.5em; color: var(--muted); }
+    .meter .val { min-width: 3em; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .bar { position: relative; display: block; height: 10px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+    .bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 999px; }
+    .bar.mine .fill { background: var(--mine); }
+    .bar.thin .fill { opacity: .35; }
+    .bar .chance { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--text); opacity: .25; }
+    details { margin-top: 10px; }
+    summary { cursor: pointer; font-size: 14px; color: var(--accent); font-weight: 600; list-style: none; min-height: 32px; display: flex; align-items: center; }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: '▸'; margin-right: 6px; transition: transform .15s; }
+    details[open] summary::before { transform: rotate(90deg); }
+    .dims { display: grid; gap: 14px; margin-top: 8px; }
+    .dim h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    .grow { display: grid; grid-template-columns: 7.5em 1fr 3.2em; align-items: center; gap: 8px; font-size: 14px; min-height: 26px; }
+    .grow .n { text-align: right; font-variant-numeric: tabular-nums; }
+    .grow.mine .g { color: var(--mine); font-weight: 600; }
+    .grow.few { color: var(--muted); }
+    .yours { background: var(--mine-soft); border-color: transparent; }
+    .yours li { margin-bottom: 8px; }
+    .explain { font-size: 15px; }
+    .explain .bar { display: inline-block; width: 70px; vertical-align: middle; }
+    .ai-note { font-size: 14px; color: var(--muted); border-left: 3px solid var(--ai); padding-left: 10px; margin-top: 8px; }
+    .admin { font-size: 13px; margin-top: 8px; }
+    .admin button { font: inherit; background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 0; }
+    footer { border-top: 1px solid var(--line); padding: 20px 0 32px; font-size: 14px; color: var(--muted); }
+
+    @media (min-width: 700px) {
+      .qgrid { grid-template-columns: 1fr 1fr; }
+      .dims { gap: 16px; }
+      .grow { grid-template-columns: 9em 1fr 3.2em; }
+    }
+    @media (min-width: 900px) {
+      body { font-size: 17px; }
+      main { padding-top: 36px; }
+      .layout { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+      .layout aside { position: sticky; top: 20px; }
+      .sticky-submit { position: static; background: none; padding-bottom: 0; }
+      .mobile-only { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="<%= lab_index_path %>">Can humanity agree?<small>Voices of Humanity · lab</small></a>
+      <div class="who">
+        <% if participant_signed_in? %>
+          <%= current_participant.id == VISITOR_ID ? 'Guest' : current_participant.name %>
+        <% else %>
+          <%= link_to 'Sign in', lab_login_path(return: request.fullpath) %>
+        <% end %>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="wrap">
+      <% flash.each do |type, msg| %>
+        <% next unless %w[notice alert].include?(type.to_s) && msg.is_a?(String) %>
+        <div class="flash <%= type %>" role="status"><%= msg %></div>
+      <% end %>
+      <%= yield %>
+    </div>
+  </main>
+  <footer>
+    <div class="wrap">
+      An experiment from Voices of Humanity. Results describe the people taking part here,
+      not whole countries or populations.
+    </div>
+  </footer>
+</body>
+</html>

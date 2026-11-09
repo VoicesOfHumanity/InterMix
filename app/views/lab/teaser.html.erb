@@ -1,0 +1,28 @@
+<% content_for :title, @question.title %>
+<div class="layout">
+  <section class="stack">
+    <p class="muted small"><%= link_to '← All questions', lab_index_path %></p>
+    <h1><%= @question.title %></h1>
+    <% if @question.intro.present? %><p class="lede"><%= @question.intro %></p><% end %>
+    <p class="mobile-only"><a class="btn block" href="#takepart">Take part &darr;</a></p>
+    <% if @preview.any? %>
+      <p class="muted">Some of the answers people have given:</p>
+      <% @preview.each do |row| %>
+        <div class="card">&ldquo;<%= row.answer.body %>&rdquo; <%= lab_author_badge(row.answer) %></div>
+      <% end %>
+    <% end %>
+    <p><%= link_to 'See the results so far →', lab_results_path(@question) %></p>
+  </section>
+  <aside class="card stack" id="takepart">
+    <h2>Sign in to take part</h2>
+    <p class="small">
+      Your profile&rsquo;s gender, generation and country are what let us show where different groups
+      agree. They are never shown next to your answers.
+    </p>
+    <div class="actions">
+      <%= link_to 'Sign in', lab_login_path(return: request.fullpath), class: 'btn' %>
+      <%= button_to 'Try it as a guest', lab_visitor_path(return: request.fullpath), class: 'btn secondary', form_class: 'inline' %>
+    </div>
+    <p class="small muted">Guests share one account, so their votes all count as one profile.</p>
+  </aside>
+</div>

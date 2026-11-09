@@ -1,0 +1,100 @@
+<% content_for :title, @question.title %>
+<p class="muted small"><%= link_to '← All questions', lab_index_path %></p>
+<h1><%= @question.title %></h1>
+<% if @question.intro.present? %><p class="lede"><%= @question.intro %></p><% end %>
+
+<div class="layout">
+  <section>
+    <% if @answers.empty? %>
+      <div class="card">
+        <p>Nobody has answered yet. Be the first &mdash; your answer will be shown to the next people who come by.</p>
+      </div>
+    <% else %>
+      <h2>Pick the two you agree with most</h2>
+      <%= form_with url: lab_pick_path(@question), method: :post, local: true, id: 'pickform' do %>
+        <%= hidden_field_tag :token, @token %>
+        <div class="choices">
+          <% @answers.each do |a| %>
+            <label class="choice">
+              <input type="checkbox" name="picked[]" value="<%= a.id %>">
+              <span class="card">
+                <span class="tick" aria-hidden="true">✓</span>
+                <span><%= a.body %> <%= lab_author_badge(a) %></span>
+              </span>
+            </label>
+          <% end %>
+        </div>
+        <div class="sticky-submit">
+          <button class="btn block" type="submit" id="pickbtn" disabled>See how you compare</button>
+          <div class="counter" id="pickcount" aria-live="polite">Choose 2 (or 1, if only one fits)</div>
+        </div>
+      <% end %>
+      <p class="small"><%= link_to 'None of these? Show me five others', lab_question_path(@question) %></p>
+    <% end %>
+  </section>
+
+  <aside class="stack">
+    <% missing = Lab::Groups::DIMENSIONS.reject { |_, d| d[:groups].key?(@snapshot[d[:column]]) }.map { |_, d| d[:label].downcase } %>
+    <% if missing.any? %>
+      <div class="card small" style="background: var(--warn-soft); border-color: transparent;">
+        Your profile has no <%= missing.to_sentence %>, so your votes count overall but not in those group
+        comparisons. <%= link_to 'Add them to your profile', '/me/profile/meta' %>.
+      </div>
+    <% end %>
+
+    <div class="card stack">
+      <h2>Add your own answer</h2>
+      <% if @answer_count >= (current_participant.id == VISITOR_ID ? LabController::MAX_ANSWERS_VISITOR : LabController::MAX_ANSWERS_PER_QUESTION) && !current_participant.sysadmin %>
+        <p class="small muted">You&rsquo;ve given all the answers you can to this question. Thank you!</p>
+      <% else %>
+        <%= form_with url: lab_answers_path(@question), method: :post, local: true, id: 'answerform' do %>
+          <textarea name="body" id="answerbody" maxlength="<%= LabAnswer::MAX_LENGTH %>" required minlength="3"
+                    placeholder="One short sentence is best" aria-label="Your answer"></textarea>
+          <div class="actions" style="justify-content: space-between; margin-top: 8px;">
+            <span class="small muted" id="answerlen">0 / <%= LabAnswer::MAX_LENGTH %></span>
+            <button class="btn secondary" type="submit" id="answerbtn">Add answer</button>
+          </div>
+        <% end %>
+        <p class="small muted">
+          Short and specific works best. Other people will see it in their rounds.
+          <% if Lab::Ai.enabled? %>We&rsquo;ll first check whether someone has already said the same thing, so votes aren&rsquo;t split.<% end %>
+        </p>
+      <% end %>
+    </div>
+
+    <p class="small"><%= link_to 'See the results so far →', lab_results_path(@question) %></p>
+  </aside>
+</div>
+
+<script>
+  (function () {
+    var form = document.getElementById('pickform');
+    if (form) {
+      var boxes = form.querySelectorAll('input[name="picked[]"]');
+      var btn = document.getElementById('pickbtn');
+      var count = document.getElementById('pickcount');
+      var update = function () {
+        var n = 0;
+        boxes.forEach(function (b) { if (b.checked) n++; });
+        boxes.forEach(function (b) {
+          var lock = n >= 2 && !b.checked;
+          b.disabled = lock;
+          b.closest('.choice').classList.toggle('locked', lock);
+        });
+        btn.disabled = n === 0;
+        count.textContent = n === 0 ? 'Choose 2 (or 1, if only one fits)' : n === 1 ? '1 chosen — pick one more, or continue' : '2 chosen';
+      };
+      boxes.forEach(function (b) { b.addEventListener('change', update); });
+      update();
+    }
+    var body = document.getElementById('answerbody');
+    if (body) {
+      var len = document.getElementById('answerlen');
+      body.addEventListener('input', function () { len.textContent = body.value.length + ' / ' + body.maxLength; });
+      document.getElementById('answerform').addEventListener('submit', function () {
+        var b = document.getElementById('answerbtn');
+        b.disabled = true; b.textContent = 'Checking…';
+      });
+    }
+  })();
+</script>

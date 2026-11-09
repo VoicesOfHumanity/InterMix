@@ -1,4 +1,20 @@
 Rails.application.routes.draw do
+  # Experimental "Can humanity agree on anything?" section - unlinked from the menus
+  # while it is a candidate for Roger. See app/controllers/lab_controller.rb
+  scope '/lab/agree', controller: :lab, as: :lab do
+    get  '/', action: :index, as: :index
+    get  'login', action: :login, as: :login
+    post 'visitor', action: :visitor, as: :visitor
+    constraints id: /\d+/ do
+      get  ':id', action: :show, as: :question
+      post ':id/pick', action: :pick, as: :pick
+      get  ':id/results', action: :results, as: :results
+      post ':id/answers', action: :create_answer, as: :answers
+      post ':id/answers/:answer_id/hide', action: :hide_answer, as: :hide_answer, answer_id: /\d+/
+      post ':id/synthesize', action: :synthesize, as: :synthesize
+    end
+  end
+
   resources :moons
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

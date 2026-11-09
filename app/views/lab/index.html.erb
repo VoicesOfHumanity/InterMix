@@ -1,0 +1,28 @@
+<% content_for :title, 'Questions' %>
+<h1>Can humanity agree on anything?<br>Let&rsquo;s find out.</h1>
+<p class="lede">
+  Pick a question. You&rsquo;ll see five answers from other people &mdash; choose the two you agree with most,
+  then see how your choices compare with people of other genders, generations and parts of the world.
+</p>
+
+<div class="qgrid">
+  <% @questions.each do |q| %>
+    <a class="card qcard" href="<%= lab_question_path(q) %>">
+      <h2><%= q.title %></h2>
+      <% if q.intro.present? %><p class="muted small"><%= q.intro %></p><% end %>
+      <div class="small muted">
+        <%= pluralize(q.live_answers.count, 'answer') %> · <%= pluralize(q.participant_count, 'person', plural: 'people') %> voting
+      </div>
+      <% if (lead = @leaders[q.id]) %>
+        <div class="leader">
+          <span class="muted small">Most common ground so far:</span><br>
+          &ldquo;<%= lead.answer.body %>&rdquo;
+          <span class="muted small">&mdash; picked by at least <%= lab_pct(lead.groups.values.flat_map(&:values).select(&:enough?).map(&:rate).min) %> of every group</span>
+        </div>
+      <% end %>
+    </a>
+  <% end %>
+</div>
+<% if @questions.empty? %>
+  <p class="card muted">No questions are open yet.</p>
+<% end %>
