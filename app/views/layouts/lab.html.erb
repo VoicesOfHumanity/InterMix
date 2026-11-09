@@ -9,42 +9,52 @@
   <%# Self-contained on purpose: no Sprockets assets, so the lab cannot disturb the
       main site's styles (or be disturbed by them) while it is an experiment. %>
   <style>
+    /* Palette borrowed from the main site (main.css): brand red #aa1919/#a02424, header greys,
+       the beige strip #d1cec3, the cream content panel #fcf9f7, the menu highlight #f3e5dc and
+       link blue #004488. The main site has no dark mode, so neither does this, to feel familiar. */
     :root {
-      --bg: #f6f4ef; --surface: #ffffff; --surface-2: #efece4; --text: #1d1f22; --muted: #5d6168;
-      --line: #dcd7cc; --accent: #1f6f5c; --accent-ink: #ffffff; --accent-soft: #d7ece5;
-      --mine: #b5651d; --mine-soft: #f6e3cf; --ai: #5a4fb0; --ai-soft: #e6e3f7;
-      --warn-soft: #fbf0d0; --ok-soft: #dcefe4; --radius: 14px;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #14161a; --surface: #1d2026; --surface-2: #252931; --text: #eceae4; --muted: #a2a6ad;
-        --line: #343944; --accent: #4fb89b; --accent-ink: #0c1512; --accent-soft: #1d3a32;
-        --mine: #e59a52; --mine-soft: #3c2b1b; --ai: #a99ff0; --ai-soft: #2c2847;
-        --warn-soft: #3a3220; --ok-soft: #1f3529;
-      }
+      --bg: #fcf9f7; --surface: #ffffff; --surface-2: #ece8e1; --text: #222222; --muted: #666666;
+      --line: #dcd6cc; --accent: #a02424; --accent-ink: #ffffff; --accent-soft: #f3e5dc;
+      --mine: #004488; --mine-soft: #e1ebf5; --ai: #5a4fb0; --ai-soft: #e9e6f7;
+      --warn-soft: #fbf0d0; --ok-soft: #e3f0e3; --radius: 10px;
+      --brand-red: #aa1919; --band: #ededed; --bar: #666666; --strip: #d1cec3;
     }
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
-    body { margin: 0; background: var(--bg); color: var(--text);
-      font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-    a { color: var(--accent); }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
-    header.top { border-bottom: 1px solid var(--line); background: var(--surface); }
-    header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; }
-    .brand { font-weight: 700; text-decoration: none; color: var(--text); letter-spacing: .01em; }
-    .brand small { font-weight: 500; color: var(--muted); margin-left: 6px; }
-    .who { font-size: 14px; color: var(--muted); text-align: right; white-space: nowrap;
+    body { margin: 0; color: var(--text); background: #fff url('/images/whitetrk.gif');
+      font: 16px/1.55 Verdana, Helvetica, sans-serif; }
+    a { color: var(--mine); }
+    .page { max-width: 1080px; margin: 0 auto; background: var(--bg); min-height: 100vh;
+      box-shadow: 0 0 0 1px #e5e5e5; }
+    .wrap { padding: 0 16px; }
+
+    /* Header: the same stack as the main site — red rule, logo band, grey "voices of humanity" bar,
+       beige strip — with the lab's own name and sign-in living in the strip. */
+    header.site .redline { height: 4px; background: var(--brand-red); }
+    header.site .band { background: var(--band) url('/images/header_background.gif') repeat-x; height: 84px;
+      display: flex; align-items: center; }
+    header.site .band img { display: block; height: 84px; width: auto; max-width: 100%; }
+    header.site .voh { background: var(--bar); color: #fff; font: 18px/24px Arial, Helvetica, sans-serif;
+      text-align: right; padding: 0 8px; height: 24px; }
+    header.site .strip { background: var(--strip); }
+    header.site .strip .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; }
+    .brand { font-weight: 700; font-size: 15px; text-decoration: none; color: var(--accent); }
+    .brand small { font-weight: 400; color: #555; margin-left: 6px; font-size: 13px; }
+    .who { font-size: 13px; color: #444; text-align: right; white-space: nowrap;
       max-width: 40vw; overflow: hidden; text-overflow: ellipsis; }
+    .who a { font-weight: 700; }
     @media (max-width: 599px) {
-      .brand small { display: block; margin-left: 0; font-size: 12px; line-height: 1.2; }
-      header.top .wrap { padding-top: 8px; padding-bottom: 8px; }
+      header.site .band { height: 64px; }
+      header.site .band img { height: 64px; }
+      header.site .voh { font-size: 15px; }
+      .brand small { display: none; }
     }
     main { padding: 24px 0 48px; }
-    h1 { font-size: clamp(26px, 5.5vw, 40px); line-height: 1.15; margin: 0 0 10px; letter-spacing: -.01em; }
+    h1 { font-size: clamp(24px, 5vw, 34px); line-height: 1.2; margin: 0 0 10px; color: var(--accent); }
     h2 { font-size: 21px; line-height: 1.25; margin: 0 0 12px; }
     h3 { font-size: 16px; margin: 0 0 8px; }
     p { margin: 0 0 12px; }
-    .lede { font-size: 19px; color: var(--muted); max-width: 40em; }
+    .lede { font-size: 17px; color: var(--muted); max-width: 40em; }
     .muted { color: var(--muted); }
     .small { font-size: 14px; }
     .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
@@ -126,7 +136,7 @@
     .ai-note { font-size: 14px; color: var(--muted); border-left: 3px solid var(--ai); padding-left: 10px; margin-top: 8px; }
     .admin { font-size: 13px; margin-top: 8px; }
     .admin button { font: inherit; background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 0; }
-    footer { border-top: 1px solid var(--line); padding: 20px 0 32px; font-size: 14px; color: var(--muted); }
+    footer { border-top: 1px dotted #ccc; padding: 18px 0 28px; font-size: 13px; color: var(--muted); }
 
     @media (min-width: 700px) {
       .qgrid { grid-template-columns: 1fr 1fr; }
@@ -134,7 +144,6 @@
       .grow { grid-template-columns: 9em 1fr 3.2em; }
     }
     @media (min-width: 900px) {
-      body { font-size: 17px; }
       main { padding-top: 36px; }
       .layout { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 32px; align-items: start; }
       .layout aside { position: sticky; top: 20px; }
@@ -144,15 +153,21 @@
   </style>
 </head>
 <body>
-  <header class="top">
-    <div class="wrap">
-      <a class="brand" href="<%= lab_index_path %>">Can humanity agree?<small>Voices of Humanity · lab</small></a>
-      <div class="who">
-        <% if participant_signed_in? %>
-          <%= current_participant.id == VISITOR_ID ? 'Guest' : current_participant.name %>
-        <% else %>
-          <%= link_to 'Sign in', lab_login_path(return: request.fullpath) %>
-        <% end %>
+  <div class="page">
+  <header class="site">
+    <div class="redline"></div>
+    <div class="band"><a href="/"><img src="/images/logo.gif" width="290" height="84" alt="InterMix: when groups talk, people listen"></a></div>
+    <div class="voh">voices of humanity</div>
+    <div class="strip">
+      <div class="wrap">
+        <a class="brand" href="<%= lab_index_path %>">Can humanity agree?<small>an experiment</small></a>
+        <div class="who">
+          <% if participant_signed_in? %>
+            <%= current_participant.id == VISITOR_ID ? 'Guest' : current_participant.name %>
+          <% else %>
+            <%= link_to 'Sign in', lab_login_path(return: request.fullpath) %>
+          <% end %>
+        </div>
       </div>
     </div>
   </header>
@@ -169,7 +184,9 @@
     <div class="wrap">
       An experiment from Voices of Humanity. Results describe the people taking part here,
       not whole countries or populations.
+      <a href="/">Back to Voices of Humanity</a>
     </div>
   </footer>
+  </div>
 </body>
 </html>
